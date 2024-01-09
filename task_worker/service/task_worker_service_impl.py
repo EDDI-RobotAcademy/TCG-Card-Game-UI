@@ -20,7 +20,14 @@ class TaskWorkerServiceImpl(TaskWorkerService):
     def createTaskWorker(self, name, will_be_execute_function):
         print("TaskWorkerServiceImpl: createTaskWorker()")
 
-        self.__taskWorkerRepository.save_task_worker(name, will_be_execute_function)
+        self.__taskWorkerRepository.saveTaskWorker(name, will_be_execute_function)
+
+    def executeTaskWorker(self, name):
+        print("TaskWorkerServiceImpl: executeTaskWorker()")
+
+        self.__taskWorkerRepository.executeTask(name)
+
+
 
 
 

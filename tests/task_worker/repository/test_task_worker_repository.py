@@ -20,7 +20,7 @@ class TestTaskControlRepositoryImpl(unittest.TestCase):
 
         self.assertEqual(len(self.repository._TaskWorkerRepositoryImpl__thread_worker_list), 0)
 
-        self.repository.save_task_worker(name, will_be_execute_function)
+        self.repository.saveTaskWorker(name, will_be_execute_function)
         self.assertEqual(len(self.repository._TaskWorkerRepositoryImpl__thread_worker_list), 1)
 
         saved_task_worker = self.repository._TaskWorkerRepositoryImpl__thread_worker_list.get(name)
@@ -34,8 +34,8 @@ class TestTaskControlRepositoryImpl(unittest.TestCase):
         will_be_execute_function = lambda _: print("\nhello")
         will_be_execute_function(None)
 
-        self.repository.save_task_worker(name, will_be_execute_function)
-        self.repository.execute_task(name)
+        self.repository.saveTaskWorker(name, will_be_execute_function)
+        self.repository.executeTask(name)
 
         task_worker_before = self.repository._TaskWorkerRepositoryImpl__thread_worker_list[name]
         print("TaskWorker before execution:", task_worker_before)
@@ -45,7 +45,7 @@ class TestTaskControlRepositoryImpl(unittest.TestCase):
             mock_process_instance = Mock(spec=Process)
             mock_process.return_value = mock_process_instance
 
-            self.repository.execute_task(name)
+            self.repository.executeTask(name)
 
             task_worker_after = self.repository._TaskWorkerRepositoryImpl__thread_worker_list[name]
             print("TaskWorker after execution:", task_worker_after)
