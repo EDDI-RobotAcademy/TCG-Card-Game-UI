@@ -8,8 +8,7 @@ from main_window.service.window_service_impl import WindowServiceImpl
 class TestWindowServiceImpl(unittest.TestCase):
 
     def test_create_start_window(self):
-        window_repository = WindowRepositoryImpl.getInstance()
-        window_service = WindowServiceImpl(window_repository)
+        window_service = WindowServiceImpl.getInstance()
         menu_name = "TestMenu"
 
         window_service.createStartWindow(menu_name)
