@@ -1,19 +1,24 @@
-class Window:
+from main_window.entity.window import Window
+
+
+class WindowCreateRequest:
     def __init__(self, title="", geometry="800x600", background_color="#FFFFFF", resizable=(True, True)):
         self.__title = title
         self.__geometry = geometry
         self.__background_color = background_color
         self.__resizable = resizable
 
-    def get_title(self):
+    def getTitle(self) -> str:
         return self.__title
 
-    def get_geometry(self):
+    def getGeometry(self) -> str:
         return self.__geometry
 
-    def get_background_color(self):
+    def getBackgroundColor(self) -> str:
         return self.__background_color
 
-    def get_resizable(self):
+    def getResizable(self):
         return self.__resizable
 
+    def toWindow(self):
+        return Window(self.__title, self.__geometry, self.__background_color, self.__resizable)
