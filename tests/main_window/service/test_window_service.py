@@ -1,7 +1,5 @@
 import unittest
 
-from main_window.repository.window_repository_impl import WindowRepositoryImpl
-from main_window.service.request.window_create_request import WindowCreateRequest
 from main_window.service.window_service_impl import WindowServiceImpl
 
 
