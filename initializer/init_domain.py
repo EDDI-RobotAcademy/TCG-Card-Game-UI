@@ -7,10 +7,17 @@ class DomainInitializer:
         self.initMainWindowDomain()
         self.initTaskWorkerDomain()
 
-    def initMainWindowDomain(self):
+    @staticmethod
+    def initMainWindowDomain():
         WindowServiceImpl.getInstance()
 
-    def initTaskWorkerDomain(self):
+    @staticmethod
+    def initTaskWorkerDomain():
         TaskWorkerServiceImpl.getInstance()
+
+    @staticmethod
+    def initEachDomain():
+        DomainInitializer.initMainWindowDomain()
+        DomainInitializer.initTaskWorkerDomain()
 
 
