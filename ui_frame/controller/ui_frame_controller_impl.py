@@ -25,7 +25,8 @@ class UiFrameControllerImpl(UiFrameController):
         self.__windowService.createRootWindow()
         rootWindow = self.__windowService.getRootWindow()
 
-        self.__uiFrameService.createUiFrame(rootWindow)
+        self.__uiFrameService.createMainUiFrame(rootWindow)
+        self.__uiFrameService.createLoginUiFrame(rootWindow)
 
     def requestToStartPrintGameUi(self):
         rootWindow = self.__windowService.getRootWindow()
