@@ -1,7 +1,7 @@
 import unittest
 
-from main_window.entity.window import Window
-from main_window.repository.window_repository_impl import WindowRepositoryImpl
+from app_window.entity.window import Window
+from app_window.repository.window_repository_impl import WindowRepositoryImpl
 
 
 class TestWindowRepositoryClass(unittest.TestCase):

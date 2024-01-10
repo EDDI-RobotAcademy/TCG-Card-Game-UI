@@ -1,6 +1,6 @@
 import unittest
 
-from main_window.service.window_service_impl import WindowServiceImpl
+from app_window.service.window_service_impl import WindowServiceImpl
 
 
 class TestWindowServiceImpl(unittest.TestCase):

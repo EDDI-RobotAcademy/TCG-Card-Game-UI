@@ -1,6 +1,6 @@
 import unittest
 
-from main_window.entity.window import Window
+from app_window.entity.window import Window
 
 
 class TestWindowClass(unittest.TestCase):

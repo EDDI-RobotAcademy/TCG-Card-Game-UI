@@ -1,4 +1,4 @@
-from main_window.repository.window_repository import WindowRepository
+from app_window.repository.window_repository import WindowRepository
 
 
 class WindowRepositoryImpl(WindowRepository):
@@ -19,10 +19,10 @@ class WindowRepositoryImpl(WindowRepository):
             cls.__instance = cls()
         return cls.__instance
 
-    def createNewWindow(self, menuName, newWindow):
+    def createNewWindow(self, appWindowRequest):
         print("WindowRepositoryImpl: createNewWindow()")
 
-        self.__windowFrameList[menuName] = newWindow
+        return appWindowRequest.toWindow()
 
     def getWindowFrameList(self):
         return self.__windowFrameList
