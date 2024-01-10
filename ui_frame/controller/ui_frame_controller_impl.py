@@ -29,7 +29,7 @@ class UiFrameControllerImpl(UiFrameController):
 
         mainMenuFrame = self.__mainMenuFrameService.createMainUiFrame(rootWindow)
         self.__uiFrameService.registerMainMenuUiFrame(mainMenuFrame)
-        
+
         self.__uiFrameService.createLoginUiFrame(rootWindow)
 
     def requestToStartPrintGameUi(self):
