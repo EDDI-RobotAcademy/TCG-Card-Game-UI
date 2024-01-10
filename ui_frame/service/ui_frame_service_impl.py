@@ -21,6 +21,7 @@ class UiFrameServiceImpl(UiFrameService):
         return cls.__instance
 
     def createUiFrame(self, rootWindow):
+        print("UiFrameServiceImpl: createUiFrame()")
         mainMenuFrame = self.__mainMenuFrameRepository.createMainMenuFrame(rootWindow)
         self.__uiFrameRepository.registerUiFrame("main-menu", mainMenuFrame)
 

@@ -29,7 +29,7 @@ class TaskWorkerRepositoryImpl(TaskWorkerRepository):
         found_named_task_worker = self.__thread_worker_list[name]
         execute_function = found_named_task_worker.getWillBeExecuteFunction()
 
-        newTask = multiprocessing.Process(target=execute_function, args=(None,))
+        newTask = multiprocessing.Process(target=execute_function)
         print(f"newTask: {newTask}")
         found_named_task_worker.setTaskPid(newTask.pid)
 

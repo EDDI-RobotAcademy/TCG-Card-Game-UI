@@ -2,19 +2,22 @@ import tkinter
 
 from app_window.service.window_service_impl import WindowServiceImpl
 from initializer.init_domain import DomainInitializer
+from task_worker.service.task_worker_service_impl import TaskWorkerServiceImpl
 from ui_frame.controller.ui_frame_controller_impl import UiFrameControllerImpl
-from ui_frame.repository.main_menu_frame.main_menu_frame_repository_impl import MainMenuFrameRepositoryImpl
-from ui_frame.service.ui_frame_service_impl import UiFrameServiceImpl
+
 
 DomainInitializer.initEachDomain()
 
 
 if __name__ == "__main__":
-    windowService = WindowServiceImpl.getInstance()
-    rootWindow = windowService.createStartWindow()
-
     uiFrameController = UiFrameControllerImpl.getInstance()
-    uiFrameController.requestToCreateUiFrame(rootWindow)
+    uiFrameController.requestToCreateUiFrame()
 
-    rootWindow.mainloop()
+    # uiFrameController.requestToStartPrintGameUi()
 
+    # rootWindow.mainloop()
+    # uiFrameController.requestToStartPrintGameUi()
+
+    taskWorkerService = TaskWorkerServiceImpl.getInstance()
+    taskWorkerService.createTaskWorker("UI", uiFrameController.requestToStartPrintGameUi)
+    taskWorkerService.executeTaskWorker("UI")
