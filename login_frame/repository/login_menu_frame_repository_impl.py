@@ -1,4 +1,4 @@
-from tkinter import ttk
+from tkinter import ttk, CENTER
 
 from login_frame.entity.login_menu_frame import LoginMenuFrame
 from login_frame.repository.login_menu_frame_repository import LoginMenuFrameRepository
@@ -38,14 +38,13 @@ class LoginMenuFrameRepositoryImpl(LoginMenuFrameRepository):
         # link_signup.bind("<Button-1>", lambda event: loginMenuFrame.open_signup())
         link_signup.bind("<Button-1>")
 
-        label_username.grid(row=0, column=0, pady=10, sticky="e")
-        label_password.grid(row=1, column=0, pady=10, sticky="e")
-        entry_username.grid(row=0, column=1, pady=10, padx=(0, 20))
-        entry_password.grid(row=1, column=1, pady=10, padx=(0, 20))
-        button_login.grid(row=2, column=0, columnspan=2, pady=20)
-        link_signup.grid(row=3, column=0, columnspan=2, pady=20)
+        label_username.place(relx=0.4, rely=0.4, anchor="center")
+        entry_username.place(relx=0.6, rely=0.4, anchor="center", width=200)
 
-        # loginMenuFrame.pack(expand=True, fill="both")
+        label_password.place(relx=0.4, rely=0.5, anchor="center")
+        entry_password.place(relx=0.6, rely=0.5, anchor="center", width=200)
 
+        button_login.place(relx=0.5, rely=0.6, anchor="center")
+        link_signup.place(relx=0.5, rely=0.7, anchor="center")
         return loginMenuFrame
 
