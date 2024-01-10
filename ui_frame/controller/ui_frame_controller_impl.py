@@ -29,11 +29,16 @@ class UiFrameControllerImpl(UiFrameController):
         self.__windowService.createRootWindow()
         rootWindow = self.__windowService.getRootWindow()
 
-        mainMenuFrame = self.__mainMenuFrameService.createMainUiFrame(rootWindow)
+        mainMenuFrame = self.__mainMenuFrameService.createMainUiFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerMainMenuUiFrame(mainMenuFrame)
 
         loginMenuFrame = self.__loginMenuFrameService.createLoginUiFrame(rootWindow)
         self.__uiFrameService.registerLoginMenuUiFrame(loginMenuFrame)
+
+        self.switchFrameWithMenuName("main-menu")
+
+    def switchFrameWithMenuName(self, name):
+        self.__uiFrameService.switchFrameWithMenuName(name)
 
     def requestToStartPrintGameUi(self):
         rootWindow = self.__windowService.getRootWindow()

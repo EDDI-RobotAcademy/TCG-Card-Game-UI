@@ -23,7 +23,8 @@ class WindowServiceImpl(WindowService):
 
         self.__windowRepository.createNewWindow(WindowCreateRequest(
             title="EDDI TCG Card Battle",
-            geometry="1200x800+50+50",
+            # geometry="1200x800+50+50",
+            geometry="1200x800",
             background_color="#000000",
             resizable=(True, True)
         ))

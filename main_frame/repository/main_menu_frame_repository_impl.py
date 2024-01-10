@@ -22,17 +22,4 @@ class MainMenuFrameRepositoryImpl(MainMenuFrameRepository):
         print("MainMenuFrameRepositoryImpl: createMainMenuFrame()")
         mainMenuFrame = MainMenuFrame(rootWindow)
 
-        label_text = "EDDI TCG Card Battle"
-        label = tkinter.Label(mainMenuFrame, text=label_text, font=("Helvetica", 72), bg="black", fg="white",
-                              anchor="center", justify="center", pady=50)
-
-        label.place(relx=0.5, rely=0.5, anchor="center", bordermode="outside")  # 가운데 정렬
-
-        start_button = tkinter.Button(mainMenuFrame, text="시작", bg="#2E7D32", fg="white", width=36, height=2)
-        start_button.place(relx=0.5, rely=0.65, anchor="center")
-
-        exit_button = tkinter.Button(mainMenuFrame, text="종료", bg="#C62828", fg="white", width=36, height=2)
-        exit_button.place(relx=0.5, rely=0.75, anchor="center")
-        mainMenuFrame.pack(expand=True, fill="both")
-
         return mainMenuFrame

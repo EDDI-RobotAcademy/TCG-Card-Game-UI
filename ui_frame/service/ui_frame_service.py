@@ -3,6 +3,10 @@ import abc
 
 class UiFrameService(abc.ABC):
     @abc.abstractmethod
+    def switchFrameWithMenuName(self, menuName: str):
+        pass
+
+    @abc.abstractmethod
     def registerMainMenuUiFrame(self, mainMenuFrame):
         pass
 

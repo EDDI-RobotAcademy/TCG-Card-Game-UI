@@ -17,6 +17,10 @@ class UiFrameServiceImpl(UiFrameService):
             cls.__instance = cls()
         return cls.__instance
 
+    def switchFrameWithMenuName(self, menuName: str):
+        print("UiFrameServiceImpl: switchFrameWithMenuName()")
+        self.__uiFrameRepository.switchFrameWithMenuName(menuName)
+
     def registerMainMenuUiFrame(self, mainMenuFrame):
         print("UiFrameServiceImpl: createMainUiFrame()")
         self.__uiFrameRepository.registerUiFrame("main-menu", mainMenuFrame)
