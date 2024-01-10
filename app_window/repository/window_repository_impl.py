@@ -3,6 +3,7 @@ from app_window.repository.window_repository import WindowRepository
 
 class WindowRepositoryImpl(WindowRepository):
     __instance = None
+    __rootWindow = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -18,5 +19,8 @@ class WindowRepositoryImpl(WindowRepository):
     def createNewWindow(self, appWindowRequest):
         print("WindowRepositoryImpl: createNewWindow()")
 
-        return appWindowRequest.toWindow()
+        self.__rootWindow = appWindowRequest.toWindow()
 
+    def getRootWindow(self):
+        print("WindowRepositoryImpl: getRootWindow()")
+        return self.__rootWindow

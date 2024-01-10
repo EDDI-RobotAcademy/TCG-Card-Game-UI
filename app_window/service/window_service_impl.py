@@ -18,13 +18,16 @@ class WindowServiceImpl(WindowService):
             cls.__instance = cls()
         return cls.__instance
 
-    def createStartWindow(self):
+    def createRootWindow(self):
         print("WindowServiceImpl: createStartWindow()")
 
-        return self.__windowRepository.createNewWindow(WindowCreateRequest(
+        self.__windowRepository.createNewWindow(WindowCreateRequest(
             title="EDDI TCG Card Battle",
             geometry="1200x800+50+50",
             background_color="#000000",
             resizable=(True, True)
         ))
+
+    def getRootWindow(self):
+        return self.__windowRepository.getRootWindow()
 
