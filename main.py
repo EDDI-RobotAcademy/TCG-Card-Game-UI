@@ -1,6 +1,3 @@
-import tkinter
-
-from app_window.service.window_service_impl import WindowServiceImpl
 from initializer.init_domain import DomainInitializer
 from task_worker.service.task_worker_service_impl import TaskWorkerServiceImpl
 from ui_frame.controller.ui_frame_controller_impl import UiFrameControllerImpl

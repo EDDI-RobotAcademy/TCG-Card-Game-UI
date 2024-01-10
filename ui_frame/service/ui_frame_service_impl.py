@@ -23,9 +23,8 @@ class UiFrameServiceImpl(UiFrameService):
         print("UiFrameServiceImpl: createMainUiFrame()")
         self.__uiFrameRepository.registerUiFrame("main-menu", mainMenuFrame)
 
-    def createLoginUiFrame(self, rootWindow):
+    def registerLoginMenuUiFrame(self, loginMenuFrame):
         print("UiFrameServiceImpl: createLoginUiFrame()")
-        loginMenuFrame = self.__loginMenuFrameRepository.createLoginMenuFrame(rootWindow)
         self.__uiFrameRepository.registerUiFrame("login-menu", loginMenuFrame)
 
 

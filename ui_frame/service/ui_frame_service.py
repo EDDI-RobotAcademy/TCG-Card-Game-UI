@@ -7,5 +7,5 @@ class UiFrameService(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def createLoginUiFrame(self, rootWindow):
+    def registerLoginMenuUiFrame(self, rootWindow):
         pass

@@ -18,6 +18,6 @@ class MainMenuFrameServiceImpl(MainMenuFrameService):
         return cls.__instance
 
     def createMainUiFrame(self, rootWindow):
-        self.__mainMenuFrameRepository.createMainMenuFrame(rootWindow)
+        return self.__mainMenuFrameRepository.createMainMenuFrame(rootWindow)
 
 
