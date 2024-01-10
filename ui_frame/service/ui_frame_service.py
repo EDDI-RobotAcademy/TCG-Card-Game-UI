@@ -3,7 +3,7 @@ import abc
 
 class UiFrameService(abc.ABC):
     @abc.abstractmethod
-    def createMainUiFrame(self, rootWindow):
+    def registerMainMenuUiFrame(self, mainMenuFrame):
         pass
 
     @abc.abstractmethod
