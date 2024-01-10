@@ -1,6 +1,6 @@
-from main_window.repository.window_repository_impl import WindowRepositoryImpl
-from main_window.service.request.window_create_request import WindowCreateRequest
-from main_window.service.window_service import WindowService
+from app_window.repository.window_repository_impl import WindowRepositoryImpl
+from app_window.service.request.window_create_request import WindowCreateRequest
+from app_window.service.window_service import WindowService
 
 
 class WindowServiceImpl(WindowService):
@@ -18,13 +18,13 @@ class WindowServiceImpl(WindowService):
             cls.__instance = cls()
         return cls.__instance
 
-    def createStartWindow(self, menuName):
+    def createStartWindow(self):
         print("WindowServiceImpl: createStartWindow()")
 
-        self.__windowRepository.createNewWindow(menuName, WindowCreateRequest(
-            "EDDI TCG Card Battle",
-            "1200x800",
-            "#000000",
-            (True, True)
+        return self.__windowRepository.createNewWindow(WindowCreateRequest(
+            title="EDDI TCG Card Battle",
+            geometry="1200x800+50+50",
+            background_color="#000000",
+            resizable=(True, True)
         ))
 
