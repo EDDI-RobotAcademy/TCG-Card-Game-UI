@@ -38,13 +38,14 @@ class LoginMenuFrameRepositoryImpl(LoginMenuFrameRepository):
         # link_signup.bind("<Button-1>", lambda event: loginMenuFrame.open_signup())
         link_signup.bind("<Button-1>")
 
-        label_username.place(relx=0.4, rely=0.4, anchor="center")
-        entry_username.place(relx=0.6, rely=0.4, anchor="center", width=200)
+        label_username.place(relx=0.44, rely=0.4, anchor="center")
+        entry_username.place(relx=0.56, rely=0.4, anchor="center")
 
-        label_password.place(relx=0.4, rely=0.5, anchor="center")
-        entry_password.place(relx=0.6, rely=0.5, anchor="center", width=200)
+        label_password.place(relx=0.44, rely=0.5, anchor="center")
+        entry_password.place(relx=0.56, rely=0.5, anchor="center")
 
         button_login.place(relx=0.5, rely=0.6, anchor="center")
         link_signup.place(relx=0.5, rely=0.7, anchor="center")
+
         return loginMenuFrame
 
