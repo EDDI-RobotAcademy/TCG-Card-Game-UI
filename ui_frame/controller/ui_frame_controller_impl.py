@@ -1,3 +1,4 @@
+from account_register_frame.service.account_register_frame_service_impl import AccountRegisterFrameServiceImpl
 from app_window.service.window_service_impl import WindowServiceImpl
 from login_frame.service.login_menu_frame_service_impl import LoginMenuFrameServiceImpl
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
@@ -15,6 +16,7 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__windowService = WindowServiceImpl.getInstance()
             cls.__instance.__mainMenuFrameService = MainMenuFrameServiceImpl.getInstance()
             cls.__instance.__loginMenuFrameService = LoginMenuFrameServiceImpl.getInstance()
+            cls.__instance.__accountRegisterFrameService = AccountRegisterFrameServiceImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -32,8 +34,11 @@ class UiFrameControllerImpl(UiFrameController):
         mainMenuFrame = self.__mainMenuFrameService.createMainUiFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerMainMenuUiFrame(mainMenuFrame)
 
-        loginMenuFrame = self.__loginMenuFrameService.createLoginUiFrame(rootWindow)
+        loginMenuFrame = self.__loginMenuFrameService.createLoginUiFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerLoginMenuUiFrame(loginMenuFrame)
+
+        accountRegisterFrame = self.__accountRegisterFrameService.createAccountRegisterUiFrame(rootWindow)
+        self.__uiFrameService.registerAccountRegisterUiFrame(accountRegisterFrame)
 
         self.switchFrameWithMenuName("main-menu")
 

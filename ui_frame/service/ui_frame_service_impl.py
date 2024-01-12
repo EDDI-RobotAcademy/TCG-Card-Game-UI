@@ -22,12 +22,16 @@ class UiFrameServiceImpl(UiFrameService):
         self.__uiFrameRepository.switchFrameWithMenuName(menuName)
 
     def registerMainMenuUiFrame(self, mainMenuFrame):
-        print("UiFrameServiceImpl: createMainUiFrame()")
+        print("UiFrameServiceImpl: registerMainMenuUiFrame()")
         self.__uiFrameRepository.registerUiFrame("main-menu", mainMenuFrame)
 
     def registerLoginMenuUiFrame(self, loginMenuFrame):
-        print("UiFrameServiceImpl: createLoginUiFrame()")
+        print("UiFrameServiceImpl: registerLoginMenuUiFrame()")
         self.__uiFrameRepository.registerUiFrame("login-menu", loginMenuFrame)
+
+    def registerAccountRegisterUiFrame(self, accountRegisterFrame):
+        print("UiFrameServiceImpl: registerAccountRegisterUiFrame()")
+        self.__uiFrameRepository.registerUiFrame("account-register", accountRegisterFrame)
 
 
 

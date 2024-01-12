@@ -19,4 +19,3 @@ class AccountRegisterFrameServiceImpl(AccountRegisterFrameService):
 
     def createAccountRegisterUiFrame(self, rootWindow):
         return self.__accountRegisterFrameRepository.createAccountRegisterFrame(rootWindow)
-    
