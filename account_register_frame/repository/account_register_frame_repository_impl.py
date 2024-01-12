@@ -32,7 +32,6 @@ class AccountRegisterFrameRepositoryImpl(AccountRegisterFrameRepository):
         entry_username = ttk.Entry(accountRegisterFrame, font=("Arial", 12))
         entry_password = ttk.Entry(accountRegisterFrame, show="*", font=("Arial", 12))
 
-        button_login = ttk.Button(accountRegisterFrame, text="로그인", style="TButton")
         link_signup = ttk.Label(accountRegisterFrame, text="회원 가입", cursor="hand2", font=("Arial", 10, "underline"))
         link_signup.bind("<Button-1>")
 
@@ -42,8 +41,7 @@ class AccountRegisterFrameRepositoryImpl(AccountRegisterFrameRepository):
         label_password.place(relx=0.44, rely=0.5, anchor="center")
         entry_password.place(relx=0.56, rely=0.5, anchor="center")
 
-        button_login.place(relx=0.5, rely=0.6, anchor="center")
-        link_signup.place(relx=0.5, rely=0.7, anchor="center")
+        link_signup.place(relx=0.5, rely=0.6, anchor="center")
 
         return accountRegisterFrame
 
