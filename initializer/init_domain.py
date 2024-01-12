@@ -1,3 +1,4 @@
+from account_register_frame.service.account_register_frame_service_impl import AccountRegisterFrameServiceImpl
 from app_window.service.window_service_impl import WindowServiceImpl
 from client_socket.service.client_socket_service_impl import ClientSocketServiceImpl
 from login_frame.service.login_menu_frame_service_impl import LoginMenuFrameServiceImpl
@@ -33,13 +34,20 @@ class DomainInitializer:
         UiFrameControllerImpl.getInstance()
 
     @staticmethod
+    def initAccountRegisterFrameDomain():
+        AccountRegisterFrameServiceImpl.getInstance()
+
+    @staticmethod
     def initEachDomain():
         DomainInitializer.initRootWindowDomain()
         DomainInitializer.initMainMenuFrameDomain()
         DomainInitializer.initLoginMenuFrameDomain()
+        DomainInitializer.initAccountRegisterFrameDomain()
         DomainInitializer.initUiFrameDomain()
         DomainInitializer.initClientSocketDomain()
         DomainInitializer.initTaskWorkerDomain()
+
+
 
 
 
