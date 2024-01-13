@@ -21,9 +21,9 @@ class TransmitterControllerImpl(TransmitterController):
         print("TransmitterControllerImpl: requestToInjectSocketClient()")
         self.__transmitterService.injectSocketClient(socketClient)
 
-    def requestToInjectIpcChannel(self, ipcChannel):
+    def requestToInjectUiIpcChannel(self, uiIpcChannel):
         print("TransmitterControllerImpl: requestToInjectIpcChannel()")
-        self.__transmitterService.injectIpcChannel(ipcChannel)
+        self.__transmitterService.injectUiIpcChannel(uiIpcChannel)
 
 
 
