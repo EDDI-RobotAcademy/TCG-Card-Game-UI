@@ -1,3 +1,5 @@
+import multiprocessing
+
 from account_register_frame.service.account_register_frame_service_impl import AccountRegisterFrameServiceImpl
 from app_window.service.window_service_impl import WindowServiceImpl
 from client_socket.service.client_socket_service_impl import ClientSocketServiceImpl
@@ -27,8 +29,9 @@ class DomainInitializer:
         LoginMenuFrameServiceImpl.getInstance()
 
     @staticmethod
-    def initTransmitterDomain():
-        TransmitterControllerImpl.getInstance()
+    def initTransmitterDomain(uiTransmitIpcChannel):
+        transmitterController = TransmitterControllerImpl.getInstance()
+        transmitterController.requestToInjectIpcChannel(uiTransmitIpcChannel)
 
     @staticmethod
     def initClientSocketDomain():
@@ -44,13 +47,15 @@ class DomainInitializer:
 
     @staticmethod
     def initEachDomain():
+        uiTransmitIpcChannel = multiprocessing.Queue()
+
         DomainInitializer.initRootWindowDomain()
         DomainInitializer.initMainMenuFrameDomain()
         DomainInitializer.initLoginMenuFrameDomain()
         DomainInitializer.initAccountRegisterFrameDomain()
         DomainInitializer.initUiFrameDomain()
         DomainInitializer.initClientSocketDomain()
-        DomainInitializer.initTransmitterDomain()
+        DomainInitializer.initTransmitterDomain(uiTransmitIpcChannel)
         DomainInitializer.initTaskWorkerDomain()
 
 

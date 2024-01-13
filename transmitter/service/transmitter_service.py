@@ -6,7 +6,10 @@ class TransmitterService(abc.ABC):
     def injectSocketClient(self, socketClient):
         pass
 
+    @abc.abstractmethod
+    def injectIpcChannel(self, ipcChannel):
+        pass
 
 
 
-    
+

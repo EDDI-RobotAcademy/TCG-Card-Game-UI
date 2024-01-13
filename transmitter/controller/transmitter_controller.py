@@ -6,5 +6,8 @@ class TransmitterController(abc.ABC):
     def requestToInjectSocketClient(self, socketClient):
         pass
 
+    @abc.abstractmethod
+    def requestToInjectIpcChannel(self, ipcChannel):
+        pass
 
-    
+
