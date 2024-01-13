@@ -4,6 +4,7 @@ from ui_frame.repository.ui_frame_repository import UiFrameRepository
 class UiFrameRepositoryImpl(UiFrameRepository):
     __instance = None
     __currentFrame = None
+    __transmitIpcChannel = None
     __windowFrameList = {}
 
     def __new__(cls):
@@ -43,4 +44,10 @@ class UiFrameRepositoryImpl(UiFrameRepository):
 
         foundUiFrame.pack(expand=True, fill="both")
         self.__currentFrame = foundUiFrame
+
+    def saveTransmitIpcChannel(self, transmitIpcChannel):
+        print("UiFrameRepositoryImpl: saveTransmitIpcChannel()")
+        self.__transmitIpcChannel = transmitIpcChannel
+
+
 

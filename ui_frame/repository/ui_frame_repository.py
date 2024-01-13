@@ -11,3 +11,7 @@ class UiFrameRepository(abc.ABC):
     def registerUiFrame(self, name, newFrame):
         pass
 
+    @abc.abstractmethod
+    def saveTransmitIpcChannel(self, transmitIpcChannel):
+        pass
+

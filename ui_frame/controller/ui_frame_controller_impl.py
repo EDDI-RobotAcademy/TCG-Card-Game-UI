@@ -43,9 +43,17 @@ class UiFrameControllerImpl(UiFrameController):
         self.switchFrameWithMenuName("main-menu")
 
     def switchFrameWithMenuName(self, name):
+        print("UiFrameControllerImpl: switchFrameWithMenuName()")
         self.__uiFrameService.switchFrameWithMenuName(name)
 
     def requestToStartPrintGameUi(self):
+        print("UiFrameControllerImpl: requestToStartPrintGameUi()")
         rootWindow = self.__windowService.getRootWindow()
         rootWindow.mainloop()
+
+    def requestToInjectTransmitIpcChannel(self, transmitIpcChannel):
+        print("UiFrameControllerImpl: requestToInjectTransmitIpcChannel()")
+        self.__uiFrameService.injectTransmitIpcChannel(transmitIpcChannel)
+
+
 

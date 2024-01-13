@@ -33,6 +33,12 @@ class UiFrameServiceImpl(UiFrameService):
         print("UiFrameServiceImpl: registerAccountRegisterUiFrame()")
         self.__uiFrameRepository.registerUiFrame("account-register", accountRegisterFrame)
 
+    def injectTransmitIpcChannel(self, transmitIpcChannel):
+        print("UiFrameServiceImpl: injectTransmitIpcChannel()")
+        self.__uiFrameRepository.saveTransmitIpcChannel(transmitIpcChannel)
+
+
+
 
 
 
