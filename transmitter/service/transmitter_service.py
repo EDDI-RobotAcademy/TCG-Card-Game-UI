@@ -7,7 +7,7 @@ class TransmitterService(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def injectIpcChannel(self, ipcChannel):
+    def injectUiIpcChannel(self, uiIpcChannel):
         pass
 
 

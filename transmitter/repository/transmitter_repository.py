@@ -8,7 +8,7 @@ class TransmitterRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def saveIpcChannel(self, ipcChannel):
+    def saveUiIpcChannel(self, uiIpcChannel):
         pass
 
     # @abc.abstractmethod

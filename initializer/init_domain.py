@@ -31,7 +31,7 @@ class DomainInitializer:
     @staticmethod
     def initTransmitterDomain(uiTransmitIpcChannel):
         transmitterController = TransmitterControllerImpl.getInstance()
-        transmitterController.requestToInjectIpcChannel(uiTransmitIpcChannel)
+        transmitterController.requestToInjectUiIpcChannel(uiTransmitIpcChannel)
 
     @staticmethod
     def initClientSocketDomain():

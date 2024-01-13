@@ -6,7 +6,7 @@ from transmitter.repository.transmitter_repository import TransmitterRepository
 class TransmitterRepositoryImpl(TransmitterRepository):
     __instance = None
     __clientSocket = None
-    __ipcChannel = None
+    __uiIpcChannel = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -23,9 +23,9 @@ class TransmitterRepositoryImpl(TransmitterRepository):
         print("TransmitterRepositoryImpl: saveClientSocket()")
         self.__clientSocket = clientSocket
 
-    def saveIpcChannel(self, ipcChannel):
+    def saveUiIpcChannel(self, uiIpcChannel):
         print("TransmitterRepositoryImpl: saveIpcChannel()")
-        self.__ipcChannel = ipcChannel
+        self.__uiIpcChannel = uiIpcChannel
 
     # def __blockToAcquireSocket(self):
     #     if self.__clientSocket is None:
