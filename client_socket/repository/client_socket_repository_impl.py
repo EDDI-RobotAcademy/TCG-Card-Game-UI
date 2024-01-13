@@ -8,6 +8,7 @@ import socket
 
 class ClientSocketRepositoryImpl(ClientSocketRepository):
     __instance = None
+    __clientSocket = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -21,11 +22,14 @@ class ClientSocketRepositoryImpl(ClientSocketRepository):
         return cls.__instance
 
     def createClientSocket(self):
+        print("ClientSocketRepositoryImpl: createClientSocket()")
         socketObject = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__clientSocket = ClientSocket(config('TARGET_HOST'), int(config('TARGET_PORT')), socketObject)
         return self.__clientSocket
 
     def connectionToTargetHost(self):
+        print("ClientSocketRepositoryImpl: connectionToTargetHost()")
+
         if not self.__clientSocket:
             self.createClientSocket(config('TARGET_HOST'), int(config('TARGET_PORT')))
 
