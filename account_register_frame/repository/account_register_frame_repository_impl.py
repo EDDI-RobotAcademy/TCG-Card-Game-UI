@@ -22,26 +22,5 @@ class AccountRegisterFrameRepositoryImpl(AccountRegisterFrameRepository):
         print("AccountRegisterFrameRepositoryImpl: createAccountRegisterFrame()")
         accountRegisterFrame = AccountRegisterFrame(rootWindow)
 
-        style = ttk.Style()
-        style.configure("TFrame", background="#444444")
-        style.configure("TLabel", background="#444444", foreground="#ffffff", font=("Arial", 12))
-        style.configure("TButton", background="#2C3E50", foreground="#ffffff", font=("Arial", 12), padding=(10, 5))
-
-        label_username = ttk.Label(accountRegisterFrame, text="아이디:", style="TLabel")
-        label_password = ttk.Label(accountRegisterFrame, text="비밀번호:", style="TLabel")
-        entry_username = ttk.Entry(accountRegisterFrame, font=("Arial", 12))
-        entry_password = ttk.Entry(accountRegisterFrame, show="*", font=("Arial", 12))
-
-        link_signup = ttk.Label(accountRegisterFrame, text="회원 가입", cursor="hand2", font=("Arial", 10, "underline"))
-        link_signup.bind("<Button-1>")
-
-        label_username.place(relx=0.44, rely=0.4, anchor="center")
-        entry_username.place(relx=0.56, rely=0.4, anchor="center")
-
-        label_password.place(relx=0.44, rely=0.5, anchor="center")
-        entry_password.place(relx=0.56, rely=0.5, anchor="center")
-
-        link_signup.place(relx=0.5, rely=0.6, anchor="center")
-
         return accountRegisterFrame
 

@@ -1,7 +1,7 @@
 from tkinter import ttk
 
-from login_frame.repository.login_menu_frame_repository_impl import LoginMenuFrameRepositoryImpl
-from login_frame.service.login_menu_frame_service import LoginMenuFrameService
+from account_login_frame.repository.login_menu_frame_repository_impl import LoginMenuFrameRepositoryImpl
+from account_login_frame.service.login_menu_frame_service import LoginMenuFrameService
 
 
 class LoginMenuFrameServiceImpl(LoginMenuFrameService):
