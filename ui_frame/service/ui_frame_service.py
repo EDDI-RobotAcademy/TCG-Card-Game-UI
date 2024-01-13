@@ -13,3 +13,7 @@ class UiFrameService(abc.ABC):
     @abc.abstractmethod
     def registerLoginMenuUiFrame(self, rootWindow):
         pass
+
+    @abc.abstractmethod
+    def injectTransmitIpcChannel(self, transmitIpcChannel):
+        pass
