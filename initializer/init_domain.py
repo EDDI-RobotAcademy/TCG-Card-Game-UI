@@ -4,6 +4,7 @@ from client_socket.service.client_socket_service_impl import ClientSocketService
 from login_frame.service.login_menu_frame_service_impl import LoginMenuFrameServiceImpl
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
 from task_worker.service.task_worker_service_impl import TaskWorkerServiceImpl
+from transmitter.controller.transmitter_controller_impl import TransmitterControllerImpl
 from ui_frame.controller.ui_frame_controller_impl import UiFrameControllerImpl
 
 
@@ -26,6 +27,10 @@ class DomainInitializer:
         LoginMenuFrameServiceImpl.getInstance()
 
     @staticmethod
+    def initTransmitterDomain():
+        TransmitterControllerImpl.getInstance()
+
+    @staticmethod
     def initClientSocketDomain():
         ClientSocketServiceImpl.getInstance()
 
@@ -45,6 +50,7 @@ class DomainInitializer:
         DomainInitializer.initAccountRegisterFrameDomain()
         DomainInitializer.initUiFrameDomain()
         DomainInitializer.initClientSocketDomain()
+        DomainInitializer.initTransmitterDomain()
         DomainInitializer.initTaskWorkerDomain()
 
 
