@@ -7,6 +7,10 @@ class TransmitterRepository(abc.ABC):
     def saveClientSocket(self, clientSocket):
         pass
 
+    @abc.abstractmethod
+    def saveIpcChannel(self, ipcChannel):
+        pass
+
     # @abc.abstractmethod
     # def transmitCommand(self):
     #     pass

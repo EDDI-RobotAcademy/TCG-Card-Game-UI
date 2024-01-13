@@ -21,6 +21,12 @@ class TransmitterServiceImpl(TransmitterService):
         print("TransmitterServiceImpl: injectSocketClient()")
         self.__transmitterRepository.saveClientSocket(socketClient)
 
+    def injectIpcChannel(self, ipcChannel):
+        print("TransmitterServiceImpl: injectIpcChannel()")
+        self.__transmitterRepository.saveIpcChannel(ipcChannel)
+
+
+
 
 
 
