@@ -1,3 +1,4 @@
+import json
 import pickle
 import time
 import socket
@@ -48,8 +49,11 @@ class TransmitterRepositoryImpl(TransmitterRepository):
                 transmitData = self.__uiIpcChannel.get()
                 print(f"transmitData: {transmitData}")
 
-                serializedData = pickle.dumps(transmitData)
-                socketObject.sendall(serializedData)
+                serializedData = json.dumps(transmitData.toDictionary())
+                socketObject.sendall(serializedData.encode())
+
+                # serializedData = pickle.dumps(transmitData)
+                # socketObject.sendall(serializedData)
 
             except (socket.error, BrokenPipeError) as exception:
                 print(f"사용자 연결 종료")

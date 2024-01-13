@@ -1,5 +1,3 @@
-from tkinter import ttk
-
 from account_register_frame.entity.account_register_frame import AccountRegisterFrame
 from account_register_frame.repository.account_register_frame_repository import AccountRegisterFrameRepository
 
