@@ -25,6 +25,13 @@ class TransmitterControllerImpl(TransmitterController):
         print("TransmitterControllerImpl: requestToInjectIpcChannel()")
         self.__transmitterService.injectUiIpcChannel(uiIpcChannel)
 
+    def requestToTransmitCommand(self):
+        print("TransmitterControllerImpl: requestToTransmitCommand()")
+        self.__transmitterService.startToTransmitCommand()
+
+
+
+
 
 
 

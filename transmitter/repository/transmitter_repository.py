@@ -11,8 +11,8 @@ class TransmitterRepository(abc.ABC):
     def saveUiIpcChannel(self, uiIpcChannel):
         pass
 
-    # @abc.abstractmethod
-    # def transmitCommand(self):
-    #     pass
+    @abc.abstractmethod
+    def transmitCommand(self):
+        pass
 
 

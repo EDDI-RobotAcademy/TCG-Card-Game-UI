@@ -34,7 +34,6 @@ class TaskWorkerRepositoryImpl(TaskWorkerRepository):
         found_named_task_worker.setTaskPid(newTask.pid)
 
         newTask.start()
-        newTask.join()
 
 
 

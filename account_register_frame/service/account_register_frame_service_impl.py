@@ -2,6 +2,7 @@ from tkinter import ttk
 
 from account_register_frame.repository.account_register_frame_repository_impl import AccountRegisterFrameRepositoryImpl
 from account_register_frame.service.account_register_frame_service import AccountRegisterFrameService
+from account_register_frame.service.request.account_register_request import AccountRegisterRequest
 
 
 class AccountRegisterFrameServiceImpl(AccountRegisterFrameService):
@@ -32,8 +33,15 @@ class AccountRegisterFrameServiceImpl(AccountRegisterFrameService):
         entry_username = ttk.Entry(accountRegisterFrame, font=("Arial", 12))
         entry_password = ttk.Entry(accountRegisterFrame, show="*", font=("Arial", 12))
 
+        # link_signup = ttk.Label(accountRegisterFrame, text="회원 가입", cursor="hand2", font=("Arial", 10, "underline"))
+        # link_signup.bind("<Button-1>", self.__accountRegisterFrameRepository.requestLogin(entry_username.get(), entry_password.get()))
         link_signup = ttk.Label(accountRegisterFrame, text="회원 가입", cursor="hand2", font=("Arial", 10, "underline"))
-        link_signup.bind("<Button-1>")
+
+        def on_signup_click(event):
+            self.__accountRegisterFrameRepository.requestLogin(
+                AccountRegisterRequest(entry_username.get(), entry_password.get()))
+
+        link_signup.bind("<Button-1>", on_signup_click)
 
         label_username.place(relx=0.44, rely=0.4, anchor="center")
         entry_username.place(relx=0.56, rely=0.4, anchor="center")
@@ -44,3 +52,9 @@ class AccountRegisterFrameServiceImpl(AccountRegisterFrameService):
         link_signup.place(relx=0.5, rely=0.6, anchor="center")
 
         return accountRegisterFrame
+
+    def injectTransmitIpcChannel(self, transmitIpcChannel):
+        print("AccountRegisterFrameService: injectTransmitIpcChannel()")
+        self.__accountRegisterFrameRepository.saveTransmitIpcChannel(transmitIpcChannel)
+
+
