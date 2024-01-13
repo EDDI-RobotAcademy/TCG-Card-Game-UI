@@ -17,8 +17,11 @@ class ClientSocketServiceImpl(ClientSocketService):
             cls.__instance = cls(repository)
         return cls.__instance
 
-    def createClientSocket(self, host, port):
-        return self.__clientSocketRepository.create(host, port)
+    def createClientSocket(self):
+        return self.__clientSocketRepository.createClientSocket()
+
+    def connectToTargetHost(self):
+        return self.__clientSocketRepository.connectionToTargetHost()
 
 
 
