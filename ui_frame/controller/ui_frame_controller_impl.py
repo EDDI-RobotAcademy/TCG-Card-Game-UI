@@ -37,6 +37,7 @@ class UiFrameControllerImpl(UiFrameController):
         loginMenuFrame = self.__loginMenuFrameService.createLoginUiFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerLoginMenuUiFrame(loginMenuFrame)
 
+
         accountRegisterFrame = self.__accountRegisterFrameService.createAccountRegisterUiFrame(rootWindow)
         self.__uiFrameService.registerAccountRegisterUiFrame(accountRegisterFrame)
 
@@ -54,6 +55,8 @@ class UiFrameControllerImpl(UiFrameController):
     def requestToInjectTransmitIpcChannel(self, transmitIpcChannel):
         print("UiFrameControllerImpl: requestToInjectTransmitIpcChannel()")
         self.__uiFrameService.injectTransmitIpcChannel(transmitIpcChannel)
+
+        self.__accountRegisterFrameService.injectTransmitIpcChannel(transmitIpcChannel)
 
 
 

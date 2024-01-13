@@ -6,6 +6,7 @@ from account_register_frame.repository.account_register_frame_repository import 
 
 class AccountRegisterFrameRepositoryImpl(AccountRegisterFrameRepository):
     __instance = None
+    __transmitIpcChannel = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -23,4 +24,12 @@ class AccountRegisterFrameRepositoryImpl(AccountRegisterFrameRepository):
         accountRegisterFrame = AccountRegisterFrame(rootWindow)
 
         return accountRegisterFrame
+
+    def saveTransmitIpcChannel(self, transmitIpcChannel):
+        print("AccountRegisterFrameRepositoryImpl: saveTransmitIpcChannel()")
+        self.__transmitIpcChannel = transmitIpcChannel
+
+    def requestLogin(self, accountRegisterRequest):
+        print(f"AccountRegisterFrameRepositoryImpl: createAccountRegisterFrame() -> {accountRegisterRequest}")
+        self.__transmitIpcChannel.put(accountRegisterRequest)
 

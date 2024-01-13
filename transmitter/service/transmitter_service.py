@@ -10,6 +10,12 @@ class TransmitterService(abc.ABC):
     def injectUiIpcChannel(self, uiIpcChannel):
         pass
 
+    @abc.abstractmethod
+    def startToTransmitCommand(self):
+        pass
+
+
+
 
 
 

@@ -20,7 +20,12 @@ if __name__ == "__main__":
     uiFrameController.requestToCreateUiFrame()
 
     taskWorkerService = TaskWorkerServiceImpl.getInstance()
+    taskWorkerService.createTaskWorker("Transmitter", transmitterController.requestToTransmitCommand)
+    taskWorkerService.executeTaskWorker("Transmitter")
+
     taskWorkerService.createTaskWorker("UI", uiFrameController.requestToStartPrintGameUi)
     taskWorkerService.executeTaskWorker("UI")
+
+
 
 
