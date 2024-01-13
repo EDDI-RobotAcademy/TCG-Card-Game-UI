@@ -1,7 +1,7 @@
 from tkinter import ttk, CENTER
 
-from login_frame.entity.login_menu_frame import LoginMenuFrame
-from login_frame.repository.login_menu_frame_repository import LoginMenuFrameRepository
+from account_login_frame.entity.login_menu_frame import LoginMenuFrame
+from account_login_frame.repository.login_menu_frame_repository import LoginMenuFrameRepository
 
 
 class LoginMenuFrameRepositoryImpl(LoginMenuFrameRepository):
