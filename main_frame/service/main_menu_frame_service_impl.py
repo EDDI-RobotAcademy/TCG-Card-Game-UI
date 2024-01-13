@@ -32,9 +32,9 @@ class MainMenuFrameServiceImpl(MainMenuFrameService):
                                       command=lambda: switchFrameWithMenuName("login-menu"), width=36, height=2)
         start_button.place(relx=0.5, rely=0.65, anchor="center")
 
-        exit_button = tkinter.Button(mainMenuFrame, text="종료", bg="#C62828", fg="white", width=36, height=2)
+        exit_button = tkinter.Button(mainMenuFrame, text="종료", bg="#C62828", fg="white",
+                                     command=mainMenuFrame.quit, width=36, height=2)
         exit_button.place(relx=0.5, rely=0.75, anchor="center")
-        # mainMenuFrame.pack(expand=True, fill="both")
 
         return mainMenuFrame
 
