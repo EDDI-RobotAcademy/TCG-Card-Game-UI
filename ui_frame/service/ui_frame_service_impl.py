@@ -1,4 +1,3 @@
-from lobby_frame.entity.lobby_menu_frame import LobbyMenuFrame
 from ui_frame.repository.ui_frame_repository_impl import UiFrameRepositoryImpl
 from ui_frame.service.ui_frame_service import UiFrameService
 

@@ -1,5 +1,3 @@
-import tkinter
-
 from main_frame.entity.main_menu_frame import MainMenuFrame
 from main_frame.repository.main_menu_frame_repository import MainMenuFrameRepository
 

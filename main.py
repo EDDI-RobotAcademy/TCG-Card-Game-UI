@@ -25,7 +25,3 @@ if __name__ == "__main__":
 
     taskWorkerService.createTaskWorker("UI", uiFrameController.requestToStartPrintGameUi)
     taskWorkerService.executeTaskWorker("UI")
-
-
-
-

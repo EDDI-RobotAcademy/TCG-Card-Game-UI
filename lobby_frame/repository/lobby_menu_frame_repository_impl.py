@@ -1,5 +1,3 @@
-from tkinter import ttk, CENTER
-
 from lobby_frame.entity.lobby_menu_frame import LobbyMenuFrame
 from lobby_frame.repository.lobby_menu_frame_repository import LobbyMenuFrameRepository
 

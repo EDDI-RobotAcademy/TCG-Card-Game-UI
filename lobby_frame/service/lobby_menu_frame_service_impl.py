@@ -1,5 +1,4 @@
 import tkinter
-from tkinter import ttk
 
 from lobby_frame.repository.lobby_menu_frame_repository_impl import LobbyMenuFrameRepositoryImpl
 from lobby_frame.service.lobby_menu_frame_service import LobbyMenuFrameService
