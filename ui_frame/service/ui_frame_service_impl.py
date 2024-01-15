@@ -38,6 +38,10 @@ class UiFrameServiceImpl(UiFrameService):
         print("UiFrameServiceImpl: registerLobbyMenuUiFrame()")
         self.__uiFrameRepository.registerUiFrame("lobby-menu", lobbyMenuFrame)
 
+    def registerCardShopMenuUiFrame(self, cardShopMenuFrame):
+        print("UiFrameServiceImpl: registerCardShopMenuUiFrame()")
+        self.__uiFrameRepository.registerUiFrame("card-shop-menu", cardShopMenuFrame)
+
     def injectTransmitIpcChannel(self, transmitIpcChannel):
         print("UiFrameServiceImpl: injectTransmitIpcChannel()")
         self.__uiFrameRepository.saveTransmitIpcChannel(transmitIpcChannel)

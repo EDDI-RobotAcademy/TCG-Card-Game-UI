@@ -23,5 +23,9 @@ class UiFrameService(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def registerCardShopMenuUiFrame(self, cardShopMenuFrame):
+        pass
+
+    @abc.abstractmethod
     def injectTransmitIpcChannel(self, transmitIpcChannel):
         pass

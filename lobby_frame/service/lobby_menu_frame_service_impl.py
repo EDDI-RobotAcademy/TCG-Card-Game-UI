@@ -39,7 +39,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
         my_card_button.place(relx=0.5, rely=0.5, anchor="center")
 
         card_shop_button = tkinter.Button(lobbyMenuFrame, text="상점", bg="#2E2BE2", fg="white",
-                                        command=lambda: switchFrameWithMenuName("login-menu"), width=36,
+                                        command=lambda: switchFrameWithMenuName("card-shop-menu"), width=36,
                                         height=2)
         card_shop_button.place(relx=0.5, rely=0.65, anchor="center")
 
