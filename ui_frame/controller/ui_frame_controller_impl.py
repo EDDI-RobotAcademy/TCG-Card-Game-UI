@@ -1,6 +1,8 @@
 from account_register_frame.service.account_register_frame_service_impl import AccountRegisterFrameServiceImpl
 from app_window.service.window_service_impl import WindowServiceImpl
 from account_login_frame.service.login_menu_frame_service_impl import LoginMenuFrameServiceImpl
+from card_shop_frame.service.card_shop_service_impl import CardShopMenuFrameServiceImpl
+from lobby_frame.service.lobby_menu_frame_service_impl import LobbyMenuFrameServiceImpl
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
 from ui_frame.controller.ui_frame_controller import UiFrameController
 from ui_frame.service.ui_frame_service_impl import UiFrameServiceImpl
@@ -17,6 +19,8 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__mainMenuFrameService = MainMenuFrameServiceImpl.getInstance()
             cls.__instance.__loginMenuFrameService = LoginMenuFrameServiceImpl.getInstance()
             cls.__instance.__accountRegisterFrameService = AccountRegisterFrameServiceImpl.getInstance()
+            cls.__instance.__lobbyMenuFrameService = LobbyMenuFrameServiceImpl.getInstance()
+            cls.__instance.__cardShopMenuFrameService = CardShopMenuFrameServiceImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -37,9 +41,15 @@ class UiFrameControllerImpl(UiFrameController):
         loginMenuFrame = self.__loginMenuFrameService.createLoginUiFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerLoginMenuUiFrame(loginMenuFrame)
 
-
         accountRegisterFrame = self.__accountRegisterFrameService.createAccountRegisterUiFrame(rootWindow)
         self.__uiFrameService.registerAccountRegisterUiFrame(accountRegisterFrame)
+
+        lobbyMenuFrame = self.__lobbyMenuFrameService.createLobbyUiFrame(rootWindow, self.switchFrameWithMenuName)
+        self.__uiFrameService.registerLobbyMenuUiFrame(lobbyMenuFrame)
+
+        cardShopMenuFrame = (
+            self.__cardShopMenuFrameService.createCardShopUiFrame(rootWindow, self.switchFrameWithMenuName))
+        self.__uiFrameService.registerCardShopMenuUiFrame(cardShopMenuFrame)
 
         self.switchFrameWithMenuName("main-menu")
 
@@ -57,6 +67,3 @@ class UiFrameControllerImpl(UiFrameController):
         self.__uiFrameService.injectTransmitIpcChannel(transmitIpcChannel)
 
         self.__accountRegisterFrameService.injectTransmitIpcChannel(transmitIpcChannel)
-
-
-

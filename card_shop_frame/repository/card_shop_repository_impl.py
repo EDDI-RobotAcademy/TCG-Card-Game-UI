@@ -1,8 +1,8 @@
-from main_frame.entity.main_menu_frame import MainMenuFrame
-from main_frame.repository.main_menu_frame_repository import MainMenuFrameRepository
+from card_shop_frame.entity.card_shop_menu_frame import CardShopMenuFrame
+from card_shop_frame.repository.card_shop_repository import CardShopMenuFrameRepository
 
 
-class MainMenuFrameRepositoryImpl(MainMenuFrameRepository):
+class CardShopMenuFrameRepositoryImpl(CardShopMenuFrameRepository):
     __instance = None
 
     def __new__(cls):
@@ -16,8 +16,9 @@ class MainMenuFrameRepositoryImpl(MainMenuFrameRepository):
             cls.__instance = cls()
         return cls.__instance
 
-    def createMainMenuFrame(self, rootWindow):
+    def createCardShopMenuFrame(self, rootWindow):
         print("MainMenuFrameRepositoryImpl: createMainMenuFrame()")
-        mainMenuFrame = MainMenuFrame(rootWindow)
+        cardShopMenuFrame = CardShopMenuFrame(rootWindow)
 
-        return mainMenuFrame
+        return cardShopMenuFrame
+

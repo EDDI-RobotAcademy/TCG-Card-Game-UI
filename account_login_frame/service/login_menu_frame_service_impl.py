@@ -34,6 +34,7 @@ class LoginMenuFrameServiceImpl(LoginMenuFrameService):
 
         # button_login = ttk.Button(loginMenuFrame, text="로그인", command=loginMenuFrame.login, style="TButton")
         button_login = ttk.Button(loginMenuFrame, text="로그인", style="TButton")
+        button_login.bind("<Button-1>", lambda event: switchFrameWithMenuName("lobby-menu"))
         link_signup = ttk.Label(loginMenuFrame, text="회원 가입", cursor="hand2", font=("Arial", 10, "underline"))
         link_signup.bind("<Button-1>", lambda event: switchFrameWithMenuName("account-register"))
 
