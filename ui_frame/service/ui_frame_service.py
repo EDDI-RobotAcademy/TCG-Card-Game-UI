@@ -11,7 +11,15 @@ class UiFrameService(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def registerLoginMenuUiFrame(self, rootWindow):
+    def registerLoginMenuUiFrame(self, loginMenuFrame):
+        pass
+
+    @abc.abstractmethod
+    def registerAccountRegisterUiFrame(self, accountRegisterFrame):
+        pass
+
+    @abc.abstractmethod
+    def registerLobbyMenuUiFrame(self, lobbyMenuFrame):
         pass
 
     @abc.abstractmethod

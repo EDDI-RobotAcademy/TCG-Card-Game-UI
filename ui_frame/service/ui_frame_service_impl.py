@@ -1,3 +1,4 @@
+from lobby_frame.entity.lobby_menu_frame import LobbyMenuFrame
 from ui_frame.repository.ui_frame_repository_impl import UiFrameRepositoryImpl
 from ui_frame.service.ui_frame_service import UiFrameService
 
@@ -33,13 +34,10 @@ class UiFrameServiceImpl(UiFrameService):
         print("UiFrameServiceImpl: registerAccountRegisterUiFrame()")
         self.__uiFrameRepository.registerUiFrame("account-register", accountRegisterFrame)
 
+    def registerLobbyMenuUiFrame(self, lobbyMenuFrame):
+        print("UiFrameServiceImpl: registerLobbyMenuUiFrame()")
+        self.__uiFrameRepository.registerUiFrame("lobby-menu", lobbyMenuFrame)
+
     def injectTransmitIpcChannel(self, transmitIpcChannel):
         print("UiFrameServiceImpl: injectTransmitIpcChannel()")
         self.__uiFrameRepository.saveTransmitIpcChannel(transmitIpcChannel)
-
-
-
-
-
-
-
