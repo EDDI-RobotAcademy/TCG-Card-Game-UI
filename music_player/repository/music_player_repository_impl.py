@@ -12,9 +12,6 @@ class MusicPlayerRepositoryImpl(MusicPlayerRepository):
             cls.__instance = super().__new__(cls)
         return cls.__instance
 
-    def __init__(self):
-        mixer.init()
-
     @classmethod
     def getInstance(cls):
         if cls.__instance is None:
@@ -22,11 +19,14 @@ class MusicPlayerRepositoryImpl(MusicPlayerRepository):
         return cls.__instance
 
     def playMusicWithFrameName(self, frameName):
-        while True:
-            try:
-                script_dir = os.getcwd()
-                self.__music_file = os.path.join(script_dir, "../../", "local_storage", "music", f"{frameName}.mp3")
-                mixer.music.load(self.__music_file)
-                mixer.music.play()
-            except FileNotFoundError:
-                print("No music file found")
+        mixer.init()
+        print(mixer)
+        script_dir = os.getcwd()
+        print(script_dir)
+        self.__music_file = os.path.join(script_dir, "../../", "local_storage", "music", f"{frameName}.mp3")
+        print(self.__music_file)
+        mixer.music.load(self.__music_file)
+        mixer.music.play()
+
+        if mixer.music.get_busy():
+            print("Music is playing")

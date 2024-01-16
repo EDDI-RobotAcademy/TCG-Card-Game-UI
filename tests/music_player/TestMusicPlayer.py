@@ -8,8 +8,7 @@ class TestMusicPlayer(unittest.TestCase):
         music_player_service = MusicPlayerServiceImpl.getInstance()
         sample_frame_name = "main-menu"
 
-        music_player = music_player_service.playMusicWithFrameName(sample_frame_name)
-        print(music_player)
+        music_player_service.playMusicWithFrameName(sample_frame_name)
 
 
 if __name__ == '__main__':
