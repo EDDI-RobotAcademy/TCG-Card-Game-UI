@@ -1,3 +1,5 @@
+from colorama import Style, Fore
+
 from ui_frame.repository.ui_frame_repository_impl import UiFrameRepositoryImpl
 from ui_frame.service.ui_frame_service import UiFrameService
 
@@ -18,33 +20,33 @@ class UiFrameServiceImpl(UiFrameService):
         return cls.__instance
 
     def switchFrameWithMenuName(self, menuName: str):
-        print("UiFrameServiceImpl: switchFrameWithMenuName()")
+        print(f"{Fore.GREEN}UiFrameServiceImpl: switchFrameWithMenuName() -> {menuName}{Style.RESET_ALL}")
         self.__uiFrameRepository.switchFrameWithMenuName(menuName)
 
     def registerMainMenuUiFrame(self, mainMenuFrame):
-        print("UiFrameServiceImpl: registerMainMenuUiFrame()")
+        print(f"{Fore.GREEN}UiFrameServiceImpl: registerMainMenuUiFrame(){Style.RESET_ALL}")
         self.__uiFrameRepository.registerUiFrame("main-menu", mainMenuFrame)
 
     def registerLoginMenuUiFrame(self, loginMenuFrame):
-        print("UiFrameServiceImpl: registerLoginMenuUiFrame()")
+        print(f"{Fore.GREEN}UiFrameServiceImpl: registerLoginMenuUiFrame(){Style.RESET_ALL}")
         self.__uiFrameRepository.registerUiFrame("login-menu", loginMenuFrame)
 
     def registerAccountRegisterUiFrame(self, accountRegisterFrame):
-        print("UiFrameServiceImpl: registerAccountRegisterUiFrame()")
+        print(f"{Fore.GREEN}UiFrameServiceImpl: registerAccountRegisterUiFrame(){Style.RESET_ALL}")
         self.__uiFrameRepository.registerUiFrame("account-register", accountRegisterFrame)
 
     def registerLobbyMenuUiFrame(self, lobbyMenuFrame):
-        print("UiFrameServiceImpl: registerLobbyMenuUiFrame()")
+        print(f"{Fore.GREEN}UiFrameServiceImpl: registerLobbyMenuUiFrame(){Style.RESET_ALL}")
         self.__uiFrameRepository.registerUiFrame("lobby-menu", lobbyMenuFrame)
 
     def registerMyCardUiFrame(self, myCardFrame):
-        print("UiFrameServiceImpl: registerMyCardUiFrame()")
+        print(f"{Fore.GREEN}UiFrameServiceImpl: registerMyCardUiFrame(){Style.RESET_ALL}")
         self.__uiFrameRepository.registerUiFrame("my-card", myCardFrame)
 
     def registerCardShopMenuUiFrame(self, cardShopMenuFrame):
-        print("UiFrameServiceImpl: registerCardShopMenuUiFrame()")
+        print(f"{Fore.GREEN}UiFrameServiceImpl: registerCardShopMenuUiFrame(){Style.RESET_ALL}")
         self.__uiFrameRepository.registerUiFrame("card-shop-menu", cardShopMenuFrame)
 
     def injectTransmitIpcChannel(self, transmitIpcChannel):
-        print("UiFrameServiceImpl: injectTransmitIpcChannel()")
+        print(f"{Fore.GREEN}UiFrameServiceImpl: injectTransmitIpcChannel(){Style.RESET_ALL}")
         self.__uiFrameRepository.saveTransmitIpcChannel(transmitIpcChannel)

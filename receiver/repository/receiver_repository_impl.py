@@ -1,6 +1,8 @@
 import time
 import socket
 
+from colorama import Fore, Style
+
 from receiver.repository.receiver_repository import ReceiverRepository
 
 
@@ -46,17 +48,17 @@ class ReceiverRepositoryImpl(ReceiverRepository):
                     break
 
                 decodedData = data.decode()
-                print("\033[91m수신된 정보:\033[0m\033[92m", decodedData)
+                print(f"{Fore.RED}수신된 정보:{Fore.GREEN} {decodedData}{Style.RESET_ALL}")
 
             except (socket.error, BrokenPipeError) as exception:
-                print(f"사용자 연결 종료")
+                print(f"{Fore.RED}사용자 연결 종료{Style.RESET_ALL}")
                 return None
 
             except socket.error as exception:
-                print(f"전송 중 에러 발생: str{exception}")
+                print(f"{Fore.RED}전송 중 에러 발생: {Fore.YELLOW}str{exception}{Style.RESET_ALL}")
 
             except Exception as exception:
-                print(f"transmitter: {str(exception)}")
+                print(f"{Fore.RED}transmitter: {Fore.YELLOW}{str(exception)}{Style.RESET_ALL}")
 
             finally:
                 time.sleep(0.5)
