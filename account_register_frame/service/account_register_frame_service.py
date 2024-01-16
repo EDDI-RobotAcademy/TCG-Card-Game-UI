@@ -3,7 +3,7 @@ import abc
 
 class AccountRegisterFrameService(abc.ABC):
     @abc.abstractmethod
-    def createAccountRegisterUiFrame(self, rootWindow):
+    def createAccountRegisterUiFrame(self, rootWindow, switchFrameWithMenuName):
         pass
 
     @abc.abstractmethod

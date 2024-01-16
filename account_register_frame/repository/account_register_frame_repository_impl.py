@@ -35,4 +35,5 @@ class AccountRegisterFrameRepositoryImpl(AccountRegisterFrameRepository):
     def requestRegister(self, accountRegisterRequest):
         print(f"AccountRegisterFrameRepositoryImpl: requestRegister() -> {accountRegisterRequest}")
         self.__transmitIpcChannel.put(accountRegisterRequest)
+        return self.__receiveIpcChannel.get()
 

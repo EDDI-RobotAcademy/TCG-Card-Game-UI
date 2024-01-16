@@ -4,6 +4,7 @@ import socket
 from colorama import Fore, Style
 
 from receiver.repository.receiver_repository import ReceiverRepository
+from response_generator.repository.ressponse_generator_repository_impl import ResponseGeneratorRepositoryImpl
 
 
 class ReceiverRepositoryImpl(ReceiverRepository):
@@ -39,6 +40,8 @@ class ReceiverRepositoryImpl(ReceiverRepository):
     def receiveCommand(self):
         print("ReceiverRepositoryImpl: receiveCommand()")
 
+        responseGeneratorRepository = ResponseGeneratorRepositoryImpl.getInstance()
+
         while self.__blockToAcquireSocket():
             time.sleep(0.5)
 
@@ -55,6 +58,10 @@ class ReceiverRepositoryImpl(ReceiverRepository):
                 decodedData = data.decode()
                 print(f"{Fore.RED}수신된 정보:{Fore.GREEN} {decodedData}{Style.RESET_ALL}")
 
+                responseData = responseGeneratorRepository.generate_response(decodedData)
+                print(type(self.__uiIpcChannel))
+                self.__uiIpcChannel.put(responseData)
+
             except (socket.error, BrokenPipeError) as exception:
                 print(f"{Fore.RED}사용자 연결 종료{Style.RESET_ALL}")
                 return None
@@ -63,7 +70,7 @@ class ReceiverRepositoryImpl(ReceiverRepository):
                 print(f"{Fore.RED}전송 중 에러 발생: {Fore.YELLOW}str{exception}{Style.RESET_ALL}")
 
             except Exception as exception:
-                print(f"{Fore.RED}transmitter: {Fore.YELLOW}{str(exception)}{Style.RESET_ALL}")
+                print(f"{Fore.RED}receiver: {Fore.YELLOW}{str(exception)}{Style.RESET_ALL}")
 
             finally:
                 time.sleep(0.5)
