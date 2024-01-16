@@ -1,3 +1,4 @@
+from pygame import mixer
 from music_player.repository.music_player_repository_impl import MusicPlayerRepositoryImpl
 from music_player.service.music_player_service import MusicPlayerService
 

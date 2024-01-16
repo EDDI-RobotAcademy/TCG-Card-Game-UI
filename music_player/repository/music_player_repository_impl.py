@@ -22,7 +22,11 @@ class MusicPlayerRepositoryImpl(MusicPlayerRepository):
         return cls.__instance
 
     def playMusicWithFrameName(self, frameName):
-        script_dir = os.getcwd()
-        self.__music_file = os.path.join(script_dir, "../../", "local_storage", "music", f"{frameName}.mp3")
-        mixer.music.load(self.__music_file)
-        mixer.music.play()
+        while True:
+            try:
+                script_dir = os.getcwd()
+                self.__music_file = os.path.join(script_dir, "../../", "local_storage", "music", f"{frameName}.mp3")
+                mixer.music.load(self.__music_file)
+                mixer.music.play()
+            except FileNotFoundError:
+                print("No music file found")

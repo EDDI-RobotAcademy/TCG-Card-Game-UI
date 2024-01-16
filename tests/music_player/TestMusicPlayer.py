@@ -9,8 +9,7 @@ class TestMusicPlayer(unittest.TestCase):
         sample_frame_name = "main-menu"
 
         music_player = music_player_service.playMusicWithFrameName(sample_frame_name)
-        current_directory = os.getcwd()
-        print("현재 작업 디렉토리:", current_directory)
+        print(music_player)
 
 
 if __name__ == '__main__':
