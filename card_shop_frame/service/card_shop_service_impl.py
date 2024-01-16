@@ -39,7 +39,7 @@ class CardShopMenuFrameServiceImpl(CardShopMenuFrameService):
         go_back_to_lobby_button.place(relx=0.2, rely=0.9, anchor="center")
 
         my_card_button = tkinter.Button(cardShopMenuFrame, text="내 카드 바로가기", bg="#2E2BE2", fg="white",
-                                                 command=lambda: switchFrameWithMenuName("lobby-menu"), width=24,
+                                                 command=lambda: switchFrameWithMenuName("my-card"), width=24,
                                                  height=2)
         my_card_button.place(relx=0.8, rely=0.9, anchor="center")
 
