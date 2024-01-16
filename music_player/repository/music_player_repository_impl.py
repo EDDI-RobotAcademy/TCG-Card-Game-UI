@@ -1,3 +1,4 @@
+import os
 from pygame import mixer
 from music_player.repository.music_player_repository import MusicPlayerRepository
 
@@ -21,7 +22,8 @@ class MusicPlayerRepositoryImpl(MusicPlayerRepository):
         return cls.__instance
 
     def playMusicWithFrameName(self, frameName):
-        self.__music_file = f"/home/eddi/proj/TCG-Card-Game-UI/tests/music_player/music/{frameName}.mp3"
+        script_dir = os.path.dirname(os.path.realpath(__file__))
+        self.__music_file = os.path.join(script_dir, "music", f"{frameName}.mp3")
 
         mixer.music.load(self.__music_file)
         mixer.music.play()
