@@ -3,6 +3,8 @@ import pickle
 import time
 import socket
 
+from colorama import Fore, Style
+
 from transmitter.repository.transmitter_repository import TransmitterRepository
 
 
@@ -47,23 +49,20 @@ class TransmitterRepositoryImpl(TransmitterRepository):
         while True:
             try:
                 transmitData = self.__uiIpcChannel.get()
-                print(f"transmitData: {transmitData}")
+                print(f"{Fore.RED}transmitData: {Fore.GREEN}{transmitData}{Style.RESET_ALL}")
 
                 serializedData = json.dumps(transmitData.toDictionary())
                 socketObject.sendall(serializedData.encode())
 
-                # serializedData = pickle.dumps(transmitData)
-                # socketObject.sendall(serializedData)
-
             except (socket.error, BrokenPipeError) as exception:
-                print(f"사용자 연결 종료")
+                print(f"{Fore.RED}사용자 연결 종료{Style.RESET_ALL}")
                 return None
 
             except socket.error as exception:
-                print(f"전송 중 에러 발생: str{exception}")
+                print(f"{Fore.RED}전송 중 에러 발생: {Fore.YELLOW}str{exception}{Style.RESET_ALL}")
 
             except Exception as exception:
-                print(f"transmitter: {str(exception)}")
+                print(f"{Fore.RED}transmitter: {Fore.YELLOW}{str(exception)}{Style.RESET_ALL}")
 
             finally:
                 time.sleep(0.5)

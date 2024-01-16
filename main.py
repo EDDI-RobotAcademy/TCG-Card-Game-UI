@@ -1,3 +1,5 @@
+import colorama
+
 from client_socket.service.client_socket_service_impl import ClientSocketServiceImpl
 from initializer.init_domain import DomainInitializer
 from receiver.controller.receiver_controller_impl import ReceiverControllerImpl
@@ -10,6 +12,9 @@ DomainInitializer.initEachDomain()
 
 
 if __name__ == "__main__":
+    # Console Color
+    colorama.init(autoreset=True)
+
     clientSocketService = ClientSocketServiceImpl.getInstance()
     clientSocket = clientSocketService.createClientSocket()
     clientSocketService.connectToTargetHost()
