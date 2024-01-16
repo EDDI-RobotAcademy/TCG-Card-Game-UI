@@ -27,5 +27,9 @@ if __name__ == "__main__":
     taskWorkerService.createTaskWorker("Transmitter", transmitterController.requestToTransmitCommand)
     taskWorkerService.executeTaskWorker("Transmitter")
 
+    taskWorkerService.createTaskWorker("Receiver", receiverController.requestToReceiveCommand)
+    taskWorkerService.executeTaskWorker("Receiver")
+
     taskWorkerService.createTaskWorker("UI", uiFrameController.requestToStartPrintGameUi)
     taskWorkerService.executeTaskWorker("UI")
+

@@ -6,5 +6,6 @@ class ReceiverService(abc.ABC):
     def injectSocketClient(self, socketClient):
         pass
 
-
-    
+    @abc.abstractmethod
+    def startToReceiveCommand(self):
+        pass

@@ -21,4 +21,8 @@ class ReceiverServiceImpl(ReceiverService):
         print("ReceiverServiceImpl: injectSocketClient()")
         self.__receiverRepository.saveClientSocket(socketClient)
 
+    def startToReceiveCommand(self):
+        print("ReceiverServiceImpl: startToReceiveCommand()")
+        self.__receiverRepository.receiveCommand()
+
 
