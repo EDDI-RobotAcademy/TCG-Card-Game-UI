@@ -6,6 +6,7 @@ from client_socket.service.client_socket_service_impl import ClientSocketService
 from account_login_frame.service.login_menu_frame_service_impl import LoginMenuFrameServiceImpl
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
 from receiver.controller.receiver_controller_impl import ReceiverControllerImpl
+from response_generator.repository.ressponse_generator_repository_impl import ResponseGeneratorRepositoryImpl
 from task_worker.service.task_worker_service_impl import TaskWorkerServiceImpl
 from transmitter.controller.transmitter_controller_impl import TransmitterControllerImpl
 from ui_frame.controller.ui_frame_controller_impl import UiFrameControllerImpl
@@ -55,11 +56,16 @@ class DomainInitializer:
     def initTaskWorkerDomain():
         TaskWorkerServiceImpl.getInstance()
 
+    # Response Generator Domain
+    @staticmethod
+    def initResponseGeneratorDomain():
+        ResponseGeneratorRepositoryImpl.getInstance()
+
     @staticmethod
     def initEachDomain():
         # IPC Channel
         uiTransmitIpcChannel = multiprocessing.Queue()
-        uiReceiveIpcChannel = multiprocessing.Queue
+        uiReceiveIpcChannel = multiprocessing.Queue()
 
         # UI Frame Domain
         DomainInitializer.initRootWindowDomain()
@@ -75,6 +81,9 @@ class DomainInitializer:
 
         # Task Worker Domain
         DomainInitializer.initTaskWorkerDomain()
+
+        # Response Generator Domain
+        DomainInitializer.initResponseGeneratorDomain()
 
 
 
