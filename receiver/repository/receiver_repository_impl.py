@@ -8,6 +8,7 @@ from receiver.repository.receiver_repository import ReceiverRepository
 
 class ReceiverRepositoryImpl(ReceiverRepository):
     __instance = None
+    __uiIpcChannel = None
     __clientSocket = None
 
     def __new__(cls):
@@ -30,6 +31,10 @@ class ReceiverRepositoryImpl(ReceiverRepository):
     def saveClientSocket(self, clientSocket):
         print("ReceiverRepositoryImpl: saveClientSocket()")
         self.__clientSocket = clientSocket
+
+    def saveUiIpcChannel(self, uiIpcChannel):
+        print("TransmitterRepositoryImpl: saveIpcChannel()")
+        self.__uiIpcChannel = uiIpcChannel
 
     def receiveCommand(self):
         print("ReceiverRepositoryImpl: receiveCommand()")

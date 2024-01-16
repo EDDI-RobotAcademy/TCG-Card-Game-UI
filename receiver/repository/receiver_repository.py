@@ -7,6 +7,10 @@ class ReceiverRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def saveUiIpcChannel(self, uiIpcChannel):
+        pass
+
+    @abc.abstractmethod
     def receiveCommand(self):
         pass
 

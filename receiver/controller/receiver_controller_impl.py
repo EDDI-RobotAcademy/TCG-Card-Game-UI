@@ -21,6 +21,10 @@ class ReceiverControllerImpl(ReceiverController):
         print("ReceiverControllerImpl: requestToInjectSocketClient()")
         self.__receiverService.injectSocketClient(socketClient)
 
+    def requestToInjectUiIpcChannel(self, uiIpcChannel):
+        print("ReceiverControllerImpl: requestToInjectIpcChannel()")
+        self.__receiverService.injectUiIpcChannel(uiIpcChannel)
+
     def requestToReceiveCommand(self):
         print("ReceiverControllerImpl: requestToReceiveCommand()")
         self.__receiverService.startToReceiveCommand()
