@@ -50,3 +50,7 @@ class UiFrameServiceImpl(UiFrameService):
     def injectTransmitIpcChannel(self, transmitIpcChannel):
         print(f"{Fore.GREEN}UiFrameServiceImpl: injectTransmitIpcChannel(){Style.RESET_ALL}")
         self.__uiFrameRepository.saveTransmitIpcChannel(transmitIpcChannel)
+
+    def injectReceiveIpcChannel(self, receiveIpcChannel):
+        print(f"{Fore.GREEN}UiFrameServiceImpl: injectReceiveIpcChannel(){Style.RESET_ALL}")
+        self.__uiFrameRepository.saveReceiveIpcChannel(receiveIpcChannel)

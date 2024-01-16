@@ -38,7 +38,7 @@ class AccountRegisterFrameServiceImpl(AccountRegisterFrameService):
         link_signup = ttk.Label(accountRegisterFrame, text="회원 가입", cursor="hand2", font=("Arial", 10, "underline"))
 
         def on_signup_click(event):
-            self.__accountRegisterFrameRepository.requestLogin(
+            self.__accountRegisterFrameRepository.requestRegister(
                 AccountRegisterRequest(entry_username.get(), entry_password.get()))
 
         link_signup.bind("<Button-1>", on_signup_click)
@@ -56,5 +56,9 @@ class AccountRegisterFrameServiceImpl(AccountRegisterFrameService):
     def injectTransmitIpcChannel(self, transmitIpcChannel):
         print("AccountRegisterFrameService: injectTransmitIpcChannel()")
         self.__accountRegisterFrameRepository.saveTransmitIpcChannel(transmitIpcChannel)
+
+    def injectReceiveIpcChannel(self, receiveIpcChannel):
+        print("AccountRegisterFrameService: injectTransmitIpcChannel()")
+        self.__accountRegisterFrameRepository.saveReceiveIpcChannel(receiveIpcChannel)
 
 

@@ -13,3 +13,7 @@ class UiFrameController(abc.ABC):
     @abc.abstractmethod
     def requestToInjectTransmitIpcChannel(self, ipcChannel):
         pass
+
+    @abc.abstractmethod
+    def requestToInjectReceiveIpcChannel(self, ipcChannel):
+        pass

@@ -5,6 +5,7 @@ class UiFrameRepositoryImpl(UiFrameRepository):
     __instance = None
     __currentFrame = None
     __transmitIpcChannel = None
+    __receiveIpcChannel = None
     __windowFrameList = {}
 
     def __new__(cls):
@@ -48,6 +49,10 @@ class UiFrameRepositoryImpl(UiFrameRepository):
     def saveTransmitIpcChannel(self, transmitIpcChannel):
         print("UiFrameRepositoryImpl: saveTransmitIpcChannel()")
         self.__transmitIpcChannel = transmitIpcChannel
+
+    def saveReceiveIpcChannel(self, receiveIpcChannel):
+        print("UiFrameRepositoryImpl: saveTransmitIpcMessage()")
+        self.__receiveIpcChannel = receiveIpcChannel
 
 
 
