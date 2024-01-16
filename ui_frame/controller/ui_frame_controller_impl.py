@@ -43,7 +43,7 @@ class UiFrameControllerImpl(UiFrameController):
         loginMenuFrame = self.__loginMenuFrameService.createLoginUiFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerLoginMenuUiFrame(loginMenuFrame)
 
-        accountRegisterFrame = self.__accountRegisterFrameService.createAccountRegisterUiFrame(rootWindow)
+        accountRegisterFrame = self.__accountRegisterFrameService.createAccountRegisterUiFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerAccountRegisterUiFrame(accountRegisterFrame)
 
         lobbyMenuFrame = self.__lobbyMenuFrameService.createLobbyUiFrame(rootWindow, self.switchFrameWithMenuName)

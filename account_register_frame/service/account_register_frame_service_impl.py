@@ -20,7 +20,7 @@ class AccountRegisterFrameServiceImpl(AccountRegisterFrameService):
             cls.__instance = cls()
         return cls.__instance
 
-    def createAccountRegisterUiFrame(self, rootWindow):
+    def createAccountRegisterUiFrame(self, rootWindow, switchFrameWithMenuName):
         accountRegisterFrame = self.__accountRegisterFrameRepository.createAccountRegisterFrame(rootWindow)
 
         style = ttk.Style()
@@ -38,8 +38,18 @@ class AccountRegisterFrameServiceImpl(AccountRegisterFrameService):
         link_signup = ttk.Label(accountRegisterFrame, text="회원 가입", cursor="hand2", font=("Arial", 10, "underline"))
 
         def on_signup_click(event):
-            self.__accountRegisterFrameRepository.requestRegister(
-                AccountRegisterRequest(entry_username.get(), entry_password.get()))
+            try:
+                responseData = self.__accountRegisterFrameRepository.requestRegister(
+                    AccountRegisterRequest(entry_username.get(), entry_password.get()))
+
+                print(f"responseData: {responseData}")
+
+                if responseData and responseData.get("is_success") is True:
+                    switchFrameWithMenuName("login-menu")
+                else:
+                    print("Invalid or missing response data.")
+            except Exception as e:
+                print(f"An error occurred: {e}")
 
         link_signup.bind("<Button-1>", on_signup_click)
 
