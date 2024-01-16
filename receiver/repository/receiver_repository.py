@@ -6,3 +6,7 @@ class ReceiverRepository(abc.ABC):
     def saveClientSocket(self, clientSocket):
         pass
 
+    @abc.abstractmethod
+    def receiveCommand(self):
+        pass
+

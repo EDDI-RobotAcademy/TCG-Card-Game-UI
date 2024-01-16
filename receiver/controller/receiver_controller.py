@@ -6,5 +6,9 @@ class ReceiverController(abc.ABC):
     def requestToInjectSocketClient(self, socketClient):
         pass
 
+    @abc.abstractmethod
+    def requestToReceiveCommand(self):
+        pass
+
 
 
