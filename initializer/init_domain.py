@@ -44,9 +44,10 @@ class DomainInitializer:
         transmitterController = TransmitterControllerImpl.getInstance()
         transmitterController.requestToInjectUiIpcChannel(uiTransmitIpcChannel)
 
-    @classmethod
-    def initReceiverDomain(cls):
+    @staticmethod
+    def initReceiverDomain(uiReceiveIpcChannel):
         receiverController = ReceiverControllerImpl.getInstance()
+        receiverController.requestToInjectUiIpcChannel(uiReceiveIpcChannel)
 
     # Task Worker Domain
     @staticmethod
@@ -57,6 +58,7 @@ class DomainInitializer:
     def initEachDomain():
         # IPC Channel
         uiTransmitIpcChannel = multiprocessing.Queue()
+        uiReceiveIpcChannel = multiprocessing.Queue
 
         # UI Frame Domain
         DomainInitializer.initRootWindowDomain()
@@ -68,7 +70,7 @@ class DomainInitializer:
         # Socket Domain
         DomainInitializer.initClientSocketDomain()
         DomainInitializer.initTransmitterDomain(uiTransmitIpcChannel)
-        DomainInitializer.initReceiverDomain()
+        DomainInitializer.initReceiverDomain(uiReceiveIpcChannel)
 
         # Task Worker Domain
         DomainInitializer.initTaskWorkerDomain()

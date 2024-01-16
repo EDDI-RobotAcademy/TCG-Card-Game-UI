@@ -7,6 +7,10 @@ class ReceiverController(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def requestToInjectUiIpcChannel(self, uiIpcChannel):
+        pass
+
+    @abc.abstractmethod
     def requestToReceiveCommand(self):
         pass
 
