@@ -23,7 +23,6 @@ class MusicPlayerRepositoryImpl(MusicPlayerRepository):
 
     def playMusicWithFrameName(self, frameName):
         script_dir = os.path.dirname(os.path.realpath(__file__))
-        self.__music_file = os.path.join(script_dir, "music", f"{frameName}.mp3")
-
+        self.__music_file = os.path.join(script_dir, "../../", "local_storage", "music", f"{frameName}.mp3")
         mixer.music.load(self.__music_file)
         mixer.music.play()
