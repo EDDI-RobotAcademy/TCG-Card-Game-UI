@@ -37,6 +37,10 @@ class UiFrameServiceImpl(UiFrameService):
         print("UiFrameServiceImpl: registerLobbyMenuUiFrame()")
         self.__uiFrameRepository.registerUiFrame("lobby-menu", lobbyMenuFrame)
 
+    def registerMyCardUiFrame(self, myCardFrame):
+        print("UiFrameServiceImpl: registerMyCardUiFrame()")
+        self.__uiFrameRepository.registerUiFrame("my-card", myCardFrame)
+
     def registerCardShopMenuUiFrame(self, cardShopMenuFrame):
         print("UiFrameServiceImpl: registerCardShopMenuUiFrame()")
         self.__uiFrameRepository.registerUiFrame("card-shop-menu", cardShopMenuFrame)

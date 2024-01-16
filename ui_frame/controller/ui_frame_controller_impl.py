@@ -4,6 +4,7 @@ from account_login_frame.service.login_menu_frame_service_impl import LoginMenuF
 from card_shop_frame.service.card_shop_service_impl import CardShopMenuFrameServiceImpl
 from lobby_frame.service.lobby_menu_frame_service_impl import LobbyMenuFrameServiceImpl
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
+from my_card_frame.service.my_card_frame_service_impl import MyCardFrameServiceImpl
 from ui_frame.controller.ui_frame_controller import UiFrameController
 from ui_frame.service.ui_frame_service_impl import UiFrameServiceImpl
 
@@ -21,6 +22,7 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__accountRegisterFrameService = AccountRegisterFrameServiceImpl.getInstance()
             cls.__instance.__lobbyMenuFrameService = LobbyMenuFrameServiceImpl.getInstance()
             cls.__instance.__cardShopMenuFrameService = CardShopMenuFrameServiceImpl.getInstance()
+            cls.__instance.__myCardFrameService = MyCardFrameServiceImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -46,6 +48,9 @@ class UiFrameControllerImpl(UiFrameController):
 
         lobbyMenuFrame = self.__lobbyMenuFrameService.createLobbyUiFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerLobbyMenuUiFrame(lobbyMenuFrame)
+
+        myCardFrame = self.__myCardFrameService.createMyCardUiFrame(rootWindow, self.switchFrameWithMenuName)
+        self.__uiFrameService.registerMyCardUiFrame(myCardFrame)
 
         cardShopMenuFrame = (
             self.__cardShopMenuFrameService.createCardShopUiFrame(rootWindow, self.switchFrameWithMenuName))
