@@ -69,6 +69,13 @@ class UiFrameControllerImpl(UiFrameController):
 
     def requestToInjectTransmitIpcChannel(self, transmitIpcChannel):
         print("UiFrameControllerImpl: requestToInjectTransmitIpcChannel()")
-        self.__uiFrameService.injectTransmitIpcChannel(transmitIpcChannel)
 
+        self.__uiFrameService.injectTransmitIpcChannel(transmitIpcChannel)
         self.__accountRegisterFrameService.injectTransmitIpcChannel(transmitIpcChannel)
+
+    def requestToInjectReceiveIpcChannel(self, receiveIpcChannel):
+        print("UiFrameControllerImpl: requestToInjectReceiveIpcChannel()")
+
+        self.__uiFrameService.injectReceiveIpcChannel(receiveIpcChannel)
+        self.__accountRegisterFrameService.injectReceiveIpcChannel(receiveIpcChannel)
+

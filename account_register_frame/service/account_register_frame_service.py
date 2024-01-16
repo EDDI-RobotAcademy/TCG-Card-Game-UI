@@ -10,4 +10,6 @@ class AccountRegisterFrameService(abc.ABC):
     def injectTransmitIpcChannel(self, transmitIpcChannel):
         pass
 
-
+    @abc.abstractmethod
+    def injectReceiveIpcChannel(self, receiveIpcChannel):
+        pass

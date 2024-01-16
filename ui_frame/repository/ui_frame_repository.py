@@ -15,3 +15,7 @@ class UiFrameRepository(abc.ABC):
     def saveTransmitIpcChannel(self, transmitIpcChannel):
         pass
 
+    @abc.abstractmethod
+    def saveReceiveIpcChannel(self, receiveIpcChannel):
+        pass
+

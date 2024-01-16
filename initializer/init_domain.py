@@ -26,9 +26,10 @@ class DomainInitializer:
         LoginMenuFrameServiceImpl.getInstance()
 
     @staticmethod
-    def initUiFrameDomain(uiTransmitIpcChannel):
+    def initUiFrameDomain(uiTransmitIpcChannel, uiReceiveIpcChannel):
         uiFrameController = UiFrameControllerImpl.getInstance()
         uiFrameController.requestToInjectTransmitIpcChannel(uiTransmitIpcChannel)
+        uiFrameController.requestToInjectReceiveIpcChannel(uiReceiveIpcChannel)
 
     @staticmethod
     def initAccountRegisterFrameDomain():
@@ -65,7 +66,7 @@ class DomainInitializer:
         DomainInitializer.initMainMenuFrameDomain()
         DomainInitializer.initLoginMenuFrameDomain()
         DomainInitializer.initAccountRegisterFrameDomain()
-        DomainInitializer.initUiFrameDomain(uiTransmitIpcChannel)
+        DomainInitializer.initUiFrameDomain(uiTransmitIpcChannel, uiReceiveIpcChannel)
 
         # Socket Domain
         DomainInitializer.initClientSocketDomain()
