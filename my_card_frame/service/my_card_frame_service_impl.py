@@ -1,5 +1,6 @@
 import tkinter
 
+from card_frame.service.card_frame_service_impl import CardFrameServiceImpl
 from my_card_frame.repository.my_card_frame_repository_impl import MyCardFrameRepositoryImpl
 from my_card_frame.service.my_card_frame_service import MyCardFrameService
 from my_deck_frame.service.my_deck_frame_service_impl import MyDeckFrameRepositoryImpl, MyDeckFrameServiceImpl
@@ -14,6 +15,7 @@ class MyCardFrameServiceImpl(MyCardFrameService):
             cls.__instance.__myCardFrameRepository = MyCardFrameRepositoryImpl.getInstance()
             cls.__instance.__myDeckFrameRepository = MyDeckFrameRepositoryImpl.getInstance()
             cls.__instance.__myDeckFrameService = MyDeckFrameServiceImpl.getInstance()
+            cls.__instance.__cardFrameService = CardFrameServiceImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -23,7 +25,7 @@ class MyCardFrameServiceImpl(MyCardFrameService):
         return cls.__instance
 
 
-    def createMyCardUiFrame(self, rootWindow):
+    def createMyCardUiFrame(self, rootWindow, switchFrameWithMenuName):
         myCardFrame = self.__myCardFrameRepository.createMyCardFrame(rootWindow)
 
         label_text = "My Card"
@@ -32,10 +34,13 @@ class MyCardFrameServiceImpl(MyCardFrameService):
 
         label.place(relx=0.3, rely=0.2, anchor="center", bordermode="outside")  # 가운데 정렬
 
-
         #MyCardFrame 위에 MyDeckFrame 띄우기
-        myDeckFrame = self.__myDeckFrameService.createMyDeckUiFrame(myCardFrame, myCardFrame)
-        myDeckFrame.pack(side="right", expand=False)
+        myDeckFrame = self.__myDeckFrameService.createMyDeckUiFrame(myCardFrame, switchFrameWithMenuName)
+        myDeckFrame.pack(side="right", fill="both", expand=True)
+
+        # MyCardFrame 위에 CardFrame 띄우기
+        cardFrame = self.__cardFrameService.createCardUiFrame(myCardFrame, switchFrameWithMenuName)
+        cardFrame.pack(side="left", fill="both", expand=True)
 
 
         return myCardFrame
