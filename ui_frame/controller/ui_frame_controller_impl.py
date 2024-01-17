@@ -1,6 +1,7 @@
 from account_register_frame.service.account_register_frame_service_impl import AccountRegisterFrameServiceImpl
 from app_window.service.window_service_impl import WindowServiceImpl
 from account_login_frame.service.login_menu_frame_service_impl import LoginMenuFrameServiceImpl
+from battle_lobby_frame.service.battle_lobby_menu_frame_service_impl import BattleLobbyMenuFrameServiceImpl
 from card_shop_frame.service.card_shop_service_impl import CardShopMenuFrameServiceImpl
 from lobby_frame.service.lobby_menu_frame_service_impl import LobbyMenuFrameServiceImpl
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
@@ -21,8 +22,10 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__loginMenuFrameService = LoginMenuFrameServiceImpl.getInstance()
             cls.__instance.__accountRegisterFrameService = AccountRegisterFrameServiceImpl.getInstance()
             cls.__instance.__lobbyMenuFrameService = LobbyMenuFrameServiceImpl.getInstance()
+            cls.__instance.__battleLobbyMenuFrameService = BattleLobbyMenuFrameServiceImpl.getInstance()
             cls.__instance.__cardShopMenuFrameService = CardShopMenuFrameServiceImpl.getInstance()
             cls.__instance.__myCardFrameService = MyCardFrameServiceImpl.getInstance()
+
         return cls.__instance
 
     @classmethod
@@ -45,6 +48,9 @@ class UiFrameControllerImpl(UiFrameController):
 
         accountRegisterFrame = self.__accountRegisterFrameService.createAccountRegisterUiFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerAccountRegisterUiFrame(accountRegisterFrame)
+
+        battleLobbyMenuFrame = self.__battleLobbyMenuFrameService.createBattleLobbyUiFrame(rootWindow, self.switchFrameWithMenuName)
+        self.__uiFrameService.registerBattleLobbyMenuUiFrame(battleLobbyMenuFrame)
 
         lobbyMenuFrame = self.__lobbyMenuFrameService.createLobbyUiFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerLobbyMenuUiFrame(lobbyMenuFrame)

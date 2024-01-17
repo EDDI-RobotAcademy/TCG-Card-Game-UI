@@ -29,7 +29,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
         label.place(relx=0.5, rely=0.2, anchor="center", bordermode="outside")  # 가운데 정렬
 
         battle_entrance_button = tkinter.Button(lobbyMenuFrame, text="대전 입장", bg="#2E2BE2", fg="white",
-                                      command=lambda: switchFrameWithMenuName("login-menu"), width=36, height=2)
+                                      command=lambda: switchFrameWithMenuName("battle-lobby-menu"), width=36, height=2)
         battle_entrance_button.place(relx=0.5, rely=0.35, anchor="center")
 
         my_card_button = tkinter.Button(lobbyMenuFrame, text="내 카드", bg="#2E2BE2", fg="white",
