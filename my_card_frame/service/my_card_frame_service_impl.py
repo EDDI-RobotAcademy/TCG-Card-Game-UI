@@ -44,5 +44,7 @@ class MyCardFrameServiceImpl(MyCardFrameService):
         cardFrame = self.__cardFrameService.createCardUiFrame(myCardFrame, switchFrameWithMenuName)
         cardFrame.pack(side="left", fill="both", expand=True)
 
+        cardPackFrame = self.__cardPackFrameService.createCardPackUiFrame(rootWindow)
+        cardPackFrame.pack(anchor="center")
 
         return myCardFrame
