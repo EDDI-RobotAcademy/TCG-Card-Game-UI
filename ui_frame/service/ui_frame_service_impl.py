@@ -39,9 +39,9 @@ class UiFrameServiceImpl(UiFrameService):
         print(f"{Fore.GREEN}UiFrameServiceImpl: registerLobbyMenuUiFrame(){Style.RESET_ALL}")
         self.__uiFrameRepository.registerUiFrame("lobby-menu", lobbyMenuFrame)
 
-    def registerBattleLobbyMenuUiFrame(self, battleLobbyMenuFrame):
+    def registerBattleLobbyMenuUiFrame(self, battleLobbyFrame):
         print(f"{Fore.GREEN}UiFrameServiceImpl: registerBattleLobbyMenuUiFrame(){Style.RESET_ALL}")
-        self.__uiFrameRepository.registerUiFrame("battle-lobby-menu", battleLobbyMenuFrame)
+        self.__uiFrameRepository.registerUiFrame("battle-lobby", battleLobbyFrame)
 
 
     def registerMyCardUiFrame(self, myCardFrame):

@@ -1,7 +1,7 @@
 import abc
 
 
-class BattleLobbyMenuFrameService(abc.ABC):
+class BattleLobbyFrameService(abc.ABC):
     @abc.abstractmethod
     def createBattleLobbyUiFrame(self, rootWindow, switchFrameWithMenuName):
         pass

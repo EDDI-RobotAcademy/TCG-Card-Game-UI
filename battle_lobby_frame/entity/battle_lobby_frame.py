@@ -1,7 +1,7 @@
 import tkinter
 
 
-class BattleLobbyMenuFrame(tkinter.Frame):
+class BattleLobbyFrame(tkinter.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
