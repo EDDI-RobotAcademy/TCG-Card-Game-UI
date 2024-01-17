@@ -3,6 +3,7 @@ from tkinter import ttk
 from account_login_frame.repository.login_menu_frame_repository_impl import LoginMenuFrameRepositoryImpl
 from account_login_frame.service.login_menu_frame_service import LoginMenuFrameService
 from account_login_frame.service.request.account_login_request import AccountLoginRequest
+from session.repository.session_repository_impl import SessionRepositoryImpl
 
 
 class LoginMenuFrameServiceImpl(LoginMenuFrameService):
@@ -12,6 +13,7 @@ class LoginMenuFrameServiceImpl(LoginMenuFrameService):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
             cls.__instance.__loginMenuFrameRepository = LoginMenuFrameRepositoryImpl.getInstance()
+            cls.__instance.__sessionRepository = SessionRepositoryImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -50,6 +52,9 @@ class LoginMenuFrameServiceImpl(LoginMenuFrameService):
 
                     if redis_token is not None and isinstance(redis_token, str) and redis_token != "":
                         print(f"Valid redis_token received: {redis_token}")
+
+                        self.__sessionRepository.writeRedisTokenSessionInfoToFile(redis_token)
+
                         switchFrameWithMenuName("lobby-menu")
                     else:
                         print("Invalid or missing redis_token in response data.")
