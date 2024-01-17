@@ -6,5 +6,16 @@ class SessionService(abc.ABC):
     def save_session(self, redisTokenSessionInfo):
         pass
 
+    @abc.abstractmethod
+    def getSessionInfo(self):
+        pass
 
-    
+    @abc.abstractmethod
+    def requestLoginWithSession(self):
+        pass
+
+    @abc.abstractmethod
+    def injectTransmitIpcChannel(self, transmitIpcChannel):
+        pass
+
+

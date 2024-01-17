@@ -1,4 +1,5 @@
 from session.repository.session_repository_impl import SessionRepositoryImpl
+from session.service.request.session_login_request import SessionLoginRequest
 from session.service.session_service import SessionService
 
 
@@ -21,6 +22,26 @@ class SessionServiceImpl(SessionService):
         print("SessionRepositoryImpl: save_session()")
 
         self.__sessionRepository.writeRedisTokenSessionInfoToFile(redisTokenSessionInfo)
+
+    def getSessionInfo(self):
+        print("SessionRepositoryImpl: getSessionInfo()")
+
+        return self.__sessionRepository.readRedisTokenSessionInfoToFile()
+
+    def requestLoginWithSession(self):
+        print("SessionRepositoryImpl: requestLoginWithSession()")
+        sessionInfo = self.__sessionRepository.get_session_info()
+        sessionLoginRequest = SessionLoginRequest(sessionInfo)
+
+        return self.__sessionRepository.requestLoginWithSession(sessionLoginRequest)
+
+    def injectTransmitIpcChannel(self, transmitIpcChannel):
+        print("SessionRepositoryImpl: injectTransmitIpcChannel()")
+
+        return self.__sessionRepository.injectTransmitIpcChannel(transmitIpcChannel)
+
+
+
 
 
 
