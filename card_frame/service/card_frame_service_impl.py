@@ -2,8 +2,6 @@ import tkinter
 
 from card_frame.repository.card_frame_repository_impl import CardFrameRepositoryImpl
 from card_frame.service.card_frame_service import CardFrameService
-from card_pack_frame.repository.card_pack_repository_impl import CardPackFrameRepositoryImpl
-from card_pack_frame.service.card_pack_service_impl import CardPackFrameServiceImpl
 
 
 class CardFrameServiceImpl(CardFrameService):
@@ -13,8 +11,6 @@ class CardFrameServiceImpl(CardFrameService):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
             cls.__instance.__cardFrameRepository = CardFrameRepositoryImpl.getInstance()
-            cls.__instance.__cardPackFrameService = CardPackFrameServiceImpl.getInstance()
-            cls.__instance.__cardPackFrameRepository = CardPackFrameRepositoryImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -39,9 +35,6 @@ class CardFrameServiceImpl(CardFrameService):
         go_back_to_lobby_button = tkinter.Button(CardFrame, text="다음 페이지", bg="#C62828", fg="white",
                                      command=lambda: switchFrameWithMenuName("lobby-menu"), width=24, height=2)
         go_back_to_lobby_button.place(relx=0.7, rely=0.9, anchor="w")
-
-        cardPackFrame = self.__cardPackFrameRepository.createCardPackFrame(CardFrame)
-        cardPackFrame.place(relx=0.5, rely=0.5, anchor="center")
 
 
         return CardFrame
