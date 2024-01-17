@@ -28,6 +28,9 @@ if __name__ == "__main__":
     uiFrameController = UiFrameControllerImpl.getInstance()
     uiFrameController.requestToCreateUiFrame()
 
+    # musicPlayerController = MusicPlayerController.getInstance()
+    # musicPlayerController.requestToLoadAllMusicFiles()
+
     taskWorkerService = TaskWorkerServiceImpl.getInstance()
     taskWorkerService.createTaskWorker("Transmitter", transmitterController.requestToTransmitCommand)
     taskWorkerService.executeTaskWorker("Transmitter")
@@ -37,4 +40,3 @@ if __name__ == "__main__":
 
     taskWorkerService.createTaskWorker("UI", uiFrameController.requestToStartPrintGameUi)
     taskWorkerService.executeTaskWorker("UI")
-

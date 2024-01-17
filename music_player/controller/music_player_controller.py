@@ -1,9 +1,9 @@
 import abc
 
 
-class MusicPlayerService(abc.ABC):
+class MusicPlayerController(abc.ABC):
     @abc.abstractmethod
-    def loadBackgroundMusics(self):
+    def loadAllMusicFiles(self):
         pass
 
     @abc.abstractmethod
@@ -11,5 +11,5 @@ class MusicPlayerService(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def injectUiIpcChannel(self, uiIpcChannel):
+    def requestToInjectUiIpcChannel(self, uiIpcChannel):
         pass

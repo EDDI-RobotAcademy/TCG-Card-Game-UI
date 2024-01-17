@@ -1,4 +1,4 @@
-from pygame import mixer
+import os
 from music_player.repository.music_player_repository_impl import MusicPlayerRepositoryImpl
 from music_player.service.music_player_service import MusicPlayerService
 
@@ -18,6 +18,11 @@ class MusicPlayerServiceImpl(MusicPlayerService):
             cls.__instance = cls()
         return cls.__instance
 
-    def playMusicWithFrameName(self, frameName):
-        print(f"Music Player : Playing {frameName} music")
-        self.__musicPlayerRepository.playMusicWithFrameName(frameName)
+    def loadBackgroundMusics(self):
+        self.__musicPlayerRepository.loadBackgroundMp3("main-menu")
+
+    def playBackgroundMusic(self):
+        self.__musicPlayerRepository.playBackgroundMusic()
+
+    def injectUiIpcChannel(self, uiIpcChannel):
+        self.__musicPlayerRepository.saveUiIpcChannel(uiIpcChannel)
