@@ -2,6 +2,7 @@ import colorama
 
 from client_socket.service.client_socket_service_impl import ClientSocketServiceImpl
 from initializer.init_domain import DomainInitializer
+from music_player.controller.music_player_controller_impl import MusicPlayerControllerImpl
 from receiver.controller.receiver_controller_impl import ReceiverControllerImpl
 from task_worker.service.task_worker_service_impl import TaskWorkerServiceImpl
 from transmitter.controller.transmitter_controller_impl import TransmitterControllerImpl
@@ -28,8 +29,8 @@ if __name__ == "__main__":
     uiFrameController = UiFrameControllerImpl.getInstance()
     uiFrameController.requestToCreateUiFrame()
 
-    # musicPlayerController = MusicPlayerController.getInstance()
-    # musicPlayerController.requestToLoadAllMusicFiles()
+    musicPlayerController = MusicPlayerControllerImpl.getInstance()
+    musicPlayerController.loadAllMusicFiles()
 
     taskWorkerService = TaskWorkerServiceImpl.getInstance()
     taskWorkerService.createTaskWorker("Transmitter", transmitterController.requestToTransmitCommand)
@@ -40,3 +41,6 @@ if __name__ == "__main__":
 
     taskWorkerService.createTaskWorker("UI", uiFrameController.requestToStartPrintGameUi)
     taskWorkerService.executeTaskWorker("UI")
+
+    taskWorkerService.createTaskWorker("MusicPlayer", musicPlayerController.playBackgroundMusic)
+    taskWorkerService.executeTaskWorker("MusicPlayer")

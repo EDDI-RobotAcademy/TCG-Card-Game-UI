@@ -24,8 +24,7 @@ class MusicPlayerRepositoryImpl(MusicPlayerRepository):
     def loadBackgroundMp3(self, frameName: str):
         # 방식의 개선이 필요함
         currentLocation = os.getcwd()
-        backgroundMusicPath = os.path.join(
-            currentLocation, '../../', 'local_storage', 'background_music', f'{frameName}.mp3')
+        backgroundMusicPath = os.path.join(currentLocation, 'local_storage', 'background_music', f'{frameName}.mp3')
         self.__backgroundMusicFilePathDict[frameName] = backgroundMusicPath
         print(f'MusicPlayerRepositoryImpl : {frameName} background music loaded')
         print(self.__backgroundMusicFilePathDict)
@@ -48,4 +47,6 @@ class MusicPlayerRepositoryImpl(MusicPlayerRepository):
             print("Background Music is not playing")
 
     def saveUiIpcChannel(self, uiIpcChannel):
+        print('music channel saved')
         self.__uiIpcChannel = uiIpcChannel
+        print(self.__uiIpcChannel)

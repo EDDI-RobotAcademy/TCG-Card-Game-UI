@@ -18,7 +18,7 @@ class MusicPlayerControllerImpl(MusicPlayerController):
         return cls.__instance
 
     def loadAllMusicFiles(self):
-        print("MusicPlayerController - requestToLoadAllMusicFiles")
+        print("MusicPlayerController - loadAllMusicFiles")
         self.__musicPlayerService.loadBackgroundMusics()
         # self.__musicPlayerService.loadEffectSounds()
 

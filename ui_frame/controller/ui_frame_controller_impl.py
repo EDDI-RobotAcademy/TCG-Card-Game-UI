@@ -89,3 +89,7 @@ class UiFrameControllerImpl(UiFrameController):
         self.__uiFrameService.injectReceiveIpcChannel(receiveIpcChannel)
         self.__accountRegisterFrameService.injectReceiveIpcChannel(receiveIpcChannel)
 
+    def requestToInjectMusicPlayIpcChannel(self, musicPlayIpcChannel):
+        print("UiFrameControllerImpl: requestToInjectMusicPlayIpcChannel()")
+
+        self.__uiFrameService.injectMusicPlayIpcChannel(musicPlayIpcChannel)
