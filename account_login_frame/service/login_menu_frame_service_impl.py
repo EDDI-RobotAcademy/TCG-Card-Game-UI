@@ -2,6 +2,7 @@ from tkinter import ttk
 
 from account_login_frame.repository.login_menu_frame_repository_impl import LoginMenuFrameRepositoryImpl
 from account_login_frame.service.login_menu_frame_service import LoginMenuFrameService
+from account_login_frame.service.request.account_login_request import AccountLoginRequest
 
 
 class LoginMenuFrameServiceImpl(LoginMenuFrameService):
@@ -34,7 +35,26 @@ class LoginMenuFrameServiceImpl(LoginMenuFrameService):
 
         # button_login = ttk.Button(loginMenuFrame, text="로그인", command=loginMenuFrame.login, style="TButton")
         button_login = ttk.Button(loginMenuFrame, text="로그인", style="TButton")
-        button_login.bind("<Button-1>", lambda event: switchFrameWithMenuName("lobby-menu"))
+        # button_login.bind("<Button-1>", lambda event: switchFrameWithMenuName("lobby-menu"))
+
+        def on_signin_click(event):
+            try:
+                responseData = self.__loginMenuFrameRepository.requestLogin(
+                    AccountLoginRequest(entry_username.get(), entry_password.get()))
+
+                print(f"responseData: {responseData}")
+
+                # TODO: Session 처리 필요함
+                if responseData and responseData.get("redis_token") is True:
+                    switchFrameWithMenuName("lobby-menu")
+                else:
+                    print("Invalid or missing response data.")
+            except Exception as e:
+                print(f"An error occurred: {e}")
+
+        # link_signup.bind("<Button-1>", on_signup_click)
+        button_login.bind("<Button-1>", on_signin_click)
+
         link_signup = ttk.Label(loginMenuFrame, text="회원 가입", cursor="hand2", font=("Arial", 10, "underline"))
         link_signup.bind("<Button-1>", lambda event: switchFrameWithMenuName("account-register"))
 
@@ -48,3 +68,15 @@ class LoginMenuFrameServiceImpl(LoginMenuFrameService):
         link_signup.place(relx=0.5, rely=0.7, anchor="center")
 
         return loginMenuFrame
+
+    def injectTransmitIpcChannel(self, transmitIpcChannel):
+        print("LoginMenuFrameServiceImpl: injectTransmitIpcChannel()")
+        self.__loginMenuFrameRepository.saveTransmitIpcChannel(transmitIpcChannel)
+
+    def injectReceiveIpcChannel(self, receiveIpcChannel):
+        print("LoginMenuFrameServiceImpl: injectReceiveIpcChannel()")
+        self.__loginMenuFrameRepository.saveReceiveIpcChannel(receiveIpcChannel)
+
+
+
+
