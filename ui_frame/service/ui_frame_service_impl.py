@@ -48,6 +48,10 @@ class UiFrameServiceImpl(UiFrameService):
         print(f"{Fore.GREEN}UiFrameServiceImpl: registerMyCardUiFrame(){Style.RESET_ALL}")
         self.__uiFrameRepository.registerUiFrame("my-card", myCardFrame)
 
+    def registerMyDeckUiFrame(self, myDeckFrame):
+        print("UiFrameServiceImpl: registerMyDeckUiFrame()")
+        self.__uiFrameRepository.registerUiFrame("my-deck", myDeckFrame)
+
     def registerCardShopMenuUiFrame(self, cardShopMenuFrame):
         print(f"{Fore.GREEN}UiFrameServiceImpl: registerCardShopMenuUiFrame(){Style.RESET_ALL}")
         self.__uiFrameRepository.registerUiFrame("card-shop-menu", cardShopMenuFrame)
