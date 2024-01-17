@@ -23,7 +23,19 @@ class UiFrameService(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def registerBattleLobbyMenuUiFrame(self, battleLobbyMenuFrame):
+        pass
+
+    @abc.abstractmethod
     def registerMyCardUiFrame(self, myCardFrame):
+        pass
+
+    @abc.abstractmethod
+    def registerMyDeckUiFrame(self, myDeckFrame):
+        pass
+
+    @abc.abstractmethod
+    def registerCardUiFrame(self, cardFrame):
         pass
 
     @abc.abstractmethod
