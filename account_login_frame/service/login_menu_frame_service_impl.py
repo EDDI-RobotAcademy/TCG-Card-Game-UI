@@ -45,8 +45,14 @@ class LoginMenuFrameServiceImpl(LoginMenuFrameService):
                 print(f"responseData: {responseData}")
 
                 # TODO: Session 처리 필요함
-                if responseData and responseData.get("redis_token") is True:
-                    switchFrameWithMenuName("lobby-menu")
+                if responseData:
+                    redis_token = responseData.get("redis_token")
+
+                    if redis_token is not None and isinstance(redis_token, str) and redis_token != "":
+                        print(f"Valid redis_token received: {redis_token}")
+                        switchFrameWithMenuName("lobby-menu")
+                    else:
+                        print("Invalid or missing redis_token in response data.")
                 else:
                     print("Invalid or missing response data.")
             except Exception as e:
