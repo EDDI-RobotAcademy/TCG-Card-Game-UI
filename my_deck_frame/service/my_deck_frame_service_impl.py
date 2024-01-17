@@ -29,7 +29,7 @@ class MyDeckFrameServiceImpl(MyDeckFrameService):
         label.place(relx=0.5, rely=0.2, anchor="center", bordermode="outside")
 
         deck_generation_button = tkinter.Button(myDeckFrame, text="덱 생성", bg="#2E7D32", fg="white",
-                                      command=lambda: switchFrameWithMenuName("lobby-menu"), width=24, height=2)
+                                      command=lambda: switchFrameWithMenuName("make-my-deck"), width=24, height=2)
         deck_generation_button.place(relx=0.5, rely=0.8, anchor="center")
 
         go_back_to_lobby_button = tkinter.Button(myDeckFrame, text="로비로 돌아가기", bg="#C62828", fg="white",

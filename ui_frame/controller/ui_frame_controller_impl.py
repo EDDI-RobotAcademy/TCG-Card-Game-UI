@@ -5,6 +5,7 @@ from battle_lobby_frame.service.battle_lobby_frame_service_impl import BattleLob
 from card_shop_frame.service.card_shop_service_impl import CardShopMenuFrameServiceImpl
 from lobby_frame.service.lobby_menu_frame_service_impl import LobbyMenuFrameServiceImpl
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
+from make_my_deck_frame.service.make_my_deck_frame_service_impl import MakeMyDeckFrameServiceImpl
 from my_card_frame.service.my_card_frame_service_impl import MyCardFrameServiceImpl
 from my_deck_frame.service.my_deck_frame_service_impl import MyDeckFrameServiceImpl
 from ui_frame.controller.ui_frame_controller import UiFrameController
@@ -27,6 +28,7 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__cardShopMenuFrameService = CardShopMenuFrameServiceImpl.getInstance()
             cls.__instance.__myCardFrameService = MyCardFrameServiceImpl.getInstance()
             cls.__instance.__myDeckFrameService = MyDeckFrameServiceImpl.getInstance()
+            cls.__instance.__makeMyDeckFrameService = MakeMyDeckFrameServiceImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -61,6 +63,9 @@ class UiFrameControllerImpl(UiFrameController):
 
         myDeckFrame = self.__myDeckFrameService.createMyDeckUiFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerMyDeckUiFrame(myDeckFrame)
+
+        makeMyDeckFrame = self.__makeMyDeckFrameService.createMakeMyDeckUiFrame(rootWindow, self.switchFrameWithMenuName)
+        self.__uiFrameService.registerMakeMyDeckUiFrame(makeMyDeckFrame)
 
         cardShopMenuFrame = (
             self.__cardShopMenuFrameService.createCardShopUiFrame(rootWindow, self.switchFrameWithMenuName))
