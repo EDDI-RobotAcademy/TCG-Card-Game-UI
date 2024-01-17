@@ -56,7 +56,7 @@ class UiFrameControllerImpl(UiFrameController):
         lobbyMenuFrame = self.__lobbyMenuFrameService.createLobbyUiFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerLobbyMenuUiFrame(lobbyMenuFrame)
 
-        myCardFrame = self.__myCardFrameService.createMyCardUiFrame(rootWindow)
+        myCardFrame = self.__myCardFrameService.createMyCardUiFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerMyCardUiFrame(myCardFrame)
 
         myDeckFrame = self.__myDeckFrameService.createMyDeckUiFrame(rootWindow, self.switchFrameWithMenuName)
