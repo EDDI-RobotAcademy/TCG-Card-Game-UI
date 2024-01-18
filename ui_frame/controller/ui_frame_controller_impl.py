@@ -71,9 +71,6 @@ class UiFrameControllerImpl(UiFrameController):
             self.__cardShopMenuFrameService.createCardShopUiFrame(rootWindow, self.switchFrameWithMenuName))
         self.__uiFrameService.registerCardShopMenuUiFrame(cardShopMenuFrame)
 
-        if self.__sessionService.getSessionInfo() is not None:
-            self.__sessionService.requestLoginWithSession()
-
         self.switchFrameWithMenuName("main-menu")
 
     def switchFrameWithMenuName(self, name):
@@ -100,4 +97,6 @@ class UiFrameControllerImpl(UiFrameController):
         self.__uiFrameService.injectReceiveIpcChannel(receiveIpcChannel)
         self.__accountRegisterFrameService.injectReceiveIpcChannel(receiveIpcChannel)
         self.__loginMenuFrameService.injectReceiveIpcChannel(receiveIpcChannel)
+
+        self.__sessionService.injectReceiveIpcChannel(receiveIpcChannel)
 

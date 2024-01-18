@@ -2,6 +2,7 @@ import tkinter
 
 from main_frame.repository.main_menu_frame_repository_impl import MainMenuFrameRepositoryImpl
 from main_frame.service.main_menu_frame_service import MainMenuFrameService
+from session.service.session_service_impl import SessionServiceImpl
 
 
 class MainMenuFrameServiceImpl(MainMenuFrameService):
@@ -11,6 +12,8 @@ class MainMenuFrameServiceImpl(MainMenuFrameService):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
             cls.__instance.__mainMenuFrameRepository = MainMenuFrameRepositoryImpl.getInstance()
+
+            cls.__instance.__sessionService = SessionServiceImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -28,8 +31,31 @@ class MainMenuFrameServiceImpl(MainMenuFrameService):
 
         label.place(relx=0.5, rely=0.5, anchor="center", bordermode="outside")  # 가운데 정렬
 
-        start_button = tkinter.Button(mainMenuFrame, text="시작", bg="#2E7D32", fg="white",
-                                      command=lambda: switchFrameWithMenuName("login-menu"), width=36, height=2)
+        # start_button = tkinter.Button(mainMenuFrame, text="시작", bg="#2E7D32", fg="white",
+        #                               command=lambda: switchFrameWithMenuName("login-menu"), width=36, height=2)
+        start_button = tkinter.Button(mainMenuFrame, text="시작", bg="#2E7D32", fg="white", width=36, height=2)
+
+        def on_session_login_click(event):
+            try:
+                if self.__sessionService.getSessionInfo() is not None:
+                    responseData = self.__sessionService.requestLoginWithSession()
+                    if responseData:
+                        redis_token = responseData.get("redis_token")
+
+                        if redis_token is not None and isinstance(redis_token, str) and redis_token != "":
+                            switchFrameWithMenuName("lobby-menu")
+                        else:
+                            print("on_session_login_click: no valid session")
+                            switchFrameWithMenuName("login-menu")
+                    else:
+                        print("Invalid or missing redis_token in response data.")
+                else:
+                    switchFrameWithMenuName("login-menu")
+            except Exception as e:
+                print(f"An error occurred: {e}")
+
+        start_button.bind("<Button-1>", on_session_login_click)
+
         start_button.place(relx=0.5, rely=0.65, anchor="center")
 
         exit_button = tkinter.Button(mainMenuFrame, text="종료", bg="#C62828", fg="white",
