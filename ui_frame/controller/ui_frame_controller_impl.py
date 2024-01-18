@@ -71,9 +71,15 @@ class UiFrameControllerImpl(UiFrameController):
             self.__cardShopMenuFrameService.createCardShopUiFrame(rootWindow, self.switchFrameWithMenuName))
         self.__uiFrameService.registerCardShopMenuUiFrame(cardShopMenuFrame)
 
-        if self.__sessionService.getSessionInfo() is not None:
-            self.__sessionService.requestLoginWithSession()
-
+        # if self.__sessionService.getSessionInfo() is not None:
+        #     responseData = self.__sessionService.requestLoginWithSession()
+        #     if responseData:
+        #         redis_token = responseData.get("redis_token")
+        #
+        #         if redis_token is not None and isinstance(redis_token, str) and redis_token != "":
+        #             self.switchFrameWithMenuName("lobby-menu")
+        # else:
+        #     self.switchFrameWithMenuName("main-menu")
         self.switchFrameWithMenuName("main-menu")
 
     def switchFrameWithMenuName(self, name):
@@ -100,4 +106,6 @@ class UiFrameControllerImpl(UiFrameController):
         self.__uiFrameService.injectReceiveIpcChannel(receiveIpcChannel)
         self.__accountRegisterFrameService.injectReceiveIpcChannel(receiveIpcChannel)
         self.__loginMenuFrameService.injectReceiveIpcChannel(receiveIpcChannel)
+
+        self.__sessionService.injectReceiveIpcChannel(receiveIpcChannel)
 
