@@ -6,6 +6,8 @@ from account_login_frame.repository.login_menu_frame_repository import LoginMenu
 
 class LoginMenuFrameRepositoryImpl(LoginMenuFrameRepository):
     __instance = None
+    __transmitIpcChannel = None
+    __receiveIpcChannel = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -23,4 +25,20 @@ class LoginMenuFrameRepositoryImpl(LoginMenuFrameRepository):
         loginMenuFrame = LoginMenuFrame(rootWindow)
 
         return loginMenuFrame
+
+    def saveTransmitIpcChannel(self, transmitIpcChannel):
+        print("MainMenuFrameRepositoryImpl: saveTransmitIpcChannel()")
+        self.__transmitIpcChannel = transmitIpcChannel
+
+    def saveReceiveIpcChannel(self, receiveIpcChannel):
+        print("MainMenuFrameRepositoryImpl: saveReceiveIpcChannel()")
+        self.__receiveIpcChannel = receiveIpcChannel
+
+    def requestLogin(self, accountLoginRequest):
+        print(f"MainMenuFrameRepositoryImpl: requestLogin() -> {accountLoginRequest}")
+
+        self.__transmitIpcChannel.put(accountLoginRequest)
+        return self.__receiveIpcChannel.get()
+
+
 
