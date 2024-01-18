@@ -120,23 +120,11 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
                               fg="#FFFFFF", bg="#000000")
         label.place(relx=0.5, rely=0.15, anchor="center")
 
-        # TODO: 테스트코드
+        # TODO: 테스트코드지워야함
         request = [{'deckName': "ㅁㄴㅇㄻㄴㅇㄹ"}, {'deckName': "123123"}, {'deckName': "568567858"}, {'deckName': "ㅋㅋㅋㅋㅋㅋㅋ"},
                    {'deckName': "ㅋ시발 "}, {'deckName': "되냐??"}]
 
         self.createBattleLobbyMyDeckButton(request)
-
-        # deck = tkinter.Button(self.__battleLobbyFrame, text='deckName', font=("Helvetica", 15))
-        # deck.place(relx=0.3, rely=0.4, anchor="center", relwidth=0.25, relheight=0.1)
-        #
-        # deck2 = tkinter.Button(self.__battleLobbyFrame, text='deck2Name', font=("Helvetica", 15))
-        # deck2.place(relx=0.7, rely=0.4, anchor="center", relwidth=0.25, relheight=0.1)
-        #
-        # deck3 = tkinter.Button(self.__battleLobbyFrame, text='deck3Name', font=("Helvetica", 15))
-        # deck3.place(relx=0.3, rely=0.55, anchor="center", relwidth=0.25, relheight=0.1)
-        #
-        # deck4 = tkinter.Button(self.__battleLobbyFrame, text='deck4Name', font=("Helvetica", 15))
-        # deck4.place(relx=0.3, rely=0.7, anchor="center", relwidth=0.25, relheight=0.1)
 
         enterButton = tkinter.Button(self.__battleLobbyFrame, text="입장", font=("Arial", 20))
         enterButton.place(relx=0.5, rely=0.85, anchor="center", relwidth=0.15, relheight=0.075)
@@ -148,16 +136,13 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
             def relX(j):
                 return 0.3 if j % 2 == 0 else 0.7
 
-            i = 0
-            for deckData in request:
+            for i, deckData in enumerate(request):
                 deck = tkinter.Label(self.__battleLobbyFrame, text=f"{deckData['deckName']}", font=("Helvetica", 15))
                 deck.place(relx=relX(i), rely=0.4 + (i // 2 * 0.15),
                            anchor="center", relwidth=0.25, relheight=0.1)
 
-                def onClick(event, deck: tkinter.Button):
-                    self.__battleLobbyFrameRepository.selectDeck(deck)
-
-
+                def onClick(event, _deck: tkinter.Button):
+                    self.__battleLobbyFrameRepository.selectDeck(_deck)
 
                 deck.bind("<Button-1>", lambda event, current_deck=deck: onClick(event, current_deck))
                 self.__battleLobbyFrameRepository.addDeckToDeckList(deck)
