@@ -59,7 +59,6 @@ class ReceiverRepositoryImpl(ReceiverRepository):
                 print(f"{Fore.RED}수신된 정보:{Fore.GREEN} {decodedData}{Style.RESET_ALL}")
 
                 responseData = responseGeneratorRepository.generate_response(decodedData)
-                print(type(self.__uiIpcChannel))
                 self.__uiIpcChannel.put(responseData)
 
             except (socket.error, BrokenPipeError) as exception:
