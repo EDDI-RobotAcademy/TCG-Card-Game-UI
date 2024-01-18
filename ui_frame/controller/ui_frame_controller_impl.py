@@ -7,6 +7,9 @@ from lobby_frame.service.lobby_menu_frame_service_impl import LobbyMenuFrameServ
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
 from my_card_frame.service.my_card_frame_service_impl import MyCardFrameServiceImpl
 from my_deck_frame.service.my_deck_frame_service_impl import MyDeckFrameServiceImpl
+
+from session.service.session_service_impl import SessionServiceImpl
+
 from ui_frame.controller.ui_frame_controller import UiFrameController
 from ui_frame.service.ui_frame_service_impl import UiFrameServiceImpl
 
@@ -27,6 +30,8 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__cardShopMenuFrameService = CardShopMenuFrameServiceImpl.getInstance()
             cls.__instance.__myCardFrameService = MyCardFrameServiceImpl.getInstance()
             cls.__instance.__myDeckFrameService = MyDeckFrameServiceImpl.getInstance()
+
+            cls.__instance.__sessionService = SessionServiceImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -82,12 +87,18 @@ class UiFrameControllerImpl(UiFrameController):
 
         self.__uiFrameService.injectTransmitIpcChannel(transmitIpcChannel)
         self.__accountRegisterFrameService.injectTransmitIpcChannel(transmitIpcChannel)
+        self.__loginMenuFrameService.injectTransmitIpcChannel(transmitIpcChannel)
+
+        self.__sessionService.injectTransmitIpcChannel(transmitIpcChannel)
 
     def requestToInjectReceiveIpcChannel(self, receiveIpcChannel):
         print("UiFrameControllerImpl: requestToInjectReceiveIpcChannel()")
 
         self.__uiFrameService.injectReceiveIpcChannel(receiveIpcChannel)
         self.__accountRegisterFrameService.injectReceiveIpcChannel(receiveIpcChannel)
+        self.__loginMenuFrameService.injectReceiveIpcChannel(receiveIpcChannel)
+
+        self.__sessionService.injectReceiveIpcChannel(receiveIpcChannel)
 
     def requestToInjectMusicPlayIpcChannel(self, musicPlayIpcChannel):
         print("UiFrameControllerImpl: requestToInjectMusicPlayIpcChannel()")

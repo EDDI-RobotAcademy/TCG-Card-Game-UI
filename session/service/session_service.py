@@ -1,9 +1,17 @@
 import abc
 
 
-class LoginMenuFrameService(abc.ABC):
+class SessionService(abc.ABC):
     @abc.abstractmethod
-    def createLoginUiFrame(self, rootWindow, switchFrameWithMenuName):
+    def save_session(self, redisTokenSessionInfo):
+        pass
+
+    @abc.abstractmethod
+    def getSessionInfo(self):
+        pass
+
+    @abc.abstractmethod
+    def requestLoginWithSession(self):
         pass
 
     @abc.abstractmethod
@@ -13,4 +21,5 @@ class LoginMenuFrameService(abc.ABC):
     @abc.abstractmethod
     def injectReceiveIpcChannel(self, receiveIpcChannel):
         pass
+
 
