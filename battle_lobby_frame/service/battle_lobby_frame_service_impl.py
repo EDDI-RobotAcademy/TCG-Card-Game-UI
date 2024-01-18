@@ -146,5 +146,3 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
 
                 deck.bind("<Button-1>", lambda event, current_deck=deck: onClick(event, current_deck))
                 self.__battleLobbyFrameRepository.addDeckToDeckList(deck)
-
-                i = i + 1
