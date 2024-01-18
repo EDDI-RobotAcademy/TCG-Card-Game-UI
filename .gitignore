@@ -1,9 +1,6 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python
 # Edit at https://www.toptal.com/developers/gitignore?templates=python
 
-# exclude session_info.txt
-session_info.txt
-
 # exclude .env
 .env
 

@@ -2,7 +2,6 @@ import tkinter
 
 from card_frame.repository.card_frame_repository_impl import CardFrameRepositoryImpl
 from card_frame.service.card_frame_service import CardFrameService
-from card_merge_frame.service.card_merge_frame_service_impl import CardMergeFrameServiceImpl
 
 
 class CardFrameServiceImpl(CardFrameService):
@@ -12,7 +11,6 @@ class CardFrameServiceImpl(CardFrameService):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
             cls.__instance.__cardFrameRepository = CardFrameRepositoryImpl.getInstance()
-            cls.__instance.__cardMergeFrameService = CardMergeFrameServiceImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -37,9 +35,6 @@ class CardFrameServiceImpl(CardFrameService):
         go_back_to_lobby_button = tkinter.Button(CardFrame, text="다음 페이지", bg="#C62828", fg="white",
                                      command=lambda: switchFrameWithMenuName("lobby-menu"), width=24, height=2)
         go_back_to_lobby_button.place(relx=0.7, rely=0.9, anchor="w")
-
-        CardMergeFrame = self.__cardMergeFrameService.createCardMergeUiFrame(CardFrame)
-        CardMergeFrame.place(relx=0.5, rely=0.55, relwidth=0.8, relheight=0.63, anchor="center")
 
 
         return CardFrame

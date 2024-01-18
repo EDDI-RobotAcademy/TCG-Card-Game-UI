@@ -8,9 +8,6 @@ from main_frame.service.main_menu_frame_service_impl import MainMenuFrameService
 from make_my_deck_frame.service.make_my_deck_frame_service_impl import MakeMyDeckFrameServiceImpl
 from my_card_frame.service.my_card_frame_service_impl import MyCardFrameServiceImpl
 from my_deck_frame.service.my_deck_frame_service_impl import MyDeckFrameServiceImpl
-
-from session.service.session_service_impl import SessionServiceImpl
-
 from ui_frame.controller.ui_frame_controller import UiFrameController
 from ui_frame.service.ui_frame_service_impl import UiFrameServiceImpl
 
@@ -32,9 +29,6 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__myCardFrameService = MyCardFrameServiceImpl.getInstance()
             cls.__instance.__myDeckFrameService = MyDeckFrameServiceImpl.getInstance()
             cls.__instance.__makeMyDeckFrameService = MakeMyDeckFrameServiceImpl.getInstance()
-
-            cls.__instance.__sessionService = SessionServiceImpl.getInstance()
-
         return cls.__instance
 
     @classmethod
@@ -77,9 +71,6 @@ class UiFrameControllerImpl(UiFrameController):
             self.__cardShopMenuFrameService.createCardShopUiFrame(rootWindow, self.switchFrameWithMenuName))
         self.__uiFrameService.registerCardShopMenuUiFrame(cardShopMenuFrame)
 
-        if self.__sessionService.getSessionInfo() is not None:
-            self.__sessionService.requestLoginWithSession()
-
         self.switchFrameWithMenuName("main-menu")
 
     def switchFrameWithMenuName(self, name):
@@ -96,14 +87,10 @@ class UiFrameControllerImpl(UiFrameController):
 
         self.__uiFrameService.injectTransmitIpcChannel(transmitIpcChannel)
         self.__accountRegisterFrameService.injectTransmitIpcChannel(transmitIpcChannel)
-        self.__loginMenuFrameService.injectTransmitIpcChannel(transmitIpcChannel)
-
-        self.__sessionService.injectTransmitIpcChannel(transmitIpcChannel)
 
     def requestToInjectReceiveIpcChannel(self, receiveIpcChannel):
         print("UiFrameControllerImpl: requestToInjectReceiveIpcChannel()")
 
         self.__uiFrameService.injectReceiveIpcChannel(receiveIpcChannel)
         self.__accountRegisterFrameService.injectReceiveIpcChannel(receiveIpcChannel)
-        self.__loginMenuFrameService.injectReceiveIpcChannel(receiveIpcChannel)
 
