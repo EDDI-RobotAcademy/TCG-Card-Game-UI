@@ -19,3 +19,6 @@ class UiFrameRepository(abc.ABC):
     def saveReceiveIpcChannel(self, receiveIpcChannel):
         pass
 
+    @abc.abstractmethod
+    def saveMusicPlayIpcChannel(self, musicPlayIpcChannel):
+        pass

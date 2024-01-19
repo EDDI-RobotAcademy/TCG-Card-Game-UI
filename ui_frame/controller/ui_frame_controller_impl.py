@@ -100,3 +100,7 @@ class UiFrameControllerImpl(UiFrameController):
 
         self.__sessionService.injectReceiveIpcChannel(receiveIpcChannel)
 
+    def requestToInjectMusicPlayIpcChannel(self, musicPlayIpcChannel):
+        print("UiFrameControllerImpl: requestToInjectMusicPlayIpcChannel()")
+
+        self.__uiFrameService.injectMusicPlayIpcChannel(musicPlayIpcChannel)

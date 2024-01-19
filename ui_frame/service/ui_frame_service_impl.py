@@ -43,7 +43,6 @@ class UiFrameServiceImpl(UiFrameService):
         print(f"{Fore.GREEN}UiFrameServiceImpl: registerBattleLobbyMenuUiFrame(){Style.RESET_ALL}")
         self.__uiFrameRepository.registerUiFrame("battle-lobby", battleLobbyFrame)
 
-
     def registerMyCardUiFrame(self, myCardFrame):
         print(f"{Fore.GREEN}UiFrameServiceImpl: registerMyCardUiFrame(){Style.RESET_ALL}")
         self.__uiFrameRepository.registerUiFrame("my-card", myCardFrame)
@@ -67,3 +66,7 @@ class UiFrameServiceImpl(UiFrameService):
     def injectReceiveIpcChannel(self, receiveIpcChannel):
         print(f"{Fore.GREEN}UiFrameServiceImpl: injectReceiveIpcChannel(){Style.RESET_ALL}")
         self.__uiFrameRepository.saveReceiveIpcChannel(receiveIpcChannel)
+
+    def injectMusicPlayIpcChannel(self, musicPlayIpcChannel):
+        print(f"{Fore.GREEN}UiFrameServiceImpl: injectMusicPlayIpcChannel(){Style.RESET_ALL}")
+        self.__uiFrameRepository.saveMusicPlayIpcChannel(musicPlayIpcChannel)

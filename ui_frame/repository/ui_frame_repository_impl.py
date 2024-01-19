@@ -6,6 +6,7 @@ class UiFrameRepositoryImpl(UiFrameRepository):
     __currentFrame = None
     __transmitIpcChannel = None
     __receiveIpcChannel = None
+    __musicPlayIpcChannel = None
     __windowFrameList = {}
 
     def __new__(cls):
@@ -46,13 +47,16 @@ class UiFrameRepositoryImpl(UiFrameRepository):
         foundUiFrame.pack(expand=True, fill="both")
         self.__currentFrame = foundUiFrame
 
+        self.__musicPlayIpcChannel.put(name)
+
     def saveTransmitIpcChannel(self, transmitIpcChannel):
         print("UiFrameRepositoryImpl: saveTransmitIpcChannel()")
         self.__transmitIpcChannel = transmitIpcChannel
 
     def saveReceiveIpcChannel(self, receiveIpcChannel):
-        print("UiFrameRepositoryImpl: saveTransmitIpcMessage()")
+        print("UiFrameRepositoryImpl: saveReceiveIpcMessage()")
         self.__receiveIpcChannel = receiveIpcChannel
 
-
-
+    def saveMusicPlayIpcChannel(self, musicPlayIpcChannel):
+        print("UiFrameRepositoryImpl: saveMusicPlayIpcMessage()")
+        self.__musicPlayIpcChannel = musicPlayIpcChannel
