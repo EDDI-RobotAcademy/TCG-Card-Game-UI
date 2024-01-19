@@ -88,6 +88,7 @@ class UiFrameControllerImpl(UiFrameController):
         self.__uiFrameService.injectTransmitIpcChannel(transmitIpcChannel)
         self.__accountRegisterFrameService.injectTransmitIpcChannel(transmitIpcChannel)
         self.__loginMenuFrameService.injectTransmitIpcChannel(transmitIpcChannel)
+        self.__mainMenuFrameService.injectTransmitIpcChannel(transmitIpcChannel)
 
         self.__sessionService.injectTransmitIpcChannel(transmitIpcChannel)
 
@@ -97,6 +98,7 @@ class UiFrameControllerImpl(UiFrameController):
         self.__uiFrameService.injectReceiveIpcChannel(receiveIpcChannel)
         self.__accountRegisterFrameService.injectReceiveIpcChannel(receiveIpcChannel)
         self.__loginMenuFrameService.injectReceiveIpcChannel(receiveIpcChannel)
+        self.__mainMenuFrameService.injectReceiveIpcChannel(receiveIpcChannel)
 
         self.__sessionService.injectReceiveIpcChannel(receiveIpcChannel)
 

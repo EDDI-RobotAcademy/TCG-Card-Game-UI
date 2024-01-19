@@ -7,5 +7,7 @@ class CustomProtocol(Enum):
 
     SESSION_LOGIN = 3
 
+    PROGRAM_EXIT = 4444
+
 
 
