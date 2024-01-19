@@ -4,6 +4,10 @@ from card_frame.service.card_frame_service_impl import CardFrameServiceImpl
 from my_card_frame.repository.my_card_frame_repository_impl import MyCardFrameRepositoryImpl
 from my_card_frame.service.my_card_frame_service import MyCardFrameService
 from my_deck_frame.service.my_deck_frame_service_impl import MyDeckFrameRepositoryImpl, MyDeckFrameServiceImpl
+from transparent_background_frame.repository.transparent_background_frame_repository import \
+    TransparentBackgroundFrameRepository
+from transparent_background_frame.repository.transparent_background_frame_repository_impl import \
+    TransparentBackgroundFrameRepositoryImpl
 
 
 class MyCardFrameServiceImpl(MyCardFrameService):
@@ -16,6 +20,7 @@ class MyCardFrameServiceImpl(MyCardFrameService):
             cls.__instance.__myDeckFrameRepository = MyDeckFrameRepositoryImpl.getInstance()
             cls.__instance.__myDeckFrameService = MyDeckFrameServiceImpl.getInstance()
             cls.__instance.__cardFrameService = CardFrameServiceImpl.getInstance()
+            cls.__instance.__transparentBackgroundFrameRepository = TransparentBackgroundFrameRepositoryImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -41,6 +46,10 @@ class MyCardFrameServiceImpl(MyCardFrameService):
         # MyCardFrame 위에 CardFrame 띄우기
         cardFrame = self.__cardFrameService.createCardUiFrame(myCardFrame, switchFrameWithMenuName)
         cardFrame.pack(side="left", fill="both", expand=True)
+
+        # 검정색 투명 배경화면 띄우기
+        transparentBackgroundFrame = self.__transparentBackgroundFrameRepository.createTransparentBackgroundFrame(myCardFrame)
+        transparentBackgroundFrame.place(relx=0, rely=0, relwidth=1, relheight=1)
 
 
         return myCardFrame
