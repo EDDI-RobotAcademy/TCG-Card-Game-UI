@@ -8,6 +8,7 @@ class SessionRepositoryImpl(SessionRepository):
     __instance = None
     __session = None
     __transmitIpcChannel = None
+    __receiveIpcChannel = None
 
     SESSION_INFO_FILE_PATH = 'local_storage/session_info.txt'
 
@@ -63,13 +64,17 @@ class SessionRepositoryImpl(SessionRepository):
         print("SessionRepositoryImpl: requestLoginWithSession()")
 
         self.__transmitIpcChannel.put(sessionLoginRequest)
+        return self.__receiveIpcChannel.get()
 
     def injectTransmitIpcChannel(self, transmitIpcChannel):
         print("SessionRepositoryImpl: injectTransmitIpcChannel()")
 
         self.__transmitIpcChannel = transmitIpcChannel
 
+    def injectReceiveIpcChannel(self, receiveIpcChannel):
+        print("SessionRepositoryImpl: injectReceiveIpcChannel()")
 
+        self.__receiveIpcChannel = receiveIpcChannel
 
 
 
