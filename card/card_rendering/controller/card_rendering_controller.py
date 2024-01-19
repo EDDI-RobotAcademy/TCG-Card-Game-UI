@@ -3,5 +3,5 @@ import abc
 class CardRenderingController(abc.ABC):
 
     @abc.abstractmethod
-    def cardRender(self, cardNumber, cardSize):
+    def requestToCardRenderingCardNumber(self, cardNumber):
         pass
