@@ -17,3 +17,7 @@ class UiFrameController(abc.ABC):
     @abc.abstractmethod
     def requestToInjectReceiveIpcChannel(self, ipcChannel):
         pass
+
+    @abc.abstractmethod
+    def requestToInjectMusicPlayIpcChannel(self, ipcChannel):
+        pass
