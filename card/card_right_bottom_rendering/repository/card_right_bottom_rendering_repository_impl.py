@@ -1,11 +1,9 @@
-import tkinter
-
-from card.card_left_bottom_rendering.entity.card_left_bottom_rendering import CardLeftBottomRendering
-from card.card_left_bottom_rendering.repository.card_left_bottom_rendering_repository import \
-    CardLeftBottomRenderingRepository
+from card.card_right_bottom_rendering.entity.card_right_bottom_rendering import CardRightBottomRendering
+from card.card_right_bottom_rendering.repository.card_right_bottom_rendering_repository import \
+    CardRightBottomRenderingRepository
 
 
-class CardLeftBottomRenderingRepositoryImpl(CardLeftBottomRenderingRepository):
+class CardRightBottomRenderingRepositoryImpl(CardRightBottomRenderingRepository):
     __instance = None
 
     def __new__(cls):
@@ -19,17 +17,17 @@ class CardLeftBottomRenderingRepositoryImpl(CardLeftBottomRenderingRepository):
             cls.__instance = cls()
         return cls.__instance
 
-    def createCardLeftBottomRenderingFrame(self, rootWindow):
+    def createCardRightBottomRenderingFrame(self, rootWindow):
         print("CardFrameRepositoryImpl: createCardFrame()")
-        cardLeftBottomRendering = CardLeftBottomRendering(rootWindow)
+        cardRightBottomRendering = CardRightBottomRendering(rootWindow)
         circle_radius = 12  # 반지름 값, 적절하게 조절해주세요
 
         # Calculate the coordinates of the bounding box
         x1 = y1 = 25 - circle_radius
         x2 = y2 = 25 + circle_radius
-        self.drawCircle(cardLeftBottomRendering.canvas, x1, y1, x2, y2, fill='blue', outline='black', width=1, text="HP")
+        self.drawCircle(cardRightBottomRendering.canvas, x1, y1, x2, y2, fill='yellow', outline='black', width=1, text="Attack")
 
-        return cardLeftBottomRendering
+        return cardRightBottomRendering
     def drawCircle(self, canvas, x1, y1, x2, y2, text=None, **kwargs):
 
         # canvas.delete("all")

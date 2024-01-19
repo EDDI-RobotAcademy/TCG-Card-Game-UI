@@ -19,13 +19,7 @@ class CardLeftBottomRenderingServiceImpl(CardLeftBottomRenderingService):
             cls.__instance = cls()
         return cls.__instance
 
-    def createCardBackUiFrame(self, rootWindow):
-        cardLeftBottomRenderingRepository = self.__cardLeftBottomRenderingRepository.createCardLeftBottomRenderingFrame(rootWindow)
-        # cardLeftBottomRenderingRepository.canvas = tkinter.Canvas(width=50, height=50)
-        # cardLeftBottomRenderingRepository.canvas.pack()
+    def createCardLeftBottomRenderingUiFrame(self, rootWindow):
+        cardLeftBottomRendering = self.__cardLeftBottomRenderingRepository.createCardLeftBottomRenderingFrame(rootWindow)
 
-        # radius = 50
-        # center_x, center_y = 50, 50
-        # cardLeftBottomRenderingRepository.canvas.create_oval(center_x - radius, center_y - radius, center_x + radius, center_y + radius, fill='blue')
-
-        return cardLeftBottomRenderingRepository
+        return cardLeftBottomRendering
