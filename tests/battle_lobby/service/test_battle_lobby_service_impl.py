@@ -11,7 +11,7 @@ class TestBattleLobbyServiceImpl(unittest.TestCase):
         request = [{'deckName': "ㅁㄴㅇㄻㄴㅇㄹ"}, {'deckName': "123123"}, {'deckName': "568567858"}, {'deckName': "ㅋㅋㅋㅋㅋㅋㅋ"},
                    {'deckName': "ㅋ시발 "}, {'deckName': "되냐??"}]
         battleLobbyFrame = tkinter.Tk()
-
+        deckDictionary = {}
         def relX(j):
             return 0.3 if j % 2 == 0 else 0.7
 
@@ -22,8 +22,12 @@ class TestBattleLobbyServiceImpl(unittest.TestCase):
             def onClick(event, _deck: tkinter.Button):
                 self.__battleLobbyFrameRepository.selectDeck(_deck)
 
-            deck.bind("<Button-1>", onClick)
+            deck.bind("<Button-1>", lambda event, current_deck=deck: onClick(event, current_deck))
             self.__battleLobbyFrameRepository.addDeckToDeckList(deck)
+            deckDictionary[i] = deck
+
+        print(deckDictionary)
+
 
 
 
