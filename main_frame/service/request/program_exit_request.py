@@ -11,4 +11,4 @@ class ProgramExitRequest:
         }
 
     def __str__(self):
-        return f"AccountRegisterRequest(protocolNumber={self.__protocolNumber})"
+        return f"ProgramExitRequest(protocolNumber={self.__protocolNumber})"

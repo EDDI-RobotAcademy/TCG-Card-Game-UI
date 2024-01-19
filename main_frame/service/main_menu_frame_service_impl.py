@@ -66,8 +66,8 @@ class MainMenuFrameServiceImpl(MainMenuFrameService):
 
                 print(f"responseData: {responseData}")
 
-                if responseData and responseData.get("is_success") is True:
-                    rootWindow.quit()
+                if responseData and responseData.get("does_client_exit_success") is True:
+                    rootWindow.destroy()
                 else:
                     print("응답이 잘못 되었음")
             except Exception as e:
