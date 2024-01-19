@@ -49,3 +49,7 @@ class UiFrameService(abc.ABC):
     @abc.abstractmethod
     def injectReceiveIpcChannel(self, receiveIpcChannel):
         pass
+
+    @abc.abstractmethod
+    def injectMusicPlayIpcChannel(self, musicPlayIpcChannel):
+        pass
