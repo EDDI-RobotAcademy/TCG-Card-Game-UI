@@ -4,6 +4,9 @@ from battle_lobby_frame.repository.battle_lobby_frame_repository_impl import Bat
 from battle_lobby_frame.service.battle_lobby_frame_service import BattleLobbyFrameService
 from utility.image_generator import ImageGenerator
 
+from pyopengltk import OpenGLFrame
+from OpenGL import GL, GLU, GLUT
+
 
 # from discarded.battle_room_list_frame.repository import BattleRoomListFrameRepositoryImpl
 
@@ -54,12 +57,22 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
 
             for i, deckData in enumerate(request):
                 generatedImage = imageGenerator.getUnselectedDeckImage()
-                deck = tkinter.Label(self.__battleLobbyFrame)
-                deck.configure(image=generatedImage)
+                deck = tkinter.Canvas(self.__battleLobbyFrame, highlightthickness=5, highlightbackground="white")
+                deck.create_image(150,40, image=generatedImage)
 
-                text = tkinter.Label(deck,text=deckData["deckName"], font=("Arial",10))
-                #text.create_text(20, 20, text=deckData["deckName"], font=("Arial",15))
-                text.pack()
+
+                # deck = tkinter.Label(self.__battleLobbyFrame)
+                # deck.configure(image=generatedImage)
+
+
+
+
+                #text = tkinter.Canvas(deck)
+                deck.create_text(150, 40, text=deckData["deckName"], font=("Arial",15))
+                deck.pack()
+                #text = tkinter.Label(deck, text=deckData["deckName"], font=("Arial", 15))
+
+                #text.pack(fill="y", expand=True)
                 # deck = tkinter.Label(self.__battleLobbyFrame, text=f"{deckData['deckName']}", font=("Helvetica", 15),
                 #                      image=ImageGenerator.getInstance().getDeckImage(), anchor="center")
                                      #image=ImageGenerator.getInstance().generateImageByDirectoryAndName("battle_lobby",
@@ -75,6 +88,14 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
                 def onClick(event, _deck):
                     self.__battleLobbyFrameRepository.selectDeck(_deck)
 
-                text.bind("<Button-1>", lambda event, current_deck=deck: onClick(event, current_deck))
+                deck.bind("<Button-1>", lambda event, current_deck=deck: onClick(event, current_deck))
                 self.__battleLobbyFrameRepository.addDeckToDeckList(deck)
 
+
+    def initgl(self,width,height):
+        GL.glClearColor(1.0, 1.0, 1.0, 0.0)
+        GL.glEnable(GL.GL_BLEND)
+        GL.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
+        GL.glLoadIdentity()
+        GLU.gluOrtho2D(0, width, height, 0)
+        GLUT.glutInit()

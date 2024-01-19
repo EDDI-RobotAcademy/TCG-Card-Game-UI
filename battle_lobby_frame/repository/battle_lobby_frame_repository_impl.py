@@ -39,9 +39,11 @@ class BattleLobbyFrameRepositoryImpl(BattleLobbyFrameRepository):
     def removeDeckFromDeckList(self, deck):
         self.__decks.remove(deck)
 
-    def selectDeck(self, deck: tkinter.Button):
+    def selectDeck(self, deck):
         for d in self.__decks:
             if d==deck:
-                d.configure(image=ImageGenerator.getInstance().getSelectedDeckImage())
+               # d.create_image(150,40, image=ImageGenerator.getInstance().getSelectedDeckImage())
+               d.config(highlightbackground="red")
             else:
-                d.configure(image=ImageGenerator.getInstance().getUnselectedDeckImage())
+               # d.create_image(150,40, image=ImageGenerator.getInstance().getUnselectedDeckImage())
+               d.config(highlightbackground="white")
