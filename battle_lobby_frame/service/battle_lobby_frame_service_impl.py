@@ -12,11 +12,13 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
     __instance = None
     __battleLobbyFrame = None
     __onClickEventList = []
+    __imageGenerator = None
 
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
             cls.__instance.__battleLobbyFrameRepository = BattleLobbyFrameRepositoryImpl.getInstance()
+            #cls.__instance.__imageGenerator = ImageGenerator.getInstance()
         #  cls.__instance.__battleRoomListFrameRepository = BattleRoomListFrameRepositoryImpl.getInstance()
         return cls.__instance
 
@@ -45,21 +47,34 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
         return self.__battleLobbyFrame
 
     def createBattleLobbyMyDeckButton(self, request=None):
+        imageGenerator = ImageGenerator.getInstance()
         if request:
             def relX(j):
                 return 0.3 if j % 2 == 0 else 0.7
 
             for i, deckData in enumerate(request):
-                deck = tkinter.Label(self.__battleLobbyFrame, text=f"{deckData['deckName']}", font=("Helvetica", 15),
-                                     image=ImageGenerator.getInstance().generateImageByDirectoryAndName("battle_lobby",
-                                                                                                        "deck"))
+                generatedImage = imageGenerator.getUnselectedDeckImage()
+                deck = tkinter.Label(self.__battleLobbyFrame)
+                deck.configure(image=generatedImage)
+
+                text = tkinter.Label(deck,text=deckData["deckName"], font=("Arial",10))
+                #text.create_text(20, 20, text=deckData["deckName"], font=("Arial",15))
+                text.pack()
+                # deck = tkinter.Label(self.__battleLobbyFrame, text=f"{deckData['deckName']}", font=("Helvetica", 15),
+                #                      image=ImageGenerator.getInstance().getDeckImage(), anchor="center")
+                                     #image=ImageGenerator.getInstance().generateImageByDirectoryAndName("battle_lobby",
+                                     #                                                                  "deck"))
+
+                # deck.place(relx=relX(i), rely=0.4 + (i // 2 * 0.15),
+                #            anchor="center", relwidth=0.25, relheight=0.1)
 
                 deck.place(relx=relX(i), rely=0.4 + (i // 2 * 0.15),
-                           anchor="center", relwidth=0.25, relheight=0.1)
+                           anchor="center", width=300, height=80)
+
 
                 def onClick(event, _deck):
                     self.__battleLobbyFrameRepository.selectDeck(_deck)
 
-                deck.bind("<Button-1>", lambda event, current_deck=deck: onClick(event, current_deck))
+                text.bind("<Button-1>", lambda event, current_deck=deck: onClick(event, current_deck))
                 self.__battleLobbyFrameRepository.addDeckToDeckList(deck)
 

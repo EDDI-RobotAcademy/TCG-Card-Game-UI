@@ -42,6 +42,6 @@ class BattleLobbyFrameRepositoryImpl(BattleLobbyFrameRepository):
     def selectDeck(self, deck: tkinter.Button):
         for d in self.__decks:
             if d==deck:
-                deck.configure(bg="#336633")
+                d.configure(image=ImageGenerator.getInstance().getSelectedDeckImage())
             else:
-                d.configure(bg="#ffffff")
+                d.configure(image=ImageGenerator.getInstance().getUnselectedDeckImage())
