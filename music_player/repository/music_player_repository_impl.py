@@ -1,11 +1,14 @@
 import os
+import time
+
 from pygame import mixer
 from music_player.repository.music_player_repository import MusicPlayerRepository
 
 
 class MusicPlayerRepositoryImpl(MusicPlayerRepository):
     __instance = None
-    __music_file = None
+    __uiIpcChannel = None
+    __backgroundMusicFilePathDict = {}
 
     def __new__(cls):
         if cls.__instance is None:
@@ -18,15 +21,32 @@ class MusicPlayerRepositoryImpl(MusicPlayerRepository):
             cls.__instance = cls()
         return cls.__instance
 
-    def playMusicWithFrameName(self, frameName):
+    def loadBackgroundMp3(self, frameName: str):
+        # 방식의 개선이 필요함
+        currentLocation = os.getcwd()
+        backgroundMusicPath = os.path.join(currentLocation, 'local_storage', 'background_music', f'{frameName}.mp3')
+        self.__backgroundMusicFilePathDict[frameName] = backgroundMusicPath
+        print(f'MusicPlayerRepositoryImpl : {frameName} background music loaded')
+        print(self.__backgroundMusicFilePathDict)
+
+    def playBackgroundMusic(self):
+        backgroundMusicPath = self.getBackgroundMusicFilePath()
         mixer.init()
-        print(mixer)
-        script_dir = os.getcwd()
-        print(script_dir)
-        self.__music_file = os.path.join(script_dir, "../../", "local_storage", "music", f"{frameName}.mp3")
-        print(self.__music_file)
-        mixer.music.load(self.__music_file)
+        mixer.music.load(backgroundMusicPath)
         mixer.music.play()
 
-        if mixer.music.get_busy():
-            print("Music is playing")
+        while mixer.music.get_busy():
+            print("Background Music is playing")
+            time.sleep(5)
+
+    def getBackgroundMusicFilePath(self):
+        frameName = self.__uiIpcChannel.get()
+        if self.__backgroundMusicFilePathDict[frameName]:
+            return self.__backgroundMusicFilePathDict[frameName]
+        else:
+            print("Background Music is not playing")
+
+    def saveUiIpcChannel(self, uiIpcChannel):
+        print('music channel saved')
+        self.__uiIpcChannel = uiIpcChannel
+        print(self.__uiIpcChannel)
