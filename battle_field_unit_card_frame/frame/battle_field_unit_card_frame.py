@@ -15,8 +15,11 @@ class BattleFieldUnitCardFrame(OpenGLFrame):
         super().__init__(master, **kwargs)
         self.domain_scene = BattleFieldUnitCardScene()
 
-        self.width = self.winfo_reqwidth()
-        self.height = self.winfo_reqheight()
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+
+        self.width = screen_width
+        self.height = screen_height
 
         self.bind("<Configure>", self.on_resize)
 
@@ -46,7 +49,7 @@ class BattleFieldUnitCardFrame(OpenGLFrame):
         equip_card = Rectangle(
             color=(0.6, 0.4, 0.6, 1.0),
             vertices=[(0, 0), (350, 0), (350, 500), (0, 500)],
-            translation=(20, 20))
+            local_translation=(20, 20))
         equip_card.set_draw_gradient(True)
         self.domain_scene.add_shape(equip_card)
 
@@ -95,7 +98,6 @@ class BattleFieldUnitCardFrame(OpenGLFrame):
         equip_image = self.domain_scene.images[1]
         equip_image.set_visible(not equip_image.get_visible())
 
-        self.apply_translation((-50, -50))
         self.redraw()
 
     def reshape(self, width, height):
