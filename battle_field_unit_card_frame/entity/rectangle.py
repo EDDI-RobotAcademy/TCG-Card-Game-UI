@@ -1,5 +1,3 @@
-
-
 from OpenGL.GL import *
 import random
 
@@ -7,8 +5,8 @@ from battle_field_unit_card_frame.entity.shape import Shape
 
 
 class Rectangle(Shape):
-    def __init__(self, color, vertices, translation=(0, 0)):
-        super().__init__(color, vertices, translation)
+    def __init__(self, color, vertices, translation=(0, 0), local_translation=(0, 0)):
+        super().__init__(color, vertices, translation, local_translation)
         self.draw_border = True
         self.draw_gradient = False
         self.is_visible = True
@@ -34,10 +32,14 @@ class Rectangle(Shape):
             glLineWidth(2.0)
             glColor4f(0.0, 0.0, 0.0, 1.0)
             glBegin(GL_LINE_LOOP)
-            glVertex2f(self.vertices[0][0] + self.translation[0] - 1, self.vertices[0][1] + self.translation[1] - 1)
-            glVertex2f(self.vertices[1][0] + self.translation[0] + 1, self.vertices[1][1] + self.translation[1] - 1)
-            glVertex2f(self.vertices[2][0] + self.translation[0] + 1, self.vertices[2][1] + self.translation[1] + 1)
-            glVertex2f(self.vertices[3][0] + self.translation[0] - 1, self.vertices[3][1] + self.translation[1] + 1)
+            glVertex2f(self.vertices[0][0] + self.translation[0] + self.local_translation[0] - 1,
+                       self.vertices[0][1] + self.translation[1] + self.local_translation[1] - 1)
+            glVertex2f(self.vertices[1][0] + self.translation[0] + self.local_translation[0] + 1,
+                       self.vertices[1][1] + self.translation[1] + self.local_translation[1]  - 1)
+            glVertex2f(self.vertices[2][0] + self.translation[0] + self.local_translation[0]  + 1,
+                       self.vertices[2][1] + self.translation[1] + self.local_translation[1]  + 1)
+            glVertex2f(self.vertices[3][0] + self.translation[0] + self.local_translation[0]  - 1,
+                       self.vertices[3][1] + self.translation[1] + self.local_translation[1]  + 1)
             glEnd()
 
         glBegin(GL_QUADS)
@@ -52,11 +54,13 @@ class Rectangle(Shape):
                                       zip(self.color, colored_border)]
 
                 glColor4f(*interpolated_color)
-                glVertex2f(vertex[0] + self.translation[0], vertex[1] + self.translation[1])
+                glVertex2f(vertex[0] + self.translation[0] + self.local_translation[0],
+                           vertex[1] + self.translation[1] + self.local_translation[1])
         else:
             for vertex in self.vertices:
                 glColor4f(*self.color)
-                glVertex2f(vertex[0] + self.translation[0], vertex[1] + self.translation[1])
+                glVertex2f(vertex[0] + self.translation[0] + self.local_translation[0],
+                           vertex[1] + self.translation[1] + self.local_translation[1])
 
         glEnd()
 
