@@ -57,12 +57,11 @@ class BattleLobbyFrameRepositoryImpl(BattleLobbyFrameRepository):
         else:
             print('덱을 골라주세요!!')
 
-    def exitBattleLobby(self, switchFrameWithMenuName):
+    def exitBattleLobby(self):
         self.__currentDeckIndex = None
         for deck in self.__decks:
             deck.destroy()
         self.__decks.clear()
-        switchFrameWithMenuName('lobby-menu')
 
     def saveReceiveIpcChannel(self, receiveIpcChannel):
         self.__receiveIpcChannel = receiveIpcChannel

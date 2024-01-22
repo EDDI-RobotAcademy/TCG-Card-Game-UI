@@ -44,7 +44,6 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
         # TODO: 테스트코드지워야함
         request = [{'deckName': "ㅁㄴㅇㄻㄴㅇㄹ"}, {'deckName': "123123"}, {'deckName': "568567858"}, {'deckName': "ㅋㅋㅋㅋㅋㅋㅋ"},
                    {'deckName': "ㅋ시발 "}, {'deckName': "되냐??"}]
-
         self.createBattleLobbyMyDeckButton(request)
 
         enterButton = tkinter.Button(self.__battleLobbyFrame, text="입장", font=("Arial", 20))
@@ -74,10 +73,11 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
                                     text="나가기", font=("Arial", 20))
         exitButton.place(relx=0.8, rely=0.85, anchor="center", width=180, height=60)
 
-        def onClickExit(event, _switchFrameWithMenuName):
-            self.__battleLobbyFrameRepository.exitBattleLobby(_switchFrameWithMenuName)
+        def onClickExit(event):
+            self.__battleLobbyFrameRepository.exitBattleLobby()
+            switchFrameWithMenuName('lobby-menu')
 
-        exitButton.bind("<Button-1>",lambda event, switchFrame=switchFrameWithMenuName: onClickExit(event,switchFrame))
+        exitButton.bind("<Button-1>", onClickExit)
 
 
         return self.__battleLobbyFrame

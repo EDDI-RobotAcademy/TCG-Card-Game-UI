@@ -6,9 +6,6 @@ class BattleLobbyFrameRepository(abc.ABC):
     def createBattleLobbyFrame(self, rootWindow):
         pass
 
-    @abc.abstractmethod
-    def getDeckList(self):
-        pass
 
     @abc.abstractmethod
     def addDeckToDeckList(self, deck):
@@ -23,7 +20,7 @@ class BattleLobbyFrameRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def exitBattleLobby(self, switchFrameWithMenuName):
+    def exitBattleLobby(self):
         pass
 
     @abc.abstractmethod
