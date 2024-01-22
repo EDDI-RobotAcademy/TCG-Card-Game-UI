@@ -25,9 +25,9 @@ class OpenglShapeDrawerServiceImpl(OpenglShapeDrawerService):
         print("OpenglShapeDrawerServiceImpl: get_shape_drawer_scene()")
         return self.__shapeRepository.get_opengl_shape_drawer_scene()
 
-    # def process_border(self, is_drawer_border):
-    #     print("OpenglShapeDrawerServiceImpl: process_border()")
-    #     return self.__shapeRepository.process_border(is_drawer_border)
+    def process_border(self, shape_id, is_drawer_border):
+        print("OpenglShapeDrawerServiceImpl: process_border()")
+        return self.__shapeRepository.process_border(shape_id, is_drawer_border)
 
 
 

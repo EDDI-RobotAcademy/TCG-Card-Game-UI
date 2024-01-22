@@ -10,8 +10,8 @@ class OpenglShapeDrawerService(abc.ABC):
     def get_shape_drawer_scene(self):
         pass
 
-    # @abc.abstractmethod
-    # def process_border(self, is_drawer_border):
-    #     pass
+    @abc.abstractmethod
+    def process_border(self, shape_id, is_drawer_border):
+        pass
 
 
