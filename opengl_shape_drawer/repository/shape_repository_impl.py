@@ -30,8 +30,13 @@ class ShapeRepositoryImpl(ShapeRepository):
 
         return rectangle.get_shape_id()
 
-    # def process_border(self, is_draw_border):
-    #     print("ShapeRepositoryImpl: process_border()")
+    def process_border(self, shape_id, is_draw_border):
+        print("ShapeRepositoryImpl: process_border()")
+
+        scene_shapes = self.get_opengl_shape_drawer_scene()
+        for shape in scene_shapes:
+            if shape_id == shape.get_shape_id():
+                shape.set_is_draw_border(is_draw_border)
 
 
 
