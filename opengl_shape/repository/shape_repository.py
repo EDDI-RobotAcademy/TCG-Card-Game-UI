@@ -11,6 +11,10 @@ class ShapeRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def create_image(self, color, vertices, image_path):
+        pass
+
+    @abc.abstractmethod
     def process_border(self, shape_id, is_draw_border):
         pass
 
