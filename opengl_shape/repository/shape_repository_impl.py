@@ -1,6 +1,6 @@
-from opengl_shape_drawer.entity.rectangle import Rectangle
-from opengl_shape_drawer.entity.shape_drawer_scene import ShapeDrawerScene
-from opengl_shape_drawer.repository.shape_repository import ShapeRepository
+from opengl_shape.entity.rectangle import Rectangle
+from opengl_shape.entity.shape_scene import ShapeDrawerScene
+from opengl_shape.repository.shape_repository import ShapeRepository
 
 
 class ShapeRepositoryImpl(ShapeRepository):
