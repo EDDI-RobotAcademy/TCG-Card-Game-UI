@@ -43,7 +43,10 @@ class BattleLobbyFrameRepositoryImpl(BattleLobbyFrameRepository):
         for d in self.__decks:
             if d==deck:
                # d.create_image(150,40, image=ImageGenerator.getInstance().getSelectedDeckImage())
-               d.config(highlightbackground="red")
+               #d.config(highlightbackground="#93FFE8")
+               d.config(highlightthickness=5)
+
             else:
                # d.create_image(150,40, image=ImageGenerator.getInstance().getUnselectedDeckImage())
-               d.config(highlightbackground="white")
+               #d.config(highlightbackground="")
+               d.config(highlightthickness=0)

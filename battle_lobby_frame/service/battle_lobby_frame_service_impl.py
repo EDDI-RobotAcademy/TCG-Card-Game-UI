@@ -57,7 +57,7 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
 
             for i, deckData in enumerate(request):
                 generatedImage = imageGenerator.getUnselectedDeckImage()
-                deck = tkinter.Canvas(self.__battleLobbyFrame, highlightthickness=5, highlightbackground="white")
+                deck = tkinter.Canvas(self.__battleLobbyFrame, highlightthickness=0, highlightbackground="#93FFE8")
                 deck.create_image(150,40, image=generatedImage)
 
 
