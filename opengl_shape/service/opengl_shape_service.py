@@ -11,6 +11,10 @@ class OpenglShapeDrawerService(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def create_image(self, color, vertices, image_path):
+        pass
+
+    @abc.abstractmethod
     def get_shape_drawer_scene(self):
         pass
 
