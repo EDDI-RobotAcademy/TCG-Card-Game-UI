@@ -19,11 +19,17 @@ class OpenglShapeDrawerServiceImpl(OpenglShapeDrawerService):
 
     def create_rectangle(self, color, vertices):
         print("OpenglShapeDrawerServiceImpl: create_rectangle()")
-        self.__shapeRepository.create_rectangle(color, vertices)
+        return self.__shapeRepository.create_rectangle(color, vertices)
 
     def get_shape_drawer_scene(self):
         print("OpenglShapeDrawerServiceImpl: get_shape_drawer_scene()")
         return self.__shapeRepository.get_opengl_shape_drawer_scene()
+
+    # def process_border(self, is_drawer_border):
+    #     print("OpenglShapeDrawerServiceImpl: process_border()")
+    #     return self.__shapeRepository.process_border(is_drawer_border)
+
+
 
 
 
