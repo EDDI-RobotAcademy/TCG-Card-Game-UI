@@ -4,6 +4,8 @@ from lobby_frame.repository.lobby_menu_frame_repository import LobbyMenuFrameRep
 
 class LobbyMenuFrameRepositoryImpl(LobbyMenuFrameRepository):
     __instance = None
+    __receiveIpcChannel = None
+    __transmitIpcChannel = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -21,4 +23,15 @@ class LobbyMenuFrameRepositoryImpl(LobbyMenuFrameRepository):
         lobbyMenuFrame = LobbyMenuFrame(rootWindow)
 
         return lobbyMenuFrame
+
+    def enterToBattleLobby(self, enterBattleLobbyRequest):
+        self.__transmitIpcChannel.put(enterBattleLobbyRequest)
+        return self.__receiveIpcChannel.get()
+
+
+    def saveReceiveIpcChannel(self, receiveIpcChannel):
+        self.__receiveIpcChannel = receiveIpcChannel
+
+    def saveTransmitIpcChannel(self, transmitIpcChannel):
+        self.__transmitIpcChannel = transmitIpcChannel
 
