@@ -21,6 +21,10 @@ class OpenglShapeDrawerServiceImpl(OpenglShapeDrawerService):
         print("OpenglShapeDrawerServiceImpl: create_rectangle()")
         return self.__shapeRepository.create_rectangle(color, vertices)
 
+    def create_circle(self, color, center_vertex, radius):
+        print("OpenglShapeDrawerServiceImpl: create_circle()")
+        return self.__shapeRepository.create_rectangle(color, center_vertex, radius)
+
     def get_shape_drawer_scene(self):
         print("OpenglShapeDrawerServiceImpl: get_shape_drawer_scene()")
         return self.__shapeRepository.get_opengl_shape_drawer_scene()
