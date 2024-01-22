@@ -46,6 +46,15 @@ class ShapeRepositoryImpl(ShapeRepository):
             if shape_id == shape.get_shape_id():
                 shape.set_is_visible(is_visible)
 
+    def set_local_translation(self, shape_id, local_translation):
+        print("ShapeRepositoryImpl: set_local_translation()")
+
+        scene_shapes = self.get_opengl_shape_drawer_scene()
+        for shape in scene_shapes:
+            if shape_id == shape.get_shape_id():
+                shape.set_local_translation(local_translation)
+
+
 
 
 

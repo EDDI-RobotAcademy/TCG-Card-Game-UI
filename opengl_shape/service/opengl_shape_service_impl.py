@@ -31,7 +31,13 @@ class OpenglShapeDrawerServiceImpl(OpenglShapeDrawerService):
 
     def set_shape_visible(self, shape_id, is_visible):
         print("OpenglShapeDrawerServiceImpl: set_shape_visible()")
-        self.__shapeRepository.process_border(shape_id, is_visible)
+        self.__shapeRepository.set_shape_visible(shape_id, is_visible)
+
+    def set_local_translation(self, shape_id, local_translation):
+        print("OpenglShapeDrawerServiceImpl: set_local_translation()")
+        self.__shapeRepository.set_local_translation(shape_id, local_translation)
+
+
 
 
 
