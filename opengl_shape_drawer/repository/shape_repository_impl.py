@@ -28,3 +28,13 @@ class ShapeRepositoryImpl(ShapeRepository):
         rectangle = Rectangle(color, vertices)
         self.__opengl_shape_drawer_scene.add_shape(rectangle)
 
+        return rectangle.get_shape_id()
+
+    # def process_border(self, is_draw_border):
+    #     print("ShapeRepositoryImpl: process_border()")
+
+
+
+
+
+
