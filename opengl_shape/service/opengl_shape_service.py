@@ -17,3 +17,7 @@ class OpenglShapeDrawerService(abc.ABC):
     @abc.abstractmethod
     def set_shape_visible(self, shape_id, is_visible):
         pass
+
+    @abc.abstractmethod
+    def set_local_translation(self, shape_id, local_translation):
+        pass

@@ -4,12 +4,13 @@ import abc
 class Shape(abc.ABC):
     id_counter = 0
 
-    def __init__(self, color, vertices, is_draw_border=True, is_visible=True):
+    def __init__(self, color, vertices, is_draw_border=True, is_visible=True, local_translation=(0, 0)):
         self.id = Shape.generate_id()
         self.color = color
         self.vertices = vertices
         self.is_draw_border = is_draw_border
         self.is_visible = is_visible
+        self.local_translation = local_translation
 
     def get_shape_id(self):
         return self.id
@@ -19,6 +20,9 @@ class Shape(abc.ABC):
 
     def set_is_visible(self, is_visible):
         self.is_visible = is_visible
+
+    def set_local_translation(self, local_translation):
+        self.local_translation = local_translation
 
     @staticmethod
     def generate_id():
