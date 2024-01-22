@@ -1,6 +1,14 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python
 # Edit at https://www.toptal.com/developers/gitignore?templates=python
 
+# exclude *.png, *.jpg, *.jpeg
+*.jpg
+*.jpeg
+*.png
+
+# exclude *.csv
+*.csv
+
 # exclude session_info.txt
 session_info.txt
 
