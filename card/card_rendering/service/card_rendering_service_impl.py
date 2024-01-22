@@ -19,4 +19,4 @@ class CardRenderingServiceImpl(CardRenderingService):
 
 
     def registerCardRenderingInfo(self, cardNumber):
-        self.__cardRenderingRepository.registerCardInfo(cardNumber)
+        return self.__cardRenderingRepository.registerCardInfo(cardNumber)
