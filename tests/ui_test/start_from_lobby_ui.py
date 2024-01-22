@@ -18,8 +18,7 @@ class TestTaskWorker(unittest.TestCase):
         taskWorkerService.createTaskWorker("UI", uiFrameController.requestToStartPrintGameUi)
         taskWorkerService.executeTaskWorker("UI")
 
-        while True:
-            pass
+
 
 
 if __name__ == '__main__':

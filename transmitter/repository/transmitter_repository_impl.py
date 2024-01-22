@@ -5,6 +5,7 @@ import socket
 
 from colorama import Fore, Style
 
+from main_frame.service.request.program_exit_request import ProgramExitRequest
 from transmitter.repository.transmitter_repository import TransmitterRepository
 
 
@@ -54,6 +55,10 @@ class TransmitterRepositoryImpl(TransmitterRepository):
                 serializedData = json.dumps(transmitData.toDictionary())
                 socketObject.sendall(serializedData.encode())
 
+                if isinstance(transmitData, ProgramExitRequest):
+                    print("프로그램 종료 감지")
+                    break
+
             except (socket.error, BrokenPipeError) as exception:
                 print(f"{Fore.RED}사용자 연결 종료{Style.RESET_ALL}")
                 return None
@@ -66,6 +71,8 @@ class TransmitterRepositoryImpl(TransmitterRepository):
 
             finally:
                 time.sleep(0.5)
+
+        print("Transmitter 종료!")
 
 
 

@@ -1,10 +1,11 @@
+import json
 import time
 import socket
 
 from colorama import Fore, Style
 
 from receiver.repository.receiver_repository import ReceiverRepository
-from response_generator.repository.ressponse_generator_repository_impl import ResponseGeneratorRepositoryImpl
+from response_generator.repository.response_generator_repository_impl import ResponseGeneratorRepositoryImpl
 
 
 class ReceiverRepositoryImpl(ReceiverRepository):
@@ -61,6 +62,16 @@ class ReceiverRepositoryImpl(ReceiverRepository):
                 responseData = responseGeneratorRepository.generate_response(decodedData)
                 self.__uiIpcChannel.put(responseData)
 
+                try:
+                    json_data = json.loads(decodedData)
+
+                    if "PROGRAM_EXIT" in json_data:
+                        print("프로그램 종료 감지")
+                        break
+
+                except json.JSONDecodeError as e:
+                    print(f"Failed to decode JSON: {e}")
+
             except (socket.error, BrokenPipeError) as exception:
                 print(f"{Fore.RED}사용자 연결 종료{Style.RESET_ALL}")
                 return None
@@ -74,7 +85,7 @@ class ReceiverRepositoryImpl(ReceiverRepository):
             finally:
                 time.sleep(0.5)
 
-
+        print("Receiver 종료")
 
 
 
