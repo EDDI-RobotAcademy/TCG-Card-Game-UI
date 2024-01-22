@@ -15,7 +15,7 @@ class BattleLobbyFrameRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def setDeckToDeckList(self,i,deck):
+    def setDeckToDeckList(self, i, deck):
         pass
 
     @abc.abstractmethod
@@ -24,4 +24,8 @@ class BattleLobbyFrameRepository(abc.ABC):
 
     @abc.abstractmethod
     def selectDeck(self, deck):
+        pass
+
+    @abc.abstractmethod
+    def enterToRandomMatchingBattle(self):
         pass

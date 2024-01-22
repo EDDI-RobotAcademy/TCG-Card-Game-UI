@@ -45,7 +45,18 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
         self.createBattleLobbyMyDeckButton(request)
 
         enterButton = tkinter.Button(self.__battleLobbyFrame, text="입장", font=("Arial", 20))
-        enterButton.place(relx=0.5, rely=0.85, anchor="center", relwidth=0.15, relheight=0.075)
+        enterButton.place(relx=0.5, rely=0.85, anchor="center", width=180, height=60)
+
+        # TODO : 입장 버튼 클릭 시 현재 선택 된 덱으로 매칭을 요청함.
+        def onClickEnter(event):
+            self.__battleLobbyFrameRepository.enterToRandomMatchingBattle()
+
+        enterButton.bind("<Button-1>", onClickEnter)
+
+        exitButton = tkinter.Button(self.__battleLobbyFrame,command=lambda: switchFrameWithMenuName("lobby-menu"),
+                                    text="나가기", font=("Arial", 20))
+        exitButton.place(relx=0.8, rely=0.85, anchor="center", width=180, height=60)
+
 
         return self.__battleLobbyFrame
 
@@ -59,28 +70,8 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
                 generatedImage = imageGenerator.getUnselectedDeckImage()
                 deck = tkinter.Canvas(self.__battleLobbyFrame, highlightthickness=0, highlightbackground="#93FFE8")
                 deck.create_image(150,40, image=generatedImage)
-
-
-                # deck = tkinter.Label(self.__battleLobbyFrame)
-                # deck.configure(image=generatedImage)
-
-
-
-
-                #text = tkinter.Canvas(deck)
                 deck.create_text(150, 40, text=deckData["deckName"], font=("Arial",15))
                 deck.pack()
-                #text = tkinter.Label(deck, text=deckData["deckName"], font=("Arial", 15))
-
-                #text.pack(fill="y", expand=True)
-                # deck = tkinter.Label(self.__battleLobbyFrame, text=f"{deckData['deckName']}", font=("Helvetica", 15),
-                #                      image=ImageGenerator.getInstance().getDeckImage(), anchor="center")
-                                     #image=ImageGenerator.getInstance().generateImageByDirectoryAndName("battle_lobby",
-                                     #                                                                  "deck"))
-
-                # deck.place(relx=relX(i), rely=0.4 + (i // 2 * 0.15),
-                #            anchor="center", relwidth=0.25, relheight=0.1)
-
                 deck.place(relx=relX(i), rely=0.4 + (i // 2 * 0.15),
                            anchor="center", width=300, height=80)
 

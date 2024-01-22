@@ -33,7 +33,7 @@ class BattleLobbyFrameRepositoryImpl(BattleLobbyFrameRepository):
         self.__decks.append(deck)
         print(f"decks: {self.__decks}")
 
-    def setDeckToDeckList(self,i,deck):
+    def setDeckToDeckList(self, i, deck):
         self.__decks[i] = deck
 
     def removeDeckFromDeckList(self, deck):
@@ -41,12 +41,11 @@ class BattleLobbyFrameRepositoryImpl(BattleLobbyFrameRepository):
 
     def selectDeck(self, deck):
         for d in self.__decks:
-            if d==deck:
-               # d.create_image(150,40, image=ImageGenerator.getInstance().getSelectedDeckImage())
-               #d.config(highlightbackground="#93FFE8")
-               d.config(highlightthickness=5)
-
+            if d == deck:
+                d.config(highlightthickness=5)
             else:
-               # d.create_image(150,40, image=ImageGenerator.getInstance().getUnselectedDeckImage())
-               #d.config(highlightbackground="")
-               d.config(highlightthickness=0)
+                d.config(highlightthickness=0)
+
+    # TODO : 입장 버튼 클릭 시 실행 될 이벤트. 서버로 무작위 매칭을 요청합니다.
+    def enterToRandomMatchingBattle(self):
+        pass
