@@ -2,6 +2,8 @@ import tkinter
 
 from battle_lobby_frame.repository.battle_lobby_frame_repository_impl import BattleLobbyFrameRepositoryImpl
 from battle_lobby_frame.service.battle_lobby_frame_service import BattleLobbyFrameService
+from battle_lobby_frame.service.request.request_enter_random_match import RequestEnterRandomMatch
+from session.repository.session_repository_impl import SessionRepositoryImpl
 from utility.image_generator import ImageGenerator
 
 from pyopengltk import OpenGLFrame
@@ -21,6 +23,7 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
             cls.__instance.__battleLobbyFrameRepository = BattleLobbyFrameRepositoryImpl.getInstance()
+            cls.__instance.__sessionRepository = SessionRepositoryImpl.getInstance()
             #cls.__instance.__imageGenerator = ImageGenerator.getInstance()
         #  cls.__instance.__battleRoomListFrameRepository = BattleRoomListFrameRepositoryImpl.getInstance()
         return cls.__instance
@@ -49,17 +52,37 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
 
         # TODO : 입장 버튼 클릭 시 현재 선택 된 덱으로 매칭을 요청함.
         def onClickEnter(event):
-            self.__battleLobbyFrameRepository.enterToRandomMatchingBattle()
+            try:
+                response = self.__battleLobbyFrameRepository.enterToRandomMatchingBattle(
+                    RequestEnterRandomMatch(self.__battleLobbyFrameRepository.getCurrentDeckIndex(),
+                                            self.__sessionRepository.readRedisTokenSessionInfoToFile())
+                )
+
+                print(f"BattleLobbyFrameService response: {response}")
+                if response is not None and response != "":
+                    opponentId = response.get("opponentSessionId")
+                    #TODO : battleField 도메인을 호출하여 프레임을 전환해야합니다.
+                    #switchFrameWithMenuName('battle-field')
+                    #TODO : 또한 opponentId를 넘겨주어 상대편 아이디가 표시되게 합니다.
+
+            except Exception as e:
+                print(e)
 
         enterButton.bind("<Button-1>", onClickEnter)
 
-        exitButton = tkinter.Button(self.__battleLobbyFrame,command=lambda: switchFrameWithMenuName("lobby-menu"),
+        exitButton = tkinter.Button(self.__battleLobbyFrame,
                                     text="나가기", font=("Arial", 20))
         exitButton.place(relx=0.8, rely=0.85, anchor="center", width=180, height=60)
+
+        def onClickExit(event, _switchFrameWithMenuName):
+            self.__battleLobbyFrameRepository.exitBattleLobby(_switchFrameWithMenuName)
+
+        exitButton.bind("<Button-1>",lambda event, switchFrame=switchFrameWithMenuName: onClickExit(event,switchFrame))
 
 
         return self.__battleLobbyFrame
 
+    # TODO : Controller가 호출해야함.
     def createBattleLobbyMyDeckButton(self, request=None):
         imageGenerator = ImageGenerator.getInstance()
         if request:
@@ -82,11 +105,8 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
                 deck.bind("<Button-1>", lambda event, current_deck=deck: onClick(event, current_deck))
                 self.__battleLobbyFrameRepository.addDeckToDeckList(deck)
 
+    def injectTransmitIpcChannel(self, transmitIpcChannel):
+        self.__battleLobbyFrameRepository.saveTransmitIpcChannel(transmitIpcChannel)
 
-    def initgl(self,width,height):
-        GL.glClearColor(1.0, 1.0, 1.0, 0.0)
-        GL.glEnable(GL.GL_BLEND)
-        GL.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA)
-        GL.glLoadIdentity()
-        GLU.gluOrtho2D(0, width, height, 0)
-        GLUT.glutInit()
+    def injectReceiveIpcChannel(self, receiveIpcChannel):
+        self.__battleLobbyFrameRepository.saveReceiveIpcChannel(receiveIpcChannel)

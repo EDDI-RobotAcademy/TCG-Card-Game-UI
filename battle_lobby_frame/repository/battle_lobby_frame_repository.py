@@ -15,17 +15,25 @@ class BattleLobbyFrameRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def setDeckToDeckList(self, i, deck):
-        pass
-
-    @abc.abstractmethod
-    def removeDeckFromDeckList(self, deck):
-        pass
-
-    @abc.abstractmethod
     def selectDeck(self, deck):
         pass
 
     @abc.abstractmethod
-    def enterToRandomMatchingBattle(self):
+    def enterToRandomMatchingBattle(self,request):
+        pass
+
+    @abc.abstractmethod
+    def exitBattleLobby(self, switchFrameWithMenuName):
+        pass
+
+    @abc.abstractmethod
+    def saveTransmitIpcChannel(self, transmitIpcChannel):
+        pass
+
+    @abc.abstractmethod
+    def saveReceiveIpcChannel(self, receiveIpcChannel):
+        pass
+
+    @abc.abstractmethod
+    def getCurrentDeckIndex(self):
         pass
