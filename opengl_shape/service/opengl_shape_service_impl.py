@@ -27,7 +27,11 @@ class OpenglShapeDrawerServiceImpl(OpenglShapeDrawerService):
 
     def process_border(self, shape_id, is_drawer_border):
         print("OpenglShapeDrawerServiceImpl: process_border()")
-        return self.__shapeRepository.process_border(shape_id, is_drawer_border)
+        self.__shapeRepository.process_border(shape_id, is_drawer_border)
+
+    def set_shape_visible(self, shape_id, is_visible):
+        print("OpenglShapeDrawerServiceImpl: set_shape_visible()")
+        self.__shapeRepository.process_border(shape_id, is_visible)
 
 
 

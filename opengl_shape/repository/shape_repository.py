@@ -10,4 +10,9 @@ class ShapeRepository(abc.ABC):
     def process_border(self, shape_id, is_draw_border):
         pass
 
+    @abc.abstractmethod
+    def set_shape_visible(self, shape_id, is_visible):
+        pass
+
+
 

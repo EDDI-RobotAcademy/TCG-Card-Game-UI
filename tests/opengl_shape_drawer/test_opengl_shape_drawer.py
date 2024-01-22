@@ -71,6 +71,17 @@ class TestOpenGLShapeDrawer(unittest.TestCase):
 
         root.mainloop()
 
+    # Multi Frame 의 경우 고려할 사항이 많으므로 우선은 단일 프레임 전환을 고려함
+    def test_opengl_shaper_render_multi_frames(self):
+        root = tkinter.Tk()
+
+        frame1 = TestFrame(root, width=400, height=400)
+        frame1.pack(fill=tkinter.BOTH, expand=1)
+
+        frame2 = TestFrame(root, width=400, height=400)
+        frame2.pack(fill=tkinter.BOTH, expand=1)
+
+        root.mainloop()
 
 
 if __name__ == '__main__':
