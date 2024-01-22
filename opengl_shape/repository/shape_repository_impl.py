@@ -54,6 +54,16 @@ class ShapeRepositoryImpl(ShapeRepository):
             if shape_id == shape.get_shape_id():
                 shape.set_local_translation(local_translation)
 
+    def set_color_gradient(self, shape_id, is_color_gradient):
+        print("ShapeRepositoryImpl: set_color_gradient()")
+
+        scene_shapes = self.get_opengl_shape_drawer_scene()
+        for shape in scene_shapes:
+            if shape_id == shape.get_shape_id():
+                shape.set_color_gradient(is_color_gradient)
+
+
+
 
 
 
