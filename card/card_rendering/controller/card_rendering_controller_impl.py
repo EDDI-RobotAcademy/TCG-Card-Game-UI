@@ -19,4 +19,4 @@ class CardRenderingControllerImpl(CardRenderingController):
         return cls.__instance
 
     def requestToCardRenderingCardNumber(self, cardNumber):
-        self.__cardRenderingService.registerCardRenderingInfo(cardNumber)
+        card_info = self.__cardRenderingService.registerCardRenderingInfo(cardNumber)

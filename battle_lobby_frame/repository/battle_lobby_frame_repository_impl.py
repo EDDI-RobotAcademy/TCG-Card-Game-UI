@@ -2,6 +2,7 @@ import tkinter
 
 from battle_lobby_frame.entity.battle_lobby_frame import BattleLobbyFrame
 from battle_lobby_frame.repository.battle_lobby_frame_repository import BattleLobbyFrameRepository
+from utility.image_generator import ImageGenerator
 
 
 class BattleLobbyFrameRepositoryImpl(BattleLobbyFrameRepository):
@@ -32,15 +33,19 @@ class BattleLobbyFrameRepositoryImpl(BattleLobbyFrameRepository):
         self.__decks.append(deck)
         print(f"decks: {self.__decks}")
 
-    def setDeckToDeckList(self,i,deck):
+    def setDeckToDeckList(self, i, deck):
         self.__decks[i] = deck
 
     def removeDeckFromDeckList(self, deck):
         self.__decks.remove(deck)
 
-    def selectDeck(self, deck: tkinter.Button):
+    def selectDeck(self, deck):
         for d in self.__decks:
-            if d==deck:
-                deck.configure(bg="#336633")
+            if d == deck:
+                d.config(highlightthickness=5)
             else:
-                d.configure(bg="#ffffff")
+                d.config(highlightthickness=0)
+
+    # TODO : 입장 버튼 클릭 시 실행 될 이벤트. 서버로 무작위 매칭을 요청합니다.
+    def enterToRandomMatchingBattle(self):
+        pass
