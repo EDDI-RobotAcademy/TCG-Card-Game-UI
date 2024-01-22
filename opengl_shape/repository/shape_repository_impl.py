@@ -38,6 +38,13 @@ class ShapeRepositoryImpl(ShapeRepository):
             if shape_id == shape.get_shape_id():
                 shape.set_is_draw_border(is_draw_border)
 
+    def set_shape_visible(self, shape_id, is_visible):
+        print("ShapeRepositoryImpl: set_shape_visible()")
+
+        scene_shapes = self.get_opengl_shape_drawer_scene()
+        for shape in scene_shapes:
+            if shape_id == shape.get_shape_id():
+                shape.set_is_visible(is_visible)
 
 
 
