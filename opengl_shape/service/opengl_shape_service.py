@@ -21,3 +21,7 @@ class OpenglShapeDrawerService(abc.ABC):
     @abc.abstractmethod
     def set_local_translation(self, shape_id, local_translation):
         pass
+
+    @abc.abstractmethod
+    def set_color_gradient(self, shape_id, is_color_gradient):
+        pass

@@ -37,6 +37,12 @@ class OpenglShapeDrawerServiceImpl(OpenglShapeDrawerService):
         print("OpenglShapeDrawerServiceImpl: set_local_translation()")
         self.__shapeRepository.set_local_translation(shape_id, local_translation)
 
+    def set_color_gradient(self, shape_id, is_color_gradient):
+        print("OpenglShapeDrawerServiceImpl: set_color_gradient()")
+        self.__shapeRepository.set_color_gradient(shape_id, is_color_gradient)
+
+
+
 
 
 
