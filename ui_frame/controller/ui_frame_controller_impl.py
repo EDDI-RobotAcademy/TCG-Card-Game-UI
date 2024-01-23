@@ -89,7 +89,8 @@ class UiFrameControllerImpl(UiFrameController):
         self.__accountRegisterFrameService.injectTransmitIpcChannel(transmitIpcChannel)
         self.__loginMenuFrameService.injectTransmitIpcChannel(transmitIpcChannel)
         self.__mainMenuFrameService.injectTransmitIpcChannel(transmitIpcChannel)
-
+        self.__battleLobbyFrameService.injectTransmitIpcChannel(transmitIpcChannel)
+        self.__lobbyMenuFrameService.injectTransmitIpcChannel(transmitIpcChannel)
         self.__sessionService.injectTransmitIpcChannel(transmitIpcChannel)
 
     def requestToInjectReceiveIpcChannel(self, receiveIpcChannel):
@@ -99,7 +100,8 @@ class UiFrameControllerImpl(UiFrameController):
         self.__accountRegisterFrameService.injectReceiveIpcChannel(receiveIpcChannel)
         self.__loginMenuFrameService.injectReceiveIpcChannel(receiveIpcChannel)
         self.__mainMenuFrameService.injectReceiveIpcChannel(receiveIpcChannel)
-
+        self.__battleLobbyFrameService.injectReceiveIpcChannel(receiveIpcChannel)
+        self.__lobbyMenuFrameService.injectReceiveIpcChannel(receiveIpcChannel)
         self.__sessionService.injectReceiveIpcChannel(receiveIpcChannel)
 
     def requestToInjectMusicPlayIpcChannel(self, musicPlayIpcChannel):

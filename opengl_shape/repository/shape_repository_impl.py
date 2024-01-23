@@ -1,3 +1,5 @@
+from opengl_shape.entity.circle import Circle
+from opengl_shape.entity.image_item import ImageItem
 from opengl_shape.entity.rectangle import Rectangle
 from opengl_shape.entity.shape_scene import ShapeDrawerScene
 from opengl_shape.repository.shape_repository import ShapeRepository
@@ -29,6 +31,22 @@ class ShapeRepositoryImpl(ShapeRepository):
         self.__opengl_shape_drawer_scene.add_shape(rectangle)
 
         return rectangle.get_shape_id()
+
+    def create_circle(self, color, center_vertex, radius):
+        print("ShapeRepositoryImpl: create_circle()")
+
+        circle = Circle(color, center_vertex, radius)
+        self.__opengl_shape_drawer_scene.add_shape(circle)
+
+        return circle.get_shape_id()
+
+    def create_image(self, color, vertices, image_path):
+        print("ShapeRepositoryImpl: create_image()")
+
+        imageItem = ImageItem(color, vertices, image_path)
+        self.__opengl_shape_drawer_scene.add_shape(imageItem)
+
+        return imageItem.get_shape_id()
 
     def process_border(self, shape_id, is_draw_border):
         print("ShapeRepositoryImpl: process_border()")

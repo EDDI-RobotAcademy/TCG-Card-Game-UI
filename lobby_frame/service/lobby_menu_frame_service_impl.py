@@ -1,7 +1,10 @@
 import tkinter
 
+from battle_lobby_frame.controller.battle_lobby_frame_controller_impl import BattleLobbyFrameControllerImpl
 from lobby_frame.repository.lobby_menu_frame_repository_impl import LobbyMenuFrameRepositoryImpl
 from lobby_frame.service.lobby_menu_frame_service import LobbyMenuFrameService
+from lobby_frame.service.request.enter_battle_lobby_request import EnterBattleLobbyRequest
+from session.repository.session_repository_impl import SessionRepositoryImpl
 
 
 class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
@@ -11,6 +14,8 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
             cls.__instance.__lobbyMenuFrameRepository = LobbyMenuFrameRepositoryImpl.getInstance()
+            cls.__instance.__sessionRepository = SessionRepositoryImpl.getInstance()
+            cls.__instance.__battleLobbyFrameController = BattleLobbyFrameControllerImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -29,8 +34,23 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
         label.place(relx=0.5, rely=0.2, anchor="center", bordermode="outside")  # 가운데 정렬
 
         battle_entrance_button = tkinter.Button(lobbyMenuFrame, text="대전 입장", bg="#2E2BE2", fg="white",
-                                      command=lambda: switchFrameWithMenuName("battle-lobby"), width=36, height=2)
+                                       width=36, height=2)
         battle_entrance_button.place(relx=0.5, rely=0.35, anchor="center")
+
+        def onClickEntrance(event):
+            try:
+                response = self.__lobbyMenuFrameRepository.enterToBattleLobby(
+                    EnterBattleLobbyRequest(
+                        self.__sessionRepository.readRedisTokenSessionInfoToFile()
+                    )
+                )
+                if response is not None and response != "":
+                    self.__battleLobbyFrameController.createDeckButtons(response)
+                    switchFrameWithMenuName("battle-lobby")
+            except Exception as e:
+                print(e)
+
+        battle_entrance_button.bind("<Button-1>", onClickEntrance)
 
         my_card_button = tkinter.Button(lobbyMenuFrame, text="내 카드", bg="#2E2BE2", fg="white",
                                                 command=lambda: switchFrameWithMenuName("my-card"), width=36,
@@ -47,3 +67,9 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
         exit_button.place(relx=0.5, rely=0.8, anchor="center")
 
         return lobbyMenuFrame
+
+    def injectTransmitIpcChannel(self, transmitIpcChannel):
+        self.__lobbyMenuFrameRepository.saveTransmitIpcChannel(transmitIpcChannel)
+
+    def injectReceiveIpcChannel(self, receiveIpcChannel):
+        self.__lobbyMenuFrameRepository.saveReceiveIpcChannel(receiveIpcChannel)
