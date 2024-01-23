@@ -4,7 +4,6 @@ from card_frame.service.card_frame_service_impl import CardFrameServiceImpl
 from my_card_frame.repository.my_card_frame_repository_impl import MyCardFrameRepositoryImpl
 from my_card_frame.service.my_card_frame_service import MyCardFrameService
 from my_deck_frame.service.my_deck_frame_service_impl import MyDeckFrameRepositoryImpl, MyDeckFrameServiceImpl
-from my_deck_frame_sample.service.my_deck_frame_sample_service_impl import MyDeckFrameSampleServiceImpl
 # from my_deck_frame_sample.repository.my_deck_frame_sample_repository_impl import MyDeckFrameSampleRepositoryImpl
 
 
@@ -19,7 +18,6 @@ class MyCardFrameServiceImpl(MyCardFrameService):
             cls.__instance.__myDeckFrameService = MyDeckFrameServiceImpl.getInstance()
             cls.__instance.__cardFrameService = CardFrameServiceImpl.getInstance()
             # cls.__instance.__myDeckFrameSampleRepository = MyDeckFrameSampleRepositoryImpl.getInstance()
-            cls.__instance.__myDeckFrameSampleService = MyDeckFrameSampleServiceImpl.getInstance()
         return cls.__instance
 
     @classmethod

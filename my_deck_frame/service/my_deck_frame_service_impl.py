@@ -2,8 +2,7 @@ import tkinter
 
 from my_deck_frame.repository.my_deck_frame_repository_impl import MyDeckFrameRepositoryImpl
 from my_deck_frame.service.my_deck_frame_service import MyDeckFrameService
-from transparent_background_frame.repository.transparent_background_frame_repository_impl import \
-    TransparentBackgroundFrameRepositoryImpl
+
 
 
 class MyDeckFrameServiceImpl(MyDeckFrameService):
@@ -13,7 +12,6 @@ class MyDeckFrameServiceImpl(MyDeckFrameService):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
             cls.__instance.__myDeckFrameRepository = MyDeckFrameRepositoryImpl.getInstance()
-            cls.__instance.__transparentBackgroundFrameRepository = TransparentBackgroundFrameRepositoryImpl.getInstance()
         return cls.__instance
 
     @classmethod
