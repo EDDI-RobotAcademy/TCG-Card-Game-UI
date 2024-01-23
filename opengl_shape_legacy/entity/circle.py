@@ -1,4 +1,4 @@
-from opengl_shape.entity.shape import Shape
+from opengl_shape_legacy.entity.shape import Shape
 
 
 class Circle(Shape):

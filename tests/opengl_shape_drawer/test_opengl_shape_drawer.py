@@ -4,7 +4,7 @@ import unittest
 from pyopengltk import OpenGLFrame
 from OpenGL import GL, GLU, GLUT
 
-from opengl_shape.service.opengl_shape_service_impl import OpenglShapeDrawerServiceImpl
+from opengl_shape_legacy.service.opengl_shape_service_impl import OpenglShapeDrawerServiceImpl
 
 
 class TestFrame(OpenGLFrame):

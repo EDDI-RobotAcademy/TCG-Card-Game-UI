@@ -1,10 +1,10 @@
 import os
 
-from battle_field_unit_card.entity.unit_card import UnitCard
-from battle_field_unit_card.repository.battle_field_unit_card_repository import BattleFieldUnitCardRepository
-from opengl_shape.entity.circle import Circle
-from opengl_shape.entity.image_item import ImageItem
-from opengl_shape.entity.rectangle import Rectangle
+from battle_field_unit_card_legacy.entity.unit_card import UnitCard
+from battle_field_unit_card_legacy.repository.battle_field_unit_card_repository import BattleFieldUnitCardRepository
+from opengl_shape_legacy.entity.circle import Circle
+from opengl_shape_legacy.entity.image_item import ImageItem
+from opengl_shape_legacy.entity.rectangle import Rectangle
 
 
 class BattleFieldUnitCardRepositoryImpl(BattleFieldUnitCardRepository):
