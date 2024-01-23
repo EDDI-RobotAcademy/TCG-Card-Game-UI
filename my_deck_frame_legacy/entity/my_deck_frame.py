@@ -1,8 +1,8 @@
 import tkinter
 
 
-class CardFrame(tkinter.Frame):
+class MyDeckFrame(tkinter.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.master = master
-        self.configure(bg="#AE905E", width=800, height=800)
+        self.configure(bg="#D7AC87", width=400, height=800)

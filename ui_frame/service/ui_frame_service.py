@@ -27,15 +27,11 @@ class UiFrameService(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def registerMyCardUiFrame(self, myCardFrame):
+    def registerMyCardMainUiFrame(self, myCardMainFrame):
         pass
 
     @abc.abstractmethod
     def registerMyDeckUiFrame(self, myDeckFrame):
-        pass
-
-    @abc.abstractmethod
-    def registerCardUiFrame(self, cardFrame):
         pass
 
     @abc.abstractmethod
