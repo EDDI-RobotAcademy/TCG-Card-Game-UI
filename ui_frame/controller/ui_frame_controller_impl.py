@@ -5,7 +5,7 @@ from battle_lobby_frame.service.battle_lobby_frame_service_impl import BattleLob
 from card_shop_frame.service.card_shop_service_impl import CardShopMenuFrameServiceImpl
 from lobby_frame.service.lobby_menu_frame_service_impl import LobbyMenuFrameServiceImpl
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
-from my_card_frame.service.my_card_frame_service_impl import MyCardFrameServiceImpl
+from my_card_main_frame.service.my_card_main_frame_service_impl import MyCardMainFrameServiceImpl
 from my_deck_frame.service.my_deck_frame_service_impl import MyDeckFrameServiceImpl
 
 from session.service.session_service_impl import SessionServiceImpl
@@ -28,7 +28,7 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__lobbyMenuFrameService = LobbyMenuFrameServiceImpl.getInstance()
             cls.__instance.__battleLobbyFrameService = BattleLobbyFrameServiceImpl.getInstance()
             cls.__instance.__cardShopMenuFrameService = CardShopMenuFrameServiceImpl.getInstance()
-            cls.__instance.__myCardFrameService = MyCardFrameServiceImpl.getInstance()
+            cls.__instance.__myCardMainFrameService = MyCardMainFrameServiceImpl.getInstance()
             cls.__instance.__myDeckFrameService = MyDeckFrameServiceImpl.getInstance()
 
             cls.__instance.__sessionService = SessionServiceImpl.getInstance()
@@ -61,8 +61,8 @@ class UiFrameControllerImpl(UiFrameController):
         lobbyMenuFrame = self.__lobbyMenuFrameService.createLobbyUiFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerLobbyMenuUiFrame(lobbyMenuFrame)
 
-        myCardFrame = self.__myCardFrameService.createMyCardUiFrame(rootWindow, self.switchFrameWithMenuName)
-        self.__uiFrameService.registerMyCardUiFrame(myCardFrame)
+        myCardMainFrame = self.__myCardMainFrameService.createMyCardMainUiFrame(rootWindow, self.switchFrameWithMenuName)
+        self.__uiFrameService.registerMyCardMainUiFrame(myCardMainFrame)
 
         myDeckFrame = self.__myDeckFrameService.createMyDeckUiFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerMyDeckUiFrame(myDeckFrame)

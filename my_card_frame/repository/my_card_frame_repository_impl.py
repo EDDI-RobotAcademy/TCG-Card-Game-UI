@@ -17,7 +17,7 @@ class MyCardFrameRepositoryImpl(MyCardFrameRepository):
         return cls.__instance
 
     def createMyCardFrame(self, rootWindow):
-        print("MainMenuFrameRepositoryImpl: createMainMenuFrame()")
-        myCardFrame = MyCardFrame(rootWindow, width=1200, height=800)
+        print("MyCardFrameRepositoryImpl: createMyCardFrame()")
+        myCardFrame = MyCardFrame(rootWindow)
 
         return myCardFrame
