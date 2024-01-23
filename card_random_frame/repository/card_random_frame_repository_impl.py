@@ -16,8 +16,9 @@ class CardRandomFrameRepositoryImpl(CardRandomFrameRepository):
             cls.__instance = cls()
         return cls.__instance
 
-    def createCardFrame(self, rootWindow):
-        print("CardFrameRepositoryImpl: createCardFrame()")
+    def createCardRandomFrame(self, rootWindow):
+        print("CardRandomFrameRepositoryImpl: createCardRandomFrame()")
         cardRandomFrame = CardRandomFrame(rootWindow)
 
         return cardRandomFrame
+
