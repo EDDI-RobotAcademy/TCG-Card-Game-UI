@@ -7,6 +7,7 @@ from lobby_frame.service.lobby_menu_frame_service_impl import LobbyMenuFrameServ
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
 from my_card_main_frame.service.my_card_main_frame_service_impl import MyCardMainFrameServiceImpl
 
+
 from session.service.session_service_impl import SessionServiceImpl
 
 from ui_frame.controller.ui_frame_controller import UiFrameController
@@ -28,7 +29,6 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__battleLobbyFrameService = BattleLobbyFrameServiceImpl.getInstance()
             cls.__instance.__cardShopMenuFrameService = CardShopMenuFrameServiceImpl.getInstance()
             cls.__instance.__myCardMainFrameService = MyCardMainFrameServiceImpl.getInstance()
-
             cls.__instance.__sessionService = SessionServiceImpl.getInstance()
         return cls.__instance
 
@@ -61,7 +61,6 @@ class UiFrameControllerImpl(UiFrameController):
 
         myCardMainFrame = self.__myCardMainFrameService.createMyCardMainUiFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerMyCardMainUiFrame(myCardMainFrame)
-
 
         cardShopMenuFrame = (
             self.__cardShopMenuFrameService.createCardShopUiFrame(rootWindow, self.switchFrameWithMenuName))
