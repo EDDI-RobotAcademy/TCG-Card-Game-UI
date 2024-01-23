@@ -1,6 +1,6 @@
 import tkinter
 
-from card_frame.service.card_frame_service_impl import CardFrameServiceImpl
+from my_card_frame.service.my_card_frame_service_impl import CardFrameServiceImpl
 from my_card_main_frame.repository.my_card_main_frame_repository_impl import MyCardMainFrameRepositoryImpl
 from my_card_main_frame.service.my_card_main_frame_service import MyCardMainFrameService
 from my_deck_frame.service.my_deck_frame_service_impl import MyDeckFrameRepositoryImpl, MyDeckFrameServiceImpl
