@@ -35,10 +35,6 @@ class UiFrameService(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def registerCardUiFrame(self, cardFrame):
-        pass
-
-    @abc.abstractmethod
     def registerCardShopMenuUiFrame(self, cardShopMenuFrame):
         pass
 
