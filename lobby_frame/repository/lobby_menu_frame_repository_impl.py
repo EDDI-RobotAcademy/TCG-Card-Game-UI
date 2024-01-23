@@ -28,6 +28,14 @@ class LobbyMenuFrameRepositoryImpl(LobbyMenuFrameRepository):
         self.__transmitIpcChannel.put(enterBattleLobbyRequest)
         return self.__receiveIpcChannel.get()
 
+        # print(f"lobby_manu_frame Error")
+        # result = [{"deckName" : "이거되나"},
+        #           {"deckName" : "ㅋㅋㅋㅋㅋㅋ"},
+        #           {"deckName": "오제발"},
+        #           {"deckName": "안되면망함"}
+        # ]
+        # return result
+
 
     def saveReceiveIpcChannel(self, receiveIpcChannel):
         self.__receiveIpcChannel = receiveIpcChannel

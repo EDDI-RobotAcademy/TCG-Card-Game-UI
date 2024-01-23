@@ -48,7 +48,6 @@ class BattleLobbyFrameRepositoryImpl(BattleLobbyFrameRepository):
             else:
                 d.config(highlightthickness=0)
 
-    # TODO : 입장 버튼 클릭 시 실행 될 이벤트. 덱을 골랐을 때 호출 시 서버로 무작위 매칭을 요청합니다.
     def enterToRandomMatchingBattle(self, request):
         if self.__currentDeckIndex is not None:
             print(f"self.__currentDeckIndex : {self.__currentDeckIndex}")
