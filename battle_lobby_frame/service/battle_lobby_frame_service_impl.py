@@ -41,10 +41,10 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
                               fg="#FFFFFF", bg="#000000")
         label.place(relx=0.5, rely=0.15, anchor="center")
 
-        # TODO: 테스트코드지워야함
-        request = [{'deckName': "ㅁㄴㅇㄻㄴㅇㄹ"}, {'deckName': "123123"}, {'deckName': "568567858"}, {'deckName': "ㅋㅋㅋㅋㅋㅋㅋ"},
-                   {'deckName': "ㅋ시발 "}, {'deckName': "되냐??"}]
-        self.createBattleLobbyMyDeckButton(request)
+        # # TODO: 테스트코드지워야함
+        # request = [{'deckName': "ㅁㄴㅇㄻㄴㅇㄹ"}, {'deckName': "123123"}, {'deckName': "568567858"}, {'deckName': "ㅋㅋㅋㅋㅋㅋㅋ"},
+        #            {'deckName': "ㅋ시발 "}, {'deckName': "되냐??"}]
+        # self.createBattleLobbyMyDeckButton(request)
 
         enterButton = tkinter.Button(self.__battleLobbyFrame, text="입장", font=("Arial", 20))
         enterButton.place(relx=0.5, rely=0.85, anchor="center", width=180, height=60)

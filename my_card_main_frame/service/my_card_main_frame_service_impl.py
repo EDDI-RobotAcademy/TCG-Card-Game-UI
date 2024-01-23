@@ -1,9 +1,8 @@
 import tkinter
 
-from my_card_frame.service.my_card_frame_service_impl import CardFrameServiceImpl
 from my_card_main_frame.repository.my_card_main_frame_repository_impl import MyCardMainFrameRepositoryImpl
 from my_card_main_frame.service.my_card_main_frame_service import MyCardMainFrameService
-from my_deck_frame.service.my_deck_frame_service_impl import MyDeckFrameRepositoryImpl, MyDeckFrameServiceImpl
+from my_deck_frame_legacy.service.my_deck_frame_service_impl import MyDeckFrameRepositoryImpl, MyDeckFrameServiceImpl
 
 
 class MyCardMainFrameServiceImpl(MyCardMainFrameService):
@@ -15,7 +14,6 @@ class MyCardMainFrameServiceImpl(MyCardMainFrameService):
             cls.__instance.__myCardMainFrameRepository = MyCardMainFrameRepositoryImpl.getInstance()
             cls.__instance.__myDeckFrameRepository = MyDeckFrameRepositoryImpl.getInstance()
             cls.__instance.__myDeckFrameService = MyDeckFrameServiceImpl.getInstance()
-            cls.__instance.__cardFrameService = CardFrameServiceImpl.getInstance()
         return cls.__instance
 
     @classmethod

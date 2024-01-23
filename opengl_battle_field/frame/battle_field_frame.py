@@ -50,6 +50,42 @@ class BattleFieldFrame(OpenGLFrame):
                 shape.global_translate(translation)
 
 
+    def summon_units(self):
+        project_root = get_project_root()
+        unitList = self.battle_field.get_unit_card()
+        unitCount = len(unitList)
+        print(f"unitList : {unitList}")
+
+        if unitCount > 2:
+            placeX = 500 * (unitCount)
+            #placeX = 1500.0
+            self.resize_units()
+            summon_unit = UnitCard(local_translation=(placeX*3/(unitCount), 0))
+            summon_unit.init_shapes(
+                os.path.join(project_root, "local_storage", "card_images", f"card{unitCount + 1}.png"))
+            self.battle_field.add_unit_card(summon_unit)
+            summon_unit.redraw_shapes_with_scale(unitCount)
+
+        else:
+            placeX = 500 * (unitCount)
+            summon_unit = UnitCard(local_translation=(placeX, 0))
+            summon_unit.init_shapes(
+                os.path.join(project_root, "local_storage", "card_images", f"card{unitCount + 1}.png"))
+            self.battle_field.add_unit_card(summon_unit)
+
+
+
+    def resize_units(self):
+        unitList = self.battle_field.get_unit_card()
+
+        unitCount = len(unitList).__float__()
+        print(f"unitCount : {unitCount}")
+
+        for unit in unitList:
+            unit.redraw_shapes_with_scale(unitCount)
+
+
+
     def initgl(self):
         GL.glClearColor(1.0, 1.0, 1.0, 0.0)
         GL.glOrtho(0, self.width, self.height, 0, -1, 1)
@@ -64,6 +100,7 @@ class BattleFieldFrame(OpenGLFrame):
 
             equipped_mark = unit_shapes[3]
             equipped_mark.set_visible(not equipped_mark.get_visible())
+
 
         self.redraw()
 
