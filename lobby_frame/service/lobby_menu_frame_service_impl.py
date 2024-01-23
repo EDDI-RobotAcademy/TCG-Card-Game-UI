@@ -53,7 +53,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
         battle_entrance_button.bind("<Button-1>", onClickEntrance)
 
         my_card_button = tkinter.Button(lobbyMenuFrame, text="내 카드", bg="#2E2BE2", fg="white",
-                                                command=lambda: switchFrameWithMenuName("my-card"), width=36,
+                                                command=lambda: switchFrameWithMenuName("my-card-main"), width=36,
                                                 height=2)
         my_card_button.place(relx=0.5, rely=0.5, anchor="center")
 
