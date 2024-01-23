@@ -1,5 +1,5 @@
-from my_card_frame.entity.my_card_frame import MyCardFrame
-from my_card_frame.repository.my_card_frame_repository import MyCardFrameRepository
+from my_card_frame_legacy.entity.my_card_frame import MyCardFrame
+from my_card_frame_legacy.repository.my_card_frame_repository import MyCardFrameRepository
 
 
 class MyCardFrameRepositoryImpl(MyCardFrameRepository):

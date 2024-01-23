@@ -1,5 +1,5 @@
-from my_deck_frame.entity.my_deck_frame import MyDeckFrame
-from my_deck_frame.repository.my_deck_frame_repository import MyDeckFrameRepository
+from my_deck_frame_legacy.entity.my_deck_frame import MyDeckFrame
+from my_deck_frame_legacy.repository.my_deck_frame_repository import MyDeckFrameRepository
 
 
 class MyDeckFrameRepositoryImpl(MyDeckFrameRepository):
