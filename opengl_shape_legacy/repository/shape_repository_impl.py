@@ -1,8 +1,8 @@
-from opengl_shape.entity.circle import Circle
-from opengl_shape.entity.image_item import ImageItem
-from opengl_shape.entity.rectangle import Rectangle
-from opengl_shape.entity.shape_scene import ShapeDrawerScene
-from opengl_shape.repository.shape_repository import ShapeRepository
+from opengl_shape_legacy.entity.circle import Circle
+from opengl_shape_legacy.entity.image_item import ImageItem
+from opengl_shape_legacy.entity.rectangle import Rectangle
+from opengl_shape_legacy.entity.shape_scene import ShapeDrawerScene
+from opengl_shape_legacy.repository.shape_repository import ShapeRepository
 
 
 class ShapeRepositoryImpl(ShapeRepository):
