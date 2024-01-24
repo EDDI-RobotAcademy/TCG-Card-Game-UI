@@ -2,6 +2,7 @@ class BattleField:
     def __init__(self):
         self.unit_card = []
         self.tomb = []
+        self.card_deck = []
 
     def get_unit_card(self):
         return self.unit_card
@@ -14,3 +15,9 @@ class BattleField:
 
     def add_tomb(self, tomb):
         self.tomb.append(tomb)
+
+    def get_card_deck(self):
+        return self.card_deck
+
+    def add_card_deck(self, card_deck):
+        self.card_deck.append(card_deck)

@@ -24,6 +24,12 @@ class BattleFieldFrameRenderer:
             for shape in tomb_shapes:
                 self._render_shape(shape)
 
+        card_deck_list = self.battle_field_scene.get_card_deck()
+        for card_deck in card_deck_list:
+            card_deck_shapes = card_deck.get_card_deck_shapes()
+            for shape in card_deck_shapes:
+                self._render_shape(shape)
+
         self.window.tkSwapBuffers()
 
     def _render_shape(self, shape):
