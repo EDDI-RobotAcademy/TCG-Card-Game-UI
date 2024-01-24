@@ -7,9 +7,11 @@ class CustomProtocol(Enum):
 
     SESSION_LOGIN = 3
 
-    ENTER_BATTLE_LOBBY = 4
-    ENTER_MATCH = 5
-    DECK_LIST = 333
+    DECK_NAME_LIST = 11
+    ENTER_MATCH = 12
+    READY_FOR_BATTLE = 13
+    DECK_CARD_LIST = 14
+
     PROGRAM_EXIT = 4444
 
 
