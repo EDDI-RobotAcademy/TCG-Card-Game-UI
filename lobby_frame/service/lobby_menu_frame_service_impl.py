@@ -107,6 +107,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             )
             if deckNameResponse is not None and deckNameResponse != "":
                 self.__battleLobbyFrameController.createDeckButtons(deckNameResponse)
+                self.__battleLobbyFrameController.startCheckTime()
                 switchFrameWithMenuName("battle-lobby")
         except Exception as e:
             print(f"switchToBattleLobby Error: {e}")

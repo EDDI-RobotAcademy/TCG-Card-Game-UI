@@ -48,10 +48,10 @@ class BattleLobbyFrameRepositoryImpl(BattleLobbyFrameRepository):
             else:
                 d.config(highlightthickness=0)
 
-    def enterToRandomMatchingBattle(self, request):
+    def requestCardList(self, RequestDeckCardList):
         if self.__currentDeckIndex is not None:
             print(f"self.__currentDeckIndex : {self.__currentDeckIndex}")
-            self.__transmitIpcChannel.put(request)
+            self.__transmitIpcChannel.put(RequestDeckCardList)
             return self.__receiveIpcChannel.get()
         else:
             print('덱을 골라주세요!!')

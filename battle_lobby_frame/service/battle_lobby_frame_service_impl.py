@@ -52,14 +52,15 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
         # TODO : 입장 버튼 클릭 시 현재 선택 된 덱으로 매칭을 요청함.
         def onClickEnter(event):
             try:
-                response = self.__battleLobbyFrameRepository.enterToRandomMatchingBattle(
+                response = self.__battleLobbyFrameRepository.requestCardList(
                     RequestDeckCardList(self.__battleLobbyFrameRepository.getCurrentDeckIndex(),
                                         self.__sessionRepository.readRedisTokenSessionInfoToFile())
                 )
 
                 print(f"BattleLobbyFrameService response: {response}")
                 if response is not None and response != "":
-                    opponentId = response.get("opponentSessionId")
+                    pass
+                    # opponentId = response.get("opponentSessionId")
                     # TODO : battleField 도메인을 호출하여 프레임을 전환해야합니다.
                     # switchFrameWithMenuName('battle-field')
                     # TODO : 또한 opponentId를 넘겨주어 상대편 아이디가 표시되게 합니다.
@@ -102,6 +103,10 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
 
                 deck.bind("<Button-1>", lambda event, current_deck=deck: onClick(event, current_deck))
                 self.__battleLobbyFrameRepository.addDeckToDeckList(deck)
+
+    def checkTimeForDeckSelection(self):
+        pass
+
 
     def injectTransmitIpcChannel(self, transmitIpcChannel):
         self.__battleLobbyFrameRepository.saveTransmitIpcChannel(transmitIpcChannel)
