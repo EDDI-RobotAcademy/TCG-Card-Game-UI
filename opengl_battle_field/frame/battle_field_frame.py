@@ -34,8 +34,7 @@ class BattleFieldFrame(OpenGLFrame):
         project_root = get_project_root()
 
         your_tomb = Tomb()
-        your_tomb.init_shapes()
-
+        your_tomb.init_shapes(os.path.join(project_root, "local_storage", "image", "battle_field", "tomb.jpeg"))
         self.battle_field.add_tomb(your_tomb)
 
         first_unit = UnitCard()
