@@ -20,7 +20,7 @@ class BattleFieldFrameRenderer:
 
         tomb_list = self.battle_field_scene.get_tomb()
         for tomb in tomb_list:
-            tomb_shapes = tomb.get_tomb()
+            tomb_shapes = tomb.get_tomb_shapes()
             for shape in tomb_shapes:
                 self._render_shape(shape)
 
