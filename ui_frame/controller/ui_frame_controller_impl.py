@@ -8,6 +8,7 @@ from main_frame.service.main_menu_frame_service_impl import MainMenuFrameService
 from my_card_main_frame.service.my_card_main_frame_service_impl import MyCardMainFrameServiceImpl
 from card_random_frame.service.card_random_frame_service_impl import CardRandomFrameServiceImpl
 
+
 from session.service.session_service_impl import SessionServiceImpl
 
 from ui_frame.controller.ui_frame_controller import UiFrameController
@@ -63,7 +64,6 @@ class UiFrameControllerImpl(UiFrameController):
 
         myCardMainFrame = self.__myCardMainFrameService.createMyCardMainUiFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerMyCardMainUiFrame(myCardMainFrame)
-
 
         cardShopMenuFrame = (
             self.__cardShopMenuFrameService.createCardShopUiFrame(rootWindow, self.switchFrameWithMenuName))
