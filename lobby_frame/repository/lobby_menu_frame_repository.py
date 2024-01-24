@@ -15,5 +15,13 @@ class LobbyMenuFrameRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def enterToBattleLobby(self, enterBattleLobbyRequest):
+    def requestDeckNameList(self, deckNameRequest):
+        pass
+
+    @abc.abstractmethod
+    def startMatching(self, startMatchingRequest):
+        pass
+
+    @abc.abstractmethod
+    def checkMatching(self, checkMatchingRequest):
         pass

@@ -12,3 +12,11 @@ class LobbyMenuFrameService(abc.ABC):
     @abc.abstractmethod
     def injectReceiveIpcChannel(self, receiveIpcChannel):
         pass
+
+    @abc.abstractmethod
+    def readyForMatching(self, switchFrameWithMenuName):
+        pass
+
+    @abc.abstractmethod
+    def switchToBattleLobby(self, switchFrameWithMenuName):
+        pass

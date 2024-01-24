@@ -12,11 +12,15 @@ class BattleLobbyFrameRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def addDeckIdToDeckIdList(self, deckId):
+        pass
+
+    @abc.abstractmethod
     def selectDeck(self, deck):
         pass
 
     @abc.abstractmethod
-    def enterToRandomMatchingBattle(self,request):
+    def requestCardList(self, RequestDeckCardList):
         pass
 
     @abc.abstractmethod
