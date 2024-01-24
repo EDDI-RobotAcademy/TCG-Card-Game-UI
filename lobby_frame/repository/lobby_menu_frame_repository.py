@@ -19,7 +19,7 @@ class LobbyMenuFrameRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def startMatching(self, startMatchingRequest):
+    def startMatch(self, startMatchingRequest):
         pass
 
     @abc.abstractmethod
