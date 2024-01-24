@@ -12,6 +12,10 @@ class BattleLobbyFrameRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def addDeckIdToDeckIdList(self, deckId):
+        pass
+
+    @abc.abstractmethod
     def selectDeck(self, deck):
         pass
 

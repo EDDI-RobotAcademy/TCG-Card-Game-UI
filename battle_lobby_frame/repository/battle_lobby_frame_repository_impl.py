@@ -8,7 +8,8 @@ from utility.image_generator import ImageGenerator
 class BattleLobbyFrameRepositoryImpl(BattleLobbyFrameRepository):
     __instance = None
     __decks = []
-    __currentDeckIndex = None
+    __deckIds = []
+    __currentDeckId = None
     __receiveIpcChannel = None
     __transmitIpcChannel = None
 
@@ -37,30 +38,32 @@ class BattleLobbyFrameRepositoryImpl(BattleLobbyFrameRepository):
 
     def addDeckToDeckList(self, deck):
         self.__decks.append(deck)
-        print(f"decks: {self.__decks}")
 
+    def addDeckIdToDeckIdList(self, deckId):
+        self.__deckIds.append(deckId)
 
     def selectDeck(self, deck):
         for i, d in enumerate(self.__decks):
             if d == deck:
                 d.config(highlightthickness=5)
-                self.__currentDeckIndex = i
+                self.__currentDeckId = self.__deckIds[i]
             else:
                 d.config(highlightthickness=0)
 
     def requestCardList(self, RequestDeckCardList):
-        if self.__currentDeckIndex is not None:
-            print(f"self.__currentDeckIndex : {self.__currentDeckIndex}")
+        if self.__currentDeckId is not None:
+            print(f"self.__currentDeckId : {self.__currentDeckId}")
             self.__transmitIpcChannel.put(RequestDeckCardList)
             return self.__receiveIpcChannel.get()
         else:
             print('덱을 골라주세요!!')
 
     def exitBattleLobby(self):
-        self.__currentDeckIndex = None
+        self.__currentDeckId = None
         for deck in self.__decks:
             deck.destroy()
         self.__decks.clear()
+        self.__deckIds.clear()
 
     def saveReceiveIpcChannel(self, receiveIpcChannel):
         self.__receiveIpcChannel = receiveIpcChannel
