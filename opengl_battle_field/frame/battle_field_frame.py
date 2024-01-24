@@ -33,18 +33,22 @@ class BattleFieldFrame(OpenGLFrame):
     def make_battle_field(self):
         project_root = get_project_root()
 
-        your_tomb = Tomb()
+        opponent_tomb = Tomb()
+        opponent_tomb.init_shapes(os.path.join(project_root, "local_storage", "image", "battle_field", "tomb.jpeg"))
+        self.battle_field.add_tomb(opponent_tomb)
+
+        your_tomb = Tomb(local_translation=(1670, 780))
         your_tomb.init_shapes(os.path.join(project_root, "local_storage", "image", "battle_field", "tomb.jpeg"))
         self.battle_field.add_tomb(your_tomb)
 
-        first_unit = UnitCard()
-        first_unit.init_shapes(os.path.join(project_root, "local_storage", "card_images", "card1.png"))
-
-        second_unit = UnitCard(local_translation=(500, 0))
-        second_unit.init_shapes(os.path.join(project_root, "local_storage", "card_images", "card2.png"))
-
-        self.battle_field.add_unit_card(first_unit)
-        self.battle_field.add_unit_card(second_unit)
+        # first_unit = UnitCard()
+        # first_unit.init_shapes(os.path.join(project_root, "local_storage", "card_images", "card1.png"))
+        #
+        # second_unit = UnitCard(local_translation=(500, 0))
+        # second_unit.init_shapes(os.path.join(project_root, "local_storage", "card_images", "card2.png"))
+        #
+        # self.battle_field.add_unit_card(first_unit)
+        # self.battle_field.add_unit_card(second_unit)
 
 
     def apply_global_translation(self, translation):

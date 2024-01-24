@@ -9,6 +9,7 @@ class Tomb:
         self.shapes = []
         self.local_translation = local_translation
         self.scale = scale
+
     def get_tomb_shapes(self):
         return self.shapes
     def change_local_translation(self, _translation):
@@ -27,7 +28,6 @@ class Tomb:
         unit_illustration = ImageElement(image_path=image_path,
                                          vertices=vertices)
         self.add_shape(unit_illustration)
-
 
     def init_shapes(self, image_path):
         self.__imagePath = image_path
