@@ -1,15 +1,18 @@
 from OpenGL import GL, GLU, GLUT
+from pyopengltk import OpenGLFrame
+from opengl_shape.rectangle import Rectangle
 
-from make_my_deck_frame.frame.make_my_deck_frame import MakeMyDeckFrame
-from opengl_color.alpha_background import AlphaBackground
 
-
-class MyCardMainFrame(AlphaBackground, MakeMyDeckFrame):
-    def __init__(self, master=None, **kwargs):
+class MyCardMainFrame(OpenGLFrame):
+    def __init__(self, master=None, width=1200, height=800, **kwargs):
         super().__init__(master, **kwargs)
         self.master = master
         self.darkened = False
-        self.darken_alpha = 0.5
+        self.width = width
+        self.height = height
+        self.background_rectangle = Rectangle(color=(0.0, 0.0, 0.0, 0),
+                                              vertices=[(0, 0), (self.width, 0), (self.width, self.height),
+                                                        (0, self.height)])
 
     def initgl(self):
         GL.glClearColor(0.8706, 0.7216, 0.5294, 0)
@@ -29,5 +32,11 @@ class MyCardMainFrame(AlphaBackground, MakeMyDeckFrame):
         GL.glVertex2f(self.width, self.height)
         GL.glVertex2f(0, self.height)
         GL.glEnd()
+
+        self.tkSwapBuffers()
+
+    def set_background_alpha(self, alpha):
+        self.background_rectangle.set_alpha(alpha)
+        self.background_rectangle.draw()
 
         self.tkSwapBuffers()
