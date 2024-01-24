@@ -6,7 +6,9 @@ from OpenGL import GL, GLU
 from common.utility import get_project_root
 from opengl_battle_field.entity.battle_field import BattleField
 from opengl_battle_field.renderer.battle_field_frame_renderer import BattleFieldFrameRenderer
+from opengl_battle_field_panel.battle_field_panel import BattleFieldPanel
 from opengl_battle_field_unit.unit_card import UnitCard
+from opengl_card_deck.card_deck import CardDeck
 from opengl_tomb.tomb import Tomb
 
 
@@ -40,6 +42,28 @@ class BattleFieldFrame(OpenGLFrame):
         your_tomb = Tomb(local_translation=(1670, 780))
         your_tomb.init_shapes(os.path.join(project_root, "local_storage", "image", "battle_field", "tomb.jpeg"))
         self.battle_field.add_tomb(your_tomb)
+
+        opponent_card_deck = CardDeck()
+        opponent_card_deck.init_shapes(os.path.join(project_root, "local_storage", "image", "battle_field", "opponent_card_deck.png"),
+                                       os.path.join(project_root, "local_storage", "image", "battle_field", "opponent_card_deck.png"),
+                                       os.path.join(project_root, "local_storage", "image", "battle_field", "opponent_card_deck.png"),
+                                       os.path.join(project_root, "local_storage", "image", "battle_field", "opponent_card_deck.png"),
+                                       os.path.join(project_root, "local_storage", "image", "battle_field", "opponent_card_deck.png"))
+        self.battle_field.add_card_deck(opponent_card_deck)
+
+        your_card_deck = CardDeck(local_translation=(1650, 320))
+        your_card_deck.init_shapes(
+            os.path.join(project_root, "local_storage", "image", "battle_field", "your_card_deck.png"),
+            os.path.join(project_root, "local_storage", "image", "battle_field", "your_card_deck.png"),
+            os.path.join(project_root, "local_storage", "image", "battle_field", "your_card_deck.png"),
+            os.path.join(project_root, "local_storage", "image", "battle_field", "your_card_deck.png"),
+            os.path.join(project_root, "local_storage", "image", "battle_field", "your_card_deck.png"))
+        self.battle_field.add_card_deck(your_card_deck)
+
+        battle_field_panel = BattleFieldPanel()
+        battle_field_panel.init_shapes(os.path.join(project_root, "local_storage", "image", "battle_field", "battle_field_panel.jpeg"))
+        self.battle_field.add_battle_field_panel(battle_field_panel)
+
 
         # first_unit = UnitCard()
         # first_unit.init_shapes(os.path.join(project_root, "local_storage", "card_images", "card1.png"))
