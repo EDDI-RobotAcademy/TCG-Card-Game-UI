@@ -19,3 +19,8 @@ class BattleLobbyFrameControllerImpl(BattleLobbyFrameController):
 
     def createDeckButtons(self, response):
         self.__battleLobbyFrameService.createBattleLobbyMyDeckButton(response)
+
+
+    def startCheckTime(self):
+        self.__battleLobbyFrameService.checkTimeForDeckSelection()
+

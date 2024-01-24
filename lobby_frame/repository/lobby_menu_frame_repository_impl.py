@@ -24,8 +24,8 @@ class LobbyMenuFrameRepositoryImpl(LobbyMenuFrameRepository):
 
         return lobbyMenuFrame
 
-    def enterToBattleLobby(self, enterBattleLobbyRequest):
-        self.__transmitIpcChannel.put(enterBattleLobbyRequest)
+    def requestDeckNameList(self, deckNameRequest):
+        self.__transmitIpcChannel.put(deckNameRequest)
         return self.__receiveIpcChannel.get()
 
         # print(f"lobby_manu_frame Error")
@@ -36,6 +36,13 @@ class LobbyMenuFrameRepositoryImpl(LobbyMenuFrameRepository):
         # ]
         # return result
 
+    def startMatch(self, startMatchingRequest):
+        self.__transmitIpcChannel.put(startMatchingRequest)
+        return self.__receiveIpcChannel.get()
+
+    def checkMatching(self, checkMatchingRequest):
+        self.__transmitIpcChannel.put(checkMatchingRequest)
+        return self.__receiveIpcChannel.get()
 
     def saveReceiveIpcChannel(self, receiveIpcChannel):
         self.__receiveIpcChannel = receiveIpcChannel

@@ -63,10 +63,10 @@ class BattleFieldFrame(OpenGLFrame):
         print(f"unitList : {unitList}")
 
         if unitCount > 2:
-            placeX = 500 * (unitCount)
+            placeX = 500 * (unitCount) * 3/(unitCount)
             #placeX = 1500.0
             self.resize_units()
-            summon_unit = UnitCard(local_translation=(placeX*3/(unitCount), 0))
+            summon_unit = UnitCard(local_translation=(placeX, 0))
             summon_unit.init_shapes(
                 os.path.join(project_root, "local_storage", "card_images", f"card{unitCount + 1}.png"))
             self.battle_field.add_unit_card(summon_unit)

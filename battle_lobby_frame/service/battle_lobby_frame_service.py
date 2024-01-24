@@ -10,6 +10,10 @@ class BattleLobbyFrameService(abc.ABC):
     def createBattleLobbyMyDeckButton(self, request):
         pass
 
+    @abc.abstractmethod
+    def checkTimeForDeckSelection(self):
+        pass
+
 
     @abc.abstractmethod
     def injectTransmitIpcChannel(self, transmitIpcChannel):
