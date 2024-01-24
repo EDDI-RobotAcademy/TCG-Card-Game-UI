@@ -1,8 +1,7 @@
 import tkinter
 
-
-from my_card_main_frame.repository.my_card_main_frame_repository_impl import MyCardMainFrameRepositoryImpl
-from my_card_main_frame.service.my_card_main_frame_service import MyCardMainFrameService
+from my_card_main_frame_legacy.repository.my_card_main_frame_repository_impl import MyCardMainFrameRepositoryImpl
+from my_card_main_frame_legacy.service.my_card_main_frame_service import MyCardMainFrameService
 from my_deck_frame_legacy.service.my_deck_frame_service_impl import MyDeckFrameRepositoryImpl, MyDeckFrameServiceImpl
 
 
@@ -29,7 +28,7 @@ class MyCardMainFrameServiceImpl(MyCardMainFrameService):
         myCardMainFrame = self.__myCardMainFrameRepository.createMyCardMainFrame(rootWindow)
 
         deck_generation_button = tkinter.Button(myCardMainFrame, text="덱 생성", bg="#2E7D32", fg="white",
-                                                command=lambda:[myCardMainFrame.alphaBackground(), myCardMainFrame.makeMyDeckFrame()], width=24, height=2)
+                                                command=lambda:myCardMainFrame.set_background_alpha(0.5), width=24, height=2)
         deck_generation_button.place(relx=0.85, rely=0.8, anchor="center")
 
         go_back_to_lobby_button = tkinter.Button(myCardMainFrame, text="로비로 돌아가기", bg="#C62828", fg="white",
