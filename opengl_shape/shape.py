@@ -14,6 +14,12 @@ class Shape(abc.ABC):
     def global_translate(self, global_translate):
         self.global_translation = global_translate
 
+    def set_alpha(self, new_alpha):
+        if len(self.color) == 4:
+            self.color = self.color[:3] + (new_alpha,)
+        else:
+            self.color = self.color + (new_alpha,)
+
     @abc.abstractmethod
     def draw(self):
         pass
