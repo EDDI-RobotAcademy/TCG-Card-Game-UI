@@ -30,6 +30,12 @@ class BattleFieldFrameRenderer:
             for shape in card_deck_shapes:
                 self._render_shape(shape)
 
+        battle_field_panel_list = self.battle_field_scene.get_battle_field_panel()
+        for battle_field_panel in battle_field_panel_list:
+            battle_field_panel_shapes = battle_field_panel.get_battle_field_panel_shapes()
+            for shape in battle_field_panel_shapes:
+                self._render_shape(shape)
+
         self.window.tkSwapBuffers()
 
     def _render_shape(self, shape):
