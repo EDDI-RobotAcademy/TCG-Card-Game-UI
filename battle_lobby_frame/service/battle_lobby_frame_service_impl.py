@@ -52,7 +52,7 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
         def onClickEnter(event):
             try:
                 response = self.__battleLobbyFrameRepository.requestCardList(
-                    RequestDeckCardList(self.__battleLobbyFrameRepository.getCurrentDeckIndex(),
+                    RequestDeckCardList(self.__battleLobbyFrameRepository.getCurrentDeckId(),
                                         self.__sessionRepository.readRedisTokenSessionInfoToFile())
                 )
 

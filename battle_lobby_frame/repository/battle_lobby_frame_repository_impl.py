@@ -34,7 +34,7 @@ class BattleLobbyFrameRepositoryImpl(BattleLobbyFrameRepository):
         return self.__decks
 
     def getCurrentDeckIndex(self):
-        return self.__currentDeckIndex
+        return self.__currentDeckId
 
     def addDeckToDeckList(self, deck):
         self.__decks.append(deck)
