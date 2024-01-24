@@ -7,6 +7,7 @@ from common.utility import get_project_root
 from opengl_battle_field.entity.battle_field import BattleField
 from opengl_battle_field.renderer.battle_field_frame_renderer import BattleFieldFrameRenderer
 from opengl_battle_field_unit.unit_card import UnitCard
+from opengl_tomb.tomb import Tomb
 
 
 class BattleFieldFrame(OpenGLFrame):
@@ -32,6 +33,11 @@ class BattleFieldFrame(OpenGLFrame):
     def make_battle_field(self):
         project_root = get_project_root()
 
+        your_tomb = Tomb()
+        your_tomb.init_shapes()
+
+        self.battle_field.add_tomb(your_tomb)
+
         first_unit = UnitCard()
         first_unit.init_shapes(os.path.join(project_root, "local_storage", "card_images", "card1.png"))
 
@@ -40,6 +46,7 @@ class BattleFieldFrame(OpenGLFrame):
 
         self.battle_field.add_unit_card(first_unit)
         self.battle_field.add_unit_card(second_unit)
+
 
     def apply_global_translation(self, translation):
         unit_card_list = self.battle_field.get_unit_card()
@@ -101,7 +108,6 @@ class BattleFieldFrame(OpenGLFrame):
             equipped_mark = unit_shapes[3]
             equipped_mark.set_visible(not equipped_mark.get_visible())
 
-
         self.redraw()
 
     def reshape(self, width, height):
@@ -119,4 +125,3 @@ class BattleFieldFrame(OpenGLFrame):
         self.apply_global_translation((50, 50))
         self.tkSwapBuffers()
         self.after(100, self.renderer.render)
-

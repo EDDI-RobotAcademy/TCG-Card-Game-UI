@@ -1,5 +1,7 @@
 from OpenGL import GL
 
+from opengl_tomb import tomb
+
 
 class BattleFieldFrameRenderer:
     def __init__(self, battle_field_scene, window):
@@ -16,8 +18,13 @@ class BattleFieldFrameRenderer:
             for shape in unit_shapes:
                 self._render_shape(shape)
 
+        tomb_list = self.battle_field_scene.get_tomb()
+        for tomb in tomb_list:
+            tomb_shapes = tomb.get_tomb()
+            for shape in tomb_shapes:
+                self._render_shape(shape)
+
         self.window.tkSwapBuffers()
 
     def _render_shape(self, shape):
         shape.draw()
-
