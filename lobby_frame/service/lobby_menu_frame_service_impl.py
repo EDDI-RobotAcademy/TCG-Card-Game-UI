@@ -42,15 +42,18 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
         def onClickEntrance(event):
             try:
-                watingResponse = self.__lobbyMenuFrameRepository.startMatch(
+                afterBattleMatchResponse = self.__lobbyMenuFrameRepository.startMatch(
                     StartMatchingRequest(
                         self.__sessionRepository.readRedisTokenSessionInfoToFile()
                     )
                 )
-                if watingResponse is not None and watingResponse != "":
-                    self.readyForMatching(switchFrameWithMenuName)
-                    # self.__battleLobbyFrameController.createDeckButtons(response)
-                    # switchFrameWithMenuName("battle-lobby")
+
+                is_success_to_insert_wait_queue = False
+
+                if afterBattleMatchResponse:
+                    is_success_to_insert_wait_queue = afterBattleMatchResponse.get("is_success")
+
+                
             except Exception as e:
                 print(f"onClickEntrance Error: {e}")
 
