@@ -55,6 +55,10 @@ class UiFrameServiceImpl(UiFrameService):
         print(f"{Fore.GREEN}UiFrameServiceImpl: registerCardShopMenuUiFrame(){Style.RESET_ALL}")
         self.__uiFrameRepository.registerUiFrame("card-shop-menu", cardShopMenuFrame)
 
+    def registerCardRandomUiFrame(self, cardRandomFrame):
+        print(f"{Fore.GREEN}UiFrameServiceImpl: registerCardRandomMenuUiFrame(){Style.RESET_ALL}")
+        self.__uiFrameRepository.registerUiFrame("card-random", cardRandomFrame)
+
     def injectTransmitIpcChannel(self, transmitIpcChannel):
         print(f"{Fore.GREEN}UiFrameServiceImpl: injectTransmitIpcChannel(){Style.RESET_ALL}")
         self.__uiFrameRepository.saveTransmitIpcChannel(transmitIpcChannel)
