@@ -2,7 +2,7 @@ import tkinter
 
 from battle_lobby_frame.repository.battle_lobby_frame_repository_impl import BattleLobbyFrameRepositoryImpl
 from battle_lobby_frame.service.battle_lobby_frame_service import BattleLobbyFrameService
-from battle_lobby_frame.service.request.request_enter_random_match import RequestEnterRandomMatch
+from battle_lobby_frame.service.request.request_deck_card_list import RequestDeckCardList
 from session.repository.session_repository_impl import SessionRepositoryImpl
 from utility.image_generator import ImageGenerator
 
@@ -24,7 +24,7 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
             cls.__instance = super().__new__(cls)
             cls.__instance.__battleLobbyFrameRepository = BattleLobbyFrameRepositoryImpl.getInstance()
             cls.__instance.__sessionRepository = SessionRepositoryImpl.getInstance()
-            #cls.__instance.__imageGenerator = ImageGenerator.getInstance()
+            # cls.__instance.__imageGenerator = ImageGenerator.getInstance()
         #  cls.__instance.__battleRoomListFrameRepository = BattleRoomListFrameRepositoryImpl.getInstance()
         return cls.__instance
 
@@ -53,32 +53,31 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
         def onClickEnter(event):
             try:
                 response = self.__battleLobbyFrameRepository.enterToRandomMatchingBattle(
-                    RequestEnterRandomMatch(self.__battleLobbyFrameRepository.getCurrentDeckIndex(),
-                                            self.__sessionRepository.readRedisTokenSessionInfoToFile())
+                    RequestDeckCardList(self.__battleLobbyFrameRepository.getCurrentDeckIndex(),
+                                        self.__sessionRepository.readRedisTokenSessionInfoToFile())
                 )
 
                 print(f"BattleLobbyFrameService response: {response}")
                 if response is not None and response != "":
                     opponentId = response.get("opponentSessionId")
-                    #TODO : battleField 도메인을 호출하여 프레임을 전환해야합니다.
-                    #switchFrameWithMenuName('battle-field')
-                    #TODO : 또한 opponentId를 넘겨주어 상대편 아이디가 표시되게 합니다.
+                    # TODO : battleField 도메인을 호출하여 프레임을 전환해야합니다.
+                    # switchFrameWithMenuName('battle-field')
+                    # TODO : 또한 opponentId를 넘겨주어 상대편 아이디가 표시되게 합니다.
 
             except Exception as e:
                 print(e)
 
         enterButton.bind("<Button-1>", onClickEnter)
 
-        exitButton = tkinter.Button(self.__battleLobbyFrame,
-                                    text="나가기", font=("Arial", 20))
-        exitButton.place(relx=0.8, rely=0.85, anchor="center", width=180, height=60)
-
-        def onClickExit(event):
-            self.__battleLobbyFrameRepository.exitBattleLobby()
-            switchFrameWithMenuName('lobby-menu')
-
-        exitButton.bind("<Button-1>", onClickExit)
-
+        # exitButton = tkinter.Button(self.__battleLobbyFrame,
+        #                             text="나가기", font=("Arial", 20))
+        # exitButton.place(relx=0.8, rely=0.85, anchor="center", width=180, height=60)
+        #
+        # def onClickExit(event):
+        #     self.__battleLobbyFrameRepository.exitBattleLobby()
+        #     switchFrameWithMenuName('lobby-menu')
+        #
+        # exitButton.bind("<Button-1>", onClickExit)
 
         return self.__battleLobbyFrame
 
@@ -92,12 +91,11 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
             for i, deckData in enumerate(request):
                 generatedImage = imageGenerator.getUnselectedDeckImage()
                 deck = tkinter.Canvas(self.__battleLobbyFrame, highlightthickness=0, highlightbackground="#93FFE8")
-                deck.create_image(150,40, image=generatedImage)
-                deck.create_text(150, 40, text=deckData["deckName"], font=("Arial",15))
+                deck.create_image(150, 40, image=generatedImage)
+                deck.create_text(150, 40, text=deckData["deckName"], font=("Arial", 15))
                 deck.pack()
                 deck.place(relx=relX(i), rely=0.4 + (i // 2 * 0.15),
                            anchor="center", width=300, height=80)
-
 
                 def onClick(event, _deck):
                     self.__battleLobbyFrameRepository.selectDeck(_deck)

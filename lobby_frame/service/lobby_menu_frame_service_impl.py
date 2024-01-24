@@ -1,9 +1,12 @@
+import time
 import tkinter
 
 from battle_lobby_frame.controller.battle_lobby_frame_controller_impl import BattleLobbyFrameControllerImpl
+from battle_lobby_frame.service.request.request_deck_name_list_for_battle import RequestDeckNameListForBattle
 from lobby_frame.repository.lobby_menu_frame_repository_impl import LobbyMenuFrameRepositoryImpl
 from lobby_frame.service.lobby_menu_frame_service import LobbyMenuFrameService
-from lobby_frame.service.request.enter_battle_lobby_request import EnterBattleLobbyRequest
+from lobby_frame.service.request.check_matching_request import CheckMatchingRequest
+from lobby_frame.service.request.start_matching_request import StartMatchingRequest
 from session.repository.session_repository_impl import SessionRepositoryImpl
 
 
@@ -34,32 +37,33 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
         label.place(relx=0.5, rely=0.2, anchor="center", bordermode="outside")  # 가운데 정렬
 
         battle_entrance_button = tkinter.Button(lobbyMenuFrame, text="대전 입장", bg="#2E2BE2", fg="white",
-                                       width=36, height=2)
+                                                width=36, height=2)
         battle_entrance_button.place(relx=0.5, rely=0.35, anchor="center")
 
         def onClickEntrance(event):
             try:
-                response = self.__lobbyMenuFrameRepository.enterToBattleLobby(
-                    EnterBattleLobbyRequest(
+                watingResponse = self.__lobbyMenuFrameRepository.startMatch(
+                    StartMatchingRequest(
                         self.__sessionRepository.readRedisTokenSessionInfoToFile()
                     )
                 )
-                if response is not None and response != "":
-                    self.__battleLobbyFrameController.createDeckButtons(response)
-                    switchFrameWithMenuName("battle-lobby")
+                if watingResponse is not None and watingResponse != "":
+                    self.readyForMatching(switchFrameWithMenuName)
+                    # self.__battleLobbyFrameController.createDeckButtons(response)
+                    # switchFrameWithMenuName("battle-lobby")
             except Exception as e:
-                print(e)
+                print(f"onClickEntrance Error: {e}")
 
         battle_entrance_button.bind("<Button-1>", onClickEntrance)
 
         my_card_button = tkinter.Button(lobbyMenuFrame, text="내 카드", bg="#2E2BE2", fg="white",
-                                                command=lambda: switchFrameWithMenuName("my-card-main"), width=36,
-                                                height=2)
+                                        command=lambda: switchFrameWithMenuName("my-card-main"), width=36,
+                                        height=2)
         my_card_button.place(relx=0.5, rely=0.5, anchor="center")
 
         card_shop_button = tkinter.Button(lobbyMenuFrame, text="상점", bg="#2E2BE2", fg="white",
-                                        command=lambda: switchFrameWithMenuName("card-shop-menu"), width=36,
-                                        height=2)
+                                          command=lambda: switchFrameWithMenuName("card-shop-menu"), width=36,
+                                          height=2)
         card_shop_button.place(relx=0.5, rely=0.65, anchor="center")
 
         exit_button = tkinter.Button(lobbyMenuFrame, text="종료", bg="#C62828", fg="white",
@@ -73,3 +77,36 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
     def injectReceiveIpcChannel(self, receiveIpcChannel):
         self.__lobbyMenuFrameRepository.saveReceiveIpcChannel(receiveIpcChannel)
+
+
+
+    def readyForMatching(self, switchFrameWithMenuName):
+        try:
+            isReadyForBattle = False
+            while isReadyForBattle == False:
+                readyResponse = self.__lobbyMenuFrameRepository.checkMatching(
+                    CheckMatchingRequest(self.__sessionRepository.readRedisTokenSessionInfoToFile())
+                )
+
+                if readyResponse is not None and readyResponse != "":
+                    isReadyForBattle = True
+                    self.switchToBattleLobby(switchFrameWithMenuName)
+                else:
+                    time.sleep(3)
+
+
+        except Exception as e:
+            print(f"readyForMatching Error: {e}")
+
+    def switchToBattleLobby(self, switchFrameWithMenuName):
+        try:
+            deckNameResponse = self.__lobbyMenuFrameRepository.requestDeckNameList(
+                RequestDeckNameListForBattle(
+                    self.__sessionRepository.readRedisTokenSessionInfoToFile()
+                )
+            )
+            if deckNameResponse is not None and deckNameResponse != "":
+                self.__battleLobbyFrameController.createDeckButtons(deckNameResponse)
+                switchFrameWithMenuName("battle-lobby")
+        except Exception as e:
+            print(f"switchToBattleLobby Error: {e}")
