@@ -5,6 +5,7 @@ class ResponseGeneration(Enum):
     ACCOUNT_LOGIN = 2
 
     BATTLE_MATCH = 12
+    BATTLE_READY = 13
 
     PROGRAM_EXIT = 4444
 

@@ -53,7 +53,20 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                 if afterBattleMatchResponse:
                     is_success_to_insert_wait_queue = afterBattleMatchResponse.get("is_success")
 
-                
+                if is_success_to_insert_wait_queue:
+                    while True:
+                        isMatchingSuccessResponse = self.__lobbyMenuFrameRepository.checkMatching(
+                            CheckMatchingRequest(
+                                self.__sessionRepository.readRedisTokenSessionInfoToFile()
+                            )
+                        )
+
+                        # print(f"isMatchingSuccessResponse: {isMatchingSuccessResponse}")
+                        isMatchingSuccessResponse.get("")
+
+                        time.sleep(3)
+                else:
+                    print("Invalid or missing response data.")
             except Exception as e:
                 print(f"onClickEntrance Error: {e}")
 
