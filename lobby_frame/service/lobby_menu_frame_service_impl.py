@@ -62,7 +62,17 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                         )
 
                         # print(f"isMatchingSuccessResponse: {isMatchingSuccessResponse}")
-                        isMatchingSuccessResponse.get("")
+                        currentStatus = isMatchingSuccessResponse.get("current_status")
+                        print(f"after request matching status: {currentStatus}")
+
+                        if currentStatus == "FAIL":
+                            print("배틀 매칭 실패!")
+                            break
+
+                        if currentStatus == "SUCCESS":
+                            print("배틀 매칭 성공!")
+                            # TODO: 배틀 필드 화면 그리면 연결해서 화면 전환 진행하세요
+                            # switchFrameWithMenuName("")
 
                         time.sleep(3)
                 else:
