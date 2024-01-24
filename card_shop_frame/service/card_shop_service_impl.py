@@ -29,7 +29,7 @@ class CardShopMenuFrameServiceImpl(CardShopMenuFrameService):
         label.place(relx=0.5, rely=0.2, anchor="center", bordermode="outside")  # 가운데 정렬
 
         get_new_cards_button = tkinter.Button(cardShopMenuFrame, text="카드 뽑기", bg="#2E2BE2", fg="white",
-                                                command=lambda: switchFrameWithMenuName("lobby-menu"), width=36,
+                                                command=lambda: switchFrameWithMenuName("card-random"), width=36,
                                                 height=4)
         get_new_cards_button.place(relx=0.5, rely=0.5, anchor="center")
 
