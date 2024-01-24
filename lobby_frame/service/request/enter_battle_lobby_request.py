@@ -12,3 +12,7 @@ class EnterBattleLobbyRequest:
             "protocolNumber": self.__protocolNumber,
             "sessionId": self.__sessionId
         }
+
+    def __str__(self):
+        return f"EnterBattleLobbyRequest(protocolNumber={self.__protocolNumber}, sessionId={self.__sessionId})"
+
