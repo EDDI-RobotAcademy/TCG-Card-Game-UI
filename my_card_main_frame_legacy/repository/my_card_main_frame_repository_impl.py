@@ -1,7 +1,5 @@
-import tkinter
-
-from my_card_main_frame.entity.my_card_main_frame import MyCardMainFrame
-from my_card_main_frame.repository.my_card_main_frame_repository import MyCardMainFrameRepository
+from my_card_main_frame_legacy.entity.my_card_main_frame import MyCardMainFrame
+from my_card_main_frame_legacy.repository.my_card_main_frame_repository import MyCardMainFrameRepository
 
 
 class MyCardMainFrameRepositoryImpl(MyCardMainFrameRepository):
@@ -20,6 +18,6 @@ class MyCardMainFrameRepositoryImpl(MyCardMainFrameRepository):
 
     def createMyCardMainFrame(self, rootWindow):
         print("MyCardFrameRepositoryImpl: createMyCardFrame()")
-        myCardMainFrame = MyCardMainFrame(rootWindow, width=1200, height=800)
+        myCardMainFrame = MyCardMainFrame(rootWindow)
 
         return myCardMainFrame
