@@ -52,7 +52,7 @@ class ImageGenerator:
 
     def __setImageByDirectoryAndName(self, directoryName, imageName):
         openDeckImage = Image.open(os.path.join(os.getcwd(), "local_storage", "image", directoryName, f"{imageName}.png"))
-        #openDeckImage = Image.open(os.path.join(os.getcwd(), "../../../local_storage", "image", directoryName, f"{imageName}.png"))
+        # openDeckImage = Image.open(os.path.join(os.getcwd(), "../../../local_storage", "image", directoryName, f"{imageName}.png"))
         thumbnailImage = openDeckImage.copy()
         thumbnailImage.thumbnail((300, 300), )
         result = ImageTk.PhotoImage(thumbnailImage)
