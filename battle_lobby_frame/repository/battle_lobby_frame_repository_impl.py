@@ -33,7 +33,7 @@ class BattleLobbyFrameRepositoryImpl(BattleLobbyFrameRepository):
     def getDeckIndex(self):
         return self.__decks
 
-    def getCurrentDeckIndex(self):
+    def getCurrentDeckId(self):
         return self.__currentDeckId
 
     def addDeckToDeckList(self, deck):

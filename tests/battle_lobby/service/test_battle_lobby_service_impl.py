@@ -10,16 +10,18 @@ class TestBattleLobbyServiceImpl(unittest.TestCase):
     __battleLobbyFrameService = BattleLobbyFrameServiceImpl.getInstance()
 
     def test_battle_lobby_service_impl(self):
-        requestData = [{'deckName': "ㅁㄴㅇㄻㄴㅇㄹ"}, {'deckName': "123123"}, {'deckName': "568567858"}, {'deckName': "ㅋㅋㅋㅋㅋㅋㅋ"},
-                   {'deckName': "ㅋ시발 "}, {'deckName': "되냐??"}]
+        requestData = {'abc':[{'1': "ㅁㄴㅇㄻㄴㅇㄹ"}, {'2': "123123"}, {'3': "568567858"}, {'4': "ㅋㅋㅋㅋㅋㅋㅋ"},
+                   {'5': "ㅋ시발 "}, {'6': "되냐??"}]}
         battleLobbyFrame = tkinter.Tk()
 
 
-        self.__battleLobbyFrameService.createBattleLobbyMyDeckButton(requestData)
+       # self.__battleLobbyFrameService.createBattleLobbyMyDeckButton(requestData)
+
 
 
 
         battleLobbyFrame.mainloop()
+        self.__battleLobbyFrameService.checkTimeForDeckSelection(battleLobbyFrame)
 
 
 if __name__ == '__main__':

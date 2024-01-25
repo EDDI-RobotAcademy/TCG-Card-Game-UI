@@ -18,6 +18,9 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
     __battleLobbyFrame = None
     __onClickEventList = []
     __imageGenerator = None
+    __timer_id = None
+    __remain_time = 30
+    __timer = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -40,6 +43,9 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
         label = tkinter.Label(self.__battleLobbyFrame, text="WATING ROOM FOR BATTLE", font=("Helvetica", 50, "bold"),
                               fg="#FFFFFF", bg="#000000")
         label.place(relx=0.5, rely=0.15, anchor="center")
+
+        self.__timer = tkinter.Label(self.__battleLobbyFrame, text="30", font=("Helvetica", 30, "bold"), fg="#FF0000", bg="#000000")
+        self.__timer.place(relx=0.5, rely=0.25, anchor="center")
 
         # # TODO: 테스트코드지워야함
         # request = [{'deckName': "ㅁㄴㅇㄻㄴㅇㄹ"}, {'deckName': "123123"}, {'deckName': "568567858"}, {'deckName': "ㅋㅋㅋㅋㅋㅋㅋ"},
@@ -83,37 +89,47 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
         return self.__battleLobbyFrame
 
     # TODO : Controller가 호출해야함.
-    def createBattleLobbyMyDeckButton(self, request=None):
+    def createBattleLobbyMyDeckButton(self, request: dict = None):
         # request의 형태는 {ACCOUNT_DECK_LIST:[{’1’:’ㅋㅋㅋ’}, {’2’: ‘아이고’], {’3’:’이것은 세 번째 덱 이름’}]}
+
+        # request = {"ACCOUNT_DECK_LIST":[{"1":'ㅋㅋㅋㅋ'}, {"23": "아이고"}, {'3':'이것은 세 번째 덱 이름'}]}
+
         imageGenerator = ImageGenerator.getInstance()
         if request:
             def relX(j):
                 return 0.3 if j % 2 == 0 else 0.7
 
-            deckDataList = request[0]
+            for deckDataList in request.values():
 
-            for i, deckData in enumerate(deckDataList):
-                for deckId, deckName in deckData.items():
+                for i, deckData in enumerate(deckDataList):
+                    for deckId, deckName in deckData.items():
+                        generatedImage = imageGenerator.getUnselectedDeckImage()
+                        deck = tkinter.Canvas(self.__battleLobbyFrame, highlightthickness=0,
+                                              highlightbackground="#93FFE8")
+                        deck.create_image(150, 40, image=generatedImage)
+                        deck.create_text(150, 40, text=deckName, font=("Arial", 15))
+                        deck.pack()
+                        deck.place(relx=relX(i), rely=0.4 + (i // 2 * 0.15),
+                                   anchor="center", width=300, height=80)
 
-                    generatedImage = imageGenerator.getUnselectedDeckImage()
-                    deck = tkinter.Canvas(self.__battleLobbyFrame, highlightthickness=0, highlightbackground="#93FFE8")
-                    deck.create_image(150, 40, image=generatedImage)
-                    deck.create_text(150, 40, text=deckName, font=("Arial", 15))
-                    deck.pack()
-                    deck.place(relx=relX(i), rely=0.4 + (i // 2 * 0.15),
-                               anchor="center", width=300, height=80)
+                        def onClick(event, _deck):
+                            self.__battleLobbyFrameRepository.selectDeck(_deck)
 
-                    def onClick(event, _deck):
-                        self.__battleLobbyFrameRepository.selectDeck(_deck)
-
-                    deck.bind("<Button-1>", lambda event, current_deck=deck: onClick(event, current_deck))
-                    self.__battleLobbyFrameRepository.addDeckToDeckList(deck)
-                    self.__battleLobbyFrameRepository.addDeckIdToDeckIdList(deckId)
+                        deck.bind("<Button-1>", lambda event, current_deck=deck: onClick(event, current_deck))
+                        self.__battleLobbyFrameRepository.addDeckToDeckList(deck)
+                        self.__battleLobbyFrameRepository.addDeckIdToDeckIdList(deckId)
 
     # Todo: timer task에서 30초를 카운트 하는 기능을 만들어 넣어야함
     def checkTimeForDeckSelection(self):
-        pass
+        if self.__timer_id is None:
+            self.updateTimer()
 
+    def updateTimer(self):
+        self.__timer.configure(text=str(self.__remain_time))
+
+        if self.__remain_time > 0:
+            self.__remain_time -=1
+            self.__timer_id = self.__battleLobbyFrame.after(1000, self.updateTimer)
 
     def injectTransmitIpcChannel(self, transmitIpcChannel):
         self.__battleLobbyFrameRepository.saveTransmitIpcChannel(transmitIpcChannel)
