@@ -36,5 +36,5 @@ class BattleLobbyFrameRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def getCurrentDeckIndex(self):
+    def getCurrentDeckId(self):
         pass

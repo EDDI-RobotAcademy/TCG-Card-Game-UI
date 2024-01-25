@@ -68,12 +68,12 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                         if currentStatus == "FAIL":
                             print("배틀 매칭 실패!")
                             break
-
-                        if currentStatus == "SUCCESS":
+                        else:
+                        # if currentStatus == "SUCCESS":
                             print("배틀 매칭 성공!")
                             # TODO: 배틀 필드 화면 그리면 연결해서 화면 전환 진행하세요
                             self.switchToBattleLobby(switchFrameWithMenuName)
-
+                            break
                             #switchFrameWithMenuName("")
 
                         time.sleep(3)

@@ -11,11 +11,6 @@ class BattleLobbyFrameService(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def checkTimeForDeckSelection(self):
-        pass
-
-
-    @abc.abstractmethod
     def injectTransmitIpcChannel(self, transmitIpcChannel):
         pass
 
