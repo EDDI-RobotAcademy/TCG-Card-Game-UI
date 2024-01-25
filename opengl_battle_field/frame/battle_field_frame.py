@@ -6,11 +6,8 @@ from OpenGL import GL, GLU
 from common.utility import get_project_root
 from opengl_battle_field.entity.battle_field import BattleField
 from opengl_battle_field.renderer.battle_field_frame_renderer import BattleFieldFrameRenderer
-from opengl_battle_field_panel.battle_field_panel import BattleFieldPanel
 from opengl_battle_field_unit.unit_card import UnitCard
-from opengl_card_deck.card_deck import CardDeck
-from opengl_tomb.tomb import Tomb
-from tests.ugly_test_card.opengl_battle_field_card.card import Card
+from opengl_battle_field_card.card import Card
 
 
 class BattleFieldFrame(OpenGLFrame):

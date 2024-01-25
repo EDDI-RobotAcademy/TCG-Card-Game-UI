@@ -1,6 +1,6 @@
-from common.protocol import TypeProtocol
-from tests.ugly_test_card.opengl_battle_field_card_controller.card_controller import CardController
-from tests.ugly_test_card.opengl_battle_field_item.item_card import ItemCard
+from common.card_type import CardType
+from opengl_battle_field_card_controller.card_controller import CardController
+from opengl_battle_field_item.item_card import ItemCard
 
 
 class CardControllerImpl(CardController):
@@ -11,7 +11,7 @@ class CardControllerImpl(CardController):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
             cls.__cardTypeTable[
-                TypeProtocol.ITEM.value] = cls.__instance.itemCardInitShapes
+                CardType.ITEM.value] = cls.__instance.itemCardInitShapes
 
 
     def __init__(self):

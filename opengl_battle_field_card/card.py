@@ -1,12 +1,9 @@
 import os
 
 from common.utility import get_project_root
-from opengl_shape.circle import Circle
 from opengl_shape.image_element import ImageElement
 from opengl_shape.rectangle import Rectangle
-from tests.ugly_test_card.opengl_battle_field_card_controller.card_controller_impl import CardController, \
-    CardControllerImpl
-from tests.ugly_test_card.opengl_battle_field_item.item_card import ItemCard
+from opengl_battle_field_card_controller.card_controller_impl import CardControllerImpl
 
 
 class Card:
@@ -74,35 +71,3 @@ class Card:
         card_shapes = card_controller_shapes(self.local_translation)
         for shape in card_shapes:
             self.add_shape(shape)
-
-
-
-    def redraw_shapes_with_scale(self, scale:float):
-        print(f"scale : {scale}")
-
-        self.shapes = []
-
-       # self.scale = scale * self.scale
-        self.scale = 3/(scale+1)
-        rectangle_width = 350 * self.scale
-        rectangle_height = 500 * self.scale
-
-        print(f"local_translation = {self.local_translation}")
-        self.local_translation = ((self.scale * self.local_translation[0]) ,0)
-
-        self.create_attached_tool_card_rectangle(color=(0.6, 0.4, 0.6, 1.0),
-                                                 vertices=[(20* self.scale, 20* self.scale), (20* self.scale+rectangle_width, 20* self.scale),
-                                                           (20* self.scale+rectangle_width, 20* self.scale+rectangle_height), (20* self.scale, 20* self.scale+rectangle_height)])
-
-        self.create_card_base_rectangle(color=(0.0, 0.78, 0.34, 1.0),
-                                        vertices=[(0, 0), (rectangle_width, 0),
-                                                           (rectangle_width, rectangle_height), (0, rectangle_height)])
-
-        self.create_illustration(image_path=self.__imagePath,
-                                 vertices=[(25* self.scale, 25* self.scale), (rectangle_width-25* self.scale, 25* self.scale),
-                                           (rectangle_width-25* self.scale, rectangle_height-25* self.scale), (25* self.scale, rectangle_height-25* self.scale)])
-
-        project_root = get_project_root()
-        self.create_equipped_mark(image_path=os.path.join(project_root, "local_storage", "card_images", "equip_white.jpg"),
-                                  vertices=[(rectangle_width+40* self.scale, 30* self.scale), (rectangle_width+80* self.scale, 30* self.scale),
-                                            (rectangle_width+80* self.scale, 70* self.scale), (rectangle_width+40* self.scale, 70* self.scale)])
