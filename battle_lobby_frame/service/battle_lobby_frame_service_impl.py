@@ -4,6 +4,7 @@ from battle_lobby_frame.repository.battle_lobby_frame_repository_impl import Bat
 from battle_lobby_frame.service.battle_lobby_frame_service import BattleLobbyFrameService
 from battle_lobby_frame.service.request.request_deck_card_list import RequestDeckCardList
 from session.repository.session_repository_impl import SessionRepositoryImpl
+from utility.Timer import Timer
 from utility.image_generator import ImageGenerator
 
 from pyopengltk import OpenGLFrame
@@ -18,8 +19,7 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
     __battleLobbyFrame = None
     __onClickEventList = []
     __imageGenerator = None
-    __timer_id = None
-    __remain_time = 30
+    __deck_selection_time = 30
     __timer = None
 
     def __new__(cls):
@@ -44,18 +44,10 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
                               fg="#FFFFFF", bg="#000000")
         label.place(relx=0.5, rely=0.15, anchor="center")
 
-        self.__timer = tkinter.Label(self.__battleLobbyFrame, text="30", font=("Helvetica", 30, "bold"), fg="#FF0000", bg="#000000")
-        self.__timer.place(relx=0.5, rely=0.25, anchor="center")
-
-        # # TODO: 테스트코드지워야함
-        # request = [{'deckName': "ㅁㄴㅇㄻㄴㅇㄹ"}, {'deckName': "123123"}, {'deckName': "568567858"}, {'deckName': "ㅋㅋㅋㅋㅋㅋㅋ"},
-        #            {'deckName': "ㅋ시발 "}, {'deckName': "되냐??"}]
-        # self.createBattleLobbyMyDeckButton(request)
-
         enterButton = tkinter.Button(self.__battleLobbyFrame, text="입장", font=("Arial", 20))
         enterButton.place(relx=0.5, rely=0.85, anchor="center", width=180, height=60)
 
-        def onClickEnter(event):
+        def onClickEnter(event=None):
             try:
                 response = self.__battleLobbyFrameRepository.requestCardList(
                     RequestDeckCardList(self.__battleLobbyFrameRepository.getCurrentDeckId(),
@@ -76,6 +68,9 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
 
         enterButton.bind("<Button-1>", onClickEnter)
 
+        self.__timer = Timer(rootWindow=self.__battleLobbyFrame, time=self.__deck_selection_time, relx=0.5, rely=0.25,
+                             expiredEvent=onClickEnter)
+
         # exitButton = tkinter.Button(self.__battleLobbyFrame,
         #                             text="나가기", font=("Arial", 20))
         # exitButton.place(relx=0.8, rely=0.85, anchor="center", width=180, height=60)
@@ -92,7 +87,7 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
     def createBattleLobbyMyDeckButton(self, request: dict = None):
         # request의 형태는 {ACCOUNT_DECK_LIST:[{’1’:’ㅋㅋㅋ’}, {’2’: ‘아이고’], {’3’:’이것은 세 번째 덱 이름’}]}
 
-        # request = {"ACCOUNT_DECK_LIST":[{"1":'ㅋㅋㅋㅋ'}, {"23": "아이고"}, {'3':'이것은 세 번째 덱 이름'}]}
+        request = {"ACCOUNT_DECK_LIST":[{"1":'ㅋㅋㅋㅋ'}, {"23": "아이고"}, {'3':'이것은 세 번째 덱 이름'}]}
 
         imageGenerator = ImageGenerator.getInstance()
         if request:
@@ -119,17 +114,10 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
                         self.__battleLobbyFrameRepository.addDeckToDeckList(deck)
                         self.__battleLobbyFrameRepository.addDeckIdToDeckIdList(deckId)
 
-    # Todo: timer task에서 30초를 카운트 하는 기능을 만들어 넣어야함
     def checkTimeForDeckSelection(self):
-        if self.__timer_id is None:
-            self.updateTimer()
+        self.__timer.resetTimer()
+        self.__timer.startTimer()
 
-    def updateTimer(self):
-        self.__timer.configure(text=str(self.__remain_time))
-
-        if self.__remain_time > 0:
-            self.__remain_time -=1
-            self.__timer_id = self.__battleLobbyFrame.after(1000, self.updateTimer)
 
     def injectTransmitIpcChannel(self, transmitIpcChannel):
         self.__battleLobbyFrameRepository.saveTransmitIpcChannel(transmitIpcChannel)
