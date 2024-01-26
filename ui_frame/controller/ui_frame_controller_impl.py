@@ -10,7 +10,7 @@ from my_card_main_frame_legacy.service.my_card_main_frame_service_impl import My
 
 from buy_random_card_frame.service.buy_random_card_frame_service_impl import BuyRandomCardFrameServiceImpl
 
-from card_random_frame.service.card_random_frame_service_impl import CardRandomFrameServiceImpl
+# from card_random_frame.service.card_random_frame_service_impl import CardRandomFrameServiceImpl
 from my_deck_register_frame.service.my_deck_register_frame_service_impl import MyDeckRegisterFrameServiceImpl
 
 
@@ -38,7 +38,7 @@ class UiFrameControllerImpl(UiFrameController):
 
             cls.__instance.__buyRandomCardFrameService = BuyRandomCardFrameServiceImpl.getInstance()
 
-            cls.__instance.__cardRandomFrameService = CardRandomFrameServiceImpl.getInstance()
+            # cls.__instance.__cardRandomFrameService = CardRandomFrameServiceImpl.getInstance()
 
             cls.__instance.__battleFieldFunctionService = BattleFieldFunctionServiceImpl.getInstance()
 
