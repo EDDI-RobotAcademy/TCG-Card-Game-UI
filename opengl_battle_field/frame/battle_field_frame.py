@@ -9,6 +9,7 @@ from opengl_battle_field.renderer.battle_field_frame_renderer import BattleField
 from opengl_battle_field_unit.unit_card import UnitCard
 from opengl_battle_field_card.card import Card
 from opengl_card_deck.card_deck import CardDeck
+from opengl_environment.environment import Environment
 from opengl_lost_zone.lost_zone import LostZone
 from opengl_tomb.tomb import Tomb
 from opengl_trap.trap import Trap
@@ -81,6 +82,10 @@ class BattleFieldFrame(OpenGLFrame):
         your_lost_zone = LostZone(local_translation=(-1620, 300))
         your_lost_zone.init_shapes(os.path.join(project_root, "local_storage", "image", "battle_field", "lost_zone.png"))
         self.battle_field.add_lost_zone(your_lost_zone)
+
+        environment = Environment()
+        environment.init_shapes()
+        self.battle_field.add_environment(environment)
 
         first_unit = UnitCard()
         first_unit.init_shapes(os.path.join(project_root, "local_storage", "card_images", "card1.png"))
