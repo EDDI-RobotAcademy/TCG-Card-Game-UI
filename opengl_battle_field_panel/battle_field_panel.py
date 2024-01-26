@@ -1,3 +1,6 @@
+import os
+
+from common.utility import get_project_root
 from opengl_shape.image_element import ImageElement
 from opengl_shape.rectangle import Rectangle
 
@@ -28,12 +31,12 @@ class BattleFieldPanel:
                                          vertices=vertices)
         self.add_shape(unit_illustration)
 
-    def init_shapes(self, image_path):
-        self.__imagePath = image_path
+    def init_shapes(self):
+        project_root = get_project_root()
 
         self.create_battle_field_panel_rectangle(color=(0, 0, 0, 1.0),
                                    vertices=[(0, 0), (1920, 0), (1920, 1080), (0, 1080)])
 
-        self.create_illustration(image_path=self.__imagePath,
+        self.create_illustration(image_path=os.path.join(project_root, "local_storage", "image", "battle_field", "battle_field_panel.png"),
                                  vertices=[(0, 0), (1920, 0), (1920, 1080), (0, 1080)])
 
