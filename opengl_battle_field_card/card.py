@@ -49,7 +49,7 @@ class Card:
         self.add_shape(unit_equipped_mark)
 
 
-    def init_shapes(self, image_path):
+    def init_shapes(self, image_path, card_type):
         self.__imagePath = image_path
         CardControllerImpl()
         card_controller = CardControllerImpl.getInstance()
@@ -67,7 +67,7 @@ class Card:
                                   vertices=[(390, 30), (430, 30), (430, 70), (390, 70)])
         print(f"{card_controller}")
 
-        card_controller_shapes = card_controller.getCardTypeTable(2)
+        card_controller_shapes = card_controller.getCardTypeTable(card_type)
         card_shapes = card_controller_shapes(self.local_translation)
         for shape in card_shapes:
             self.add_shape(shape)

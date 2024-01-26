@@ -67,7 +67,7 @@ class BattleFieldFrame(OpenGLFrame):
         first_unit.init_shapes(os.path.join(project_root, "local_storage", "card_images", "card1.png"))
 
         second_unit = Card(local_translation=(500, 0))
-        second_unit.init_shapes(os.path.join(project_root, "local_storage", "card_images", "card2.png"))
+        second_unit.init_shapes(os.path.join(project_root, "local_storage", "card_images", "card2.png"), 2)
 
         self.battle_field.add_unit_card(first_unit)
         self.battle_field.add_unit_card(second_unit)
