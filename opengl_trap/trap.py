@@ -1,3 +1,6 @@
+import os
+
+from common.utility import get_project_root
 from opengl_shape.image_element import ImageElement
 from opengl_shape.rectangle import Rectangle
 
@@ -29,8 +32,10 @@ class Trap:
                                          vertices=vertices)
         self.add_shape(unit_illustration)
 
-    def init_shapes(self, image_path):
-        self.__imagePath = image_path
+    def init_shapes(self):
+        project_root = get_project_root()
+        self.__imagePath = os.path.join(project_root, "local_storage", "image", "battle_field", "trap.jpeg")
+
         self.create_trap_rectangle(color=(0, 0, 0, 1.0),
                                    vertices=[(1400, 200), (1600, 200), (1600, 400), (1400, 400)])
 

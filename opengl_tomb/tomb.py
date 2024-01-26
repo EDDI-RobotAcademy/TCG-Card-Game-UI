@@ -1,3 +1,6 @@
+import os
+
+from common.utility import get_project_root
 from opengl_shape.image_element import ImageElement
 from opengl_shape.rectangle import Rectangle
 
@@ -29,8 +32,11 @@ class Tomb:
                                          vertices=vertices)
         self.add_shape(unit_illustration)
 
-    def init_shapes(self, image_path):
-        self.__imagePath = image_path
+    def init_shapes(self):
+        project_root = get_project_root()
+        self.__imagePath = os.path.join(project_root, "local_storage", "image", "battle_field",
+                                            "tomb.jpeg")
+
         self.create_tomb_rectangle(color=(0, 0, 0, 1.0),
                                    vertices=[(50, 50), (200, 50), (200, 250), (50, 250)])
 

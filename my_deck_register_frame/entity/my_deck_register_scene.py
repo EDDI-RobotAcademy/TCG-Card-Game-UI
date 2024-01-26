@@ -1,4 +1,4 @@
-class MyDeckConstructionScene:
+class MyDeckRegisterScene:
     def __init__(self):
         self.shapes = []
         self.translations = []

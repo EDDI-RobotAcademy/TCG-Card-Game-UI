@@ -1,17 +1,17 @@
 import tkinter
 import unittest
 
-from my_deck_construction_frame.frame.my_deck_construction_frame import MyDeckConstructionFrame
+from my_deck_register_frame.frame.my_deck_register_frame import MyDeckRegisterFrame
 
 
-class TestMyDeckConstructionFrame(unittest.TestCase):
+class TestMyDeckRegisterFrame(unittest.TestCase):
 
-    def test_my_deck_construction_frame(self):
+    def test_my_deck_register_frame(self):
         root = tkinter.Tk()
         root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}+0+0")
         root.deiconify()
 
-        window = MyDeckConstructionFrame(root)
+        window = MyDeckRegisterFrame(root)
         window.pack(fill=tkinter.BOTH, expand=1)
 
         toggle_button = tkinter.Button(root, text="Toggle Visibility", command=window.toggle_visibility)
