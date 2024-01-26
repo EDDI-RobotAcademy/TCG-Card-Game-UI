@@ -1,7 +1,5 @@
 from OpenGL import GL
 
-from opengl_tomb import tomb
-
 
 class BattleFieldFrameRenderer:
     def __init__(self, battle_field_scene, window):
@@ -59,6 +57,19 @@ class BattleFieldFrameRenderer:
             energy_field_shapes = energy_field.get_energy_field_shapes()
             for shape in energy_field_shapes:
                 self._render_shape(shape)
+
+        main_character_list = self.battle_field_scene.get_main_character()
+        for main_character in main_character_list:
+            main_character_shapes = main_character.get_main_character_shapes()
+            for shape in main_character_shapes:
+                self._render_shape(shape)
+
+        hand_deck_list = self.battle_field_scene.get_hand_deck()
+        for hand_deck in hand_deck_list:
+            hand_deck_shapes = hand_deck.get_hand_deck_shapes()
+            for shape in hand_deck_shapes:
+                self._render_shape(shape)
+
 
         self.window.tkSwapBuffers()
 
