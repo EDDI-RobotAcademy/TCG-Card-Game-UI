@@ -12,6 +12,9 @@ class CustomProtocol(Enum):
     CHECK_MATCHING = 13
     DECK_CARD_LIST = 14
 
+
+
+    SURRENDER = 4443
     PROGRAM_EXIT = 4444
 
 
