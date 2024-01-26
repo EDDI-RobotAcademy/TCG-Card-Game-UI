@@ -13,6 +13,7 @@ from opengl_card_deck.card_deck import CardDeck
 from opengl_energy_field.energy_field import EnergyField
 from opengl_environment.environment import Environment
 from opengl_lost_zone.lost_zone import LostZone
+from opengl_main_character.main_character import MainCharacter
 from opengl_tomb.tomb import Tomb
 from opengl_trap.trap import Trap
 
@@ -84,6 +85,14 @@ class BattleFieldFrame(OpenGLFrame):
         energy_field = EnergyField()
         energy_field.init_shapes()
         self.battle_field.add_energy_field(energy_field)
+
+        opponent_main_character = MainCharacter()
+        opponent_main_character.init_opponent_main_character_shapes()
+        self.battle_field.add_main_character(opponent_main_character)
+
+        your_main_character = MainCharacter()
+        your_main_character.init_your_main_character_shapes()
+        self.battle_field.add_main_character(your_main_character)
 
         # first_unit = UnitCard()
         # first_unit.init_shapes(os.path.join(project_root, "local_storage", "card_images", "card1.png"))

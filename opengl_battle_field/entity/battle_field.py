@@ -8,6 +8,7 @@ class BattleField:
         self.lost_zone = []
         self.environment = []
         self.energy_field = []
+        self.main_character = []
 
     def get_unit_card(self):
         return self.unit_card
@@ -56,3 +57,10 @@ class BattleField:
 
     def add_energy_field(self, energy_field):
         self.energy_field.append(energy_field)
+
+    def get_main_character(self):
+         return self.main_character
+
+    def add_main_character(self, main_character):
+         self.main_character.append(main_character)
+
