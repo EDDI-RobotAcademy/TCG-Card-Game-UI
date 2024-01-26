@@ -6,8 +6,8 @@ from OpenGL import GL, GLU
 from common.utility import get_project_root
 from opengl_battle_field.entity.battle_field import BattleField
 from opengl_battle_field.renderer.battle_field_frame_renderer import BattleFieldFrameRenderer
-from opengl_battle_field_panel.battle_field_panel import BattleFieldPanel
 from opengl_battle_field_unit.unit_card import UnitCard
+from opengl_battle_field_card.card import Card
 from opengl_card_deck.card_deck import CardDeck
 from opengl_lost_zone.lost_zone import LostZone
 from opengl_tomb.tomb import Tomb
@@ -82,14 +82,14 @@ class BattleFieldFrame(OpenGLFrame):
         your_lost_zone.init_shapes(os.path.join(project_root, "local_storage", "image", "battle_field", "lost_zone.png"))
         self.battle_field.add_lost_zone(your_lost_zone)
 
-        # first_unit = UnitCard()
-        # first_unit.init_shapes(os.path.join(project_root, "local_storage", "card_images", "card1.png"))
-        #
-        # second_unit = UnitCard(local_translation=(500, 0))
-        # second_unit.init_shapes(os.path.join(project_root, "local_storage", "card_images", "card2.png"))
-        #
-        # self.battle_field.add_unit_card(first_unit)
-        # self.battle_field.add_unit_card(second_unit)
+        first_unit = UnitCard()
+        first_unit.init_shapes(os.path.join(project_root, "local_storage", "card_images", "card1.png"))
+
+        second_unit = Card(local_translation=(500, 0))
+        second_unit.init_shapes(os.path.join(project_root, "local_storage", "card_images", "card2.png"), 2)
+
+        self.battle_field.add_unit_card(first_unit)
+        self.battle_field.add_unit_card(second_unit)
 
 
     def apply_global_translation(self, translation):
