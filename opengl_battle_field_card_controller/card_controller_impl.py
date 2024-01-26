@@ -1,5 +1,6 @@
 from common.card_type import CardType
 from opengl_battle_field_card_controller.card_controller import CardController
+from opengl_battle_field_energy.energy_card import EnergyCard
 from opengl_battle_field_item.item_card import ItemCard
 from opengl_battle_field_support.support_card import SupportCard
 from opengl_battle_field_tool.tool_card import ToolCard
@@ -25,6 +26,9 @@ class CardControllerImpl(CardController):
 
             cls.__cardTypeTable[
                 CardType.TOOL.value] = cls.__instance.toolCardInitShapes
+
+            cls.__cardTypeTable[
+                CardType.ENERGY.value] = cls.__instance.energyCardInitShapes
 
 
     def __init__(self):
@@ -69,3 +73,8 @@ class CardControllerImpl(CardController):
         toolCard.init_shapes()
         return toolCard.get_shapes()
 
+    def energyCardInitShapes(self, local_translation):
+        print("energyCardInitShapes 생성")
+        energyCard = EnergyCard(local_translation)
+        energyCard.init_shapes()
+        return energyCard.get_shapes()
