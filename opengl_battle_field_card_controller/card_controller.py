@@ -14,3 +14,7 @@ class CardController(abc.ABC):
     @abc.abstractmethod
     def trapCardInitShapes(self, local_translation):
         pass
+
+    @abc.abstractmethod
+    def suppoitCardInitShapes(self, local_translation):
+        pass
