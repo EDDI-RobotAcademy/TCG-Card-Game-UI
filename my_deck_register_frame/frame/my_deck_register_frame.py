@@ -2,15 +2,15 @@ from OpenGL import GL
 from OpenGL.GLU.tess import GLU
 from pyopengltk import OpenGLFrame
 
-from my_deck_construction_frame.entity.my_deck_construction_scene import MyDeckConstructionScene
-from my_deck_construction_frame.renderer.my_deck_construction_frame_renderer import MyDeckConstructionFrameRenderer
+from my_deck_register_frame.entity.my_deck_register_scene import MyDeckRegisterScene
+from my_deck_register_frame.renderer.my_deck_register_frame_renderer import MyDeckRegisterFrameRenderer
 from opengl_shape.rectangle import Rectangle
 
 
-class MyDeckConstructionFrame(OpenGLFrame):
+class MyDeckRegisterFrame(OpenGLFrame):
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
-        self.domain_scene = MyDeckConstructionScene()
+        self.domain_scene = MyDeckRegisterScene()
 
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
@@ -22,16 +22,16 @@ class MyDeckConstructionFrame(OpenGLFrame):
 
         self.init_shapes()
 
-        self.renderer = MyDeckConstructionFrameRenderer(self.domain_scene, self)
+        self.renderer = MyDeckRegisterFrameRenderer(self.domain_scene, self)
 
 
     def init_shapes(self):
-        my_deck_construction_frame = Rectangle(
+        my_deck_register_frame = Rectangle(
             color=(0.6, 0.4, 0.6, 1.0),
             vertices=[(0, 0), (600, 0), (600, 260), (0, 260)],
             local_translation=(20, 20))
-        self.domain_scene.add_shape(my_deck_construction_frame)
-        my_deck_construction_frame.set_visible(False)
+        self.domain_scene.add_shape(my_deck_register_frame)
+        my_deck_register_frame.set_visible(False)
 
     # def apply_translation(self, translation):
     #     for shape in self.domain_scene.shapes:
@@ -48,19 +48,19 @@ class MyDeckConstructionFrame(OpenGLFrame):
         GL.glOrtho(0, self.width, self.height, 0, -1, 1)
 
     # def toggle_visibility(self):
-    #     my_deck_construction_frame = self.domain_scene.shapes[0]
-    #     my_deck_construction_frame.set_visible(not my_deck_construction_frame.get_visible())
+    #     my_deck_register_frame = self.domain_scene.shapes[0]
+    #     my_deck_register_frame.set_visible(not my_deck_register_frame.get_visible())
     #
     #     self.redraw()
 
     def toggle_visibility(self):
-        my_deck_construction_frame = self.domain_scene.shapes[0]
-        current_visibility = my_deck_construction_frame.get_visible()
+        my_deck_register_frame = self.domain_scene.shapes[0]
+        current_visibility = my_deck_register_frame.get_visible()
 
         if not current_visibility:
-            self.domain_scene.add_shape(my_deck_construction_frame)
+            self.domain_scene.add_shape(my_deck_register_frame)
 
-        my_deck_construction_frame.set_visible(not current_visibility)
+        my_deck_register_frame.set_visible(not current_visibility)
 
         self.redraw()
 
