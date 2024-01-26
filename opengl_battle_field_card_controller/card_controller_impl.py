@@ -4,6 +4,8 @@ from opengl_battle_field_energy.energy_card import EnergyCard
 from opengl_battle_field_environment.environment_card import EnvironmentCard
 from opengl_battle_field_item.item_card import ItemCard
 from opengl_battle_field_support.support_card import SupportCard
+from opengl_battle_field_token import token_card
+from opengl_battle_field_token.token_card import TokenCard
 from opengl_battle_field_tool.tool_card import ToolCard
 from opengl_battle_field_trap.trap_card import TrapCard
 
@@ -33,6 +35,9 @@ class CardControllerImpl(CardController):
 
             cls.__cardTypeTable[
                 CardType.ENVIRONMENT.value] = cls.__instance.environmentCardInitShapes
+
+            cls.__cardTypeTable[
+                CardType.TOKEN.value] = cls.__instance.tokenCardInitShapes
 
 
     def __init__(self):
@@ -88,3 +93,9 @@ class CardControllerImpl(CardController):
         environmentCard = EnvironmentCard(local_translation)
         environmentCard.init_shapes()
         return environmentCard.get_shapes()
+
+    def tokenCardInitShapes(self, local_translation):
+        print("tokenCardInitShapes 생성")
+        tokenCard = TokenCard(local_translation)
+        tokenCard.init_shapes()
+        return tokenCard.get_shapes()

@@ -30,3 +30,7 @@ class CardController(abc.ABC):
     @abc.abstractmethod
     def environmentCardInitShapes(self, local_translation):
         pass
+
+    @abc.abstractmethod
+    def tokenCardInitShapes(self, local_translation):
+        pass
