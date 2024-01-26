@@ -223,6 +223,18 @@ class ImageElement(Shape):
         return img_data
 
 
+class PickableRectangle(Rectangle):
+    def __init__(self, color, vertices, global_translation=(0, 0), local_translation=(0, 0)):
+        super().__init__(color, vertices, global_translation, local_translation, is_pickable=True)
+        self.selected = False
+
+    def set_selected(self, selected):
+        self.selected = selected
+
+    def is_selected(self):
+        return self.selected
+
+
 class UnitCard:
     __imagePath = None
 
