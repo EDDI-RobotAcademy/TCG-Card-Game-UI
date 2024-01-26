@@ -1,6 +1,7 @@
 from common.card_type import CardType
 from opengl_battle_field_card_controller.card_controller import CardController
 from opengl_battle_field_item.item_card import ItemCard
+from opengl_battle_field_trap.trap_card import TrapCard
 
 
 class CardControllerImpl(CardController):
@@ -12,6 +13,8 @@ class CardControllerImpl(CardController):
             cls.__instance = super().__new__(cls)
             cls.__cardTypeTable[
                 CardType.ITEM.value] = cls.__instance.itemCardInitShapes
+            cls.__cardTypeTable[
+                CardType.TRAP.value] = cls.__instance.trapCardInitShapes
 
 
     def __init__(self):
@@ -33,7 +36,14 @@ class CardControllerImpl(CardController):
             print(f"이 카드 타입({cardType}) 를 처리 할 수 있는 함수가 없습니다.")
 
     def itemCardInitShapes(self, local_translation):
-        print("unitCardInitShapes 실행")
+        print("unitCardInitShapes 생성")
         itemCard = ItemCard(local_translation)
         itemCard.init_shapes()
         return itemCard.get_shapes()
+
+    def trapCardInitShapes(self, local_translation):
+        print("trapCardInitShapes 생성")
+        trapCard = TrapCard(local_translation)
+        trapCard.init_shapes()
+        return trapCard.get_shapes()
+

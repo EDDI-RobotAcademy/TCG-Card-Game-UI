@@ -10,3 +10,7 @@ class CardController(abc.ABC):
     @abc.abstractmethod
     def itemCardInitShapes(self, local_translation):
         pass
+
+    @abc.abstractmethod
+    def trapCardInitShapes(self, local_translation):
+        pass
