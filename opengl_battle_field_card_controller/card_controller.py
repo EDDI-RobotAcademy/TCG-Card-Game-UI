@@ -16,5 +16,5 @@ class CardController(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def suppoitCardInitShapes(self, local_translation):
+    def supportCardInitShapes(self, local_translation):
         pass
