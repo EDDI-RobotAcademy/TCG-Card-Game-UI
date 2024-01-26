@@ -20,6 +20,9 @@ class Shape(abc.ABC):
         else:
             self.color = self.color + (new_alpha,)
 
+    def update_vertices(self, new_vertices):
+        self.vertices = new_vertices
+
     @abc.abstractmethod
     def draw(self):
         pass

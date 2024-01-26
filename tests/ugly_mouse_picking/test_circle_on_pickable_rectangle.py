@@ -282,8 +282,8 @@ class Circle(Shape):
 
 
 class PickableRectangle(Rectangle):
-    def __init__(self, color, vertices, global_translation=(0, 0), local_translation=(0, 0), is_pickable=True):
-        super().__init__(color, vertices, global_translation, local_translation, is_pickable)
+    def __init__(self, color, vertices, global_translation=(0, 0), local_translation=(0, 0)):
+        super().__init__(color, vertices, global_translation, local_translation)
 
         self.attached_shapes = []
 
@@ -329,8 +329,8 @@ class ObjectComposition:
     def create_base_pickable_rectangle(self, color, vertices, local_translation):
         pickable_base = PickableRectangle(color=color,
                                            vertices=vertices,
-                                          local_translation=local_translation,
-                                           is_pickable=True)
+                                          local_translation=local_translation
+                                           )
         pickable_base.set_draw_gradient(True)
         return pickable_base
 
