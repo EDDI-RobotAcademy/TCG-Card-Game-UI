@@ -4,6 +4,8 @@ from card_shop_frame.repository.card_shop_repository import CardShopMenuFrameRep
 
 class CardShopMenuFrameRepositoryImpl(CardShopMenuFrameRepository):
     __instance = None
+    __transmitIpcChannel = None
+    __receiveIpcChannel = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -22,3 +24,15 @@ class CardShopMenuFrameRepositoryImpl(CardShopMenuFrameRepository):
 
         return cardShopMenuFrame
 
+    def saveTransmitIpcChannel(self, transmitIpcChannel):
+        print("CardShopFrameRepositoryImpl: saveTransmitIpcChannel()")
+        self.__transmitIpcChannel = transmitIpcChannel
+
+    def saveReceiveIpcChannel(self, receiveIpcChannel):
+        print("CardShopFrameRepositoryImpl: saveReceiveIpcChannel()")
+        self.__receiveIpcChannel = receiveIpcChannel
+
+    def requestCardRandom(self, CardRandomRequest):
+        print(f"CardShopFrameRepositoryImpl: requestCardRandom() -> {CardRandomRequest}")
+        self.__transmitIpcChannel.put(CardRandomRequest)
+        return self.__receiveIpcChannel.get()
