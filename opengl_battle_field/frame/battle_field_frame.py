@@ -12,6 +12,7 @@ from opengl_battle_field_card.card import Card
 from opengl_card_deck.card_deck import CardDeck
 from opengl_energy_field.energy_field import EnergyField
 from opengl_environment.environment import Environment
+from opengl_hand_deck.hand_deck import HandDeck
 from opengl_lost_zone.lost_zone import LostZone
 from opengl_main_character.main_character import MainCharacter
 from opengl_tomb.tomb import Tomb
@@ -94,6 +95,10 @@ class BattleFieldFrame(OpenGLFrame):
         your_main_character.init_your_main_character_shapes()
         self.battle_field.add_main_character(your_main_character)
 
+        hand_deck = HandDeck()
+        hand_deck.init_shapes()
+        self.battle_field.add_hand_deck(hand_deck)
+
         # first_unit = UnitCard()
         # first_unit.init_shapes(os.path.join(project_root, "local_storage", "card_images", "card1.png"))
         #
@@ -102,8 +107,6 @@ class BattleFieldFrame(OpenGLFrame):
         #
         # self.battle_field.add_unit_card(first_unit)
         # self.battle_field.add_unit_card(second_unit)
-
-
     def apply_global_translation(self, translation):
         unit_card_list = self.battle_field.get_unit_card()
         for unit_card in unit_card_list:
@@ -111,8 +114,6 @@ class BattleFieldFrame(OpenGLFrame):
             for shape in unit_shapes:
                 print("apply_global_translation")
                 shape.global_translate(translation)
-
-
     def summon_units(self):
         project_root = get_project_root()
         unitList = self.battle_field.get_unit_card()
@@ -136,8 +137,6 @@ class BattleFieldFrame(OpenGLFrame):
                 os.path.join(project_root, "local_storage", "card_images", f"card{unitCount + 1}.png"))
             self.battle_field.add_unit_card(summon_unit)
 
-
-
     def resize_units(self):
         unitList = self.battle_field.get_unit_card()
 
@@ -146,8 +145,6 @@ class BattleFieldFrame(OpenGLFrame):
 
         for unit in unitList:
             unit.redraw_shapes_with_scale(unitCount)
-
-
 
     def initgl(self):
         GL.glClearColor(1.0, 1.0, 1.0, 0.0)

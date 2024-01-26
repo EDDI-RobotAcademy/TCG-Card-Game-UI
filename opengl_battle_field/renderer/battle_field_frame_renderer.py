@@ -64,6 +64,13 @@ class BattleFieldFrameRenderer:
             for shape in main_character_shapes:
                 self._render_shape(shape)
 
+        hand_deck_list = self.battle_field_scene.get_hand_deck()
+        for hand_deck in hand_deck_list:
+            hand_deck_shapes = hand_deck.get_hand_deck_shapes()
+            for shape in hand_deck_shapes:
+                self._render_shape(shape)
+
+
         self.window.tkSwapBuffers()
 
     def _render_shape(self, shape):

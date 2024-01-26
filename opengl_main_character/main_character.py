@@ -26,16 +26,16 @@ class MainCharacter:
 
         self.add_shape(main_character_oval)
 
-    def init_opponent_main_character_shapes(self):
+    def init_your_main_character_shapes(self):
 
         radius_x = 100
         radius_y = 50
 
         self.create_main_character_oval(color=(0, 0, 0, 1.0),
-                                       center=(960, 880),
+                                       center=(960, 780),
                                        radius_x=radius_x, radius_y=radius_y)
 
-    def init_your_main_character_shapes(self):
+    def init_opponent_main_character_shapes(self):
         radius_x = 100
         radius_y = 50
 
