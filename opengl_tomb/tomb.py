@@ -31,7 +31,7 @@ class Tomb:
 
     def init_shapes(self, image_path):
         self.__imagePath = image_path
-        self.create_tomb_rectangle(color=(0.6, 0.4, 0.6, 1.0),
+        self.create_tomb_rectangle(color=(0, 0, 0, 1.0),
                                    vertices=[(50, 50), (200, 50), (200, 250), (50, 250)])
 
         self.create_illustration(image_path=self.__imagePath,
