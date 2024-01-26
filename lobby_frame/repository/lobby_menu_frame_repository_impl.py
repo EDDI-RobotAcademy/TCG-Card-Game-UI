@@ -27,14 +27,9 @@ class LobbyMenuFrameRepositoryImpl(LobbyMenuFrameRepository):
     def requestDeckNameList(self, deckNameRequest):
         self.__transmitIpcChannel.put(deckNameRequest)
         return self.__receiveIpcChannel.get()
+        # return "테스트용 리턴값입니다."
 
-        # print(f"lobby_manu_frame Error")
-        # result = [{"deckName" : "이거되나"},
-        #           {"deckName" : "ㅋㅋㅋㅋㅋㅋ"},
-        #           {"deckName": "오제발"},
-        #           {"deckName": "안되면망함"}
-        # ]
-        # return result
+
 
     def startMatch(self, startMatchingRequest):
         self.__transmitIpcChannel.put(startMatchingRequest)
