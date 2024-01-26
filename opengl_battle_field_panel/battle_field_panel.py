@@ -31,7 +31,7 @@ class BattleFieldPanel:
     def init_shapes(self, image_path):
         self.__imagePath = image_path
 
-        self.create_battle_field_panel_rectangle(color=(0.6, 0.4, 0.6, 1.0),
+        self.create_battle_field_panel_rectangle(color=(0, 0, 0, 1.0),
                                    vertices=[(0, 0), (1920, 0), (1920, 1080), (0, 1080)])
 
         self.create_illustration(image_path=self.__imagePath,
