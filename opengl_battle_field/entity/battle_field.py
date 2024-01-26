@@ -5,6 +5,7 @@ class BattleField:
         self.tomb = []
         self.card_deck = []
         self.trap = []
+        self.lost_zone = []
 
     def get_unit_card(self):
         return self.unit_card
@@ -35,3 +36,9 @@ class BattleField:
 
     def add_trap(self, trap):
         self.trap.append(trap)
+
+    def get_lost_zone(self):
+        return self.lost_zone
+
+    def add_lost_zone(self, lost_zone):
+        self.lost_zone.append(lost_zone)

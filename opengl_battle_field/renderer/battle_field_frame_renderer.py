@@ -42,6 +42,12 @@ class BattleFieldFrameRenderer:
             for shape in trap_shapes:
                 self._render_shape(shape)
 
+        lost_zone_list = self.battle_field_scene.get_lost_zone()
+        for lost_zone in lost_zone_list:
+            lost_zone_shapes = lost_zone.get_lost_zone_shapes()
+            for shape in lost_zone_shapes:
+                self._render_shape(shape)
+
         self.window.tkSwapBuffers()
 
     def _render_shape(self, shape):
