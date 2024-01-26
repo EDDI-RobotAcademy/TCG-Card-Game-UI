@@ -3,15 +3,15 @@ from session.repository.session_repository_impl import SessionRepositoryImpl
 
 
 class RequestDeckNameListForBattle:
-    def __init__(self, _sessionId):
+    def __init__(self, sessionInfo):
         self.__protocolNumber = CustomProtocol.DECK_NAME_LIST.value
-        self.__sessionId = _sessionId
+        self.__sessionInfo = sessionInfo
 
     def toDictionary(self):
         return {
             "protocolNumber": self.__protocolNumber,
-            "sessionId": self.__sessionId
+            "sessionInfo": self.__sessionInfo
         }
 
     def __str__(self):
-        return f"RequestDeckNameListForBattle(protocolNumber={self.__protocolNumber}, sessionId={self.__sessionId})"
+        return f"RequestDeckNameListForBattle(protocolNumber={self.__protocolNumber}, sessionInfo={self.__sessionInfo})"

@@ -2,15 +2,15 @@ from common.protocol import CustomProtocol
 
 
 class SurrenderRequest:
-    def __init__(self, _sessionId):
+    def __init__(self, _sessionInfo):
         self.__protocolNumber = CustomProtocol.SURRENDER.value
-        self.__sessionId = _sessionId
+        self.__sessionInfo = _sessionInfo
 
     def toDictionary(self):
         return {
             "protocolNumber": self.__protocolNumber,
-            "sessionId": self.__sessionId
+            "sessionInfo": self.__sessionInfo
         }
 
     def __str__(self):
-        return f"SurrenderRequest(protocolNumber={self.__protocolNumber}, sessionId={self.__sessionId})"
+        return f"SurrenderRequest(protocolNumber={self.__protocolNumber}, sessionInfo={self.__sessionInfo})"
