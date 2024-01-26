@@ -12,6 +12,12 @@ class BattleFieldFrameRenderer:
         self.window.tkMakeCurrent()
         GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
+        battle_field_panel_list = self.battle_field_scene.get_battle_field_panel()
+        for battle_field_panel in battle_field_panel_list:
+            battle_field_panel_shapes = battle_field_panel.get_battle_field_panel_shapes()
+            for shape in battle_field_panel_shapes:
+                self._render_shape(shape)
+
         unit_card_list = self.battle_field_scene.get_unit_card()
         for unit_card in unit_card_list:
             unit_shapes = unit_card.get_unit_shapes()
@@ -30,10 +36,10 @@ class BattleFieldFrameRenderer:
             for shape in card_deck_shapes:
                 self._render_shape(shape)
 
-        battle_field_panel_list = self.battle_field_scene.get_battle_field_panel()
-        for battle_field_panel in battle_field_panel_list:
-            battle_field_panel_shapes = battle_field_panel.get_battle_field_panel_shapes()
-            for shape in battle_field_panel_shapes:
+        trap_list = self.battle_field_scene.get_trap()
+        for trap in trap_list:
+            trap_shapes = trap.get_trap_shapes()
+            for shape in trap_shapes:
                 self._render_shape(shape)
 
         self.window.tkSwapBuffers()

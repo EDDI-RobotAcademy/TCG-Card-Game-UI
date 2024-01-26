@@ -1,9 +1,10 @@
 class BattleField:
     def __init__(self):
+        self.battle_field_panel = []
         self.unit_card = []
         self.tomb = []
         self.card_deck = []
-        self.battle_field_panel = []
+        self.trap = []
 
     def get_unit_card(self):
         return self.unit_card
@@ -22,7 +23,15 @@ class BattleField:
 
     def add_card_deck(self, card_deck):
         self.card_deck.append(card_deck)
+
     def get_battle_field_panel(self):
         return self.battle_field_panel
+
     def add_battle_field_panel(self, battle_field_panel):
         self.battle_field_panel.append(battle_field_panel)
+
+    def get_trap(self):
+        return self.trap
+
+    def add_trap(self, trap):
+        self.trap.append(trap)
