@@ -27,8 +27,6 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
             cls.__instance = super().__new__(cls)
             cls.__instance.__battleLobbyFrameRepository = BattleLobbyFrameRepositoryImpl.getInstance()
             cls.__instance.__sessionRepository = SessionRepositoryImpl.getInstance()
-            # cls.__instance.__imageGenerator = ImageGenerator.getInstance()
-        #  cls.__instance.__battleRoomListFrameRepository = BattleRoomListFrameRepositoryImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -51,7 +49,7 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
             try:
                 response = self.__battleLobbyFrameRepository.requestCardList(
                     RequestDeckCardList(self.__battleLobbyFrameRepository.getCurrentDeckId(),
-                                        self.__sessionRepository.readRedisTokenSessionInfoToFile())
+                                        self.__sessionRepository.get_session_info())
                 )
 
                 print(f"BattleLobbyFrameService response: {response}")
