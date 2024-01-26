@@ -1,3 +1,6 @@
+import os
+
+from common.utility import get_project_root
 from opengl_shape.image_element import ImageElement
 from opengl_shape.rectangle import Rectangle
 
@@ -29,13 +32,10 @@ class CardDeck:
                                          vertices=vertices)
         self.add_shape(unit_illustration)
 
-    def init_shapes(self, image_path1, image_path2, image_path3, image_path4, image_path5):
-        self.__imagePath1 = image_path1
-        self.__imagePath2 = image_path2
-        self.__imagePath3 = image_path3
-        self.__imagePath4 = image_path4
-        self.__imagePath5 = image_path5
-
+    def init_opponent_shapes(self):
+        project_root = get_project_root()
+        self.__imagePath = os.path.join(project_root, "local_storage", "image", "battle_field",
+                                            "opponent_card_deck.png")
         self.create_card_deck_rectangle(color=(0, 0, 0, 1.0),
                                    vertices=[(50, 270), (200, 270), (200, 470), (50, 470)])
 
@@ -51,17 +51,52 @@ class CardDeck:
         self.create_card_deck_rectangle(color=(0, 0, 0, 1.0),
                                    vertices=[(70, 290), (220, 290), (220, 490), (70, 490)])
 
-        self.create_illustration(image_path=self.__imagePath1,
+        self.create_illustration(image_path=self.__imagePath,
                                  vertices=[(50, 270), (200, 270), (200, 470), (50, 470)])
 
-        self.create_illustration(image_path=self.__imagePath2,
+        self.create_illustration(image_path=self.__imagePath,
                                  vertices=[(55, 275), (205, 275), (205, 475), (55, 475)])
 
-        self.create_illustration(image_path=self.__imagePath3,
+        self.create_illustration(image_path=self.__imagePath,
                                  vertices=[(60, 280), (210, 280), (210, 480), (60, 480)])
 
-        self.create_illustration(image_path=self.__imagePath4,
+        self.create_illustration(image_path=self.__imagePath,
                                  vertices=[(65, 285), (215, 285), (215, 485), (65, 485)])
 
-        self.create_illustration(image_path=self.__imagePath5,
+        self.create_illustration(image_path=self.__imagePath,
                                  vertices=[(70, 290), (220, 290), (220, 490), (70, 490)])
+
+    def init_your_shapes(self):
+        project_root = get_project_root()
+        self.__imagePath = os.path.join(project_root, "local_storage", "image", "battle_field",
+                                            "your_card_deck.png")
+
+        self.create_card_deck_rectangle(color=(0, 0, 0, 1.0),
+                                   vertices=[(1700, 590), (1850, 590), (1850, 790), (1700, 790)])
+
+        self.create_card_deck_rectangle(color=(0, 0, 0, 1.0),
+                                   vertices=[(1705, 595), (1855, 595), (1855, 795), (1705, 795)])
+
+        self.create_card_deck_rectangle(color=(0, 0, 0, 1.0),
+                                   vertices=[(1710, 600), (1860, 600), (1860, 800), (1710, 800)])
+
+        self.create_card_deck_rectangle(color=(0, 0, 0, 1.0),
+                                   vertices=[(1715, 605), (1865, 605), (1865, 805), (1715, 805)])
+
+        self.create_card_deck_rectangle(color=(0, 0, 0, 1.0),
+                                   vertices=[(1720, 610), (1870, 610), (1870, 810), (1720, 810)])
+
+        self.create_illustration(image_path=self.__imagePath,
+                                 vertices=[(1700, 590), (1850, 590), (1850, 790), (1700, 790)])
+
+        self.create_illustration(image_path=self.__imagePath,
+                                 vertices=[(1705, 595), (1855, 595), (1855, 795), (1705, 795)])
+
+        self.create_illustration(image_path=self.__imagePath,
+                                 vertices=[(1710, 600), (1860, 600), (1860, 800), (1710, 800)])
+
+        self.create_illustration(image_path=self.__imagePath,
+                                 vertices=[(1715, 605), (1865, 605), (1865, 805), (1715, 805)])
+
+        self.create_illustration(image_path=self.__imagePath,
+                                 vertices=[(1720, 610), (1870, 610), (1870, 810), (1720, 810)])

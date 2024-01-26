@@ -6,6 +6,7 @@ from OpenGL import GL, GLU
 from common.utility import get_project_root
 from opengl_battle_field.entity.battle_field import BattleField
 from opengl_battle_field.renderer.battle_field_frame_renderer import BattleFieldFrameRenderer
+from opengl_battle_field_panel.battle_field_panel import BattleFieldPanel
 from opengl_battle_field_unit.unit_card import UnitCard
 from opengl_battle_field_card.card import Card
 from opengl_card_deck.card_deck import CardDeck
@@ -35,66 +36,58 @@ class BattleFieldFrame(OpenGLFrame):
 
         self.renderer = BattleFieldFrameRenderer(self.battle_field, self)
 
+
     def make_battle_field(self):
         project_root = get_project_root()
 
         battle_field_panel = BattleFieldPanel()
-        battle_field_panel.init_shapes(os.path.join(project_root, "local_storage", "image", "battle_field", "battle_field_panel.png"))
+        battle_field_panel.init_shapes()
         self.battle_field.add_battle_field_panel(battle_field_panel)
 
         opponent_tomb = Tomb()
-        opponent_tomb.init_shapes(os.path.join(project_root, "local_storage", "image", "battle_field", "tomb.jpeg"))
+        opponent_tomb.init_shapes()
         self.battle_field.add_tomb(opponent_tomb)
 
         your_tomb = Tomb(local_translation=(1670, 780))
-        your_tomb.init_shapes(os.path.join(project_root, "local_storage", "image", "battle_field", "tomb.jpeg"))
+        your_tomb.init_shapes()
         self.battle_field.add_tomb(your_tomb)
 
         opponent_card_deck = CardDeck()
-        opponent_card_deck.init_shapes(os.path.join(project_root, "local_storage", "image", "battle_field", "opponent_card_deck.png"),
-                                       os.path.join(project_root, "local_storage", "image", "battle_field", "opponent_card_deck.png"),
-                                       os.path.join(project_root, "local_storage", "image", "battle_field", "opponent_card_deck.png"),
-                                       os.path.join(project_root, "local_storage", "image", "battle_field", "opponent_card_deck.png"),
-                                       os.path.join(project_root, "local_storage", "image", "battle_field", "opponent_card_deck.png"))
+        opponent_card_deck.init_opponent_shapes()
         self.battle_field.add_card_deck(opponent_card_deck)
 
-        your_card_deck = CardDeck(local_translation=(1650, 320))
-        your_card_deck.init_shapes(
-            os.path.join(project_root, "local_storage", "image", "battle_field", "your_card_deck.png"),
-            os.path.join(project_root, "local_storage", "image", "battle_field", "your_card_deck.png"),
-            os.path.join(project_root, "local_storage", "image", "battle_field", "your_card_deck.png"),
-            os.path.join(project_root, "local_storage", "image", "battle_field", "your_card_deck.png"),
-            os.path.join(project_root, "local_storage", "image", "battle_field", "your_card_deck.png"))
+        your_card_deck = CardDeck()
+        your_card_deck.init_your_shapes()
         self.battle_field.add_card_deck(your_card_deck)
 
         opponent_trap = Trap()
-        opponent_trap.init_shapes(os.path.join(project_root, "local_storage", "image", "battle_field", "trap.jpeg"))
+        opponent_trap.init_shapes()
         self.battle_field.add_trap(opponent_trap)
 
         your_trap = Trap(local_translation=(-1040, 480))
-        your_trap.init_shapes(os.path.join(project_root, "local_storage", "image", "battle_field", "trap.jpeg"))
+        your_trap.init_shapes()
         self.battle_field.add_trap(your_trap)
 
         opponent_lost_zone = LostZone()
-        opponent_lost_zone.init_shapes(os.path.join(project_root, "local_storage", "image", "battle_field", "lost_zone.png"))
+        opponent_lost_zone.init_shapes()
         self.battle_field.add_lost_zone(opponent_lost_zone)
 
         your_lost_zone = LostZone(local_translation=(-1620, 300))
-        your_lost_zone.init_shapes(os.path.join(project_root, "local_storage", "image", "battle_field", "lost_zone.png"))
+        your_lost_zone.init_shapes()
         self.battle_field.add_lost_zone(your_lost_zone)
 
         environment = Environment()
         environment.init_shapes()
         self.battle_field.add_environment(environment)
 
-        first_unit = UnitCard()
-        first_unit.init_shapes(os.path.join(project_root, "local_storage", "card_images", "card1.png"))
-
-        second_unit = Card(local_translation=(500, 0))
-        second_unit.init_shapes(os.path.join(project_root, "local_storage", "card_images", "card2.png"), 2)
-
-        self.battle_field.add_unit_card(first_unit)
-        self.battle_field.add_unit_card(second_unit)
+        # first_unit = UnitCard()
+        # first_unit.init_shapes(os.path.join(project_root, "local_storage", "card_images", "card1.png"))
+        #
+        # second_unit = Card(local_translation=(500, 0))
+        # second_unit.init_shapes(os.path.join(project_root, "local_storage", "card_images", "card2.png"), 2)
+        #
+        # self.battle_field.add_unit_card(first_unit)
+        # self.battle_field.add_unit_card(second_unit)
 
 
     def apply_global_translation(self, translation):
