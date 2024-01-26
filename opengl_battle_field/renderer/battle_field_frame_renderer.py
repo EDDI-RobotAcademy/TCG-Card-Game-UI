@@ -54,6 +54,12 @@ class BattleFieldFrameRenderer:
             for shape in environment_shapes:
                 self._render_shape(shape)
 
+        energy_field_list = self.battle_field_scene.get_energy_field()
+        for energy_field in energy_field_list:
+            energy_field_shapes = energy_field.get_energy_field_shapes()
+            for shape in energy_field_shapes:
+                self._render_shape(shape)
+
         self.window.tkSwapBuffers()
 
     def _render_shape(self, shape):

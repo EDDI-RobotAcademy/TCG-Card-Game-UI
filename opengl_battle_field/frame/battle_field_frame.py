@@ -10,6 +10,7 @@ from opengl_battle_field_panel.battle_field_panel import BattleFieldPanel
 from opengl_battle_field_unit.unit_card import UnitCard
 from opengl_battle_field_card.card import Card
 from opengl_card_deck.card_deck import CardDeck
+from opengl_energy_field.energy_field import EnergyField
 from opengl_environment.environment import Environment
 from opengl_lost_zone.lost_zone import LostZone
 from opengl_tomb.tomb import Tomb
@@ -79,6 +80,10 @@ class BattleFieldFrame(OpenGLFrame):
         environment = Environment()
         environment.init_shapes()
         self.battle_field.add_environment(environment)
+
+        energy_field = EnergyField()
+        energy_field.init_shapes()
+        self.battle_field.add_energy_field(energy_field)
 
         # first_unit = UnitCard()
         # first_unit.init_shapes(os.path.join(project_root, "local_storage", "card_images", "card1.png"))
