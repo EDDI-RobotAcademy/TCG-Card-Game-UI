@@ -7,6 +7,7 @@ class BattleField:
         self.trap = []
         self.lost_zone = []
         self.environment = []
+        self.energy_field = []
 
     def get_unit_card(self):
         return self.unit_card
@@ -49,3 +50,9 @@ class BattleField:
 
     def add_environment(self, environment):
         self.environment.append(environment)
+
+    def get_energy_field(self):
+        return self.energy_field
+
+    def add_energy_field(self, energy_field):
+        self.energy_field.append(energy_field)
