@@ -31,5 +31,10 @@ class Timer(tkinter.Label):
         else:
             self.__expired_event()
 
+    def editTimer(self, _newTime, _newEvent=None):
+        self.__remain_time = _newTime
+        if _newEvent:
+            self.__expired_event = _newEvent
+
     def deleteTimer(self):
         self.destroy()

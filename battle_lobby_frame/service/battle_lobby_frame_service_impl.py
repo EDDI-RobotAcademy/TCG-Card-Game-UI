@@ -56,7 +56,7 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
 
                 print(f"BattleLobbyFrameService response: {response}")
                 if response is not None and response != "":
-                    pass
+                    self.__battleLobbyFrameRepository.exitBattleLobby()
                     # opponentId = response.get("opponentSessionId")
                     # TODO : battleField 도메인을 호출하여 프레임을 전환해야합니다.
                     # switchFrameWithMenuName('battle-field')
@@ -87,7 +87,8 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
     def createBattleLobbyMyDeckButton(self, request: dict = None):
         # request의 형태는 {ACCOUNT_DECK_LIST:[{’1’:’ㅋㅋㅋ’}, {’2’: ‘아이고’], {’3’:’이것은 세 번째 덱 이름’}]}
 
-        request = {"ACCOUNT_DECK_LIST":[{"1":'ㅋㅋㅋㅋ'}, {"23": "아이고"}, {'3':'이것은 세 번째 덱 이름'}]}
+        #request = {"ACCOUNT_DECK_LIST": [{"1": 'ㅋㅋㅋㅋ'}, {"23": "아이고"}, {'3': '이것은 세 번째 덱 이름'}]}
+        #request = {"ACCOUNT_DECK_LIST":[]}
 
         imageGenerator = ImageGenerator.getInstance()
         if request:
@@ -97,7 +98,7 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
             for deckDataList in request.values():
                 if len(deckDataList) == 0:
                     # Todo: 사용 할 수 있는 덱이 없다면 즉시 항복을 하고 패배합니다.
-                    self.__battleFieldFunctionController.callSurrender()
+                    self.__timer.editTimer(3, self.callSurrenderAndExitLobby)
                 else:
                     for i, deckData in enumerate(deckDataList):
                         for deckId, deckName in deckData.items():
@@ -121,6 +122,9 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
         self.__timer.resetTimer()
         self.__timer.startTimer()
 
+    def callSurrenderAndExitLobby(self):
+        self.__battleFieldFunctionController.callSurrender()
+        self.__battleLobbyFrameRepository.exitBattleLobby()
 
     def injectTransmitIpcChannel(self, transmitIpcChannel):
         self.__battleLobbyFrameRepository.saveTransmitIpcChannel(transmitIpcChannel)
