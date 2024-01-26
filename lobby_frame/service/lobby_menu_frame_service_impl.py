@@ -44,7 +44,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             try:
                 afterBattleMatchResponse = self.__lobbyMenuFrameRepository.startMatch(
                     StartMatchingRequest(
-                        self.__sessionRepository.readRedisTokenSessionInfoToFile()
+                        self.__sessionRepository.get_session_info()
                     )
                 )
 
@@ -57,7 +57,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                     while True:
                         isMatchingSuccessResponse = self.__lobbyMenuFrameRepository.checkMatching(
                             CheckMatchingRequest(
-                                self.__sessionRepository.readRedisTokenSessionInfoToFile()
+                                self.__sessionRepository.get_session_info()
                             )
                         )
 
@@ -114,7 +114,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             isReadyForBattle = False
             while isReadyForBattle == False:
                 readyResponse = self.__lobbyMenuFrameRepository.checkMatching(
-                    CheckMatchingRequest(self.__sessionRepository.readRedisTokenSessionInfoToFile())
+                    CheckMatchingRequest(self.__sessionRepository.get_session_info())
                 )
 
                 if readyResponse is not None and readyResponse != "":
@@ -131,12 +131,12 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
         try:
             deckNameResponse = self.__lobbyMenuFrameRepository.requestDeckNameList(
                 RequestDeckNameListForBattle(
-                    self.__sessionRepository.readRedisTokenSessionInfoToFile()
+                    self.__sessionRepository.get_session_info()
                 )
             )
             if deckNameResponse is not None and deckNameResponse != "":
-                self.__battleLobbyFrameController.createDeckButtons(deckNameResponse)
                 self.__battleLobbyFrameController.startCheckTime()
+                self.__battleLobbyFrameController.createDeckButtons(deckNameResponse)
                 switchFrameWithMenuName("battle-lobby")
         except Exception as e:
             print(f"switchToBattleLobby Error: {e}")

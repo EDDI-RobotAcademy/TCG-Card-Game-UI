@@ -1,6 +1,7 @@
 from account_register_frame.service.account_register_frame_service_impl import AccountRegisterFrameServiceImpl
 from app_window.service.window_service_impl import WindowServiceImpl
 from account_login_frame.service.login_menu_frame_service_impl import LoginMenuFrameServiceImpl
+from battle_field_function.service.battle_field_function_service_impl import BattleFieldFunctionServiceImpl
 from battle_lobby_frame.service.battle_lobby_frame_service_impl import BattleLobbyFrameServiceImpl
 from card_shop_frame.service.card_shop_service_impl import CardShopMenuFrameServiceImpl
 from lobby_frame.service.lobby_menu_frame_service_impl import LobbyMenuFrameServiceImpl
@@ -31,6 +32,7 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__cardShopMenuFrameService = CardShopMenuFrameServiceImpl.getInstance()
             cls.__instance.__myCardMainFrameService = MyCardMainFrameServiceImpl.getInstance()
             cls.__instance.__cardRandomFrameService = CardRandomFrameServiceImpl.getInstance()
+            cls.__instance.__battleFieldFunctionService = BattleFieldFunctionServiceImpl.getInstance()
 
             cls.__instance.__sessionService = SessionServiceImpl.getInstance()
         return cls.__instance
@@ -93,6 +95,7 @@ class UiFrameControllerImpl(UiFrameController):
         self.__battleLobbyFrameService.injectTransmitIpcChannel(transmitIpcChannel)
         self.__lobbyMenuFrameService.injectTransmitIpcChannel(transmitIpcChannel)
         self.__sessionService.injectTransmitIpcChannel(transmitIpcChannel)
+        self.__battleFieldFunctionService.injectTransmitIpcChannel(transmitIpcChannel)
 
     def requestToInjectReceiveIpcChannel(self, receiveIpcChannel):
         print("UiFrameControllerImpl: requestToInjectReceiveIpcChannel()")
@@ -104,6 +107,7 @@ class UiFrameControllerImpl(UiFrameController):
         self.__battleLobbyFrameService.injectReceiveIpcChannel(receiveIpcChannel)
         self.__lobbyMenuFrameService.injectReceiveIpcChannel(receiveIpcChannel)
         self.__sessionService.injectReceiveIpcChannel(receiveIpcChannel)
+        self.__battleFieldFunctionService.injectReceiveIpcChannel(receiveIpcChannel)
 
     def requestToInjectMusicPlayIpcChannel(self, musicPlayIpcChannel):
         print("UiFrameControllerImpl: requestToInjectMusicPlayIpcChannel()")
