@@ -1,7 +1,10 @@
 from common.card_type import CardType
 from opengl_battle_field_card_controller.card_controller import CardController
+from opengl_battle_field_energy.energy_card import EnergyCard
+from opengl_battle_field_environment.environment_card import EnvironmentCard
 from opengl_battle_field_item.item_card import ItemCard
 from opengl_battle_field_support.support_card import SupportCard
+from opengl_battle_field_tool.tool_card import ToolCard
 from opengl_battle_field_trap.trap_card import TrapCard
 
 
@@ -21,6 +24,15 @@ class CardControllerImpl(CardController):
 
             cls.__cardTypeTable[
                 CardType.SUPPORT.value] = cls.__instance.supportCardInitShapes
+
+            cls.__cardTypeTable[
+                CardType.TOOL.value] = cls.__instance.toolCardInitShapes
+
+            cls.__cardTypeTable[
+                CardType.ENERGY.value] = cls.__instance.energyCardInitShapes
+
+            cls.__cardTypeTable[
+                CardType.ENVIRONMENT.value] = cls.__instance.environmentCardInitShapes
 
 
     def __init__(self):
@@ -59,3 +71,20 @@ class CardControllerImpl(CardController):
         supportCard.init_shapes()
         return supportCard.get_shapes()
 
+    def toolCardInitShapes(self, local_translation):
+        print("toolCardInitShapes 생성")
+        toolCard = ToolCard(local_translation)
+        toolCard.init_shapes()
+        return toolCard.get_shapes()
+
+    def energyCardInitShapes(self, local_translation):
+        print("energyCardInitShapes 생성")
+        energyCard = EnergyCard(local_translation)
+        energyCard.init_shapes()
+        return energyCard.get_shapes()
+
+    def environmentCardInitShapes(self, local_translation):
+        print("environmentCardInitShapes 생성")
+        environmentCard = EnvironmentCard(local_translation)
+        environmentCard.init_shapes()
+        return environmentCard.get_shapes()

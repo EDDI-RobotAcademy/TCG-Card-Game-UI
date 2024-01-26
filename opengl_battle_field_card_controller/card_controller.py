@@ -18,3 +18,15 @@ class CardController(abc.ABC):
     @abc.abstractmethod
     def supportCardInitShapes(self, local_translation):
         pass
+
+    @abc.abstractmethod
+    def toolCardInitShapes(self, local_translation):
+        pass
+
+    @abc.abstractmethod
+    def energyCardInitShapes(self, local_translation):
+        pass
+
+    @abc.abstractmethod
+    def environmentCardInitShapes(self, local_translation):
+        pass
