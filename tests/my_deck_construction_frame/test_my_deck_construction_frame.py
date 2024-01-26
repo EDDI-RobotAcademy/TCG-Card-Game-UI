@@ -11,10 +11,8 @@ class TestMyDeckConstructionFrame(unittest.TestCase):
         root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}+0+0")
         root.deiconify()
 
-
         window = MyDeckConstructionFrame(root)
         window.pack(fill=tkinter.BOTH, expand=1)
-
 
         toggle_button = tkinter.Button(root, text="Toggle Visibility", command=window.toggle_visibility)
         toggle_button.place(x=800, y=400)

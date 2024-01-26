@@ -1,13 +1,18 @@
 from OpenGL import GL
-from my_deck_construction_frame.frame.my_deck_construction_frame import MyDeckConstructionFrame
 
 class MyDeckConstructionFrameRenderer:
-    def __init__(self, my_deck_construction_frame: MyDeckConstructionFrame):
-        self.my_deck_construction_frame = my_deck_construction_frame
+    def __init__(self, scene, window):
+        self.scene = scene
+        self.window = window
 
     def render(self):
-        self.my_deck_construction_frame.tkMakeCurrent()
+        self.window.tkMakeCurrent()
         GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
-        self.my_deck_construction_frame.draw_frame()
-        self.my_deck_construction_frame.tkSwapBuffers()
+        for shape in self.scene.shapes:
+            self._render_shape(shape)
+
+        self.window.tkSwapBuffers()
+
+    def _render_shape(self, shape):
+        shape.draw()
