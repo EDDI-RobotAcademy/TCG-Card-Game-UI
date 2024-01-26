@@ -1,5 +1,6 @@
 import tkinter
 
+from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
 from battle_lobby_frame.repository.battle_lobby_frame_repository_impl import BattleLobbyFrameRepositoryImpl
 from battle_lobby_frame.service.battle_lobby_frame_service import BattleLobbyFrameService
 from battle_lobby_frame.service.request.request_deck_card_list import RequestDeckCardList
@@ -27,6 +28,7 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
             cls.__instance = super().__new__(cls)
             cls.__instance.__battleLobbyFrameRepository = BattleLobbyFrameRepositoryImpl.getInstance()
             cls.__instance.__sessionRepository = SessionRepositoryImpl.getInstance()
+            cls.__instance.__battleFieldFunctionController = BattleFieldFunctionControllerImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -93,24 +95,27 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
                 return 0.3 if j % 2 == 0 else 0.7
 
             for deckDataList in request.values():
+                if len(deckDataList) == 0:
+                    # Todo: 사용 할 수 있는 덱이 없다면 즉시 항복을 하고 패배합니다.
+                    self.__battleFieldFunctionController.callSurrender()
+                else:
+                    for i, deckData in enumerate(deckDataList):
+                        for deckId, deckName in deckData.items():
+                            generatedImage = imageGenerator.getUnselectedDeckImage()
+                            deck = tkinter.Canvas(self.__battleLobbyFrame, highlightthickness=0,
+                                                  highlightbackground="#93FFE8")
+                            deck.create_image(150, 40, image=generatedImage)
+                            deck.create_text(150, 40, text=deckName, font=("Arial", 15))
+                            deck.pack()
+                            deck.place(relx=relX(i), rely=0.4 + (i // 2 * 0.15),
+                                       anchor="center", width=300, height=80)
 
-                for i, deckData in enumerate(deckDataList):
-                    for deckId, deckName in deckData.items():
-                        generatedImage = imageGenerator.getUnselectedDeckImage()
-                        deck = tkinter.Canvas(self.__battleLobbyFrame, highlightthickness=0,
-                                              highlightbackground="#93FFE8")
-                        deck.create_image(150, 40, image=generatedImage)
-                        deck.create_text(150, 40, text=deckName, font=("Arial", 15))
-                        deck.pack()
-                        deck.place(relx=relX(i), rely=0.4 + (i // 2 * 0.15),
-                                   anchor="center", width=300, height=80)
+                            def onClick(event, _deck):
+                                self.__battleLobbyFrameRepository.selectDeck(_deck)
 
-                        def onClick(event, _deck):
-                            self.__battleLobbyFrameRepository.selectDeck(_deck)
-
-                        deck.bind("<Button-1>", lambda event, current_deck=deck: onClick(event, current_deck))
-                        self.__battleLobbyFrameRepository.addDeckToDeckList(deck)
-                        self.__battleLobbyFrameRepository.addDeckIdToDeckIdList(deckId)
+                            deck.bind("<Button-1>", lambda event, current_deck=deck: onClick(event, current_deck))
+                            self.__battleLobbyFrameRepository.addDeckToDeckList(deck)
+                            self.__battleLobbyFrameRepository.addDeckIdToDeckIdList(deckId)
 
     def checkTimeForDeckSelection(self):
         self.__timer.resetTimer()
