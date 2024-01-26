@@ -1,8 +1,8 @@
 import tkinter
 import unittest
 
-from my_card_frame.frame.my_card_frame import MyCardFrame
-from my_deck_frame.frame.my_deck_frame import MyDeckFrame
+from my_card_frame.renderer.my_card_frame_renderer import MyCardFrameRenderer
+from my_card_main_frame.frame.my_card_main_frame import MyCardFrame
 
 
 class TestMyCardFrame(unittest.TestCase):
@@ -13,11 +13,12 @@ class TestMyCardFrame(unittest.TestCase):
         root.deiconify()
 
 
-        # window = MyDeckFrame(root)
-        # window.pack(fill=tkinter.BOTH, expand=1)
-        #
         window = MyCardFrame(root)
         window.pack(fill=tkinter.BOTH, expand=1)
+
+
+        toggle_button = tkinter.Button(root, text="Toggle Visibility", command=window.toggle_visibility)
+        toggle_button.place(x=100, y=10)
 
         root.mainloop()
 
