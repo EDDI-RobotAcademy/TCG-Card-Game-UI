@@ -12,7 +12,6 @@ class Environment:
         self.shapes = []
         self.local_translation = local_translation
         self.scale = scale
-        project_root = get_project_root()
 
     def get_environment_shapes(self):
         return self.shapes
@@ -35,8 +34,9 @@ class Environment:
 
     def init_shapes(self):
         project_root = get_project_root()
+        self.__image_path = os.path.join(project_root, "local_storage", "image", "battle_field", "environment.jpeg")
         self.create_environment_rectangle(color=(0, 0, 0, 1.0),
                                    vertices=[(400, 490), (500, 490), (500, 590), (400, 590)])
 
-        self.create_illustration(image_path=os.path.join(project_root, "local_storage", "image", "battle_field", "environment.jpeg"),
+        self.create_illustration(self.__image_path,
                                  vertices=[(400, 490), (500, 490), (500, 590), (400, 590)])
