@@ -1,6 +1,6 @@
 from OpenGL import GL
 
-class MyDeckConstructionFrameRenderer:
+class MyDeckRegisterFrameRenderer:
     def __init__(self, scene, window):
         self.scene = scene
         self.window = window
