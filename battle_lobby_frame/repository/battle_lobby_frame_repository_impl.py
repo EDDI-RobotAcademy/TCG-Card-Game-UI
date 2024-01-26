@@ -34,7 +34,10 @@ class BattleLobbyFrameRepositoryImpl(BattleLobbyFrameRepository):
         return self.__decks
 
     def getCurrentDeckId(self):
-        return self.__currentDeckId
+        if self.__currentDeckId is not None:
+            return self.__currentDeckId
+        else:
+            return self.__deckIds[0]
 
     def addDeckToDeckList(self, deck):
         self.__decks.append(deck)
