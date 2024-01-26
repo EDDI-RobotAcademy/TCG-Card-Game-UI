@@ -26,3 +26,7 @@ class CardController(abc.ABC):
     @abc.abstractmethod
     def energyCardInitShapes(self, local_translation):
         pass
+
+    @abc.abstractmethod
+    def environmentCardInitShapes(self, local_translation):
+        pass
