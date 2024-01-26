@@ -1,6 +1,7 @@
 from common.card_type import CardType
 from opengl_battle_field_card_controller.card_controller import CardController
 from opengl_battle_field_item.item_card import ItemCard
+from opengl_battle_field_support.support_card import SupportCard
 from opengl_battle_field_trap.trap_card import TrapCard
 
 
@@ -15,6 +16,8 @@ class CardControllerImpl(CardController):
                 CardType.ITEM.value] = cls.__instance.itemCardInitShapes
             cls.__cardTypeTable[
                 CardType.TRAP.value] = cls.__instance.trapCardInitShapes
+            cls.__cardTypeTable[
+                CardType.SUPPORT.value] = cls.__instance.suppoitCardInitShapes
 
 
     def __init__(self):
@@ -46,4 +49,10 @@ class CardControllerImpl(CardController):
         trapCard = TrapCard(local_translation)
         trapCard.init_shapes()
         return trapCard.get_shapes()
+
+    def supplyCardInitShapes(self, local_translation):
+        print("supplyCardInitShapes 생성")
+        supplyCard = SupportCard(local_translation)
+        supplyCard.init_shapes()
+        return supplyCard.get_shapes()
 
