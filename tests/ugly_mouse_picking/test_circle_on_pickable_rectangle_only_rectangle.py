@@ -1,4 +1,5 @@
 import abc
+import math
 import random
 
 from OpenGL.GL import *
@@ -68,18 +69,20 @@ class CustomOpenGLFrame(OpenGLFrame):
         try:
             x, y = event.x, event.y
             y = self.winfo_reqheight() - y  # Flip y coordinate to match OpenGL coordinate system
+            print(f"Adjusted coordinates: x={x}, y={y}")
 
             for obj in self.objects:
-                obj.selected = False  # 모든 객체의 선택 상태를 해제
+                if isinstance(obj, PickableRectangle):
+                    obj.selected = False  # 모든 PickableRectangle 객체의 선택 상태를 해제
 
             self.selected_object = None
 
             for obj in reversed(self.objects):
-                if obj.is_point_inside((x, y)):
+                if isinstance(obj, PickableRectangle) and obj.is_point_inside((x, y)):
                     obj.selected = not obj.selected  # 토글 형식으로 선택 상태를 변경
                     self.selected_object = obj
                     self.drag_start = (x, y)
-                    print(f"Selected object at ({x}, {y})")  # 디버깅 메시지 추가
+                    print(f"Selected PickableRectangle at ({x}, {y})")  # 디버깅 메시지 추가
                     break
 
             self.redraw()
@@ -108,22 +111,44 @@ class Shape(abc.ABC):
             self.color = self.color + (new_alpha,)
 
     def is_point_inside(self, point):
+        print("is_point_inside() - self.vertices:", self.vertices)
+        print("is_point_inside() - self.vertices[0][0]:", self.vertices[0][0])
+        print("is_point_inside() - self.vertices[0][1]:", self.vertices[0][1])
+        print("is_point_inside() - self.vertices[2][0]:", self.vertices[2][0])
+        print("is_point_inside() - self.vertices[2][1]:", self.vertices[2][1])
         x, y = point
 
-        if not (self.vertices[0][0] <= x <= self.vertices[2][0] and
-                self.vertices[0][1] <= y <= self.vertices[2][1]):
+        print("x, y")
+        if not (self.vertices[0][0] + self.global_translation[0] + self.local_translation[0] <= x <=
+                self.vertices[-2][0] + self.global_translation[0] + self.local_translation[0] and
+                self.vertices[0][1] + self.global_translation[1] + self.local_translation[1] <= y <=
+                self.vertices[-2][1] + self.global_translation[1] + self.local_translation[1]):
             return False
 
         winding_number = 0
+        j = len(self.vertices) - 1
+        print(f"is it ok ? len(self.vertices): {j}")
         for i in range(len(self.vertices)):
-            x1, y1 = self.vertices[i]
-            x2, y2 = self.vertices[(i + 1) % len(self.vertices)]
+            print("is_point_inside() range is ok ?")
+            if i < len(self.vertices):
+                x1, y1 = self.vertices[j]
+                x2, y2 = self.vertices[i]
+                print(f"Checking edge {i}: ({x1}, {y1}) - ({x2}, {y2})")
 
-            if y1 <= y < y2 or y2 <= y < y1:
-                if x1 + (y - y1) / (y2 - y1) * (x2 - x1) > x:
-                    winding_number += 1
+                if y1 + self.global_translation[1] + self.local_translation[1] <= y < y2 + self.global_translation[1] + \
+                        self.local_translation[1] or \
+                        y2 + self.global_translation[1] + self.local_translation[1] <= y < y1 + self.global_translation[
+                    1] + self.local_translation[1]:
+                    print("Checking intersection")
+                    if x1 + self.global_translation[0] + self.local_translation[0] + (
+                            y - y1 - self.global_translation[1] - self.local_translation[1]) / (
+                            y2 - y1) * (x2 - x1) > x:
+                        winding_number = 1 - winding_number
 
-        return winding_number % 2 == 1
+                j = i
+
+        print("finish is_point_inside()")
+        return winding_number == 1
 
     def update_position(self, x, y):
         new_global_translation = (self.global_translation[0] + x, self.global_translation[1] + y)
@@ -203,11 +228,92 @@ class Rectangle(Shape):
 
         glEnd()
 
+
+class Circle(Shape):
+    def __init__(self, color, center, radius, local_translation=(0, 0), global_translation=(0, 0)):
+        super().__init__([center], local_translation, global_translation)
+        self.color = color
+        self.radius = radius
+        self.draw_border = True
+
+    def set_draw_border(self, value):
+        self.draw_border = value
+
+    def move(self, dx, dy):
+        self.vertices[0] = (self.vertices[0][0] + dx, self.vertices[0][1] + dy)
+
+    def draw(self):
+        glColor4f(*self.color)
+        glBegin(GL_POLYGON)
+        for i in range(100):
+            theta = 2.0 * math.pi * i / 100
+            x = self.radius * math.cos(theta) + self.vertices[0][0] + self.global_translation[0] + self.local_translation[0]
+            y = self.radius * math.sin(theta) + self.vertices[0][1] + self.global_translation[1] + self.local_translation[1]
+            glVertex2f(x, y)
+        glEnd()
+
+        if self.draw_border:
+            glLineWidth(2.0)
+            glColor4f(0.0, 0.0, 0.0, 1.0)
+            glBegin(GL_LINE_LOOP)
+            for i in range(100):
+                theta = 2.0 * math.pi * i / 100
+                x = self.radius * math.cos(theta) + self.vertices[0][0] + self.global_translation[0] + self.local_translation[0] - 1
+                y = self.radius * math.sin(theta) + self.vertices[0][1] + self.global_translation[1] + self.local_translation[1] - 1
+                glVertex2f(x, y)
+            glEnd()
+
+
 class PickableRectangle(Rectangle):
     def __init__(self, color, vertices, global_translation=(0, 0), local_translation=(0, 0), is_pickable=True):
         super().__init__(color, vertices, global_translation, local_translation, is_pickable)
 
+    def move(self, dx, dy):
+        for i in range(len(self.vertices)):
+            self.vertices[i] = (self.vertices[i][0] + dx, self.vertices[i][1] + dy)
 
+
+class ObjectComposition:
+    def __init__(self, local_translation=(0, 0), unit_id=None):
+        self.shapes = []
+        self.local_translation = local_translation
+        self.id = unit_id
+
+    def move_all_objects(self, dx, dy):
+        for obj in self.shapes:
+            obj.move(dx, dy)
+
+    def change_local_translation(self, _translation):
+        self.local_translation = _translation
+
+    def get_object_shapes(self):
+        return self.shapes
+
+    def add_shape(self, shape):
+        shape.local_translate(self.local_translation)
+        self.shapes.append(shape)
+
+    def create_base_pickable_rectangle(self, color, vertices):
+        pickable_base = PickableRectangle(color=color,
+                                           vertices=vertices,
+                                           is_pickable=True)
+        pickable_base.set_draw_gradient(True)
+        self.add_shape(pickable_base)
+
+    def create_attached_circle(self, color, center, radius):
+        attached_circle = Circle(color=color,
+                                 center=center,
+                                 radius=radius)
+        self.add_shape(attached_circle)
+
+    def create_composition_object(self):
+        self.create_base_pickable_rectangle(color=(0.0, 0.78, 0.34, 1.0),
+                                            vertices=[(0, 0), (50, 0), (50, 150), (0, 150)])
+
+        circle_radius = 15
+        self.create_attached_circle(color=(1.0, 0.33, 0.34, 1.0),
+                                    center=(0, 0),
+                                    radius=circle_radius)
 
 
 class TestUglyAnimationFrame(unittest.TestCase):
@@ -215,9 +321,13 @@ class TestUglyAnimationFrame(unittest.TestCase):
         root = tk.Tk()
         app = CustomOpenGLFrame(root, width=800, height=800, bg="white")
 
-        app.objects = [
-            PickableRectangle(color=(1.0, 0.0, 0.0, 1.0), vertices=[(100, 100), (150, 100), (150, 150), (100, 150)]),
-            PickableRectangle(color=(0.0, 0.0, 1.0, 1.0), vertices=[(200, 200), (250, 200), (250, 250), (200, 250)])]
+        composition1 = ObjectComposition(local_translation=(100, 100), unit_id=1)
+        composition1.create_composition_object()
+
+        composition2 = ObjectComposition(local_translation=(400, 400), unit_id=2)
+        composition2.create_composition_object()
+
+        app.objects = composition1.get_object_shapes() + composition2.get_object_shapes()
 
         app.pack(fill=tk.BOTH, expand=tk.YES)
         app.mainloop()
