@@ -14,6 +14,7 @@ class CustomProtocol(Enum):
     DECK_CARD_LIST = 14
 
 
+    ACCOUNT_DECK_REGISTER = 41
 
     SURRENDER = 4443
     PROGRAM_EXIT = 4444

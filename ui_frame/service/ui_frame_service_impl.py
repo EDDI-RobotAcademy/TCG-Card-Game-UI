@@ -59,6 +59,10 @@ class UiFrameServiceImpl(UiFrameService):
         print(f"{Fore.GREEN}UiFrameServiceImpl: registerBuyRandomCardUiFrame(){Style.RESET_ALL}")
         self.__uiFrameRepository.registerUiFrame("buy-random-card", buyRandomCardFrame)
 
+    def registerMyDeckRegisterUiFrame(self, myDeckRegisterFrame):
+        print(f"{Fore.GREEN}UiFrameServiceImpl: registerMyDeckRegisterUiFrame(){Style.RESET_ALL}")
+        self.__uiFrameRepository.registerUiFrame("my-deck-register", myDeckRegisterFrame)
+
     def injectTransmitIpcChannel(self, transmitIpcChannel):
         print(f"{Fore.GREEN}UiFrameServiceImpl: injectTransmitIpcChannel(){Style.RESET_ALL}")
         self.__uiFrameRepository.saveTransmitIpcChannel(transmitIpcChannel)
