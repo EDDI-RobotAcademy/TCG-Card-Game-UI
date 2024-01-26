@@ -12,12 +12,15 @@ class CardControllerImpl(CardController):
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
+
             cls.__cardTypeTable[
                 CardType.ITEM.value] = cls.__instance.itemCardInitShapes
+
             cls.__cardTypeTable[
                 CardType.TRAP.value] = cls.__instance.trapCardInitShapes
+
             cls.__cardTypeTable[
-                CardType.SUPPORT.value] = cls.__instance.suppoitCardInitShapes
+                CardType.SUPPORT.value] = cls.__instance.supportCardInitShapes
 
 
     def __init__(self):
@@ -50,9 +53,9 @@ class CardControllerImpl(CardController):
         trapCard.init_shapes()
         return trapCard.get_shapes()
 
-    def supplyCardInitShapes(self, local_translation):
+    def supportCardInitShapes(self, local_translation):
         print("supplyCardInitShapes 생성")
-        supplyCard = SupportCard(local_translation)
-        supplyCard.init_shapes()
-        return supplyCard.get_shapes()
+        supportCard = SupportCard(local_translation)
+        supportCard.init_shapes()
+        return supportCard.get_shapes()
 

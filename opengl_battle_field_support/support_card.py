@@ -20,13 +20,13 @@ class SupportCard():
         shape.local_translate(self.local_translation)
         self.shapes.append(shape)
 
-    def create_trap_race_circle(self, color, center, radius):
+    def create_support_race_circle(self, color, center, radius):
         unit_tribe_circle = Circle(color=color,
                                    center=center,
                                    radius=radius)
         self.add_shape(unit_tribe_circle)
 
-    def create_trap_type_circle(self, color, center, radius):
+    def create_support_type_circle(self, color, center, radius):
         unit_attack_circle = Circle(color=color,
                                     center=center,
                                     radius=radius)
@@ -37,10 +37,10 @@ class SupportCard():
 
         circle_radius = 30
 
-        self.create_trap_race_circle(color=(0.678, 0.847, 0.902, 1.0),
-                                     center=(350, 0),
-                                     radius=circle_radius)
+        self.create_support_race_circle(color=(0.678, 0.847, 0.902, 1.0),
+                                        center=(350, 0),
+                                        radius=circle_radius)
 
-        self.create_trap_type_circle(color=(0.988, 0.976, 0.800, 1.0),
-                                     center=(350, 500),
-                                     radius=circle_radius)
+        self.create_support_type_circle(color=(0.988, 0.976, 0.800, 1.0),
+                                        center=(350, 500),
+                                        radius=circle_radius)
