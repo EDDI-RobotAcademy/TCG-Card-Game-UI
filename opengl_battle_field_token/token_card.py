@@ -2,8 +2,6 @@ import os
 
 from opengl_shape.circle import Circle
 
-
-
 class TokenCard:
     __imagePath = None
 
@@ -15,7 +13,7 @@ class TokenCard:
     def change_local_translation(self, _translation):
         self.local_translation = _translation
 
-    def get_unit_shapes(self):
+    def get_shapes(self):
         return self.shapes
 
     def add_shape(self, shape):
