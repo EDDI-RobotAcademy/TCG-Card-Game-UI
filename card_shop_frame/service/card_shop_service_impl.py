@@ -22,14 +22,14 @@ class CardShopMenuFrameServiceImpl(CardShopMenuFrameService):
     def createCardShopUiFrame(self, rootWindow, switchFrameWithMenuName):
         cardShopMenuFrame = self.__cardShopMenuFrameRepository.createCardShopMenuFrame(rootWindow)
 
-        label_text = "This is the card shop menu"
+        label_text = "상점"
         label = tkinter.Label(cardShopMenuFrame, text=label_text, font=("Helvetica", 64), fg="black",
                               anchor="center", justify="center")
 
-        label.place(relx=0.5, rely=0.2, anchor="center", bordermode="outside")  # 가운데 정렬
+        label.place(relx=0.5, rely=0.1, anchor="center", bordermode="outside")  # 가운데 정렬
 
         get_new_cards_button = tkinter.Button(cardShopMenuFrame, text="카드 뽑기", bg="#2E2BE2", fg="white",
-                                                command=lambda: switchFrameWithMenuName("card-random"), width=36,
+                                                command=lambda: switchFrameWithMenuName("buy-random-card"), width=36,
                                                 height=4)
         get_new_cards_button.place(relx=0.5, rely=0.5, anchor="center")
 
@@ -39,7 +39,7 @@ class CardShopMenuFrameServiceImpl(CardShopMenuFrameService):
         go_back_to_lobby_button.place(relx=0.2, rely=0.9, anchor="center")
 
         my_card_button = tkinter.Button(cardShopMenuFrame, text="내 카드 바로가기", bg="#2E2BE2", fg="white",
-                                                 command=lambda: switchFrameWithMenuName("my-card"), width=24,
+                                                 command=lambda: switchFrameWithMenuName("my-card-main"), width=24,
                                                  height=2)
         my_card_button.place(relx=0.8, rely=0.9, anchor="center")
 

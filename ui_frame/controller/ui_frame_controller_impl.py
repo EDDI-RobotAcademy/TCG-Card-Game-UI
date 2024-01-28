@@ -7,7 +7,11 @@ from card_shop_frame.service.card_shop_service_impl import CardShopMenuFrameServ
 from lobby_frame.service.lobby_menu_frame_service_impl import LobbyMenuFrameServiceImpl
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
 from my_card_main_frame_legacy.service.my_card_main_frame_service_impl import MyCardMainFrameServiceImpl
-from card_random_frame.service.card_random_frame_service_impl import CardRandomFrameServiceImpl
+
+from buy_random_card_frame.service.buy_random_card_frame_service_impl import BuyRandomCardFrameServiceImpl
+
+# from card_random_frame.service.card_random_frame_service_impl import CardRandomFrameServiceImpl
+from my_deck_register_frame.service.my_deck_register_frame_service_impl import MyDeckRegisterFrameServiceImpl
 
 
 from session.service.session_service_impl import SessionServiceImpl
@@ -31,8 +35,15 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__battleLobbyFrameService = BattleLobbyFrameServiceImpl.getInstance()
             cls.__instance.__cardShopMenuFrameService = CardShopMenuFrameServiceImpl.getInstance()
             cls.__instance.__myCardMainFrameService = MyCardMainFrameServiceImpl.getInstance()
-            cls.__instance.__cardRandomFrameService = CardRandomFrameServiceImpl.getInstance()
+
+            cls.__instance.__buyRandomCardFrameService = BuyRandomCardFrameServiceImpl.getInstance()
+
+            # cls.__instance.__cardRandomFrameService = CardRandomFrameServiceImpl.getInstance()
+
             cls.__instance.__battleFieldFunctionService = BattleFieldFunctionServiceImpl.getInstance()
+
+            cls.__instance.__myDeckRegisterFrameService = MyDeckRegisterFrameServiceImpl.getInstance()
+
 
             cls.__instance.__sessionService = SessionServiceImpl.getInstance()
         return cls.__instance
@@ -71,8 +82,11 @@ class UiFrameControllerImpl(UiFrameController):
             self.__cardShopMenuFrameService.createCardShopUiFrame(rootWindow, self.switchFrameWithMenuName))
         self.__uiFrameService.registerCardShopMenuUiFrame(cardShopMenuFrame)
 
-        cardRandomFrame = self.__cardRandomFrameService.createCardRandomUiFrame(rootWindow, self.switchFrameWithMenuName)
-        self.__uiFrameService.registerCardRandomUiFrame(cardRandomFrame)
+        buyRandomCardFrame = self.__buyRandomCardFrameService.createBuyRandomCardUiFrame(rootWindow, self.switchFrameWithMenuName)
+        self.__uiFrameService.registerBuyRandomCardUiFrame(buyRandomCardFrame)
+
+        myDeckRegisterFrame = self.__myDeckRegisterFrameService.createMyDeckRegisterUiFrame(rootWindow, self.switchFrameWithMenuName)
+        self.__uiFrameService.registerMyDeckRegisterUiFrame(myDeckRegisterFrame)
 
         self.switchFrameWithMenuName("main-menu")
 
@@ -95,7 +109,11 @@ class UiFrameControllerImpl(UiFrameController):
         self.__battleLobbyFrameService.injectTransmitIpcChannel(transmitIpcChannel)
         self.__lobbyMenuFrameService.injectTransmitIpcChannel(transmitIpcChannel)
         self.__sessionService.injectTransmitIpcChannel(transmitIpcChannel)
+
         self.__battleFieldFunctionService.injectTransmitIpcChannel(transmitIpcChannel)
+
+        self.__myDeckRegisterFrameService.injectTransmitIpcChannel(transmitIpcChannel)
+
 
     def requestToInjectReceiveIpcChannel(self, receiveIpcChannel):
         print("UiFrameControllerImpl: requestToInjectReceiveIpcChannel()")
@@ -107,7 +125,11 @@ class UiFrameControllerImpl(UiFrameController):
         self.__battleLobbyFrameService.injectReceiveIpcChannel(receiveIpcChannel)
         self.__lobbyMenuFrameService.injectReceiveIpcChannel(receiveIpcChannel)
         self.__sessionService.injectReceiveIpcChannel(receiveIpcChannel)
+
         self.__battleFieldFunctionService.injectReceiveIpcChannel(receiveIpcChannel)
+
+        self.__myDeckRegisterFrameService.injectReceiveIpcChannel(receiveIpcChannel)
+
 
     def requestToInjectMusicPlayIpcChannel(self, musicPlayIpcChannel):
         print("UiFrameControllerImpl: requestToInjectMusicPlayIpcChannel()")

@@ -17,8 +17,9 @@ class TestBattleFieldFrame(unittest.TestCase):
 
         toggle_button = tkinter.Button(root, text="Toggle Visibility", command=window.toggle_visibility)
         toggle_button.place(x=100, y=10)
+        root.update()
 
-        sleep(1)
+        # sleep(1)
 
         root.mainloop()
 

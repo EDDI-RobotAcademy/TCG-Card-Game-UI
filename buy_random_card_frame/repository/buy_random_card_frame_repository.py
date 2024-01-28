@@ -1,9 +1,9 @@
 import abc
 
 
-class CardShopMenuFrameRepository(abc.ABC):
+class BuyRandomCardFrameRepository(abc.ABC):
     @abc.abstractmethod
-    def createCardShopMenuFrame(self, rootWindow):
+    def createBuyRandomCardFrame(self, rootWindow):
         pass
 
     @abc.abstractmethod
@@ -12,4 +12,8 @@ class CardShopMenuFrameRepository(abc.ABC):
 
     @abc.abstractmethod
     def saveReceiveIpcChannel(self, receiveIpcChannel):
+        pass
+
+    @abc.abstractmethod
+    def requestBuyRandomCard(self, buyRandomCardRequest):
         pass
