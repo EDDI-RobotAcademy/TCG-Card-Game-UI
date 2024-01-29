@@ -1,9 +1,9 @@
 from tkinter import ttk
 
-from my_deck_register_frame.frame.my_deck_register_frame import MyDeckRegisterFrame
-from my_deck_register_frame.repository.my_deck_register_frame_repository_impl import MyDeckRegisterFrameRepositoryImpl
-from my_deck_register_frame.service.my_deck_register_frame_service import MyDeckRegisterFrameService
-from my_deck_register_frame.service.request.my_deck_register_request import MyDeckRegisterRequest
+from opengl_my_deck_register_frame.frame.my_deck_register_frame import MyDeckRegisterFrame
+from opengl_my_deck_register_frame.repository.my_deck_register_frame_repository_impl import MyDeckRegisterFrameRepositoryImpl
+from opengl_my_deck_register_frame.service.my_deck_register_frame_service import MyDeckRegisterFrameService
+from opengl_my_deck_register_frame.service.request.my_deck_register_request import MyDeckRegisterRequest
 from session.service.session_service_impl import SessionServiceImpl
 
 
@@ -59,12 +59,11 @@ class MyDeckRegisterFrameServiceImpl(MyDeckRegisterFrameService):
         label_deckname.place(relx=0.44, rely=0.4, anchor="center")
         entry_deckname.place(relx=0.56, rely=0.4, anchor="center")
 
-        myDeckRegisterFrame.init_shapes()
+        # myDeckRegisterFrame.init_shapes()
 
         button_register_deck.place(relx=0.5, rely=0.6, anchor="center")
 
         return myDeckRegisterFrame
-
 
     def injectTransmitIpcChannel(self, transmitIpcChannel):
         print("MyDeckRegisterFrameService: injectTransmitIpcChannel()")
