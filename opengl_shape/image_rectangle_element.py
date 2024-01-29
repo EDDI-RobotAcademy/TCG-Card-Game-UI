@@ -7,7 +7,7 @@ from PIL import Image
 from OpenGL import GL
 
 
-class ImageElement(Shape):
+class ImageRectangleElement(Shape):
     def __init__(self, image_path, vertices, global_translation=(0, 0), local_translation=(0, 0)):
         super().__init__(vertices, global_translation, local_translation)
         self.image_path = image_path
