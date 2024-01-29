@@ -79,7 +79,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
                         if currentStatus == "FAIL":
                             watingText.configure(text="매칭 실패!")
-                            rootWindow.after(3000, watingWindow.destroy())
+                            rootWindow.after(3000, lambda: watingWindow.destroy)
 
                         if currentStatus == "WAIT":
                             watingText.configure(text="매칭중입니다...")
@@ -89,10 +89,10 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                         if currentStatus == "SUCCESS":
                             watingText.configure(text="매칭 성공!")
                             # TODO: 배틀 필드 화면 그리면 연결해서 화면 전환 진행하세요.
-                            watingBar.destroy()
-                            watingPercent.destroy()
+                            watingBar.place_forget()
+                            watingPercent.place_forget()
                             #rootWindow.after(3000, lambda: watingWindow.destroy)
-                            rootWindow.after(3000, lambda : self.switchToBattleLobby(watingWindow, switchFrameWithMenuName))
+                            rootWindow.after(3000, lambda: self.switchToBattleLobby(watingWindow, switchFrameWithMenuName))
 
 
                             # switchFrameWithMenuName("")
@@ -103,6 +103,8 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                         if i<480:
                             rootWindow.after(10, lambda: update_width(i + (480/60/100)))
                             watingPercent.configure(text = f"{round((i + (480/60/100))/480*100)}%")
+                        else:
+                            watingWindow.destroy()
 
                     update_width(0)
                     rootWindow.after(3000, waitingForMatch)
@@ -190,7 +192,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
     def switchToBattleLobby(self, windowToDestory, switchFrameWithMenuName):
         try:
-            windowToDestory.destroy()
+            windowToDestory.place_forget()
             deckNameResponse = self.__lobbyMenuFrameRepository.requestDeckNameList(
                 RequestDeckNameListForBattle(
                     self.__sessionRepository.get_session_info()
