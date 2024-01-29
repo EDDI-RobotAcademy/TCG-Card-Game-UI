@@ -1,4 +1,4 @@
-from card_info_from_csv.entity.card_rendering_entity import CardInfo
+from card_info_from_csv.entity.card_rendering_entity import Card
 from card_info_from_csv.repository.card_rendering_repository import CardRenderingRepository
 import pandas as pd
 
@@ -17,22 +17,20 @@ class CardRenderingRepositoryImpl(CardRenderingRepository):
             cls.__instance = cls()
         return cls.__instance
 
-    def registerCardInfo(self, cardNumber):
-        print("registerCardInfo 찾기")
-        card = pd.read_csv('../../../local_storage/card/data.csv')
-        findCardInfo = card.loc[(card['카드번호'] == cardNumber)].to_dict(orient='list')
+    def readCsvFile(self, filePath):
+        print("readCsvFile 찾기")
+        cards = []
+        dataFile = pd.read_csv(filePath)
+        for index, row in dataFile.iterrows():
+            card = Card(row['카드명'], row['종족'], row['등급'], row['종류'], row['카드번호'], row['필요_에너지'], row['공격력'], row['체력'])
+            cards.append(card.to_dict())
 
-        card_type = findCardInfo['종류'][0]
-        card_name = findCardInfo['카드명'][0]
-        card_race = findCardInfo['종족'][0]
-        card_energy = findCardInfo['필요_에너지'][0]
-        if card_type == '유닛':
-            card_health = findCardInfo['체력'][0]
-            card_attack = findCardInfo['공격력'][0]
-        else:
-            card_health = findCardInfo['종류'][0]
-            card_attack = None
-        return CardInfo(card_type, card_name, card_race, card_health, card_attack, card_energy)
+        return cards
+
+    def findCardByNumber(self, cards, cardNumber):
+        print("findCardByNumber 실행")
+        print(f"{cards}")
+        return cards.get(cardNumber)
 
 
 
