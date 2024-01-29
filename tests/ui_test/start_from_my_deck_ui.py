@@ -12,7 +12,7 @@ class TestTaskWorker(unittest.TestCase):
     def test_my_deck_frame(self):
         uiFrameController = UiFrameControllerImpl.getInstance()
         uiFrameController.requestToCreateUiFrame()
-        uiFrameController.switchFrameWithMenuName("my-card")
+        uiFrameController.switchFrameWithMenuName("my-card-main")
 
         taskWorkerService = TaskWorkerServiceImpl.getInstance()
         taskWorkerService.createTaskWorker("UI", uiFrameController.requestToStartPrintGameUi)
