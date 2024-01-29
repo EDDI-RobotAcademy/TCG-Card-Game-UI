@@ -47,7 +47,7 @@ class MyDeckRegisterFrameServiceImpl(MyDeckRegisterFrameService):
                     print(f"responseData: {responseData}")
 
                     if responseData and responseData.get("is_success") is True:
-                        switchFrameWithMenuName("my_card-main")
+                        switchFrameWithMenuName("my-card-main")
                     else:
                         print("Invalid or missing response data.")
 
