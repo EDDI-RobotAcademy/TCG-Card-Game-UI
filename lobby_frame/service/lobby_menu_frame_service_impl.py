@@ -89,9 +89,10 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                         if currentStatus == "SUCCESS":
                             watingText.configure(text="매칭 성공!")
                             # TODO: 배틀 필드 화면 그리면 연결해서 화면 전환 진행하세요.
-                           #watingBar.destroy()
-                            #watingPercent.destroy()
-                            rootWindow.after(3000, lambda : self.switchToBattleLobby(switchFrameWithMenuName))
+                            watingBar.destroy()
+                            watingPercent.destroy()
+                            #rootWindow.after(3000, lambda: watingWindow.destroy)
+                            rootWindow.after(3000, lambda : self.switchToBattleLobby(watingWindow, switchFrameWithMenuName))
 
 
                             # switchFrameWithMenuName("")
@@ -187,8 +188,9 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
         except Exception as e:
             print(f"readyForMatching Error: {e}")
 
-    def switchToBattleLobby(self, switchFrameWithMenuName):
+    def switchToBattleLobby(self, windowToDestory, switchFrameWithMenuName):
         try:
+            windowToDestory.destroy()
             deckNameResponse = self.__lobbyMenuFrameRepository.requestDeckNameList(
                 RequestDeckNameListForBattle(
                     self.__sessionRepository.get_session_info()
