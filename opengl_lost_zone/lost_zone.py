@@ -1,7 +1,7 @@
 import os
 
 from common.utility import get_project_root
-from opengl_shape.image_element import ImageElement
+from opengl_shape.image_rectangle_element import ImageRectangleElement
 from opengl_shape.rectangle import Rectangle
 
 
@@ -28,7 +28,7 @@ class LostZone:
         self.add_shape(tomb_base)
 
     def create_illustration(self, image_path, vertices):
-        unit_illustration = ImageElement(image_path=image_path,
+        unit_illustration = ImageRectangleElement(image_path=image_path,
                                          vertices=vertices)
         self.add_shape(unit_illustration)
 

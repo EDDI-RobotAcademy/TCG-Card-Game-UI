@@ -3,7 +3,7 @@ import os
 from common.utility import get_project_root
 from opengl_pickable_shape.pickable_rectangle import PickableRectangle
 from opengl_shape.circle import Circle
-from opengl_shape.image_element import ImageElement
+from opengl_shape.image_rectangle_element import ImageRectangleElement
 from opengl_shape.rectangle import Rectangle
 
 
@@ -45,13 +45,13 @@ class UnitCard:
         return pickable_unit_card_base
 
     def create_illustration(self, image_path, vertices, local_translation):
-        unit_illustration = ImageElement(image_path=image_path,
+        unit_illustration = ImageRectangleElement(image_path=image_path,
                                          local_translation=local_translation,
                                          vertices=vertices)
         return unit_illustration
 
     def create_equipped_mark(self, image_path, vertices, local_translation):
-        unit_equipped_mark = ImageElement(image_path=image_path,
+        unit_equipped_mark = ImageRectangleElement(image_path=image_path,
                                           local_translation=local_translation,
                                           vertices=vertices)
         unit_equipped_mark.set_visible(False)

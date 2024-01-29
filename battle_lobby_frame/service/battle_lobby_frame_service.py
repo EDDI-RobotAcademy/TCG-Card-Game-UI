@@ -7,7 +7,7 @@ class BattleLobbyFrameService(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def createBattleLobbyMyDeckButton(self, request):
+    def createBattleLobbyMyDeckButton(self, request, switchFrameWithMenuName):
         pass
 
     @abc.abstractmethod

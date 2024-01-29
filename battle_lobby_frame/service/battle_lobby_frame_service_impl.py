@@ -84,12 +84,12 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
         return self.__battleLobbyFrame
 
     # TODO : Controller가 호출해야함.
-    def createBattleLobbyMyDeckButton(self, request: dict = None):
+    def createBattleLobbyMyDeckButton(self, request: dict = None, switchFrameWithMenuName = None):
         # request의 형태는 {ACCOUNT_DECK_LIST:[{’1’:’ㅋㅋㅋ’}, {’2’: ‘아이고’], {’3’:’이것은 세 번째 덱 이름’}]}
 
-        #request = {"ACCOUNT_DECK_LIST": [{"1": 'ㅋㅋㅋㅋ'}, {"23": "아이고"}, {'3': '이것은 세 번째 덱 이름'}]}
-        #request = {"ACCOUNT_DECK_LIST": [{"1":{ 'ㅋㅋㅋㅋ':'True'}}, {"23": {"아이고":'True'}}, {'3': {'이것은 세 번째 덱 이름':'False'}}]}
-        #request = {"ACCOUNT_DECK_LIST":[]}
+        # request = {"ACCOUNT_DECK_LIST": [{"1": 'ㅋㅋㅋㅋ'}, {"23": "아이고"}, {'3': '이것은 세 번째 덱 이름'}]}
+        # request = {"ACCOUNT_DECK_LIST": [{"1":{ 'ㅋㅋㅋㅋ':'True'}}, {"23": {"아이고":'True'}}, {'3': {'이것은 세 번째 덱 이름':'False'}}]}
+        # request = {"ACCOUNT_DECK_LIST":[]}
 
         imageGenerator = ImageGenerator.getInstance()
         if request:
@@ -99,7 +99,7 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
             for deckDataList in request.values():
                 if len(deckDataList) == 0:
                     # Todo: 사용 할 수 있는 덱이 없다면 즉시 항복을 하고 패배합니다.
-                    self.__timer.editTimer(3, self.callSurrenderAndExitLobby)
+                    self.__timer.editTimer(3, lambda : self.callSurrenderAndExitLobby(switchFrameWithMenuName))
                 else:
                     for i, deckData in enumerate(deckDataList):
                         for deckId, deckDataDict in deckData.items():
@@ -117,7 +117,8 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
                                     def onClick(event, _deck):
                                         self.__battleLobbyFrameRepository.selectDeck(_deck)
 
-                                    deck.bind("<Button-1>", lambda event, current_deck=deck: onClick(event, current_deck))
+                                    deck.bind("<Button-1>",
+                                              lambda event, current_deck=deck: onClick(event, current_deck))
                                     self.__battleLobbyFrameRepository.addDeckToDeckList(deck)
                                     self.__battleLobbyFrameRepository.addDeckIdToDeckIdList(deckId)
 
@@ -125,8 +126,9 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
         self.__timer.resetTimer()
         self.__timer.startTimer()
 
-    def callSurrenderAndExitLobby(self):
-        self.__battleFieldFunctionController.callSurrender()
+    def callSurrenderAndExitLobby(self, switchFrameWithMenuName):
+        self.__battleFieldFunctionController.callSurrender(switchFrameWithMenuName)
+
         self.__battleLobbyFrameRepository.exitBattleLobby()
 
     def injectTransmitIpcChannel(self, transmitIpcChannel):
