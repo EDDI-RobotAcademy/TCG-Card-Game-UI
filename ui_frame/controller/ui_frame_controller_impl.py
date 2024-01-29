@@ -6,12 +6,12 @@ from battle_lobby_frame.service.battle_lobby_frame_service_impl import BattleLob
 from card_shop_frame.service.card_shop_service_impl import CardShopMenuFrameServiceImpl
 from lobby_frame.service.lobby_menu_frame_service_impl import LobbyMenuFrameServiceImpl
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
-from my_card_main_frame_legacy.service.my_card_main_frame_service_impl import MyCardMainFrameServiceImpl
+from opengl_my_card_main_frame.service.my_card_main_frame_service_impl import MyCardMainFrameServiceImpl
 
 from buy_random_card_frame.service.buy_random_card_frame_service_impl import BuyRandomCardFrameServiceImpl
 
 # from card_random_frame.service.card_random_frame_service_impl import CardRandomFrameServiceImpl
-from my_deck_register_frame.service.my_deck_register_frame_service_impl import MyDeckRegisterFrameServiceImpl
+from opengl_my_deck_register_frame.service.my_deck_register_frame_service_impl import MyDeckRegisterFrameServiceImpl
 
 
 from session.service.session_service_impl import SessionServiceImpl
@@ -43,7 +43,6 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__battleFieldFunctionService = BattleFieldFunctionServiceImpl.getInstance()
 
             cls.__instance.__myDeckRegisterFrameService = MyDeckRegisterFrameServiceImpl.getInstance()
-
 
             cls.__instance.__sessionService = SessionServiceImpl.getInstance()
         return cls.__instance

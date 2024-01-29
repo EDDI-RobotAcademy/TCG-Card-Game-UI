@@ -14,9 +14,5 @@ class LobbyMenuFrameService(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def readyForMatching(self, switchFrameWithMenuName):
-        pass
-
-    @abc.abstractmethod
-    def switchToBattleLobby(self, switchFrameWithMenuName):
+    def switchToBattleLobby(self, windowToDestory, switchFrameWithMenuName):
         pass

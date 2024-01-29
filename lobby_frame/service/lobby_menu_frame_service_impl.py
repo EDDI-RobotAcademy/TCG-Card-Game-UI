@@ -41,6 +41,18 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
         battle_entrance_button.place(relx=0.5, rely=0.35, anchor="center")
 
         def onClickEntrance(event):
+
+            watingWindow = tkinter.Frame(rootWindow, width=480, height=360)
+            watingWindow.place(relx=0.5, rely=0.5, anchor="center")
+            watingText = tkinter.Label(watingWindow, text="매칭 시작!")
+            watingText.place(relx=0.5, rely=0.5, anchor="center")
+
+            watingBar = tkinter.Frame(watingWindow, width=0, height=36, bg="#E22500")
+            watingBar.place(relx=0.5, rely=0.9, anchor="center")
+            watingPercent = tkinter.Label(watingWindow)
+            watingPercent.place(relx=0.5, rely=0.8, anchor="center")
+            rootWindow.update()
+
             try:
                 afterBattleMatchResponse = self.__lobbyMenuFrameRepository.startMatch(
                     StartMatchingRequest(
@@ -54,29 +66,43 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                     is_success_to_insert_wait_queue = afterBattleMatchResponse.get("is_success")
 
                 if is_success_to_insert_wait_queue:
-                    while True:
+                    def waitingForMatch():
                         isMatchingSuccessResponse = self.__lobbyMenuFrameRepository.checkMatching(
                             CheckMatchingRequest(
                                 self.__sessionRepository.get_session_info()
                             )
                         )
-
-                        # print(f"isMatchingSuccessResponse: {isMatchingSuccessResponse}")
                         currentStatus = isMatchingSuccessResponse.get("current_status")
                         print(f"after request matching status: {currentStatus}")
 
                         if currentStatus == "FAIL":
-                            print("배틀 매칭 실패!")
-                            break
-                        #else:
-                        if currentStatus == "SUCCESS":
-                            print("배틀 매칭 성공!")
-                            # TODO: 배틀 필드 화면 그리면 연결해서 화면 전환 진행하세요
-                            self.switchToBattleLobby(switchFrameWithMenuName)
-                            break
-                            #switchFrameWithMenuName("")
+                            watingText.configure(text="매칭 실패!")
+                            rootWindow.after(3000, lambda: watingWindow.destroy)
 
-                        time.sleep(3)
+                        if currentStatus == "WAIT":
+                            watingText.configure(text="매칭중입니다...")
+                            rootWindow.after(3000, waitingForMatch)
+
+                        # else:
+                        if currentStatus == "SUCCESS":
+                            watingText.configure(text="매칭 성공!")
+                            watingBar.place_forget()
+                            watingPercent.place_forget()
+                            rootWindow.after(3000, lambda: self.switchToBattleLobby(watingWindow, switchFrameWithMenuName))
+
+
+
+                    def update_width(i):
+                        watingBar.configure(width=i, height=36)
+                        if i<480:
+                            rootWindow.after(10, lambda: update_width(i + (480/60/100)))
+                            watingPercent.configure(text = f"{round((i + (480/60/100))/480*100)}%")
+                        else:
+                            watingWindow.destroy()
+
+                    update_width(0)
+                    rootWindow.after(3000, waitingForMatch)
+
                 else:
                     print("Invalid or missing response data.")
 
@@ -108,35 +134,18 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
         self.__lobbyMenuFrameRepository.saveReceiveIpcChannel(receiveIpcChannel)
 
 
-
-    def readyForMatching(self, switchFrameWithMenuName):
+    def switchToBattleLobby(self, windowToDestory, switchFrameWithMenuName):
         try:
-            isReadyForBattle = False
-            while isReadyForBattle == False:
-                readyResponse = self.__lobbyMenuFrameRepository.checkMatching(
-                    CheckMatchingRequest(self.__sessionRepository.get_session_info())
-                )
-
-                if readyResponse is not None and readyResponse != "":
-                    isReadyForBattle = True
-                    self.switchToBattleLobby(switchFrameWithMenuName)
-                else:
-                    time.sleep(3)
-
-
-        except Exception as e:
-            print(f"readyForMatching Error: {e}")
-
-    def switchToBattleLobby(self, switchFrameWithMenuName):
-        try:
+            windowToDestory.place_forget()
             deckNameResponse = self.__lobbyMenuFrameRepository.requestDeckNameList(
                 RequestDeckNameListForBattle(
                     self.__sessionRepository.get_session_info()
                 )
             )
             if deckNameResponse is not None and deckNameResponse != "":
+                print(f"switchToBattleLobby : 호출됨 {deckNameResponse}")
                 self.__battleLobbyFrameController.startCheckTime()
-                self.__battleLobbyFrameController.createDeckButtons(deckNameResponse)
+                self.__battleLobbyFrameController.createDeckButtons(deckNameResponse, switchFrameWithMenuName)
                 switchFrameWithMenuName("battle-lobby")
         except Exception as e:
             print(f"switchToBattleLobby Error: {e}")
