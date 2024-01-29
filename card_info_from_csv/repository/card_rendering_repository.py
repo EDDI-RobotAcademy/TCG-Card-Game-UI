@@ -4,5 +4,9 @@ import abc
 class CardRenderingRepository(abc.ABC):
 
     @abc.abstractmethod
-    def registerCardInfo(self, cardNumber):
+    def readCsvFile(self, filePath):
+        pass
+
+    @abc.abstractmethod
+    def findCardByNumber(self, cards, cardNumber):
         pass
