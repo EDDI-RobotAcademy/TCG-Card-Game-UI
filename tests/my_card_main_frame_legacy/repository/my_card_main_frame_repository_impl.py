@@ -1,5 +1,5 @@
-from my_card_main_frame_legacy.entity.my_card_main_frame import MyCardMainFrame
-from my_card_main_frame_legacy.repository.my_card_main_frame_repository import MyCardMainFrameRepository
+from tests.my_card_main_frame_legacy.entity.my_card_main_frame import MyCardMainFrame
+from tests.my_card_main_frame_legacy.repository.my_card_main_frame_repository import MyCardMainFrameRepository
 
 
 class MyCardMainFrameRepositoryImpl(MyCardMainFrameRepository):
