@@ -10,11 +10,10 @@ class TestCardInfoRepositoryImpl(unittest.TestCase):
 
     def testRegisterCardInfo(self):
         repository = CardInfoFromCsv.getInstance()
-        dataFile = pd.read_csv('../../../local_storage/card/data.csv', skiprows=1)
-        dataFile.fillna(0, inplace=True)
-        print(f"{dataFile.head()}")
-        repository.build_dictionaries(dataFile.itertuples())
-        repository.get_card_name('55')
+        dataFile = repository.read_card_data('../../../local_storage/card/data.csv')
+        repository.build_dictionaries(dataFile)
+        card_name = repository.get_card_name(8)
+        print(card_name)
 
 if __name__ == '__main__':
     unittest.main()
