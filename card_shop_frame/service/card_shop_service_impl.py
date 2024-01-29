@@ -33,7 +33,7 @@ class CardShopMenuFrameServiceImpl(CardShopMenuFrameService):
 
         label.place(relx=0.5, rely=0.1, anchor="center", bordermode="outside")  # 가운데 정렬
 
-        my_money_frame = self.__myGameMoneyFrameService.createMyGameMoneyUiFrame(cardShopMenuFrame, 1000)
+        my_money_frame = self.__myGameMoneyFrameService.createMyGameMoneyUiFrame(cardShopMenuFrame, 10000)
         my_money_frame.place(relx=0.91, rely=0.06, relwidth=0.09, relheight=0.02, anchor="center")
 
         get_new_all_cards_button = tkinter.Button(cardShopMenuFrame, text="전체 카드 뽑기", bg="#2E2BE2", fg="white",

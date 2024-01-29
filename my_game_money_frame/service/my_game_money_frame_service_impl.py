@@ -28,12 +28,11 @@ class MyGameMoneyFrameServiceImpl(MyGameMoneyFrameService):
     def createMyGameMoneyUiFrame(self, rootWindow, getGameMoneyInfo):
         myGameMoneyFrame = self.__myGameMoneyFrameRepository.createMyGameMoneyFrame(rootWindow)
 
-        image_path = '/home/eddi/proj/TCG-Card-Game-UI/images/game_money.png'
-        original_image = Image.open(image_path)
-        resized_image = original_image.resize((15, 15), Image.LANCZOS)
-        self.__money_image = ImageTk.PhotoImage(resized_image)
+        # image_path = '/home/eddi/proj/TCG-Card-Game-UI/images/game_money.png'
+        # original_image = Image.open(image_path)
+        # resized_image = original_image.resize((15, 15), Image.LANCZOS)
+        # self.__money_image = ImageTk.PhotoImage(resized_image)
 
-        # Label과 ImageTk.PhotoImage을 인스턴스 변수로 선언
         self.__label_GameMoney = Label(myGameMoneyFrame, text=getGameMoneyInfo, image=self.__money_image, compound="left",
                                        font=("Arial", 12))
         self.__label_GameMoney.pack()
