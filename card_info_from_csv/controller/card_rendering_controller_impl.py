@@ -1,5 +1,5 @@
-from card.card_rendering.controller.card_rendering_controller import CardRenderingController
-from card.card_rendering.service.card_rendering_service_impl import CardRenderingServiceImpl
+from card_info_from_csv.controller.card_rendering_controller import CardRenderingController
+from card_info_from_csv.service.card_rendering_service_impl import CardRenderingServiceImpl
 
 
 class CardRenderingControllerImpl(CardRenderingController):

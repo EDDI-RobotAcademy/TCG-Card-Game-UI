@@ -1,5 +1,5 @@
-from card.card_rendering.repository.card_rendering_repository_impl import CardRenderingRepositoryImpl
-from card.card_rendering.service.card_rendering_service import CardRenderingService
+from card_info_from_csv.repository.card_rendering_repository_impl import CardRenderingRepositoryImpl
+from card_info_from_csv.service.card_rendering_service import CardRenderingService
 
 
 class CardRenderingServiceImpl(CardRenderingService):
