@@ -72,8 +72,6 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                                 self.__sessionRepository.get_session_info()
                             )
                         )
-
-                        # print(f"isMatchingSuccessResponse: {isMatchingSuccessResponse}")
                         currentStatus = isMatchingSuccessResponse.get("current_status")
                         print(f"after request matching status: {currentStatus}")
 
@@ -88,14 +86,10 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                         # else:
                         if currentStatus == "SUCCESS":
                             watingText.configure(text="매칭 성공!")
-                            # TODO: 배틀 필드 화면 그리면 연결해서 화면 전환 진행하세요.
                             watingBar.place_forget()
                             watingPercent.place_forget()
-                            #rootWindow.after(3000, lambda: watingWindow.destroy)
                             rootWindow.after(3000, lambda: self.switchToBattleLobby(watingWindow, switchFrameWithMenuName))
 
-
-                            # switchFrameWithMenuName("")
 
 
                     def update_width(i):
@@ -109,37 +103,6 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                     update_width(0)
                     rootWindow.after(3000, waitingForMatch)
 
-
-
-                    # while True:
-                    #     rootWindow.update()
-                    #     watingWindow.configure(width=i, height=360)
-                    #
-                    #     i+=1
-
-
-                        # isMatchingSuccessResponse = self.__lobbyMenuFrameRepository.checkMatching(
-                        #     CheckMatchingRequest(
-                        #         self.__sessionRepository.get_session_info()
-                        #     )
-                        # )
-                        #
-                        # # print(f"isMatchingSuccessResponse: {isMatchingSuccessResponse}")
-                        # currentStatus = isMatchingSuccessResponse.get("current_status")
-                        # print(f"after request matching status: {currentStatus}")
-                        #
-                        # if currentStatus == "FAIL":
-                        #     print("배틀 매칭 실패!")
-                        #     break
-                        # #else:
-                        # if currentStatus == "SUCCESS":
-                        #     print("배틀 매칭 성공!")
-                        #     # TODO: 배틀 필드 화면 그리면 연결해서 화면 전환 진행하세요
-                        #     self.switchToBattleLobby(switchFrameWithMenuName)
-                        #     break
-                        #     #switchFrameWithMenuName("")
-
-                        #time.sleep(3)
                 else:
                     print("Invalid or missing response data.")
 
@@ -170,25 +133,6 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
     def injectReceiveIpcChannel(self, receiveIpcChannel):
         self.__lobbyMenuFrameRepository.saveReceiveIpcChannel(receiveIpcChannel)
 
-
-
-    def readyForMatching(self, switchFrameWithMenuName):
-        try:
-            isReadyForBattle = False
-            while isReadyForBattle == False:
-                readyResponse = self.__lobbyMenuFrameRepository.checkMatching(
-                    CheckMatchingRequest(self.__sessionRepository.get_session_info())
-                )
-
-                if readyResponse is not None and readyResponse != "":
-                    isReadyForBattle = True
-                    self.switchToBattleLobby(switchFrameWithMenuName)
-                else:
-                    time.sleep(3)
-
-
-        except Exception as e:
-            print(f"readyForMatching Error: {e}")
 
     def switchToBattleLobby(self, windowToDestory, switchFrameWithMenuName):
         try:

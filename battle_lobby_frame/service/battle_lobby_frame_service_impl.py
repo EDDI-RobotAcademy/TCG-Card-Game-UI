@@ -129,6 +129,8 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
         self.__battleFieldFunctionController.callSurrender()
         self.__battleLobbyFrameRepository.exitBattleLobby()
 
+
+
     def injectTransmitIpcChannel(self, transmitIpcChannel):
         self.__battleLobbyFrameRepository.saveTransmitIpcChannel(transmitIpcChannel)
 
