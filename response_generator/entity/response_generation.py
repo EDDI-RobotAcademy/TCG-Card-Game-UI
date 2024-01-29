@@ -8,7 +8,7 @@ class ResponseGeneration(Enum):
     BATTLE_MATCH = 12
     BATTLE_READY = 13
 
-
+    ACCOUNT_DECK_REGISTER = 41
 
     PROGRAM_EXIT = 4444
 

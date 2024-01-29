@@ -1,7 +1,7 @@
 import tkinter
 import unittest
 
-from my_deck_register_frame.frame.my_deck_register_frame import MyDeckRegisterFrame
+from opengl_my_deck_register_frame.frame.my_deck_register_frame import MyDeckRegisterFrame
 
 
 class TestMyDeckRegisterFrame(unittest.TestCase):
