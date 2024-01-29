@@ -1,7 +1,7 @@
 from OpenGL.GL import *
 import random
 
-from battle_field_unit_card_frame.entity.shape import Shape
+from tests.battle_field_unit_card_frame.entity.shape import Shape
 
 
 class Rectangle(Shape):

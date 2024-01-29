@@ -3,11 +3,11 @@ import os
 from pyopengltk import OpenGLFrame
 from OpenGL import GL, GLU
 
-from battle_field_unit_card_frame.entity.battle_field_unit_card_scene import BattleFieldUnitCardScene
-from battle_field_unit_card_frame.entity.circle import Circle
-from battle_field_unit_card_frame.entity.image_item import ImageItem
-from battle_field_unit_card_frame.entity.rectangle import Rectangle
-from battle_field_unit_card_frame.renderer.battle_field_unit_card_frame_renderer import BattleFieldUnitCardFrameRenderer
+from tests.battle_field_unit_card_frame.entity.battle_field_unit_card_scene import BattleFieldUnitCardScene
+from tests.battle_field_unit_card_frame.entity.circle import Circle
+from tests.battle_field_unit_card_frame.entity.image_item import ImageItem
+from tests.battle_field_unit_card_frame.entity.rectangle import Rectangle
+from tests.battle_field_unit_card_frame.renderer.battle_field_unit_card_frame_renderer import BattleFieldUnitCardFrameRenderer
 
 
 class BattleFieldUnitCardFrame(OpenGLFrame):
@@ -36,7 +36,7 @@ class BattleFieldUnitCardFrame(OpenGLFrame):
                 translation=(0, 0)))
 
         equip_image = ImageItem(
-                path="../../local_storage/card_images/equip_white.jpg",
+                path="../../local_storage/card_images/equip_white.jpeg",
                 position=(390, 30),
                 size=(40, 40),
                 translation=(0, 0))
