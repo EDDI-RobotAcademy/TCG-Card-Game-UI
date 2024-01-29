@@ -1,7 +1,9 @@
 import tkinter
 
+
 from card_shop_frame.repository.card_shop_repository_impl import CardShopMenuFrameRepositoryImpl
 from card_shop_frame.service.card_shop_service import CardShopMenuFrameService
+from my_game_money_frame.service.my_game_money_frame_service_impl import MyGameMoneyFrameServiceImpl
 
 
 class CardShopMenuFrameServiceImpl(CardShopMenuFrameService):
@@ -11,6 +13,7 @@ class CardShopMenuFrameServiceImpl(CardShopMenuFrameService):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
             cls.__instance.__cardShopMenuFrameRepository = CardShopMenuFrameRepositoryImpl.getInstance()
+            cls.__instance.__myGameMoneyFrameService = MyGameMoneyFrameServiceImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -18,6 +21,8 @@ class CardShopMenuFrameServiceImpl(CardShopMenuFrameService):
         if cls.__instance is None:
             cls.__instance = cls()
         return cls.__instance
+
+
 
     def createCardShopUiFrame(self, rootWindow, switchFrameWithMenuName):
         cardShopMenuFrame = self.__cardShopMenuFrameRepository.createCardShopMenuFrame(rootWindow)
@@ -28,10 +33,28 @@ class CardShopMenuFrameServiceImpl(CardShopMenuFrameService):
 
         label.place(relx=0.5, rely=0.1, anchor="center", bordermode="outside")  # 가운데 정렬
 
-        get_new_cards_button = tkinter.Button(cardShopMenuFrame, text="카드 뽑기", bg="#2E2BE2", fg="white",
+        my_money_frame = self.__myGameMoneyFrameService.createMyGameMoneyUiFrame(cardShopMenuFrame, 10000)
+        my_money_frame.place(relx=0.91, rely=0.06, relwidth=0.09, relheight=0.02, anchor="center")
+
+        get_new_all_cards_button = tkinter.Button(cardShopMenuFrame, text="전체 카드 뽑기", bg="#2E2BE2", fg="white",
                                                 command=lambda: switchFrameWithMenuName("buy-random-card"), width=36,
                                                 height=4)
-        get_new_cards_button.place(relx=0.5, rely=0.5, anchor="center")
+        get_new_all_cards_button.place(relx=0.5, rely=0.2, anchor="center")
+
+        get_new_undead_cards_button = tkinter.Button(cardShopMenuFrame, text="언데드 카드 뽑기", bg="#2E2BE2", fg="white",
+                                              command=lambda: switchFrameWithMenuName("buy-random-card"), width=36,
+                                              height=4)
+        get_new_undead_cards_button.place(relx=0.5, rely=0.4, anchor="center")
+
+        get_new_trant_cards_button = tkinter.Button(cardShopMenuFrame, text="트랜트 카드 뽑기", bg="#2E2BE2", fg="white",
+                                              command=lambda: switchFrameWithMenuName("buy-random-card"), width=36,
+                                              height=4)
+        get_new_trant_cards_button.place(relx=0.5, rely=0.6, anchor="center")
+
+        get_new_human_cards_button = tkinter.Button(cardShopMenuFrame, text="휴먼 카드 뽑기", bg="#2E2BE2", fg="white",
+                                              command=lambda: switchFrameWithMenuName("buy-random-card"), width=36,
+                                              height=4)
+        get_new_human_cards_button.place(relx=0.5, rely=0.8, anchor="center")
 
         go_back_to_lobby_button = tkinter.Button(cardShopMenuFrame, text="로비로 돌아가기", bg="#2E2BE2", fg="white",
                                         command=lambda: switchFrameWithMenuName("lobby-menu"), width=24,
