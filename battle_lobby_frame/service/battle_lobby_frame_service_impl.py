@@ -5,7 +5,7 @@ from battle_lobby_frame.repository.battle_lobby_frame_repository_impl import Bat
 from battle_lobby_frame.service.battle_lobby_frame_service import BattleLobbyFrameService
 from battle_lobby_frame.service.request.request_deck_card_list import RequestDeckCardList
 from session.repository.session_repository_impl import SessionRepositoryImpl
-from utility.Timer import Timer
+from utility.timer import Timer
 from utility.image_generator import ImageGenerator
 
 from pyopengltk import OpenGLFrame
