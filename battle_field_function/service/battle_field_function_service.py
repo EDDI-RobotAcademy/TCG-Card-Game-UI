@@ -12,5 +12,5 @@ class BattleFieldFunctionService(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def surrender(self):
+    def surrender(self, switchFrameWithMenuName):
         pass

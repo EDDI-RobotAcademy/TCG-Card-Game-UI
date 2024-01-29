@@ -26,10 +26,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
         self.__battleFieldFunctionRepository.saveReceiveIpcChannel(receiveIpcChannel)
 
 
-    def getSwitchFrameWithMenuName(self, switchFrameWithMenuName):
-        self.__switchFrameWithMenuName = switchFrameWithMenuName
-
-    def surrender(self):
+    def surrender(self, switchFrameWithMenuName):
         print(f"battleFieldFunctionServiceImpl: Surrender")
         response = self.__battleFieldFunctionRepository.sendSurrender(
             SurrenderRequest(
@@ -37,5 +34,5 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             )
         )
         # Todo : switchFrameWithMenuName('lobby-menu') 를 호출 할 수 있어야합니다.
-        self.__switchFrameWithMenuName('lobby-menu')
+        switchFrameWithMenuName("lobby-menu")
 

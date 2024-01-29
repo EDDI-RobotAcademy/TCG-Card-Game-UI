@@ -62,6 +62,7 @@ class BattleLobbyFrameRepositoryImpl(BattleLobbyFrameRepository):
             print('덱을 골라주세요!!')
 
     def exitBattleLobby(self):
+        print(f"exitBattleLobby")
         self.__currentDeckId = None
         for deck in self.__decks:
             deck.destroy()

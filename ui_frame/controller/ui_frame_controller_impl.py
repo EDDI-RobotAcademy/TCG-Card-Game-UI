@@ -88,8 +88,6 @@ class UiFrameControllerImpl(UiFrameController):
         myDeckRegisterFrame = self.__myDeckRegisterFrameService.createMyDeckRegisterUiFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerMyDeckRegisterUiFrame(myDeckRegisterFrame)
 
-        self.__battleFieldFunctionService.getSwitchFrameWithMenuName(self.switchFrameWithMenuName)
-
         self.switchFrameWithMenuName("main-menu")
 
     def switchFrameWithMenuName(self, name):
