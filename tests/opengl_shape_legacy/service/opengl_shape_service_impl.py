@@ -1,5 +1,5 @@
-from opengl_shape_legacy.repository.shape_repository_impl import ShapeRepositoryImpl
-from opengl_shape_legacy.service.opengl_shape_service import OpenglShapeDrawerService
+from tests.opengl_shape_legacy.repository.shape_repository_impl import ShapeRepositoryImpl
+from tests.opengl_shape_legacy.service.opengl_shape_service import OpenglShapeDrawerService
 
 
 class OpenglShapeDrawerServiceImpl(OpenglShapeDrawerService):
