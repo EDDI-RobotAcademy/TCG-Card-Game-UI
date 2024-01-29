@@ -44,7 +44,7 @@ class UiFrameServiceImpl(UiFrameService):
         self.__uiFrameRepository.registerUiFrame("battle-lobby", battleLobbyFrame)
 
     def registerMyCardMainUiFrame(self, myCardMainFrame):
-        print(f"{Fore.GREEN}UiFrameServiceImpl: registerMyCardUiFrame(){Style.RESET_ALL}")
+        print(f"{Fore.GREEN}UiFrameServiceImpl: registerMyCardMainUiFrame(){Style.RESET_ALL}")
         self.__uiFrameRepository.registerUiFrame("my-card-main", myCardMainFrame)
 
     def registerMyDeckUiFrame(self, myDeckFrame):
