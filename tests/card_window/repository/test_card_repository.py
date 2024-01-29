@@ -1,5 +1,5 @@
 import unittest
-from card.card_rendering.repository.card_rendering_repository_impl import CardRenderingRepositoryImpl
+from card_info_from_csv.repository.card_rendering_repository_impl import CardRenderingRepositoryImpl
 
 
 class TestCardInfoRepositoryImpl(unittest.TestCase):

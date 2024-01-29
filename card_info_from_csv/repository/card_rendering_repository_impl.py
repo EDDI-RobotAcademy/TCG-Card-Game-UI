@@ -1,5 +1,5 @@
-from card.card_rendering.entity.card_rendering_entity import CardInfo
-from card.card_rendering.repository.card_rendering_repository import CardRenderingRepository
+from card_info_from_csv.entity.card_rendering_entity import CardInfo
+from card_info_from_csv.repository.card_rendering_repository import CardRenderingRepository
 import pandas as pd
 
 class CardRenderingRepositoryImpl(CardRenderingRepository):
