@@ -1,4 +1,4 @@
-from opengl_my_deck_register_frame.repository.my_deck_register_frame_repository import \
+from opengl_my_deck_register_frame_legacy.repository.my_deck_register_frame_repository import \
     MyDeckRegisterFrameRepository
 
 class MyDeckRegisterFrameRepositoryImpl(MyDeckRegisterFrameRepository):
