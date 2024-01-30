@@ -13,3 +13,9 @@ class CardShopMenuFrameRepository(abc.ABC):
     @abc.abstractmethod
     def saveReceiveIpcChannel(self, receiveIpcChannel):
         pass
+
+    @abc.abstractmethod
+    def requestMyGameMoney(self, MyGameMoneyRequest):
+        pass
+
+
