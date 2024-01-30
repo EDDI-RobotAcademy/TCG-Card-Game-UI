@@ -1,3 +1,4 @@
+import random
 import time
 import tkinter
 
@@ -8,6 +9,7 @@ from lobby_frame.service.lobby_menu_frame_service import LobbyMenuFrameService
 from lobby_frame.service.request.check_matching_request import CheckMatchingRequest
 from lobby_frame.service.request.start_matching_request import StartMatchingRequest
 from session.repository.session_repository_impl import SessionRepositoryImpl
+from utility.image_generator import ImageGenerator
 
 
 class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
@@ -29,6 +31,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
     def createLobbyUiFrame(self, rootWindow, switchFrameWithMenuName):
         lobbyMenuFrame = self.__lobbyMenuFrameRepository.createLobbyMenuFrame(rootWindow)
+        imageGenerator = ImageGenerator.getInstance()
 
         label_text = "EDDI TCG Card Battle"
         label = tkinter.Label(lobbyMenuFrame, text=label_text, font=("Helvetica", 72), bg="black", fg="white",
@@ -42,15 +45,25 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
         def onClickEntrance(event):
 
-            watingWindow = tkinter.Frame(rootWindow, width=480, height=360)
-            watingWindow.place(relx=0.5, rely=0.5, anchor="center")
-            watingText = tkinter.Label(watingWindow, text="매칭 시작!")
-            watingText.place(relx=0.5, rely=0.5, anchor="center")
+            waitingWindow = tkinter.Frame(rootWindow, width=480, height=360)
+            waitingWindow.place(relx=0.5, rely=0.5, anchor="center")
+            waitingText = tkinter.Label(waitingWindow, text="매칭 시작!")
+            waitingText.place(relx=0.5, rely=0.1, anchor="center")
 
-            watingBar = tkinter.Frame(watingWindow, width=0, height=36, bg="#E22500")
-            watingBar.place(relx=0.5, rely=0.9, anchor="center")
-            watingPercent = tkinter.Label(watingWindow)
-            watingPercent.place(relx=0.5, rely=0.8, anchor="center")
+            waitingBar = tkinter.Frame(waitingWindow, width=0, height=36, bg="#E22500")
+            waitingBar.place(relx=0.5, rely=0.9, anchor="center")
+            waitingPercent = tkinter.Label(waitingWindow)
+            waitingPercent.place(relx=0.5, rely=0.8, anchor="center")
+
+            imageWidth = 256
+            imageHeight = 256
+            waitingImage = tkinter.Canvas(waitingWindow, width=imageWidth, height=imageHeight)
+            generatedImage = imageGenerator.getRandomCardImage()
+            waitingImage.create_image(imageWidth/2, imageHeight/2, image=generatedImage)
+            waitingImage.place(relx=0.5, rely=0.5, anchor="center", width=imageWidth, height=imageHeight)
+
+
+
             rootWindow.update()
 
             try:
@@ -67,6 +80,10 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
                 if is_success_to_insert_wait_queue:
                     def waitingForMatch():
+                        generatedImage = imageGenerator.getRandomCardImage()
+                        waitingImage.create_image(imageWidth / 2, imageHeight / 2, image=generatedImage)
+                        #waitingImage.place(relx=0.5, rely=0.5, anchor="center", width=imageWidth, height=imageHeight)
+
                         isMatchingSuccessResponse = self.__lobbyMenuFrameRepository.checkMatching(
                             CheckMatchingRequest(
                                 self.__sessionRepository.get_session_info()
@@ -76,29 +93,28 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                         print(f"after request matching status: {currentStatus}")
 
                         if currentStatus == "FAIL":
-                            watingText.configure(text="매칭 실패!")
-                            rootWindow.after(3000, lambda: watingWindow.destroy)
+                            waitingText.configure(text="매칭 실패!")
+                            rootWindow.after(3000, lambda: waitingWindow.destroy)
 
                         if currentStatus == "WAIT":
-                            watingText.configure(text="매칭중입니다...")
+                            waitingText.configure(text="매칭중입니다...")
                             rootWindow.after(3000, waitingForMatch)
 
                         # else:
                         if currentStatus == "SUCCESS":
-                            watingText.configure(text="매칭 성공!")
-                            watingBar.place_forget()
-                            watingPercent.place_forget()
-                            rootWindow.after(3000, lambda: self.switchToBattleLobby(watingWindow, switchFrameWithMenuName))
-
-
+                            waitingText.configure(text="매칭 성공!")
+                            waitingBar.place_forget()
+                            waitingPercent.place_forget()
+                            rootWindow.after(3000,
+                                             lambda: self.switchToBattleLobby(waitingWindow, switchFrameWithMenuName))
 
                     def update_width(i):
-                        watingBar.configure(width=i, height=36)
-                        if i<480:
-                            rootWindow.after(10, lambda: update_width(i + (480/60/100)))
-                            watingPercent.configure(text = f"{round((i + (480/60/100))/480*100)}%")
+                        waitingBar.configure(width=i, height=36)
+                        if i < 480:
+                            rootWindow.after(10, lambda: update_width(i + (480 / 60 / 100)))
+                            waitingPercent.configure(text=f"{round((i + (480 / 60 / 100)) / 480 * 100)}%")
                         else:
-                            watingWindow.destroy()
+                            waitingWindow.destroy()
 
                     update_width(0)
                     rootWindow.after(3000, waitingForMatch)
@@ -132,7 +148,6 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
     def injectReceiveIpcChannel(self, receiveIpcChannel):
         self.__lobbyMenuFrameRepository.saveReceiveIpcChannel(receiveIpcChannel)
-
 
     def switchToBattleLobby(self, windowToDestory, switchFrameWithMenuName):
         try:
