@@ -125,6 +125,11 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                                      command=lobbyMenuFrame.quit, width=36, height=2)
         exit_button.place(relx=0.5, rely=0.8, anchor="center")
 
+        battle_field_button = tkinter.Button(lobbyMenuFrame, text="전장으로", bg="#2E2BE2", fg="white",
+                                          command=lambda: switchFrameWithMenuName("battle-field"), width=20,
+                                          height=2)
+        battle_field_button.place(relx=0.1, rely=0.65, anchor="center")
+
         return lobbyMenuFrame
 
     def injectTransmitIpcChannel(self, transmitIpcChannel):
