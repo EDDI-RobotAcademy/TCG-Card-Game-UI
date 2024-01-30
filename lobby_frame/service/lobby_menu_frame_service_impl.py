@@ -125,6 +125,12 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                                      command=lobbyMenuFrame.quit, width=36, height=2)
         exit_button.place(relx=0.5, rely=0.8, anchor="center")
 
+        #TODO 임시적으로 사용하는 버튼으로 나중에 battle 매칭 기능 완료되면 삭제 필요
+        battle_field_button = tkinter.Button(lobbyMenuFrame, text="전장으로", bg="#2E2BE2", fg="white",
+                                          command=lambda: switchFrameWithMenuName("battle-field"), width=20,
+                                          height=2)
+        battle_field_button.place(relx=0.1, rely=0.65, anchor="center")
+
         return lobbyMenuFrame
 
     def injectTransmitIpcChannel(self, transmitIpcChannel):

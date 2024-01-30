@@ -6,10 +6,9 @@ from battle_lobby_frame.service.battle_lobby_frame_service_impl import BattleLob
 from card_shop_frame.service.card_shop_service_impl import CardShopMenuFrameServiceImpl
 from lobby_frame.service.lobby_menu_frame_service_impl import LobbyMenuFrameServiceImpl
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
+from opengl_battle_field.frame.battle_field_frame import BattleFieldFrame
 from opengl_my_card_main_frame.service.my_card_main_frame_service_impl import MyCardMainFrameServiceImpl
-
 from buy_random_card_frame.service.buy_random_card_frame_service_impl import BuyRandomCardFrameServiceImpl
-
 # from card_random_frame.service.card_random_frame_service_impl import CardRandomFrameServiceImpl
 from opengl_my_deck_register_frame.service.my_deck_register_frame_service_impl import MyDeckRegisterFrameServiceImpl
 
@@ -35,15 +34,11 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__battleLobbyFrameService = BattleLobbyFrameServiceImpl.getInstance()
             cls.__instance.__cardShopMenuFrameService = CardShopMenuFrameServiceImpl.getInstance()
             cls.__instance.__myCardMainFrameService = MyCardMainFrameServiceImpl.getInstance()
-
             cls.__instance.__buyRandomCardFrameService = BuyRandomCardFrameServiceImpl.getInstance()
-
             # cls.__instance.__cardRandomFrameService = CardRandomFrameServiceImpl.getInstance()
-
             cls.__instance.__battleFieldFunctionService = BattleFieldFunctionServiceImpl.getInstance()
-
             cls.__instance.__myDeckRegisterFrameService = MyDeckRegisterFrameServiceImpl.getInstance()
-
+            cls.__instance.__battleFieldFrame = BattleFieldFrame
             cls.__instance.__sessionService = SessionServiceImpl.getInstance()
         return cls.__instance
 
@@ -86,6 +81,9 @@ class UiFrameControllerImpl(UiFrameController):
 
         myDeckRegisterFrame = self.__myDeckRegisterFrameService.createMyDeckRegisterUiFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerMyDeckRegisterUiFrame(myDeckRegisterFrame)
+
+        battleFieldFrame = self.__battleFieldFrame()
+        self.__uiFrameService.registerBattleFieldUiFrame(battleFieldFrame)
 
         self.switchFrameWithMenuName("main-menu")
 

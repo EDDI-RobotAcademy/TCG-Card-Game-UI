@@ -19,6 +19,10 @@ class TestBattleFieldFrame(unittest.TestCase):
         toggle_button.place(x=100, y=10)
         root.update()
 
+        summon_button = tkinter.Button(root, text="Summon", command=window.draw_cards)
+
+        summon_button.place(x=400, y=10)
+
         # sleep(1)
 
         root.mainloop()
