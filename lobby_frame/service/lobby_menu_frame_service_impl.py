@@ -6,6 +6,7 @@ from battle_lobby_frame.controller.battle_lobby_frame_controller_impl import Bat
 from battle_lobby_frame.service.request.request_deck_name_list_for_battle import RequestDeckNameListForBattle
 from lobby_frame.repository.lobby_menu_frame_repository_impl import LobbyMenuFrameRepositoryImpl
 from lobby_frame.service.lobby_menu_frame_service import LobbyMenuFrameService
+from lobby_frame.service.request.cancel_matching_request import CancelMatchingRequest
 from lobby_frame.service.request.check_matching_request import CheckMatchingRequest
 from lobby_frame.service.request.start_matching_request import StartMatchingRequest
 from session.repository.session_repository_impl import SessionRepositoryImpl
@@ -51,9 +52,12 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             waitingText.place(relx=0.5, rely=0.1, anchor="center")
 
             waitingBar = tkinter.Frame(waitingWindow, width=0, height=36, bg="#E22500")
-            waitingBar.place(relx=0.5, rely=0.9, anchor="center")
+            waitingBar.place(relx=0.5, rely=0.875, anchor="center")
             waitingPercent = tkinter.Label(waitingWindow)
-            waitingPercent.place(relx=0.5, rely=0.8, anchor="center")
+            waitingPercent.place(relx=0.5, rely=0.96, anchor="center")
+
+            # Todo : 마땅히 배치 할 곳이 없어서 잠시 안보이게 설정함
+            waitingPercent.place_forget()
 
             imageWidth = 256
             imageHeight = 256
@@ -62,7 +66,19 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             waitingImage.create_image(imageWidth/2, imageHeight/2, image=generatedImage)
             waitingImage.place(relx=0.5, rely=0.5, anchor="center", width=imageWidth, height=imageHeight)
 
+            cancelMatchingButton = tkinter.Button(waitingWindow, text="매칭 취소")
+            cancelMatchingButton.place(relx=0.5, rely=0.95, anchor="center")
 
+            def onClickCancelMatchingButton(event):
+                matchingCancelResponse = self.__lobbyMenuFrameRepository.cancelMatching(
+                    CancelMatchingRequest(
+                        self.__sessionRepository.get_session_info()
+                    )
+                )
+                if matchingCancelResponse is not None and matchingCancelResponse != "":
+                    waitingWindow.destroy()
+
+            cancelMatchingButton.bind("<Button-1>", onClickCancelMatchingButton)
 
             rootWindow.update()
 
@@ -109,12 +125,14 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                                              lambda: self.switchToBattleLobby(waitingWindow, switchFrameWithMenuName))
 
                     def update_width(i):
-                        waitingBar.configure(width=i, height=36)
+                        waitingBar.configure(width=i, height=9)
                         if i < 480:
                             rootWindow.after(10, lambda: update_width(i + (480 / 60 / 100)))
                             waitingPercent.configure(text=f"{round((i + (480 / 60 / 100)) / 480 * 100)}%")
                         else:
                             waitingWindow.destroy()
+
+
 
                     update_width(0)
                     rootWindow.after(3000, waitingForMatch)

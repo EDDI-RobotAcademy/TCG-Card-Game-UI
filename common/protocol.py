@@ -12,6 +12,7 @@ class CustomProtocol(Enum):
     ENTER_MATCHING = 12
     CHECK_MATCHING = 13
     DECK_CARD_LIST = 14
+    CANCEL_MATCHING = 15
 
 
     ACCOUNT_DECK_REGISTER = 41

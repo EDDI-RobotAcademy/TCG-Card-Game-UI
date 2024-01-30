@@ -1,9 +1,9 @@
 from common.protocol import CustomProtocol
 
 
-class StartMatchingRequest:
+class CancelMatchingRequest():
     def __init__(self, sessionInfo):
-        self.__protocolNumber = CustomProtocol.ENTER_MATCHING.value
+        self.__protocolNumber = CustomProtocol.CANCEL_MATCHING.value
         self.__sessionInfo = sessionInfo
 
 
@@ -14,4 +14,4 @@ class StartMatchingRequest:
         }
 
     def __str__(self):
-        return f"StartMatchingRequest(protocolNumber={self.__protocolNumber}, sessionInfo={self.__sessionInfo})"
+        return f"CancelMatchingRequest(protocolNumber={self.__protocolNumber}, sessionInfo={self.__sessionInfo})"
