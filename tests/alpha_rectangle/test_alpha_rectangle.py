@@ -2,6 +2,7 @@ import unittest
 
 import tkinter as tk
 import unittest
+from tkinter import ttk
 
 from PIL import Image, ImageDraw, ImageFont, ImageTk
 
@@ -22,9 +23,15 @@ class CanvasWithAlphaRectangles(OpenGLFrame):
 
         self.transparent_rect_visible = False
 
-        self.images = []  # to hold the newly created image
+        self.images = []
         self.canvas = tk.Canvas(self, width=self.width, height=self.height)
         self.canvas.pack()
+
+        self.textbox_string = tk.StringVar()
+        self.textbox_string.trace_add('write', self.update_displayed_text)
+
+        self.canvas.textbox = tk.Entry(self.canvas, textvariable=self.textbox_string, bg="white")
+        # self.canvas.textbox.bind('<Return>', self.update_displayed_text)
 
         self.button = tk.Button(self.master, text="버튼", command=self.button_click, bg="white")
         self.button.pack()
@@ -49,15 +56,18 @@ class CanvasWithAlphaRectangles(OpenGLFrame):
         glClear(GL_COLOR_BUFFER_BIT)
 
         self.canvas.delete("all")
+        self.canvas.textbox.place_forget()
 
-        self.create_alpha_rectangle(10, 10, 200, 100, fill='blue')
-        self.create_alpha_rectangle(50, 50, 250, 150, fill='green', alpha=0.5)
-        self.create_alpha_rectangle(0, 0, self.width, self.height, fill='black', alpha=0.8)
+        self.create_alpha_rectangle(10, 10, 400, 100, fill='blue')
+        self.create_alpha_rectangle(50, 50, 450, 150, fill='green', alpha=0.5)
 
         if self.transparent_rect_visible:
+            self.create_alpha_rectangle(0, 0, self.width, self.height, fill='black', alpha=0.7)
             self.create_alpha_rectangle(int(self.width * 0.25), int(self.height * 0.25),
                                         int(self.width * 0.75), int(self.height * 0.75), fill='yellow', alpha=1.0)
             self.render_text()
+            self.canvas.textbox = tk.Entry(self.canvas, textvariable=self.textbox_string, bg="white")
+            self.canvas.textbox.place(relx=0.5, rely=0.6, anchor='center')
 
         self.tkSwapBuffers()
 
@@ -84,18 +94,25 @@ class CanvasWithAlphaRectangles(OpenGLFrame):
         glVertex2f(0, self.height)
         glEnd()
 
-        text_to_render = "Hello, PyOpenGLTK!"
+        text_to_render = self.textbox_string.get()
+        if not text_to_render:
+            text_to_render = "덱 이름을 입력하세요!"
         text_color = "blue"
 
-        font = ImageFont.load_default()
+        font_size = 24
+        font_path = "/usr/share/fonts/truetype/noto/NotoSansMono-Regular.ttf"
+        font = ImageFont.truetype(font_path, font_size)
 
         text_width, text_height = font.getsize(text_to_render)
         x = (self.width - text_width) // 2
         y = (self.height - text_height) // 2
 
-        # self.canvas.delete("all")
-
         self.canvas.create_text(x, y, text=text_to_render, fill=text_color, font=("TkDefaultFont", 24))
+
+    def update_displayed_text(self, *args):
+        self.render_text()
+        # self.update_idletasks()
+        self.redraw()
 
 class TestAppWindow(unittest.TestCase):
     def test_button_click_visual(self):
