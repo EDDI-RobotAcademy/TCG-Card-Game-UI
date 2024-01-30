@@ -1,9 +1,10 @@
 from tkinter import ttk
 
-from opengl_my_deck_register_frame.frame.my_deck_register_frame import MyDeckRegisterFrame
-from opengl_my_deck_register_frame.repository.my_deck_register_frame_repository_impl import MyDeckRegisterFrameRepositoryImpl
-from opengl_my_deck_register_frame.service.my_deck_register_frame_service import MyDeckRegisterFrameService
-from opengl_my_deck_register_frame.service.request.my_deck_register_request import MyDeckRegisterRequest
+from opengl_my_deck_register_frame_legacy.entity.my_deck_register_scene import MyDeckRegisterScene
+from opengl_my_deck_register_frame_legacy.frame.my_deck_register_frame import MyDeckRegisterFrame
+from opengl_my_deck_register_frame_legacy.repository.my_deck_register_frame_repository_impl import MyDeckRegisterFrameRepositoryImpl
+from opengl_my_deck_register_frame_legacy.service.my_deck_register_frame_service import MyDeckRegisterFrameService
+from opengl_my_deck_register_frame_legacy.service.request.my_deck_register_request import MyDeckRegisterRequest
 from session.service.session_service_impl import SessionServiceImpl
 
 
@@ -26,6 +27,7 @@ class MyDeckRegisterFrameServiceImpl(MyDeckRegisterFrameService):
 
     def createMyDeckRegisterUiFrame(self, rootWindow, switchFrameWithMenuName):
         myDeckRegisterFrame = self.__myDeckRegisterFrame(rootWindow)
+        #myDeckRegisterScene = MyDeckRegisterScene.create_my_deck_register_rectangle()
 
         style = ttk.Style()
         style.configure("TFrame", background="#444444")
@@ -36,6 +38,7 @@ class MyDeckRegisterFrameServiceImpl(MyDeckRegisterFrameService):
         entry_deckname = ttk.Entry(myDeckRegisterFrame, font=("Arial", 12))
 
         button_register_deck = ttk.Button(myDeckRegisterFrame, text="확인", style="TButton")
+
 
         def on_deck_register_click(event):
             try:
@@ -56,11 +59,9 @@ class MyDeckRegisterFrameServiceImpl(MyDeckRegisterFrameService):
 
         button_register_deck.bind("<Button-1>", on_deck_register_click)
 
+
         label_deckname.place(relx=0.44, rely=0.4, anchor="center")
         entry_deckname.place(relx=0.56, rely=0.4, anchor="center")
-
-        # myDeckRegisterFrame.init_shapes()
-
         button_register_deck.place(relx=0.5, rely=0.6, anchor="center")
 
         return myDeckRegisterFrame
