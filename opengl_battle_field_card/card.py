@@ -43,7 +43,7 @@ class Card:
         self.add_shape(unit_illustration)
 
     def create_equipped_mark(self, image_path, vertices):
-        unit_equipped_mark = ImageElement(image_path=image_path,
+        unit_equipped_mark = ImageRectangleElement(image_path=image_path,
                                           vertices=vertices)
         unit_equipped_mark.set_visible(False)
         self.add_shape(unit_equipped_mark)

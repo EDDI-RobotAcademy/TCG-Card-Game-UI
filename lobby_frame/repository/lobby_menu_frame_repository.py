@@ -19,6 +19,10 @@ class LobbyMenuFrameRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def cancelMatching(self, cancelMatchingRequest):
+        pass
+
+    @abc.abstractmethod
     def startMatch(self, startMatchingRequest):
         pass
 

@@ -15,13 +15,11 @@ class TestAdjustCardSize(unittest.TestCase):
         window = BattleFieldFrame(root)
         window.pack(fill=tkinter.BOTH, expand=1)
 
-        toggle_button = tkinter.Button(root, text="Toggle Visibility", command=window.toggle_visibility)
-        toggle_button.place(x=100, y=10)
+        # toggle_button = tkinter.Button(root, text="Toggle Visibility", command=window.toggle_visibility)
+        # toggle_button.place(x=100, y=10)
 
-        summon_button = tkinter.Button(root, text="Summon", command=window.summon_units)
-
+        summon_button = tkinter.Button(root, text="Summon", command=window.draw_cards)
         summon_button.place(x=400, y=10)
-
         sleep(1)
 
         root.mainloop()
