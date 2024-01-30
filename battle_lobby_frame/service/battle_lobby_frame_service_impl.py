@@ -88,7 +88,7 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
         # request의 형태는 {ACCOUNT_DECK_LIST:[{’1’:’ㅋㅋㅋ’}, {’2’: ‘아이고’], {’3’:’이것은 세 번째 덱 이름’}]}
 
         # request = {"ACCOUNT_DECK_LIST": [{"1": 'ㅋㅋㅋㅋ'}, {"23": "아이고"}, {'3': '이것은 세 번째 덱 이름'}]}
-        # request = {"ACCOUNT_DECK_LIST": [{"1":{ 'ㅋㅋㅋㅋ':'True'}}, {"23": {"아이고":'True'}}, {'3': {'이것은 세 번째 덱 이름':'False'}}]}
+        #request = {"ACCOUNT_DECK_LIST": [{"1":{ 'ㅋㅋㅋㅋ':'True'}}, {"23": {"아이고":'True'}}, {'3': {'이것은 세 번째 덱 이름':'False'}}]}
         # request = {"ACCOUNT_DECK_LIST":[]}
 
         imageGenerator = ImageGenerator.getInstance()
