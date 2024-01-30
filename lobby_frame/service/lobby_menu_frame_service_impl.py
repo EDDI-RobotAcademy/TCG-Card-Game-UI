@@ -15,6 +15,7 @@ from utility.image_generator import ImageGenerator
 
 class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
     __instance = None
+    __isMatching = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -68,7 +69,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
             cancelMatchingButton = tkinter.Button(waitingWindow, text="매칭 취소")
             cancelMatchingButton.place(relx=0.5, rely=0.95, anchor="center")
-
+            self.__isMatching = True
             def onClickCancelMatchingButton(event):
                 matchingCancelResponse = self.__lobbyMenuFrameRepository.cancelMatching(
                     CancelMatchingRequest(
@@ -76,10 +77,10 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                     )
                 )
                 if matchingCancelResponse is not None and matchingCancelResponse != "":
+                    self.__isMatching = False
                     waitingWindow.destroy()
 
             cancelMatchingButton.bind("<Button-1>", onClickCancelMatchingButton)
-
             rootWindow.update()
 
             try:
@@ -96,41 +97,43 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
                 if is_success_to_insert_wait_queue:
                     def waitingForMatch():
-                        generatedImage = imageGenerator.getRandomCardImage()
-                        waitingImage.create_image(imageWidth / 2, imageHeight / 2, image=generatedImage)
-                        #waitingImage.place(relx=0.5, rely=0.5, anchor="center", width=imageWidth, height=imageHeight)
+                        if self.__isMatching:
+                            generatedImage = imageGenerator.getRandomCardImage()
+                            waitingImage.create_image(imageWidth / 2, imageHeight / 2, image=generatedImage)
+                            #waitingImage.place(relx=0.5, rely=0.5, anchor="center", width=imageWidth, height=imageHeight)
 
-                        isMatchingSuccessResponse = self.__lobbyMenuFrameRepository.checkMatching(
-                            CheckMatchingRequest(
-                                self.__sessionRepository.get_session_info()
+                            isMatchingSuccessResponse = self.__lobbyMenuFrameRepository.checkMatching(
+                                CheckMatchingRequest(
+                                    self.__sessionRepository.get_session_info()
+                                )
                             )
-                        )
-                        currentStatus = isMatchingSuccessResponse.get("current_status")
-                        print(f"after request matching status: {currentStatus}")
+                            currentStatus = isMatchingSuccessResponse.get("current_status")
+                            print(f"after request matching status: {currentStatus}")
 
-                        if currentStatus == "FAIL":
-                            waitingText.configure(text="매칭 실패!")
-                            rootWindow.after(3000, lambda: waitingWindow.destroy)
+                            if currentStatus == "FAIL":
+                                waitingText.configure(text="매칭 실패!")
+                                rootWindow.after(3000, lambda: waitingWindow.destroy)
 
-                        if currentStatus == "WAIT":
-                            waitingText.configure(text="매칭중입니다...")
-                            rootWindow.after(3000, waitingForMatch)
+                            if currentStatus == "WAIT":
+                                waitingText.configure(text="매칭중입니다...")
+                                rootWindow.after(3000, waitingForMatch)
 
-                        # else:
-                        if currentStatus == "SUCCESS":
-                            waitingText.configure(text="매칭 성공!")
-                            waitingBar.place_forget()
-                            waitingPercent.place_forget()
-                            rootWindow.after(3000,
-                                             lambda: self.switchToBattleLobby(waitingWindow, switchFrameWithMenuName))
+                            # else:
+                            if currentStatus == "SUCCESS":
+                                waitingText.configure(text="매칭 성공!")
+                                waitingBar.place_forget()
+                                waitingPercent.place_forget()
+                                rootWindow.after(3000,
+                                                 lambda: self.switchToBattleLobby(waitingWindow, switchFrameWithMenuName))
 
                     def update_width(i):
-                        waitingBar.configure(width=i, height=9)
-                        if i < 480:
-                            rootWindow.after(10, lambda: update_width(i + (480 / 60 / 100)))
-                            waitingPercent.configure(text=f"{round((i + (480 / 60 / 100)) / 480 * 100)}%")
-                        else:
-                            waitingWindow.destroy()
+                        if self.__isMatching:
+                            waitingBar.configure(width=i, height=9)
+                            if i < 480:
+                                rootWindow.after(10, lambda: update_width(i + (480 / 60 / 100)))
+                                waitingPercent.configure(text=f"{round((i + (480 / 60 / 100)) / 480 * 100)}%")
+                            else:
+                                waitingWindow.destroy()
 
 
 
