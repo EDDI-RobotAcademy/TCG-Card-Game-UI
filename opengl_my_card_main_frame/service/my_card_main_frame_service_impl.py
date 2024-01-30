@@ -1,4 +1,5 @@
 from tkinter import ttk
+import tkinter as tk
 
 from opengl_my_card_main_frame.frame.my_card_main_frame import MyCardMainFrame
 from opengl_my_card_main_frame.service.my_card_main_frame_service import MyCardMainFrameService
@@ -22,20 +23,19 @@ class MyCardMainFrameServiceImpl(MyCardMainFrameService):
     def createMyCardMainUiFrame(self, rootWindow, switchFrameWithMenuName):
         myCardMainFrame = self.__myCardMainFrame(rootWindow)
 
-        style = ttk.Style()
-        style.configure("TFrame", background="#DEB852")
-        style.configure("TLabel", background="#DEB852", foreground="#ffffff", font=("Arial", 30))
-        style.configure("TButton", background="#2C3E50", foreground="#ffffff", font=("Arial", 12), padding=(10, 5))
 
-        label_myCardMainText = ttk.Label(myCardMainFrame, text="My Card", style="TLabel")
+        label_myCardMainText = tk.Label(myCardMainFrame, text="My Card", fg="black")
 
-        button_create_deck = ttk.Button(myCardMainFrame, text="덱 생성", style="TButton")
-        button_go_back_to_lobby = ttk.Button(myCardMainFrame, text="로비로 돌아가기", style="TButton")
+        button_create_deck = tk.Button(myCardMainFrame, text="덱 생성", bg="red")
+        button_go_back_to_lobby = tk.Button(myCardMainFrame, text="로비로 돌아가기", bg="green")
+
 
         def on_deck_register_click(event):
             try:
                 if event.widget == button_create_deck:
-                    switchFrameWithMenuName("my-deck-register")
+                    myCardMainFrame.toggle_visibility()
+                    #switchFrameWithMenuName("my-deck-register")
+
                 elif event.widget == button_go_back_to_lobby:
                     switchFrameWithMenuName("lobby-menu")
 
