@@ -14,4 +14,4 @@ class CheckMatchingRequest:
         }
 
     def __str__(self):
-        return f"EnterBattleRequest(protocolNumber={self.__protocolNumber}, sessionInfo={self.__sessionInfo})"
+        return f"CheckMatchingRequest(protocolNumber={self.__protocolNumber}, sessionInfo={self.__sessionInfo})"

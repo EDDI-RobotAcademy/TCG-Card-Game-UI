@@ -29,6 +29,11 @@ class LobbyMenuFrameRepositoryImpl(LobbyMenuFrameRepository):
         return self.__receiveIpcChannel.get()
         # return "테스트용 리턴값입니다."
 
+    def cancelMatching(self, cancelMatchingRequest):
+        self.__transmitIpcChannel.put(cancelMatchingRequest)
+        return self.__receiveIpcChannel.get()
+        # return "테스트용 리턴값입니다."
+
 
 
     def startMatch(self, startMatchingRequest):
