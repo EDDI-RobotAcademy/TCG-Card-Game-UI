@@ -10,7 +10,7 @@ from opengl_battle_field.frame.battle_field_frame import BattleFieldFrame
 from opengl_my_card_main_frame.service.my_card_main_frame_service_impl import MyCardMainFrameServiceImpl
 from buy_random_card_frame.service.buy_random_card_frame_service_impl import BuyRandomCardFrameServiceImpl
 # from card_random_frame.service.card_random_frame_service_impl import CardRandomFrameServiceImpl
-from opengl_my_deck_register_frame_legacy.service.my_deck_register_frame_service_impl import MyDeckRegisterFrameServiceImpl
+from opengl_my_deck_register_frame.service.my_deck_register_frame_service_impl import MyDeckRegisterFrameServiceImpl
 
 
 from session.service.session_service_impl import SessionServiceImpl
@@ -79,8 +79,8 @@ class UiFrameControllerImpl(UiFrameController):
         buyRandomCardFrame = self.__buyRandomCardFrameService.createBuyRandomCardUiFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerBuyRandomCardUiFrame(buyRandomCardFrame)
 
-        myDeckRegisterFrame = self.__myDeckRegisterFrameService.createMyDeckRegisterUiFrame(rootWindow, self.switchFrameWithMenuName)
-        self.__uiFrameService.registerMyDeckRegisterUiFrame(myDeckRegisterFrame)
+        # myDeckRegisterFrame = self.__myDeckRegisterFrameService.createMyDeckRegisterUiFrame(rootWindow, self.switchFrameWithMenuName)
+        # self.__uiFrameService.registerMyDeckRegisterUiFrame(myDeckRegisterFrame)
 
         battleFieldFrame = self.__battleFieldFrame()
         self.__uiFrameService.registerBattleFieldUiFrame(battleFieldFrame)
