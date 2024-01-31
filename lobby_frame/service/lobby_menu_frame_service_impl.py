@@ -8,6 +8,7 @@ from lobby_frame.repository.lobby_menu_frame_repository_impl import LobbyMenuFra
 from lobby_frame.service.lobby_menu_frame_service import LobbyMenuFrameService
 from lobby_frame.service.request.cancel_matching_request import CancelMatchingRequest
 from lobby_frame.service.request.check_matching_request import CheckMatchingRequest
+from lobby_frame.service.request.check_prepare_battle_request import CheckPrepareBattleRequest
 from lobby_frame.service.request.start_matching_request import StartMatchingRequest
 from session.repository.session_repository_impl import SessionRepositoryImpl
 from utility.image_generator import ImageGenerator
@@ -16,6 +17,9 @@ from utility.image_generator import ImageGenerator
 class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
     __instance = None
     __isMatching = None
+
+    __switchFrameWithMenuName = None
+    __rootWindow = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -31,7 +35,28 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             cls.__instance = cls()
         return cls.__instance
 
+    def __waitForPrepareBattle(self):
+        print("LobbyMenuFrameServiceImpl: __waitForPrepareBattle()")
+        while True:
+            isPrepareCompleteResponse = self.__lobbyMenuFrameRepository.checkPrepareBattle(
+                CheckPrepareBattleRequest(
+                    self.__sessionRepository.get_session_info()
+                )
+            )
+            currentStatus = isPrepareCompleteResponse.get("current_status")
+            print(f"after request matching status: {currentStatus}")
+
+            if currentStatus == "SUCCESS":
+                self.__switchFrameWithMenuName("battle-lobby")
+                break
+
+            time.sleep(3)
+
+
     def createLobbyUiFrame(self, rootWindow, switchFrameWithMenuName):
+        self.__switchFrameWithMenuName = switchFrameWithMenuName
+        self.__rootWindow = rootWindow
+
         lobbyMenuFrame = self.__lobbyMenuFrameRepository.createLobbyMenuFrame(rootWindow)
         imageGenerator = ImageGenerator.getInstance()
 
@@ -117,6 +142,10 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                             if currentStatus == "WAIT":
                                 waitingText.configure(text="매칭중입니다...")
                                 rootWindow.after(3000, waitingForMatch)
+
+                            if currentStatus == "PREPARE":
+                                waitingText.configure(text="매칭 성공! 배틀 준비중입니다...")
+                                self.__waitForPrepareBattle()
 
                             # else:
                             if currentStatus == "SUCCESS":
