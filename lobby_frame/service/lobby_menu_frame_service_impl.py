@@ -143,15 +143,18 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                                 waitingText.configure(text="매칭중입니다...")
                                 rootWindow.after(3000, waitingForMatch)
 
+                            # 응답에 다소 시간이 걸릴 경우
+                            # __waitForPrepareBattle() 로 넘어가서도 성공의 경우 동일한 루틴을 따라갈 수 있도록 만들어주세요.
                             if currentStatus == "PREPARE":
                                 waitingText.configure(text="매칭 성공! 배틀 준비중입니다...")
                                 self.__waitForPrepareBattle()
 
+                            # 응답에 다소 시간이 걸릴 경우
                             if currentStatus == "PREPARE_PROCESS":
                                 waitingText.configure(text="매칭 성공! 배틀 준비중입니다...")
                                 self.__waitForPrepareBattle()
 
-                            # else:
+                            # 빠르게 응답이 된 경우
                             if currentStatus == "SUCCESS":
                                 waitingText.configure(text="매칭 성공!")
                                 waitingBar.place_forget()
