@@ -6,9 +6,9 @@ from OpenGL.GLU import *
 
 from opengl_my_card_main_frame.entity.alpha_rectangle import AlphaRectangle
 from opengl_my_card_main_frame.entity.background_image import MyCardMainFramImage
-from opengl_my_deck_register_frame.entity.button import MyDeckRegisterButtonEntity
 from opengl_my_deck_register_frame.entity.my_deck_rectangle import MyDeckRegisterRectangle
 from opengl_my_deck_register_frame.entity.my_deck_render_text import MyDeckRegisterTextEntity
+from opengl_my_deck_register_frame.service.my_deck_register_frame_service_impl import MyDeckRegisterFrameServiceImpl
 
 
 class MyCardMainFrame(OpenGLFrame):
@@ -34,7 +34,7 @@ class MyCardMainFrame(OpenGLFrame):
         self.background_drawer = MyCardMainFramImage(master, self.canvas)
         self.alpha_rectangle_drawer = AlphaRectangle(master, self.canvas)
         self.my_deck_rectangle_drawer = MyDeckRegisterRectangle(master, self.canvas)
-        self.add_button = MyDeckRegisterButtonEntity(master, self.canvas)
+
 
     def initgl(self):
         print("initgl")
@@ -81,7 +81,8 @@ class MyCardMainFrame(OpenGLFrame):
             self.canvas.textbox = self.text_drawer.text_box(font_size=20, lines=3)
             self.canvas.textbox.place(relx=0.5, rely=0.55, anchor='center')
 
-            self.add_button(self.width // 2, int(self.height * 0.7), "버튼", self.toggle_visibility)
+            button_submit = tk.Button(self.canvas, text="확인", command=self.on_submit_click)
+            button_submit.place(relx=0.5, rely=0.65, anchor='center')
 
         self.tkSwapBuffers()
 
@@ -96,3 +97,8 @@ class MyCardMainFrame(OpenGLFrame):
         GLU.gluOrtho2D(0, width, height, 0)
         GL.glMatrixMode(GL.GL_MODELVIEW)
         GL.glLoadIdentity()
+
+    def on_submit_click(self):
+        entry_deckname = self.canvas.textbox.get()
+        self.my_deck_register_frame_service = MyDeckRegisterFrameServiceImpl.getInstance()
+        self.my_deck_register_frame_service.on_deck_register_click(entry_deckname)

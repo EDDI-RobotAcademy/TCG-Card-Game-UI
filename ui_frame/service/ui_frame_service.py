@@ -38,9 +38,9 @@ class UiFrameService(abc.ABC):
     def registerCardShopMenuUiFrame(self, cardShopMenuFrame):
         pass
 
-    @abc.abstractmethod
-    def registerMyDeckRegisterUiFrame(self, myDeckRegisterFrame):
-        pass
+    # @abc.abstractmethod
+    # def registerMyDeckRegisterUiFrame(self, myDeckRegisterFrame):
+    #     pass
 
     @abc.abstractmethod
     def injectTransmitIpcChannel(self, transmitIpcChannel):
