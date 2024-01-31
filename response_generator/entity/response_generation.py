@@ -8,6 +8,8 @@ class ResponseGeneration(Enum):
     BATTLE_WAIT_QUEUE_FOR_MATCH = 12
     BATTLE_READY = 13
 
+    CHECK_BATTLE_PREPARE = 17
+
     ACCOUNT_DECK_REGISTER = 41
 
     PROGRAM_EXIT = 4444
