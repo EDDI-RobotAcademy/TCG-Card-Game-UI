@@ -96,9 +96,9 @@ class BattleFieldFrame(OpenGLFrame):
         your_main_character.init_your_main_character_shapes()
         self.battle_field.add_main_character(your_main_character)
 
-        first_hand_deck = HandDeck()
+        first_hand_deck = HandDeck(window=self, battle_field=self.battle_field)
         first_hand_deck.init_shapes(os.path.join(project_root, "local_storage", "card_images", "card1.png"))
-        self.battle_field.add_hand_deck(first_hand_deck)
+        self.battle_field.add_pickable_hand_deck_base(first_hand_deck)
 
         # second_hand_deck = HandDeck()
         # second_hand_deck.init_shapes(os.path.join(project_root, "local_storage", "card_images", "card2.png"))
@@ -145,7 +145,7 @@ class BattleFieldFrame(OpenGLFrame):
 
     def draw_cards(self):
         project_root = get_project_root()
-        handDeckList = self.battle_field.get_hand_deck()
+        handDeckList = self.battle_field.get_pickable_hand_deck_base()
         handDeckCount = len(handDeckList)
         print(f"handDeckList : {handDeckList}")
         print(f"handDeckCount : {handDeckCount}")
@@ -153,18 +153,18 @@ class BattleFieldFrame(OpenGLFrame):
         if handDeckCount > 10:
             # placeX = 200 * (handDeckCount) * 3/(handDeckCount)
             placeX = 200 * (handDeckCount)
-            draw_card = HandDeck(local_translation=(placeX, 0))
+            draw_card = HandDeck(local_translation=(placeX, 0), window=self, battle_field=self.battle_field)
             draw_card.init_shapes(
                 os.path.join(project_root, "local_storage", "card_images", f"card{handDeckCount + 1}.png"))
-            self.battle_field.add_hand_deck(draw_card)
-            print(f"{self.battle_field.add_hand_deck(draw_card)}")
+            self.battle_field.add_pickable_hand_deck_base(draw_card)
+            print(f"{self.battle_field.add_pickable_hand_deck_base(draw_card)}")
 
         else:
             placeX = 200 * (handDeckCount)
-            draw_card = HandDeck(local_translation=(placeX, 0))
+            draw_card = HandDeck(local_translation=(placeX, 0), window=self, battle_field=self.battle_field)
             draw_card.init_shapes(
                 os.path.join(project_root, "local_storage", "card_images", f"card{handDeckCount + 1}.png"))
-            self.battle_field.add_hand_deck(draw_card)
+            self.battle_field.add_pickable_hand_deck_base(draw_card)
 
     def resize_units(self):
         unitList = self.battle_field.get_unit_card()
