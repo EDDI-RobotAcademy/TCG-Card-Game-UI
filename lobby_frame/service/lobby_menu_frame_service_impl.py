@@ -147,6 +147,10 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                                 waitingText.configure(text="매칭 성공! 배틀 준비중입니다...")
                                 self.__waitForPrepareBattle()
 
+                            if currentStatus == "PREPARE_PROCESS":
+                                waitingText.configure(text="매칭 성공! 배틀 준비중입니다...")
+                                self.__waitForPrepareBattle()
+
                             # else:
                             if currentStatus == "SUCCESS":
                                 waitingText.configure(text="매칭 성공!")
