@@ -5,7 +5,7 @@ class ResponseGeneration(Enum):
     ACCOUNT_LOGIN = 2
 
     BATTLE_DECK_LIST = 11
-    BATTLE_MATCH = 12
+    BATTLE_WAIT_QUEUE_FOR_MATCH = 12
     BATTLE_READY = 13
 
     ACCOUNT_DECK_REGISTER = 41

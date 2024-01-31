@@ -7,7 +7,7 @@ from OpenGL.GLU import *
 from opengl_my_card_main_frame_legacy.entity.alpha_rectangle import AlphaRectangle
 from opengl_my_card_main_frame_legacy.entity.my_card_main_frame_scene import MyCardMainFrameScene
 from opengl_my_card_main_frame_legacy.renderer.my_card_main_frame_renderer import MyCardMainFrameRenderer
-from opengl_my_deck_register_frame.entity.my_deck_rectangle import MyDeckRegisterRectangle
+from opengl_my_deck_register_frame_legacy.entity.my_deck_rectangle import MyDeckRegisterRectangle
 
 
 class MyCardMainFrame(OpenGLFrame):
