@@ -24,10 +24,8 @@ class MyCardMainFrameServiceImpl(MyCardMainFrameService):
         myCardMainFrame = self.__myCardMainFrame(rootWindow)
 
 
-        label_myCardMainText = tk.Label(myCardMainFrame, text="My Card", fg="black")
-
-        button_create_deck = tk.Button(myCardMainFrame, text="덱 생성", bg="red")
-        button_go_back_to_lobby = tk.Button(myCardMainFrame, text="로비로 돌아가기", bg="green")
+        button_create_deck = tk.Button(myCardMainFrame, text="덱 생성", bg="#483C32", width=25, height=2)
+        button_go_back_to_lobby = tk.Button(myCardMainFrame, text="로비로 돌아가기", bg="#483C32", width=25, height=2)
 
 
         def on_deck_register_click(event):
@@ -46,9 +44,8 @@ class MyCardMainFrameServiceImpl(MyCardMainFrameService):
         button_create_deck.bind("<Button-1>", on_deck_register_click)
         button_go_back_to_lobby.bind("<Button-1>", on_deck_register_click)
 
-        label_myCardMainText.place(relx=0.5, rely=0.2, anchor="center")
-        button_create_deck.place(relx=0.85, rely=0.8, anchor="center")
-        button_go_back_to_lobby.place(relx=0.85, rely=0.9, anchor="center")
+        button_create_deck.place(relx=0.85, rely=0.75, anchor="center")
+        button_go_back_to_lobby.place(relx=0.85, rely=0.85, anchor="center")
 
 
         return myCardMainFrame

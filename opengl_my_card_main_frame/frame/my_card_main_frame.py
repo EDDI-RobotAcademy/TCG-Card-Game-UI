@@ -4,7 +4,9 @@ from pyopengltk import OpenGLFrame
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
-from opengl_my_card_main_frame.entity.alpha_rectangle import AlphaBlackRectangle
+from opengl_my_card_main_frame.entity.alpha_rectangle import AlphaRectangle
+from opengl_my_card_main_frame.entity.background_image import MyCardMainFramImage
+from opengl_my_deck_register_frame.entity.button import MyDeckRegisterButtonEntity
 from opengl_my_deck_register_frame.entity.my_deck_rectangle import MyDeckRegisterRectangle
 from opengl_my_deck_register_frame.entity.my_deck_render_text import MyDeckRegisterTextEntity
 
@@ -21,15 +23,18 @@ class MyCardMainFrame(OpenGLFrame):
 
         self.transparent_rect_visible = False
 
+        # 캔버스 생성
         self.canvas = tk.Canvas(self, width=self.width, height=self.height)
         self.canvas.pack()
 
         self.textbox_string = tk.StringVar()
-        self.textbox_string.trace_add('write', self.update_displayed_text)
+        self.text_drawer = MyDeckRegisterTextEntity(master, self.canvas, None, self.width, self.height)
+        self.textbox_string.trace_add('write', self.text_drawer.update_displayed_text)
 
-        self.alpha_rectangle_drawer = AlphaBlackRectangle(master, self.canvas)
+        self.background_drawer = MyCardMainFramImage(master, self.canvas)
+        self.alpha_rectangle_drawer = AlphaRectangle(master, self.canvas)
         self.my_deck_rectangle_drawer = MyDeckRegisterRectangle(master, self.canvas)
-        self.text_drawer = MyDeckRegisterTextEntity(master, self.canvas, self.textbox_string, self.width, self.height)
+        self.add_button = MyDeckRegisterButtonEntity(master, self.canvas)
 
     def initgl(self):
         print("initgl")
@@ -49,17 +54,34 @@ class MyCardMainFrame(OpenGLFrame):
         GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
         self.canvas.delete("all")
-        # 배경 화면 대신하는 도형
-        self.alpha_rectangle_drawer.create_alpha_rectangle(0, 0, self.width, self.height, fill='yellow')
+        # opengl frame에 tkinter canvas를 올리면 frame 배경이 보이지 않으므로 이를 대체할 배경 도형 추가
+        #self.alpha_rectangle_drawer.create_alpha_rectangle(0, 0, self.width, self.height, fill='yellow')
+        self.background_drawer.create_background_image(self.width, self.height, image_path="local_storage/image/battle_lobby/background.png")
+        text_x = self.width // 2
+        text_y = self.height // 6
+        self.text_drawer.render_text(x=text_x, y=text_y, custom_text="My Card", text_color="black", font_size=50)
 
-        # 투명 검정 화면 그리기
         if self.transparent_rect_visible:
+            # 투명 검정 화면 그리기
             self.alpha_rectangle_drawer.create_alpha_rectangle(0, 0, self.width, self.height, fill='black', alpha=0.7)
-            self.my_deck_rectangle_drawer.create_rectangle()
+            # 덱 생성 화면 그리기
+            deck_rectangle = self.my_deck_rectangle_drawer.create_rectangle(self.width, self.height)
 
-            self.text_drawer.render_text()
-            self.canvas.textbox = self.text_drawer.text_box()
-            self.canvas.textbox.place(relx=0.5, rely=0.6, anchor='center')
+            x1, y1, x2, y2 = self.canvas.coords(deck_rectangle)
+            x = (x1 + x2)/2
+            y = y1 + 70
+            self.text_drawer.render_text(x=x, y=y, custom_text="덱 생성", text_color="black", font_size=30)
+
+            # 생성할 덱 이름을 입력하세요
+            x1, y1, x2, y2 = self.canvas.coords(deck_rectangle)
+            x = (x1 + x2)/2
+            y = y1 + 130
+            self.text_drawer.render_text(x=x, y=y)
+
+            self.canvas.textbox = self.text_drawer.text_box(font_size=20, lines=3)
+            self.canvas.textbox.place(relx=0.5, rely=0.55, anchor='center')
+
+            self.add_button(self.width // 2, int(self.height * 0.7), "버튼", self.toggle_visibility)
 
         self.tkSwapBuffers()
 
@@ -74,11 +96,3 @@ class MyCardMainFrame(OpenGLFrame):
         GLU.gluOrtho2D(0, width, height, 0)
         GL.glMatrixMode(GL.GL_MODELVIEW)
         GL.glLoadIdentity()
-
-    def update_displayed_text(self, *args):
-        self.text_drawer.render_text()
-        # self.update_idletasks()
-        self.redraw()
-
-
-
