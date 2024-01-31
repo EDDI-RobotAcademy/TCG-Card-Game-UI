@@ -2,8 +2,8 @@ from OpenGL import GL
 from OpenGL.GLU.tess import GLU
 from pyopengltk import OpenGLFrame
 
-from opengl_my_deck_register_frame.entity.my_deck_register_scene import MyDeckRegisterScene
-from opengl_my_deck_register_frame.renderer.my_deck_register_frame_renderer import MyDeckRegisterFrameRenderer
+from opengl_my_deck_register_frame_legacy.entity.my_deck_register_scene import MyDeckRegisterScene
+from opengl_my_deck_register_frame_legacy.renderer.my_deck_register_frame_renderer import MyDeckRegisterFrameRenderer
 from opengl_shape.rectangle import Rectangle
 
 
@@ -21,7 +21,6 @@ class MyDeckRegisterFrame(OpenGLFrame):
         self.bind("<Configure>", self.on_resize)
 
         self.init_shapes()
-
         self.renderer = MyDeckRegisterFrameRenderer(self.domain_scene, self)
 
 
@@ -30,7 +29,7 @@ class MyDeckRegisterFrame(OpenGLFrame):
             color=(0.6, 0.4, 0.6, 1.0),
             vertices=[(0, 0), (600, 0), (600, 260), (0, 260)],
             local_translation=(20, 20))
-        my_deck_register_frame.set_visible(True)
+        my_deck_register_frame.set_visible(False)
         self.domain_scene.add_shape(my_deck_register_frame)
         print("init_shapes 적용 되었니?")
 
@@ -48,10 +47,9 @@ class MyDeckRegisterFrame(OpenGLFrame):
     def toggle_visibility(self):
 
         my_deck_register_frame = self.domain_scene.shapes[0]
-        my_deck_register_frame.set_visible(not my_deck_register_frame.get_visible())
+        my_deck_register_frame.set_visible(True)
 
         self.redraw()
-
 
     def reshape(self, width, height):
         GL.glViewport(0, 0, width, height)
@@ -60,7 +58,6 @@ class MyDeckRegisterFrame(OpenGLFrame):
         GLU.gluOrtho2D(0, width, height, 0)
         GL.glMatrixMode(GL.GL_MODELVIEW)
         GL.glLoadIdentity()
-
 
     def on_resize(self, event):
         self.reshape(event.width, event.height)

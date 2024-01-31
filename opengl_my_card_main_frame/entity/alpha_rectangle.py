@@ -1,20 +1,19 @@
-from opengl_shape.rectangle import Rectangle
+from PIL import Image, ImageDraw, ImageFont, ImageTk
+
+class AlphaBlackRectangle:
+    def __init__(self, master, canvas):
+        self.master = master
+        self.canvas = canvas
+        self.images = []
+
+    def create_alpha_rectangle(self, x1, y1, x2, y2, **kwargs):
+        if 'alpha' in kwargs:
+            alpha = int(kwargs.pop('alpha') * 255)
+            fill = kwargs.pop('fill')
+            fill = self.master.winfo_rgb(fill) + (alpha,)
+            image = Image.new('RGBA', (x2 - x1, y2 - y1), fill)
+            self.images.append(ImageTk.PhotoImage(image))
+            self.canvas.create_image(x1, y1, image=self.images[-1], anchor='nw')
+        self.canvas.create_rectangle(x1, y1, x2, y2, **kwargs)
 
 
-class AlphaRectangle:
-    def __init__(self, width=1200, height=800):
-        self.width = width
-        self.height = height
-        self.background_rectangle = Rectangle(color=(0.0, 0.0, 0.0, 0),
-                                              vertices=[(0, 0), (self.width, 0), (self.width, self.height), (0, self.height)])
-        self.is_visible = False
-
-    def set_background_alpha(self, alpha):
-        self.background_rectangle.set_alpha(alpha)
-
-    def local_translate(self, local_translate):
-        self.background_rectangle.local_translate(local_translate)
-
-    def draw(self):
-        if self.is_visible:
-            self.background_rectangle.draw()
