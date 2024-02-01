@@ -20,6 +20,10 @@ class BattleLobbyFrameRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def requestDeckNameList(self, requestDeckNameListForBattle):
+        pass
+
+    @abc.abstractmethod
     def requestCardList(self, RequestDeckCardList):
         pass
 

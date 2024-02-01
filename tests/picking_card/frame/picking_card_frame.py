@@ -199,7 +199,6 @@ class PickingCardFrame(OpenGLFrame):
             y = self.winfo_reqheight() - y
 
             for unit_card in self.unit_card_list:
-                print(f"type(unit_card): {type(unit_card)}")
                 if isinstance(unit_card, UnitCard):
                     unit_card.selected = False
 
@@ -210,7 +209,7 @@ class PickingCardFrame(OpenGLFrame):
                 pickable_unit_card_base = unit_card.get_pickable_unit_card_base()
 
                 if pickable_unit_card_base.is_point_inside((x, y)):
-                    print("pickable_unit_card_base.is_point_inside(x, y) pass")
+                    print(f"pickable_unit_card_base.is_point_inside(x, y) pass")
                     unit_card.selected = not unit_card.selected
                     self.selected_object = unit_card
                     self.drag_start = (x, y)
