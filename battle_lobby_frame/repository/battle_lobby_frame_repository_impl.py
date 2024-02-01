@@ -56,6 +56,7 @@ class BattleLobbyFrameRepositoryImpl(BattleLobbyFrameRepository):
     def requestCardList(self, RequestDeckCardList):
         if self.__currentDeckId is not None:
             print(f"self.__currentDeckId : {self.__currentDeckId}")
+            #return "aaa"
             self.__transmitIpcChannel.put(RequestDeckCardList)
             return self.__receiveIpcChannel.get()
         else:

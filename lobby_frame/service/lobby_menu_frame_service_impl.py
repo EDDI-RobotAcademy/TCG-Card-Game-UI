@@ -1,4 +1,5 @@
 import random
+import sys
 import time
 import tkinter
 
@@ -8,6 +9,7 @@ from lobby_frame.repository.lobby_menu_frame_repository_impl import LobbyMenuFra
 from lobby_frame.service.lobby_menu_frame_service import LobbyMenuFrameService
 from lobby_frame.service.request.cancel_matching_request import CancelMatchingRequest
 from lobby_frame.service.request.check_matching_request import CheckMatchingRequest
+from lobby_frame.service.request.exit_request import ExitRequest
 from lobby_frame.service.request.check_prepare_battle_request import CheckPrepareBattleRequest
 from lobby_frame.service.request.start_matching_request import StartMatchingRequest
 from session.repository.session_repository_impl import SessionRepositoryImpl
@@ -194,9 +196,26 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                                           height=2)
         card_shop_button.place(relx=0.5, rely=0.65, anchor="center")
 
-        exit_button = tkinter.Button(lobbyMenuFrame, text="종료", bg="#C62828", fg="white",
-                                     command=lobbyMenuFrame.quit, width=36, height=2)
+        exit_button = tkinter.Button(lobbyMenuFrame, text="종료", bg="#C62828", fg="white", width=36, height=2)
         exit_button.place(relx=0.5, rely=0.8, anchor="center")
+
+        def onClickExit(event):
+            try:
+                responseData = self.__lobbyMenuFrameRepository.requestProgramExit(
+                    ExitRequest())
+
+                print(f"responseData: {responseData}")
+
+                if responseData and responseData.get("does_client_exit_success") is True:
+                    rootWindow.destroy()
+                    sys.exit()
+                else:
+                    print("응답이 잘못 되었음")
+            except Exception as e:
+                print(f"An error occurred: {e}")
+
+        exit_button.bind("<Button-1>", onClickExit)
+
 
         #TODO 임시적으로 사용하는 버튼으로 나중에 battle 매칭 기능 완료되면 삭제 필요
         battle_field_button = tkinter.Button(lobbyMenuFrame, text="전장으로", bg="#2E2BE2", fg="white",

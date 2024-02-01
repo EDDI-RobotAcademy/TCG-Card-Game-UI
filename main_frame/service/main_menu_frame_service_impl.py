@@ -3,6 +3,7 @@ import tkinter
 from main_frame.repository.main_menu_frame_repository_impl import MainMenuFrameRepositoryImpl
 from main_frame.service.main_menu_frame_service import MainMenuFrameService
 from main_frame.service.request.program_exit_request import ProgramExitRequest
+from music_player.repository.music_player_repository_impl import MusicPlayerRepositoryImpl
 from session.service.session_service_impl import SessionServiceImpl
 
 
@@ -67,6 +68,7 @@ class MainMenuFrameServiceImpl(MainMenuFrameService):
                 print(f"responseData: {responseData}")
 
                 if responseData and responseData.get("does_client_exit_success") is True:
+                    MusicPlayerRepositoryImpl.getInstance().stopBackgroundMusic()
                     rootWindow.destroy()
                 else:
                     print("응답이 잘못 되었음")
