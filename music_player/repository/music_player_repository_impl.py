@@ -38,6 +38,11 @@ class MusicPlayerRepositoryImpl(MusicPlayerRepository):
         while mixer.music.get_busy():
             print("Background Music is playing")
             time.sleep(5)
+    def stopBackgroundMusic(self):
+
+        mixer.music.stop()
+        mixer.quit()
+
 
     def getBackgroundMusicFilePath(self):
         frameName = self.__uiIpcChannel.get()
