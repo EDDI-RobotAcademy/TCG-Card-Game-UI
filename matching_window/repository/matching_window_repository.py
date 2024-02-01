@@ -1,10 +1,7 @@
 import abc
 
 
-class LobbyMenuFrameRepository(abc.ABC):
-    @abc.abstractmethod
-    def createLobbyMenuFrame(self, rootWindow):
-        pass
+class MatchingWindowRepository(abc.ABC):
 
     @abc.abstractmethod
     def saveReceiveIpcChannel(self, receiveIpcChannel):
@@ -15,15 +12,17 @@ class LobbyMenuFrameRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def requestDeckNameList(self, deckNameRequest):
-        pass
-      
-    @abc.abstractmethod
-    def requestProgramExit(self, exitRequest):
+    def createMatchingWindowFrame(self, rootWindow):
         pass
 
     @abc.abstractmethod
-    def checkPrepareBattle(self, checkPrepareBattleRequest):
+    def requestMatching(self, request):
         pass
 
+    @abc.abstractmethod
+    def cancelMatching(self, request):
+        pass
 
+    @abc.abstractmethod
+    def checkMatching(self, request):
+        pass
