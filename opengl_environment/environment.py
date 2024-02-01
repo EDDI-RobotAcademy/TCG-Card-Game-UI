@@ -22,10 +22,10 @@ class Environment:
         shape.local_translate(self.local_translation)
         self.shapes.append(shape)
     def create_environment_rectangle(self, color, vertices):
-        tomb_base = Rectangle(color=color,
+        environment_base = Rectangle(color=color,
                                        vertices=vertices)
-        tomb_base.set_visible(True)
-        self.add_shape(tomb_base)
+        environment_base.set_visible(True)
+        self.add_shape(environment_base)
 
     def create_illustration(self, image_path, vertices):
         unit_illustration = ImageRectangleElement(image_path=image_path,
