@@ -19,7 +19,7 @@ class LobbyMenuFrameRepositoryImpl(LobbyMenuFrameRepository):
         return cls.__instance
 
     def createLobbyMenuFrame(self, rootWindow):
-        print("MainMenuFrameRepositoryImpl: createLobbyMenuFrame()")
+        print("LobbyMenuFrameRepositoryImpl: createLobbyMenuFrame()")
         lobbyMenuFrame = LobbyMenuFrame(rootWindow)
 
         return lobbyMenuFrame
@@ -51,6 +51,11 @@ class LobbyMenuFrameRepositoryImpl(LobbyMenuFrameRepository):
 
     def saveTransmitIpcChannel(self, transmitIpcChannel):
         self.__transmitIpcChannel = transmitIpcChannel
+
+    def checkPrepareBattle(self, checkPrepareBattleRequest):
+        print("LobbyMenuFrameRepositoryImpl: checkPrepareBattle()")
+        self.__transmitIpcChannel.put(checkPrepareBattleRequest)
+        return self.__receiveIpcChannel.get()
 
 
 

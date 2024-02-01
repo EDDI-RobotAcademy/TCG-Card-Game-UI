@@ -79,8 +79,8 @@ class UiFrameControllerImpl(UiFrameController):
         buyRandomCardFrame = self.__buyRandomCardFrameService.createBuyRandomCardUiFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerBuyRandomCardUiFrame(buyRandomCardFrame)
 
-        myDeckRegisterFrame = self.__myDeckRegisterFrameService.createMyDeckRegisterUiFrame(rootWindow, self.switchFrameWithMenuName)
-        self.__uiFrameService.registerMyDeckRegisterUiFrame(myDeckRegisterFrame)
+        # myDeckRegisterFrame = self.__myDeckRegisterFrameService.createMyDeckRegisterUiFrame(rootWindow, self.switchFrameWithMenuName)
+        # self.__uiFrameService.registerMyDeckRegisterUiFrame(myDeckRegisterFrame)
 
         battleFieldFrame = self.__battleFieldFrame()
         self.__uiFrameService.registerBattleFieldUiFrame(battleFieldFrame)

@@ -68,6 +68,7 @@ class CanvasWithAlphaRectangles(OpenGLFrame):
             self.render_text()
             self.canvas.textbox = tk.Entry(self.canvas, textvariable=self.textbox_string, bg="white")
             self.canvas.textbox.place(relx=0.5, rely=0.6, anchor='center')
+            self.add_button_to_canvas(self.width // 2, int(self.height * 0.8), "버튼", self.button_click)
 
         self.tkSwapBuffers()
 
@@ -113,6 +114,11 @@ class CanvasWithAlphaRectangles(OpenGLFrame):
         self.render_text()
         # self.update_idletasks()
         self.redraw()
+
+    def add_button_to_canvas(self, x, y, text, command):
+        button = tk.Button(self.canvas, text=text, command=command, bg="white")
+        button_window = self.canvas.create_window(x, y, anchor='nw', window=button)
+        return button, button_window
 
 class TestAppWindow(unittest.TestCase):
     def test_button_click_visual(self):
