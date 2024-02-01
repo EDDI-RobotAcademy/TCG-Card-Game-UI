@@ -12,6 +12,10 @@ class MatchingWindowService(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def checkMatching(self, rootWindow):
+        pass
+
+    @abc.abstractmethod
     def injectTransmitIpcChannel(self, transmitIpcChannel):
         pass
 

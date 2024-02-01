@@ -17,18 +17,6 @@ class LobbyMenuFrameRepository(abc.ABC):
     @abc.abstractmethod
     def requestDeckNameList(self, deckNameRequest):
         pass
-
-    @abc.abstractmethod
-    def cancelMatching(self, cancelMatchingRequest):
-        pass
-
-    @abc.abstractmethod
-    def startMatch(self, startMatchingRequest):
-        pass
-
-    @abc.abstractmethod
-    def checkMatching(self, checkMatchingRequest):
-        pass
       
     @abc.abstractmethod
     def requestProgramExit(self, exitRequest):

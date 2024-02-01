@@ -79,9 +79,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
         def onClickEntrance(event):
             self.__matchingWindowController.makeMatchingWindow(rootWindow)
-            response = self.__matchingWindowController.matching(rootWindow)
-            if response:
-                rootWindow.after(3000, lambda: self.switchToBattleLobby(switchFrameWithMenuName))
+            self.__matchingWindowController.matching(rootWindow)
 
         battle_entrance_button.bind("<Button-1>", onClickEntrance)
 
@@ -130,7 +128,8 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
     def injectReceiveIpcChannel(self, receiveIpcChannel):
         self.__lobbyMenuFrameRepository.saveReceiveIpcChannel(receiveIpcChannel)
 
-    def switchToBattleLobby(self, switchFrameWithMenuName):
+    def switchToBattleLobby(self, windowToDestroy):
+        windowToDestroy.destroy()
         try:
             deckNameResponse = self.__lobbyMenuFrameRepository.requestDeckNameList(
                 RequestDeckNameListForBattle(
@@ -140,8 +139,8 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             if deckNameResponse is not None and deckNameResponse != "":
                 print(f"switchToBattleLobby : 호출됨 {deckNameResponse}")
                 self.__battleLobbyFrameController.startCheckTime()
-                self.__battleLobbyFrameController.createDeckButtons(deckNameResponse, switchFrameWithMenuName)
-                switchFrameWithMenuName("battle-lobby")
+                self.__battleLobbyFrameController.createDeckButtons(deckNameResponse, self.__switchFrameWithMenuName)
+                self.__switchFrameWithMenuName("battle-lobby")
         except Exception as e:
             print(f"switchToBattleLobby Error: {e}")
 
