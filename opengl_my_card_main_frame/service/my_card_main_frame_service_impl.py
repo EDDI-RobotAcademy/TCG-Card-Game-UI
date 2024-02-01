@@ -23,7 +23,6 @@ class MyCardMainFrameServiceImpl(MyCardMainFrameService):
     def createMyCardMainUiFrame(self, rootWindow, switchFrameWithMenuName):
         myCardMainFrame = self.__myCardMainFrame(rootWindow)
 
-
         button_create_deck = tk.Button(myCardMainFrame, text="덱 생성", bg="#483C32", width=25, height=2)
         button_go_back_to_lobby = tk.Button(myCardMainFrame, text="로비로 돌아가기", bg="#483C32", width=25, height=2)
 
