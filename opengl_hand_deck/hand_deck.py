@@ -55,14 +55,16 @@ class HandDeck:
     def init_shapes(self, imagePath):
         self.__imagePath = imagePath
 
-        self.pickable_hand_deck_base = (self.create_hand_deck_rectangle(color=(0, 0, 0, 1.0),
+        self.pickable_hand_deck_base = (
+            self.create_hand_deck_rectangle(color=(0, 0, 0, 1.0),
                                             local_translation=self.local_translation,
                                             vertices=[(600, 860), (750, 860), (750, 1055), (600, 1055)]))
 
-        # self.pickable_hand_deck_base.set_attached_shapes(
-        #     self.create_illustration(image_path=self.__imagePath,
-        #                              local_translation=self.local_translation,
-        #                              vertices=[(600, 860), (750, 860), (750, 1055), (600, 1055)]))
+        self.pickable_hand_deck_base.set_attached_shapes(
+            self.create_illustration(image_path=self.__imagePath,
+                                     local_translation=self.local_translation,
+                                     vertices=[(600, 860), (750, 860), (750, 1055), (600, 1055)]))
+
 
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
@@ -113,11 +115,11 @@ class HandDeck:
             # ]
             # tool_card.update_vertices(new_tool_card_vertices)
             #
-            # for attached_shape in pickable_unit.get_attached_shapes():
-            #     new_attached_shape_vertices = [
-            #         (vx + dx, vy + dy) for vx, vy in attached_shape.vertices
-            #     ]
-            #     attached_shape.update_vertices(new_attached_shape_vertices)
+            for attached_shape in pickable_hand_deck.get_attached_shapes():
+                new_attached_shape_vertices = [
+                    (vx + dx, vy + dy) for vx, vy in attached_shape.vertices
+                ]
+                attached_shape.update_vertices(new_attached_shape_vertices)
 
             self.drag_start = (x, y)
             self.redraw()
