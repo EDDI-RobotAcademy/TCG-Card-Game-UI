@@ -60,14 +60,14 @@ class MatchingWindowServiceImpl(MatchingWindowService):
                 )
             )
             if matchingCancelResponse is not None and matchingCancelResponse != "":
-                self.__matchingWindow.hideMatchingUI()
-                self.__matchingWindow.destroy()
+                self.matchingCancel()
 
 
         self.__matchingWindow.getCancelMatchingButton().bind("<Button-1>", onClickCancelMatchingButton)
         rootWindow.update()
 
     def startMatching(self, rootWindow):
+        self.__isMatching = True
         try:
             startMatchResponse = self.__matchingWindowRepository.requestMatching(
                 StartMatchingRequest(
@@ -88,45 +88,47 @@ class MatchingWindowServiceImpl(MatchingWindowService):
 
             else:
                 print("matching Window: Invalid or missing response data.")
-                self.__matchingWindow.hideMatchingUI()
-                self.__matchingWindow.destroy()
+                self.matchingCancel()
 
         except Exception as e:
             print(f"startMatch Error: {e}")
-            self.__matchingWindow.hideMatchingUI()
-            self.__matchingWindow.destroy()
+            self.matchingCancel()
 
-
+    def matchingCancel(self):
+        self.__isMatching = False
+        self.__matchingWindow.hideMatchingUI()
+        self.__matchingWindow.destroy()
 
     def checkMatching(self, rootWindow):
-        from lobby_frame.controller.lobby_menu_frame_controller_impl import LobbyMenuFrameControllerImpl
-        self.__matchingWindow.updateMatchingImage()
+        if self.__isMatching:
+            from lobby_frame.controller.lobby_menu_frame_controller_impl import LobbyMenuFrameControllerImpl
+            self.__matchingWindow.updateMatchingImage()
 
-        isMatchingSuccessResponse = self.__matchingWindowRepository.checkMatching(
-            CheckMatchingRequest(
-                self.__sessionRepository.get_session_info()
+            isMatchingSuccessResponse = self.__matchingWindowRepository.checkMatching(
+                CheckMatchingRequest(
+                    self.__sessionRepository.get_session_info()
+                )
             )
-        )
-        currentStatus = isMatchingSuccessResponse.get("current_status")
-        print(f"after request matching status: {currentStatus}")
+            currentStatus = isMatchingSuccessResponse.get("current_status")
+            print(f"after request matching status: {currentStatus}")
 
-        if currentStatus == "FAIL":
-            self.__matchingWindow.changeWindowText("매칭 실패!")
-            rootWindow.after(3000, lambda: self.__matchingWindow.destroy)
-
-
-        if currentStatus == "WAIT":
-            self.__matchingWindow.changeWindowText("매칭중입니다...")
-            rootWindow.after(3000, lambda: self.checkMatching(rootWindow))
-
-        # else:
-        if currentStatus == "SUCCESS":
-            self.__matchingWindow.changeWindowText("매칭 성공!")
-            self.__matchingWindow.hideMatchingUI()
-            rootWindow.after(3000, lambda: LobbyMenuFrameControllerImpl.getInstance().switchFrameToBattleLobby(self.__matchingWindow))
+            if currentStatus == "FAIL":
+                self.__matchingWindow.changeWindowText("매칭 실패!")
+                rootWindow.after(3000, lambda: self.matchingCancel())
 
 
-        print("CheckMatching: Invalid response data")
+            if currentStatus == "WAIT":
+                self.__matchingWindow.changeWindowText("매칭중입니다...")
+                rootWindow.after(3000, lambda: self.checkMatching(rootWindow))
+
+            # else:
+            if currentStatus == "SUCCESS":
+                self.__matchingWindow.changeWindowText("매칭 성공!")
+                self.__matchingWindow.hideMatchingUI()
+                rootWindow.after(3000, lambda: LobbyMenuFrameControllerImpl.getInstance().switchFrameToBattleLobby(self.__matchingWindow))
+
+
+            print("CheckMatching: Invalid response data")
 
 
     def getMatchingWindow(self):

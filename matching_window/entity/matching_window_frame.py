@@ -36,8 +36,9 @@ class MatchingWindowFrame(tkinter.Frame):
         # self.__matchingPercent.place(relx=0.5, rely=0.96, anchor="center")
 
     def updateMatchingImage(self):
-        generatedImage = self.__imageGenerator.getRandomCardImage()
-        self.__waitingImage.create_image(imageWidth / 2, imageHeight / 2, image=generatedImage)
+        if self.__isMatching:
+            generatedImage = self.__imageGenerator.getRandomCardImage()
+            self.__waitingImage.create_image(imageWidth / 2, imageHeight / 2, image=generatedImage)
 
     def updateMatchingBarWidth(self, i, rootWindow):
         if self.__isMatching:
@@ -53,7 +54,8 @@ class MatchingWindowFrame(tkinter.Frame):
         return self.__cancelMatchingButton
 
     def changeWindowText(self, text):
-        self.__matchingText.configure(text=text)
+        if self.__isMatching:
+            self.__matchingText.configure(text=text)
 
     def hideMatchingUI(self):
         self.__matchingBar.place_forget()
