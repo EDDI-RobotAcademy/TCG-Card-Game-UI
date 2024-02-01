@@ -18,7 +18,7 @@ class MatchingWindowControllerImpl(MatchingWindowController):
         return cls.__instance
 
     def makeMatchingWindow(self, rootWindow):
-        self.__matchingWindowService.makeMatchingWindow(rootWindow)
+        self.__matchingWindowService.createMatchingWindow(rootWindow)
 
     def matching(self, rootWindow):
         return self.__matchingWindowService.startMatching(rootWindow)
