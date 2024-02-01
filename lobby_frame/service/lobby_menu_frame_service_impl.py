@@ -1,20 +1,24 @@
-import random
 import sys
 import time
 import tkinter
+
 
 from battle_lobby_frame.controller.battle_lobby_frame_controller_impl import BattleLobbyFrameControllerImpl
 from battle_lobby_frame.service.request.request_deck_name_list_for_battle import RequestDeckNameListForBattle
 from lobby_frame.repository.lobby_menu_frame_repository_impl import LobbyMenuFrameRepositoryImpl
 from lobby_frame.service.lobby_menu_frame_service import LobbyMenuFrameService
-from lobby_frame.service.request.cancel_matching_request import CancelMatchingRequest
-from lobby_frame.service.request.check_matching_request import CheckMatchingRequest
+from matching_window.controller.matching_window_controller_impl import MatchingWindowControllerImpl
+from matching_window.service.request.cancel_matching_request import CancelMatchingRequest
+from matching_window.service.request.check_matching_request import CheckMatchingRequest
 from lobby_frame.service.request.exit_request import ExitRequest
 from lobby_frame.service.request.check_prepare_battle_request import CheckPrepareBattleRequest
-from lobby_frame.service.request.start_matching_request import StartMatchingRequest
+# from lobby_frame.service.request.start_matching_request import StartMatchingRequest
+from matching_window.service.request.start_matching_request import StartMatchingRequest
 from session.repository.session_repository_impl import SessionRepositoryImpl
 from utility.image_generator import ImageGenerator
 
+imageWidth = 256
+imageHeight = 256
 
 class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
     __instance = None
@@ -29,6 +33,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             cls.__instance.__lobbyMenuFrameRepository = LobbyMenuFrameRepositoryImpl.getInstance()
             cls.__instance.__sessionRepository = SessionRepositoryImpl.getInstance()
             cls.__instance.__battleLobbyFrameController = BattleLobbyFrameControllerImpl.getInstance()
+            cls.__instance.__matchingWindowController = MatchingWindowControllerImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -60,7 +65,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
         self.__rootWindow = rootWindow
 
         lobbyMenuFrame = self.__lobbyMenuFrameRepository.createLobbyMenuFrame(rootWindow)
-        imageGenerator = ImageGenerator.getInstance()
+
 
         label_text = "EDDI TCG Card Battle"
         label = tkinter.Label(lobbyMenuFrame, text=label_text, font=("Helvetica", 72), bg="black", fg="white",
@@ -73,116 +78,10 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
         battle_entrance_button.place(relx=0.5, rely=0.35, anchor="center")
 
         def onClickEntrance(event):
-
-            waitingWindow = tkinter.Frame(rootWindow, width=480, height=360)
-            waitingWindow.place(relx=0.5, rely=0.5, anchor="center")
-            waitingText = tkinter.Label(waitingWindow, text="매칭 시작!")
-            waitingText.place(relx=0.5, rely=0.1, anchor="center")
-
-            waitingBar = tkinter.Frame(waitingWindow, width=0, height=36, bg="#E22500")
-            waitingBar.place(relx=0.5, rely=0.875, anchor="center")
-            waitingPercent = tkinter.Label(waitingWindow)
-            waitingPercent.place(relx=0.5, rely=0.96, anchor="center")
-
-            # Todo : 마땅히 배치 할 곳이 없어서 잠시 안보이게 설정함
-            waitingPercent.place_forget()
-
-            imageWidth = 256
-            imageHeight = 256
-            waitingImage = tkinter.Canvas(waitingWindow, width=imageWidth, height=imageHeight)
-            generatedImage = imageGenerator.getRandomCardImage()
-            waitingImage.create_image(imageWidth/2, imageHeight/2, image=generatedImage)
-            waitingImage.place(relx=0.5, rely=0.5, anchor="center", width=imageWidth, height=imageHeight)
-
-            cancelMatchingButton = tkinter.Button(waitingWindow, text="매칭 취소")
-            cancelMatchingButton.place(relx=0.5, rely=0.95, anchor="center")
-            self.__isMatching = True
-            def onClickCancelMatchingButton(event):
-                matchingCancelResponse = self.__lobbyMenuFrameRepository.cancelMatching(
-                    CancelMatchingRequest(
-                        self.__sessionRepository.get_session_info()
-                    )
-                )
-                if matchingCancelResponse is not None and matchingCancelResponse != "":
-                    self.__isMatching = False
-                    waitingWindow.destroy()
-
-            cancelMatchingButton.bind("<Button-1>", onClickCancelMatchingButton)
-            rootWindow.update()
-
-            try:
-                afterBattleMatchResponse = self.__lobbyMenuFrameRepository.startMatch(
-                    StartMatchingRequest(
-                        self.__sessionRepository.get_session_info()
-                    )
-                )
-
-                is_success_to_insert_wait_queue = False
-
-                if afterBattleMatchResponse:
-                    is_success_to_insert_wait_queue = afterBattleMatchResponse.get("is_success")
-
-                if is_success_to_insert_wait_queue:
-                    def waitingForMatch():
-                        if self.__isMatching:
-                            generatedImage = imageGenerator.getRandomCardImage()
-                            waitingImage.create_image(imageWidth / 2, imageHeight / 2, image=generatedImage)
-                            #waitingImage.place(relx=0.5, rely=0.5, anchor="center", width=imageWidth, height=imageHeight)
-
-                            isMatchingSuccessResponse = self.__lobbyMenuFrameRepository.checkMatching(
-                                CheckMatchingRequest(
-                                    self.__sessionRepository.get_session_info()
-                                )
-                            )
-                            currentStatus = isMatchingSuccessResponse.get("current_status")
-                            print(f"after request matching status: {currentStatus}")
-
-                            if currentStatus == "FAIL":
-                                waitingText.configure(text="매칭 실패!")
-                                rootWindow.after(3000, lambda: waitingWindow.destroy)
-
-                            if currentStatus == "WAIT":
-                                waitingText.configure(text="매칭중입니다...")
-                                rootWindow.after(3000, waitingForMatch)
-
-                            # 응답에 다소 시간이 걸릴 경우
-                            # __waitForPrepareBattle() 로 넘어가서도 성공의 경우 동일한 루틴을 따라갈 수 있도록 만들어주세요.
-                            if currentStatus == "PREPARE":
-                                waitingText.configure(text="매칭 성공! 배틀 준비중입니다...")
-                                self.__waitForPrepareBattle()
-
-                            # 응답에 다소 시간이 걸릴 경우
-                            if currentStatus == "PREPARE_PROCESS":
-                                waitingText.configure(text="매칭 성공! 배틀 준비중입니다...")
-                                self.__waitForPrepareBattle()
-
-                            # 빠르게 응답이 된 경우
-                            if currentStatus == "SUCCESS":
-                                waitingText.configure(text="매칭 성공!")
-                                waitingBar.place_forget()
-                                waitingPercent.place_forget()
-                                rootWindow.after(3000,
-                                                 lambda: self.switchToBattleLobby(waitingWindow, switchFrameWithMenuName))
-
-                    def update_width(i):
-                        if self.__isMatching:
-                            waitingBar.configure(width=i, height=9)
-                            if i < 480:
-                                rootWindow.after(10, lambda: update_width(i + (480 / 60 / 100)))
-                                waitingPercent.configure(text=f"{round((i + (480 / 60 / 100)) / 480 * 100)}%")
-                            else:
-                                waitingWindow.destroy()
-
-
-
-                    update_width(0)
-                    rootWindow.after(3000, waitingForMatch)
-
-                else:
-                    print("Invalid or missing response data.")
-
-            except Exception as e:
-                print(f"onClickEntrance Error: {e}")
+            self.__matchingWindowController.makeMatchingWindow(rootWindow)
+            response = self.__matchingWindowController.matching(rootWindow)
+            if response:
+                rootWindow.after(3000, lambda: self.switchToBattleLobby(switchFrameWithMenuName))
 
         battle_entrance_button.bind("<Button-1>", onClickEntrance)
 
@@ -217,11 +116,11 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
         exit_button.bind("<Button-1>", onClickExit)
 
 
-        #TODO 임시적으로 사용하는 버튼으로 나중에 battle 매칭 기능 완료되면 삭제 필요
-        battle_field_button = tkinter.Button(lobbyMenuFrame, text="전장으로", bg="#2E2BE2", fg="white",
-                                          command=lambda: switchFrameWithMenuName("battle-field"), width=20,
-                                          height=2)
-        battle_field_button.place(relx=0.1, rely=0.65, anchor="center")
+        # #TODO 임시적으로 사용하는 버튼으로 나중에 battle 매칭 기능 완료되면 삭제 필요
+        # battle_field_button = tkinter.Button(lobbyMenuFrame, text="전장으로", bg="#2E2BE2", fg="white",
+        #                                   command=lambda: switchFrameWithMenuName("battle-field"), width=20,
+        #                                   height=2)
+        # battle_field_button.place(relx=0.1, rely=0.65, anchor="center")
 
         return lobbyMenuFrame
 
@@ -231,9 +130,8 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
     def injectReceiveIpcChannel(self, receiveIpcChannel):
         self.__lobbyMenuFrameRepository.saveReceiveIpcChannel(receiveIpcChannel)
 
-    def switchToBattleLobby(self, windowToDestory, switchFrameWithMenuName):
+    def switchToBattleLobby(self, switchFrameWithMenuName):
         try:
-            windowToDestory.place_forget()
             deckNameResponse = self.__lobbyMenuFrameRepository.requestDeckNameList(
                 RequestDeckNameListForBattle(
                     self.__sessionRepository.get_session_info()
@@ -246,3 +144,108 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                 switchFrameWithMenuName("battle-lobby")
         except Exception as e:
             print(f"switchToBattleLobby Error: {e}")
+
+
+    # def makeWaitingWindow(self, rootWindow, switchFrameWithMenuName):
+    #     imageGenerator = ImageGenerator.getInstance()
+    #
+    #     waitingWindow = tkinter.Frame(rootWindow, width=480, height=360)
+    #     waitingWindow.place(relx=0.5, rely=0.5, anchor="center")
+    #     waitingText = tkinter.Label(waitingWindow, text="매칭 시작!")
+    #     waitingText.place(relx=0.5, rely=0.1, anchor="center")
+    #
+    #     waitingBar = tkinter.Frame(waitingWindow, width=0, height=36, bg="#E22500")
+    #     waitingBar.place(relx=0.5, rely=0.875, anchor="center")
+    #     waitingPercent = tkinter.Label(waitingWindow)
+    #     waitingPercent.place(relx=0.5, rely=0.96, anchor="center")
+    #
+    #     # Todo : 마땅히 배치 할 곳이 없어서 잠시 안보이게 설정함
+    #     waitingPercent.place_forget()
+    #
+    #
+    #     waitingImage = tkinter.Canvas(waitingWindow, width=imageWidth, height=imageHeight)
+    #     generatedImage = imageGenerator.getRandomCardImage()
+    #     waitingImage.create_image(imageWidth / 2, imageHeight / 2, image=generatedImage)
+    #     waitingImage.place(relx=0.5, rely=0.5, anchor="center", width=imageWidth, height=imageHeight)
+    #
+    #     cancelMatchingButton = tkinter.Button(waitingWindow, text="매칭 취소")
+    #     cancelMatchingButton.place(relx=0.5, rely=0.95, anchor="center")
+    #     self.__isMatching = True
+    #
+    #     def onClickCancelMatchingButton(event):
+    #         matchingCancelResponse = self.__lobbyMenuFrameRepository.cancelMatching(
+    #             CancelMatchingRequest(
+    #                 self.__sessionRepository.get_session_info()
+    #             )
+    #         )
+    #         if matchingCancelResponse is not None and matchingCancelResponse != "":
+    #             self.__isMatching = False
+    #             waitingWindow.destroy()
+    #
+    #     cancelMatchingButton.bind("<Button-1>", onClickCancelMatchingButton)
+    #     rootWindow.update()
+    #
+    #
+    #
+    #     try:
+    #         afterBattleMatchResponse = self.__lobbyMenuFrameRepository.startMatch(
+    #             StartMatchingRequest(
+    #                 self.__sessionRepository.get_session_info()
+    #             )
+    #         )
+    #
+    #         is_success_to_insert_wait_queue = False
+    #
+    #         if afterBattleMatchResponse:
+    #             is_success_to_insert_wait_queue = afterBattleMatchResponse.get("is_success")
+    #
+    #         if is_success_to_insert_wait_queue:
+    #
+    #             def waitingForMatch():
+    #                 pass
+    #
+    #             def update_width(i):
+    #                 if self.__isMatching:
+    #                     waitingBar.configure(width=i, height=9)
+    #                     if i < 480:
+    #                         rootWindow.after(10, lambda: update_width(i + (480 / 60 / 100)))
+    #                         waitingPercent.configure(text=f"{round((i + (480 / 60 / 100)) / 480 * 100)}%")
+    #                     else:
+    #                         waitingWindow.destroy()
+    #
+    #             update_width(0)
+    #             rootWindow.after(3000, waitingForMatch)
+    #
+    #         else:
+    #             print("Invalid or missing response data.")
+    #
+    #     except Exception as e:
+    #         print(f"onClickEntrance Error: {e}")
+    #
+    # def updateWaitingWindow(self, imageGenerator, waitingImage, waitingText, rootWindow):
+    #     if self.__isMatching:
+    #         generatedImage = imageGenerator.getRandomCardImage()
+    #         waitingImage.create_image(imageWidth / 2, imageHeight / 2, image=generatedImage)
+    #         # waitingImage.place(relx=0.5, rely=0.5, anchor="center", width=imageWidth, height=imageHeight)
+    #
+    #         isMatchingSuccessResponse = self.__lobbyMenuFrameRepository.checkMatching(
+    #             CheckMatchingRequest(
+    #                 self.__sessionRepository.get_session_info()
+    #             )
+    #         )
+    #         currentStatus = isMatchingSuccessResponse.get("current_status")
+    #         print(f"after request matching status: {currentStatus}")
+    #
+    #         if currentStatus == "FAIL":
+    #             waitingText.configure(text="매칭 실패!")
+    #             rootWindow.after(3000, lambda: waitingWindow.destroy)
+    #
+    #         if currentStatus == "WAIT":
+    #             waitingText.configure(text="매칭중입니다...")
+    #             rootWindow.after(3000, lambda : self.updateWaitingWindow())
+    #
+    #         # else:
+    #         if currentStatus == "SUCCESS":
+    #             waitingText.configure(text="매칭 성공!")
+    #             waitingBar.place_forget()
+    #             waitingPercent.place_forget()
