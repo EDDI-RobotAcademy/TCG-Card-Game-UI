@@ -6,6 +6,7 @@ from battle_lobby_frame.service.battle_lobby_frame_service_impl import BattleLob
 from card_shop_frame.service.card_shop_service_impl import CardShopMenuFrameServiceImpl
 from lobby_frame.service.lobby_menu_frame_service_impl import LobbyMenuFrameServiceImpl
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
+from matching_window.service.matching_window_service_impl import MatchingWindowServiceImpl
 from opengl_battle_field.frame.battle_field_frame import BattleFieldFrame
 from opengl_my_card_main_frame.service.my_card_main_frame_service_impl import MyCardMainFrameServiceImpl
 from buy_random_card_frame.service.buy_random_card_frame_service_impl import BuyRandomCardFrameServiceImpl
@@ -40,6 +41,7 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__myDeckRegisterFrameService = MyDeckRegisterFrameServiceImpl.getInstance()
             cls.__instance.__battleFieldFrame = BattleFieldFrame
             cls.__instance.__sessionService = SessionServiceImpl.getInstance()
+            cls.__instance.__matchingWindowService = MatchingWindowServiceImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -110,6 +112,7 @@ class UiFrameControllerImpl(UiFrameController):
         self.__battleFieldFunctionService.injectTransmitIpcChannel(transmitIpcChannel)
 
         self.__myDeckRegisterFrameService.injectTransmitIpcChannel(transmitIpcChannel)
+        self.__matchingWindowService.injectTransmitIpcChannel(transmitIpcChannel)
 
 
     def requestToInjectReceiveIpcChannel(self, receiveIpcChannel):
@@ -126,6 +129,7 @@ class UiFrameControllerImpl(UiFrameController):
         self.__battleFieldFunctionService.injectReceiveIpcChannel(receiveIpcChannel)
 
         self.__myDeckRegisterFrameService.injectReceiveIpcChannel(receiveIpcChannel)
+        self.__matchingWindowService.injectReceiveIpcChannel(receiveIpcChannel)
 
 
     def requestToInjectMusicPlayIpcChannel(self, musicPlayIpcChannel):
