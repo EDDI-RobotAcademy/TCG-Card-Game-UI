@@ -19,7 +19,7 @@ class LobbyMenuFrameRepositoryImpl(LobbyMenuFrameRepository):
         return cls.__instance
 
     def createLobbyMenuFrame(self, rootWindow):
-        print("MainMenuFrameRepositoryImpl: createLobbyMenuFrame()")
+        print("LobbyMenuFrameRepositoryImpl: createLobbyMenuFrame()")
         lobbyMenuFrame = LobbyMenuFrame(rootWindow)
 
         return lobbyMenuFrame
@@ -34,7 +34,9 @@ class LobbyMenuFrameRepositoryImpl(LobbyMenuFrameRepository):
         return self.__receiveIpcChannel.get()
         # return "테스트용 리턴값입니다."
 
-
+    def requestProgramExit(self, exitRequest):
+        self.__transmitIpcChannel.put(exitRequest)
+        return self.__receiveIpcChannel.get()
 
     def startMatch(self, startMatchingRequest):
         self.__transmitIpcChannel.put(startMatchingRequest)
@@ -49,4 +51,12 @@ class LobbyMenuFrameRepositoryImpl(LobbyMenuFrameRepository):
 
     def saveTransmitIpcChannel(self, transmitIpcChannel):
         self.__transmitIpcChannel = transmitIpcChannel
+
+    def checkPrepareBattle(self, checkPrepareBattleRequest):
+        print("LobbyMenuFrameRepositoryImpl: checkPrepareBattle()")
+        self.__transmitIpcChannel.put(checkPrepareBattleRequest)
+        return self.__receiveIpcChannel.get()
+
+
+
 

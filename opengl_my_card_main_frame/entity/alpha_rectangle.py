@@ -1,6 +1,6 @@
 from PIL import Image, ImageDraw, ImageFont, ImageTk
 
-class AlphaBlackRectangle:
+class AlphaRectangle:
     def __init__(self, master, canvas):
         self.master = master
         self.canvas = canvas

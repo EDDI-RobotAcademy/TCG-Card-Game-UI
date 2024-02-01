@@ -1,4 +1,5 @@
 import random
+import sys
 import time
 import tkinter
 
@@ -8,6 +9,8 @@ from lobby_frame.repository.lobby_menu_frame_repository_impl import LobbyMenuFra
 from lobby_frame.service.lobby_menu_frame_service import LobbyMenuFrameService
 from lobby_frame.service.request.cancel_matching_request import CancelMatchingRequest
 from lobby_frame.service.request.check_matching_request import CheckMatchingRequest
+from lobby_frame.service.request.exit_request import ExitRequest
+from lobby_frame.service.request.check_prepare_battle_request import CheckPrepareBattleRequest
 from lobby_frame.service.request.start_matching_request import StartMatchingRequest
 from session.repository.session_repository_impl import SessionRepositoryImpl
 from utility.image_generator import ImageGenerator
@@ -16,6 +19,9 @@ from utility.image_generator import ImageGenerator
 class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
     __instance = None
     __isMatching = None
+
+    __switchFrameWithMenuName = None
+    __rootWindow = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -31,7 +37,28 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             cls.__instance = cls()
         return cls.__instance
 
+    def __waitForPrepareBattle(self):
+        print("LobbyMenuFrameServiceImpl: __waitForPrepareBattle()")
+        while True:
+            isPrepareCompleteResponse = self.__lobbyMenuFrameRepository.checkPrepareBattle(
+                CheckPrepareBattleRequest(
+                    self.__sessionRepository.get_session_info()
+                )
+            )
+            currentStatus = isPrepareCompleteResponse.get("current_status")
+            print(f"after request matching status: {currentStatus}")
+
+            if currentStatus == "SUCCESS":
+                self.__switchFrameWithMenuName("battle-lobby")
+                break
+
+            time.sleep(3)
+
+
     def createLobbyUiFrame(self, rootWindow, switchFrameWithMenuName):
+        self.__switchFrameWithMenuName = switchFrameWithMenuName
+        self.__rootWindow = rootWindow
+
         lobbyMenuFrame = self.__lobbyMenuFrameRepository.createLobbyMenuFrame(rootWindow)
         imageGenerator = ImageGenerator.getInstance()
 
@@ -118,7 +145,18 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                                 waitingText.configure(text="매칭중입니다...")
                                 rootWindow.after(3000, waitingForMatch)
 
-                            # else:
+                            # 응답에 다소 시간이 걸릴 경우
+                            # __waitForPrepareBattle() 로 넘어가서도 성공의 경우 동일한 루틴을 따라갈 수 있도록 만들어주세요.
+                            if currentStatus == "PREPARE":
+                                waitingText.configure(text="매칭 성공! 배틀 준비중입니다...")
+                                self.__waitForPrepareBattle()
+
+                            # 응답에 다소 시간이 걸릴 경우
+                            if currentStatus == "PREPARE_PROCESS":
+                                waitingText.configure(text="매칭 성공! 배틀 준비중입니다...")
+                                self.__waitForPrepareBattle()
+
+                            # 빠르게 응답이 된 경우
                             if currentStatus == "SUCCESS":
                                 waitingText.configure(text="매칭 성공!")
                                 waitingBar.place_forget()
@@ -158,9 +196,26 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                                           height=2)
         card_shop_button.place(relx=0.5, rely=0.65, anchor="center")
 
-        exit_button = tkinter.Button(lobbyMenuFrame, text="종료", bg="#C62828", fg="white",
-                                     command=lobbyMenuFrame.quit, width=36, height=2)
+        exit_button = tkinter.Button(lobbyMenuFrame, text="종료", bg="#C62828", fg="white", width=36, height=2)
         exit_button.place(relx=0.5, rely=0.8, anchor="center")
+
+        def onClickExit(event):
+            try:
+                responseData = self.__lobbyMenuFrameRepository.requestProgramExit(
+                    ExitRequest())
+
+                print(f"responseData: {responseData}")
+
+                if responseData and responseData.get("does_client_exit_success") is True:
+                    rootWindow.destroy()
+                    sys.exit()
+                else:
+                    print("응답이 잘못 되었음")
+            except Exception as e:
+                print(f"An error occurred: {e}")
+
+        exit_button.bind("<Button-1>", onClickExit)
+
 
         #TODO 임시적으로 사용하는 버튼으로 나중에 battle 매칭 기능 완료되면 삭제 필요
         battle_field_button = tkinter.Button(lobbyMenuFrame, text="전장으로", bg="#2E2BE2", fg="white",
