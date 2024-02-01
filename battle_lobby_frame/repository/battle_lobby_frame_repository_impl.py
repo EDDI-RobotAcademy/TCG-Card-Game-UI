@@ -53,6 +53,10 @@ class BattleLobbyFrameRepositoryImpl(BattleLobbyFrameRepository):
             else:
                 d.config(highlightthickness=0)
 
+    def requestDeckNameList(self, requestDeckNameListForBattle):
+        self.__transmitIpcChannel.put(requestDeckNameListForBattle)
+        return self.__receiveIpcChannel.get()
+
     def requestCardList(self, RequestDeckCardList):
         if self.__currentDeckId is not None:
             print(f"self.__currentDeckId : {self.__currentDeckId}")
