@@ -28,9 +28,9 @@ class Tomb:
         self.add_shape(tomb_base)
 
     def create_illustration(self, image_path, vertices):
-        unit_illustration = ImageRectangleElement(image_path=image_path,
+        tomb_illustration = ImageRectangleElement(image_path=image_path,
                                          vertices=vertices)
-        self.add_shape(unit_illustration)
+        self.add_shape(tomb_illustration)
 
     def init_shapes(self):
         project_root = get_project_root()

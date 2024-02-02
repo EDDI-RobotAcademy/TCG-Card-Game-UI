@@ -46,11 +46,11 @@ class HandDeck:
         return pickable_hand_deck_base
 
     def create_illustration(self, image_path, vertices, local_translation):
-        unit_illustration = ImageRectangleElement(image_path=image_path,
+        hand_deck_illustration = ImageRectangleElement(image_path=image_path,
                                                   local_translation=local_translation,
                                                   vertices=vertices)
-        self.add_shape(unit_illustration)
-        return unit_illustration
+        self.add_shape(hand_deck_illustration)
+        return hand_deck_illustration
 
     def init_shapes(self, imagePath):
         self.__imagePath = imagePath
