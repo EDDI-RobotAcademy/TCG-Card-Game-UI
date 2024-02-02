@@ -67,12 +67,7 @@ class BattleFieldFrameRenderer:
 
         hand_deck_list = self.battle_field_scene.get_pickable_hand_deck_base()
         for hand_deck in hand_deck_list:
-            print("here")
-            print(type(hand_deck))
-            print(f"hand_deck{hand_deck}")
             hand_deck_shapes = hand_deck.get_pickable_hand_deck_shapes()
-            print("here1")
-            print(type(hand_deck_shapes))
             for shape in hand_deck_shapes:
                 self._render_shape(shape)
 

@@ -18,11 +18,14 @@ class TextBox(TextEntity):
 
     def text_box(self, font_size=20, lines=1, relx=0.5, rely=0.55):
         font = ("TkDefaultFont", font_size)
-        text_entry = tk.Entry(self.canvas, textvariable=self.textbox_string, bg="white", font=font)
-        text_entry.place(relx=relx, rely=rely, anchor='center')
+        self.text_entry = tk.Entry(self.canvas, textvariable=self.textbox_string, bg="white", font=font)
+        self.text_entry.place(relx=relx, rely=rely, anchor='center')
 
     def get_textbox_string(self):
         return self.textbox_string
+
+    def hideTextBox(self):
+        self.text_entry.destroy()
 
     def draw(self):
         self.text_box()

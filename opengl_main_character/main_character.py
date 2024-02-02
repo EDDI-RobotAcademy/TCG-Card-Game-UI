@@ -1,5 +1,7 @@
 import os
 
+from common.utility import get_project_root
+from opengl_shape.image_oval_element import ImageOvalElement
 from opengl_shape.oval import Oval
 
 
@@ -26,6 +28,15 @@ class MainCharacter:
 
         self.add_shape(main_character_oval)
 
+    def create_main_character_illustration(self, image_path, center, radius_x, radius_y):
+        main_character_illustration = ImageOvalElement(image_path=image_path,
+                                                       center=center,
+                                                       radius_x=radius_x,
+                                                       radius_y=radius_y)
+        print(f"main_character_illustration{main_character_illustration}")
+        print(type(main_character_illustration))
+        self.add_shape(main_character_illustration)
+
     def init_your_main_character_shapes(self):
 
         radius_x = 100
@@ -42,3 +53,13 @@ class MainCharacter:
         self.create_main_character_oval(color=(0, 0, 0, 0),
                                              center=(960, 100),
                                              radius_x=radius_x, radius_y=radius_y)
+        project_root = get_project_root()
+
+        self.__imagePath = os.path.join(project_root, "local_storage", "card_images", "card4.png")
+        radius_x = 100
+        radius_y = 50
+
+        self.create_main_character_illustration(image_path=self.__imagePath,
+                                                center=(960, 100),
+                                                radius_x=radius_x,
+                                                radius_y=radius_y)

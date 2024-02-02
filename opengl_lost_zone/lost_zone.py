@@ -22,15 +22,15 @@ class LostZone:
         shape.local_translate(self.local_translation)
         self.shapes.append(shape)
     def create_lost_zone_rectangle(self, color, vertices):
-        tomb_base = Rectangle(color=color,
+        lost_zone_base = Rectangle(color=color,
                                        vertices=vertices)
-        tomb_base.set_visible(True)
-        self.add_shape(tomb_base)
+        lost_zone_base.set_visible(True)
+        self.add_shape(lost_zone_base)
 
     def create_illustration(self, image_path, vertices):
-        unit_illustration = ImageRectangleElement(image_path=image_path,
+        lost_zone_illustration = ImageRectangleElement(image_path=image_path,
                                          vertices=vertices)
-        self.add_shape(unit_illustration)
+        self.add_shape(lost_zone_illustration)
 
     def init_shapes(self):
         project_root = get_project_root()
