@@ -116,17 +116,14 @@ class MatchingWindowServiceImpl(MatchingWindowService):
                 self.__matchingWindow.changeWindowText("매칭 실패!")
                 rootWindow.after(3000, lambda: self.matchingCancel())
 
-
-            if currentStatus == "WAIT":
-                self.__matchingWindow.changeWindowText("매칭중입니다...")
-                rootWindow.after(3000, lambda: self.checkMatching(rootWindow))
-
-            # else:
-            if currentStatus == "SUCCESS":
+            elif currentStatus == "SUCCESS":
                 self.__matchingWindow.changeWindowText("매칭 성공!")
                 self.__matchingWindow.hideMatchingUI()
                 rootWindow.after(3000, lambda: LobbyMenuFrameControllerImpl.getInstance().switchFrameToBattleLobby(self.__matchingWindow))
-
+                
+            else:
+                self.__matchingWindow.changeWindowText("매칭중입니다...")
+                rootWindow.after(3000, lambda: self.checkMatching(rootWindow))
 
             print("CheckMatching: Invalid response data")
 
