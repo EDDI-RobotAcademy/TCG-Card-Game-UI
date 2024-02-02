@@ -5,6 +5,7 @@ from opengl_pickable_shape.pickable_rectangle import PickableRectangle
 from opengl_shape.circle import Circle
 from opengl_shape.image_rectangle_element import ImageRectangleElement
 from opengl_shape.rectangle import Rectangle
+#from tests.ugly_text_field.test_ugly_text_field_rectangle import TextFieldRectangle
 
 
 class UnitCard:
@@ -49,6 +50,12 @@ class UnitCard:
                                          local_translation=local_translation,
                                          vertices=vertices)
         return unit_illustration
+
+    # def create_text_field(self, text, vertices, local_translation):
+    #     unit_text_field = TextFieldRectangle(text=text,
+    #                                          local_translation=local_translation,
+    #                                          vertices=vertices)
+    #     return unit_text_field
 
     def create_equipped_mark(self, image_path, vertices, local_translation):
         unit_equipped_mark = ImageRectangleElement(image_path=image_path,
@@ -103,6 +110,12 @@ class UnitCard:
                 image_path=self.__imagePath,
                 local_translation=self.local_translation,
                 vertices=[(25, 25), (325, 25), (325, 325), (25, 325)]))
+
+        # self.pickable_card_base.set_attached_shapes(
+        #     self.create_text_field(
+        #         text="Unit Card Ability",
+        #         local_translation=self.local_translation,
+        #         vertices=[(25, 350), (325, 350), (325, 450), (25, 450)]))
 
         project_root = get_project_root()
         self.pickable_card_base.set_attached_shapes(
