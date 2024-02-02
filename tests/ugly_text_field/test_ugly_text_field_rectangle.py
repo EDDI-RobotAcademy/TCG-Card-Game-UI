@@ -3,6 +3,7 @@ import unittest
 import numpy as np
 import tkinter as tk
 from PIL.ImageFont import ImageFont
+from reportlab.pdfgen import canvas
 
 from opengl_shape.rectangle import Rectangle
 from opengl_shape.shape import Shape
@@ -12,6 +13,7 @@ from OpenGL import GL
 
 
 class TextFieldRectangle(Shape):
+
     def __init__(self, text, vertices, global_translation=(0, 0), local_translation=(0, 0)):
         super().__init__(vertices, global_translation, local_translation)
         self.text = text
@@ -30,9 +32,6 @@ class TextFieldRectangle(Shape):
                                    global_translation=self.global_translation,
                                    local_translation=self.local_translation)
             white_rect.draw()
-
-            canvas = tk.Canvas(width=198,height=102)
-            canvas.pack()
 
             GL.glBegin(GL.GL_QUADS)
             GL.glTexCoord2f(0, 0)
@@ -54,15 +53,5 @@ class TextFieldRectangle(Shape):
                           self.vertices[3][1] + self.local_translation[1] + self.global_translation[1])
             GL.glEnd()
 
-            text_color = "blue"
-
-            font = ImageFont.load_default()
-
-            text_width, text_height = font.getsize(self.text)
-            x = 198
-            y = 102
 
 
-            canvas.delete("all")
-
-            canvas.create_text(x, y, text=self.text, fill=text_color, font=("TkDefaultFont", 12))
