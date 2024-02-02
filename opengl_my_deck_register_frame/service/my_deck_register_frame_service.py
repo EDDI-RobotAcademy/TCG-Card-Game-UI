@@ -11,6 +11,10 @@ class MyDeckRegisterFrameService(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def create_register_deck_button(self, canvas, entry_deckName):
+        pass
+
+    @abc.abstractmethod
     def injectTransmitIpcChannel(self, transmitIpcChannel):
         pass
 

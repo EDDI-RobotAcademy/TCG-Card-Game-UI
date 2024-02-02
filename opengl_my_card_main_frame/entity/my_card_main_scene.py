@@ -6,7 +6,8 @@ class MyCardMainScene:
         self.text_box = []
         self.my_card_rectangle = []
         self.my_deck_rectangle = []
-        self.button_list = []
+        self.deck_button_list = []
+        self.my_deck_list = []
 
     def add_alpha_rectangle(self, alpha_rectangle):
         self.alpha_rectangle.append(alpha_rectangle)
@@ -44,8 +45,14 @@ class MyCardMainScene:
     def get_my_deck_rectangle(self):
         return self.my_deck_rectangle
 
-    def add_button_list(self, button):
-        self.button_list.append(button)
+    def add_deck_button_list(self, button):
+        self.deck_button_list.append(button)
 
-    def get_button_set(self):
-        return self.button_list
+    def get_deck_button_set(self):
+        return self.deck_button_list
+
+    def add_my_deck_list(self, deck_list):
+        self.my_deck_list.append(deck_list)
+
+    def get_my_deck_list(self):
+        return self.my_deck_list

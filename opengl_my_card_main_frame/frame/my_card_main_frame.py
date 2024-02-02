@@ -142,7 +142,9 @@ class MyCardMainFrame(OpenGLFrame):
         try:
             if self.my_deck_register_frame_service.on_deck_register_click(entry_deck_name):
                 deck_button= self.my_deck_register_frame_service.create_register_deck_button(self.canvas, entry_deck_name)
+                self.my_card_main_scene.add_deck_button_list(deck_button)
                 deck_button.place(relx=0.88, rely=self.current_rely, anchor="center")
+                deck_button.bind("<Button-1>", self.make_my_deck_rectangle)
                 self.current_rely += 0.1
 
         except Exception as e:
@@ -151,4 +153,13 @@ class MyCardMainFrame(OpenGLFrame):
     def redraw(self):
         self.make_main_frame_before()
 
+    # 생성한 덱 버튼을 누르면 그 버튼에 해당하는 덱 화면 만들기.
+    def make_my_deck_rectangle(self, event=None):
+        self.transparent_rect_visible = False
+        if not self.transparent_rect_visible:
+            x2 = self.width - self.width // 4
+            my_deck_rectangle = AlphaRectangle(self.master, self.canvas)
+            my_deck_rectangle.create_alpha_rectangle(0, 0, x2, self.height, fill='#C19A6B')
+            self.my_card_main_scene.add_my_deck_list(my_deck_rectangle)
+            print("확인용 메시지: 덱 나타나라 얍!")
 
