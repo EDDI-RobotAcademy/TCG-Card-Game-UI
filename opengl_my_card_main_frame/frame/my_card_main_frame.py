@@ -1,19 +1,23 @@
 import tkinter as tk
-from OpenGL import GL, GLU, GLUT
+from OpenGL import GL, GLU
 from pyopengltk import OpenGLFrame
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
 from opengl_my_card_main_frame.entity.alpha_rectangle import AlphaRectangle
 from opengl_my_card_main_frame.entity.background_image import MyCardMainFramImage
-from opengl_my_deck_register_frame.entity.my_deck_rectangle import MyDeckRegisterRectangle
-from opengl_my_deck_register_frame.entity.my_deck_render_text import MyDeckRegisterTextEntity
+from opengl_my_card_main_frame.entity.my_card_main_scene import MyCardMainScene
+from opengl_my_card_main_frame.renderer.my_card_main_frame_renderer import MyCardMainrameRenderer
+from opengl_my_card_main_frame.renderer.my_card_main_frame_renderer_after_click_button import MyCardMainrameRendererAfterClickButton
 from opengl_my_deck_register_frame.service.my_deck_register_frame_service_impl import MyDeckRegisterFrameServiceImpl
+from text_field.text_box import TextBox
+from text_field.text_render import TextRender
 
 
 class MyCardMainFrame(OpenGLFrame):
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
+        self.my_card_main_scene = MyCardMainScene()
 
         screen_width = self.winfo_screenwidth()
         screen_height = self.winfo_screenheight()
@@ -21,19 +25,16 @@ class MyCardMainFrame(OpenGLFrame):
         self.width = screen_width
         self.height = screen_height
 
-        self.transparent_rect_visible = False
 
         # 캔버스 생성
         self.canvas = tk.Canvas(self, width=self.width, height=self.height)
         self.canvas.pack()
 
-        self.textbox_string = tk.StringVar()
-        self.text_drawer = MyDeckRegisterTextEntity(master, self.canvas, None, self.width, self.height)
-        self.textbox_string.trace_add('write', self.text_drawer.update_displayed_text)
+        self.make_main_frame_before()
 
-        self.background_drawer = MyCardMainFramImage(master, self.canvas)
-        self.alpha_rectangle_drawer = AlphaRectangle(master, self.canvas)
-        self.my_deck_rectangle_drawer = MyDeckRegisterRectangle(master, self.canvas)
+        self.renderer = MyCardMainrameRenderer(self.my_card_main_scene, self)
+
+        self.my_deck_register_frame_service = MyDeckRegisterFrameServiceImpl.getInstance()
 
 
     def initgl(self):
@@ -50,45 +51,56 @@ class MyCardMainFrame(OpenGLFrame):
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-    def redraw(self, event=None):
-        GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
+    def make_main_frame_before(self):
 
-        self.canvas.delete("all")
-        # opengl frame에 tkinter canvas를 올리면 frame 배경이 보이지 않으므로 이를 대체할 배경 도형 추가
-        #self.alpha_rectangle_drawer.create_alpha_rectangle(0, 0, self.width, self.height, fill='yellow')
-        self.background_drawer.create_background_image(self.width, self.height, image_path="local_storage/image/battle_lobby/background.png")
+        # Todo: 배경(나중에 나의 카드, 나의 덱 프레임 사각형이 와야함.)
+        image_rectangle_element = MyCardMainFramImage(self.master, self.canvas)
+        image_rectangle_element.create_background_image(self.width, self.height, image_path="local_storage/image/battle_lobby/background.png")
+        self.my_card_main_scene.add_image_rectangle(image_rectangle_element)
+
+        # Todo: 여기도 마찬가지로 My Card, 나의 덱 텍스트 추가 필요.+ 위치 조정 필요
         text_x = self.width // 2
         text_y = self.height // 6
-        self.text_drawer.render_text(x=text_x, y=text_y, custom_text="My Card", text_color="black", font_size=50)
+        text_render = TextRender(self.master, self.canvas, None, self.width, self.height)
+        text_render.render_text(x=text_x, y=text_y, custom_text="My Card", text_color="black", font_size=50)
+        self.my_card_main_scene.add_text_render(text_render)
 
-        if self.transparent_rect_visible:
-            # 투명 검정 화면 그리기
-            self.alpha_rectangle_drawer.create_alpha_rectangle(0, 0, self.width, self.height, fill='black', alpha=0.7)
-            # 덱 생성 화면 그리기
-            deck_rectangle = self.my_deck_rectangle_drawer.create_rectangle(self.width, self.height)
+    def make_main_frame_after(self):
 
-            x1, y1, x2, y2 = self.canvas.coords(deck_rectangle)
-            x = (x1 + x2)/2
-            y = y1 + 70
-            self.text_drawer.render_text(x=x, y=y, custom_text="덱 생성", text_color="black", font_size=30)
+        alpha_rectangle = AlphaRectangle(self.master, self.canvas)
+        alpha_rectangle.create_alpha_rectangle(0, 0, self.width, self.height, fill='black', alpha=0.7)
+        self.my_card_main_scene.add_alpha_rectangle(alpha_rectangle)
 
-            # 생성할 덱 이름을 입력하세요
-            x1, y1, x2, y2 = self.canvas.coords(deck_rectangle)
-            x = (x1 + x2)/2
-            y = y1 + 130
-            self.text_drawer.render_text(x=x, y=y)
+        x1 = (self.width - 800) // 2
+        y1 = (self.height - 500) // 2
+        x2 = x1 + 800
+        y2 = y1 + 500
+        deck_rectangle = AlphaRectangle(self.master, self.canvas)
+        deck_rectangle.create_alpha_rectangle(x1, y1, x2, y2, fill='#966F33')
+        self.my_card_main_scene.add_alpha_rectangle(deck_rectangle)
 
-            self.canvas.textbox = self.text_drawer.text_box(font_size=20, lines=3)
-            self.canvas.textbox.place(relx=0.5, rely=0.55, anchor='center')
+        text_x = self.width // 2
+        text_y = self.height // 6 + 135
+        text_render = TextRender(self.master, self.canvas, None, self.width, self.height)
+        text_render.render_text(x=text_x, y=text_y, custom_text="덱 생성", text_color="black", font_size=30)
+        self.my_card_main_scene.add_text_render(text_render)
 
-            button_submit = tk.Button(self.canvas, text="확인", command=self.on_submit_click)
-            button_submit.place(relx=0.5, rely=0.65, anchor='center')
+        text_x = self.width // 2
+        text_y = self.height // 6 + 200
+        text_render = TextRender(self.master, self.canvas, None, self.width, self.height)
+        text_render.render_text(x=text_x, y=text_y, custom_text="생성할 덱의 이름을 입력하시오", text_color="black", font_size=20)
+        self.my_card_main_scene.add_text_render(text_render)
 
-        self.tkSwapBuffers()
+        deck_text_box = TextBox(self.master, self.canvas, None)
+        deck_text_box.text_box(font_size=20, lines=3)
+        self.my_card_main_scene.add_text_box(deck_text_box)
+
 
     def toggle_visibility(self):
-        self.transparent_rect_visible = not self.transparent_rect_visible
-        self.redraw()
+        self.make_main_frame_after()
+        self.renderer_after = MyCardMainrameRendererAfterClickButton(self.my_card_main_scene, self)
+        button_submit = tk.Button(self.canvas, text="확인", command=self.on_submit_click)
+        button_submit.place(relx=0.5, rely=0.65, anchor='center')
 
     def reshape(self, width, height):
         GL.glViewport(0, 0, width, height)
@@ -99,6 +111,9 @@ class MyCardMainFrame(OpenGLFrame):
         GL.glLoadIdentity()
 
     def on_submit_click(self):
-        entry_deckname = self.canvas.textbox.get()
-        self.my_deck_register_frame_service = MyDeckRegisterFrameServiceImpl.getInstance()
-        self.my_deck_register_frame_service.on_deck_register_click(entry_deckname)
+        text_boxes = self.my_card_main_scene.get_text_box()
+        for text_box in text_boxes:
+            textbox_string = text_box.get_textbox_string()
+            text_value = textbox_string.get()
+        entry_deck_name = text_value
+        self.my_deck_register_frame_service.on_deck_register_click(entry_deck_name)
