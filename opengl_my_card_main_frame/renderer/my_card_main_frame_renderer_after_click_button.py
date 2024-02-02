@@ -12,10 +12,10 @@ class MyCardMainrameRendererAfterClickButton:
 
         if self.transparent_rect_visible:
             for rectangle in self.scene.alpha_rectangle:
-                self._render_shape(rectangle)
+                self._render_shape(rectangle[1:])
 
             for text in self.scene.text_render:
-                self._render_shape(text[1:])
+                self._render_shape(text[2:])
 
             for text_box in self.scene.text_box:
                 self._render_shape(text_box)
