@@ -39,6 +39,7 @@ class MyDeckRegisterFrameServiceImpl(MyDeckRegisterFrameService):
         except Exception as e:
             print(f"An error occurred: {e}")
 
+    # 덱 버튼 생성 함수
     def create_register_deck_button(self, canvas, entry_deckName):
         return tk.Button(canvas, text=entry_deckName, fg="white", bg="#483C32", width=25, height=2)
 
