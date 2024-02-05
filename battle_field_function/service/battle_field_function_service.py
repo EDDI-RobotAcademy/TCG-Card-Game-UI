@@ -16,11 +16,11 @@ class BattleFieldFunctionService(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def mulligan(self):
+    def mulligan(self, cardCount):
         pass
 
     @abc.abstractmethod
-    def unitAttack(self):
+    def unitAttack(self, target):
         pass
 
     @abc.abstractmethod
@@ -28,7 +28,7 @@ class BattleFieldFunctionService(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def useEnvironmentCard(self):
+    def useEnvironmentCard(self, cardNumber):
         pass
 
     @abc.abstractmethod
@@ -36,25 +36,25 @@ class BattleFieldFunctionService(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def useSpecialEnergyCard(self):
+    def useSpecialEnergyCard(self, cardNumber):
         pass
 
     @abc.abstractmethod
-    def useItemCard(self):
+    def useItemCard(self, cardNumber):
         pass
 
     @abc.abstractmethod
-    def useSupportCard(self):
+    def useSupportCard(self, cardNumber):
         pass
 
     @abc.abstractmethod
-    def useToolCard(self):
+    def useToolCard(self, cardNumber):
         pass
 
     @abc.abstractmethod
-    def useTrapCard(self):
+    def useTrapCard(self, cardNumber):
         pass
 
     @abc.abstractmethod
-    def useUnitCard(self):
+    def useUnitCard(self, cardNumber):
         pass

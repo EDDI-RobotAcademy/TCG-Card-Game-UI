@@ -18,5 +18,5 @@ class UnitAttackRequest:
         }
 
     def __str__(self):
-        return f"SurrenderRequest(protocolNumber={self.__protocolNumber}, roomNumber={self.__roomNumber}, \
+        return f"UnitAttackRequest(protocolNumber={self.__protocolNumber}, roomNumber={self.__roomNumber}, \
                                 target={self.__target}, sessionInfo={self.__sessionInfo})"

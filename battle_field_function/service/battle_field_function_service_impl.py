@@ -1,6 +1,11 @@
 from battle_field_function.repository.battle_field_function_repository_impl import BattleFieldFunctionRepositoryImpl
 from battle_field_function.service.battle_field_function_service import BattleFieldFunctionService
+from battle_field_function.service.request.mulligan_request import MulliganRequest
 from battle_field_function.service.request.surrender_request import SurrenderRequest
+from battle_field_function.service.request.turn_end_request import TurnEndRequest
+from battle_field_function.service.request.unit_attack_request import UnitAttackRequest
+from battle_field_function.service.request.use_energy_card_request import UseEnergyCardRequest
+from battle_field_function.service.request.use_environment_card_request import UseEnvironmentCardRequest
 from session.repository.session_repository_impl import SessionRepositoryImpl
 
 
@@ -39,45 +44,74 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
         switchFrameWithMenuName("lobby-menu")
 
 
-    def mulligan(self):
-        pass
+    def mulligan(self, cardCount):
+        try:
+            mulliganResponse = self.__battleFieldFunctionRepository.requestMulligan(
+                MulliganRequest(_sessionInfo=self.__sessionRepository.get_session_info(),
+                                cardCount=cardCount)
+            )
+            #Todo : 멀리건 결과로 새로운 카드를 리턴받을것임.
+            #Todo : 새로 받은 카드를 렌더링하고 메모리에 저장해두면됨
+
+        except Exception as e:
+            print(f"mulligan Error : {e}")
 
 
-    def unitAttack(self):
-        pass
-
+    def unitAttack(self, target):
+        try:
+            unitAttackResponse = self.__battleFieldFunctionRepository.requestUnitAttack(
+                UnitAttackRequest(_sessionInfo=self.__sessionRepository.get_session_info(),
+                                  target=target)
+            )
+            # Todo: 공격에 대한 응답을 받으면 적절하게 하면됨... ㅋ
+        except Exception as e:
+            print(f"unitAttack Error: {e}")
 
     def turnEnd(self):
-        pass
+        try:
+            turnEndResponse = self.__battleFieldFunctionRepository.requestTurnEnd(
+                TurnEndRequest(_sessionInfo=self.__sessionRepository)
+            )
+        except Exception as e:
+            print(f"turnEnd Error: {e}")
 
 
-    def useEnvironmentCard(self):
-        pass
+    def useEnvironmentCard(self, cardNumber):
+        try:
+            useEnvironmentCardResponse = self.__battleFieldFunctionRepository.requestUseEnvironmentCard(
+                UseEnvironmentCardRequest(_sessionInfo=self.__sessionRepository.get_session_info(),
+                                            cardNumber=cardNumber)
+            )
+        except Exception as e:
+            print(f"useEnvironmentCard Error: {e}")
 
 
     def useEnergyCard(self):
+        try:
+            useEnergyCardResponse = self.__battleFieldFunctionRepository.requestUseEnergyCard(
+                UseEnergyCardRequest(_sessionInfo=self.__sessionRepository.get_session_info())
+            )
+
+
+    def useSpecialEnergyCard(self, cardNumber):
         pass
 
 
-    def useSpecialEnergyCard(self):
+    def useItemCard(self, cardNumber):
         pass
 
 
-    def useItemCard(self):
+    def useSupportCard(self, cardNumber):
         pass
 
 
-    def useSupportCard(self):
+    def useToolCard(self, cardNumber):
         pass
 
 
-    def useToolCard(self):
+    def useTrapCard(self, cardNumber):
         pass
 
 
-    def useTrapCard(self):
-        pass
-
-
-    def useUnitCard(self):
+    def useUnitCard(self, cardNumber):
         pass

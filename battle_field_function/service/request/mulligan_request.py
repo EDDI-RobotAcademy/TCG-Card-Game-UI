@@ -18,5 +18,5 @@ class MulliganRequest:
         }
 
     def __str__(self):
-        return (f"SurrenderRequest(protocolNumber={self.__protocolNumber}, roomNumber={self.__roomNumber}, \
+        return (f"MulliganRequest(protocolNumber={self.__protocolNumber}, roomNumber={self.__roomNumber}, \
                                                     cardCount={self.__cardCount}, sessionInfo={self.__sessionInfo})")

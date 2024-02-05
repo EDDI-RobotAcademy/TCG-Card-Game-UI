@@ -18,5 +18,5 @@ class UseEnvironmentCardRequest:
         }
 
     def __str__(self):
-        return f"SurrenderRequest(protocolNumber={self.__protocolNumber}, roomNumber={self.__roomNumber}, \
+        return f"UseEnvironmentCardRequest(protocolNumber={self.__protocolNumber}, roomNumber={self.__roomNumber}, \
                                    cardNumber={self.__cardNumber}, sessionInfo={self.__sessionInfo})"
