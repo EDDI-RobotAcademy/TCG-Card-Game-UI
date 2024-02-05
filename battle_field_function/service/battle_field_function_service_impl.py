@@ -38,3 +38,46 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
         # Todo : switchFrameWithMenuName('lobby-menu') 를 호출 할 수 있어야합니다.
         switchFrameWithMenuName("lobby-menu")
 
+
+    def mulligan(self):
+        pass
+
+
+    def unitAttack(self):
+        pass
+
+
+    def turnEnd(self):
+        pass
+
+
+    def useEnvironmentCard(self):
+        pass
+
+
+    def useEnergyCard(self):
+        pass
+
+
+    def useSpecialEnergyCard(self):
+        pass
+
+
+    def useItemCard(self):
+        pass
+
+
+    def useSupportCard(self):
+        pass
+
+
+    def useToolCard(self):
+        pass
+
+
+    def useTrapCard(self):
+        pass
+
+
+    def useUnitCard(self):
+        pass
