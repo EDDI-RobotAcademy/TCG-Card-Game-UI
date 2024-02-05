@@ -140,12 +140,11 @@ class MyCardMainFrame(OpenGLFrame):
 
         # 버튼 생성해서 캔버스에 올림.
         try:
-            if self.my_deck_register_frame_service.on_deck_register_click(entry_deck_name):
-                deck_button= self.my_deck_register_frame_service.create_register_deck_button(self.canvas, entry_deck_name)
-                self.my_card_main_scene.add_deck_button_list(deck_button)
-                deck_button.place(relx=0.88, rely=self.current_rely, anchor="center")
-                deck_button.bind("<Button-1>", self.make_my_deck_rectangle)
-                self.current_rely += 0.1
+            deck_button= self.my_deck_register_frame_service.create_register_deck_button(self.canvas, entry_deck_name)
+            self.my_card_main_scene.add_deck_button_list(deck_button)
+            deck_button.place(relx=0.88, rely=self.current_rely, anchor="center")
+            deck_button.bind("<Button-1>", self.make_my_deck_rectangle)
+            self.current_rely += 0.1
 
         except Exception as e:
             print(f"An error occurred: {e}")
@@ -162,4 +161,3 @@ class MyCardMainFrame(OpenGLFrame):
             my_deck_rectangle.create_alpha_rectangle(0, 0, x2, self.height, fill='#C19A6B')
             self.my_card_main_scene.add_my_deck_list(my_deck_rectangle)
             print("확인용 메시지: 덱 나타나라 얍!")
-
