@@ -1,58 +1,23 @@
 class MyCardMainScene:
     def __init__(self):
-        self.alpha_rectangle = []
-        self.image_rectangle_element = []
-        self.text_render = []
-        self.text_box = []
-        self.my_card_rectangle = []
-        self.my_deck_rectangle = []
-        self.deck_button_list = []
-        self.my_deck_list = []
+        self.my_card_background = [] # 카드 전체 배경 화면, 사이드에 있는 나의 덱 화면
+        self.text_list = []
+        self.button_list = []
 
-    def add_alpha_rectangle(self, alpha_rectangle):
-        self.alpha_rectangle.append(alpha_rectangle)
+    def add_my_card_background(self, rectangle):
+        self.my_card_background.append(rectangle)
 
-    def get_alpha_rectangle(self):
-        return self.alpha_rectangle
+    def get_my_card_background(self):
+        return self.my_card_background
 
-    def add_image_rectangle(self, image_rectangle):
-        self.image_rectangle_element.append(image_rectangle)
+    def add_text_list(self, text):
+        self.text_list.append(text)
 
-    def get_image_rectangle(self):
-        return self.image_rectangle_element
+    def get_text_list(self):
+        return self.text_list
 
-    def add_text_render(self, text):
-        self.text_render.append(text)
+    def add_button_list(self, button):
+        self.button_list.append(button)
 
-    def get_text_render(self):
-        return self.text_render
-
-    def add_text_box(self, box):
-        self.text_box.append(box)
-
-    def get_text_box(self):
-        return self.text_box
-
-    def add_my_card_rectangle(self, my_card_rectangle):
-        self.my_card_rectangle.append(my_card_rectangle)
-
-    def get_my_card_rectangle(self):
-        return self.my_card_rectangle
-
-    def add_my_deck_rectangle(self, my_deck_rectangle):
-        self.my_deck_rectangle.append(my_deck_rectangle)
-
-    def get_my_deck_rectangle(self):
-        return self.my_deck_rectangle
-
-    def add_deck_button_list(self, button):
-        self.deck_button_list.append(button)
-
-    def get_deck_button_set(self):
-        return self.deck_button_list
-
-    def add_my_deck_list(self, deck_list):
-        self.my_deck_list.append(deck_list)
-
-    def get_my_deck_list(self):
-        return self.my_deck_list
+    def get_button_list(self):
+        return self.button_list

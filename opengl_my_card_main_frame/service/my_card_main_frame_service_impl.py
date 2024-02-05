@@ -1,6 +1,7 @@
 from tkinter import ttk
 import tkinter as tk
 
+from opengl_my_card_main_frame.entity.my_card_main_scene import MyCardMainScene
 from opengl_my_card_main_frame.frame.my_card_main_frame import MyCardMainFrame
 from opengl_my_card_main_frame.service.my_card_main_frame_service import MyCardMainFrameService
 
@@ -12,6 +13,7 @@ class MyCardMainFrameServiceImpl(MyCardMainFrameService):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
             cls.__instance.__myCardMainFrame = MyCardMainFrame
+            cls.__instance.__myCardMainScene = MyCardMainScene()
         return cls.__instance
 
     @classmethod
@@ -25,7 +27,6 @@ class MyCardMainFrameServiceImpl(MyCardMainFrameService):
 
         button_create_deck = tk.Button(myCardMainFrame, text="덱 생성", fg="white", bg="#483C32", width=25, height=2)
         button_go_back_to_lobby = tk.Button(myCardMainFrame, text="로비로 돌아가기", fg="white", bg="#483C32", width=25, height=2)
-
 
         def on_deck_create_click(event):
             try:
@@ -47,3 +48,8 @@ class MyCardMainFrameServiceImpl(MyCardMainFrameService):
 
 
         return myCardMainFrame
+
+    def button_bind(self, button_list):
+        button_create_deck = button_list[0]
+        button_go_back_to_lobby = button_list[1]
+        button_create_deck.bind("<Button-1>", self.__myCardMainFrame.toggle_visibility())
