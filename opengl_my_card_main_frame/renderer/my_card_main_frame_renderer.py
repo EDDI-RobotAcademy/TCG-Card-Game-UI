@@ -1,6 +1,6 @@
 from OpenGL import GL
 
-class MyCardMainrameRenderer:
+class MyCardMainFrameRenderer:
     def __init__(self, scene, window):
         self.scene = scene
         self.window = window
@@ -9,17 +9,16 @@ class MyCardMainrameRenderer:
         self.window.tkMakeCurrent()
         GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
-
-        for image_element in self.scene.image_rectangle_element:
+        # 배경 및 사이드에 있는 나의 덱 화면
+        for image_element in self.scene.my_card_background:
             self._render_shape(image_element)
 
-        # 여기에 카드 덱 프레임, 나의 덱 프레임 사각형 들어 가야 함.
-        for rectangle in self.scene.alpha_rectangle:
-            self._render_shape(rectangle[0])
-
         # 나의 카드 텍스트
-        for text in self.scene.text_render:
-            self._render_shape(text[0:2])
+        for text in self.scene.text_list:
+            self._render_shape(text)
+
+        for button in self.scene.buttons_list:
+            self._render_shape(button)
 
         self.window.tkSwapBuffers()
 
