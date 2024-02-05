@@ -21,15 +21,15 @@ class BattleFieldPanel:
         shape.local_translate(self.local_translation)
         self.shapes.append(shape)
     def create_battle_field_panel_rectangle(self, color, vertices):
-        tomb_base = Rectangle(color=color,
+        battle_field_panel_base = Rectangle(color=color,
                                        vertices=vertices)
-        tomb_base.set_visible(True)
-        self.add_shape(tomb_base)
+        battle_field_panel_base.set_visible(True)
+        self.add_shape(battle_field_panel_base)
 
     def create_illustration(self, image_path, vertices):
-        unit_illustration = ImageRectangleElement(image_path=image_path,
+        battle_field_panel_illustration = ImageRectangleElement(image_path=image_path,
                                          vertices=vertices)
-        self.add_shape(unit_illustration)
+        self.add_shape(battle_field_panel_illustration)
 
     def init_shapes(self):
         project_root = get_project_root()

@@ -1,19 +1,20 @@
 import unittest
 
-import pandas as pd
-
-from card_info_from_csv.entity.card_rendering_entity import CardInfoFromCsv
+from card_info_from_csv.controller.card_info_from_csv_controller_impl import CardInfoFromCsvControllerImpl
+from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
+from card_info_from_csv.service.card_info_from_csv_service_impl import CardInfoFromCsvServiceImpl
 
 
 class TestCardInfoRepositoryImpl(unittest.TestCase):
 
 
     def testRegisterCardInfo(self):
-        repository = CardInfoFromCsv.getInstance()
-        dataFile = repository.read_card_data('../../../local_storage/card/data.csv')
-        repository.build_dictionaries(dataFile)
-        card_name = repository.get_card_name(8)
-        print(card_name)
+        repo = CardInfoFromCsvRepositoryImpl().getInstance()
+        CardInfoFromCsvServiceImpl().getInstance()
+        con = CardInfoFromCsvControllerImpl().getInstance()
+
+        con.requestToCardInfoSettingInMemory()
+        print(f"{repo.getCardNameForCardNumber(8)}")
 
 if __name__ == '__main__':
     unittest.main()

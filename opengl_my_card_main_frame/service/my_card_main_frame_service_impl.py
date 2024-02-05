@@ -23,16 +23,14 @@ class MyCardMainFrameServiceImpl(MyCardMainFrameService):
     def createMyCardMainUiFrame(self, rootWindow, switchFrameWithMenuName):
         myCardMainFrame = self.__myCardMainFrame(rootWindow)
 
-
-        button_create_deck = tk.Button(myCardMainFrame, text="덱 생성", bg="#483C32", width=25, height=2)
-        button_go_back_to_lobby = tk.Button(myCardMainFrame, text="로비로 돌아가기", bg="#483C32", width=25, height=2)
+        button_create_deck = tk.Button(myCardMainFrame, text="덱 생성", fg="white", bg="#483C32", width=25, height=2)
+        button_go_back_to_lobby = tk.Button(myCardMainFrame, text="로비로 돌아가기", fg="white", bg="#483C32", width=25, height=2)
 
 
         def on_deck_create_click(event):
             try:
                 if event.widget == button_create_deck:
                     myCardMainFrame.toggle_visibility()
-                    #switchFrameWithMenuName("my-deck-register")
 
                 elif event.widget == button_go_back_to_lobby:
                     switchFrameWithMenuName("lobby-menu")
@@ -44,8 +42,8 @@ class MyCardMainFrameServiceImpl(MyCardMainFrameService):
         button_create_deck.bind("<Button-1>", on_deck_create_click)
         button_go_back_to_lobby.bind("<Button-1>", on_deck_create_click)
 
-        button_create_deck.place(relx=0.85, rely=0.75, anchor="center")
-        button_go_back_to_lobby.place(relx=0.85, rely=0.85, anchor="center")
+        button_create_deck.place(relx=0.88, rely=0.80, anchor="center")
+        button_go_back_to_lobby.place(relx=0.88, rely=0.90, anchor="center")
 
 
         return myCardMainFrame

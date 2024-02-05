@@ -3,6 +3,7 @@ from opengl_my_deck_register_frame.service.my_deck_register_frame_service import
 from opengl_my_deck_register_frame.service.request.my_deck_register_request import MyDeckRegisterRequest
 from session.service.session_service_impl import SessionServiceImpl
 
+import tkinter as tk
 
 class MyDeckRegisterFrameServiceImpl(MyDeckRegisterFrameService):
     __instance = None
@@ -20,26 +21,6 @@ class MyDeckRegisterFrameServiceImpl(MyDeckRegisterFrameService):
             cls.__instance = cls()
         return cls.__instance
 
-    # def createMyDeckRegisterUiFrame(self, rootWindow, switchFrameWithMenuName):
-    #
-    #     def on_deck_register_click(event, entry_deckname):
-    #         try:
-    #             session_info = self.__sessionService.getSessionInfo()
-    #             if session_info is not None:
-    #                 responseData = self.__myDeckRegisterFrameRepository.requestRegister(
-    #                     MyDeckRegisterRequest(session_info, entry_deckname.get()))
-    #
-    #                 print(f"responseData: {responseData}")
-    #
-    #                 if responseData and responseData.get("is_success") is True:
-    #                     switchFrameWithMenuName("my-card-main")
-    #                 else:
-    #                     print("Invalid or missing response data.")
-    #
-    #         except Exception as e:
-    #             print(f"An error occurred: {e}")
-    #
-    #     return None
 
     def on_deck_register_click(self, entry_deckName):
         try:
@@ -51,14 +32,16 @@ class MyDeckRegisterFrameServiceImpl(MyDeckRegisterFrameService):
                 print(f"responseData: {responseData}")
 
                 if responseData and responseData.get("is_success") is True:
-                    #switchFrameWithMenuName("my-card-main")
-                    pass
+                    return entry_deckName
                 else:
                     print("Invalid or missing response data.")
 
         except Exception as e:
             print(f"An error occurred: {e}")
 
+    # 덱 버튼 생성 함수
+    def create_register_deck_button(self, canvas, entry_deckName):
+        return tk.Button(canvas, text=entry_deckName, fg="white", bg="#483C32", width=25, height=2)
 
     def injectTransmitIpcChannel(self, transmitIpcChannel):
         print("MyDeckRegisterFrameService: injectTransmitIpcChannel()")
