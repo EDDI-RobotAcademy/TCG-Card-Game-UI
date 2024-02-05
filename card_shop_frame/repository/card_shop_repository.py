@@ -13,3 +13,11 @@ class CardShopMenuFrameRepository(abc.ABC):
     @abc.abstractmethod
     def saveReceiveIpcChannel(self, receiveIpcChannel):
         pass
+
+    @abc.abstractmethod
+    def setRace(self, race):
+        pass
+
+    @abc.abstractmethod
+    def getRace(self):
+        pass

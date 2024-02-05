@@ -4,6 +4,7 @@ from card_back_frame.service.card_back_frame_service_impl import CardBackFrameSe
 from buy_random_card_frame.repository.buy_random_card_frame_repository_impl import BuyRandomCardFrameRepositoryImpl
 from buy_random_card_frame.service.buy_random_card_frame_service import BuyRandomCardFrameService
 from buy_random_card_frame.service.request.buy_random_card_request import BuyRandomCardRequest
+from card_shop_frame.repository.card_shop_repository_impl import CardShopMenuFrameRepositoryImpl
 
 
 class BuyRandomCardFrameServiceImpl(BuyRandomCardFrameService):
@@ -14,6 +15,7 @@ class BuyRandomCardFrameServiceImpl(BuyRandomCardFrameService):
             cls.__instance = super().__new__(cls)
             cls.__instance.__buyRandomCardFrameRepository = BuyRandomCardFrameRepositoryImpl.getInstance()
             cls.__instance.__cardBackFrameService = CardBackFrameServiceImpl.getInstance()
+            cls.__instance.__cardShopMenuFrameRepository = CardShopMenuFrameRepositoryImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -23,14 +25,19 @@ class BuyRandomCardFrameServiceImpl(BuyRandomCardFrameService):
         return cls.__instance
 
     def createBuyRandomCardUiFrame(self, rootWindow, switchFrameWithMenuName):
+        BuyRandomCardFrame = self.__buyRandomCardFrameRepository.createBuyRandomCardFrame(rootWindow)
+
         # responseData = self.__buyRandomCardFrameRepository.requestBuyRandomCard(
         #         BuyRandomCardRequest())
         # print(responseData)
 
-        BuyRandomCardFrame = self.__buyRandomCardFrameRepository.createBuyRandomCardFrame(rootWindow)
+        testRace = self.__cardShopMenuFrameRepository.getRace()
+        label = tkinter.Label(BuyRandomCardFrame, text=testRace, font=("Helvetica", 64), fg="black",
+                              anchor="center", justify="center")
+        label.place(relx=0.3, rely=0.95, anchor="center", bordermode="outside")  # 가운데 정렬
 
         BuyRandomCardFrame1 = self.__cardBackFrameService.createCardBackUiFrame(BuyRandomCardFrame)
-        BuyRandomCardFrame1.place(relx=0.15, rely=0.25, relwidth=0.15, relheight=0.38,anchor="center")
+        BuyRandomCardFrame1.place(relx=0.15, rely=0.25, relwidth=0.15, relheight=0.38, anchor="center")
 
         BuyRandomCardFrame2 = self.__cardBackFrameService.createCardBackUiFrame(BuyRandomCardFrame)
         BuyRandomCardFrame2.place(relx=0.33, rely=0.25, relwidth=0.15, relheight=0.38, anchor="center")

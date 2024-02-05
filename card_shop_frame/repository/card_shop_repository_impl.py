@@ -7,6 +7,9 @@ class CardShopMenuFrameRepositoryImpl(CardShopMenuFrameRepository):
     __transmitIpcChannel = None
     __receiveIpcChannel = None
 
+    def __init__(self):
+        self.__race = None
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -36,3 +39,9 @@ class CardShopMenuFrameRepositoryImpl(CardShopMenuFrameRepository):
         print(f"CardShopFrameRepositoryImpl: requestCardRandom() -> {CardRandomRequest}")
         self.__transmitIpcChannel.put(CardRandomRequest)
         return self.__receiveIpcChannel.get()
+
+    def setRace(self, race):
+        self.__race = race
+
+    def getRace(self):
+        return self.__race
