@@ -1,11 +1,10 @@
 from common.protocol import CustomProtocol
 
 
-class CheckMatchingRequest:
+class RoomNumberRequest:
     def __init__(self, sessionInfo):
-        self.__protocolNumber = CustomProtocol.BATTLE_READY.value
+        self.__protocolNumber = CustomProtocol.WHAT_IS_THE_ROOM_NUMBER.value
         self.__sessionInfo = sessionInfo
-
 
     def toDictionary(self):
         return {
@@ -14,4 +13,4 @@ class CheckMatchingRequest:
         }
 
     def __str__(self):
-        return f"CheckMatchingRequest(protocolNumber={self.__protocolNumber}, sessionInfo={self.__sessionInfo})"
+        return f"RoomNumberRequest(protocolNumber={self.__protocolNumber}, sessionInfo={self.__sessionInfo})"

@@ -18,3 +18,15 @@ class BattleFieldFunctionControllerImpl(BattleFieldFunctionController):
 
     def callSurrender(self, switchFrameWithMenuName):
         self.__battleFieldFunctionService.surrender(switchFrameWithMenuName)
+
+    def callShuffleDeck(self):
+        pass
+
+    def callFirstTurnDrawCard(self):
+        pass
+
+    def callDrawCard(self):
+        pass
+
+    def useCard(self, cardId):
+        pass
