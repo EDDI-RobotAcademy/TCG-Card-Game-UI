@@ -46,3 +46,6 @@ class MatchingWindowRepositoryImpl(MatchingWindowRepository):
         self.__transmitIpcChannel.put(checkPrepareBattleRequest)
         return self.__receiveIpcChannel.get()
 
+    def requestRoomNumber(self, roomNumberRequest):
+        self.__transmitIpcChannel.put(roomNumberRequest)
+        return self.__receiveIpcChannel.get()

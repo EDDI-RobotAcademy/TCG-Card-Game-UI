@@ -7,6 +7,7 @@ from matching_window.service.matching_window_service import MatchingWindowServic
 from matching_window.service.request.cancel_matching_request import CancelMatchingRequest
 from matching_window.service.request.check_matching_request import CheckMatchingRequest
 from matching_window.service.request.check_prepare_battle_request import CheckPrepareBattleRequest
+from matching_window.service.request.room_number_request import RoomNumberRequest
 from matching_window.service.request.start_matching_request import StartMatchingRequest
 from session.repository.session_repository_impl import SessionRepositoryImpl
 from utility.image_generator import ImageGenerator
@@ -49,6 +50,14 @@ class MatchingWindowServiceImpl(MatchingWindowService):
             else:
                 time.sleep(3)
 
+    def __saveRoomNumber(self):
+        try:
+            roomNumberResponse = self.__matchingWindowRepository.requestRoomNumber(
+                RoomNumberRequest(self.__sessionRepository.get_session_info())
+            )
+            print(f"room number: {roomNumberResponse}")
+        except Exception as e:
+            print(f"roomNumberError: {e}")
     def createMatchingWindow(self, rootWindow):
         self.__matchingWindow = self.__matchingWindowRepository.createMatchingWindowFrame(rootWindow)
 
