@@ -12,6 +12,7 @@ from ui_frame.controller.ui_frame_controller_impl import UiFrameControllerImpl
 DomainInitializer.initEachDomain()
 
 
+
 if __name__ == "__main__":
     # Console Color
     colorama.init(autoreset=True)

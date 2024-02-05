@@ -1,7 +1,7 @@
 import time
 import tkinter
 
-
+from battle_field_function.repository.battle_field_function_repository_impl import BattleFieldFunctionRepositoryImpl
 from matching_window.repository.matching_window_repository_impl import MatchingWindowRepositoryImpl
 from matching_window.service.matching_window_service import MatchingWindowService
 from matching_window.service.request.cancel_matching_request import CancelMatchingRequest
@@ -15,6 +15,7 @@ from utility.image_generator import ImageGenerator
 
 imageWidth = 256
 imageHeight = 256
+
 
 class MatchingWindowServiceImpl(MatchingWindowService):
     __instance = None
@@ -56,6 +57,8 @@ class MatchingWindowServiceImpl(MatchingWindowService):
                 RoomNumberRequest(self.__sessionRepository.get_session_info())
             )
             print(f"room number: {roomNumberResponse}")
+            roomNumber = roomNumberResponse.get("room_number")
+            BattleFieldFunctionRepositoryImpl.getInstance().saveRoomNumber(roomNumber)
         except Exception as e:
             print(f"roomNumberError: {e}")
     def createMatchingWindow(self, rootWindow):
@@ -151,6 +154,7 @@ class MatchingWindowServiceImpl(MatchingWindowService):
                 self.__matchingWindow.changeWindowText("매칭 성공!")
                 self.__matchingWindow.hideMatchingUI()
                 self.__waitForPrepareBattle()
+                self.__saveRoomNumber()
                 rootWindow.after(3000, lambda: LobbyMenuFrameControllerImpl.getInstance().switchFrameToBattleLobby(self.__matchingWindow))
                 
             else:

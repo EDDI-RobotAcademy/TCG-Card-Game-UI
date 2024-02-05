@@ -3,6 +3,7 @@ from battle_field_function.repository.battle_field_function_repository import Ba
 
 class BattleFieldFunctionRepositoryImpl(BattleFieldFunctionRepository):
     __instance = None
+    __roomNumber = None
 
 
     def __new__(cls):
@@ -16,6 +17,13 @@ class BattleFieldFunctionRepositoryImpl(BattleFieldFunctionRepository):
             cls.__instance = cls()
         return cls.__instance
 
+
+    def saveRoomNumber(self, roomNumber):
+        self.__roomNumber = roomNumber
+
+
+    def getRoomNumber(self):
+        return self.__roomNumber
 
     def saveReceiveIpcChannel(self, receiveIpcChannel):
         self.__receiveIpcChannel = receiveIpcChannel

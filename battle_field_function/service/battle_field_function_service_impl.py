@@ -26,6 +26,8 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
         self.__battleFieldFunctionRepository.saveReceiveIpcChannel(receiveIpcChannel)
 
 
+
+
     def surrender(self, switchFrameWithMenuName):
         print(f"battleFieldFunctionServiceImpl: Surrender")
         response = self.__battleFieldFunctionRepository.sendSurrender(
