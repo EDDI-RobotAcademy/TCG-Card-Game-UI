@@ -33,7 +33,7 @@ class BuyRandomCardFrameRepositoryImpl(BuyRandomCardFrameRepository):
         self.__receiveIpcChannel = receiveIpcChannel
 
     def requestBuyRandomCard(self, buyRandomCardRequest):
-        print(f"BuyRandomCardFrameRepositoryImpl: requestLogin() -> {buyRandomCardRequest}")
+        print(f"BuyRandomCardFrameRepositoryImpl: requestBuyRandomCard() -> {buyRandomCardRequest}")
 
         self.__transmitIpcChannel.put(buyRandomCardRequest)
         return self.__receiveIpcChannel.get()
