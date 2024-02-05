@@ -31,9 +31,58 @@ class BattleFieldFunctionRepositoryImpl(BattleFieldFunctionRepository):
     def saveTransmitIpcChannel(self, transmitIpcChannel):
         self.__transmitIpcChannel = transmitIpcChannel
 
-    def sendSurrender(self, surrenderRequest):
+    def requestSurrender(self, surrenderRequest):
         print(f"battleFieldFunctionRepositoryImpl: surrender")
         print(f"battleFieldFunctionRepositoryImpl: {surrenderRequest}")
         self.__transmitIpcChannel.put(surrenderRequest)
         return self.__receiveIpcChannel.get()
 
+
+    def requestTurnEnd(self, turnEndRequest):
+        self.__transmitIpcChannel.put(turnEndRequest)
+        return self.__receiveIpcChannel.get()
+
+
+    def requestUseUnitCard(self, useUnitCardRequest):
+        self.__transmitIpcChannel.put(useUnitCardRequest)
+        return self.__receiveIpcChannel.get()
+
+
+    def requestUnitAttack(self, unitAttackRequest):
+        self.__transmitIpcChannel.put(unitAttackRequest)
+        return self.__receiveIpcChannel.get()
+
+
+    def requestUseEnergyCard(self, useEnergyCardRequest):
+        self.__transmitIpcChannel.put(useEnergyCardRequest)
+        return self.__receiveIpcChannel.get()
+
+
+    def requestUseSpecialEnergyCard(self, useSpecialEnergyCardRequest):
+        self.__transmitIpcChannel.put(useSpecialEnergyCardRequest)
+        return self.__receiveIpcChannel.get()
+
+
+    def requestUseEnvironmentCard(self, useEnvironmentCardRequest):
+        self.__transmitIpcChannel.put(useEnvironmentCardRequest)
+        return self.__receiveIpcChannel.get()
+
+
+    def requestUseItemCard(self, useItemCardRequest):
+        self.__transmitIpcChannel.put(useItemCardRequest)
+        return self.__receiveIpcChannel.get()
+
+
+    def requestUseSupportCard(self, useSupportCardRequest):
+        self.__transmitIpcChannel.put(useSupportCardRequest)
+        return self.__receiveIpcChannel.get()
+
+
+    def requestUseToolCard(self, useToolCardRequest):
+        self.__transmitIpcChannel.put(useToolCardRequest)
+        return self.__receiveIpcChannel.get()
+
+
+    def requestUseTrapCard(self, useTrapCardRequest):
+        self.__transmitIpcChannel.put(useTrapCardRequest)
+        return self.__receiveIpcChannel.get()

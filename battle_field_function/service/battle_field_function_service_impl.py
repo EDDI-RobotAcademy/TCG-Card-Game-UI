@@ -30,7 +30,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
 
     def surrender(self, switchFrameWithMenuName):
         print(f"battleFieldFunctionServiceImpl: Surrender")
-        response = self.__battleFieldFunctionRepository.sendSurrender(
+        response = self.__battleFieldFunctionRepository.requestSurrender(
             SurrenderRequest(
                 self.__sessionRepository.get_session_info()
             )
