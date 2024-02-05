@@ -3,7 +3,7 @@ from PIL import Image, ImageTk
 
 from tkinter_shape.shape import Shape
 
-class MyCardMainFramImage(Shape):
+class ImageRectangel(Shape):
     def __init__(self, master, canvas):
         super().__init__(master, canvas)
         self.master = master
