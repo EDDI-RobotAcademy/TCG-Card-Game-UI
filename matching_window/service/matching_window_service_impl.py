@@ -1,3 +1,4 @@
+import time
 import tkinter
 
 
@@ -5,6 +6,7 @@ from matching_window.repository.matching_window_repository_impl import MatchingW
 from matching_window.service.matching_window_service import MatchingWindowService
 from matching_window.service.request.cancel_matching_request import CancelMatchingRequest
 from matching_window.service.request.check_matching_request import CheckMatchingRequest
+from matching_window.service.request.check_prepare_battle_request import CheckPrepareBattleRequest
 from matching_window.service.request.start_matching_request import StartMatchingRequest
 from session.repository.session_repository_impl import SessionRepositoryImpl
 from utility.image_generator import ImageGenerator
@@ -15,6 +17,7 @@ imageHeight = 256
 
 class MatchingWindowServiceImpl(MatchingWindowService):
     __instance = None
+    __isRoomPrepared = False
 
     def __new__(cls):
         if cls.__instance is None:
@@ -28,6 +31,21 @@ class MatchingWindowServiceImpl(MatchingWindowService):
         if cls.__instance is None:
             cls.__instance = cls()
         return cls.__instance
+
+    def __waitForPrepareBattle(self):
+        print("LobbyMenuFrameServiceImpl: __waitForPrepareBattle()")
+        isPrepareCompleteResponse = self.__matchingWindowRepository.checkPrepareBattle(
+            CheckPrepareBattleRequest(
+                self.__sessionRepository.get_session_info()
+            )
+        )
+        currentStatus = isPrepareCompleteResponse.get("current_status")
+        print(f"after request matching status: {currentStatus}")
+
+        if currentStatus == "SUCCESS":
+            self.__isRoomPrepared = True
+        else:
+            self.__matchingWindow.after(3000, self.__waitForPrepareBattle)
 
     def createMatchingWindow(self, rootWindow):
         self.__matchingWindow = self.__matchingWindowRepository.createMatchingWindowFrame(rootWindow)
@@ -85,6 +103,7 @@ class MatchingWindowServiceImpl(MatchingWindowService):
                 print("matching request success")
                 self.__matchingWindow.updateMatchingBarWidth(0, rootWindow)
                 rootWindow.after(3000, lambda: self.checkMatching(rootWindow))
+                rootWindow.after(3000, lambda: self.__waitForPrepareBattle)
 
             else:
                 print("matching Window: Invalid or missing response data.")
@@ -96,6 +115,7 @@ class MatchingWindowServiceImpl(MatchingWindowService):
 
     def matchingCancel(self):
         self.__isMatching = False
+        self.__isRoomPrepared = False
         self.__matchingWindow.hideMatchingUI()
         self.__matchingWindow.destroy()
 
@@ -119,6 +139,8 @@ class MatchingWindowServiceImpl(MatchingWindowService):
             elif currentStatus == "SUCCESS":
                 self.__matchingWindow.changeWindowText("매칭 성공!")
                 self.__matchingWindow.hideMatchingUI()
+                while not self.__isRoomPrepared:
+                    time.sleep(3)
                 rootWindow.after(3000, lambda: LobbyMenuFrameControllerImpl.getInstance().switchFrameToBattleLobby(self.__matchingWindow))
                 
             else:
