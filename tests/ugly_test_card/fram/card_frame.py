@@ -28,14 +28,12 @@ class CardFrame(OpenGLFrame):
         project_root = get_project_root()
 
         first_card = Card(local_translation=(100, 100))
-        first_card.init_card(
-            os.path.join(project_root, "local_storage", "card_images", "card1.png"), 2)
+        first_card.init_card(2)
 
         self.card_list.append(first_card)
 
         second_card = Card(local_translation=(400, 400))
-        second_card.init_card(
-            os.path.join(project_root, "local_storage", "card_images", "card2.png"), 4)
+        second_card.init_card(8)
 
         self.card_list.append(second_card)
 
@@ -56,36 +54,6 @@ class CardFrame(OpenGLFrame):
         # self.set_projection_matrix()
         glClearColor(1.0, 1.0, 1.0, 0.0)
         glOrtho(0, self.width, self.height, 0, -1, 1)
-
-    # def tkExpose(self, event):
-    #     print("Handling tkExpose event")
-    #     self.initgl()
-    #     self.redraw()
-
-    # def redraw(self, event=None):
-    #     self.tkMakeCurrent()
-    #     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    #     glLoadIdentity()
-    #
-    #     for unit_card in self.unit_card_list:
-    #         pickable_unit_card_base = unit_card.get_pickable_unit_card_base()
-    #         attached_tool_card = unit_card.get_tool_card()
-    #         attached_shape_list = pickable_unit_card_base.get_attached_shapes()
-    #
-    #         attached_tool_card.draw()
-    #
-    #         for attached_shape in attached_shape_list:
-    #             attached_shape.draw()
-    #
-    #         # composition_shape_list = composition_object.get_object_shapes()
-    #         # for shape in composition_shape_list:
-    #         #     attached_shapes = shape.get_attached_shapes()
-    #         #     for attached_shape in attached_shapes:
-    #         #         attached_shape.draw()
-    #         #
-    #         #     shape.draw()
-    #
-    #     self.tkSwapBuffers()
 
     def toggle_visibility(self):
         for card in self.card_list:
