@@ -3,12 +3,15 @@ import tkinter
 from card_shop_frame.frame.buy_check_frame.service.buy_check_service import BuyCheckService
 from card_shop_frame.frame.buy_check_frame.repository.buy_check_repository_impl import BuyCheckRepositoryImpl
 
+
 class BuyCheckServiceImpl(BuyCheckService):
     __instance = None
     def __new__(cls):
+        from card_shop_frame.service.card_shop_service_impl import CardShopMenuFrameServiceImpl
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
             cls.__instance.__buyCheckRepository = BuyCheckRepositoryImpl.getInstance()
+            cls.__instance.__cardShopMenuFrameService = CardShopMenuFrameServiceImpl.getInstance()
         return cls.__instance
 
     @classmethod

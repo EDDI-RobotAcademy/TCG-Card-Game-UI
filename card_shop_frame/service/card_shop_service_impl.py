@@ -27,15 +27,27 @@ class CardShopMenuFrameServiceImpl(CardShopMenuFrameService):
         return cls.__instance
 
 
+    def button_emp(self):
+        original_state = self.get_new_all_cards_button["state"]
+        self.get_new_all_cards_button["state"] = "disabled"  # 버튼 비활성화
+
+    def restore_frame(self, original_state):
+        # 기존 버튼 상태 복원
+        self.get_new_all_cards_button["state"] = original_state
+
 
     def createCardShopUiFrame(self, rootWindow, switchFrameWithMenuName):
         cardShopMenuFrame = self.__cardShopMenuFrameRepository.createCardShopMenuFrame(rootWindow)
 
-        def on_button_click(event):
+        # self.__cardShopMenuFrameRepository.setRace("전체")
+        def buy_check_button_click(event):
+
             self.__buyCheckService.createBuyCheckUiFrame(cardShopMenuFrame, switchFrameWithMenuName)
+
 
         def lobby_click_button():
             switchFrameWithMenuName("lobby-menu")
+
 
         label_text = "상점"
         label = tkinter.Label(cardShopMenuFrame, text=label_text, font=("Helvetica", 64), fg="black",
@@ -49,10 +61,10 @@ class CardShopMenuFrameServiceImpl(CardShopMenuFrameService):
 
 
 
-        get_new_all_cards_button = tkinter.Button(cardShopMenuFrame, text="전체 카드 뽑기", bg="#2E2BE2", fg="white",
+        self.get_new_all_cards_button = tkinter.Button(cardShopMenuFrame, text="전체 카드 뽑기", bg="#2E2BE2", fg="white",
                                                 width=36, height=4)
-        get_new_all_cards_button.place(relx=0.5, rely=0.2, anchor="center")
-        get_new_all_cards_button.bind("<Button-1>", on_button_click)
+        self.get_new_all_cards_button.place(relx=0.5, rely=0.2, anchor="center")
+        self.get_new_all_cards_button.bind("<Button-1>", buy_check_button_click)
 
 
         get_new_undead_cards_button = tkinter.Button(cardShopMenuFrame, text="언데드 카드 뽑기", bg="#2E2BE2", fg="white",
@@ -71,7 +83,7 @@ class CardShopMenuFrameServiceImpl(CardShopMenuFrameService):
         get_new_human_cards_button.place(relx=0.5, rely=0.8, anchor="center")
 
         go_back_to_lobby_button = tkinter.Button(cardShopMenuFrame, text="로비로 돌아가기", bg="#2E2BE2", fg="white",
-                                        command=lambda: lobby_click_button
+                                        command=lambda: lobby_click_button()
                                                  , width=24,height=2)
         go_back_to_lobby_button.place(relx=0.2, rely=0.9, anchor="center")
 
