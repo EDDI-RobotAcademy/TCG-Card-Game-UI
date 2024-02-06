@@ -54,7 +54,8 @@ class MyCardMainFrame(OpenGLFrame):
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-
+    def getCanvas(self):
+        return self.canvas
     def make_card_main_frame(self):
 
         # 나의 카드 배경 화면
@@ -117,12 +118,16 @@ class MyCardMainFrame(OpenGLFrame):
         self.my_deck_register_scene.add_text_box(self.deck_text_box)
         self.my_deck_register_scene.add_deck_name_list(self.deck_text_box.get_textbox_string()) # 생성한 덱의 이름을 리스트에 저장
 
+        return self.my_deck_register_scene
+
     # 덱 생성 버튼을 누르면 진행
     def toggle_visibility(self):
-        self.make_my_deck_register_frame()
-        self.renderer_after = MyDeckRegisterFrameRenderer(self.my_deck_register_scene, self)
-        self.button_submit = ButtonMaker(self.master, self.canvas)
-        self.ok_button = self.button_submit.create_button(button_name="확인", bg="black", work= self.on_submit_click)
+        pass
+        # self.make_my_deck_register_frame()
+        # self.renderer_after = MyDeckRegisterFrameRenderer(self.my_deck_register_scene, self)
+        # self.button_submit = ButtonMaker(self.master, self.canvas)
+        # self.ok_button = self.button_submit.create_button(button_name="확인", bg="black", work= self.on_submit_click)
+
         #self.button_submit = tk.Button(self.canvas, text="확인", command=self.on_submit_click)
         #self.button_submit.place(relx=0.5, rely=0.65, anchor='center')
 

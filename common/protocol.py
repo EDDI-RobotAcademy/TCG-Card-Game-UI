@@ -35,6 +35,7 @@ class CustomProtocol(Enum):
     UNIT_ATTACK = 1021
     UNIT_FIRST_SKILL = 1022
     UNIT_SECOND_SKILL = 1023
+    BUY_CARD = 71
 
     SURRENDER = 4443
     PROGRAM_EXIT = 4444

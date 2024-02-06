@@ -41,6 +41,7 @@ class CardShopMenuFrameRepositoryImpl(CardShopMenuFrameRepository):
         return self.__receiveIpcChannel.get()
 
     def setRace(self, race):
+        print(f"CardShopFrameRepositoryImpl race set {race}")
         self.__race = race
 
     def getRace(self):
