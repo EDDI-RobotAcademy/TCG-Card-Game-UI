@@ -3,7 +3,7 @@ from common.protocol import CustomProtocol
 
 class StartMatchingRequest:
     def __init__(self, sessionInfo):
-        self.__protocolNumber = CustomProtocol.ENTER_MATCHING.value
+        self.__protocolNumber = CustomProtocol.BATTLE_WAIT_QUEUE_FOR_MATCH.value
         self.__sessionInfo = sessionInfo
 
 

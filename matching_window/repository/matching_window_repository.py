@@ -26,3 +26,11 @@ class MatchingWindowRepository(abc.ABC):
     @abc.abstractmethod
     def checkMatching(self, request):
         pass
+
+    @abc.abstractmethod
+    def checkPrepareBattle(self, checkPrepareBattleRequest):
+        pass
+
+    @abc.abstractmethod
+    def requestRoomNumber(self, request):
+        pass

@@ -10,7 +10,6 @@ from lobby_frame.repository.lobby_menu_frame_repository_impl import LobbyMenuFra
 from lobby_frame.service.lobby_menu_frame_service import LobbyMenuFrameService
 from matching_window.controller.matching_window_controller_impl import MatchingWindowControllerImpl
 from lobby_frame.service.request.exit_request import ExitRequest
-from lobby_frame.service.request.check_prepare_battle_request import CheckPrepareBattleRequest
 from session.repository.session_repository_impl import SessionRepositoryImpl
 
 
@@ -19,8 +18,6 @@ imageHeight = 256
 
 class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
     __instance = None
-    __isMatching = None
-
     __switchFrameWithMenuName = None
     __rootWindow = None
 
@@ -40,22 +37,8 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             cls.__instance = cls()
         return cls.__instance
 
-    def __waitForPrepareBattle(self):
-        print("LobbyMenuFrameServiceImpl: __waitForPrepareBattle()")
-        while True:
-            isPrepareCompleteResponse = self.__lobbyMenuFrameRepository.checkPrepareBattle(
-                CheckPrepareBattleRequest(
-                    self.__sessionRepository.get_session_info()
-                )
-            )
-            currentStatus = isPrepareCompleteResponse.get("current_status")
-            print(f"after request matching status: {currentStatus}")
 
-            if currentStatus == "SUCCESS":
-                self.__switchFrameWithMenuName("battle-lobby")
-                break
 
-            time.sleep(3)
 
 
     def createLobbyUiFrame(self, rootWindow, switchFrameWithMenuName):
@@ -76,6 +59,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
         battle_entrance_button.place(relx=0.5, rely=0.35, anchor="center")
 
         def onClickEntrance(event):
+            #rootWindow.after(3000, self.__waitForPrepareBattle)
             self.__matchingWindowController.makeMatchingWindow(rootWindow)
             self.__matchingWindowController.matching(rootWindow)
 

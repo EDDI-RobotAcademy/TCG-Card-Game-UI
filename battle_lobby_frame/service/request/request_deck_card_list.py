@@ -4,7 +4,7 @@ from session.repository.session_repository_impl import SessionRepositoryImpl
 
 class RequestDeckCardList:
     def __init__(self, _deckId, _sessionInfo):
-        self.__protocolNumber = CustomProtocol.DECK_CARD_LIST.value
+        self.__protocolNumber = CustomProtocol.BATTLE_DECK_CARD.value
         self.__deckId = _deckId
         self.__sessionInfo = _sessionInfo
 

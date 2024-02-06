@@ -1,10 +1,13 @@
+import time
 import tkinter
 
-
+from battle_field_function.repository.battle_field_function_repository_impl import BattleFieldFunctionRepositoryImpl
 from matching_window.repository.matching_window_repository_impl import MatchingWindowRepositoryImpl
 from matching_window.service.matching_window_service import MatchingWindowService
 from matching_window.service.request.cancel_matching_request import CancelMatchingRequest
 from matching_window.service.request.check_matching_request import CheckMatchingRequest
+from matching_window.service.request.check_prepare_battle_request import CheckPrepareBattleRequest
+from matching_window.service.request.room_number_request import RoomNumberRequest
 from matching_window.service.request.start_matching_request import StartMatchingRequest
 from session.repository.session_repository_impl import SessionRepositoryImpl
 from utility.image_generator import ImageGenerator
@@ -13,8 +16,10 @@ from utility.image_generator import ImageGenerator
 imageWidth = 256
 imageHeight = 256
 
+
 class MatchingWindowServiceImpl(MatchingWindowService):
     __instance = None
+    __isRoomPrepared = False
 
     def __new__(cls):
         if cls.__instance is None:
@@ -29,6 +34,33 @@ class MatchingWindowServiceImpl(MatchingWindowService):
             cls.__instance = cls()
         return cls.__instance
 
+    def __waitForPrepareBattle(self):
+        while True:
+            print("LobbyMenuFrameServiceImpl: __waitForPrepareBattle()")
+            isPrepareCompleteResponse = self.__matchingWindowRepository.checkPrepareBattle(
+                CheckPrepareBattleRequest(
+                    self.__sessionRepository.get_session_info()
+                )
+            )
+            currentStatus = isPrepareCompleteResponse.get("current_status")
+            print(f"after request matching status: {currentStatus}")
+
+            if currentStatus == "SUCCESS":
+                print(f"server is prepared!!")
+                break
+            else:
+                time.sleep(3)
+
+    def __saveRoomNumber(self):
+        try:
+            roomNumberResponse = self.__matchingWindowRepository.requestRoomNumber(
+                RoomNumberRequest(self.__sessionRepository.get_session_info())
+            )
+            print(f"room number: {roomNumberResponse}")
+            roomNumber = roomNumberResponse.get("room_number")
+            BattleFieldFunctionRepositoryImpl.getInstance().saveRoomNumber(roomNumber)
+        except Exception as e:
+            print(f"roomNumberError: {e}")
     def createMatchingWindow(self, rootWindow):
         self.__matchingWindow = self.__matchingWindowRepository.createMatchingWindowFrame(rootWindow)
 
@@ -86,6 +118,7 @@ class MatchingWindowServiceImpl(MatchingWindowService):
                 self.__matchingWindow.updateMatchingBarWidth(0, rootWindow)
                 rootWindow.after(3000, lambda: self.checkMatching(rootWindow))
 
+
             else:
                 print("matching Window: Invalid or missing response data.")
                 self.matchingCancel()
@@ -96,6 +129,7 @@ class MatchingWindowServiceImpl(MatchingWindowService):
 
     def matchingCancel(self):
         self.__isMatching = False
+        self.__isRoomPrepared = False
         self.__matchingWindow.hideMatchingUI()
         self.__matchingWindow.destroy()
 
@@ -119,13 +153,15 @@ class MatchingWindowServiceImpl(MatchingWindowService):
             elif currentStatus == "SUCCESS":
                 self.__matchingWindow.changeWindowText("매칭 성공!")
                 self.__matchingWindow.hideMatchingUI()
+                self.__waitForPrepareBattle()
+                self.__saveRoomNumber()
                 rootWindow.after(3000, lambda: LobbyMenuFrameControllerImpl.getInstance().switchFrameToBattleLobby(self.__matchingWindow))
                 
             else:
                 self.__matchingWindow.changeWindowText("매칭중입니다...")
                 rootWindow.after(3000, lambda: self.checkMatching(rootWindow))
 
-            print("CheckMatching: Invalid response data")
+            #print("CheckMatching: Invalid response data")
 
 
     def getMatchingWindow(self):

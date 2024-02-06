@@ -22,8 +22,6 @@ class LobbyMenuFrameRepository(abc.ABC):
     def requestProgramExit(self, exitRequest):
         pass
 
-    @abc.abstractmethod
-    def checkPrepareBattle(self, checkPrepareBattleRequest):
-        pass
+
 
 
