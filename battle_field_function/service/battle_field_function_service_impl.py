@@ -6,6 +6,12 @@ from battle_field_function.service.request.turn_end_request import TurnEndReques
 from battle_field_function.service.request.unit_attack_request import UnitAttackRequest
 from battle_field_function.service.request.use_energy_card_request import UseEnergyCardRequest
 from battle_field_function.service.request.use_environment_card_request import UseEnvironmentCardRequest
+from battle_field_function.service.request.use_item_card_request import UseItemCardRequest
+from battle_field_function.service.request.use_special_energy_card_request import UseSpecialEnergyCardRequest
+from battle_field_function.service.request.use_support_card_request import UseSupportCardRequest
+from battle_field_function.service.request.use_tool_card_request import UseToolCardRequest
+from battle_field_function.service.request.use_trap_card_request import UseTrapCardRequest
+from battle_field_function.service.request.use_unit_card_request import UseUnitCardRequest
 from session.repository.session_repository_impl import SessionRepositoryImpl
 
 
@@ -91,27 +97,63 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             useEnergyCardResponse = self.__battleFieldFunctionRepository.requestUseEnergyCard(
                 UseEnergyCardRequest(_sessionInfo=self.__sessionRepository.get_session_info())
             )
-
+        except Exception as e:
+            print(f"useEnergyCard Error: {e}")
 
     def useSpecialEnergyCard(self, cardNumber):
-        pass
-
+        try:
+            useSpecialEnergyCardResponse = self.__battleFieldFunctionRepository.requestUseSpecialEnergyCard(
+                UseSpecialEnergyCardRequest(_sessionInfo=self.__sessionRepository.get_session_info(),
+                                            cardNumber=cardNumber)
+            )
+        except Exception as e:
+            print(f"useSpecialEnergy Error: {e}")
 
     def useItemCard(self, cardNumber):
-        pass
+        try:
+            useItemCardResponse = self.__battleFieldFunctionRepository.requestItemCard(
+                UseItemCardRequest(_sessionInfo=self.__sessionRepository.get_session_info(),
+                                   cardNumber=cardNumber)
+            )
+        except Exception as e:
+            print(f"useItemCard Error: {e}")
 
 
     def useSupportCard(self, cardNumber):
-        pass
+        try:
+            useSupportCardResponse = self.__battleFieldFunctionRepository.requestSupportCard(
+                UseSupportCardRequest(_sessionInfo=self.__sessionRepository.get_session_info(),
+                                      cardNumber=cardNumber)
+            )
+        except Exception as e:
+            print(f"useSupportCard Error: {e}")
 
 
     def useToolCard(self, cardNumber):
-        pass
+        try:
+            useToolCardResponse = self.__battleFieldFunctionRepository.requestToolCard(
+                UseToolCardRequest(_sessionInfo=self.__sessionRepository.get_session_info(),
+                                   cardNumber=cardNumber)
+            )
+        except Exception as e:
+            print(f"useToolCard Error: {e}")
 
 
     def useTrapCard(self, cardNumber):
-        pass
+        try:
+            useTrapCardResponse = self.__battleFieldFunctionRepository.requestTrapCard(
+                UseTrapCardRequest(_sessionInfo=self.__sessionRepository.get_session_info(),
+                                   cardNumber=cardNumber)
+            )
+        except Exception as e:
+            print(f"useTrapCard Error: {e}")
 
 
     def useUnitCard(self, cardNumber):
-        pass
+        try:
+            useUnitCardResponse = self.__battleFieldFunctionRepository.requestUnitCard(
+                UseUnitCardRequest(_sessionInfo=self.__sessionRepository.get_session_info(),
+                                   cardNumber=cardNumber)
+            )
+        except Exception as e:
+            print(f"useUnitCard Error: {e}")

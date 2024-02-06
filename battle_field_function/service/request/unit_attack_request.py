@@ -4,7 +4,7 @@ from common.protocol import CustomProtocol
 
 class UnitAttackRequest:
     def __init__(self, target, _sessionInfo):
-        self.__protocolNumber = CustomProtocol.SURRENDER.value
+        self.__protocolNumber = CustomProtocol.UNIT_ATTACK.value
         self.__roomNumber = BattleFieldFunctionRepositoryImpl.getInstance().getRoomNumber()
         self.__target = target
         self.__sessionInfo = _sessionInfo

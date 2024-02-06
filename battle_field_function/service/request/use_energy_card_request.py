@@ -4,7 +4,7 @@ from common.protocol import CustomProtocol
 
 class UseEnergyCardRequest:
     def __init__(self, _sessionInfo):
-        self.__protocolNumber = CustomProtocol.SURRENDER.value
+        self.__protocolNumber = CustomProtocol.USE_ENERGY_CARD.value
         self.__roomNumber = BattleFieldFunctionRepositoryImpl.getInstance().getRoomNumber()
         self.__sessionInfo = _sessionInfo
 

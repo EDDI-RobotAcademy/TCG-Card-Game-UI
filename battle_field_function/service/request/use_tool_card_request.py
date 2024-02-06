@@ -4,7 +4,7 @@ from common.protocol import CustomProtocol
 
 class UseToolCardRequest:
     def __init__(self, cardNumber, _sessionInfo):
-        self.__protocolNumber = CustomProtocol.SURRENDER.value
+        self.__protocolNumber = CustomProtocol.USE_TOOL_CARD.value
         self.__roomNumber = BattleFieldFunctionRepositoryImpl.getInstance().getRoomNumber()
         self.__cardNumber = cardNumber
         self.__sessionInfo = _sessionInfo
