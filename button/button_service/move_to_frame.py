@@ -4,16 +4,16 @@ from ui_frame.service.ui_frame_service_impl import UiFrameServiceImpl
 class MoveToFrame:
     __instance = None
 
-    def __init__(self, master, canvas):
+    def __init__(self, master, frame):
         self.master = master
-        self.canvas = canvas
+        self.my_card_main_frame = frame
         self.ui_frame_service = UiFrameServiceImpl.getInstance()
 
-    def moveToFrameButton(self, go_to_frame):
-        button = ButtonMaker(self.master, self.canvas)
+    def moveToFrameButton(self, menu):
+        button = ButtonMaker(self.master, self.my_card_main_frame.getCanvas())
         button.create_button(button_name="되돌아 가기", bg="black", relx=0.88, rely=0.90,
                              width=25, height=2,
-                             work=self.switchFrame(go_to_frame))
+                             work=lambda: self.switchFrame(menu))
 
-    def switchFrame(self, menu_name):
-        self.ui_frame_service.switchFrameWithMenuName(menu_name)
+    def switchFrame(self, menu):
+        self.ui_frame_service.switchFrameWithMenuName(menu)

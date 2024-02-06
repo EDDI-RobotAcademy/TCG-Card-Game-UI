@@ -56,6 +56,7 @@ class MyCardMainFrame(OpenGLFrame):
 
     def getCanvas(self):
         return self.canvas
+
     def make_card_main_frame(self):
 
         # 나의 카드 배경 화면
@@ -118,6 +119,7 @@ class MyCardMainFrame(OpenGLFrame):
         self.my_deck_register_scene.add_text_box(self.deck_text_box)
         self.my_deck_register_scene.add_deck_name_list(self.deck_text_box.get_textbox_string()) # 생성한 덱의 이름을 리스트에 저장
 
+    def getScene(self):
         return self.my_deck_register_scene
 
     # 덱 생성 버튼을 누르면 진행
@@ -132,35 +134,35 @@ class MyCardMainFrame(OpenGLFrame):
         #self.button_submit.place(relx=0.5, rely=0.65, anchor='center')
 
     def on_submit_click(self):
-        for textbox_string in self.my_deck_register_scene.get_deck_name_list():
-            text = textbox_string.get()
-        entry_deck_name = text
-
-        self.my_deck_register_frame_service.on_deck_register_click(entry_deck_name)
-
-        self.canvas.delete("all")
-        #self.button_submit.destroy()
-        self.ok_button.destroy()
-        self.deck_text_box.hideTextBox()
-        self.redraw()
-
-        # 덱 버튼 생성해서 캔버스에 올림.
-        # 여기서 말하는 덱 버튼은 사용자가 새로 생성한 덱을 말함.
-        try:
-            deck_button= self.my_deck_register_frame_service.create_register_deck_button(self.canvas, entry_deck_name)
-            self.my_deck_register_scene.add_deck_button_list(deck_button)
-            print(f"생성한 버튼은?: {self.my_deck_register_scene.get_deck_button_list()}")
-            deck_button.place(relx=0.88, rely=self.current_rely, anchor="center")
-            deck_button.bind("<Button-1>", self.make_my_deck_rectangle)
-            self.current_rely += 0.1
-
-        except Exception as e:
-            print(f"An error occurred: {e}")
+        pass
+        # for textbox_string in self.my_deck_register_scene.get_deck_name_list():
+        #     text = textbox_string.get()
+        # entry_deck_name = text
+        #
+        # self.my_deck_register_frame_service.on_deck_register_click(entry_deck_name)
+        #
+        # self.canvas.delete("all")
+        # self.ok_button.destroy()
+        # self.deck_text_box.hideTextBox()
+        # self.redraw()
+        #
+        # # 덱 버튼 생성해서 캔버스에 올림.
+        # # 여기서 말하는 덱 버튼은 사용자가 새로 생성한 덱을 말함.
+        # try:
+        #     deck_button= self.my_deck_register_frame_service.create_register_deck_button(self.canvas, entry_deck_name)
+        #     self.my_deck_register_scene.add_deck_button_list(deck_button)
+        #     print(f"생성한 버튼은?: {self.my_deck_register_scene.get_deck_button_list()}")
+        #     deck_button.place(relx=0.88, rely=self.current_rely, anchor="center")
+        #     deck_button.bind("<Button-1>", self.make_my_deck_rectangle)
+        #     self.current_rely += 0.1
+        #
+        # except Exception as e:
+        #     print(f"An error occurred: {e}")
 
     def redraw(self):
         self.make_card_main_frame()
 
-    # 생성한 덱 버튼을 누르면 그 버튼에 해당하는 덱 화면 만들기.
+    # 생성한 덱 버튼을 누르면 그 버튼에 해당 하는 덱 화면 만들기.
     def make_my_deck_rectangle(self, event=None):
         self.transparent_rect_visible = False
         if not self.transparent_rect_visible:

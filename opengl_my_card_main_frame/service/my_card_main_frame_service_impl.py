@@ -27,14 +27,17 @@ class MyCardMainFrameServiceImpl(MyCardMainFrameService):
     def createMyCardMainUiFrame(self, rootWindow, switchFrameWithMenuName):
         myCardMainFrame = self.__myCardMainFrame(rootWindow)
 
-        # ButtonHandlerImpl()
-        # button_handler = ButtonHandlerImpl.getInstance()
-        #
-        # buttonFunction = button_handler.getButtonTypeTable(ButtonType.DECKREGISTER.value)
-        # buttonFunction(rootWindow, myCardMainFrame.getCanvas(), myCardMainFrame.make_my_deck_register_frame())
-        # button_handler.getButtonTypeTable(2)
+        ButtonHandlerImpl()
+        button_handler = ButtonHandlerImpl.getInstance()
 
+        buttonFunction1 = button_handler.getButtonTypeTable(ButtonType.DECKREGISTER.value)
+        buttonFunction1(rootWindow, myCardMainFrame)
 
+        buttonFunction2 = button_handler.getButtonTypeTable(ButtonType.MOVETOFRAME.value)
+        buttonFunction2(rootWindow, myCardMainFrame)
+
+        buttonFunction3 = button_handler.getButtonTypeTable(ButtonType.CREATEDECK.value)
+        buttonFunction3(rootWindow, myCardMainFrame)
 
 
         # button_create_deck = tk.Button(myCardMainFrame, text="덱 생성", fg="white", bg="#483C32", width=25, height=2)
@@ -60,8 +63,3 @@ class MyCardMainFrameServiceImpl(MyCardMainFrameService):
 
 
         return myCardMainFrame
-
-    def button_bind(self, button_list):
-        button_create_deck = button_list[0]
-        button_go_back_to_lobby = button_list[1]
-        button_create_deck.bind("<Button-1>", self.__myCardMainFrame.toggle_visibility())
