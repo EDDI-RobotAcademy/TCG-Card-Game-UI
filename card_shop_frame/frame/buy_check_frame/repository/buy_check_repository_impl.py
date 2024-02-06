@@ -21,8 +21,3 @@ class BuyCheckRepositoryImpl(BuyCheckRepository):
         buyCheckFrame = BuyCheckFrame(rootWindow)
 
         return buyCheckFrame
-
-    def destroyBuyCheckFrame(self, rootWindow):
-        print("BuyCheckRepositoryImpl: destroyBuyCheckFrame()")
-        buyCheckFrame = BuyCheckFrame.destroy(rootWindow)
-        return buyCheckFrame
