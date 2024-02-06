@@ -9,4 +9,4 @@ class TestBattleFieldFunction(unittest.TestCase):
 
     def test_battle_field_function(self):
         surrenderReqeust = SurrenderRequest("abcbabcb")
-        BattleFieldFunctionRepositoryImpl.getInstance().sendSurrender(surrenderReqeust)
+        BattleFieldFunctionRepositoryImpl.getInstance().requestSurrender(surrenderReqeust)
