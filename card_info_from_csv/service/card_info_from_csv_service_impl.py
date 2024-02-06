@@ -1,5 +1,9 @@
+import os
+
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from card_info_from_csv.service.card_info_from_csv_service import CardInfoFromCsvService
+
+from common.utility import get_project_root
 
 
 class CardInfoFromCsvServiceImpl(CardInfoFromCsvService):
@@ -19,6 +23,8 @@ class CardInfoFromCsvServiceImpl(CardInfoFromCsvService):
 
 
     def cardInfoSettingInMemory(self):
-        dataFile = self.__cardInfoFromCsvRepositoryImpl.readCardData('../../../local_storage/card/data.csv')
+        project_root = get_project_root()
+
+        dataFile = self.__cardInfoFromCsvRepositoryImpl.readCardData(os.path.join(project_root, 'local_storage', 'card', 'data.csv'))
         self.__cardInfoFromCsvRepositoryImpl.build_dictionaries(dataFile)
         print("Setting On")
