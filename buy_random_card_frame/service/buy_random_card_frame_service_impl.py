@@ -5,6 +5,7 @@ from buy_random_card_frame.repository.buy_random_card_frame_repository_impl impo
 from buy_random_card_frame.service.buy_random_card_frame_service import BuyRandomCardFrameService
 from buy_random_card_frame.service.request.buy_random_card_request import BuyRandomCardRequest
 from card_shop_frame.repository.card_shop_repository_impl import CardShopMenuFrameRepositoryImpl
+from session.service.session_service_impl import SessionServiceImpl
 
 
 class BuyRandomCardFrameServiceImpl(BuyRandomCardFrameService):
@@ -16,6 +17,7 @@ class BuyRandomCardFrameServiceImpl(BuyRandomCardFrameService):
             cls.__instance.__buyRandomCardFrameRepository = BuyRandomCardFrameRepositoryImpl.getInstance()
             cls.__instance.__cardBackFrameService = CardBackFrameServiceImpl.getInstance()
             cls.__instance.__cardShopMenuFrameRepository = CardShopMenuFrameRepositoryImpl.getInstance()
+            cls.__instance.__sessionService = SessionServiceImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -24,17 +26,40 @@ class BuyRandomCardFrameServiceImpl(BuyRandomCardFrameService):
             cls.__instance = cls()
         return cls.__instance
 
+    def Gacha(self):
+        testRace = self.__cardShopMenuFrameRepository.getRace()
+        print(f"testRace: {testRace}")
+        self.__label.configure(text=testRace)
+        return testRace
+
+    def buyRandomCardRequest(self):
+        try:
+            session_info = self.__sessionService.getSessionInfo()
+            if session_info is not None:
+                responseData = self.__buyRandomCardFrameRepository.requestBuyRandomCard(
+                    BuyRandomCardRequest(sessionInfo=session_info, race=self.Gacha()))
+
+                print(f"responseData: {responseData}")
+                return responseData
+
+            else:
+                print("Invalid or missing response data.")
+
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
     def createBuyRandomCardUiFrame(self, rootWindow, switchFrameWithMenuName):
         BuyRandomCardFrame = self.__buyRandomCardFrameRepository.createBuyRandomCardFrame(rootWindow)
 
-        # responseData = self.__buyRandomCardFrameRepository.requestBuyRandomCard(
-        #         BuyRandomCardRequest())
+        # responseData = self.buyRandomCardRequest()
         # print(responseData)
+        # card = [value for value in responseData]
 
-        testRace = self.__cardShopMenuFrameRepository.getRace()
-        label = tkinter.Label(BuyRandomCardFrame, text=testRace, font=("Helvetica", 64), fg="black",
+
+
+        self.__label = tkinter.Label(BuyRandomCardFrame, font=("Helvetica", 64), fg="black",
                               anchor="center", justify="center")
-        label.place(relx=0.3, rely=0.95, anchor="center", bordermode="outside")  # 가운데 정렬
+        self.__label.place(relx=0.3, rely=0.95, anchor="center", bordermode="outside")  # 가운데 정렬
 
         BuyRandomCardFrame1 = self.__cardBackFrameService.createCardBackUiFrame(BuyRandomCardFrame)
         BuyRandomCardFrame1.place(relx=0.15, rely=0.25, relwidth=0.15, relheight=0.38, anchor="center")
