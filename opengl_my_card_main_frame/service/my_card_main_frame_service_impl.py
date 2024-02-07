@@ -36,8 +36,8 @@ class MyCardMainFrameServiceImpl(MyCardMainFrameService):
         buttonFunction2 = button_handler.getButtonTypeTable(ButtonType.MOVETOFRAME.value)
         buttonFunction2(rootWindow, myCardMainFrame)
 
-        buttonFunction3 = button_handler.getButtonTypeTable(ButtonType.CREATEDECK.value)
-        buttonFunction3(rootWindow, myCardMainFrame)
+        # buttonFunction3 = button_handler.getButtonTypeTable(ButtonType.CREATEDECK.value)
+        # buttonFunction3(rootWindow, myCardMainFrame)
 
 
         # button_create_deck = tk.Button(myCardMainFrame, text="덱 생성", fg="white", bg="#483C32", width=25, height=2)
