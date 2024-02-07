@@ -39,6 +39,13 @@ class Card:
         attached_tool_card.set_visible(False)
         return attached_tool_card
 
+    def create_card_background_rectangle(self, image_path, vertices, local_translation):
+        card_background_illustration = ImageRectangleElement(image_path=image_path,
+                                                             local_translation=local_translation,
+                                                             vertices=vertices)
+        card_background_illustration.set_visible(False)
+        return card_background_illustration
+
     def create_card_base_pickable_rectangle(self, color, vertices, local_translation):
         pickable_card_base = PickableRectangle(color=color,
                                                local_translation=local_translation,
@@ -85,7 +92,6 @@ class Card:
         )
 
 
-
         self.pickable_card_base.set_attached_shapes(
             self.create_illustration(
                 image_path=os.path.join(project_root, "local_storage", "card_images", f"{card_number}.png"),
@@ -106,3 +112,11 @@ class Card:
         card_shapes = card_controller_shapes(self.local_translation)
         for shape in card_shapes:
             self.pickable_card_base.set_attached_shapes(shape)
+
+        self.pickable_card_base.set_attached_shapes(
+            self.create_card_background_rectangle(
+                image_path=os.path.join(project_root, "local_storage", "card_images", "background.png"),
+                local_translation=self.local_translation,
+                vertices=[(0, 0), (350, 0), (350, 500), (0, 500)]
+            )
+        )
