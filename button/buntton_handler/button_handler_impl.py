@@ -44,14 +44,17 @@ class ButtonHandlerImpl(ButtonHandler):
         print("덱 생성 화면 만드는 버튼임")
         screen = CreateDeckRegisterScreen(master, frame)
         screen.createDeckRegisterScreenButton()
+        screen.buttonPlace()
+        screen.buttonBind()
 
     def goToLobbyFrame(self, master, frame):
         print("로비로 되돌아 가는 버튼임")
         lobby = MoveToFrame(master, frame)
-        lobby.moveToFrameButton("lobby-menu")
+        lobby.moveToFrameButton()
+        lobby.buttonPlace()
+        lobby.buttonBind("lobby-menu")
 
     def createDeck(self, master, frame):
         print("확인 누르면 나의 카드 화면으로 바뀌고, 덱 버튼을 생성하는 버튼임")
-        self.transparent_rect_visible = False
         deck = CreateDeckButton(master, frame)
         deck.createDeckButton()

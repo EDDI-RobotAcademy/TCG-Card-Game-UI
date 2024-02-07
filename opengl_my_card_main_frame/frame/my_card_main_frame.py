@@ -122,52 +122,5 @@ class MyCardMainFrame(OpenGLFrame):
     def getScene(self):
         return self.my_deck_register_scene
 
-    # 덱 생성 버튼을 누르면 진행
-    def toggle_visibility(self):
-        pass
-        # self.make_my_deck_register_frame()
-        # self.renderer_after = MyDeckRegisterFrameRenderer(self.my_deck_register_scene, self)
-        # self.button_submit = ButtonMaker(self.master, self.canvas)
-        # self.ok_button = self.button_submit.create_button(button_name="확인", bg="black", work= self.on_submit_click)
-
-        #self.button_submit = tk.Button(self.canvas, text="확인", command=self.on_submit_click)
-        #self.button_submit.place(relx=0.5, rely=0.65, anchor='center')
-
-    def on_submit_click(self):
-        pass
-        # for textbox_string in self.my_deck_register_scene.get_deck_name_list():
-        #     text = textbox_string.get()
-        # entry_deck_name = text
-        #
-        # self.my_deck_register_frame_service.on_deck_register_click(entry_deck_name)
-        #
-        # self.canvas.delete("all")
-        # self.ok_button.destroy()
-        # self.deck_text_box.hideTextBox()
-        # self.redraw()
-        #
-        # # 덱 버튼 생성해서 캔버스에 올림.
-        # # 여기서 말하는 덱 버튼은 사용자가 새로 생성한 덱을 말함.
-        # try:
-        #     deck_button= self.my_deck_register_frame_service.create_register_deck_button(self.canvas, entry_deck_name)
-        #     self.my_deck_register_scene.add_deck_button_list(deck_button)
-        #     print(f"생성한 버튼은?: {self.my_deck_register_scene.get_deck_button_list()}")
-        #     deck_button.place(relx=0.88, rely=self.current_rely, anchor="center")
-        #     deck_button.bind("<Button-1>", self.make_my_deck_rectangle)
-        #     self.current_rely += 0.1
-        #
-        # except Exception as e:
-        #     print(f"An error occurred: {e}")
-
     def redraw(self):
         self.make_card_main_frame()
-
-    # 생성한 덱 버튼을 누르면 그 버튼에 해당 하는 덱 화면 만들기.
-    def make_my_deck_rectangle(self, event=None):
-        self.transparent_rect_visible = False
-        if not self.transparent_rect_visible:
-            x2 = self.width - self.width // 4
-            my_deck_rectangle = AlphaRectangle(self.master, self.canvas)
-            my_deck_rectangle.create_alpha_rectangle(0, 0, x2, self.height, fill='#C19A6B')
-            #self.my_card_main_scene.add_my_deck_list(my_deck_rectangle)
-            print("확인용 메시지: 덱 나타나라 얍!")
