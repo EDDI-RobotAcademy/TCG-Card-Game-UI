@@ -2,6 +2,7 @@ class DeckToField:
     def __init__(self):
         self.card = []
         self.field = []
+        self.unit_in_field = []
 
     def get_card(self):
         return self.card
