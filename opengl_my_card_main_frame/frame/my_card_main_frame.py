@@ -1,17 +1,18 @@
+import os
 import tkinter as tk
+
+import pandas
 from OpenGL import GL, GLU
 from pyopengltk import OpenGLFrame
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
+from opengl_battle_field_card.card import Card
 from opengl_my_card_main_frame.entity.my_deck_register_scene import MyDeckRegisterScene
 from tkinter_shape.alpha_rectangle import AlphaRectangle
-from tkinter_shape.button_maker import ButtonMaker
 from tkinter_shape.image_rectangle_element import ImageRectangel
 from opengl_my_card_main_frame.entity.my_card_main_scene import MyCardMainScene
 from opengl_my_card_main_frame.renderer.my_card_main_frame_renderer import MyCardMainFrameRenderer
-from opengl_my_card_main_frame.renderer.my_deck_register_frame_renderer import MyDeckRegisterFrameRenderer
-from opengl_my_deck_register_frame.service.my_deck_register_frame_service_impl import MyDeckRegisterFrameServiceImpl
 from text_field.text_box import TextBox
 from text_field.text_render import TextRender
 
@@ -36,8 +37,6 @@ class MyCardMainFrame(OpenGLFrame):
         # 덱 생성 버튼 누르기 전 화면 그리기
         self.make_card_main_frame()
         self.renderer = MyCardMainFrameRenderer(self.my_card_main_scene, self)
-
-        self.my_deck_register_frame_service = MyDeckRegisterFrameServiceImpl.getInstance()
 
 
     def initgl(self):
@@ -84,6 +83,27 @@ class MyCardMainFrame(OpenGLFrame):
         text_my_deck.render_text(x=text_x, y=text_y, custom_text="나의 덱", text_color="black", font_size=30)
         self.my_card_main_scene.add_text_list(text_my_deck)
 
+        # 모든 카드
+        all_card_number = self.card_data_read().tolist()
+        print(f"카드 번호 리스트: {all_card_number}")
+        x = 10
+        y = 20
+        for number in all_card_number[:9]:
+            try:
+                card = Card(local_translation=(x, y))
+                card.init_card(int(number))
+                self.my_card_main_scene.add_card_list(card)
+                print(f"카드 리스트에 잘 담겼니?{self.my_card_main_scene.get_card_list()}")
+                x += 390
+                if len(self.my_card_main_scene.get_card_list()) > 4:
+                    x = 10
+                    y = 620
+                if len(self.my_card_main_scene.get_card_list()) == 6:
+                    break
+            except:
+                pass
+
+
     def make_my_deck_register_frame(self):
 
         # 검정 투명 화면
@@ -124,3 +144,15 @@ class MyCardMainFrame(OpenGLFrame):
 
     def redraw(self):
         self.make_card_main_frame()
+
+
+    # 카드 번호를 받아 오기 위한 함수
+    def card_data_read(self):
+        currentLocation = os.getcwd()
+        print(f"currentLocation: {currentLocation}")
+
+        card_info = pandas.read_csv('local_storage/card/data.csv')
+        card_number = card_info['카드번호']
+
+
+        return card_number

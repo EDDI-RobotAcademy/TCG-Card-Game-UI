@@ -20,6 +20,17 @@ class MyCardMainFrameRenderer:
         for button in self.scene.buttons_list:
             self._render_shape(button)
 
+        for card in self.scene.cards_list:
+            attached_tool_card = card.get_tool_card()
+            attached_tool_card.draw()
+
+            pickable_card_base = card.get_pickable_card_base()
+            pickable_card_base.draw()
+
+            attached_shape_list = pickable_card_base.get_attached_shapes()
+            for attached_shape in attached_shape_list:
+                attached_shape.draw()
+
         self.window.tkSwapBuffers()
 
     def _render_shape(self, shape):
