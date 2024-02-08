@@ -113,8 +113,9 @@ class DeckToFieldFrame(OpenGLFrame):
                             self.selected_object = None
                             self.master.title(f"unselected object: {card}")
                         elif self.selected_object == None:
-                            self.selected_object = card
-                            self.master.title(f"selected {card.card_type} object: {card}")
+                            if card.is_hand or card.card_type == CardType.UNIT:
+                                self.selected_object = card
+                                self.master.title(f"new selected {card.card_type} object: {card}")
                         elif self.selected_object.card_type == CardType.ENERGY or self.selected_object.card_type == CardType.TOOL:
                             self.selected_target = card
                             self.master.title(f"selected {card.card_type} target: {card}")
@@ -130,14 +131,15 @@ class DeckToFieldFrame(OpenGLFrame):
 
 
                         else:
+                            if self.selected_object.card_type == CardType.UNIT:
                             #Todo : 필드의 카드를 클릭하면, 유닛의 사망처리에 관련된 UI기능이 호출됨
-                            self.selected_object.move_to_tomb()
-                            self.selected_count -= 1
-                            self.master.title(f"Unit destroyed!!")
-                            self.deck_to_field.unit_in_field.remove(self.selected_object)
-                            for i,unit in enumerate(self.deck_to_field.unit_in_field):
-                                unit.local_translation = (i * 120, 0)
-                                unit.move_to_field(150,325)
+                                self.selected_object.move_to_tomb()
+                                self.selected_count -= 1
+                                self.master.title(f"Unit destroyed!!")
+                                self.deck_to_field.unit_in_field.remove(self.selected_object)
+                                for i,unit in enumerate(self.deck_to_field.unit_in_field):
+                                    unit.local_translation = (i * 120, 0)
+                                    unit.move_to_field(150,325)
 
 
                         self.selected_object = None
@@ -158,10 +160,15 @@ class DeckToFieldFrame(OpenGLFrame):
         self.selected_count += 1
 
     def use_tool_card(self, selected_object):
-        self.selected_target.equip_tool()
-        selected_object.move_to_tomb()
-        self.selected_target = None
-        self.master.title(f"use Tool Card!! : {selected_object}")
+        if self.selected_target.card_type == CardType.UNIT:
+            self.selected_target.equip_tool()
+            selected_object.move_to_tomb()
+            self.selected_target = None
+            self.master.title(f"use Tool Card!! : {selected_object}")
+        else:
+            self.master.title(f"Wrong Target! {selected_object.card_type}")
+            self.selected_object = None
+            self.selected_target = None
 
 
 
@@ -177,7 +184,12 @@ class DeckToFieldFrame(OpenGLFrame):
         self.master.title(f"use Trap Card!! : {selected_object}")
 
     def use_energy_card(self, selected_object):
-        selected_object.move_to_tomb()
-        self.master.title(f"use Energy Card!! : {selected_object}")
-        self.selected_target.set_energy()
-        self.selected_target = None
+        if self.selected_target.card_type == CardType.UNIT:
+            selected_object.move_to_tomb()
+            self.master.title(f"use Energy Card!! : {selected_object}")
+            self.selected_target.set_energy()
+            self.selected_target = None
+        else:
+            self.master.title(f"Wrong Target! {selected_object.card_type}")
+            self.selected_object = None
+            self.selected_target = None
