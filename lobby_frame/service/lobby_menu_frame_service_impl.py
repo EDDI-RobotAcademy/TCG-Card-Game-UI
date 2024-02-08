@@ -78,6 +78,11 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
         exit_button = tkinter.Button(lobbyMenuFrame, text="종료", bg="#C62828", fg="white", width=36, height=2)
         exit_button.place(relx=0.5, rely=0.8, anchor="center")
 
+        battle_field_button = tkinter.Button(lobbyMenuFrame, text="전장", bg="#2E2BE2", fg="white",
+                                          command=lambda: switchFrameWithMenuName("battle-field"), width=36,
+                                          height=2)
+        battle_field_button.place(relx=0.2, rely=0.65, anchor="center")
+
         def onClickExit(event):
             try:
                 responseData = self.__lobbyMenuFrameRepository.requestProgramExit(
