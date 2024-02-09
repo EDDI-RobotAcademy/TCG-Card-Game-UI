@@ -11,9 +11,13 @@ class CreateDeckRegisterScreen:
 
     def createDeckRegisterScreenButton(self):
         button = ButtonMaker(self.master, self.my_card_main_frame.getCanvas())
-        button.create_button(button_name="덱 생성", bg="black", relx=0.88, rely=0.80,
-                             width=25, height=2,
-                             work=self.toggle_visibility)
+        self.deck_button = button.create_button(button_name="덱 생성", bg="black",
+                             width=25, height=2)
+    def buttonPlace(self, relx=0.88, rely=0.80):
+        self.deck_button.place(relx=relx, rely=rely, anchor="center")
+
+    def buttonBind(self):
+        self.deck_button.bind("<Button-1>", lambda event: self.toggle_visibility())
 
     def toggle_visibility(self):
         print("나의 카드 화면에서 scene 잘 가져왔니?")
@@ -22,5 +26,10 @@ class CreateDeckRegisterScreen:
         self.renderer_after = MyDeckRegisterFrameRenderer(my_scene, self.my_card_main_frame)
         self.renderer_after.render()
         print("scene 그려졌고~~")
+
+        button = CreateDeckButton(self.master, self.my_card_main_frame)
+        button.createDeckButton()
+        button.buttonPlace()
+        button.buttonBind()
 
 

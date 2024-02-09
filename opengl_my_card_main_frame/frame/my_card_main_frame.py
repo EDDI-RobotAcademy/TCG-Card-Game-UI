@@ -1,17 +1,18 @@
+import os
 import tkinter as tk
+
+import pandas
 from OpenGL import GL, GLU
 from pyopengltk import OpenGLFrame
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
+from opengl_battle_field_card.card import Card
 from opengl_my_card_main_frame.entity.my_deck_register_scene import MyDeckRegisterScene
 from tkinter_shape.alpha_rectangle import AlphaRectangle
-from tkinter_shape.button_maker import ButtonMaker
 from tkinter_shape.image_rectangle_element import ImageRectangel
 from opengl_my_card_main_frame.entity.my_card_main_scene import MyCardMainScene
 from opengl_my_card_main_frame.renderer.my_card_main_frame_renderer import MyCardMainFrameRenderer
-from opengl_my_card_main_frame.renderer.my_deck_register_frame_renderer import MyDeckRegisterFrameRenderer
-from opengl_my_deck_register_frame.service.my_deck_register_frame_service_impl import MyDeckRegisterFrameServiceImpl
 from text_field.text_box import TextBox
 from text_field.text_render import TextRender
 
@@ -36,8 +37,6 @@ class MyCardMainFrame(OpenGLFrame):
         # 덱 생성 버튼 누르기 전 화면 그리기
         self.make_card_main_frame()
         self.renderer = MyCardMainFrameRenderer(self.my_card_main_scene, self)
-
-        self.my_deck_register_frame_service = MyDeckRegisterFrameServiceImpl.getInstance()
 
 
     def initgl(self):
@@ -84,6 +83,27 @@ class MyCardMainFrame(OpenGLFrame):
         text_my_deck.render_text(x=text_x, y=text_y, custom_text="나의 덱", text_color="black", font_size=30)
         self.my_card_main_scene.add_text_list(text_my_deck)
 
+        # 모든 카드
+        all_card_number = self.card_data_read().tolist()
+        print(f"카드 번호 리스트: {all_card_number}")
+        x = 10
+        y = 20
+        for number in all_card_number[:9]:
+            try:
+                card = Card(local_translation=(x, y))
+                card.init_card(int(number))
+                self.my_card_main_scene.add_card_list(card)
+                print(f"카드 리스트에 잘 담겼니?{self.my_card_main_scene.get_card_list()}")
+                x += 390
+                if len(self.my_card_main_scene.get_card_list()) > 4:
+                    x = 10
+                    y = 620
+                if len(self.my_card_main_scene.get_card_list()) == 6:
+                    break
+            except:
+                pass
+
+
     def make_my_deck_register_frame(self):
 
         # 검정 투명 화면
@@ -122,52 +142,17 @@ class MyCardMainFrame(OpenGLFrame):
     def getScene(self):
         return self.my_deck_register_scene
 
-    # 덱 생성 버튼을 누르면 진행
-    def toggle_visibility(self):
-        pass
-        # self.make_my_deck_register_frame()
-        # self.renderer_after = MyDeckRegisterFrameRenderer(self.my_deck_register_scene, self)
-        # self.button_submit = ButtonMaker(self.master, self.canvas)
-        # self.ok_button = self.button_submit.create_button(button_name="확인", bg="black", work= self.on_submit_click)
-
-        #self.button_submit = tk.Button(self.canvas, text="확인", command=self.on_submit_click)
-        #self.button_submit.place(relx=0.5, rely=0.65, anchor='center')
-
-    def on_submit_click(self):
-        pass
-        # for textbox_string in self.my_deck_register_scene.get_deck_name_list():
-        #     text = textbox_string.get()
-        # entry_deck_name = text
-        #
-        # self.my_deck_register_frame_service.on_deck_register_click(entry_deck_name)
-        #
-        # self.canvas.delete("all")
-        # self.ok_button.destroy()
-        # self.deck_text_box.hideTextBox()
-        # self.redraw()
-        #
-        # # 덱 버튼 생성해서 캔버스에 올림.
-        # # 여기서 말하는 덱 버튼은 사용자가 새로 생성한 덱을 말함.
-        # try:
-        #     deck_button= self.my_deck_register_frame_service.create_register_deck_button(self.canvas, entry_deck_name)
-        #     self.my_deck_register_scene.add_deck_button_list(deck_button)
-        #     print(f"생성한 버튼은?: {self.my_deck_register_scene.get_deck_button_list()}")
-        #     deck_button.place(relx=0.88, rely=self.current_rely, anchor="center")
-        #     deck_button.bind("<Button-1>", self.make_my_deck_rectangle)
-        #     self.current_rely += 0.1
-        #
-        # except Exception as e:
-        #     print(f"An error occurred: {e}")
-
     def redraw(self):
         self.make_card_main_frame()
 
-    # 생성한 덱 버튼을 누르면 그 버튼에 해당 하는 덱 화면 만들기.
-    def make_my_deck_rectangle(self, event=None):
-        self.transparent_rect_visible = False
-        if not self.transparent_rect_visible:
-            x2 = self.width - self.width // 4
-            my_deck_rectangle = AlphaRectangle(self.master, self.canvas)
-            my_deck_rectangle.create_alpha_rectangle(0, 0, x2, self.height, fill='#C19A6B')
-            #self.my_card_main_scene.add_my_deck_list(my_deck_rectangle)
-            print("확인용 메시지: 덱 나타나라 얍!")
+
+    # 카드 번호를 받아 오기 위한 함수
+    def card_data_read(self):
+        currentLocation = os.getcwd()
+        print(f"currentLocation: {currentLocation}")
+
+        card_info = pandas.read_csv('local_storage/card/data.csv')
+        card_number = card_info['카드번호']
+
+
+        return card_number

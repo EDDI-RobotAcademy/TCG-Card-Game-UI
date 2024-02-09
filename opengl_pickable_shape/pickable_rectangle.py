@@ -25,18 +25,18 @@ class PickableRectangle(Rectangle):
         #         self.vertices[-2][1] + self.global_translation[1] + self.local_translation[1]):
         #     print("마우스가 Picking 가능한 객체에 존재하지 않음: Fail")
         #     return False
-        print(f"self.vertices: {self.vertices}")
-        print(f"self.vertices[0][0] + global_translation[0] + local_translation[0]: "
-              f"{self.vertices[0][0] + self.global_translation[0] + self.local_translation[0]}")
-        print(f"self.vertices[2][0] + global_translation[0] + local_translation[0]: "
-              f"{self.vertices[2][0] + self.global_translation[0] + self.local_translation[0]}")
-        print(f"self.vertices[0][1] + global_translation[1] + local_translation[1]: "
-              f"{self.vertices[0][1] + self.global_translation[1] + self.local_translation[1]}")
-        print(f"self.vertices[2][1] + global_translation[1] + local_translation[1]: "
-              f"{self.vertices[2][1] + self.global_translation[1] + self.local_translation[1]}")
-
-        print(f"global_translation[0]: {self.global_translation[0]}, global_translation[1]: {self.global_translation[1]}")
-        print(f"local_translation[0]: {self.local_translation[0]}, local_translation[1]: {self.local_translation[1]}")
+        # print(f"self.vertices: {self.vertices}")
+        # print(f"self.vertices[0][0] + global_translation[0] + local_translation[0]: "
+        #       f"{self.vertices[0][0] + self.global_translation[0] + self.local_translation[0]}")
+        # print(f"self.vertices[2][0] + global_translation[0] + local_translation[0]: "
+        #       f"{self.vertices[2][0] + self.global_translation[0] + self.local_translation[0]}")
+        # print(f"self.vertices[0][1] + global_translation[1] + local_translation[1]: "
+        #       f"{self.vertices[0][1] + self.global_translation[1] + self.local_translation[1]}")
+        # print(f"self.vertices[2][1] + global_translation[1] + local_translation[1]: "
+        #       f"{self.vertices[2][1] + self.global_translation[1] + self.local_translation[1]}")
+        #
+        # print(f"global_translation[0]: {self.global_translation[0]}, global_translation[1]: {self.global_translation[1]}")
+        # print(f"local_translation[0]: {self.local_translation[0]}, local_translation[1]: {self.local_translation[1]}")
 
         if not (self.vertices[0][0] + self.global_translation[0] + self.local_translation[0] <= x <=
                 self.vertices[2][0] + self.global_translation[0] + self.local_translation[0] and
