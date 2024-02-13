@@ -9,6 +9,7 @@ from opengl_battle_field_token.token_card import TokenCard
 from opengl_battle_field_tool.tool_card import ToolCard
 from opengl_battle_field_trap.trap_card import TrapCard
 
+circle_radius = 30
 
 class CardControllerImpl(CardController):
     __instance = None
@@ -51,51 +52,51 @@ class CardControllerImpl(CardController):
 
         return cls.__instance
 
-    def getCardTypeTable(self, cardType):
+    def getCardTypeTable(self, card_type):
         print("cardType을 찾아 옵니다")
-        if self.__cardTypeTable[cardType] is not None:
-            return self.__cardTypeTable[cardType]
+        if self.__cardTypeTable[card_type] is not None:
+            return self.__cardTypeTable[card_type]
         else:
-            print(f"이 카드 타입({cardType}) 를 처리 할 수 있는 함수가 없습니다.")
+            print(f"이 카드 타입({card_type}) 를 처리 할 수 있는 함수가 없습니다.")
 
-    def itemCardInitShapes(self, local_translation):
+    def itemCardInitShapes(self, local_translation, card_number):
         print("unitCardInitShapes 생성")
         itemCard = ItemCard(local_translation)
-        itemCard.init_shapes()
+        itemCard.init_shapes(circle_radius, card_number)
         return itemCard.get_shapes()
 
-    def trapCardInitShapes(self, local_translation):
+    def trapCardInitShapes(self, local_translation, card_number):
         print("trapCardInitShapes 생성")
         trapCard = TrapCard(local_translation)
-        trapCard.init_shapes()
+        trapCard.init_shapes(circle_radius, card_number)
         return trapCard.get_shapes()
 
-    def supportCardInitShapes(self, local_translation):
+    def supportCardInitShapes(self, local_translation, card_number):
         print("supplyCardInitShapes 생성")
         supportCard = SupportCard(local_translation)
-        supportCard.init_shapes()
+        supportCard.init_shapes(circle_radius, card_number)
         return supportCard.get_shapes()
 
-    def toolCardInitShapes(self, local_translation):
+    def toolCardInitShapes(self, local_translation, card_number):
         print("toolCardInitShapes 생성")
         toolCard = ToolCard(local_translation)
-        toolCard.init_shapes()
+        toolCard.init_shapes(circle_radius, card_number)
         return toolCard.get_shapes()
 
-    def energyCardInitShapes(self, local_translation):
+    def energyCardInitShapes(self, local_translation, card_number):
         print("energyCardInitShapes 생성")
         energyCard = EnergyCard(local_translation)
-        energyCard.init_shapes()
+        energyCard.init_shapes(circle_radius, card_number)
         return energyCard.get_shapes()
 
-    def environmentCardInitShapes(self, local_translation):
+    def environmentCardInitShapes(self, local_translation, card_number):
         print("environmentCardInitShapes 생성")
         environmentCard = EnvironmentCard(local_translation)
-        environmentCard.init_shapes()
+        environmentCard.init_shapes(circle_radius, card_number)
         return environmentCard.get_shapes()
 
-    def tokenCardInitShapes(self, local_translation):
+    def tokenCardInitShapes(self, local_translation, card_number):
         print("tokenCardInitShapes 생성")
         tokenCard = TokenCard(local_translation)
-        tokenCard.init_shapes()
+        tokenCard.init_shapes(circle_radius, card_number)
         return tokenCard.get_shapes()

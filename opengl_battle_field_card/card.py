@@ -20,6 +20,9 @@ class Card:
 
     def get_card_number(self):
         return self.card_number
+
+    def set_card_number(self, card_number):
+        self.card_number = card_number
         
     def change_local_translation(self, _translation):
         self.local_translation = _translation
@@ -68,7 +71,7 @@ class Card:
 
 
     def init_card(self, card_number):
-        self.card_number = card_number
+        self.set_card_number(card_number)
         project_root = get_project_root()
 
         cardInfo = CardInfoFromCsvRepositoryImpl.getInstance()
@@ -108,7 +111,7 @@ class Card:
         )
 
         card_controller_shapes = card_controller.getCardTypeTable(cardInfo.getCardTypeDictionary(card_number))
-        card_shapes = card_controller_shapes(self.local_translation)
+        card_shapes = card_controller_shapes(self.local_translation, card_number)
         for shape in card_shapes:
             self.pickable_card_base.set_attached_shapes(shape)
 

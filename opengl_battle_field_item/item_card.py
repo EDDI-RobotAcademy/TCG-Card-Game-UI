@@ -39,9 +39,8 @@ class ItemCard:
         self.add_shape(unit_attack_circle)
 
 
-    def init_shapes(self):
+    def init_shapes(self, circle_radius, card_number):
 
-        circle_radius = 30
         self.create_item_energy_circle(color=(1.0, 0.33, 0.34, 1.0),
                                        center=(0, 0),
                                        radius=circle_radius)

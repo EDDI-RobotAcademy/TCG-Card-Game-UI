@@ -33,9 +33,7 @@ class SupportCard():
         self.add_shape(unit_attack_circle)
 
 
-    def init_shapes(self):
-
-        circle_radius = 30
+    def init_shapes(self, circle_radius, card_number):
 
         self.create_support_race_circle(color=(0.678, 0.847, 0.902, 1.0),
                                         center=(350, 0),
