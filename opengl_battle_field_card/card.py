@@ -91,7 +91,6 @@ class Card:
             )
         )
 
-
         self.pickable_card_base.set_attached_shapes(
             self.create_illustration(
                 image_path=os.path.join(project_root, "local_storage", "card_images", f"{card_number}.png"),
