@@ -1,6 +1,7 @@
 from common.button_type import ButtonType
 from opengl_button.button_handler.button_handler import ButtonHandler
 from opengl_button.button_service.create_deck_register_screen import CreateDeckRegisterScreen
+from opengl_button.button_service.move_to_frame import MoveToFrame
 
 
 class ButtonHandlerImpl(ButtonHandler):
@@ -14,8 +15,8 @@ class ButtonHandlerImpl(ButtonHandler):
             cls.__buttonTable[
                 ButtonType.DECKREGISTER.value] = cls.__instance.myDeckRegisterScreen
 
-            # cls.__buttonTable[
-            #     ButtonType.MOVETOFRAME.value] = cls.__instance.goToLobbyFrame
+            cls.__buttonTable[
+                ButtonType.MOVETOFRAME.value] = cls.__instance.goToLobbyFrame
             #
             # cls.__buttonTable[
             #     ButtonType.CREATEDECK.value] = cls.__instance.createDeck
@@ -43,12 +44,10 @@ class ButtonHandlerImpl(ButtonHandler):
         screen = CreateDeckRegisterScreen(master=master, frame=frame)
         screen.buttonBind()
 
-    # def goToLobbyFrame(self, master, frame):
-    #     print("로비로 되돌아 가는 버튼임")
-    #     lobby = MoveToFrame(master, frame)
-    #     lobby.moveToFrameButton()
-    #     lobby.buttonPlace()
-    #     lobby.buttonBind("lobby-menu")
+    def goToLobbyFrame(self, master, frame):
+        print("로비로 되돌아 가는 버튼임")
+        lobby = MoveToFrame(master, frame)
+        lobby.buttonBind()
     #
     # def createDeck(self, master, frame):
     #     print("확인 누르면 나의 카드 화면으로 바뀌고, 덱 버튼을 생성하는 버튼임")

@@ -29,9 +29,9 @@ class MyCardMainFrameServiceImpl(MyCardMainFrameService):
 
         buttonFunction1 = button_handler.getButtonTypeTable(ButtonType.DECKREGISTER.value)
         buttonFunction1(master=rootWindow, frame=myCardMainFrame)
-        #
-        # buttonFunction2 = button_handler.getButtonTypeTable(ButtonType.MOVETOFRAME.value)
-        # buttonFunction2(rootWindow, myCardMainFrame)
+
+        buttonFunction2 = button_handler.getButtonTypeTable(ButtonType.MOVETOFRAME.value)
+        buttonFunction2(rootWindow, myCardMainFrame)
 
         # buttonFunction3 = button_handler.getButtonTypeTable(ButtonType.CREATEDECK.value)
         # buttonFunction3(rootWindow, myCardMainFrame)
