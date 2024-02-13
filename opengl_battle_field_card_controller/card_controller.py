@@ -8,29 +8,29 @@ class CardController(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def itemCardInitShapes(self, local_translation):
+    def itemCardInitShapes(self, local_translation, card_number):
         pass
 
     @abc.abstractmethod
-    def trapCardInitShapes(self, local_translation):
+    def trapCardInitShapes(self, local_translation, card_number):
         pass
 
     @abc.abstractmethod
-    def supportCardInitShapes(self, local_translation):
+    def supportCardInitShapes(self, local_translation, card_number):
         pass
 
     @abc.abstractmethod
-    def toolCardInitShapes(self, local_translation):
+    def toolCardInitShapes(self, local_translation, card_number):
         pass
 
     @abc.abstractmethod
-    def energyCardInitShapes(self, local_translation):
+    def energyCardInitShapes(self, local_translation, card_number):
         pass
 
     @abc.abstractmethod
-    def environmentCardInitShapes(self, local_translation):
+    def environmentCardInitShapes(self, local_translation, card_number):
         pass
 
     @abc.abstractmethod
-    def tokenCardInitShapes(self, local_translation):
+    def tokenCardInitShapes(self, local_translation, card_number):
         pass

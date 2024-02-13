@@ -33,14 +33,12 @@ class EnvironmentCard():
         self.add_shape(unit_attack_circle)
 
 
-    def init_shapes(self):
-
-        circle_radius = 30
+    def init_shapes(self, circle_radius, card_number):
 
         self.create_environment_race_circle(color=(0.678, 0.847, 0.902, 1.0),
-                                            center=(350, 0),
+                                            center=(124, 0),
                                             radius=circle_radius)
 
         self.create_environment_type_circle(color=(0.988, 0.976, 0.800, 1.0),
-                                            center=(350, 500),
+                                            center=(124, 200),
                                             radius=circle_radius)
