@@ -1,6 +1,6 @@
 import unittest
 import tkinter as tk
-
+import freetype
 import pandas
 from OpenGL.GL import *
 from OpenGL.GLUT import *
@@ -24,59 +24,51 @@ class RectDrawingApp(OpenGLFrame):
         self.height = screen_height
 
         self.card_list = []
-
         data_card_number = self.test_ugly_data_csv_read().tolist()
-        print(f"data_csv: {data_card_number}")
         x = 10
         y = 20
         for number in data_card_number:
-            print(f"number: {number}")
             try:
                 card = Card(local_translation=(x, y))
                 card.init_card(int(number))
                 self.card_list.append(card)
-                print(f"카드 리스트: {self.card_list}")
-                print(number)
                 x += 390
-                if len(self.card_list) == 4:
+                if len(self.card_list) > 3:
                     x = 10
                     y = 620
-
-                if len(self.card_list) == 5:
-                    x = 10
-                    x += 390
-
-                if len(self.card_list) == 8:
+                if len(self.card_list) == 6:
                     break
-
-            except Exception as e:
-                print(f"Error creating card: {e}")
+            except:
                 pass
 
+
     def initgl(self):
-        glClearColor(1.0, 1.0, 1.0, 1.0)
-        #gluOrtho2D(-1.0, 1.0, -1.0, 1.0)
+        glClearColor(0.0, 1.0, 0.0, 0.0)
         glOrtho(0, self.width, self.height, 0, -1, 1)
+
 
     def redraw(self):
         project_root = get_project_root()
         glClear(GL_COLOR_BUFFER_BIT)
-        glClearColor(0.0, 1.0, 0.0, 0.0)
 
         # 배경 이미지 도형
-        background_rectangle = ImageRectangleElement(image_path=os.path.join(project_root, "local_storage", "image", "battle_lobby", "background.png"),
-                                                     local_translation=(0, 0),
-                                                     #vertices=[(-1, -1), (1, -1), (1, 1), (-1, 1)]
-                                                     vertices=[(0, 0), (self.width, 0), (self.width, self.height), (0, self.height)])
+        background_rectangle = ImageRectangleElement(
+            image_path=os.path.join(project_root, "local_storage", "image", "battle_lobby", "background.png"),
+            vertices=[(0, 0), (self.width, 0), (self.width, self.height), (0, self.height)])
+
         background_rectangle.draw()
 
         # 나의 덱 도형
-        myDeck_rectangle= Rectangle(color=(0.5137, 0.3608, 0.2314, 1.0),
-                                    local_translation=(0, 0),
-                                    #vertices=[(0.45, -1), (1, -1), (1, 1), (0.45, 1)]
-                                    vertices=[(0.75*self.width, 0), (self.width, 0), (self.width, self.height), (0.75*self.width, self.height)])
-        myDeck_rectangle.draw()
+        myDeck_regtangle = Rectangle(color=(0.5137, 0.3608, 0.2314, 1.0),
+                                     vertices=[(0.75 * self.width, 0), (self.width, 0),
+                                               (self.width, self.height), (0.75 * self.width, self.height)])
+        myDeck_regtangle.draw()
 
+        # 텍스트 렌더링
+        glColor3f(0, 0, 0)
+        self.render_text("My Deck", 0.75, 0.45)
+
+        # 카드 렌더링
         for card in self.card_list:
             attached_tool_card = card.get_tool_card()
             attached_tool_card.draw()
@@ -90,7 +82,6 @@ class RectDrawingApp(OpenGLFrame):
 
         self.tkSwapBuffers()
 
-    # csv 파일 읽어오기
     def test_ugly_data_csv_read(self):
         currentLocation = os.getcwd()
         print(f"currentLocation: {currentLocation}")
@@ -102,6 +93,24 @@ class RectDrawingApp(OpenGLFrame):
 
         return data_card_number
 
+
+    def render_text(self, text, x, y):
+        face = freetype.Face("/usr/share/fonts/truetype/noto/NotoSansMono-Regular.ttf")
+        face.set_char_size(0, 50, 0, 0)
+
+
+        normalized_x = x * self.width
+        normalized_y = y * self.height
+
+        glRasterPos2f(normalized_x, normalized_y)
+
+        for char in text:
+            face.load_char(char)
+            bitmap = face.glyph.bitmap
+            glBitmap(bitmap.width, bitmap.rows, 0, 0, face.glyph.advance.x, face.glyph.advance.y,
+                     bitmap.buffer)
+
+
 class TestAppWindow(unittest.TestCase):
     def test_opengl_basic(self):
         root = tk.Tk()
@@ -112,6 +121,7 @@ class TestAppWindow(unittest.TestCase):
         app.pack(side="top", fill="both", expand=True)
         app.animate = 1
         root.mainloop()
+
 
 if __name__ == '__main__':
     unittest.main()

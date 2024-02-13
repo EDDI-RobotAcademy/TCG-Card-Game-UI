@@ -1,7 +1,7 @@
 class MyDeckRegisterScene:
     def __init__(self):
         self.alpha_rectangle = [] # 검정 투명 화면
-        self.my_deck_background = [] # 덱 생성 배경 화면
+        self.my_deck_background = [] # 덱 배경 화면
         self.text_list = [] # '덱 생성', '입력 하시오' 텍스트
         self.button_list = [] # 되돌아 가기, 확인 버튼
         self.text_box = [] # 입력 창

@@ -1,5 +1,5 @@
 from button.button_service.create_deck_button import CreateDeckButton
-from opengl_my_card_main_frame.renderer.my_deck_register_frame_renderer import MyDeckRegisterFrameRenderer
+from opengl_my_card_main_frame_legacy_not_yet_deleted.renderer.my_deck_register_frame_renderer import MyDeckRegisterFrameRenderer
 from tkinter_shape.button_maker import ButtonMaker
 
 class CreateDeckRegisterScreen:

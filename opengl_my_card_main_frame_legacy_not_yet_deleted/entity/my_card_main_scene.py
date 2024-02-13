@@ -1,9 +1,9 @@
 class MyCardMainScene:
     def __init__(self):
         self.my_card_background = [] # 카드 전체 배경 화면, 사이드에 있는 나의 덱 화면
-        self.text_list = [] # 'My Card', '나의 덱'
-        self.button_list = [] # 버튼 도형
-        self.card_list = [] # 나타낼 카드 리스트
+        self.text_list = []
+        self.button_list = []
+        self.card_list = []
 
     def add_my_card_background(self, rectangle):
         self.my_card_background.append(rectangle)

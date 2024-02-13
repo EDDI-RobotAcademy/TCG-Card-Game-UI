@@ -6,25 +6,21 @@ class MyCardMainFrameRenderer:
         self.window = window
 
     def render(self):
-        print("렌더러 호출~~")
         self.window.tkMakeCurrent()
         GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
         # 배경 및 사이드에 있는 나의 덱 화면
         for image_element in self.scene.my_card_background:
-            print(f"이미지 그리기: {image_element}")
             self._render_shape(image_element)
 
         # 나의 카드 텍스트
-        # for text in self.scene.text_list:
-        #     self._render_shape(text)
+        for text in self.scene.text_list:
+            self._render_shape(text)
 
-        # 버튼 도형
-        for button in self.scene.button_list:
-            print(f"버튼 그리기: {button}")
+        for button in self.scene.buttons_list:
             self._render_shape(button)
 
-        for card in self.scene.card_list:
+        for card in self.scene.cards_list:
             attached_tool_card = card.get_tool_card()
             attached_tool_card.draw()
 
