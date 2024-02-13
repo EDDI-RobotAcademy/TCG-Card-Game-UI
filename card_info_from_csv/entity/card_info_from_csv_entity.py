@@ -19,9 +19,9 @@ class CardInfoFromCsv:
         self.__cardType = record[4]
         self.__cardEnergy = record[6]
         self.__cardAttack = record[7]
-        self.__cardPassive = record[9]
-        self.__cardSkill = record[10]
-        self.__cardHp = record[11]
+        self.__cardPassive = record[8]
+        self.__cardSkill = record[9]
+        self.__cardHp = record[10]
 
     def getCardNumber(self):
         return self.__cardNumber
