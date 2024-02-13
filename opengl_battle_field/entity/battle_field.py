@@ -10,6 +10,7 @@ class BattleField:
         self.energy_field = []
         self.main_character = []
         self.pickable_hand_deck_base = []
+        self.pickable_field_base = []
 
     def get_unit_card(self):
         return self.unit_card
@@ -65,12 +66,15 @@ class BattleField:
     def add_main_character(self, main_character):
          self.main_character.append(main_character)
 
-    # def get_hand_deck(self):
-    #      return self.hand_deck
-
     def get_pickable_hand_deck_base(self):
         return self.pickable_hand_deck_base
 
     def add_pickable_hand_deck_base(self, pickable_hand_deck_base):
          self.pickable_hand_deck_base.append(pickable_hand_deck_base)
+
+    def get_pickable_field_base(self):
+        return self.pickable_field_base
+
+    def add_pickable_field_base(self, pickable_field_base):
+        self.pickable_field_base.append(pickable_field_base)
 
