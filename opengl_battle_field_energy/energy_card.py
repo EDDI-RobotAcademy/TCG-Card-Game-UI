@@ -36,9 +36,9 @@ class EnergyCard():
     def init_shapes(self, circle_radius, card_number):
 
         self.create_energy_race_circle(color=(0.678, 0.847, 0.902, 1.0),
-                                        center=(350, 0),
-                                        radius=circle_radius)
+                                       center=(124, 0),
+                                       radius=circle_radius)
 
         self.create_energy_type_circle(color=(0.988, 0.976, 0.800, 1.0),
-                                        center=(350, 500),
-                                        radius=circle_radius)
+                                       center=(124, 200),
+                                       radius=circle_radius)

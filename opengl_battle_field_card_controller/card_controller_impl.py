@@ -9,7 +9,7 @@ from opengl_battle_field_token.token_card import TokenCard
 from opengl_battle_field_tool.tool_card import ToolCard
 from opengl_battle_field_trap.trap_card import TrapCard
 
-circle_radius = 30
+circle_radius = 20
 
 class CardControllerImpl(CardController):
     __instance = None

@@ -84,13 +84,13 @@ class Card:
         self.tool_card = self.create_attached_tool_card_rectangle(
             color=(0.6, 0.4, 0.6, 1.0),
             local_translation=self.local_translation,
-            vertices=[(20, 20), (370, 20), (370, 520), (20, 520)])
+            vertices=[(15, 15), (139, 15), (139, 215), (15, 215)])
 
         self.pickable_card_base = (
             self.create_card_base_pickable_rectangle(
                 color=(0.0, 0.78, 0.34, 1.0),
                 local_translation=self.local_translation,
-                vertices=[(0, 0), (350, 0), (350, 500), (0, 500)]
+                vertices=[(0, 0), (124, 0), (124, 200), (0, 200)]
             )
         )
 
@@ -98,7 +98,7 @@ class Card:
             self.create_illustration(
                 image_path=os.path.join(project_root, "local_storage", "card_images", f"{card_number}.png"),
                 local_translation=self.local_translation,
-                vertices=[(25, 25), (325, 25), (325, 325), (25, 325)]
+                vertices=[(15, 15), (109, 15), (109, 109), (15, 109)]
             )
         )
 
@@ -106,7 +106,7 @@ class Card:
             self.create_equipped_mark(
                 image_path=os.path.join(project_root, "local_storage", "card_images", "equip_white.jpg"),
                 local_translation=self.local_translation,
-                vertices=[(390, 30), (430, 30), (430, 70), (390, 70)]
+                vertices=[(164, 30), (204, 30), (204, 70), (164, 70)]
             )
         )
 
@@ -119,6 +119,6 @@ class Card:
             self.create_card_background_rectangle(
                 image_path=os.path.join(project_root, "local_storage", "card_images", "background.png"),
                 local_translation=self.local_translation,
-                vertices=[(0, 0), (350, 0), (350, 500), (0, 500)]
+                vertices=[(0, 0), (124, 0), (124, 200), (0, 200)]
             )
         )
