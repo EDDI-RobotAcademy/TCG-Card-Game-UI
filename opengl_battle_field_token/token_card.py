@@ -44,21 +44,20 @@ class TokenCard:
                                 radius=radius)
         self.add_shape(unit_hp_circle)
 
-    def init_shapes(self):
+    def init_shapes(self, circle_radius, card_number):
 
-        circle_radius = 30
         self.create_token_energy_circle(color=(1.0, 0.33, 0.34, 1.0),
                                         center=(0, 0),
                                         radius=circle_radius)
 
         self.create_token_tribe_circle(color=(0.678, 0.847, 0.902, 1.0),
-                                       center=(350, 0),
+                                       center=(124, 0),
                                        radius=circle_radius)
 
         self.create_token_attack_circle(color=(0.988, 0.976, 0.800, 1.0),
-                                        center=(350, 500),
+                                        center=(124, 200),
                                         radius=circle_radius)
 
         self.create_token_hp_circle(color=(0.267, 0.839, 0.475, 1.0),
-                                    center=(0, 500),
+                                    center=(0, 200),
                                     radius=circle_radius)

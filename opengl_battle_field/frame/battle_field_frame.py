@@ -13,6 +13,7 @@ from opengl_battle_field_card.card import Card
 from opengl_card_deck.card_deck import CardDeck
 from opengl_energy_field.energy_field import EnergyField
 from opengl_environment.environment import Environment
+from opengl_field.field import Field
 from opengl_hand_deck.hand_deck import HandDeck
 from opengl_lost_zone.lost_zone import LostZone
 from opengl_main_character.main_character import MainCharacter
@@ -97,6 +98,10 @@ class BattleFieldFrame(OpenGLFrame):
         first_hand_deck = HandDeck(window=self, battle_field=self.battle_field)
         first_hand_deck.init_shapes(os.path.join(project_root, "local_storage", "card_images", "card1.png"))
         self.battle_field.add_pickable_hand_deck_base(first_hand_deck)
+
+        your_field = Field()
+        your_field.init_shapes()
+        self.battle_field.add_pickable_field_base(your_field)
 
         # second_hand_deck = HandDeck(window=self, battle_field=self.battle_field)
         # second_hand_deck.init_shapes(os.path.join(project_root, "local_storage", "card_images", "card2.png"))
