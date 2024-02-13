@@ -1,3 +1,4 @@
+import tkinter
 import unittest
 import tkinter as tk
 
@@ -30,6 +31,7 @@ class RectDrawingApp(OpenGLFrame):
         x = 10
         y = 20
         for number in data_card_number:
+            print(f"number: {number}")
             try:
                 card = Card(local_translation=(x, y))
                 card.init_card(int(number))
@@ -37,11 +39,17 @@ class RectDrawingApp(OpenGLFrame):
                 print(f"카드 리스트: {self.card_list}")
                 print(number)
                 x += 390
-                if len(self.card_list) > 3:
+                if len(self.card_list) == 4:
                     x = 10
                     y = 620
-                if len(self.card_list) == 6:
+
+                if len(self.card_list) == 5:
+                    x = 10
+                    x += 390
+
+                if len(self.card_list) == 8:
                     break
+
             except Exception as e:
                 print(f"Error creating card: {e}")
                 pass
@@ -49,13 +57,13 @@ class RectDrawingApp(OpenGLFrame):
         self.show_alpha_rectangle = False
         self.show_deck_register_rectangle = False
 
+        self.textbox_string = tk.StringVar()
+
         self.bind("<Button-1>", self.mouse_click_event)
 
     def initgl(self):
         glClearColor(1.0, 1.0, 1.0, 1.0)
-        #gluOrtho2D(-1.0, 1.0, -1.0, 1.0)
         glOrtho(0, self.width, self.height, 0, -1, 1)
-        # glutMouseFunc(self.handle_mouse_click)
 
     def redraw(self):
         project_root = get_project_root()
@@ -100,14 +108,15 @@ class RectDrawingApp(OpenGLFrame):
                 attached_shape.draw()
 
         # 검정 투명 화면
-        if self.show_alpha_rectangle:
+        if self.show_alpha_rectangle is True:
+            print("왜자꾸이래 ")
             alpha_rectangle = Rectangle(color=(0.0, 0.0, 0.0, 0.8),
                                         local_translation=(0, 0),
                                         vertices=[(0, 0), (self.width, 0), (self.width, self.height), (0, self.height)])
             alpha_rectangle.draw()
 
         # 덱 생성 화면
-        if self.show_deck_register_rectangle:
+        if self.show_deck_register_rectangle is True:
             center_x = 0.5 * self.width
             center_y = 0.5 * self.height
             deck_register_rectangle = Rectangle(color=(0.5137, 0.3608, 0.2314, 1.0),
@@ -132,24 +141,16 @@ class RectDrawingApp(OpenGLFrame):
 
         return data_card_number
 
-    # def handle_mouse_click(self, button, state, x, y):
-    #     if button == GLUT_LEFT_BUTTON and state == GLUT_DOWN:
-    #         print(f"버튼 클릭 된겨?:{x, y}")
-    #         button_rectangle_vertices = [(0.85 * self.width, 0.85*self.height),
-    #                                      (self.width, 0.85*self.height),
-    #                                      (self.width, self.height),
-    #                                      (0.85 * self.width, self.height)]
-    #
-    #         if self.check_collision(x, y, button_rectangle_vertices):
-    #             self.show_alpha_rectangle = True
-    #             self.show_deck_register_rectangle = True
-    #             glutPostRedisplay()
+    def text_box(self):
+        entry = tkinter.Entry(self.master, textvariable=self.textbox_string)
+        entry.place(relx=0.5, rely=0.5, width=300, height=100, anchor="center")
 
     def check_collision(self, x, y, vertices):
         print(f"checking collision: x:{x}, y:{y}")
         x_min, y_min = min(v[0] for v in vertices), min(v[1] for v in vertices)
         x_max, y_max = max(v[0] for v in vertices), max(v[1] for v in vertices)
-        return x_min <= x <= x_max and y_min <= y <= y_max
+        return x_min <= x <= x_max and y_min <= -y <= y_max
+
 
     def mouse_click_event(self, event):
 
@@ -165,7 +166,7 @@ class RectDrawingApp(OpenGLFrame):
             if self.check_collision(x, y, button_rectangle_vertices):
                 self.show_alpha_rectangle = True
                 self.show_deck_register_rectangle = True
-                self.redraw()
+                self.text_box()
 
         except AttributeError:
             pass
