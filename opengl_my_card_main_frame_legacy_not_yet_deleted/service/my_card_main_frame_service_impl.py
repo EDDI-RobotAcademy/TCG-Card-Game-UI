@@ -3,9 +3,9 @@ import tkinter as tk
 
 from button.buntton_handler.button_handler_impl import ButtonHandlerImpl
 from common.button_type import ButtonType
-from opengl_my_card_main_frame.entity.my_card_main_scene import MyCardMainScene
-from opengl_my_card_main_frame.frame.my_card_main_frame import MyCardMainFrame
-from opengl_my_card_main_frame.service.my_card_main_frame_service import MyCardMainFrameService
+from opengl_my_card_main_frame_legacy_not_yet_deleted.entity.my_card_main_scene import MyCardMainScene
+from opengl_my_card_main_frame_legacy_not_yet_deleted.frame.my_card_main_frame import MyCardMainFrame
+from opengl_my_card_main_frame_legacy_not_yet_deleted.service.my_card_main_frame_service import MyCardMainFrameService
 
 
 class MyCardMainFrameServiceImpl(MyCardMainFrameService):

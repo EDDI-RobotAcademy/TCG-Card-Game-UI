@@ -1,7 +1,7 @@
 import tkinter
 import unittest
 
-from opengl_my_card_main_frame.frame.my_card_main_frame import MyCardMainFrame
+from opengl_my_card_main_frame_legacy_not_yet_deleted.frame.my_card_main_frame import MyCardMainFrame
 
 
 class TestMyCardFrame(unittest.TestCase):
