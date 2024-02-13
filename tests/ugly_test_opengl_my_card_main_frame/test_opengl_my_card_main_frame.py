@@ -30,6 +30,7 @@ class RectDrawingApp(OpenGLFrame):
         x = 10
         y = 20
         for number in data_card_number:
+            print(f"number: {number}")
             try:
                 card = Card(local_translation=(x, y))
                 card.init_card(int(number))
@@ -37,11 +38,17 @@ class RectDrawingApp(OpenGLFrame):
                 print(f"카드 리스트: {self.card_list}")
                 print(number)
                 x += 390
-                if len(self.card_list) > 3:
+                if len(self.card_list) == 4:
                     x = 10
                     y = 620
-                if len(self.card_list) == 6:
+
+                if len(self.card_list) == 5:
+                    x = 10
+                    x += 390
+
+                if len(self.card_list) == 8:
                     break
+
             except Exception as e:
                 print(f"Error creating card: {e}")
                 pass
