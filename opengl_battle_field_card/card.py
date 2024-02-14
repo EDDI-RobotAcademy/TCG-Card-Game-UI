@@ -10,7 +10,7 @@ from opengl_battle_field_card_controller.card_controller_impl import CardControl
 
 class Card:
     __imagePath = None
-    def __init__(self, local_translation=(0, 0), scale=1):
+    def __init__(self, local_translation=(0, 0), scale=200):
         self.tool_card = None
         self.pickable_card_base = None
         self.local_translation = local_translation
@@ -72,6 +72,8 @@ class Card:
 
     def init_card(self, card_number):
         self.set_card_number(card_number)
+        rectangle_height = self.scale
+        rectangle_width = self.scale / 1.618
         project_root = get_project_root()
 
         cardInfo = CardInfoFromCsvRepositoryImpl.getInstance()
@@ -84,13 +86,13 @@ class Card:
         self.tool_card = self.create_attached_tool_card_rectangle(
             color=(0.6, 0.4, 0.6, 1.0),
             local_translation=self.local_translation,
-            vertices=[(15, 15), (139, 15), (139, 215), (15, 215)])
+            vertices=[(15, 15), (rectangle_width + 15, 15), (rectangle_width + 15, rectangle_height + 15), (15, rectangle_height + 15)])
 
         self.pickable_card_base = (
             self.create_card_base_pickable_rectangle(
                 color=(0.0, 0.78, 0.34, 1.0),
                 local_translation=self.local_translation,
-                vertices=[(0, 0), (124, 0), (124, 200), (0, 200)]
+                vertices=[(0, 0), (rectangle_width, 0), (rectangle_width, rectangle_height), (0, rectangle_height)]
             )
         )
 
@@ -98,7 +100,7 @@ class Card:
             self.create_illustration(
                 image_path=os.path.join(project_root, "local_storage", "card_images", f"{card_number}.png"),
                 local_translation=self.local_translation,
-                vertices=[(15, 15), (109, 15), (109, 109), (15, 109)]
+                vertices=[(15, 15), (rectangle_width - 15, 15), (rectangle_width - 15, rectangle_width - 15), (15, rectangle_width - 15)]
             )
         )
 
@@ -106,12 +108,12 @@ class Card:
             self.create_equipped_mark(
                 image_path=os.path.join(project_root, "local_storage", "card_images", "equip_white.jpg"),
                 local_translation=self.local_translation,
-                vertices=[(164, 30), (204, 30), (204, 70), (164, 70)]
+                vertices=[(rectangle_width + 40, 30), (rectangle_width + 80, 30), (rectangle_width + 80, 70), (rectangle_width + 40, 70)]
             )
         )
 
         card_controller_shapes = card_controller.getCardTypeTable(cardInfo.getCardTypeDictionary(card_number))
-        card_shapes = card_controller_shapes(self.local_translation, card_number)
+        card_shapes = card_controller_shapes(self.local_translation, card_number, rectangle_height, rectangle_width)
         for shape in card_shapes:
             self.pickable_card_base.set_attached_shapes(shape)
 
@@ -119,6 +121,6 @@ class Card:
             self.create_card_background_rectangle(
                 image_path=os.path.join(project_root, "local_storage", "card_images", "background.png"),
                 local_translation=self.local_translation,
-                vertices=[(0, 0), (124, 0), (124, 200), (0, 200)]
+                vertices=[(0, 0), (rectangle_width, 0), (rectangle_width, rectangle_height), (0, rectangle_height)]
             )
         )
