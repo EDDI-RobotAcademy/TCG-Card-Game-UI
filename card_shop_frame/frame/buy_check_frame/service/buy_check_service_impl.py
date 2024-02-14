@@ -29,8 +29,8 @@ class BuyCheckServiceImpl(BuyCheckService):
             buyCheckFrame.destroy()
 
         def yes_click_button(buyCheckFrame):
-            from buy_random_card_frame.service.buy_random_card_frame_service_impl import BuyRandomCardFrameServiceImpl
-            BuyRandomCardFrameServiceImpl.getInstance().Gacha()
+            # from buy_random_card_frame.service.buy_random_card_frame_service_impl import BuyRandomCardFrameServiceImpl
+            # BuyRandomCardFrameServiceImpl.getInstance().Gacha()
             self.__cardShopMenuFrameService.RestoreCardShopUiButton()
             switchFrameWithMenuName("buy-random-card")
             buyCheckFrame.destroy()
