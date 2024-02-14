@@ -1,42 +1,43 @@
 import os
 
-from common.utility import get_project_root
-from opengl_shape.image_rectangle_element import ImageRectangleElement
-from opengl_shape.rectangle import Rectangle
+from opengl_shape.circle import Circle
 
-
-class Environment:
+class EnvironmentCard:
     __imagePath = None
 
-    def __init__(self, local_translation=(0, 0), scale=1):
+    def __init__(self, local_translation=(0, 0)):
         self.shapes = []
         self.local_translation = local_translation
-        self.scale = scale
 
-    def get_environment_shapes(self):
-        return self.shapes
     def change_local_translation(self, _translation):
         self.local_translation = _translation
+
+    def get_shapes(self):
+        return self.shapes
 
     def add_shape(self, shape):
         shape.local_translate(self.local_translation)
         self.shapes.append(shape)
-    def create_environment_rectangle(self, color, vertices):
-        environment_base = Rectangle(color=color,
-                                       vertices=vertices)
-        environment_base.set_visible(True)
-        self.add_shape(environment_base)
 
-    def create_illustration(self, image_path, vertices):
-        environment_illustration = ImageRectangleElement(image_path=image_path,
-                                         vertices=vertices)
-        self.add_shape(environment_illustration)
+    def create_environment_race_circle(self, color, center, radius):
+        unit_tribe_circle = Circle(color=color,
+                                   center=center,
+                                   radius=radius)
+        self.add_shape(unit_tribe_circle)
 
-    def init_shapes(self):
-        project_root = get_project_root()
-        self.__image_path = os.path.join(project_root, "local_storage", "image", "battle_field", "environment.jpeg")
-        self.create_environment_rectangle(color=(0, 0, 0, 1.0),
-                                   vertices=[(400, 490), (500, 490), (500, 590), (400, 590)])
+    def create_environment_type_circle(self, color, center, radius):
+        unit_attack_circle = Circle(color=color,
+                                    center=center,
+                                    radius=radius)
+        self.add_shape(unit_attack_circle)
 
-        self.create_illustration(self.__image_path,
-                                 vertices=[(400, 490), (500, 490), (500, 590), (400, 590)])
+
+    def init_shapes(self, circle_radius, card_number, rectangle_height, rectangle_width):
+
+        self.create_environment_race_circle(color=(0.678, 0.847, 0.902, 1.0),
+                                            center=(rectangle_width, 0),
+                                            radius=circle_radius)
+
+        self.create_environment_type_circle(color=(0.988, 0.976, 0.800, 1.0),
+                                            center=(rectangle_width, rectangle_height),
+                                            radius=circle_radius)
