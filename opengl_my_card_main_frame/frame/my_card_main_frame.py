@@ -12,6 +12,7 @@ from opengl_my_card_main_frame.entity.my_deck_register_scene import MyDeckRegist
 
 from opengl_battle_field_card.card import Card
 from opengl_my_card_main_frame.renderer.my_card_main_frame_renderer import MyCardMainFrameRenderer
+from opengl_my_card_main_frame.renderer.my_deck_register_frame_renderer import MyDeckRegisterFrameRenderer
 from opengl_shape.image_rectangle_element import ImageRectangleElement
 from opengl_shape.rectangle import Rectangle
 from text_field.text_box import TextBox
@@ -32,14 +33,18 @@ class MyCardMainFrame(OpenGLFrame):
 
         self.textbox_string = tk.StringVar()
 
-        # 덱 생성 버튼 누르기 전 화면 그리기
-        # self.make_card_main_frame()
-        # self.renderer = MyCardMainFrameRenderer(self.my_card_main_scene, self)
+        # 덱 생성 버튼 누르기 전 까지는 안 나타남.
+        self.show_my_deck_register_screen = False
+
 
     def initgl(self):
         print("initgl 입니다.")
         glClearColor(0, 0, 0, 0)
         glOrtho(0, self.width, self.height, 0, -1, 1)
+
+        self.make_card_main_frame()
+        self.render = MyCardMainFrameRenderer(self.my_card_main_scene, self)
+        self.render.render()
 
 
     def make_card_main_frame(self):
@@ -67,15 +72,24 @@ class MyCardMainFrame(OpenGLFrame):
         button_rectangle = Rectangle(color=(1.0, 0.0, 0.0, 1.0),
                                      local_translation=(0, 0),
                                      vertices=[(0.85 * self.width, 0.85 * self.height),
-                                               (self.width, 0.85 * self.height),
-                                               (self.width, self.height),
-                                               (0.85 * self.width, self.height)])
+                                               (self.width - 50, 0.85 * self.height),
+                                               (self.width - 50, self.height - 100),
+                                               (0.85 * self.width, self.height - 100)])
 
         self.my_card_main_scene.add_button_list(button_rectangle)
         print(f"버튼 도형 잘 들어갔니?:{self.my_card_main_scene.get_button_list()}")
 
+        go_to_back_button = Rectangle(color=(0.0, 1.0, 0.0, 1.0),
+                                      local_translation=(0, 0),
+                                      vertices=[(0.85 * self.width, 0.85 * self.height + 90),
+                                                (self.width - 50, 0.85 * self.height + 90),
+                                                (self.width - 50, self.height - 10),
+                                                (0.85 * self.width, self.height - 10)])
 
-        #모든 카드
+        self.my_card_main_scene.add_button_list(go_to_back_button)
+        print(f"버튼 도형 잘 들어갔니?:{self.my_card_main_scene.get_button_list()}")
+
+        # 모든 카드
         all_card_number = self.card_data_read().tolist()
         print(f"카드 번호 리스트: {all_card_number}")
         x = 10
@@ -105,10 +119,12 @@ class MyCardMainFrame(OpenGLFrame):
             except Exception as e:
                 print(f"Error creating card: {e}")
                 pass
+
     def redraw(self):
-        self.make_card_main_frame()
-        self.render = MyCardMainFrameRenderer(self.my_card_main_scene, self)
-        self.render.render()
+        if self.show_my_deck_register_screen is True:
+            self.make_my_deck_register_frame()
+            self.render_after = MyDeckRegisterFrameRenderer(self.my_deck_register_scene, self)
+            self.render_after.render()
 
 
     def make_my_deck_register_frame(self):
@@ -139,12 +155,8 @@ class MyCardMainFrame(OpenGLFrame):
         entry.place(relx=0.5, rely=0.5, width=300, height=100, anchor="center")
         #self.my_deck_register_scene.add_deck_name_list(self.entry.get_textbox_string()) # 생성한 덱의 이름을 리스트에 저장
 
-    def getScene(self):
+    def getMyDeckRegisterScene(self):
         return self.my_deck_register_scene
-
-    # def redraw(self):
-    #     self.make_card_main_frame()
-    #     self.renderer = MyCardMainFrameRenderer(self.my_card_main_scene, self)
 
     # csv 파일 읽어오기
     def card_data_read(self):
