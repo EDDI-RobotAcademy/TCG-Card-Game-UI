@@ -17,9 +17,6 @@ class MyDeckRegisterFrameRenderer:
         for text in self.scene.text_list:
             self._render_shape(text)
 
-        for text_box in self.scene.text_box:
-            self._render_shape(text_box)
-
         for button in self.scene.button_list:
             self._render_shape(button)
 

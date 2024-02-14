@@ -15,7 +15,6 @@ from opengl_my_card_main_frame.renderer.my_card_main_frame_renderer import MyCar
 from opengl_my_card_main_frame.renderer.my_deck_register_frame_renderer import MyDeckRegisterFrameRenderer
 from opengl_shape.image_rectangle_element import ImageRectangleElement
 from opengl_shape.rectangle import Rectangle
-from text_field.text_box import TextBox
 
 
 class MyCardMainFrame(OpenGLFrame):
@@ -96,7 +95,7 @@ class MyCardMainFrame(OpenGLFrame):
         y = 20
         for number in all_card_number:
             try:
-                card = Card(local_translation=(x, y))
+                card = Card(local_translation=(x, y), scale=400)
                 card.init_card(int(number))
                 self.my_card_main_scene.add_card_list(card)
                 print(f"카드 리스트: {self.my_card_main_scene.get_card_list()}")
@@ -150,11 +149,11 @@ class MyCardMainFrame(OpenGLFrame):
         self.my_deck_register_scene.add_my_deck_background(deck_register_rectangle)
 
         # 텍스트 박스
-        entry = tk.Entry(self.master, textvariable=self.textbox_string)
-        entry.place(relx=0.5, rely=0.5, width=300, height=100, anchor="center")
-        #self.my_deck_register_scene.add_deck_name_list(entry.get()) # 생성한 덱의 이름을 리스트에 저장
+        self.entry = tk.Entry(self.master, textvariable=self.textbox_string)
+        self.entry.place(relx=0.5, rely=0.4, width=300, height=50, anchor="center")
+        # self.my_deck_register_scene.add_deck_name_list(self.textbox_string.get()) # 생성한 덱의 이름을 리스트에 저장
 
-        # 확인 버튼
+        # 확인 버튼 사각형
         button_width = 0.15 * self.width
         button_height = 0.06 * self.height
         ok_button_y_offset = 0.8 * 0.5 * self.height
@@ -172,7 +171,7 @@ class MyCardMainFrame(OpenGLFrame):
 
         self.my_deck_register_scene.add_button_list(ok_button_rectangle)
 
-        # 되돌아 가기 버튼
+        # 되돌아 가기 버튼 사각형
         go_to_back_button_rectangle = Rectangle(color=(0.0, 1.0, 0.0, 1.0),
                                                 local_translation=(0, 0),
                                                 vertices=[(center_x - 0.5 * button_width - ok_button_x_offset,
@@ -197,3 +196,18 @@ class MyCardMainFrame(OpenGLFrame):
         data_card_number = data_card['카드번호']
 
         return data_card_number
+
+    # 1) 확인 버튼을 눌렀을 때 화면을 지우기 위함
+    def clear_screen(self):
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
+    # 2) 다시 그려야 함.
+    def drawMyCardMainFrame(self):
+        self.render = MyCardMainFrameRenderer(self.my_card_main_scene, self)
+        self.render.render()
+
+    def getTextBox(self):
+        return self.entry
+
+    def getString(self):
+        return self.textbox_string.get()
