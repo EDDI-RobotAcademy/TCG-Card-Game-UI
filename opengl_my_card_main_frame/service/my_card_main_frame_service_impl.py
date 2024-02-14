@@ -1,5 +1,4 @@
-from common.button_type import ButtonType
-from opengl_button.button_handler.button_handler_impl import ButtonHandlerImpl
+from opengl_button.button_binding.button_bind import MyCardMainFrameButtonBind
 from opengl_my_card_main_frame.entity.my_card_main_scene import MyCardMainScene
 from opengl_my_card_main_frame.frame.my_card_main_frame import MyCardMainFrame
 from opengl_my_card_main_frame.service.my_card_main_frame_service import MyCardMainFrameService
@@ -24,16 +23,7 @@ class MyCardMainFrameServiceImpl(MyCardMainFrameService):
     def createMyCardMainUiFrame(self, rootWindow, switchFrameWithMenuName):
         myCardMainFrame = self.__myCardMainFrame(rootWindow)
 
-        ButtonHandlerImpl()
-        button_handler = ButtonHandlerImpl.getInstance()
-
-        buttonFunction1 = button_handler.getButtonTypeTable(ButtonType.DECKREGISTER.value)
-        buttonFunction1(master=rootWindow, frame=myCardMainFrame)
-
-        buttonFunction2 = button_handler.getButtonTypeTable(ButtonType.MOVETOFRAME.value)
-        buttonFunction2(rootWindow, myCardMainFrame)
-
-        # buttonFunction3 = button_handler.getButtonTypeTable(ButtonType.CREATEDECK.value)
-        # buttonFunction3(rootWindow, myCardMainFrame)
+        buttonBinding = MyCardMainFrameButtonBind(master=rootWindow, frame=myCardMainFrame)
+        buttonBinding.button_bind()
 
         return myCardMainFrame
