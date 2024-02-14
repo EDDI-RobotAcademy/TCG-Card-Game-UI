@@ -23,6 +23,9 @@ class Shape(abc.ABC):
     def update_vertices(self, new_vertices):
         self.vertices = new_vertices
 
+    def get_local_translation(self):
+        return self.local_translation
+
     @abc.abstractmethod
     def draw(self):
         pass
