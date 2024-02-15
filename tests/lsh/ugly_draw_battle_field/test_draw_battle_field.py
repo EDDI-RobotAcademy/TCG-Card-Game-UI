@@ -304,6 +304,42 @@ class OpponentMainCharacter:
                                    radius_y=radius_y)
 
 
+class OpponentHandPanel:
+    __pre_drawed_image_instance = PreDrawedImage.getInstance()
+
+    def __init__(self, local_translation=(0, 0), scale=1):
+        self.pre_drawed_your_hand = None
+        self.shapes = []
+        self.local_translation = local_translation
+        self.scale = scale
+
+        self.pickable_card_list = []
+
+    def change_local_translation(self, _translation):
+        self.local_translation = _translation
+
+    def get_your_hand_panel_shapes(self):
+        return self.shapes
+
+    def get_pickable_card_list(self):
+        return self.pickable_card_list
+
+    def add_shape(self, shape):
+        shape.local_translate(self.local_translation)
+        self.shapes.append(shape)
+
+    def create_hand_panel(self, image_data, vertices):
+        hand_panel = ImageRectangleElementRefactor(image_data=image_data,
+                                                   vertices=vertices)
+        self.add_shape(hand_panel)
+
+    def init_shapes(self):
+        self.__pre_drawed_image_instance.pre_draw_opponent_hand_panel()
+
+        self.create_hand_panel(image_data=self.__pre_drawed_image_instance.get_pre_draw_opponent_hand_panel(),
+                               vertices=[(300, 100), (1600, 100), (1600, 250), (300, 250)])
+
+
 class YourCardDeck:
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
 
@@ -455,8 +491,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_main_character.init_opponent_main_character_shapes()
         self.opponent_main_character_shapes = self.opponent_main_character.get_main_character_shapes()
 
-
-
+        self.opponent_hand_panel = OpponentHandPanel()
+        self.opponent_hand_panel.init_shapes()
+        self.opponent_hand_panel_shapes = self.opponent_hand_panel.get_your_hand_panel_shapes()
 
         self.your_card_deck = YourCardDeck()
         self.your_card_deck.init_shapes()
@@ -508,6 +545,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         for opponent_main_character_shape in self.opponent_main_character_shapes:
             opponent_main_character_shape.draw()
 
+        for opponent_hand_panel_shape in self.opponent_hand_panel_shapes:
+            opponent_hand_panel_shape.draw()
 
         for your_card_deck_shape in self.your_card_deck_shapes:
             your_card_deck_shape.draw()
@@ -535,7 +574,8 @@ class TestPreDrawedImage(unittest.TestCase):
 
         def animate():
             pre_drawed_battle_field_frame.redraw()
-            root.after(17, animate)
+            # root.after(17, animate)
+            root.after(33, animate)
 
         root.after(0, animate)
 
