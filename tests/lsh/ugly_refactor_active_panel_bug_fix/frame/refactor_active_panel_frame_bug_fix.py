@@ -10,6 +10,9 @@ from common.utility import get_project_root
 from opengl_battle_field_card.card import Card
 from opengl_battle_field_unit.unit_card import UnitCard
 from opengl_shape.rectangle import Rectangle
+from initializer.init_domain import DomainInitializer
+
+DomainInitializer.initEachDomain()
 
 
 class LightningGenerator:

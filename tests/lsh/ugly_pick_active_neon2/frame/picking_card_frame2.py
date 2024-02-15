@@ -9,6 +9,10 @@ from pyopengltk import OpenGLFrame
 from common.utility import get_project_root
 from opengl_battle_field_card.card import Card
 
+from initializer.init_domain import DomainInitializer
+
+DomainInitializer.initEachDomain()
+
 
 class LightningSegment:
     def __init__(self, start, end, brightness=1.0):

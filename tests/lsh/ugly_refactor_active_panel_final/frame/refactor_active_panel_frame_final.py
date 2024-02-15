@@ -3,9 +3,12 @@ from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
 from common.utility import get_project_root
+from initializer.init_domain import DomainInitializer
 from opengl_battle_field_card.card import Card
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.rectangle import Rectangle
+
+DomainInitializer.initEachDomain()
 
 
 class PickingCardLightningBorderWithActivePanelFrame(OpenGLFrame):

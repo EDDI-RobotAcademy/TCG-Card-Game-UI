@@ -10,7 +10,10 @@ from common.utility import get_project_root
 from opengl_battle_field_card.card import Card
 from opengl_pickable_shape.pickable_rectangle import PickableRectangle
 from opengl_shape.rectangle import Rectangle
-from tests.picking_card.renderer.picking_card_frame_renderer import PickingCardFrameRenderer
+
+from initializer.init_domain import DomainInitializer
+
+DomainInitializer.initEachDomain()
 
 
 class LightningSegment:
