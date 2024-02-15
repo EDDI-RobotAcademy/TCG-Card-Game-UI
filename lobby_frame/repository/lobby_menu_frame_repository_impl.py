@@ -33,6 +33,10 @@ class LobbyMenuFrameRepositoryImpl(LobbyMenuFrameRepository):
         self.__transmitIpcChannel.put(exitRequest)
         return self.__receiveIpcChannel.get()
 
+    def requestAccountCardList(self, cardListRequest):
+        self.__transmitIpcChannel.put(cardListRequest)
+        return self.__receiveIpcChannel.get()
+
     def saveReceiveIpcChannel(self, receiveIpcChannel):
         self.__receiveIpcChannel = receiveIpcChannel
 
