@@ -7,6 +7,7 @@ from battle_field.components.opponent_main_character import OpponentMainCharacte
 from battle_field.components.opponent_tomb import OpponentTomb
 from battle_field.components.opponent_trap import OpponentTrap
 from battle_field.components.opponent_unit_field import OpponentUnitField
+from battle_field.components.your_tomb import YourTomb
 from image_shape.oval_image import OvalImage
 from image_shape.rectangle_image import RectangleImage
 from opengl_shape.oval import Oval
@@ -22,37 +23,6 @@ from pyopengltk import OpenGLFrame
 
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from opengl_shape.rectangle import Rectangle
-
-
-class YourTomb:
-    __pre_drawed_image_instance = PreDrawedImage.getInstance()
-
-    def __init__(self, local_translation=(0, 0), scale=1):
-        self.pre_drawed_tomb = None
-        self.shapes = []
-        self.local_translation = local_translation
-        self.scale = scale
-
-    def get_tomb_shapes(self):
-        return self.shapes
-
-    def change_local_translation(self, _translation):
-        self.local_translation = _translation
-
-    def add_shape(self, shape):
-        shape.local_translate(self.local_translation)
-        self.shapes.append(shape)
-
-    def create_tomb(self, image_data, vertices):
-        tomb_illustration = RectangleImage(image_data=image_data,
-                                           vertices=vertices)
-        self.add_shape(tomb_illustration)
-
-    def init_shapes(self):
-        self.__pre_drawed_image_instance.pre_draw_your_tomb()
-
-        self.create_tomb(image_data=self.__pre_drawed_image_instance.get_pre_draw_your_tomb(),
-                         vertices=[(1870, 1030), (1720, 1030), (1720, 830), (1870, 830)])
 
 
 class YourLostZone:
