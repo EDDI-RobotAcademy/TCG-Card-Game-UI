@@ -70,7 +70,7 @@ class MyCardMainFrame(OpenGLFrame):
                                                      local_translation=(0, 0),
                                                      vertices=[(0, 0), (self.width, 0), (self.width, self.height), (0, self.height)])
         self.my_card_main_scene.add_my_card_background(background_rectangle)
-        print(f"카드 배경 잘 들어갔니?:{self.my_card_main_scene.get_my_card_background()}")
+        #print(f"카드 배경 잘 들어갔니?:{self.my_card_main_scene.get_my_card_background()}")
 
         # 나의 덱 화면
         my_deck_rectangle = Rectangle(color=(0.5137, 0.3608, 0.2314, 1.0),
@@ -79,7 +79,7 @@ class MyCardMainFrame(OpenGLFrame):
                                                 (0.75 * self.width, self.height)])
 
         self.my_card_main_scene.add_my_card_background(my_deck_rectangle)
-        print(f"덱 화면 잘 들어갔니?:{self.my_card_main_scene.get_my_card_background()}")
+        #print(f"덱 화면 잘 들어갔니?:{self.my_card_main_scene.get_my_card_background()}")
 
         # 덱 생성 버튼
         button_rectangle = Rectangle(color=(1.0, 0.0, 0.0, 1.0),
@@ -90,7 +90,7 @@ class MyCardMainFrame(OpenGLFrame):
                                                (0.85 * self.width, self.height - 100)])
 
         self.my_card_main_scene.add_button_list(button_rectangle)
-        print(f"버튼 도형 잘 들어갔니?:{self.my_card_main_scene.get_button_list()}")
+        #print(f"버튼 도형 잘 들어갔니?:{self.my_card_main_scene.get_button_list()}")
 
         # 뒤로가기 버튼
         go_to_back_button = Rectangle(color=(0.0, 1.0, 0.0, 1.0),
@@ -101,7 +101,7 @@ class MyCardMainFrame(OpenGLFrame):
                                                 (0.85 * self.width, self.height - 10)])
 
         self.my_card_main_scene.add_button_list(go_to_back_button)
-        print(f"버튼 도형 잘 들어갔니?:{self.my_card_main_scene.get_button_list()}")
+        #print(f"버튼 도형 잘 들어갔니?:{self.my_card_main_scene.get_button_list()}")
 
         # 다음 페이지 버튼
         next_page_button_rectangle = Rectangle(color=(1.0, 1.0, 0.0, 1.0),
@@ -127,24 +127,23 @@ class MyCardMainFrame(OpenGLFrame):
         print(f"서버로 부터 가져온 카드 리스트: {self.lobby_service.get_card_data_list()}")
         #all_card_number = self.card_data_read().tolist()
         all_card_number = self.lobby_service.get_card_data_list()
-        print(f"카드 번호 리스트: {all_card_number}")
-        print(f"카드 번호 길이: {len(all_card_number)}")
+        # print(f"카드 번호 리스트: {all_card_number}")
+        # print(f"카드 번호 길이: {len(all_card_number)}")
 
         x = 50
         y = 50
 
         for i, number in enumerate(all_card_number):
             try:
-                print(f"index: {i}, card number: {number}")
+                #print(f"index: {i}, card number: {number}")
                 card = Card(local_translation=(x, y), scale=350)
                 card.init_card(number)
                 self.my_card_main_scene.add_card_list(card)
-                print(f"카드 리스트: {self.my_card_main_scene.get_card_list()}")
+                #print(f"카드 리스트: {self.my_card_main_scene.get_card_list()}")
 
                 x += 360
 
                 if (i + 1) % 4 == 0:  # 4개씩
-                    print(f"index(4단위로 나와야 정상임):{i}")
                     y = 500
                     x = 50
                     if (i + 1) % 8 == 0:
@@ -229,7 +228,7 @@ class MyCardMainFrame(OpenGLFrame):
     # csv 파일 읽어오기
     def card_data_read(self):
         currentLocation = os.getcwd()
-        print(f"currentLocation: {currentLocation}")
+        #print(f"currentLocation: {currentLocation}")
 
         data_card = pandas.read_csv('local_storage/card/data.csv')
         data_card_number = data_card['카드번호']

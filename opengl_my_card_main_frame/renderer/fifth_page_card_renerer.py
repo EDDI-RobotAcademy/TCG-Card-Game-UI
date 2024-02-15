@@ -12,7 +12,6 @@ class FifthPageCardRenderer:
 
         # 배경 및 사이드에 있는 나의 덱 화면
         for image_element in self.scene.my_card_background:
-            print(f"이미지 그리기: {image_element}")
             self._render_shape(image_element)
 
         # 나의 카드 텍스트
@@ -21,11 +20,9 @@ class FifthPageCardRenderer:
 
         # 버튼 도형
         for button in self.scene.button_list:
-            print(f"버튼 그리기: {button}")
             self._render_shape(button)
 
         for card in self.scene.card_list[32:40]:
-            print(f"카드 리스트 몇 개임? {len(self.scene.card_list[32:40])}")
             attached_tool_card = card.get_tool_card()
             attached_tool_card.draw()
 
