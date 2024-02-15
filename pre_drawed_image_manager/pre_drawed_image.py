@@ -17,6 +17,7 @@ class PreDrawedImage:
     __pre_drawed_opponent_hand_panel = None
 
     __pre_drawed_your_tomb = None
+    __pre_drawed_your_lost_zone = None
     __pre_drawed_your_card_deck = None
     __pre_drawed_your_main_character = None
     __pre_drawed_your_hand_panel = None
@@ -60,6 +61,10 @@ class PreDrawedImage:
         tomb_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "tomb.jpeg")
         self.__pre_drawed_your_tomb = ImageDataLoader.load_rectangle_image_data(tomb_image_path)
 
+    def pre_draw_your_lost_zone(self):
+        lost_zone_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "lost_zone.png")
+        self.__pre_drawed_your_lost_zone = ImageDataLoader.load_rectangle_image_data(lost_zone_image_path)
+
     def pre_draw_your_card_deck(self):
         your_card_deck_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "your_card_deck.png")
         self.__pre_drawed_your_card_deck = ImageDataLoader.load_rectangle_image_data(your_card_deck_image_path)
@@ -81,6 +86,7 @@ class PreDrawedImage:
         self.pre_draw_opponent_hand_panel()
 
         self.pre_draw_your_tomb()
+        self.pre_draw_your_lost_zone()
         self.pre_draw_your_card_deck()
         self.pre_draw_your_main_character()
         self.pre_draw_your_hand_panel()
@@ -105,6 +111,9 @@ class PreDrawedImage:
 
     def get_pre_draw_your_tomb(self):
         return self.__pre_drawed_your_tomb
+
+    def get_pre_draw_your_lost_zone(self):
+        return self.__pre_drawed_your_lost_zone
 
     def get_pre_draw_your_card_deck(self):
         return self.__pre_drawed_your_card_deck

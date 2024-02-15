@@ -371,6 +371,37 @@ class YourTomb:
                          vertices=[(1870, 1030), (1720, 1030), (1720, 830), (1870, 830)])
 
 
+class YourLostZone:
+    __pre_drawed_image_instance = PreDrawedImage.getInstance()
+
+    def __init__(self, local_translation=(0, 0), scale=1):
+        self.pre_drawed_lost_zone = None
+        self.shapes = []
+        self.local_translation = local_translation
+        self.scale = scale
+
+    def get_lost_zone_shapes(self):
+        return self.shapes
+
+    def change_local_translation(self, _translation):
+        self.local_translation = _translation
+
+    def add_shape(self, shape):
+        shape.local_translate(self.local_translation)
+        self.shapes.append(shape)
+
+    def create_lost_zone(self, image_data, vertices):
+        lost_zone_illustration = ImageRectangleElementRefactor(image_data=image_data,
+                                                               vertices=vertices)
+        self.add_shape(lost_zone_illustration)
+
+    def init_shapes(self):
+        self.__pre_drawed_image_instance.pre_draw_your_lost_zone()
+        # -1620, 300
+        self.create_lost_zone(image_data=self.__pre_drawed_image_instance.get_pre_draw_your_lost_zone(),
+                              vertices=[(50, 590), (250, 590), (250, 790), (50, 790)])
+
+
 class YourCardDeck:
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
 
@@ -530,6 +561,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_tomb.init_shapes()
         self.your_tomb_shapes = self.your_tomb.get_tomb_shapes()
 
+        self.your_lost_zone = YourLostZone()
+        self.your_lost_zone.init_shapes()
+        self.your_lost_zone_shapes = self.your_lost_zone.get_lost_zone_shapes()
+
         self.your_card_deck = YourCardDeck()
         self.your_card_deck.init_shapes()
         self.your_card_deck_shapes = self.your_card_deck.get_your_card_deck_shapes()
@@ -585,6 +620,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         for your_tomb_shape in self.your_tomb_shapes:
             your_tomb_shape.draw()
+
+        for your_lost_zone_shape in self.your_lost_zone_shapes:
+            your_lost_zone_shape.draw()
 
         for your_card_deck_shape in self.your_card_deck_shapes:
             your_card_deck_shape.draw()
