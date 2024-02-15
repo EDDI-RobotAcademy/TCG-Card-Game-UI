@@ -27,8 +27,6 @@ class PickingCardLightningBorderWithActivePanelFrame(OpenGLFrame):
         self.width = screen_width
         self.height = screen_height
 
-        project_root = get_project_root()
-
         first_unit = Card(local_translation=(100, 100))
         first_unit.init_card(6)
 
