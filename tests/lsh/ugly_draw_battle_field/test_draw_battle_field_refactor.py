@@ -6,6 +6,7 @@ from battle_field.components.opponent_lost_zone import OpponentLostZone
 from battle_field.components.opponent_main_character import OpponentMainCharacter
 from battle_field.components.opponent_tomb import OpponentTomb
 from battle_field.components.opponent_trap import OpponentTrap
+from battle_field.components.opponent_unit_field import OpponentUnitField
 from image_shape.oval_image import OvalImage
 from image_shape.rectangle_image import RectangleImage
 from opengl_shape.oval import Oval
@@ -21,42 +22,6 @@ from pyopengltk import OpenGLFrame
 
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from opengl_shape.rectangle import Rectangle
-
-
-class OpponentUnitField:
-    __pre_drawed_image_instance = PreDrawedImage.getInstance()
-
-    def __init__(self, local_translation=(0, 0), scale=1):
-        self.pre_drawed_your_hand = None
-        self.shapes = []
-        self.local_translation = local_translation
-        self.scale = scale
-
-        self.pickable_card_list = []
-
-    def change_local_translation(self, _translation):
-        self.local_translation = _translation
-
-    def get_opponent_unit_field_shapes(self):
-        return self.shapes
-
-    def get_pickable_card_list(self):
-        return self.pickable_card_list
-
-    def add_shape(self, shape):
-        shape.local_translate(self.local_translation)
-        self.shapes.append(shape)
-
-    def create_unit_field(self, image_data, vertices):
-        unit_field = RectangleImage(image_data=image_data,
-                                    vertices=vertices)
-        self.add_shape(unit_field)
-
-    def init_shapes(self):
-        self.__pre_drawed_image_instance.pre_draw_opponent_unit_field()
-
-        self.create_unit_field(image_data=self.__pre_drawed_image_instance.get_pre_draw_opponent_unit_field(),
-                               vertices=[(300, 350), (1600, 350), (1600, 500), (300, 500)])
 
 
 class YourTomb:
