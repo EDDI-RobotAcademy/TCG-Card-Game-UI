@@ -20,12 +20,12 @@ from opengl_shape.rectangle import Rectangle
 
 
 class ImageOvalElementRefactor(Shape):
-    def __init__(self, image_path, center, radius_x, radius_y, global_translation=(0, 0), local_translation=(0, 0)):
+    def __init__(self, image_data, center, radius_x, radius_y, global_translation=(0, 0), local_translation=(0, 0)):
         super().__init__([center], global_translation, local_translation)
         self.radius_x = radius_x
         self.radius_y = radius_y
         self.center = center
-        self.image_path = image_path
+        self.image_data = image_data
         self.is_visible = True
         self.texture_id = None
 
@@ -34,16 +34,6 @@ class ImageOvalElementRefactor(Shape):
 
     def get_visible(self):
         return self.is_visible
-
-    def load_image_data(self):
-        try:
-            image = Image.open(self.image_path)
-            width, height = image.size
-            image_data = image.tobytes("raw", "RGB", 0, 0)
-            return width, height, image_data
-        except Exception as e:
-            print(f"Error loading image data: {e}")
-            return None
 
     def draw(self):
         if self.get_visible():
@@ -55,7 +45,8 @@ class ImageOvalElementRefactor(Shape):
                               global_translation=self.global_translation)
             white_oval.draw()
 
-            image_info = self.load_image_data()
+            image_info = self.image_data
+            print(f"image_info = {image_info}")
 
             if image_info is not None:
                 width, height, image_data = image_info
@@ -292,13 +283,8 @@ class OpponentMainCharacter:
         shape.local_translate(self.local_translation)
         self.shapes.append(shape)
 
-    def create_main_character_oval(self, color, center, radius_x, radius_y):
-        main_character_oval = Oval(color=color, center=center, radius_x=radius_x, radius_y=radius_y)
-
-        self.add_shape(main_character_oval)
-
-    def create_main_character_illustration(self, image_path, center, radius_x, radius_y):
-        main_character_illustration = ImageOvalElementRefactor(image_path=image_path,
+    def create_main_character(self, image_data, center, radius_x, radius_y):
+        main_character_illustration = ImageOvalElementRefactor(image_data=image_data,
                                                                center=center,
                                                                radius_x=radius_x,
                                                                radius_y=radius_y)
@@ -306,30 +292,24 @@ class OpponentMainCharacter:
         print(type(main_character_illustration))
         self.add_shape(main_character_illustration)
 
-    def init_your_main_character_shapes(self):
-
-        radius_x = 100
-        radius_y = 50
-
-        self.create_main_character_oval(color=(0, 0, 0, 1.0),
-                                       center=(960, 780),
-                                       radius_x=radius_x, radius_y=radius_y)
-
     def init_opponent_main_character_shapes(self):
         radius_y = 100
         radius_x = radius_y * ((1 + math.sqrt(5)) / 2)
+        self.__pre_drawed_image_instance.pre_draw_opponent_main_character()
 
-        self.create_main_character_oval(color=(0, 0, 0, 0),
-                                             center=(960, 150),
-                                             radius_x=radius_x, radius_y=radius_y)
-        project_root = get_project_root()
+        self.create_main_character(image_data=self.__pre_drawed_image_instance.get_pre_draw_opponent_main_character(),
+                                   center=(960, 150),
+                                   radius_x=radius_x,
+                                   radius_y=radius_y)
 
-        self.__imagePath = os.path.join(project_root, "local_storage", "card_images", "card1.png")
-
-        self.create_main_character_illustration(image_path=self.__imagePath,
-                                                center=(960, 150),
-                                                radius_x=radius_x,
-                                                radius_y=radius_y)
+    # def init_your_main_character_shapes(self):
+    #
+    #     radius_x = 100
+    #     radius_y = 50
+    #
+    #     self.create_main_character_oval(color=(0, 0, 0, 1.0),
+    #                                    center=(960, 780),
+    #                                    radius_x=radius_x, radius_y=radius_y)
 
 
 class YourCardDeck:
