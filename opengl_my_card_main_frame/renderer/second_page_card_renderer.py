@@ -6,7 +6,7 @@ class SecondPageCardRenderer:
         self.window = window
 
     def render(self):
-        print("렌더러 호출~~")
+        print("2번 째 페이지 렌더러 호출")
         self.window.tkMakeCurrent()
         GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
@@ -25,6 +25,7 @@ class SecondPageCardRenderer:
             self._render_shape(button)
 
         for card in self.scene.card_list[8:16]:
+            print(f"카드 리스트 몇 개임? {len(self.scene.card_list[8:16])}")
             attached_tool_card = card.get_tool_card()
             attached_tool_card.draw()
 
