@@ -7,6 +7,7 @@ from OpenGL.GL import *
 from OpenGL.GLUT import *
 
 from common.utility import get_project_root
+from lobby_frame.service.lobby_menu_frame_service_impl import LobbyMenuFrameServiceImpl
 from opengl_my_card_main_frame.entity.my_card_main_scene import MyCardMainScene
 from opengl_my_card_main_frame.entity.my_deck_register_scene import MyDeckRegisterScene
 
@@ -26,6 +27,7 @@ class MyCardMainFrame(OpenGLFrame):
         super().__init__(master, **kwargs)
         self.my_card_main_scene = MyCardMainScene()
         self.my_deck_register_scene = MyDeckRegisterScene()
+        self.lobby_service = LobbyMenuFrameServiceImpl()
         self.current_rely = 0.20
 
         screen_width = self.winfo_screenwidth()
@@ -122,7 +124,9 @@ class MyCardMainFrame(OpenGLFrame):
         self.my_card_main_scene.add_button_list(before_page_button_rectangle)
 
         # 모든 카드
-        all_card_number = self.card_data_read().tolist()
+        print(f"서버로 부터 가져온 카드 리스트: {self.lobby_service.get_card_data_list()}")
+        #all_card_number = self.card_data_read().tolist()
+        all_card_number = self.lobby_service.get_card_data_list()
         print(f"카드 번호 리스트: {all_card_number}")
         print(f"카드 번호 길이: {len(all_card_number)}")
 
