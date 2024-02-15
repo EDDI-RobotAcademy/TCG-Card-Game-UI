@@ -40,6 +40,7 @@ class BattleFieldFrame(OpenGLFrame):
         print("프로젝트 최상위:", project_root)
 
         self.renderer = BattleFieldFrameRenderer(self.battle_field, self)
+
     def make_battle_field(self):
         project_root = get_project_root()
 
