@@ -59,6 +59,6 @@ class ItemCard:
             radius=circle_radius)
 
         self.create_item_type_illustration_circle(
-            image_path=os.path.join(project_root, "local_storage", "card_type_image", f"{self.cardInfoFromCsvRepositoryImpl.getCardTypeDictionary(card_number)}.png"),
+            image_path=os.path.join(project_root, "local_storage", "card_type_image", f"{self.cardInfoFromCsvRepositoryImpl.getCardTypeForCardNumber(card_number)}.png"),
             center=(rectangle_width, rectangle_height),
             radius=circle_radius)
