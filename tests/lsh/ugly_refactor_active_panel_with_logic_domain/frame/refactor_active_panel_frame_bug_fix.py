@@ -7,6 +7,10 @@ from opengl_battle_field_card.card import Card
 from opengl_lightning_generator.lightning_generator import LightningGenerator
 from opengl_shape.rectangle import Rectangle
 
+from initializer.init_domain import DomainInitializer
+
+DomainInitializer.initEachDomain()
+
 
 class PickingCardLightningBorderWithActivePanelFrame(OpenGLFrame):
     def __init__(self, master=None, **kwargs):
