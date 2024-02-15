@@ -29,7 +29,7 @@ class ImageCircleElement(Shape):
     def draw(self):
         if self.get_visible():
             white_rect = Circle(color=(1.0, 1.0, 1.0, 1.0),
-                                center=self.center,
+                                center=[self.vertices[0][0], self.vertices[0][1]],
                                 radius=self.radius,
                                 local_translation=self.local_translation,
                                 global_translation=self.global_translation)

@@ -18,24 +18,31 @@ class CardInfoFromCsvRepository(abc.ABC):
     @abc.abstractmethod
     def getCardRaceForCardNumber(self, cardNumber):
         pass
+
     @abc.abstractmethod
     def getCardGradeForCardNumber(self, cardNumber):
         pass
+
     @abc.abstractmethod
-    def getCardTypeDictionary(self, cardNumber):
+    def getCardTypeForCardNumber(self, cardNumber):
         pass
+
     @abc.abstractmethod
-    def getCardEnergyDictionary(self, cardNumber):
+    def getCardEnergyForCardNumber(self, cardNumber):
         pass
+
     @abc.abstractmethod
-    def getCardAttackDictionary(self, cardNumber):
+    def getCardAttackForCardNumber(self, cardNumber):
         pass
+
     @abc.abstractmethod
-    def getCardPassiveDictionary(self, cardNumber):
+    def getCardPassiveForCardNumber(self, cardNumber):
         pass
+
     @abc.abstractmethod
-    def getCardSkillDictionary(self, cardNumber):
+    def getCardSkillForCardNumber(self, cardNumber):
         pass
+
     @abc.abstractmethod
-    def getCardHp(self, cardNumber):
+    def getCardHpForCardNumber(self, cardNumber):
         pass
