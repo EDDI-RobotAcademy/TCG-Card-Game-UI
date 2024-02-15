@@ -46,7 +46,6 @@ class ImageOvalElementRefactor(Shape):
             white_oval.draw()
 
             image_info = self.image_data
-            print(f"image_info = {image_info}")
 
             if image_info is not None:
                 width, height, image_data = image_info
@@ -302,15 +301,6 @@ class OpponentMainCharacter:
                                    radius_x=radius_x,
                                    radius_y=radius_y)
 
-    # def init_your_main_character_shapes(self):
-    #
-    #     radius_x = 100
-    #     radius_y = 50
-    #
-    #     self.create_main_character_oval(color=(0, 0, 0, 1.0),
-    #                                    center=(960, 780),
-    #                                    radius_x=radius_x, radius_y=radius_y)
-
 
 class YourCardDeck:
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
@@ -356,6 +346,46 @@ class YourCardDeck:
             vertices=[(1720, 610), (1870, 610), (1870, 810), (1720, 810)])
 
 
+class YourMainCharacter:
+    __pre_drawed_image_instance = PreDrawedImage.getInstance()
+
+    def __init__(self, local_translation=(0, 0), scale=1):
+        self.pre_drawed_main_character = None
+        self.shapes = []
+        self.local_translation = local_translation
+        self.scale = scale
+
+    def change_main_character_translation(self, _translation):
+        self.local_translation = _translation
+
+    def get_main_character_shapes(self):
+        return self.shapes
+
+    def add_shape(self, shape):
+        shape.local_translate(self.local_translation)
+        self.shapes.append(shape)
+
+    def create_main_character(self, image_data, center, radius_x, radius_y):
+        main_character_illustration = ImageOvalElementRefactor(image_data=image_data,
+                                                               center=center,
+                                                               radius_x=radius_x,
+                                                               radius_y=radius_y)
+        print(f"main_character_illustration{main_character_illustration}")
+        print(type(main_character_illustration))
+        self.add_shape(main_character_illustration)
+
+    def init_your_main_character_shapes(self):
+        radius_y = 100
+        radius_x = radius_y * ((1 + math.sqrt(5)) / 2)
+        self.__pre_drawed_image_instance.pre_draw_your_main_character()
+
+        self.create_main_character(image_data=self.__pre_drawed_image_instance.get_pre_draw_your_main_character(),
+                                   center=(960, 934),
+                                   radius_x=radius_x,
+                                   radius_y=radius_y)
+
+
+
 class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
@@ -391,6 +421,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_card_deck = YourCardDeck()
         self.your_card_deck.init_shapes()
         self.your_card_deck_shapes = self.your_card_deck.get_your_card_deck_shapes()
+
+        self.your_main_character = YourMainCharacter()
+        self.your_main_character.init_your_main_character_shapes()
+        self.your_main_character_shapes = self.your_main_character.get_main_character_shapes()
 
         self.bind("<Configure>", self.on_resize)
 
@@ -430,8 +464,12 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         for opponent_main_character_shape in self.opponent_main_character_shapes:
             opponent_main_character_shape.draw()
 
+
         for your_card_deck_shape in self.your_card_deck_shapes:
             your_card_deck_shape.draw()
+
+        for your_main_character_shape in self.your_main_character_shapes:
+            your_main_character_shape.draw()
 
         self.tkSwapBuffers()
 
