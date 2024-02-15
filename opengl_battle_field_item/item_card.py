@@ -34,6 +34,7 @@ class ItemCard:
         item_race_circle = ImageCircleElement(image_path=image_path,
                                               center=center,
                                               radius=radius)
+        print(f"type {type(item_race_circle)}")
         self.add_shape(item_race_circle)
 
     def create_item_type_illustration_circle(self, image_path, center, radius):
