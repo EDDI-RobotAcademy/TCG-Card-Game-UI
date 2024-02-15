@@ -68,7 +68,7 @@ class LightningGenerator:
 
     def draw_lightning_segment(self, segment):
         glLineWidth(3.0)
-        neon_color = (0.9, 0.9, 0.9, 0.9)
+        neon_color = (0.5, 0.5, 0.5, 1.0)
 
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -81,4 +81,3 @@ class LightningGenerator:
         glEnd()
 
         glDisable(GL_BLEND)
-        
