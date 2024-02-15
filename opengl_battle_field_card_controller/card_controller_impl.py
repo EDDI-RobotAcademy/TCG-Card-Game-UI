@@ -8,6 +8,7 @@ from opengl_battle_field_token import token_card
 from opengl_battle_field_token.token_card import TokenCard
 from opengl_battle_field_tool.tool_card import ToolCard
 from opengl_battle_field_trap.trap_card import TrapCard
+from opengl_battle_field_unit.unit_card import UnitCard
 
 circle_radius = 20
 
@@ -18,6 +19,9 @@ class CardControllerImpl(CardController):
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
+
+            cls.__cardTypeTable [
+                CardType.UNIT.value] = cls.__instance.unitCardInitShapes
 
             cls.__cardTypeTable[
                 CardType.ITEM.value] = cls.__instance.itemCardInitShapes
@@ -59,8 +63,14 @@ class CardControllerImpl(CardController):
         else:
             print(f"이 카드 타입({card_type}) 를 처리 할 수 있는 함수가 없습니다.")
 
-    def itemCardInitShapes(self, local_translation, card_number, rectangle_height, rectangle_width):
+    def unitCardInitShapes(self, local_translation, card_number, rectangle_height, rectangle_width):
         print("unitCardInitShapes 생성")
+        unitCard = UnitCard(local_translation)
+        unitCard.init_shapes(circle_radius, card_number, rectangle_height, rectangle_width)
+        return unitCard.get_shapes()
+
+    def itemCardInitShapes(self, local_translation, card_number, rectangle_height, rectangle_width):
+        print("itemCardInitShapes 생성")
         itemCard = ItemCard(local_translation)
         itemCard.init_shapes(circle_radius, card_number, rectangle_height, rectangle_width)
         return itemCard.get_shapes()

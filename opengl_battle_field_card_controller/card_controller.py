@@ -8,6 +8,10 @@ class CardController(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def unitCardInitShapes(self, local_translation, card_number, rectangle_height, rectangle_width):
+        pass
+
+    @abc.abstractmethod
     def itemCardInitShapes(self, local_translation, card_number, rectangle_height, rectangle_width):
         pass
 

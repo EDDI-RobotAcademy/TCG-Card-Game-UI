@@ -17,7 +17,6 @@ class Card:
         self.scale = scale
         self.card_number = None
 
-
     def get_card_number(self):
         return self.card_number
 

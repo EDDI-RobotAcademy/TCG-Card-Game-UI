@@ -16,8 +16,8 @@ class ImageCircleElement(Shape):
     def __init__(self, image_path, center, radius, global_translation=(0, 0), local_translation=(0, 0)):
         super().__init__([center], global_translation, local_translation)
         self.image_path = image_path
-        self.radius = radius
         self.center = center
+        self.radius = radius
         self.is_visible = True
 
     def set_visible(self, visible):
@@ -28,7 +28,6 @@ class ImageCircleElement(Shape):
 
     def draw(self):
         if self.get_visible():
-
             white_rect = Circle(color=(1.0, 1.0, 1.0, 1.0),
                                 center=self.center,
                                 radius=self.radius,

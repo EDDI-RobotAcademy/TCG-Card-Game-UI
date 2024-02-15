@@ -28,12 +28,12 @@ class CardFrame(OpenGLFrame):
         project_root = get_project_root()
 
         first_card = Card(local_translation=(100, 100))
-        first_card.init_card(2)
+        first_card.init_card(5)
 
         self.card_list.append(first_card)
 
         second_card = Card(local_translation=(400, 400))
-        second_card.init_card(8)
+        second_card.init_card(6)
 
         self.card_list.append(second_card)
 
