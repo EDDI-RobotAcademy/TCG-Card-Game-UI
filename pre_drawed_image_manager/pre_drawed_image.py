@@ -15,12 +15,15 @@ class PreDrawedImage:
     __pre_drawed_opponent_card_deck = None
     __pre_drawed_opponent_main_character = None
     __pre_drawed_opponent_hand_panel = None
+    __pre_drawed_opponent_unit_field = None
 
     __pre_drawed_your_tomb = None
     __pre_drawed_your_lost_zone = None
+    __pre_drawed_your_trap = None
     __pre_drawed_your_card_deck = None
     __pre_drawed_your_main_character = None
     __pre_drawed_your_hand_panel = None
+    __pre_drawed_your_unit_field = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -57,6 +60,10 @@ class PreDrawedImage:
         opponent_hand_panel_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "background.png")
         self.__pre_drawed_opponent_hand_panel = ImageDataLoader.load_rectangle_image_data(opponent_hand_panel_image_path)
 
+    def pre_draw_opponent_unit_field(self):
+        opponent_unit_field_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "background.png")
+        self.__pre_drawed_opponent_unit_field = ImageDataLoader.load_rectangle_image_data(opponent_unit_field_image_path)
+
     def pre_draw_your_tomb(self):
         tomb_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "tomb.jpeg")
         self.__pre_drawed_your_tomb = ImageDataLoader.load_rectangle_image_data(tomb_image_path)
@@ -64,6 +71,10 @@ class PreDrawedImage:
     def pre_draw_your_lost_zone(self):
         lost_zone_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "lost_zone.png")
         self.__pre_drawed_your_lost_zone = ImageDataLoader.load_rectangle_image_data(lost_zone_image_path)
+
+    def pre_draw_your_trap(self):
+        trap_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "trap.jpeg")
+        self.__pre_drawed_your_trap = ImageDataLoader.load_rectangle_image_data(trap_image_path)
 
     def pre_draw_your_card_deck(self):
         your_card_deck_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "your_card_deck.png")
@@ -77,6 +88,10 @@ class PreDrawedImage:
         your_hand_panel_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "background.png")
         self.__pre_drawed_your_hand_panel = ImageDataLoader.load_rectangle_image_data(your_hand_panel_image_path)
 
+    def pre_draw_your_unit_field(self):
+        your_unit_field_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "background.png")
+        self.__pre_drawed_your_unit_field = ImageDataLoader.load_rectangle_image_data(your_unit_field_image_path)
+
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
         self.pre_draw_opponent_lost_zone()
@@ -84,12 +99,15 @@ class PreDrawedImage:
         self.pre_draw_opponent_card_deck()
         self.pre_draw_opponent_main_character()
         self.pre_draw_opponent_hand_panel()
+        self.pre_draw_opponent_unit_field()
 
         self.pre_draw_your_tomb()
         self.pre_draw_your_lost_zone()
+        self.pre_draw_your_trap()
         self.pre_draw_your_card_deck()
         self.pre_draw_your_main_character()
         self.pre_draw_your_hand_panel()
+        self.pre_draw_your_unit_field()
 
     def get_pre_draw_opponent_tomb(self):
         return self.__pre_drawed_opponent_tomb
@@ -109,11 +127,17 @@ class PreDrawedImage:
     def get_pre_draw_opponent_hand_panel(self):
         return self.__pre_drawed_opponent_hand_panel
 
+    def get_pre_draw_opponent_unit_field(self):
+        return self.__pre_drawed_opponent_unit_field
+
     def get_pre_draw_your_tomb(self):
         return self.__pre_drawed_your_tomb
 
     def get_pre_draw_your_lost_zone(self):
         return self.__pre_drawed_your_lost_zone
+
+    def get_pre_draw_your_trap(self):
+        return self.__pre_drawed_your_trap
 
     def get_pre_draw_your_card_deck(self):
         return self.__pre_drawed_your_card_deck
@@ -123,3 +147,6 @@ class PreDrawedImage:
 
     def get_pre_draw_your_hand_panel(self):
         return self.__pre_drawed_your_hand_panel
+
+    def get_pre_draw_your_unit_field(self):
+        return self.__pre_drawed_your_unit_field

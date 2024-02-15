@@ -318,7 +318,7 @@ class OpponentHandPanel:
     def change_local_translation(self, _translation):
         self.local_translation = _translation
 
-    def get_your_hand_panel_shapes(self):
+    def get_opponent_hand_panel_shapes(self):
         return self.shapes
 
     def get_pickable_card_list(self):
@@ -338,6 +338,42 @@ class OpponentHandPanel:
 
         self.create_hand_panel(image_data=self.__pre_drawed_image_instance.get_pre_draw_opponent_hand_panel(),
                                vertices=[(300, 100), (1600, 100), (1600, 250), (300, 250)])
+
+
+class OpponentUnitField:
+    __pre_drawed_image_instance = PreDrawedImage.getInstance()
+
+    def __init__(self, local_translation=(0, 0), scale=1):
+        self.pre_drawed_your_hand = None
+        self.shapes = []
+        self.local_translation = local_translation
+        self.scale = scale
+
+        self.pickable_card_list = []
+
+    def change_local_translation(self, _translation):
+        self.local_translation = _translation
+
+    def get_opponent_unit_field_shapes(self):
+        return self.shapes
+
+    def get_pickable_card_list(self):
+        return self.pickable_card_list
+
+    def add_shape(self, shape):
+        shape.local_translate(self.local_translation)
+        self.shapes.append(shape)
+
+    def create_unit_field(self, image_data, vertices):
+        unit_field = ImageRectangleElementRefactor(image_data=image_data,
+                                                   vertices=vertices)
+        self.add_shape(unit_field)
+
+    def init_shapes(self):
+        self.__pre_drawed_image_instance.pre_draw_opponent_unit_field()
+
+        self.create_unit_field(image_data=self.__pre_drawed_image_instance.get_pre_draw_opponent_unit_field(),
+                               vertices=[(300, 350), (1600, 350), (1600, 500), (300, 500)])
 
 
 class YourTomb:
@@ -400,6 +436,37 @@ class YourLostZone:
         # -1620, 300
         self.create_lost_zone(image_data=self.__pre_drawed_image_instance.get_pre_draw_your_lost_zone(),
                               vertices=[(50, 590), (250, 590), (250, 790), (50, 790)])
+
+
+class YourTrap:
+    __pre_drawed_image_instance = PreDrawedImage.getInstance()
+
+    def __init__(self, local_translation=(0, 0), scale=1):
+        self.pre_drawed_trap = None
+        self.shapes = []
+        self.local_translation = local_translation
+        self.scale = scale
+
+    def get_trap_shapes(self):
+        return self.shapes
+
+    def change_local_translation(self, _translation):
+        self.local_translation = _translation
+
+    def add_shape(self, shape):
+        shape.local_translate(self.local_translation)
+        self.shapes.append(shape)
+
+    def create_trap(self, image_data, vertices):
+        trap_illustration = ImageRectangleElementRefactor(image_data=image_data,
+                                                          vertices=vertices)
+        self.add_shape(trap_illustration)
+
+    def init_shapes(self):
+        self.__pre_drawed_image_instance.pre_draw_your_trap()
+        # -1040, 480
+        self.create_trap(image_data=self.__pre_drawed_image_instance.get_pre_draw_your_trap(),
+                         vertices=[(300, 680), (500, 680), (500, 880), (300, 880)])
 
 
 class YourCardDeck:
@@ -518,9 +585,43 @@ class YourHandPanel:
         self.__pre_drawed_image_instance.pre_draw_your_hand_panel()
 
         self.create_hand_panel(image_data=self.__pre_drawed_image_instance.get_pre_draw_your_hand_panel(),
-                               vertices=[(300, 800), (1600, 800), (1600, 950), (300, 950)])
+                               vertices=[(300, 830), (1600, 830), (1600, 980), (300, 980)])
 
 
+class YourUnitField:
+    __pre_drawed_image_instance = PreDrawedImage.getInstance()
+
+    def __init__(self, local_translation=(0, 0), scale=1):
+        self.pre_drawed_your_hand = None
+        self.shapes = []
+        self.local_translation = local_translation
+        self.scale = scale
+
+        self.pickable_card_list = []
+
+    def change_local_translation(self, _translation):
+        self.local_translation = _translation
+
+    def get_your_unit_field_shapes(self):
+        return self.shapes
+
+    def get_pickable_card_list(self):
+        return self.pickable_card_list
+
+    def add_shape(self, shape):
+        shape.local_translate(self.local_translation)
+        self.shapes.append(shape)
+
+    def create_unit_field(self, image_data, vertices):
+        unit_field = ImageRectangleElementRefactor(image_data=image_data,
+                                                   vertices=vertices)
+        self.add_shape(unit_field)
+
+    def init_shapes(self):
+        self.__pre_drawed_image_instance.pre_draw_your_unit_field()
+        # (300, 800), (1600, 800), (1600, 950), (300, 950)
+        self.create_unit_field(image_data=self.__pre_drawed_image_instance.get_pre_draw_your_unit_field(),
+                               vertices=[(300, 580), (1600, 580), (1600, 730), (300, 730)])
 
 
 class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
@@ -555,7 +656,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.opponent_hand_panel = OpponentHandPanel()
         self.opponent_hand_panel.init_shapes()
-        self.opponent_hand_panel_shapes = self.opponent_hand_panel.get_your_hand_panel_shapes()
+        self.opponent_hand_panel_shapes = self.opponent_hand_panel.get_opponent_hand_panel_shapes()
+
+        self.opponent_unit_field = OpponentUnitField()
+        self.opponent_unit_field.init_shapes()
+        self.opponent_unit_field_shapes = self.opponent_unit_field.get_opponent_unit_field_shapes()
 
         self.your_tomb = YourTomb()
         self.your_tomb.init_shapes()
@@ -564,6 +669,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_lost_zone = YourLostZone()
         self.your_lost_zone.init_shapes()
         self.your_lost_zone_shapes = self.your_lost_zone.get_lost_zone_shapes()
+
+        self.your_trap = YourTrap()
+        self.your_trap.init_shapes()
+        self.your_trap_shapes = self.your_trap.get_trap_shapes()
 
         self.your_card_deck = YourCardDeck()
         self.your_card_deck.init_shapes()
@@ -576,6 +685,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_hand_panel = YourHandPanel()
         self.your_hand_panel.init_shapes()
         self.your_hand_panel_shapes = self.your_hand_panel.get_your_hand_panel_shapes()
+
+        self.your_unit_field = YourUnitField()
+        self.your_unit_field.init_shapes()
+        self.your_unit_field_shapes = self.your_unit_field.get_your_unit_field_shapes()
 
         self.bind("<Configure>", self.on_resize)
 
@@ -618,11 +731,17 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         for opponent_hand_panel_shape in self.opponent_hand_panel_shapes:
             opponent_hand_panel_shape.draw()
 
+        for opponent_unit_field_shape in self.opponent_unit_field_shapes:
+            opponent_unit_field_shape.draw()
+
         for your_tomb_shape in self.your_tomb_shapes:
             your_tomb_shape.draw()
 
         for your_lost_zone_shape in self.your_lost_zone_shapes:
             your_lost_zone_shape.draw()
+
+        for your_trap_shape in self.your_trap_shapes:
+            your_trap_shape.draw()
 
         for your_card_deck_shape in self.your_card_deck_shapes:
             your_card_deck_shape.draw()
@@ -632,6 +751,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         for your_hand_panel_shape in self.your_hand_panel_shapes:
             your_hand_panel_shape.draw()
+
+        for your_unit_field_shape in self.your_unit_field_shapes:
+            your_unit_field_shape.draw()
 
         self.tkSwapBuffers()
 
