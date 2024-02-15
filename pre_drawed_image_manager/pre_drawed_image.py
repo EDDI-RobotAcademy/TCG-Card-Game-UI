@@ -16,6 +16,7 @@ class PreDrawedImage:
     __pre_drawed_opponent_main_character = None
 
     __pre_drawed_your_card_deck = None
+    __pre_drawed_your_main_character = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -52,6 +53,10 @@ class PreDrawedImage:
         your_card_deck_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "your_card_deck.png")
         self.__pre_drawed_your_card_deck = ImageDataLoader.load_rectangle_image_data(your_card_deck_image_path)
 
+    def pre_draw_your_main_character(self):
+        your_main_character_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "main_character.png")
+        self.__pre_drawed_your_main_character = ImageDataLoader.load_oval_image_data(your_main_character_image_path)
+
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
         self.pre_draw_opponent_lost_zone()
@@ -60,6 +65,7 @@ class PreDrawedImage:
         self.pre_draw_opponent_main_character()
 
         self.pre_draw_your_card_deck()
+        self.pre_draw_your_main_character()
 
     def get_pre_draw_opponent_tomb(self):
         return self.__pre_drawed_tomb
@@ -79,3 +85,6 @@ class PreDrawedImage:
 
     def get_pre_draw_your_card_deck(self):
         return self.__pre_drawed_your_card_deck
+
+    def get_pre_draw_your_main_character(self):
+        return self.__pre_drawed_your_main_character
