@@ -49,6 +49,10 @@ class PreDrawedImage:
         opponent_main_character_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "main_character.png")
         self.__pre_drawed_opponent_main_character = ImageDataLoader.load_oval_image_data(opponent_main_character_image_path)
 
+    def pre_draw_opponent_hand_panel(self):
+        opponent_hand_panel_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "background.png")
+        self.__pre_drawed_opponent_hand_panel = ImageDataLoader.load_rectangle_image_data(opponent_hand_panel_image_path)
+
     def pre_draw_your_card_deck(self):
         your_card_deck_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "your_card_deck.png")
         self.__pre_drawed_your_card_deck = ImageDataLoader.load_rectangle_image_data(your_card_deck_image_path)
@@ -67,6 +71,7 @@ class PreDrawedImage:
         self.pre_draw_opponent_trap()
         self.pre_draw_opponent_card_deck()
         self.pre_draw_opponent_main_character()
+        self.pre_draw_opponent_hand_panel()
 
         self.pre_draw_your_card_deck()
         self.pre_draw_your_main_character()
@@ -87,6 +92,8 @@ class PreDrawedImage:
     def get_pre_draw_opponent_main_character(self):
         return self.__pre_drawed_opponent_main_character
 
+    def get_pre_draw_opponent_hand_panel(self):
+        return self.__pre_drawed_opponent_hand_panel
 
     def get_pre_draw_your_card_deck(self):
         return self.__pre_drawed_your_card_deck
