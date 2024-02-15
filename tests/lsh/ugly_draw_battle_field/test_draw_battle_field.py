@@ -1,3 +1,8 @@
+import math
+import os
+
+from common.utility import get_project_root
+from opengl_shape.oval import Oval
 from opengl_shape.shape import Shape
 from OpenGL import GL
 
@@ -8,8 +13,78 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
+from PIL import Image
+
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from opengl_shape.rectangle import Rectangle
+
+
+class ImageOvalElementRefactor(Shape):
+    def __init__(self, image_path, center, radius_x, radius_y, global_translation=(0, 0), local_translation=(0, 0)):
+        super().__init__([center], global_translation, local_translation)
+        self.radius_x = radius_x
+        self.radius_y = radius_y
+        self.center = center
+        self.image_path = image_path
+        self.is_visible = True
+        self.texture_id = None
+
+    def set_visible(self, visible):
+        self.is_visible = visible
+
+    def get_visible(self):
+        return self.is_visible
+
+    def load_image_data(self):
+        try:
+            image = Image.open(self.image_path)
+            width, height = image.size
+            image_data = image.tobytes("raw", "RGB", 0, 0)
+            return width, height, image_data
+        except Exception as e:
+            print(f"Error loading image data: {e}")
+            return None
+
+    def draw(self):
+        if self.get_visible():
+            white_oval = Oval(color=(1.0, 1.0, 1.0, 1.0),
+                              center=self.center,
+                              radius_x=self.radius_x,
+                              radius_y=self.radius_y,
+                              local_translation=self.local_translation,
+                              global_translation=self.global_translation)
+            white_oval.draw()
+
+            image_info = self.load_image_data()
+
+            if image_info is not None:
+                width, height, image_data = image_info
+
+                if self.texture_id is None:
+                    self.texture_id = glGenTextures(1)
+                    glBindTexture(GL.GL_TEXTURE_2D, self.texture_id)
+                    glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB, width, height, 0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE,
+                                 image_data)
+                    glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR)
+                    glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR)
+
+                GL.glEnable(GL.GL_TEXTURE_2D)
+                GL.glBindTexture(GL.GL_TEXTURE_2D, self.texture_id)
+
+                glBegin(GL_TRIANGLE_FAN)
+                glColor3f(1.0, 1.0, 1.0)
+
+                for i in range(361):
+                    angle = i * math.pi / 180.0
+                    x = self.radius_x * math.cos(angle) + self.center[0] + self.global_translation[0] + \
+                        self.local_translation[0] - 1
+                    y = self.radius_y * math.sin(angle) + self.center[1] + self.global_translation[1] + \
+                        self.local_translation[1] - 1
+                    glTexCoord2f(0.5 + 0.5 * math.cos(angle), 0.5 + 0.5 * math.sin(angle))
+                    glVertex2f(x, y)
+
+                glEnd()
+                GL.glDisable(GL.GL_TEXTURE_2D)
 
 
 class ImageRectangleElementRefactor(Shape):
@@ -66,7 +141,7 @@ class ImageRectangleElementRefactor(Shape):
             GL.glDisable(GL.GL_TEXTURE_2D)
 
 
-class Tomb:
+class OpponentTomb:
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
 
     def __init__(self, local_translation=(0, 0), scale=1):
@@ -91,13 +166,13 @@ class Tomb:
         self.add_shape(tomb_illustration)
 
     def init_shapes(self):
-        self.__pre_drawed_image_instance.pre_draw_tomb()
+        self.__pre_drawed_image_instance.pre_draw_opponent_tomb()
 
-        self.create_tomb(image_data=self.__pre_drawed_image_instance.get_pre_draw_tomb(),
+        self.create_tomb(image_data=self.__pre_drawed_image_instance.get_pre_draw_opponent_tomb(),
                          vertices=[(50, 50), (200, 50), (200, 250), (50, 250)])
 
 
-class LostZone:
+class OpponentLostZone:
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
 
     def __init__(self, local_translation=(0, 0), scale=1):
@@ -122,13 +197,13 @@ class LostZone:
         self.add_shape(lost_zone_illustration)
 
     def init_shapes(self):
-        self.__pre_drawed_image_instance.pre_draw_lost_zone()
+        self.__pre_drawed_image_instance.pre_draw_opponent_lost_zone()
 
-        self.create_lost_zone(image_data=self.__pre_drawed_image_instance.get_pre_draw_lost_zone(),
+        self.create_lost_zone(image_data=self.__pre_drawed_image_instance.get_pre_draw_opponent_lost_zone(),
                               vertices=[(1670, 290), (1870, 290), (1870, 490), (1670, 490)])
 
 
-class Trap:
+class OpponentTrap:
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
 
     def __init__(self, local_translation=(0, 0), scale=1):
@@ -153,9 +228,9 @@ class Trap:
         self.add_shape(trap_illustration)
 
     def init_shapes(self):
-        self.__pre_drawed_image_instance.pre_draw_trap()
+        self.__pre_drawed_image_instance.pre_draw_opponent_trap()
 
-        self.create_trap(image_data=self.__pre_drawed_image_instance.get_pre_draw_trap(),
+        self.create_trap(image_data=self.__pre_drawed_image_instance.get_pre_draw_opponent_trap(),
                          vertices=[(1400, 200), (1600, 200), (1600, 400), (1400, 400)])
 
 
@@ -196,6 +271,65 @@ class OpponentCardDeck:
                                        vertices=[(65, 285), (215, 285), (215, 485), (65, 485)])
         self.create_opponent_card_deck(image_data=self.__pre_drawed_image_instance.get_pre_draw_opponent_card_deck(),
                                        vertices=[(70, 290), (220, 290), (220, 490), (70, 490)])
+
+
+class OpponentMainCharacter:
+    __pre_drawed_image_instance = PreDrawedImage.getInstance()
+
+    def __init__(self, local_translation=(0, 0), scale=1):
+        self.pre_drawed_main_character = None
+        self.shapes = []
+        self.local_translation = local_translation
+        self.scale = scale
+
+    def change_main_character_translation(self, _translation):
+        self.local_translation = _translation
+
+    def get_main_character_shapes(self):
+        return self.shapes
+
+    def add_shape(self, shape):
+        shape.local_translate(self.local_translation)
+        self.shapes.append(shape)
+
+    def create_main_character_oval(self, color, center, radius_x, radius_y):
+        main_character_oval = Oval(color=color, center=center, radius_x=radius_x, radius_y=radius_y)
+
+        self.add_shape(main_character_oval)
+
+    def create_main_character_illustration(self, image_path, center, radius_x, radius_y):
+        main_character_illustration = ImageOvalElementRefactor(image_path=image_path,
+                                                               center=center,
+                                                               radius_x=radius_x,
+                                                               radius_y=radius_y)
+        print(f"main_character_illustration{main_character_illustration}")
+        print(type(main_character_illustration))
+        self.add_shape(main_character_illustration)
+
+    def init_your_main_character_shapes(self):
+
+        radius_x = 100
+        radius_y = 50
+
+        self.create_main_character_oval(color=(0, 0, 0, 1.0),
+                                       center=(960, 780),
+                                       radius_x=radius_x, radius_y=radius_y)
+
+    def init_opponent_main_character_shapes(self):
+        radius_y = 100
+        radius_x = radius_y * ((1 + math.sqrt(5)) / 2)
+
+        self.create_main_character_oval(color=(0, 0, 0, 0),
+                                             center=(960, 150),
+                                             radius_x=radius_x, radius_y=radius_y)
+        project_root = get_project_root()
+
+        self.__imagePath = os.path.join(project_root, "local_storage", "card_images", "card1.png")
+
+        self.create_main_character_illustration(image_path=self.__imagePath,
+                                                center=(960, 150),
+                                                radius_x=radius_x,
+                                                radius_y=radius_y)
 
 
 class YourCardDeck:
@@ -252,21 +386,25 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.width = screen_width
         self.height = screen_height
 
-        self.tomb = Tomb()
-        self.tomb.init_shapes()
-        self.tomb_shapes = self.tomb.get_tomb_shapes()
+        self.opponent_tomb = OpponentTomb()
+        self.opponent_tomb.init_shapes()
+        self.opponent_tomb_shapes = self.opponent_tomb.get_tomb_shapes()
 
-        self.lost_zone = LostZone()
-        self.lost_zone.init_shapes()
-        self.lost_zone_shapes = self.lost_zone.get_lost_zone_shapes()
+        self.opponent_lost_zone = OpponentLostZone()
+        self.opponent_lost_zone.init_shapes()
+        self.opponent_lost_zone_shapes = self.opponent_lost_zone.get_lost_zone_shapes()
 
-        self.trap = Trap()
-        self.trap.init_shapes()
-        self.trap_shapes = self.trap.get_trap_shapes()
+        self.opponent_trap = OpponentTrap()
+        self.opponent_trap.init_shapes()
+        self.opponent_trap_shapes = self.opponent_trap.get_trap_shapes()
 
         self.opponent_card_deck = OpponentCardDeck()
         self.opponent_card_deck.init_shapes()
         self.opponent_card_deck_shapes = self.opponent_card_deck.get_opponent_card_deck_shapes()
+
+        self.opponent_main_character = OpponentMainCharacter()
+        self.opponent_main_character.init_opponent_main_character_shapes()
+        self.opponent_main_character_shapes = self.opponent_main_character.get_main_character_shapes()
 
 
 
@@ -297,19 +435,20 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.tkMakeCurrent()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
-        for tomb_shape in self.tomb_shapes:
-            tomb_shape.draw()
+        for opponent_tomb_shape in self.opponent_tomb_shapes:
+            opponent_tomb_shape.draw()
 
-        for lost_zone_shape in self.lost_zone_shapes:
-            lost_zone_shape.draw()
+        for opponent_lost_zone_shape in self.opponent_lost_zone_shapes:
+            opponent_lost_zone_shape.draw()
 
-        for trap_shape in self.trap_shapes:
-            trap_shape.draw()
+        for opponent_trap_shape in self.opponent_trap_shapes:
+            opponent_trap_shape.draw()
 
         for opponent_card_deck_shape in self.opponent_card_deck_shapes:
             opponent_card_deck_shape.draw()
 
-
+        for opponent_main_character_shape in self.opponent_main_character_shapes:
+            opponent_main_character_shape.draw()
 
         for your_card_deck_shape in self.your_card_deck_shapes:
             your_card_deck_shape.draw()
