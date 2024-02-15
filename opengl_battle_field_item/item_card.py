@@ -23,6 +23,7 @@ class ItemCard:
     def add_shape(self, shape):
         shape.local_translate(self.local_translation)
         self.shapes.append(shape)
+        # extend
 
     def create_item_energy_circle(self, color, center, radius):
         item_energy_circle = Circle(color=color,
