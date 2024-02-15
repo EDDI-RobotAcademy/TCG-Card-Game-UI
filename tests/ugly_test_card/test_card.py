@@ -1,6 +1,7 @@
 import tkinter
 import unittest
 
+from initializer.init_domain import DomainInitializer
 from tests.ugly_test_card.fram.card_frame import CardFrame
 
 
@@ -9,6 +10,7 @@ class TestCard(unittest.TestCase):
         root = tkinter.Tk()
         root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}-0-0")
         root.deiconify()
+        DomainInitializer.initEachDomain()
 
         # picking_app = PickingCardFrame(root, width=f"{root.winfo_screenwidth()}", height=f"{root.winfo_screenheight()}", bg="white")
         picking_app = CardFrame(root)
