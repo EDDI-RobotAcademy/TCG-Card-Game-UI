@@ -7,6 +7,7 @@ from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
 from common.utility import get_project_root
+from opengl_battle_field_card.card import Card
 from opengl_battle_field_unit.unit_card import UnitCard
 from opengl_shape.rectangle import Rectangle
 
@@ -111,15 +112,13 @@ class PickingCardLightningBorderWithActivePanelFrame(OpenGLFrame):
 
         project_root = get_project_root()
 
-        first_unit = UnitCard(local_translation=(100, 100))
-        first_unit.init_unit_card(
-            os.path.join(project_root, "local_storage", "card_images", "card1.png"))
+        first_unit = Card(local_translation=(100, 100))
+        first_unit.init_card(6)
 
         self.unit_card_list.append(first_unit)
 
-        second_unit = UnitCard(local_translation=(400, 400))
-        second_unit.init_unit_card(
-            os.path.join(project_root, "local_storage", "card_images", "card2.png"))
+        second_unit = Card(local_translation=(400, 400))
+        second_unit.init_card(8)
 
         self.unit_card_list.append(second_unit)
 
@@ -140,7 +139,7 @@ class PickingCardLightningBorderWithActivePanelFrame(OpenGLFrame):
             tool_card = unit_card.get_tool_card()
             tool_card.set_visible(not tool_card.get_visible())
 
-            pickable_unit_card = unit_card.get_pickable_unit_card_base()
+            pickable_unit_card = unit_card.get_pickable_card_base()
             attached_shape_list = pickable_unit_card.get_attached_shapes()
             print(f"attached shape: {attached_shape_list}")
 
@@ -183,7 +182,7 @@ class PickingCardLightningBorderWithActivePanelFrame(OpenGLFrame):
             attached_tool_card = unit_card.get_tool_card()
             attached_tool_card.draw()
 
-            pickable_unit_card_base = unit_card.get_pickable_unit_card_base()
+            pickable_unit_card_base = unit_card.get_pickable_card_base()
             pickable_unit_card_base.draw()
 
             attached_shape_list = pickable_unit_card_base.get_attached_shapes()
@@ -192,7 +191,7 @@ class PickingCardLightningBorderWithActivePanelFrame(OpenGLFrame):
                 attached_shape.draw()
 
         if self.selected_object:
-            pickable_unit_card_base = self.selected_object.get_pickable_unit_card_base()
+            pickable_unit_card_base = self.selected_object.get_pickable_card_base()
             local_translation = pickable_unit_card_base.get_local_translation()
 
             lightning_segments = self.lightning_generator.generate_lightning(
@@ -255,7 +254,7 @@ class PickingCardLightningBorderWithActivePanelFrame(OpenGLFrame):
 
         if self.selected_object and self.drag_start:
             print(f"selected_object: {self.selected_object}")
-            pickable_unit = self.selected_object.get_pickable_unit_card_base()
+            pickable_unit = self.selected_object.get_pickable_card_base()
             print(f"pickable_unit: {pickable_unit}")
 
             dx = x - self.drag_start[0]
@@ -298,14 +297,14 @@ class PickingCardLightningBorderWithActivePanelFrame(OpenGLFrame):
             y = self.winfo_reqheight() - y
 
             for unit_card in self.unit_card_list:
-                if isinstance(unit_card, UnitCard):
+                if isinstance(unit_card, Card):
                     unit_card.selected = False
 
             self.selected_object = None
 
             for unit_card in reversed(self.unit_card_list):
                 print("find selected Pickable Rectangle")
-                pickable_unit_card_base = unit_card.get_pickable_unit_card_base()
+                pickable_unit_card_base = unit_card.get_pickable_card_base()
 
                 if pickable_unit_card_base.is_point_inside((x, y)):
                     print(f"pickable_unit_card_base.is_point_inside(x, y) pass")
@@ -337,7 +336,7 @@ class PickingCardLightningBorderWithActivePanelFrame(OpenGLFrame):
         if self.selected_object:
             print("check on_canvas_right_click")
             convert_y = self.winfo_reqheight() - y
-            pickable_unit_card_base = self.selected_object.get_pickable_unit_card_base()
+            pickable_unit_card_base = self.selected_object.get_pickable_card_base()
             if pickable_unit_card_base.is_point_inside((x, convert_y)):
                 print("Right click inside the selected card area")
                 new_rectangle = self.create_opengl_rectangle((x, y))
