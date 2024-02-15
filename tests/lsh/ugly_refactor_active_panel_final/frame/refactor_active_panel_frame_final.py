@@ -4,7 +4,6 @@ from pyopengltk import OpenGLFrame
 
 from common.utility import get_project_root
 from opengl_battle_field_card.card import Card
-from opengl_lightning_generator.lightning_generator import LightningGenerator
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.rectangle import Rectangle
 
@@ -109,58 +108,10 @@ class PickingCardLightningBorderWithActivePanelFrame(OpenGLFrame):
 
         if self.selected_object:
             pickable_unit_card_base = self.selected_object.get_pickable_card_base()
-            # local_translation = pickable_unit_card_base.get_local_translation()
 
             self.lightning_border.set_padding(50)
             self.lightning_border.update_shape(pickable_unit_card_base)
             self.lightning_border.draw_lightning_border()
-
-            # lightning_segments = self.lightning_generator.generate_lightning(
-            #     (
-            #         pickable_unit_card_base.vertices[0][0] + local_translation[0] - 50,
-            #         pickable_unit_card_base.vertices[0][1] + local_translation[1] - 50
-            #     ),
-            #     (
-            #         pickable_unit_card_base.vertices[2][0] + local_translation[0] + 50,
-            #         pickable_unit_card_base.vertices[0][1] + local_translation[1] - 50
-            #     ),
-            #     10, 5, 0.2, 0.7)
-            #
-            # lightning_segments.extend(self.lightning_generator.generate_lightning(
-            #     (
-            #         pickable_unit_card_base.vertices[2][0] + local_translation[0] + 50,
-            #         pickable_unit_card_base.vertices[0][1] + local_translation[1] - 50
-            #     ),
-            #     (
-            #         pickable_unit_card_base.vertices[2][0] + local_translation[0] + 50,
-            #         pickable_unit_card_base.vertices[2][1] + local_translation[1] + 50
-            #     ),
-            #     10, 5, 0.2, 0.7))
-            #
-            # lightning_segments.extend(self.lightning_generator.generate_lightning(
-            #     (
-            #         pickable_unit_card_base.vertices[0][0] + local_translation[0] - 50,
-            #         pickable_unit_card_base.vertices[2][1] + local_translation[1] + 50
-            #     ),
-            #     (
-            #         pickable_unit_card_base.vertices[2][0] + local_translation[0] + 50,
-            #         pickable_unit_card_base.vertices[2][1] + local_translation[1] + 50
-            #     ),
-            #     10, 5, 0.2, 0.7))
-            #
-            # lightning_segments.extend(self.lightning_generator.generate_lightning(
-            #     (
-            #         pickable_unit_card_base.vertices[0][0] + local_translation[0] - 50,
-            #         pickable_unit_card_base.vertices[0][1] + local_translation[1] - 50
-            #     ),
-            #     (
-            #         pickable_unit_card_base.vertices[0][0] + local_translation[0] - 50,
-            #         pickable_unit_card_base.vertices[2][1] + local_translation[1] + 50
-            #     ),
-            #     10, 5, 0.2, 0.7))
-            #
-            # for segment in lightning_segments:
-            #     self.lightning_generator.draw_lightning_segment(segment)
 
         if self.active_panel_rectangle:
             self.active_panel_rectangle.draw()
