@@ -340,6 +340,37 @@ class OpponentHandPanel:
                                vertices=[(300, 100), (1600, 100), (1600, 250), (300, 250)])
 
 
+class YourTomb:
+    __pre_drawed_image_instance = PreDrawedImage.getInstance()
+
+    def __init__(self, local_translation=(0, 0), scale=1):
+        self.pre_drawed_tomb = None
+        self.shapes = []
+        self.local_translation = local_translation
+        self.scale = scale
+
+    def get_tomb_shapes(self):
+        return self.shapes
+
+    def change_local_translation(self, _translation):
+        self.local_translation = _translation
+
+    def add_shape(self, shape):
+        shape.local_translate(self.local_translation)
+        self.shapes.append(shape)
+
+    def create_tomb(self, image_data, vertices):
+        tomb_illustration = ImageRectangleElementRefactor(image_data=image_data,
+                                                          vertices=vertices)
+        self.add_shape(tomb_illustration)
+
+    def init_shapes(self):
+        self.__pre_drawed_image_instance.pre_draw_your_tomb()
+
+        self.create_tomb(image_data=self.__pre_drawed_image_instance.get_pre_draw_your_tomb(),
+                         vertices=[(1870, 1030), (1720, 1030), (1720, 830), (1870, 830)])
+
+
 class YourCardDeck:
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
 
@@ -495,6 +526,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_hand_panel.init_shapes()
         self.opponent_hand_panel_shapes = self.opponent_hand_panel.get_your_hand_panel_shapes()
 
+        self.your_tomb = YourTomb()
+        self.your_tomb.init_shapes()
+        self.your_tomb_shapes = self.your_tomb.get_tomb_shapes()
+
         self.your_card_deck = YourCardDeck()
         self.your_card_deck.init_shapes()
         self.your_card_deck_shapes = self.your_card_deck.get_your_card_deck_shapes()
@@ -547,6 +582,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         for opponent_hand_panel_shape in self.opponent_hand_panel_shapes:
             opponent_hand_panel_shape.draw()
+
+        for your_tomb_shape in self.your_tomb_shapes:
+            your_tomb_shape.draw()
 
         for your_card_deck_shape in self.your_card_deck_shapes:
             your_card_deck_shape.draw()
