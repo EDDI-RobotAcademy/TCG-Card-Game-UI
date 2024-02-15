@@ -1,6 +1,6 @@
 from OpenGL import GL
 
-class MyCardMainFrameRenderer:
+class SecondPageCardRenderer:
     def __init__(self, scene, window):
         self.scene = scene
         self.window = window
@@ -24,7 +24,7 @@ class MyCardMainFrameRenderer:
             print(f"버튼 그리기: {button}")
             self._render_shape(button)
 
-        for card in self.scene.card_list[:8]:
+        for card in self.scene.card_list[8:16]:
             attached_tool_card = card.get_tool_card()
             attached_tool_card.draw()
 
