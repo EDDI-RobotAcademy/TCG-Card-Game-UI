@@ -1,6 +1,7 @@
 import math
 
 from image_shape.oval_image import OvalImage
+from image_shape.rectangle_image import RectangleImage
 from opengl_shape.oval import Oval
 from opengl_shape.shape import Shape
 from OpenGL import GL
@@ -14,60 +15,6 @@ from pyopengltk import OpenGLFrame
 
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from opengl_shape.rectangle import Rectangle
-
-
-class ImageRectangleElementRefactor(Shape):
-    def __init__(self, image_data, vertices, global_translation=(0, 0), local_translation=(0, 0)):
-        super().__init__(vertices, global_translation, local_translation)
-        self.image_data = image_data
-        self.is_visible = True
-
-    def set_visible(self, visible):
-        self.is_visible = visible
-
-    def get_visible(self):
-        return self.is_visible
-
-    def draw(self):
-        if self.get_visible():
-            white_rect = Rectangle(color=(1.0, 1.0, 1.0, 1.0),
-                                   vertices=self.vertices,
-                                   global_translation=self.global_translation,
-                                   local_translation=self.local_translation)
-            white_rect.draw()
-
-            image_data = self.image_data
-            texture_ids = GL.glGenTextures(1)
-
-            GL.glBindTexture(GL.GL_TEXTURE_2D, texture_ids)
-            GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR)
-            GL.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR)
-            GL.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, image_data.shape[1], image_data.shape[0],
-                            0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, image_data)
-
-            GL.glEnable(GL.GL_TEXTURE_2D)
-            GL.glBindTexture(GL.GL_TEXTURE_2D, texture_ids)
-
-            GL.glBegin(GL.GL_QUADS)
-            GL.glTexCoord2f(0, 0)
-
-            GL.glVertex2f(self.vertices[0][0] + self.local_translation[0] + self.global_translation[0],
-                          self.vertices[0][1] + self.local_translation[1] + self.global_translation[1])
-
-            GL.glTexCoord2f(1, 0)
-            GL.glVertex2f(self.vertices[1][0] + self.local_translation[0] + self.global_translation[0],
-                          self.vertices[1][1] + self.local_translation[1] + self.global_translation[1])
-
-            GL.glTexCoord2f(1, 1)
-            GL.glVertex2f(self.vertices[2][0] + self.local_translation[0] + self.global_translation[0],
-                          self.vertices[2][1] + self.local_translation[1] + self.global_translation[1])
-
-            GL.glTexCoord2f(0, 1)
-            GL.glVertex2f(self.vertices[3][0] + self.local_translation[0] + self.global_translation[0],
-                          self.vertices[3][1] + self.local_translation[1] + self.global_translation[1])
-            GL.glEnd()
-
-            GL.glDisable(GL.GL_TEXTURE_2D)
 
 
 class OpponentTomb:
@@ -90,8 +37,8 @@ class OpponentTomb:
         self.shapes.append(shape)
 
     def create_tomb(self, image_data, vertices):
-        tomb_illustration = ImageRectangleElementRefactor(image_data=image_data,
-                                                          vertices=vertices)
+        tomb_illustration = RectangleImage(image_data=image_data,
+                                           vertices=vertices)
         self.add_shape(tomb_illustration)
 
     def init_shapes(self):
@@ -121,8 +68,8 @@ class OpponentLostZone:
         self.shapes.append(shape)
 
     def create_lost_zone(self, image_data, vertices):
-        lost_zone_illustration = ImageRectangleElementRefactor(image_data=image_data,
-                                                               vertices=vertices)
+        lost_zone_illustration = RectangleImage(image_data=image_data,
+                                                vertices=vertices)
         self.add_shape(lost_zone_illustration)
 
     def init_shapes(self):
@@ -152,8 +99,8 @@ class OpponentTrap:
         self.shapes.append(shape)
 
     def create_trap(self, image_data, vertices):
-        trap_illustration = ImageRectangleElementRefactor(image_data=image_data,
-                                                          vertices=vertices)
+        trap_illustration = RectangleImage(image_data=image_data,
+                                           vertices=vertices)
         self.add_shape(trap_illustration)
 
     def init_shapes(self):
@@ -183,8 +130,8 @@ class OpponentCardDeck:
         self.shapes.append(shape)
 
     def create_opponent_card_deck(self, image_data, vertices):
-        opponent_card_deck = ImageRectangleElementRefactor(image_data=image_data,
-                                                           vertices=vertices)
+        opponent_card_deck = RectangleImage(image_data=image_data,
+                                            vertices=vertices)
         self.add_shape(opponent_card_deck)
 
     def init_shapes(self):
@@ -266,8 +213,8 @@ class OpponentHandPanel:
         self.shapes.append(shape)
 
     def create_hand_panel(self, image_data, vertices):
-        hand_panel = ImageRectangleElementRefactor(image_data=image_data,
-                                                   vertices=vertices)
+        hand_panel = RectangleImage(image_data=image_data,
+                                    vertices=vertices)
         self.add_shape(hand_panel)
 
     def init_shapes(self):
@@ -302,8 +249,8 @@ class OpponentUnitField:
         self.shapes.append(shape)
 
     def create_unit_field(self, image_data, vertices):
-        unit_field = ImageRectangleElementRefactor(image_data=image_data,
-                                                   vertices=vertices)
+        unit_field = RectangleImage(image_data=image_data,
+                                    vertices=vertices)
         self.add_shape(unit_field)
 
     def init_shapes(self):
@@ -333,8 +280,8 @@ class YourTomb:
         self.shapes.append(shape)
 
     def create_tomb(self, image_data, vertices):
-        tomb_illustration = ImageRectangleElementRefactor(image_data=image_data,
-                                                          vertices=vertices)
+        tomb_illustration = RectangleImage(image_data=image_data,
+                                           vertices=vertices)
         self.add_shape(tomb_illustration)
 
     def init_shapes(self):
@@ -364,8 +311,8 @@ class YourLostZone:
         self.shapes.append(shape)
 
     def create_lost_zone(self, image_data, vertices):
-        lost_zone_illustration = ImageRectangleElementRefactor(image_data=image_data,
-                                                               vertices=vertices)
+        lost_zone_illustration = RectangleImage(image_data=image_data,
+                                                vertices=vertices)
         self.add_shape(lost_zone_illustration)
 
     def init_shapes(self):
@@ -395,8 +342,8 @@ class YourTrap:
         self.shapes.append(shape)
 
     def create_trap(self, image_data, vertices):
-        trap_illustration = ImageRectangleElementRefactor(image_data=image_data,
-                                                          vertices=vertices)
+        trap_illustration = RectangleImage(image_data=image_data,
+                                           vertices=vertices)
         self.add_shape(trap_illustration)
 
     def init_shapes(self):
@@ -426,8 +373,8 @@ class YourCardDeck:
         self.shapes.append(shape)
 
     def create_your_card_deck(self, image_data, vertices):
-        your_card_deck = ImageRectangleElementRefactor(image_data=image_data,
-                                                       vertices=vertices)
+        your_card_deck = RectangleImage(image_data=image_data,
+                                        vertices=vertices)
         self.add_shape(your_card_deck)
 
     def init_shapes(self):
@@ -514,8 +461,8 @@ class YourHandPanel:
         self.shapes.append(shape)
 
     def create_hand_panel(self, image_data, vertices):
-        hand_panel = ImageRectangleElementRefactor(image_data=image_data,
-                                                   vertices=vertices)
+        hand_panel = RectangleImage(image_data=image_data,
+                                    vertices=vertices)
         self.add_shape(hand_panel)
 
     def init_shapes(self):
@@ -550,8 +497,8 @@ class YourUnitField:
         self.shapes.append(shape)
 
     def create_unit_field(self, image_data, vertices):
-        unit_field = ImageRectangleElementRefactor(image_data=image_data,
-                                                   vertices=vertices)
+        unit_field = RectangleImage(image_data=image_data,
+                                    vertices=vertices)
         self.add_shape(unit_field)
 
     def init_shapes(self):
@@ -580,8 +527,8 @@ class BattleFieldEnvironment:
         self.shapes.append(shape)
 
     def create_environment(self, image_data, vertices):
-        environment_illustration = ImageRectangleElementRefactor(image_data=image_data,
-                                                                 vertices=vertices)
+        environment_illustration = RectangleImage(image_data=image_data,
+                                                  vertices=vertices)
         self.add_shape(environment_illustration)
 
     def init_shapes(self):
