@@ -1,5 +1,6 @@
 import math
 
+from battle_field.components.opponent_lost_zone import OpponentLostZone
 from battle_field.components.opponent_tomb import OpponentTomb
 from image_shape.oval_image import OvalImage
 from image_shape.rectangle_image import RectangleImage
@@ -16,37 +17,6 @@ from pyopengltk import OpenGLFrame
 
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from opengl_shape.rectangle import Rectangle
-
-
-class OpponentLostZone:
-    __pre_drawed_image_instance = PreDrawedImage.getInstance()
-
-    def __init__(self, local_translation=(0, 0), scale=1):
-        self.pre_drawed_lost_zone = None
-        self.shapes = []
-        self.local_translation = local_translation
-        self.scale = scale
-
-    def get_lost_zone_shapes(self):
-        return self.shapes
-
-    def change_local_translation(self, _translation):
-        self.local_translation = _translation
-
-    def add_shape(self, shape):
-        shape.local_translate(self.local_translation)
-        self.shapes.append(shape)
-
-    def create_lost_zone(self, image_data, vertices):
-        lost_zone_illustration = RectangleImage(image_data=image_data,
-                                                vertices=vertices)
-        self.add_shape(lost_zone_illustration)
-
-    def init_shapes(self):
-        self.__pre_drawed_image_instance.pre_draw_opponent_lost_zone()
-
-        self.create_lost_zone(image_data=self.__pre_drawed_image_instance.get_pre_draw_opponent_lost_zone(),
-                              vertices=[(1670, 290), (1870, 290), (1870, 490), (1670, 490)])
 
 
 class OpponentTrap:
