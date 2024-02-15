@@ -1,12 +1,12 @@
 from OpenGL import GL
 
-class MyCardMainFrameRenderer:
+class FourthPageCardRenderer:
     def __init__(self, scene, window):
         self.scene = scene
         self.window = window
 
     def render(self):
-        print("my card main frame 렌더러 호출")
+        print("4번 째 페이지 렌더러 호출")
         self.window.tkMakeCurrent()
         GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
@@ -24,8 +24,8 @@ class MyCardMainFrameRenderer:
             print(f"버튼 그리기: {button}")
             self._render_shape(button)
 
-        for card in self.scene.card_list[:8]:
-            print(f"카드 리스트 몇 개임? {len(self.scene.card_list[:8])}")
+        for card in self.scene.card_list[24:32]:
+            print(f"카드 리스트 몇 개임? {len(self.scene.card_list[24:32])}")
             attached_tool_card = card.get_tool_card()
             attached_tool_card.draw()
 

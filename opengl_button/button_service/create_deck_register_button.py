@@ -106,6 +106,7 @@ class CreateDeckRegisterButton:
                     self.my_card_main_frame.getTextBox().destroy()
 
                     # 다시 내 카드 화면 그려...
+                    self.my_card_main_frame.show_first_page_card_screen = True
                     self.my_card_main_frame.drawMyCardMainFrame()
 
                     print("다 지워졌니?")
