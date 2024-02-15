@@ -62,20 +62,20 @@ class CardInfoFromCsvRepositoryImpl(CardInfoFromCsvRepository):
     def getCardGradeForCardNumber(self, cardNumber):
         return self.__cardGradeDictionary[cardNumber]
 
-    def getCardTypeDictionary(self, cardNumber):
+    def getCardTypeForCardNumber(self, cardNumber):
         return self.__cardTypeDictionary[cardNumber]
 
-    def getCardEnergyDictionary(self, cardNumber):
+    def getCardEnergyForCardNumber(self, cardNumber):
         return self.__cardEnergyDictionary[cardNumber]
 
-    def getCardAttackDictionary(self, cardNumber):
+    def getCardAttackForCardNumber(self, cardNumber):
         return self.__cardAttackDictionary[cardNumber]
 
-    def getCardPassiveDictionary(self, cardNumber):
+    def getCardPassiveForCardNumber(self, cardNumber):
         return self.__cardPassiveDictionary[cardNumber]
 
-    def getCardSkillDictionary(self, cardNumber):
+    def getCardSkillForCardNumber(self, cardNumber):
         return self.__cardSkillDictionary[cardNumber]
 
-    def getCardHp(self, cardNumber):
+    def getCardHpForCardNumber(self, cardNumber):
         return self.__cardHpDictionary[cardNumber]
