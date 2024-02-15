@@ -1,6 +1,6 @@
 from OpenGL import GL
 
-class MyCardMainFrameRenderer:
+class BuyRandomCardFrameRenderer:
     def __init__(self, scene, window):
         self.scene = scene
         self.window = window
@@ -15,9 +15,6 @@ class MyCardMainFrameRenderer:
             print(f"이미지 그리기: {image_element}")
             self._render_shape(image_element)
 
-        # 나의 카드 텍스트
-        # for text in self.scene.text_list:
-        #     self._render_shape(text)
 
         # 버튼 도형
         for button in self.scene.button_list:
