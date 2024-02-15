@@ -57,6 +57,10 @@ class PreDrawedImage:
         your_main_character_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "main_character.png")
         self.__pre_drawed_your_main_character = ImageDataLoader.load_oval_image_data(your_main_character_image_path)
 
+    def pre_draw_your_hand_panel(self):
+        your_hand_panel_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "background.png")
+        self.__pre_drawed_your_hand_panel = ImageDataLoader.load_rectangle_image_data(your_hand_panel_image_path)
+
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
         self.pre_draw_opponent_lost_zone()
@@ -66,6 +70,7 @@ class PreDrawedImage:
 
         self.pre_draw_your_card_deck()
         self.pre_draw_your_main_character()
+        self.pre_draw_your_hand_panel()
 
     def get_pre_draw_opponent_tomb(self):
         return self.__pre_drawed_tomb
@@ -88,3 +93,6 @@ class PreDrawedImage:
 
     def get_pre_draw_your_main_character(self):
         return self.__pre_drawed_your_main_character
+
+    def get_pre_draw_your_hand_panel(self):
+        return self.__pre_drawed_your_hand_panel
