@@ -7,6 +7,7 @@ from battle_field.components.opponent_main_character import OpponentMainCharacte
 from battle_field.components.opponent_tomb import OpponentTomb
 from battle_field.components.opponent_trap import OpponentTrap
 from battle_field.components.opponent_unit_field import OpponentUnitField
+from battle_field.components.your_deck import YourDeck
 from battle_field.components.your_lost_zone import YourLostZone
 from battle_field.components.your_tomb import YourTomb
 from battle_field.components.your_trap import YourTrap
@@ -25,50 +26,6 @@ from pyopengltk import OpenGLFrame
 
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from opengl_shape.rectangle import Rectangle
-
-
-class YourCardDeck:
-    __pre_drawed_image_instance = PreDrawedImage.getInstance()
-
-    def __init__(self, local_translation=(0, 0), scale=1):
-        self.pre_drawed_opponent_card_deck = None
-        self.shapes = []
-        self.local_translation = local_translation
-        self.scale = scale
-
-    def get_your_card_deck_shapes(self):
-        return self.shapes
-
-    def change_local_translation(self, _translation):
-        self.local_translation = _translation
-
-    def add_shape(self, shape):
-        shape.local_translate(self.local_translation)
-        self.shapes.append(shape)
-
-    def create_your_card_deck(self, image_data, vertices):
-        your_card_deck = RectangleImage(image_data=image_data,
-                                        vertices=vertices)
-        self.add_shape(your_card_deck)
-
-    def init_shapes(self):
-        self.__pre_drawed_image_instance.pre_draw_your_card_deck()
-
-        self.create_your_card_deck(
-            image_data=self.__pre_drawed_image_instance.get_pre_draw_your_card_deck(),
-            vertices=[(1700, 590), (1850, 590), (1850, 790), (1700, 790)])
-        self.create_your_card_deck(
-            image_data=self.__pre_drawed_image_instance.get_pre_draw_your_card_deck(),
-            vertices=[(1705, 595), (1855, 595), (1855, 795), (1705, 795)])
-        self.create_your_card_deck(
-            image_data=self.__pre_drawed_image_instance.get_pre_draw_your_card_deck(),
-            vertices=[(1710, 600), (1860, 600), (1860, 800), (1710, 800)])
-        self.create_your_card_deck(
-            image_data=self.__pre_drawed_image_instance.get_pre_draw_your_card_deck(),
-            vertices=[(1715, 605), (1865, 605), (1865, 805), (1715, 805)])
-        self.create_your_card_deck(
-            image_data=self.__pre_drawed_image_instance.get_pre_draw_your_card_deck(),
-            vertices=[(1720, 610), (1870, 610), (1870, 810), (1720, 810)])
 
 
 class YourMainCharacter:
@@ -262,7 +219,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_trap.init_shapes()
         self.your_trap_shapes = self.your_trap.get_trap_shapes()
 
-        self.your_card_deck = YourCardDeck()
+        self.your_card_deck = YourDeck()
         self.your_card_deck.init_shapes()
         self.your_card_deck_shapes = self.your_card_deck.get_your_card_deck_shapes()
 
