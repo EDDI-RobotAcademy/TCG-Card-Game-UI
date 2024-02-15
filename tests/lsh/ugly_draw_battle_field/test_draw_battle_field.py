@@ -624,6 +624,36 @@ class YourUnitField:
                                vertices=[(300, 580), (1600, 580), (1600, 730), (300, 730)])
 
 
+class BattleFieldEnvironment:
+    __pre_drawed_image_instance = PreDrawedImage.getInstance()
+
+    def __init__(self, local_translation=(0, 0), scale=1):
+        self.shapes = []
+        self.local_translation = local_translation
+        self.scale = scale
+
+    def get_environment_shapes(self):
+        return self.shapes
+
+    def change_local_translation(self, _translation):
+        self.local_translation = _translation
+
+    def add_shape(self, shape):
+        shape.local_translate(self.local_translation)
+        self.shapes.append(shape)
+
+    def create_environment(self, image_data, vertices):
+        environment_illustration = ImageRectangleElementRefactor(image_data=image_data,
+                                                                 vertices=vertices)
+        self.add_shape(environment_illustration)
+
+    def init_shapes(self):
+        self.__pre_drawed_image_instance.pre_draw_battle_field_environment()
+
+        self.create_environment(image_data=self.__pre_drawed_image_instance.get_pre_draw_battle_field_environment(),
+                                vertices=[(400, 490), (500, 490), (500, 590), (400, 590)])
+
+
 class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
@@ -690,6 +720,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_unit_field.init_shapes()
         self.your_unit_field_shapes = self.your_unit_field.get_your_unit_field_shapes()
 
+        self.battle_field_environment = BattleFieldEnvironment()
+        self.battle_field_environment.init_shapes()
+        self.battle_field_environment_shapes = self.battle_field_environment.get_environment_shapes()
+
         self.bind("<Configure>", self.on_resize)
 
     def initgl(self):
@@ -754,6 +788,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         for your_unit_field_shape in self.your_unit_field_shapes:
             your_unit_field_shape.draw()
+
+        for battle_field_environment_shape in self.battle_field_environment_shapes:
+            battle_field_environment_shape.draw()
 
         self.tkSwapBuffers()
 

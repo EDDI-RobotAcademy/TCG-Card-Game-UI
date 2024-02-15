@@ -25,6 +25,8 @@ class PreDrawedImage:
     __pre_drawed_your_hand_panel = None
     __pre_drawed_your_unit_field = None
 
+    __pre_drawed_battle_field_environment = None
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -92,6 +94,10 @@ class PreDrawedImage:
         your_unit_field_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "background.png")
         self.__pre_drawed_your_unit_field = ImageDataLoader.load_rectangle_image_data(your_unit_field_image_path)
 
+    def pre_draw_battle_field_environment(self):
+        battle_field_environment_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "environment.jpeg")
+        self.__pre_drawed_battle_field_environment = ImageDataLoader.load_rectangle_image_data(battle_field_environment_image_path)
+
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
         self.pre_draw_opponent_lost_zone()
@@ -108,6 +114,8 @@ class PreDrawedImage:
         self.pre_draw_your_main_character()
         self.pre_draw_your_hand_panel()
         self.pre_draw_your_unit_field()
+
+        self.pre_draw_battle_field_environment()
 
     def get_pre_draw_opponent_tomb(self):
         return self.__pre_drawed_opponent_tomb
@@ -150,3 +158,6 @@ class PreDrawedImage:
 
     def get_pre_draw_your_unit_field(self):
         return self.__pre_drawed_your_unit_field
+
+    def get_pre_draw_battle_field_environment(self):
+        return self.__pre_drawed_battle_field_environment
