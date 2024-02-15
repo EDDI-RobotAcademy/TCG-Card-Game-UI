@@ -159,6 +159,80 @@ class Trap:
                          vertices=[(1400, 200), (1600, 200), (1600, 400), (1400, 400)])
 
 
+class OpponentCardDeck:
+    __pre_drawed_image_instance = PreDrawedImage.getInstance()
+
+    def __init__(self, local_translation=(0, 0), scale=1):
+        self.pre_drawed_opponent_card_deck = None
+        self.shapes = []
+        self.local_translation = local_translation
+        self.scale = scale
+
+    def get_opponent_card_deck_shapes(self):
+        return self.shapes
+
+    def change_local_translation(self, _translation):
+        self.local_translation = _translation
+
+    def add_shape(self, shape):
+        shape.local_translate(self.local_translation)
+        self.shapes.append(shape)
+
+    def create_opponent_card_deck(self, image_data, vertices):
+        opponent_card_deck = ImageRectangleElementRefactor(image_data=image_data,
+                                                           vertices=vertices)
+        self.add_shape(opponent_card_deck)
+
+    def init_shapes(self):
+        self.__pre_drawed_image_instance.pre_draw_opponent_card_deck()
+
+        self.create_opponent_card_deck(image_data=self.__pre_drawed_image_instance.get_pre_draw_opponent_card_deck(),
+                                       vertices=[(50, 270), (200, 270), (200, 470), (50, 470)])
+        self.create_opponent_card_deck(image_data=self.__pre_drawed_image_instance.get_pre_draw_opponent_card_deck(),
+                                       vertices=[(55, 275), (205, 275), (205, 475), (55, 475)])
+        self.create_opponent_card_deck(image_data=self.__pre_drawed_image_instance.get_pre_draw_opponent_card_deck(),
+                                       vertices=[(60, 280), (210, 280), (210, 480), (60, 480)])
+        self.create_opponent_card_deck(image_data=self.__pre_drawed_image_instance.get_pre_draw_opponent_card_deck(),
+                                       vertices=[(65, 285), (215, 285), (215, 485), (65, 485)])
+        self.create_opponent_card_deck(image_data=self.__pre_drawed_image_instance.get_pre_draw_opponent_card_deck(),
+                                       vertices=[(70, 290), (220, 290), (220, 490), (70, 490)])
+
+    # def init_your_shapes(self):
+    #     project_root = get_project_root()
+    #     self.__imagePath = os.path.join(project_root, "local_storage", "image", "battle_field",
+    #                                         "your_card_deck.png")
+    #
+    #     self.create_card_deck_rectangle(color=(0, 0, 0, 1.0),
+    #                                vertices=[(1700, 590), (1850, 590), (1850, 790), (1700, 790)])
+    #
+    #     self.create_card_deck_rectangle(color=(0, 0, 0, 1.0),
+    #                                vertices=[(1705, 595), (1855, 595), (1855, 795), (1705, 795)])
+    #
+    #     self.create_card_deck_rectangle(color=(0, 0, 0, 1.0),
+    #                                vertices=[(1710, 600), (1860, 600), (1860, 800), (1710, 800)])
+    #
+    #     self.create_card_deck_rectangle(color=(0, 0, 0, 1.0),
+    #                                vertices=[(1715, 605), (1865, 605), (1865, 805), (1715, 805)])
+    #
+    #     self.create_card_deck_rectangle(color=(0, 0, 0, 1.0),
+    #                                vertices=[(1720, 610), (1870, 610), (1870, 810), (1720, 810)])
+    #
+    #     self.create_illustration(image_path=self.__imagePath,
+    #                              vertices=[(1700, 590), (1850, 590), (1850, 790), (1700, 790)])
+    #
+    #     self.create_illustration(image_path=self.__imagePath,
+    #                              vertices=[(1705, 595), (1855, 595), (1855, 795), (1705, 795)])
+    #
+    #     self.create_illustration(image_path=self.__imagePath,
+    #                              vertices=[(1710, 600), (1860, 600), (1860, 800), (1710, 800)])
+    #
+    #     self.create_illustration(image_path=self.__imagePath,
+    #                              vertices=[(1715, 605), (1865, 605), (1865, 805), (1715, 805)])
+    #
+    #     self.create_illustration(image_path=self.__imagePath,
+    #                              vertices=[(1720, 610), (1870, 610), (1870, 810), (1720, 810)])
+
+
 class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
@@ -180,6 +254,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.trap = Trap()
         self.trap.init_shapes()
         self.trap_shapes = self.trap.get_trap_shapes()
+
+        self.opponent_card_deck = OpponentCardDeck()
+        self.opponent_card_deck.init_shapes()
+        self.opponent_card_deck_shapes = self.opponent_card_deck.get_opponent_card_deck_shapes()
 
         self.bind("<Configure>", self.on_resize)
 
@@ -212,6 +290,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         for trap_shape in self.trap_shapes:
             trap_shape.draw()
+
+        for opponent_card_deck_shape in self.opponent_card_deck_shapes:
+            opponent_card_deck_shape.draw()
 
         self.tkSwapBuffers()
 
