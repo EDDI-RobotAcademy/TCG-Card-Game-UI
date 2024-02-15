@@ -41,7 +41,7 @@ class ImageRectangleElement(Shape):
 
             GL.glBegin(GL.GL_QUADS)
             GL.glTexCoord2f(0, 0)
-            print(f"x: {self.vertices[0][0] + self.local_translation[0]}, y: {self.vertices[0][1] + self.local_translation[1]}")
+
             GL.glVertex2f(self.vertices[0][0] + self.local_translation[0] + self.global_translation[0],
                           self.vertices[0][1] + self.local_translation[1] + self.global_translation[1])
 
