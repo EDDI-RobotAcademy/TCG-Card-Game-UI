@@ -10,6 +10,7 @@ class PreDrawedImage:
     __project_root = get_project_root()
     __pre_drawed_tomb = None
     __pre_drawed_lost_zone = None
+    __pre_drawed_trap = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -30,8 +31,14 @@ class PreDrawedImage:
         lost_zone_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "lost_zone.png")
         self.__pre_drawed_lost_zone = ImageDataLoader.load_image_data(lost_zone_image_path)
 
+    def pre_draw_trap(self):
+        trap_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "trap.jpeg")
+        self.__pre_drawed_trap = ImageDataLoader.load_image_data(trap_image_path)
+
     def pre_draw_every_image(self):
         self.pre_draw_tomb()
+        self.pre_draw_lost_zone()
+        self.pre_draw_trap()
 
     def get_pre_draw_tomb(self):
         return self.__pre_drawed_tomb
@@ -39,3 +46,5 @@ class PreDrawedImage:
     def get_pre_draw_lost_zone(self):
         return self.__pre_drawed_lost_zone
 
+    def get_pre_draw_trap(self):
+        return self.__pre_drawed_trap

@@ -128,6 +128,36 @@ class LostZone:
                               vertices=[(1670, 290), (1870, 290), (1870, 490), (1670, 490)])
 
 
+class Trap:
+    __pre_drawed_image_instance = PreDrawedImage.getInstance()
+
+    def __init__(self, local_translation=(0, 0), scale=1):
+        self.pre_drawed_trap = None
+        self.shapes = []
+        self.local_translation = local_translation
+        self.scale = scale
+
+    def get_trap_shapes(self):
+        return self.shapes
+
+    def change_local_translation(self, _translation):
+        self.local_translation = _translation
+
+    def add_shape(self, shape):
+        shape.local_translate(self.local_translation)
+        self.shapes.append(shape)
+
+    def create_trap(self, image_data, vertices):
+        trap_illustration = ImageRectangleElementRefactor(image_data=image_data,
+                                                          vertices=vertices)
+        self.add_shape(trap_illustration)
+
+    def init_shapes(self):
+        self.__pre_drawed_image_instance.pre_draw_trap()
+
+        self.create_trap(image_data=self.__pre_drawed_image_instance.get_pre_draw_trap(),
+                         vertices=[(1400, 200), (1600, 200), (1600, 400), (1400, 400)])
+
 
 class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
     def __init__(self, master=None, **kwargs):
@@ -146,6 +176,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.lost_zone = LostZone()
         self.lost_zone.init_shapes()
         self.lost_zone_shapes = self.lost_zone.get_lost_zone_shapes()
+
+        self.trap = Trap()
+        self.trap.init_shapes()
+        self.trap_shapes = self.trap.get_trap_shapes()
 
         self.bind("<Configure>", self.on_resize)
 
@@ -175,6 +209,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         for lost_zone_shape in self.lost_zone_shapes:
             lost_zone_shape.draw()
+
+        for trap_shape in self.trap_shapes:
+            trap_shape.draw()
 
         self.tkSwapBuffers()
 
