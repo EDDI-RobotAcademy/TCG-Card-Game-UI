@@ -7,13 +7,17 @@ from OpenGL.GL import *
 from OpenGL.GLUT import *
 
 from common.utility import get_project_root
+from lobby_frame.service.lobby_menu_frame_service_impl import LobbyMenuFrameServiceImpl
 from opengl_my_card_main_frame.entity.my_card_main_scene import MyCardMainScene
 from opengl_my_card_main_frame.entity.my_deck_register_scene import MyDeckRegisterScene
 
 from opengl_battle_field_card.card import Card
+from opengl_my_card_main_frame.renderer.fifth_page_card_renerer import FifthPageCardRenderer
+from opengl_my_card_main_frame.renderer.fourth_page_card_renderer import FourthPageCardRenderer
 from opengl_my_card_main_frame.renderer.my_card_main_frame_renderer import MyCardMainFrameRenderer
 from opengl_my_card_main_frame.renderer.my_deck_register_frame_renderer import MyDeckRegisterFrameRenderer
 from opengl_my_card_main_frame.renderer.second_page_card_renderer import SecondPageCardRenderer
+from opengl_my_card_main_frame.renderer.third_page_card_renderer import ThirdPageCardRenderer
 from opengl_shape.image_rectangle_element import ImageRectangleElement
 from opengl_shape.rectangle import Rectangle
 
@@ -23,6 +27,7 @@ class MyCardMainFrame(OpenGLFrame):
         super().__init__(master, **kwargs)
         self.my_card_main_scene = MyCardMainScene()
         self.my_deck_register_scene = MyDeckRegisterScene()
+        self.lobby_service = LobbyMenuFrameServiceImpl()
         self.current_rely = 0.20
 
         screen_width = self.winfo_screenwidth()
@@ -33,8 +38,16 @@ class MyCardMainFrame(OpenGLFrame):
 
         self.textbox_string = tk.StringVar()
 
+
         # 덱 생성 버튼 누르기 전 까지는 안 나타남.
         self.show_my_deck_register_screen = False
+
+        # 다음 페이지 혹은 이전 페이지 누르기 전 까지는 안 나타남.
+        self.show_first_page_card_screen = False
+        self.show_second_page_card_screen = False
+        self.show_third_page_card_screen = False
+        self.show_fourth_page_card_screen = False
+        self.show_fifth_page_card_screen = False
 
 
     def initgl(self):
@@ -111,7 +124,9 @@ class MyCardMainFrame(OpenGLFrame):
         self.my_card_main_scene.add_button_list(before_page_button_rectangle)
 
         # 모든 카드
-        all_card_number = self.card_data_read().tolist()
+        print(f"서버로 부터 가져온 카드 리스트: {self.lobby_service.get_card_data_list()}")
+        #all_card_number = self.card_data_read().tolist()
+        all_card_number = self.lobby_service.get_card_data_list()
         print(f"카드 번호 리스트: {all_card_number}")
         print(f"카드 번호 길이: {len(all_card_number)}")
 
@@ -120,56 +135,28 @@ class MyCardMainFrame(OpenGLFrame):
 
         for i, number in enumerate(all_card_number):
             try:
-                print(f"i값을 불러와: {i}")
-                print(f"number: {number}")
+                print(f"index: {i}, card number: {number}")
                 card = Card(local_translation=(x, y), scale=350)
-                card.init_card(int(number))
+                card.init_card(number)
                 self.my_card_main_scene.add_card_list(card)
                 print(f"카드 리스트: {self.my_card_main_scene.get_card_list()}")
 
                 x += 360
 
-                if (i + 1) % 5 == 0:  # 4개마다 y 값을 변경
-                    print(f"i:{i}")
+                if (i + 1) % 4 == 0:  # 4개씩
+                    print(f"index(4단위로 나와야 정상임):{i}")
                     y = 500
                     x = 50
+                    if (i + 1) % 8 == 0:
+                        x = 50
+                        y = 50
 
-                if (i + 1) % 8 == 0:  # 8개마다 반복 종료
-                    print(f"i:{i}")
-                    print(f"카드 리스트 안에 몇 개 있니?: {len(self.my_card_main_scene.get_card_list())}")
-                    break
+                if (i + 1) % 8 == 0:
+                    continue
 
             except Exception as e:
                 print(f"Error creating card: {e}")
                 pass
-        # x = 50
-        # y = 50
-        # for number in all_card_number:
-        #     try:
-        #         card = Card(local_translation=(x, y), scale=350)
-        #         card.init_card(int(number))
-        #         self.my_card_main_scene.add_card_list(card)
-        #         print(f"카드 리스트: {self.my_card_main_scene.get_card_list()}")
-        #         print(f"number: {number}")
-        #
-        #         x += 360
-        #         if len(self.my_card_main_scene.get_card_list()) == 4:
-        #             print(f"카드 리스트 안에 몇 개 있니?: {len(self.my_card_main_scene.get_card_list())}")
-        #             x = 50
-        #             y = 500
-        #
-        #         if len(self.my_card_main_scene.get_card_list()) == 5:
-        #             print(f"카드 리스트 안에 몇 개 있니?: {len(self.my_card_main_scene.get_card_list())}")
-        #             x = 50
-        #             x += 360
-        #
-        #         if len(self.my_card_main_scene.get_card_list()) == 8:
-        #             print(f"카드 리스트 안에 몇 개 있니?: {len(self.my_card_main_scene.get_card_list())}")
-        #             break
-        #
-        #     except Exception as e:
-        #         print(f"Error creating card: {e}")
-        #         pass
 
     def redraw(self):
         if self.show_my_deck_register_screen is True:
@@ -255,46 +242,34 @@ class MyCardMainFrame(OpenGLFrame):
 
     # 2) 다시 그려야 함.
     def drawMyCardMainFrame(self):
-        self.render = MyCardMainFrameRenderer(self.my_card_main_scene, self)
-        self.render.render()
+        if self.show_first_page_card_screen is True:
+            self.render = MyCardMainFrameRenderer(self.my_card_main_scene, self)
+            self.render.render()
 
+    # 텍스트 박스 지우기 위한 텍스트 박스 객체 가져오는 함수
     def getTextBox(self):
         return self.entry
 
+    # 텍스트 박스에 적은 텍스트 가져오기
     def getString(self):
         return self.textbox_string.get()
 
     def second_page_card_draw(self):
-        # all_card_number = self.card_data_read().tolist()
-        # x = 50
-        # y = 50
-        # for number in all_card_number[8:16]:
-        #     try:
-        #         card = Card(local_translation=(x, y), scale=350)
-        #         card.init_card(int(number))
-        #         self.my_card_main_scene.add_card_list(card)
-        #         print(f"카드 리스트: {self.my_card_main_scene.get_card_list()}")
-        #         print(f"number: {number}")
-        #
-        #         x += 360
-        #         if len(self.my_card_main_scene.get_card_list()) == 4:
-        #             print(f"카드 리스트 안에 몇 개 있니?: {len(self.my_card_main_scene.get_card_list())}")
-        #             x = 50
-        #             y = 500
-        #
-        #         if len(self.my_card_main_scene.get_card_list()) == 5:
-        #             print(f"카드 리스트 안에 몇 개 있니?: {len(self.my_card_main_scene.get_card_list())}")
-        #             x = 50
-        #             x += 360
-        #
-        #         # if len(self.my_card_main_scene.get_card_list()) == 8:
-        #         #     print(f"카드 리스트 안에 몇 개 있니?: {len(self.my_card_main_scene.get_card_list())}")
-        #         #     break
-        #
-        #     except Exception as e:
-        #         print(f"Error creating card: {e}")
-        #         pass
+        if self.show_second_page_card_screen is True:
+            self.render = SecondPageCardRenderer(self.my_card_main_scene, self)
+            self.render.render()
 
-        self.render = SecondPageCardRenderer(self.my_card_main_scene, self)
-        self.render.render()
-        #self.drawMyCardMainFrame()
+    def third_page_card_draw(self):
+        if self.show_third_page_card_screen is True:
+            self.render = ThirdPageCardRenderer(self.my_card_main_scene, self)
+            self.render.render()
+
+    def fourth_page_card_draw(self):
+        if self.show_fourth_page_card_screen is True:
+            self.render = FourthPageCardRenderer(self.my_card_main_scene, self)
+            self.render.render()
+
+    def fifth_page_card_draw(self):
+        if self.show_fifth_page_card_screen is True:
+            self.render = FifthPageCardRenderer(self.my_card_main_scene, self)
+            self.render.render()

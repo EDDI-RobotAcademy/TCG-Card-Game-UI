@@ -8,6 +8,7 @@ from battle_lobby_frame.repository.battle_lobby_frame_repository_impl import Bat
 from battle_lobby_frame.service.request.request_deck_name_list_for_battle import RequestDeckNameListForBattle
 from lobby_frame.repository.lobby_menu_frame_repository_impl import LobbyMenuFrameRepositoryImpl
 from lobby_frame.service.lobby_menu_frame_service import LobbyMenuFrameService
+from lobby_frame.service.request.card_list_request import CardListRequest
 from matching_window.controller.matching_window_controller_impl import MatchingWindowControllerImpl
 from lobby_frame.service.request.exit_request import ExitRequest
 from session.repository.session_repository_impl import SessionRepositoryImpl
@@ -37,9 +38,8 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             cls.__instance = cls()
         return cls.__instance
 
-
-
-
+    def __init__(self):
+        self.card_data_list = []
 
     def createLobbyUiFrame(self, rootWindow, switchFrameWithMenuName):
         self.__switchFrameWithMenuName = switchFrameWithMenuName
@@ -65,8 +65,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
         battle_entrance_button.bind("<Button-1>", onClickEntrance)
 
-        my_card_button = tkinter.Button(lobbyMenuFrame, text="내 카드", bg="#2E2BE2", fg="white",
-                                        command=lambda: switchFrameWithMenuName("my-card-main"), width=36,
+        my_card_button = tkinter.Button(lobbyMenuFrame, text="내 카드", bg="#2E2BE2", fg="white", width=36,
                                         height=2)
         my_card_button.place(relx=0.5, rely=0.5, anchor="center")
 
@@ -100,8 +99,38 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
         exit_button.bind("<Button-1>", onClickExit)
 
+        def onClickMyCard(event):
+            try:
+                session_info = self.__sessionRepository.get_session_info()
+                if session_info is not None:
+                    responseData = self.__lobbyMenuFrameRepository.requestAccountCardList(
+                        CardListRequest(session_info))
+
+                    print(f"responseData: {responseData}")
+
+                    if responseData is not None:
+                        server_data = responseData.get("card_id_list")
+
+                        for i, number in enumerate(server_data):
+                            for key in server_data[i].keys():
+                                self.card_data_list.append(int(key))
+                                print(f"서버로 부터 카드 정보 잘 받았니?:{self.card_data_list}")
+
+                        switchFrameWithMenuName("my-card-main")
+
+                    else:
+                        print("Invalid or missing response data.")
+
+            except Exception as e:
+                print(f"An error occurred: {e}")
+
+        my_card_button.bind("<Button-1>", onClickMyCard)
 
         return lobbyMenuFrame
+
+
+    def get_card_data_list(self):
+        return self.card_data_list
 
     def injectTransmitIpcChannel(self, transmitIpcChannel):
         self.__lobbyMenuFrameRepository.saveTransmitIpcChannel(transmitIpcChannel)
