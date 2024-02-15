@@ -23,7 +23,11 @@ class TestBattleFieldFrame(unittest.TestCase):
 
         summon_button.place(x=400, y=10)
 
-        # sleep(1)
+        def animate():
+            window.redraw()
+            root.after(17, animate)
+
+        root.after(0, animate)
 
         root.mainloop()
 
