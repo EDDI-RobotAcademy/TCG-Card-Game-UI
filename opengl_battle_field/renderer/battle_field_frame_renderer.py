@@ -17,11 +17,11 @@ class BattleFieldFrameRenderer:
             for shape in battle_field_panel_shapes:
                 self._render_shape(shape)
 
-        field_list = self.battle_field_scene.get_field()
-        for field in field_list:
-            field_shapes = field.get_field_shapes()
-            for shape in field_shapes:
-                self._render_shape(shape)
+        # field_list = self.battle_field_scene.get_field()
+        # for field in field_list:
+        #     field_shapes = field.get_field_shapes()
+        #     for shape in field_shapes:
+        #         self._render_shape(shape)
 
         unit_card_list = self.battle_field_scene.get_unit_card()
         for unit_card in unit_card_list:
