@@ -71,6 +71,7 @@ class PickingCardLightningBorderWithActivePanelFrame(OpenGLFrame):
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
         self.unit_card_list = []
+        self.active_panel_rectangle = None
         self.selected_object = None
         self.drag_start = None
 
@@ -98,7 +99,7 @@ class PickingCardLightningBorderWithActivePanelFrame(OpenGLFrame):
 
         self.bind("<B1-Motion>", self.on_canvas_drag)
         self.bind("<ButtonRelease-1>", self.on_canvas_release)
-        self.bind("<Button-1>", self.on_canvas_click)
+        self.bind("<Button-1>", self.on_canvas_left_click)
         self.bind("<Configure>", self.on_resize)
         self.bind("<Button-3>", self.on_canvas_right_click)
 
@@ -153,74 +154,70 @@ class PickingCardLightningBorderWithActivePanelFrame(OpenGLFrame):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         for unit_card in self.unit_card_list:
-            if hasattr(unit_card, 'get_tool_card'):
-                # Handle objects with get_tool_card method
-                attached_tool_card = unit_card.get_tool_card()
-                attached_tool_card.draw()
+            attached_tool_card = unit_card.get_tool_card()
+            attached_tool_card.draw()
 
-                pickable_unit_card_base = unit_card.get_pickable_unit_card_base()
-                pickable_unit_card_base.draw()
+            pickable_unit_card_base = unit_card.get_pickable_unit_card_base()
+            pickable_unit_card_base.draw()
 
-                attached_shape_list = pickable_unit_card_base.get_attached_shapes()
+            attached_shape_list = pickable_unit_card_base.get_attached_shapes()
 
-                for attached_shape in attached_shape_list:
-                    attached_shape.draw()
+            for attached_shape in attached_shape_list:
+                attached_shape.draw()
 
-            elif isinstance(unit_card, Rectangle):
-                # Handle Rectangle objects
-                unit_card.draw()
+        if self.active_panel_rectangle:
+            self.active_panel_rectangle.draw()
 
         if self.selected_object:
-            if hasattr(self.selected_object, 'get_pickable_unit_card_base'):
-                pickable_unit_card_base = self.selected_object.get_pickable_unit_card_base()
-                local_translation = pickable_unit_card_base.get_local_translation()
+            pickable_unit_card_base = self.selected_object.get_pickable_unit_card_base()
+            local_translation = pickable_unit_card_base.get_local_translation()
 
-                lightning_segments = generate_lightning(
-                    (
-                        pickable_unit_card_base.vertices[0][0] + local_translation[0] - 50,
-                        pickable_unit_card_base.vertices[0][1] + local_translation[1] - 50
-                    ),
-                    (
-                        pickable_unit_card_base.vertices[2][0] + local_translation[0] + 50,
-                        pickable_unit_card_base.vertices[0][1] + local_translation[1] - 50
-                    ),
-                    10, 5, 0.2, 0.7)
+            lightning_segments = generate_lightning(
+                (
+                    pickable_unit_card_base.vertices[0][0] + local_translation[0] - 50,
+                    pickable_unit_card_base.vertices[0][1] + local_translation[1] - 50
+                ),
+                (
+                    pickable_unit_card_base.vertices[2][0] + local_translation[0] + 50,
+                    pickable_unit_card_base.vertices[0][1] + local_translation[1] - 50
+                ),
+                10, 5, 0.2, 0.7)
 
-                lightning_segments.extend(generate_lightning(
-                    (
-                        pickable_unit_card_base.vertices[2][0] + local_translation[0] + 50,
-                        pickable_unit_card_base.vertices[0][1] + local_translation[1] - 50
-                    ),
-                    (
-                        pickable_unit_card_base.vertices[2][0] + local_translation[0] + 50,
-                        pickable_unit_card_base.vertices[2][1] + local_translation[1] + 50
-                    ),
-                    10, 5, 0.2, 0.7))
+            lightning_segments.extend(generate_lightning(
+                (
+                    pickable_unit_card_base.vertices[2][0] + local_translation[0] + 50,
+                    pickable_unit_card_base.vertices[0][1] + local_translation[1] - 50
+                ),
+                (
+                    pickable_unit_card_base.vertices[2][0] + local_translation[0] + 50,
+                    pickable_unit_card_base.vertices[2][1] + local_translation[1] + 50
+                ),
+                10, 5, 0.2, 0.7))
 
-                lightning_segments.extend(generate_lightning(
-                    (
-                        pickable_unit_card_base.vertices[0][0] + local_translation[0] - 50,
-                        pickable_unit_card_base.vertices[2][1] + local_translation[1] + 50
-                    ),
-                    (
-                        pickable_unit_card_base.vertices[2][0] + local_translation[0] + 50,
-                        pickable_unit_card_base.vertices[2][1] + local_translation[1] + 50
-                    ),
-                    10, 5, 0.2, 0.7))
+            lightning_segments.extend(generate_lightning(
+                (
+                    pickable_unit_card_base.vertices[0][0] + local_translation[0] - 50,
+                    pickable_unit_card_base.vertices[2][1] + local_translation[1] + 50
+                ),
+                (
+                    pickable_unit_card_base.vertices[2][0] + local_translation[0] + 50,
+                    pickable_unit_card_base.vertices[2][1] + local_translation[1] + 50
+                ),
+                10, 5, 0.2, 0.7))
 
-                lightning_segments.extend(generate_lightning(
-                    (
-                        pickable_unit_card_base.vertices[0][0] + local_translation[0] - 50,
-                        pickable_unit_card_base.vertices[0][1] + local_translation[1] - 50
-                    ),
-                    (
-                        pickable_unit_card_base.vertices[0][0] + local_translation[0] - 50,
-                        pickable_unit_card_base.vertices[2][1] + local_translation[1] + 50
-                    ),
-                    10, 5, 0.2, 0.7))
+            lightning_segments.extend(generate_lightning(
+                (
+                    pickable_unit_card_base.vertices[0][0] + local_translation[0] - 50,
+                    pickable_unit_card_base.vertices[0][1] + local_translation[1] - 50
+                ),
+                (
+                    pickable_unit_card_base.vertices[0][0] + local_translation[0] - 50,
+                    pickable_unit_card_base.vertices[2][1] + local_translation[1] + 50
+                ),
+                10, 5, 0.2, 0.7))
 
-                for segment in lightning_segments:
-                    self.draw_lightning_segment(segment)
+            for segment in lightning_segments:
+                self.draw_lightning_segment(segment)
 
         self.tkSwapBuffers()
 
@@ -286,8 +283,8 @@ class PickingCardLightningBorderWithActivePanelFrame(OpenGLFrame):
     def on_canvas_release(self, event):
         self.drag_start = None
 
-    def on_canvas_click(self, event):
-        print(f"on_canvas_click: {event}")
+    def on_canvas_left_click(self, event):
+        print(f"on_canvas_left_click: {event}")
         try:
             x, y = event.x, event.y
             y = self.winfo_reqheight() - y
@@ -296,12 +293,7 @@ class PickingCardLightningBorderWithActivePanelFrame(OpenGLFrame):
                 if isinstance(unit_card, UnitCard):
                     unit_card.selected = False
 
-            # self.selected_object = None
-            if self.selected_object:
-                self.selected_object = None
-                # Remove the selected object if it exists in the unit_card_list
-                self.remove_selected_object()
-                self.redraw()
+            self.selected_object = None
 
             for unit_card in reversed(self.unit_card_list):
                 print("find selected Pickable Rectangle")
@@ -320,6 +312,8 @@ class PickingCardLightningBorderWithActivePanelFrame(OpenGLFrame):
 
                     break
 
+                self.active_panel_rectangle = None
+
             self.redraw()
 
         except Exception as e:
@@ -329,14 +323,17 @@ class PickingCardLightningBorderWithActivePanelFrame(OpenGLFrame):
         print("Right click event")
         x, y = event.x, event.y
         print(f"before x: {x}, y: {y}")
-        # y = self.winfo_reqheight() - y
-        # print(f"after x: {x}, y: {y}")
 
-        new_rectangle = self.create_opengl_rectangle((x, y))
-        print(f"New rectangle: {new_rectangle}")
-        self.unit_card_list.append(new_rectangle)
-        self.selected_object = new_rectangle
-        self.redraw()
+        if self.selected_object:
+            print("check on_canvas_right_click")
+            convert_y = self.winfo_reqheight() - y
+            pickable_unit_card_base = self.selected_object.get_pickable_unit_card_base()
+            if pickable_unit_card_base.is_point_inside((x, convert_y)):
+                print("Right click inside the selected card area")
+                new_rectangle = self.create_opengl_rectangle((x, y))
+                print(f"New rectangle: {new_rectangle}")
+                self.active_panel_rectangle = new_rectangle
+                self.redraw()
 
     def create_opengl_rectangle(self, start_point):
         rectangle_size = 50

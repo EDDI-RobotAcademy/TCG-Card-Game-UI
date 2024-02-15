@@ -20,7 +20,7 @@ class TestActivePanel(unittest.TestCase):
 
         def animate():
             picking_app.redraw()
-            root.after(16, animate)
+            root.after(17, animate)
 
         root.after(0, animate)
 

@@ -1,1 +1,1 @@
-# Just for keep directory
+# You need to place card images here
