@@ -1,7 +1,9 @@
 import math
 import os
 
-from common.utility import get_project_root
+# from common.utility import get_project_root
+# from opengl_pickable_shape.pickable_rectangle import PickableRectangle
+# from opengl_shape.image_rectangle_element import ImageRectangleElement
 from opengl_shape.oval import Oval
 from opengl_shape.shape import Shape
 from OpenGL import GL
@@ -292,12 +294,12 @@ class OpponentMainCharacter:
         self.add_shape(main_character_illustration)
 
     def init_opponent_main_character_shapes(self):
-        radius_y = 100
+        radius_y = 40
         radius_x = radius_y * ((1 + math.sqrt(5)) / 2)
         self.__pre_drawed_image_instance.pre_draw_opponent_main_character()
 
         self.create_main_character(image_data=self.__pre_drawed_image_instance.get_pre_draw_opponent_main_character(),
-                                   center=(960, 150),
+                                   center=(960, 50),
                                    radius_x=radius_x,
                                    radius_y=radius_y)
 
@@ -375,14 +377,51 @@ class YourMainCharacter:
         self.add_shape(main_character_illustration)
 
     def init_your_main_character_shapes(self):
-        radius_y = 100
+        radius_y = 40
         radius_x = radius_y * ((1 + math.sqrt(5)) / 2)
         self.__pre_drawed_image_instance.pre_draw_your_main_character()
 
         self.create_main_character(image_data=self.__pre_drawed_image_instance.get_pre_draw_your_main_character(),
-                                   center=(960, 934),
+                                   center=(960, 1034),
                                    radius_x=radius_x,
                                    radius_y=radius_y)
+
+
+class YourHandPanel:
+    __pre_drawed_image_instance = PreDrawedImage.getInstance()
+
+    def __init__(self, local_translation=(0, 0), scale=1):
+        self.pre_drawed_your_hand = None
+        self.shapes = []
+        self.local_translation = local_translation
+        self.scale = scale
+
+        self.pickable_card_list = []
+
+    def change_local_translation(self, _translation):
+        self.local_translation = _translation
+
+    def get_your_hand_panel_shapes(self):
+        return self.shapes
+
+    def get_pickable_card_list(self):
+        return self.pickable_card_list
+
+    def add_shape(self, shape):
+        shape.local_translate(self.local_translation)
+        self.shapes.append(shape)
+
+    def create_hand_panel(self, image_data, vertices):
+        hand_panel = ImageRectangleElementRefactor(image_data=image_data,
+                                                   vertices=vertices)
+        self.add_shape(hand_panel)
+
+    def init_shapes(self):
+        self.__pre_drawed_image_instance.pre_draw_your_hand_panel()
+
+        self.create_hand_panel(image_data=self.__pre_drawed_image_instance.get_pre_draw_your_hand_panel(),
+                               vertices=[(300, 800), (1600, 800), (1600, 950), (300, 950)])
+
 
 
 
@@ -418,6 +457,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
 
 
+
         self.your_card_deck = YourCardDeck()
         self.your_card_deck.init_shapes()
         self.your_card_deck_shapes = self.your_card_deck.get_your_card_deck_shapes()
@@ -425,6 +465,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_main_character = YourMainCharacter()
         self.your_main_character.init_your_main_character_shapes()
         self.your_main_character_shapes = self.your_main_character.get_main_character_shapes()
+
+        self.your_hand_panel = YourHandPanel()
+        self.your_hand_panel.init_shapes()
+        self.your_hand_panel_shapes = self.your_hand_panel.get_your_hand_panel_shapes()
 
         self.bind("<Configure>", self.on_resize)
 
@@ -470,6 +514,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         for your_main_character_shape in self.your_main_character_shapes:
             your_main_character_shape.draw()
+
+        for your_hand_panel_shape in self.your_hand_panel_shapes:
+            your_hand_panel_shape.draw()
 
         self.tkSwapBuffers()
 
