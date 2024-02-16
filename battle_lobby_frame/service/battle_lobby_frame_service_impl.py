@@ -1,5 +1,7 @@
 import tkinter
 
+from battle_field.infra.battle_field_repository import BattleFieldRepository
+from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
 from battle_lobby_frame.repository.battle_lobby_frame_repository_impl import BattleLobbyFrameRepositoryImpl
 from battle_lobby_frame.service.battle_lobby_frame_service import BattleLobbyFrameService
@@ -29,6 +31,8 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
             cls.__instance.__battleLobbyFrameRepository = BattleLobbyFrameRepositoryImpl.getInstance()
             cls.__instance.__sessionRepository = SessionRepositoryImpl.getInstance()
             cls.__instance.__battleFieldFunctionController = BattleFieldFunctionControllerImpl.getInstance()
+            # cls.__instance.__battleFieldStateRepository = BattleFieldRepository.getInstance()
+            cls.__instance.__yourHandRepository = YourHandRepository.getInstance()
         return cls.__instance
 
     @classmethod
@@ -55,8 +59,14 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
                 )
 
                 print(f"BattleLobbyFrameService response: {response}")
-                if response is not None and response != "":
+                if response is not None and 'hand_card_list' in response:
                     self.__battleLobbyFrameRepository.exitBattleLobby()
+
+                    hand_card_list = response['hand_card_list']
+
+                    print(f"hand_card_list: {hand_card_list}")
+                    self.__yourHandRepository.save_current_hand_state(hand_card_list)
+
                     # opponentId = response.get("opponentSessionId")
                     # TODO : battleField 도메인을 호출하여 프레임을 전환해야합니다.
                     switchFrameWithMenuName('battle-field')
