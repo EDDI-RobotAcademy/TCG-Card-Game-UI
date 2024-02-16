@@ -49,7 +49,8 @@ class TestFrame(OpenGLFrame):
 
 class TestOpenGLShapeDrawer(unittest.TestCase):
 
-    def test_opengl_shaper_create_rectangle(self):
+    # TODO: need to refactor below functions
+    def test_todo_opengl_shaper_create_rectangle(self):
         opengl_shape_drawer_service = OpenglShapeDrawerServiceImpl.getInstance()
         rectangle_id = opengl_shape_drawer_service.create_rectangle(
             color=(0.6, 0.4, 0.6, 1.0),

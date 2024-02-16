@@ -1,8 +1,6 @@
 import tkinter
 import unittest
 
-from tests.ugly_mouse_picking.test_circle_on_pickable_rectangle import CustomOpenGLFrame
-
 
 class test_ugly_click_and_drop(unittest.TestCase):
 

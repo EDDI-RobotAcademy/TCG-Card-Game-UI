@@ -1,6 +1,7 @@
 import unittest
+
+from app_window.service.window_service_impl import WindowServiceImpl
 from task_worker.service.task_worker_service_impl import TaskWorkerServiceImpl
-from window.service.window_service_impl import WindowServiceImpl
 
 
 class TestDomainInitializer(unittest.TestCase):

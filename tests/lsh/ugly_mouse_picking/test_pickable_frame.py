@@ -1,9 +1,9 @@
 import tkinter
 import unittest
 
-from tests.ugly_mouse_picking.entity.pickable_object import PickableObject
-from tests.ugly_mouse_picking.frame.pickable_frame import PickableFrame
-from tests.ugly_mouse_picking.renderer.pickable_renderer import PickableRenderer
+from tests.lsh.ugly_mouse_picking.entity.pickable_object import PickableObject
+from tests.lsh.ugly_mouse_picking.frame.pickable_frame import PickableFrame
+from tests.lsh.ugly_mouse_picking.renderer.pickable_renderer import PickableRenderer
 
 
 class TestUglyAnimationFrame(unittest.TestCase):

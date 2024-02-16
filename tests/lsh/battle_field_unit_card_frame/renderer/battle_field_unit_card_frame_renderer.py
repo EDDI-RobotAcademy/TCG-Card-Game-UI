@@ -2,7 +2,7 @@ from OpenGL import GL
 from PIL import Image
 import numpy as np
 
-from tests.battle_field_unit_card_frame.entity.rectangle import Rectangle
+from tests.lsh.battle_field_unit_card_frame.entity.rectangle import Rectangle
 
 
 class BattleFieldUnitCardFrameRenderer:
