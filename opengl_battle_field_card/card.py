@@ -1,6 +1,7 @@
 import os
 
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
+from image_shape.rectangle_image import RectangleImage
 from opengl_pickable_shape.pickable_rectangle import PickableRectangle
 from common.utility import get_project_root
 from opengl_shape.image_rectangle_element import ImageRectangleElement
@@ -60,9 +61,9 @@ class Card:
         return pickable_card_base
 
     def create_illustration(self, image_data, vertices, local_translation):
-        card_illustration = ImageRectangleElementRefactor(image_data=image_data,
-                                                          local_translation=local_translation,
-                                                          vertices=vertices)
+        card_illustration = RectangleImage(image_data=image_data,
+                                           local_translation=local_translation,
+                                           vertices=vertices)
         return card_illustration
 
     def create_equipped_mark(self, image_path, vertices, local_translation):
@@ -107,23 +108,23 @@ class Card:
             )
         )
 
-        self.pickable_card_base.set_attached_shapes(
-            self.create_equipped_mark(
-                image_path=os.path.join(project_root, "local_storage", "card_images", "equip_white.jpg"),
-                local_translation=self.local_translation,
-                vertices=[(rectangle_width + 40, 30), (rectangle_width + 80, 30), (rectangle_width + 80, 70), (rectangle_width + 40, 70)]
-            )
-        )
+        # self.pickable_card_base.set_attached_shapes(
+        #     self.create_equipped_mark(
+        #         image_path=os.path.join(project_root, "local_storage", "card_images", "equip_white.jpg"),
+        #         local_translation=self.local_translation,
+        #         vertices=[(rectangle_width + 40, 30), (rectangle_width + 80, 30), (rectangle_width + 80, 70), (rectangle_width + 40, 70)]
+        #     )
+        # )
 
         card_controller_shapes = card_controller.getCardTypeTable(self.card_info.getCardTypeForCardNumber(card_number))
         card_shapes = card_controller_shapes(self.local_translation, card_number, rectangle_height, rectangle_width)
         for shape in card_shapes:
             self.pickable_card_base.set_attached_shapes(shape)
 
-        self.pickable_card_base.set_attached_shapes(
-            self.create_card_background_rectangle(
-                image_path=os.path.join(project_root, "local_storage", "card_images", "background.png"),
-                local_translation=self.local_translation,
-                vertices=[(0, 0), (rectangle_width, 0), (rectangle_width, rectangle_height), (0, rectangle_height)]
-            )
-        )
+        # self.pickable_card_base.set_attached_shapes(
+        #     self.create_card_background_rectangle(
+        #         image_path=os.path.join(project_root, "local_storage", "card_images", "background.png"),
+        #         local_translation=self.local_translation,
+        #         vertices=[(0, 0), (rectangle_width, 0), (rectangle_width, rectangle_height), (0, rectangle_height)]
+        #     )
+        # )
