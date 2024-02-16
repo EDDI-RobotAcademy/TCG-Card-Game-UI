@@ -1,6 +1,6 @@
 import tkinter as tk
 
-from text_field.text_entity import TextEntity
+from text_field_legacy.text_entity import TextEntity
 
 
 class TextBox(TextEntity):

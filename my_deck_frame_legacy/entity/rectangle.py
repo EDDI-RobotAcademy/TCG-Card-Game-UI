@@ -1,7 +1,7 @@
 from OpenGL.GL import *
 import random
 
-from my_deck_frame.entity.shape import Shape
+from my_deck_frame_legacy.entity.shape import Shape
 
 
 class Rectangle(Shape):
