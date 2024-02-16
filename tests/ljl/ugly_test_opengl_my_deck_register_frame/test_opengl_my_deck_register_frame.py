@@ -62,6 +62,8 @@ class RectDrawingApp(OpenGLFrame):
         project_root = get_project_root()
         glClear(GL_COLOR_BUFFER_BIT)
         glClearColor(0.0, 1.0, 0.0, 0.0)
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         # 배경 이미지 도형
         background_rectangle = ImageRectangleElement(image_path=os.path.join(project_root, "local_storage", "image", "battle_lobby", "background.png"),
@@ -88,6 +90,23 @@ class RectDrawingApp(OpenGLFrame):
             for attached_shape in attached_shape_list:
                 attached_shape.draw()
 
+        # 검정 투명 화면
+        alpha_rectangle = Rectangle(color=(0.0, 0.0, 0.0, 0.8),
+                                     local_translation=(0, 0),
+                                     vertices=[(0, 0), (self.width, 0), (self.width, self.height), (0, self.height)])
+        alpha_rectangle.draw()
+
+        center_x = 0.5*self.width
+        center_y = 0.5*self.height
+        # 덱 생성 화면
+        deck_register_rectangle = Rectangle(color=(0.5137, 0.3608, 0.2314, 1.0),
+                                            local_translation=(0, 0),
+                                            vertices=[(center_x-0.5*0.5*self.width, center_y-0.5*0.5*self.height),
+                                                      (center_x+0.5*0.5*self.width, center_y-0.5*0.5*self.height),
+                                                      (center_x+0.5*0.5*self.width, center_y+0.5*0.5*self.height),
+                                                      (center_x-0.5*0.5*self.width, center_y+0.5*0.5*self.height)])
+        deck_register_rectangle.draw()
+
         self.tkSwapBuffers()
 
     # csv 파일 읽어오기
@@ -95,7 +114,7 @@ class RectDrawingApp(OpenGLFrame):
         currentLocation = os.getcwd()
         print(f"currentLocation: {currentLocation}")
 
-        data_card = pandas.read_csv('../../local_storage/card/data.csv')
+        data_card = pandas.read_csv('../../../local_storage/card/data.csv')
         data_card_number = data_card['카드번호']
 
         print(data_card_number)

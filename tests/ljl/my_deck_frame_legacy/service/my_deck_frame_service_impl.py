@@ -1,7 +1,7 @@
 import tkinter
 
-from tests.my_deck_frame_legacy.repository.my_deck_frame_repository_impl import MyDeckFrameRepositoryImpl
-from tests.my_deck_frame_legacy.service.my_deck_frame_service import MyDeckFrameService
+from tests.ljl.my_deck_frame_legacy.repository.my_deck_frame_repository_impl import MyDeckFrameRepositoryImpl
+from tests.ljl.my_deck_frame_legacy.service.my_deck_frame_service import MyDeckFrameService
 
 class MyDeckFrameServiceImpl(MyDeckFrameService):
     __instance = None
