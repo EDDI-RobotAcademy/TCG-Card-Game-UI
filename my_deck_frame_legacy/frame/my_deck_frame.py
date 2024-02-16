@@ -3,9 +3,9 @@ import os
 from pyopengltk import OpenGLFrame
 from OpenGL import GL, GLU
 
-from my_deck_frame.entity.my_deck_frame_scene import MyDeckFrameScene
-from my_deck_frame.entity.rectangle import Rectangle
-from my_deck_frame.renderer.my_deck_frame_renderer import MyDeckFrameRenderer
+from my_deck_frame_legacy.entity.my_deck_frame_scene import MyDeckFrameScene
+from my_deck_frame_legacy.entity.rectangle import Rectangle
+from my_deck_frame_legacy.renderer.my_deck_frame_renderer import MyDeckFrameRenderer
 
 
 class MyDeckFrame(OpenGLFrame):

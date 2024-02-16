@@ -1,4 +1,4 @@
-from text_field.text_entity import TextEntity
+from text_field_legacy.text_entity import TextEntity
 from OpenGL.GL import *
 from PIL.ImageFont import ImageFont
 import tkinter as tk

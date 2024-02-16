@@ -6,6 +6,7 @@ from card_info_from_csv.repository.card_info_from_csv_repository import CardInfo
 
 class CardInfoFromCsvRepositoryImpl(CardInfoFromCsvRepository):
     __instance = None
+    __cardNumberDictionary = []
     __cardNameDictionary = {}
     __cardRaceDictionary = {}
     __cardGradeDictionary = {}
@@ -39,6 +40,7 @@ class CardInfoFromCsvRepositoryImpl(CardInfoFromCsvRepository):
             try:
                 cardInfo = CardInfoFromCsv(record)
 
+                self.__cardNumberDictionary.append(cardInfo.getCardNumber())
                 self.__cardNameDictionary[cardInfo.getCardNumber()] = cardInfo.getCardName()
                 self.__cardRaceDictionary[cardInfo.getCardNumber()] = cardInfo.getCardRace()
                 self.__cardGradeDictionary[cardInfo.getCardNumber()] = cardInfo.getCardGrade()
@@ -52,6 +54,9 @@ class CardInfoFromCsvRepositoryImpl(CardInfoFromCsvRepository):
             except Exception as e:
                 print("Error : {0}".format(e))
 
+    def getCardNumber(self):
+        print(f"self.__cardNumberDictionary : {self.__cardNumberDictionary}")
+        return self.__cardNumberDictionary
 
     def getCardNameForCardNumber(self, cardNumber):
         return self.__cardNameDictionary[cardNumber]

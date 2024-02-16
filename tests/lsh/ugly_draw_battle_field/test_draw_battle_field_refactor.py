@@ -46,7 +46,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.opponent_card_deck = OpponentDeck()
         self.opponent_card_deck.init_shapes()
-        self.opponent_card_deck_shapes = self.opponent_card_deck.get_opponent_card_deck_shapes()
+        self.opponent_card_deck_shapes = self.opponent_card_deck.get_opponent_deck_shapes()
 
         self.opponent_main_character = OpponentMainCharacter()
         self.opponent_main_character.init_opponent_main_character_shapes()
@@ -74,7 +74,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.your_card_deck = YourDeck()
         self.your_card_deck.init_shapes()
-        self.your_card_deck_shapes = self.your_card_deck.get_your_card_deck_shapes()
+        self.your_card_deck_shapes = self.your_card_deck.get_your_deck_shapes()
 
         self.your_main_character = YourMainCharacter()
         self.your_main_character.init_your_main_character_shapes()

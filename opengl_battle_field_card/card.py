@@ -6,10 +6,13 @@ from common.utility import get_project_root
 from opengl_shape.image_rectangle_element import ImageRectangleElement
 from opengl_shape.rectangle import Rectangle
 from opengl_battle_field_card_controller.card_controller_impl import CardControllerImpl
+from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
+from tests.lsh.ugly_draw_battle_field.test_draw_battle_field import ImageRectangleElementRefactor
 
 
 class Card:
     __imagePath = None
+    __pre_drawed_image_instance = PreDrawedImage.getInstance()
     def __init__(self, local_translation=(0, 0), scale=200):
         self.tool_card = None
         self.pickable_card_base = None
@@ -56,10 +59,10 @@ class Card:
         pickable_card_base.set_draw_gradient(True)
         return pickable_card_base
 
-    def create_illustration(self, image_path, vertices, local_translation):
-        card_illustration = ImageRectangleElement(image_path=image_path,
-                                                  local_translation=local_translation,
-                                                  vertices=vertices)
+    def create_illustration(self, image_data, vertices, local_translation):
+        card_illustration = ImageRectangleElementRefactor(image_data=image_data,
+                                                          local_translation=local_translation,
+                                                          vertices=vertices)
         return card_illustration
 
     def create_equipped_mark(self, image_path, vertices, local_translation):
@@ -98,7 +101,7 @@ class Card:
 
         self.pickable_card_base.set_attached_shapes(
             self.create_illustration(
-                image_path=os.path.join(project_root, "local_storage", "card_images", f"{card_number}.png"),
+                image_data=self.__pre_drawed_image_instance.get_pre_draw_card_illustration_for_card_number(card_number),
                 local_translation=self.local_translation,
                 vertices=[(15, 15), (rectangle_width - 15, 15), (rectangle_width - 15, rectangle_width - 15), (15, rectangle_width - 15)]
             )
