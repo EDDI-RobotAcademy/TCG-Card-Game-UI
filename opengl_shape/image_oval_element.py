@@ -51,6 +51,7 @@ class ImageOvalElement(Shape):
                 glVertex2f(x, y)
             glEnd()
             GL.glDisable(GL.GL_TEXTURE_2D)
+            GL.glBindTexture(GL.GL_TEXTURE_2D, 0)
 
     def load_image_date(self, image_path):
         image = Image.open(image_path)
