@@ -1,14 +1,17 @@
 import os
 
+from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.utility import get_project_root
 from utility.image_data_loader import ImageDataLoader
 
 
 class PreDrawedImage:
     __instance = None
+    __card_info_from_csv_repository_impl = CardInfoFromCsvRepositoryImpl().getInstance()
 
     __project_root = get_project_root()
 
+    __pre_drawed_card_illustration = {}
     __pre_drawed_opponent_tomb = None
     __pre_drawed_opponent_lost_zone = None
     __pre_drawed_opponent_trap = None
@@ -98,6 +101,12 @@ class PreDrawedImage:
         battle_field_environment_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "environment.jpeg")
         self.__pre_drawed_battle_field_environment = ImageDataLoader.load_rectangle_image_data(battle_field_environment_image_path)
 
+    def pre_draw_card_illustration(self):
+        for card_number in self.__card_info_from_csv_repository_impl.getCardNumber():
+            card_illustration_image_path = os.path.join(self.__project_root, "local_storage", "card_images", f"{card_number}.png")
+            self.__pre_drawed_card_illustration[card_number] = ImageDataLoader.load_rectangle_image_data(card_illustration_image_path)
+
+
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
         self.pre_draw_opponent_lost_zone()
@@ -116,6 +125,7 @@ class PreDrawedImage:
         self.pre_draw_your_unit_field()
 
         self.pre_draw_battle_field_environment()
+        self.pre_draw_card_illustration()
 
     def get_pre_draw_opponent_tomb(self):
         return self.__pre_drawed_opponent_tomb
@@ -161,3 +171,6 @@ class PreDrawedImage:
 
     def get_pre_draw_battle_field_environment(self):
         return self.__pre_drawed_battle_field_environment
+
+    def get_pre_draw_card_illustration_for_card_number(self, card_number):
+        return self.__pre_drawed_card_illustration[card_number]

@@ -59,6 +59,7 @@ class ImageCircleElement(Shape):
     def _load_image_data(self, path):
         image = Image.open(path)
         width, height = image.size
+        # image = image.convert("RGB")
         image_data = image.tobytes("raw", "RGB", 0, 1)# issue
 
         texture_id = glGenTextures(1)
