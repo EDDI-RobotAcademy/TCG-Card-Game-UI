@@ -22,6 +22,10 @@ class LobbyMenuFrameRepository(abc.ABC):
     def requestProgramExit(self, exitRequest):
         pass
 
+    @abc.abstractmethod
+    def requestAccountCardList(self, cardListRequest):
+        pass
+
 
 
 

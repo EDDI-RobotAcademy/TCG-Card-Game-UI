@@ -16,6 +16,7 @@ class Card:
         self.local_translation = local_translation
         self.scale = scale
         self.card_number = None
+        self.card_info = CardInfoFromCsvRepositoryImpl()
 
     def get_card_number(self):
         return self.card_number
@@ -75,9 +76,9 @@ class Card:
         rectangle_width = self.scale / 1.618
         project_root = get_project_root()
 
-        cardInfo = CardInfoFromCsvRepositoryImpl.getInstance()
-        csvInfo = cardInfo.readCardData(os.path.join(project_root, 'local_storage', 'card', 'data.csv'))
-        cardInfo.build_dictionaries(csvInfo)
+        # cardInfo = CardInfoFromCsvRepositoryImpl.getInstance()
+        # csvInfo = cardInfo.readCardData(os.path.join(project_root, 'local_storage', 'card', 'data.csv'))
+        # cardInfo.build_dictionaries(csvInfo)
 
         CardControllerImpl()
         card_controller = CardControllerImpl.getInstance()
@@ -111,7 +112,7 @@ class Card:
             )
         )
 
-        card_controller_shapes = card_controller.getCardTypeTable(cardInfo.getCardTypeForCardNumber(card_number))
+        card_controller_shapes = card_controller.getCardTypeTable(self.card_info.getCardTypeForCardNumber(card_number))
         card_shapes = card_controller_shapes(self.local_translation, card_number, rectangle_height, rectangle_width)
         for shape in card_shapes:
             self.pickable_card_base.set_attached_shapes(shape)

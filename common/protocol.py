@@ -16,8 +16,7 @@ class CustomProtocol(Enum):
     BATTLE_DECK_LIST = 16 #16
     BATTLE_DECK_CARD = 17 #17
 
-
-
+    ACCOUNT_CARD_LIST = 31
     ACCOUNT_DECK_REGISTER = 41
 
     MULLIGAN_CARD = 1012

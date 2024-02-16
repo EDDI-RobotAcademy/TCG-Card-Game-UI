@@ -24,7 +24,7 @@ class GoToBackLobbyFrame:
             print(f"create deck register Error : {e}")
 
     def check_collision(self, x, y, vertices):
-        print(f"checking collision: x: {x}, y: {y}")
+        # print(f"checking collision: x: {x}, y: {y}")
         x_min, y_min = min(v[0] for v in vertices), min(v[1] for v in vertices)
         x_max, y_max = max(v[0] for v in vertices), max(v[1] for v in vertices)
         return x_min <= x <= x_max and y_min <= -y <= y_max
