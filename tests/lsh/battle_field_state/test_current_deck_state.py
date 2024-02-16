@@ -22,8 +22,7 @@ class TestCurrentDeck(unittest.TestCase):
         self.assertEqual(drawn_card, "Card1")
         self.assertEqual(self.current_deck.get_deck_size(), 2)
 
-        # Drawing from an empty deck
-        self.current_deck.draw_card()  # No assertion needed, just check console output
+        self.current_deck.draw_card()
 
     def test_get_deck_size(self):
         self.assertEqual(self.current_deck.get_deck_size(), 0)
