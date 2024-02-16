@@ -11,7 +11,7 @@ class OpponentDeck:
         self.local_translation = local_translation
         self.scale = scale
 
-    def get_opponent_card_deck_shapes(self):
+    def get_opponent_deck_shapes(self):
         return self.shapes
 
     def change_local_translation(self, _translation):
