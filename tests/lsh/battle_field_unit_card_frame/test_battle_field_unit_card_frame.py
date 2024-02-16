@@ -1,7 +1,7 @@
 import tkinter
 import unittest
 
-from tests.battle_field_unit_card_frame.frame.battle_field_unit_card_frame import BattleFieldUnitCardFrame
+from tests.lsh.battle_field_unit_card_frame.frame.battle_field_unit_card_frame import BattleFieldUnitCardFrame
 
 
 class TestBattleFieldUnitCardFrame(unittest.TestCase):

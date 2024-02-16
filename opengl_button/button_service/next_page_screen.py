@@ -31,7 +31,6 @@ class NextPageScreen:
     def handle_page_transition(self):
         current_page = self.page_manager.get_current_page()
 
-
         if current_page == 2:
             print(f"현재 페이지는?{self.page_manager.get_current_page}")
             self.my_card_main_frame.clear_screen()
@@ -40,26 +39,31 @@ class NextPageScreen:
             self.my_card_main_frame.second_page_card_draw()
             print("현재 2 페이지 입니다.")
 
-        elif current_page == 3:
-            self.my_card_main_frame.show_second_page_card_screen = False
-            self.my_card_main_frame.clear_screen()
-            self.my_card_main_frame.show_third_page_card_screen = True
-            self.my_card_main_frame.third_page_card_draw()
-            print("현재 3 페이지 입니다.")
+        # 2 페이지 에서 버튼을 더 눌러도 current_page 숫자 안 올라감!
+        elif current_page >= 3:
+            self.page_manager.init_current_page_next_button()
+            print("마지막 페이지 입니다. 더 이상 이동할 페이지가 없습니다.")
 
-        elif current_page == 4:
-            self.my_card_main_frame.show_third_page_card_screen = False
-            self.my_card_main_frame.clear_screen()
-            self.my_card_main_frame.show_fourth_page_card_screen = True
-            self.my_card_main_frame.fourth_page_card_draw()
-            print("현재 4 페이지 입니다.")
-
-        elif current_page == 5:
-            self.my_card_main_frame.show_fourth_page_card_screen = False
-            self.my_card_main_frame.clear_screen()
-            self.my_card_main_frame.show_fifth_page_card_screen = True
-            self.my_card_main_frame.fifth_page_card_draw()
-            print("현재 5 페이지 입니다.")
+        # elif current_page == 3:
+        #     self.my_card_main_frame.show_second_page_card_screen = False
+        #     self.my_card_main_frame.clear_screen()
+        #     self.my_card_main_frame.show_third_page_card_screen = True
+        #     self.my_card_main_frame.third_page_card_draw()
+        #     print("현재 3 페이지 입니다.")
+        #
+        # elif current_page == 4:
+        #     self.my_card_main_frame.show_third_page_card_screen = False
+        #     self.my_card_main_frame.clear_screen()
+        #     self.my_card_main_frame.show_fourth_page_card_screen = True
+        #     self.my_card_main_frame.fourth_page_card_draw()
+        #     print("현재 4 페이지 입니다.")
+        #
+        # elif current_page == 5:
+        #     self.my_card_main_frame.show_fourth_page_card_screen = False
+        #     self.my_card_main_frame.clear_screen()
+        #     self.my_card_main_frame.show_fifth_page_card_screen = True
+        #     self.my_card_main_frame.fifth_page_card_draw()
+        #     print("현재 5 페이지 입니다.")
 
 
     def check_collision(self, x, y, vertices):

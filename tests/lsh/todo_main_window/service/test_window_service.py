@@ -9,9 +9,9 @@ class TestWindowServiceImpl(unittest.TestCase):
         window_service = WindowServiceImpl.getInstance()
         menu_name = "TestMenu"
 
-        window_service.createStartWindow(menu_name)
+        window_service.createRootWindow(menu_name)
 
-        window_service.createStartWindow(
+        window_service.createRootWindow(
             menu_name
         )
 
