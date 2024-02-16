@@ -55,6 +55,7 @@ class ImageCircleElement(Shape):
             GL.glEnd()
 
             GL.glDisable(GL.GL_TEXTURE_2D)
+            GL.glBindTexture(GL.GL_TEXTURE_2D, 0)
 
     def _load_image_data(self, path):
         image = Image.open(path)

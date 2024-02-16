@@ -63,4 +63,5 @@ class OvalImage(Shape):
 
                 glEnd()
                 GL.glDisable(GL.GL_TEXTURE_2D)
+                glBindTexture(GL.GL_TEXTURE_2D, 0)
                 

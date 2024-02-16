@@ -8,6 +8,7 @@ from client_socket.service.client_socket_service_impl import ClientSocketService
 from account_login_frame.service.login_menu_frame_service_impl import LoginMenuFrameServiceImpl
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
 from music_player.controller.music_player_controller_impl import MusicPlayerControllerImpl
+from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from receiver.controller.receiver_controller_impl import ReceiverControllerImpl
 from response_generator.repository.response_generator_repository_impl import ResponseGeneratorRepositoryImpl
 from task_worker.service.task_worker_service_impl import TaskWorkerServiceImpl
@@ -75,6 +76,10 @@ class DomainInitializer:
         cardInfoFromCsvController = CardInfoFromCsvControllerImpl.getInstance()
         cardInfoFromCsvController.requestToCardInfoSettingInMemory()
 
+    @classmethod
+    def initPreDrawedImageDomain(cls):
+        pre_drawed_image_manager = PreDrawedImage.getInstance()
+        pre_drawed_image_manager.pre_draw_every_image()
 
     @staticmethod
     def initEachDomain():
@@ -104,6 +109,9 @@ class DomainInitializer:
 
         # Read Csv File Domain
         DomainInitializer.initReadCsvFileDomain()
+
+        # Pre Drawed Image Domain
+        DomainInitializer.initPreDrawedImageDomain()
 
 
 

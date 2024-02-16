@@ -70,3 +70,4 @@ class CircleImage(Shape):
             GL.glEnd()
 
             GL.glDisable(GL.GL_TEXTURE_2D)
+            glBindTexture(GL.GL_TEXTURE_2D, 0)
