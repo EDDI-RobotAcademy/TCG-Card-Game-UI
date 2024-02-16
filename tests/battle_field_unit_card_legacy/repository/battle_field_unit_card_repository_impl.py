@@ -2,9 +2,9 @@ import os
 
 from tests.battle_field_unit_card_legacy.entity.unit_card import UnitCard
 from tests.battle_field_unit_card_legacy.repository.battle_field_unit_card_repository import BattleFieldUnitCardRepository
-from tests.opengl_shape_legacy.entity.circle import Circle
-from tests.opengl_shape_legacy.entity.image_item import ImageItem
-from tests.opengl_shape_legacy.entity.rectangle import Rectangle
+from tests.jsh.opengl_shape_legacy.entity.circle import Circle
+from tests.jsh.opengl_shape_legacy.entity.image_item import ImageItem
+from tests.jsh.opengl_shape_legacy.entity.rectangle import Rectangle
 
 
 class BattleFieldUnitCardRepositoryImpl(BattleFieldUnitCardRepository):
