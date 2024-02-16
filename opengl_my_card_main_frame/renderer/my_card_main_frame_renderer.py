@@ -24,8 +24,8 @@ class MyCardMainFrameRenderer:
             print(f"버튼 그리기: {button}")
             self._render_shape(button)
 
-        for card in self.scene.card_list[:10]:
-            print(f"카드 리스트 몇 개임? {len(self.scene.card_list[:10])}")
+        for card in self.scene.card_list[:8]:
+            print(f"카드 리스트 몇 개임? {len(self.scene.card_list[:8])}")
             attached_tool_card = card.get_tool_card()
             attached_tool_card.draw()
 
