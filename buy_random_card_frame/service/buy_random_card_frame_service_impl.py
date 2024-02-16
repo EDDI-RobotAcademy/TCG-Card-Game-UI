@@ -6,6 +6,7 @@ from buy_random_card_frame.service.buy_random_card_frame_service import BuyRando
 from buy_random_card_frame.service.request.buy_random_card_request import BuyRandomCardRequest
 from card_shop_frame.repository.card_shop_repository_impl import CardShopMenuFrameRepositoryImpl
 from session.service.session_service_impl import SessionServiceImpl
+from opengl_battle_field_card.card import Card
 
 
 class BuyRandomCardFrameServiceImpl(BuyRandomCardFrameService):
@@ -29,7 +30,6 @@ class BuyRandomCardFrameServiceImpl(BuyRandomCardFrameService):
     def Gacha(self):
         testRace = self.__cardShopMenuFrameRepository.getRace()
         print(f"testRace: {testRace}")
-        self.__label.configure(text=testRace)
         return testRace
 
     def buyRandomCardRequest(self):
@@ -55,14 +55,16 @@ class BuyRandomCardFrameServiceImpl(BuyRandomCardFrameService):
         # print(responseData)
         # card = [value for value in responseData]
 
-
+        card = [2, 8, 10, 15, 23, 27, 30, 45, 57, 44]
 
         self.__label = tkinter.Label(BuyRandomCardFrame, font=("Helvetica", 64), fg="black",
                               anchor="center", justify="center")
         self.__label.place(relx=0.3, rely=0.95, anchor="center", bordermode="outside")  # 가운데 정렬
 
-        BuyRandomCardFrame1 = self.__cardBackFrameService.createCardBackUiFrame(BuyRandomCardFrame)
-        BuyRandomCardFrame1.place(relx=0.15, rely=0.25, relwidth=0.15, relheight=0.38, anchor="center")
+        first_card = Card(local_translation=(100, 100))
+        first_card.init_card(card[0])
+
+        # self.card_list.append(first_card)
 
         BuyRandomCardFrame2 = self.__cardBackFrameService.createCardBackUiFrame(BuyRandomCardFrame)
         BuyRandomCardFrame2.place(relx=0.33, rely=0.25, relwidth=0.15, relheight=0.38, anchor="center")

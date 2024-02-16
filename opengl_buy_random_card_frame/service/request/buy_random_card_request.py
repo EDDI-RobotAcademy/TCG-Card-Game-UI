@@ -15,5 +15,4 @@ class BuyRandomCardRequest:
         }
 
     def __str__(self):
-        return (f"BuyRandomCardRequest(protocolNumber={self.__protocolNumber}, sessionInfo={self.__sessionInfo},"
-                f"race={self.__race})")
+        return f"BuyRandomCardRequest(protocolNumber={self.__protocolNumber}, sessionInfo={self.__sessionInfo}race={self.__race})"

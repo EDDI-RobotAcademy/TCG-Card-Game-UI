@@ -19,6 +19,9 @@ class CustomProtocol(Enum):
     ACCOUNT_CARD_LIST = 31
     ACCOUNT_DECK_REGISTER = 41
 
+    BUY_CARD = 72
+    CHECK_MONEY = 73
+
     MULLIGAN_CARD = 1012
     TURN_END = 1013
 
@@ -34,7 +37,7 @@ class CustomProtocol(Enum):
     UNIT_ATTACK = 1021
     UNIT_FIRST_SKILL = 1022
     UNIT_SECOND_SKILL = 1023
-    BUY_CARD = 71
+
 
     SURRENDER = 4443
     PROGRAM_EXIT = 4444

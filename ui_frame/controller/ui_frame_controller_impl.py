@@ -9,7 +9,7 @@ from main_frame.service.main_menu_frame_service_impl import MainMenuFrameService
 from matching_window.service.matching_window_service_impl import MatchingWindowServiceImpl
 from opengl_battle_field.frame.battle_field_frame import BattleFieldFrame
 from opengl_my_card_main_frame.service.my_card_main_frame_service_impl import MyCardMainFrameServiceImpl
-from buy_random_card_frame.service.buy_random_card_frame_service_impl import BuyRandomCardFrameServiceImpl
+from opengl_buy_random_card_frame.service.buy_random_card_frame_service_impl import BuyRandomCardFrameServiceImpl
 # from card_random_frame.service.card_random_frame_service_impl import CardRandomFrameServiceImpl
 from opengl_my_deck_register_frame.service.my_deck_register_frame_service_impl import MyDeckRegisterFrameServiceImpl
 
@@ -114,6 +114,8 @@ class UiFrameControllerImpl(UiFrameController):
         self.__myDeckRegisterFrameService.injectTransmitIpcChannel(transmitIpcChannel)
         self.__matchingWindowService.injectTransmitIpcChannel(transmitIpcChannel)
 
+        self.__cardShopMenuFrameService.injectTransmitIpcChannel(transmitIpcChannel)
+
 
     def requestToInjectReceiveIpcChannel(self, receiveIpcChannel):
         print("UiFrameControllerImpl: requestToInjectReceiveIpcChannel()")
@@ -130,6 +132,8 @@ class UiFrameControllerImpl(UiFrameController):
 
         self.__myDeckRegisterFrameService.injectReceiveIpcChannel(receiveIpcChannel)
         self.__matchingWindowService.injectReceiveIpcChannel(receiveIpcChannel)
+
+        self.__cardShopMenuFrameService.injectReceiveIpcChannel(receiveIpcChannel)
 
 
     def requestToInjectMusicPlayIpcChannel(self, musicPlayIpcChannel):
