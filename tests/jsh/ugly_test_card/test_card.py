@@ -2,7 +2,7 @@ import tkinter
 import unittest
 
 from initializer.init_domain import DomainInitializer
-from tests.ugly_test_card.fram.card_frame import CardFrame
+from tests.jsh.ugly_test_card.fram.card_frame import CardFrame
 
 
 class TestCard(unittest.TestCase):

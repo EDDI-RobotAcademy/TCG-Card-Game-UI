@@ -1,4 +1,4 @@
-from tests.opengl_shape_legacy.entity.shape import Shape
+from tests.jsh.opengl_shape_legacy.entity.shape import Shape
 
 
 class Rectangle(Shape):
