@@ -206,7 +206,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 attached_shape.update_vertices(new_attached_shape_vertices)
 
             self.drag_start = (x, y)
-            self.redraw()
+            # self.redraw()
 
     def on_canvas_release(self, event):
         self.drag_start = None
@@ -236,7 +236,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                     break
 
-            self.redraw()
+            # self.redraw()
 
         except Exception as e:
             print(f"Exception in on_canvas_click: {e}")
@@ -251,7 +251,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 new_rectangle = self.create_opengl_rectangle((x, y))
                 self.active_panel_rectangle = new_rectangle
 
-        self.redraw()
+        # self.redraw()
 
     def create_opengl_rectangle(self, start_point):
         rectangle_size = 50
