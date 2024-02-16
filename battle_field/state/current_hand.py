@@ -1,4 +1,4 @@
-class CurrentHand:
+class CurrentHandState:
     def __init__(self):
         self.current_hand_list = []
 

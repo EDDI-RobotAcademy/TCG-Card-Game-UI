@@ -1,12 +1,12 @@
 import unittest
 
-from battle_field.state.current_hand import CurrentHand
+from battle_field.state.current_hand import CurrentHandState
 
 
 class TestCurrentHand(unittest.TestCase):
 
     def setUp(self):
-        self.current_hand = CurrentHand()
+        self.current_hand = CurrentHandState()
 
     def test_add_to_hand(self):
         self.current_hand.add_to_hand("Card1")

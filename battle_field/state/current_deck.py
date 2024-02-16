@@ -1,4 +1,4 @@
-class CurrentDeck:
+class CurrentDeckState:
     def __init__(self):
         self.current_deck_list = []
 
@@ -13,3 +13,6 @@ class CurrentDeck:
 
     def get_deck_size(self):
         return len(self.current_deck_list)
+
+    def get_current_deck(self):
+        return self.current_deck_list

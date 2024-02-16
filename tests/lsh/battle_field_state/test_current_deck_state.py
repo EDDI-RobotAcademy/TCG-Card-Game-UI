@@ -1,12 +1,12 @@
 import unittest
 
-from battle_field.state.current_deck import CurrentDeck
+from battle_field.state.current_deck import CurrentDeckState
 
 
 class TestCurrentDeck(unittest.TestCase):
 
     def setUp(self):
-        self.current_deck = CurrentDeck()
+        self.current_deck = CurrentDeckState()
 
     def test_add_to_deck(self):
         self.current_deck.add_to_deck("Card1", "Card2")
