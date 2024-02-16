@@ -35,7 +35,7 @@ class BuyCheckServiceImpl(BuyCheckService):
             switchFrameWithMenuName("buy-random-card")
             buyCheckFrame.destroy()
 
-        check_label = tkinter.Label(buyCheckFrame, text="~~~를 사용하여\n 카드 뽑기를 구매하시겠습니까?",
+        check_label = tkinter.Label(buyCheckFrame, text="를 사용하여\n 해당 카드 뽑기를 구매하시겠습니까?",
                                     font=("Helvetica", 28), fg="black",
                                     anchor="center", justify="center")
         check_label.place(relx=0.5, rely=0.3, anchor="center", bordermode="outside")

@@ -35,9 +35,9 @@ class CardShopMenuFrameRepositoryImpl(CardShopMenuFrameRepository):
         print("CardShopFrameRepositoryImpl: saveReceiveIpcChannel()")
         self.__receiveIpcChannel = receiveIpcChannel
 
-    def requestCardRandom(self, CardRandomRequest):
-        print(f"CardShopFrameRepositoryImpl: requestCardRandom() -> {CardRandomRequest}")
-        self.__transmitIpcChannel.put(CardRandomRequest)
+    def requestCheckGameMoney(self, CheckGameMoneyRequest):
+        print(f"CardShopFrameRepositoryImpl: requestCheckGameMoney() -> {CheckGameMoneyRequest}")
+        self.__transmitIpcChannel.put(CheckGameMoneyRequest)
         return self.__receiveIpcChannel.get()
 
     def setRace(self, race):

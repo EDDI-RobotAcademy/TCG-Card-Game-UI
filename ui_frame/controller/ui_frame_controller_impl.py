@@ -114,6 +114,8 @@ class UiFrameControllerImpl(UiFrameController):
         self.__myDeckRegisterFrameService.injectTransmitIpcChannel(transmitIpcChannel)
         self.__matchingWindowService.injectTransmitIpcChannel(transmitIpcChannel)
 
+        self.__cardShopMenuFrameService.injectTransmitIpcChannel(transmitIpcChannel)
+
 
     def requestToInjectReceiveIpcChannel(self, receiveIpcChannel):
         print("UiFrameControllerImpl: requestToInjectReceiveIpcChannel()")
@@ -130,6 +132,8 @@ class UiFrameControllerImpl(UiFrameController):
 
         self.__myDeckRegisterFrameService.injectReceiveIpcChannel(receiveIpcChannel)
         self.__matchingWindowService.injectReceiveIpcChannel(receiveIpcChannel)
+
+        self.__cardShopMenuFrameService.injectReceiveIpcChannel(receiveIpcChannel)
 
 
     def requestToInjectMusicPlayIpcChannel(self, musicPlayIpcChannel):

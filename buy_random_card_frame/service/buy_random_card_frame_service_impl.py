@@ -30,7 +30,6 @@ class BuyRandomCardFrameServiceImpl(BuyRandomCardFrameService):
     def Gacha(self):
         testRace = self.__cardShopMenuFrameRepository.getRace()
         print(f"testRace: {testRace}")
-        self.__label.configure(text=testRace)
         return testRace
 
     def buyRandomCardRequest(self):

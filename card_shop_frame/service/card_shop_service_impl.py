@@ -6,6 +6,8 @@ from card_shop_frame.service.card_shop_service import CardShopMenuFrameService
 from card_shop_frame.frame.buy_check_frame.service.buy_check_service_impl import BuyCheckServiceImpl
 from card_shop_frame.frame.buy_check_frame.repository.buy_check_repository_impl import BuyCheckRepositoryImpl
 from my_game_money_frame.service.my_game_money_frame_service_impl import MyGameMoneyFrameServiceImpl
+from card_shop_frame.service.request.check_game_money_request import CheckGameMoneyRequest
+from session.service.session_service_impl import SessionServiceImpl
 from buy_random_card_frame.entity.buy_random_card_frame import BuyRandomCardFrame
 
 
@@ -18,6 +20,7 @@ class CardShopMenuFrameServiceImpl(CardShopMenuFrameService):
             cls.__instance.__myGameMoneyFrameService = MyGameMoneyFrameServiceImpl.getInstance()
             cls.__instance.__buyCheckService = BuyCheckServiceImpl.getInstance()
             cls.__instance.__buyCheckRepository = BuyCheckRepositoryImpl.getInstance()
+            cls.__instance.__sessionService = SessionServiceImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -45,36 +48,13 @@ class CardShopMenuFrameServiceImpl(CardShopMenuFrameService):
     def createCardShopUiFrame(self, rootWindow, switchFrameWithMenuName):
         cardShopMenuFrame = self.__cardShopMenuFrameRepository.createCardShopMenuFrame(rootWindow)
 
-        # self.__cardShopMenuFrameRepository.setRace("전체")
         def buy_check_button_click(race):
             self.__cardShopMenuFrameRepository.setRace(race)
             self.__buyCheckService.createBuyCheckUiFrame(cardShopMenuFrame, switchFrameWithMenuName)
             self.DisabledCardShopUiButton()
 
-        def buy_card_button_frame(button, text, image_path):
-            frame_width = 300
-            frame_height = 700
-
-            top_frame = tkinter.Frame(button, bg="blue")
-            top_frame.place(relwidth=1, relheight=0.3)
-
-            # 카드 뽑기 텍스트 레이블 생성
-            label_button = tkinter.Label(top_frame, text=text, font=("Helvetica", 24), fg="white", bg="blue")
-            label_button.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
-
-            # 하단 프레임 생성 및 버튼 위에 배치
-            bottom_frame = tkinter.Frame(button, bg="white")
-            bottom_frame.place(relwidth=1, relheight=0.7, rely=0.3)
-
-            # Canvas 생성
-            canvas = tkinter.Canvas(bottom_frame, bg="white", width=frame_width, height=frame_height)
-            canvas.pack()
-
-            # 이미지 로드 및 표시
-            image = tkinter.PhotoImage(file="local_storage/card_images/card1.png")
-            image = image.subsample(int(image.width() / frame_width), int(image.height() / frame_height))
-            canvas.create_image(frame_width / 2, frame_height / 2, anchor=tkinter.CENTER, image=image)
-
+        # responseData = self.__cardShopMenuFrameRepository.requestCheckGameMoney(CheckGameMoneyRequest
+        #                                                                         (self.__sessionService.getSessionInfo()))
 
 
         label_text = "상점"
@@ -124,3 +104,13 @@ class CardShopMenuFrameServiceImpl(CardShopMenuFrameService):
 
 
         return cardShopMenuFrame
+
+
+
+    def injectTransmitIpcChannel(self, transmitIpcChannel):
+        print("CardShopMenuFrameServiceImpl: injectTransmitIpcChannel()")
+        self.__cardShopMenuFrameRepository.saveTransmitIpcChannel(transmitIpcChannel)
+
+    def injectReceiveIpcChannel(self, receiveIpcChannel):
+        print("CardShopMenuFrameServiceImpl: injectReceiveIpcChannel()")
+        self.__cardShopMenuFrameRepository.saveReceiveIpcChannel(receiveIpcChannel)
