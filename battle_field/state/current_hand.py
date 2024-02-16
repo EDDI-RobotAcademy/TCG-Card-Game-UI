@@ -2,8 +2,11 @@ class CurrentHandState:
     def __init__(self):
         self.current_hand_list = []
 
-    def add_to_hand(self, *cards):
-        self.current_hand_list.extend(cards)
+    def add_to_hand(self, card_list):
+        # print(f"add_to_hand: {card_list}")
+        for card in card_list:
+            # print(f"add_to_hand: {card}")
+            self.current_hand_list.append(card)
 
     def remove_from_hand(self, *cards):
         for card in cards:
