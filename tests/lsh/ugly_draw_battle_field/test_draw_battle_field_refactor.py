@@ -1,25 +1,18 @@
-import math
-
-from battle_field.components.battle_field_environment import BattleFieldEnvironment
-from battle_field.components.opponent_deck import OpponentDeck
-from battle_field.components.opponent_hand_panel import OpponentHandPanel
-from battle_field.components.opponent_lost_zone import OpponentLostZone
-from battle_field.components.opponent_main_character import OpponentMainCharacter
-from battle_field.components.opponent_tomb import OpponentTomb
-from battle_field.components.opponent_trap import OpponentTrap
-from battle_field.components.opponent_unit_field import OpponentUnitField
-from battle_field.components.your_deck import YourDeck
-from battle_field.components.your_hand_panel import YourHandPanel
-from battle_field.components.your_lost_zone import YourLostZone
-from battle_field.components.your_main_character import YourMainCharacter
-from battle_field.components.your_tomb import YourTomb
-from battle_field.components.your_trap import YourTrap
-from battle_field.components.your_unit_field import YourUnitField
-from image_shape.oval_image import OvalImage
-from image_shape.rectangle_image import RectangleImage
-from opengl_shape.oval import Oval
-from opengl_shape.shape import Shape
-from OpenGL import GL
+from battle_field.entity.battle_field_environment import BattleFieldEnvironment
+from battle_field.entity.opponent_deck import OpponentDeck
+from battle_field.entity.opponent_hand_panel import OpponentHandPanel
+from battle_field.entity.opponent_lost_zone import OpponentLostZone
+from battle_field.entity.opponent_main_character import OpponentMainCharacter
+from battle_field.entity.opponent_tomb import OpponentTomb
+from battle_field.entity.opponent_trap import OpponentTrap
+from battle_field.entity.opponent_unit_field import OpponentUnitField
+from battle_field.entity.your_deck import YourDeck
+from battle_field.entity.your_hand_panel import YourHandPanel
+from battle_field.entity.your_lost_zone import YourLostZone
+from battle_field.entity.your_main_character import YourMainCharacter
+from battle_field.entity.your_tomb import YourTomb
+from battle_field.entity.your_trap import YourTrap
+from battle_field.entity.your_unit_field import YourUnitField
 
 import tkinter
 import unittest
@@ -27,9 +20,6 @@ import unittest
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
-
-from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
-from opengl_shape.rectangle import Rectangle
 
 
 class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
@@ -109,70 +99,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         glOrtho(0, self.width, self.height, 0, -1, 1)
 
         self.tkMakeCurrent()
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
-        for opponent_tomb_shape in self.opponent_tomb_shapes:
-            opponent_tomb_shape.draw()
-
-        for opponent_lost_zone_shape in self.opponent_lost_zone_shapes:
-            opponent_lost_zone_shape.draw()
-
-        for opponent_trap_shape in self.opponent_trap_shapes:
-            opponent_trap_shape.draw()
-
-        for opponent_card_deck_shape in self.opponent_card_deck_shapes:
-            opponent_card_deck_shape.draw()
-
-        for opponent_main_character_shape in self.opponent_main_character_shapes:
-            opponent_main_character_shape.draw()
-
-        for opponent_hand_panel_shape in self.opponent_hand_panel_shapes:
-            opponent_hand_panel_shape.draw()
-
-        for opponent_unit_field_shape in self.opponent_unit_field_shapes:
-            opponent_unit_field_shape.draw()
-
-        for your_tomb_shape in self.your_tomb_shapes:
-            your_tomb_shape.draw()
-
-        for your_lost_zone_shape in self.your_lost_zone_shapes:
-            your_lost_zone_shape.draw()
-
-        for your_trap_shape in self.your_trap_shapes:
-            your_trap_shape.draw()
-
-        for your_card_deck_shape in self.your_card_deck_shapes:
-            your_card_deck_shape.draw()
-
-        for your_main_character_shape in self.your_main_character_shapes:
-            your_main_character_shape.draw()
-
-        for your_hand_panel_shape in self.your_hand_panel_shapes:
-            your_hand_panel_shape.draw()
-
-        for your_unit_field_shape in self.your_unit_field_shapes:
-            your_unit_field_shape.draw()
-
-        for battle_field_environment_shape in self.battle_field_environment_shapes:
-            battle_field_environment_shape.draw()
-
-        self.tkSwapBuffers()
-
-    def reshape(self, width, height):
-        print(f"Reshaping window to width={width}, height={height}")
-        glViewport(0, 0, width, height)
-        glMatrixMode(GL_PROJECTION)
-        glLoadIdentity()
-        gluOrtho2D(0, width, height, 0)
-        glMatrixMode(GL_MODELVIEW)
-        glLoadIdentity()
-
-    def on_resize(self, event):
-        print("Handling resize event")
-        self.reshape(event.width, event.height)
-
-    def redraw(self):
-        self.tkMakeCurrent()
         # glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
         #
         # for opponent_tomb_shape in self.opponent_tomb_shapes:
@@ -219,6 +145,70 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         #
         # for battle_field_environment_shape in self.battle_field_environment_shapes:
         #     battle_field_environment_shape.draw()
+        #
+        # self.tkSwapBuffers()
+
+    def reshape(self, width, height):
+        print(f"Reshaping window to width={width}, height={height}")
+        glViewport(0, 0, width, height)
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        gluOrtho2D(0, width, height, 0)
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()
+
+    def on_resize(self, event):
+        print("Handling resize event")
+        self.reshape(event.width, event.height)
+
+    def redraw(self):
+        # self.tkMakeCurrent()
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
+        for opponent_tomb_shape in self.opponent_tomb_shapes:
+            opponent_tomb_shape.draw()
+
+        for opponent_lost_zone_shape in self.opponent_lost_zone_shapes:
+            opponent_lost_zone_shape.draw()
+
+        for opponent_trap_shape in self.opponent_trap_shapes:
+            opponent_trap_shape.draw()
+
+        for opponent_card_deck_shape in self.opponent_card_deck_shapes:
+            opponent_card_deck_shape.draw()
+
+        for opponent_main_character_shape in self.opponent_main_character_shapes:
+            opponent_main_character_shape.draw()
+
+        for opponent_hand_panel_shape in self.opponent_hand_panel_shapes:
+            opponent_hand_panel_shape.draw()
+
+        for opponent_unit_field_shape in self.opponent_unit_field_shapes:
+            opponent_unit_field_shape.draw()
+
+        for your_tomb_shape in self.your_tomb_shapes:
+            your_tomb_shape.draw()
+
+        for your_lost_zone_shape in self.your_lost_zone_shapes:
+            your_lost_zone_shape.draw()
+
+        for your_trap_shape in self.your_trap_shapes:
+            your_trap_shape.draw()
+
+        for your_card_deck_shape in self.your_card_deck_shapes:
+            your_card_deck_shape.draw()
+
+        for your_main_character_shape in self.your_main_character_shapes:
+            your_main_character_shape.draw()
+
+        for your_hand_panel_shape in self.your_hand_panel_shapes:
+            your_hand_panel_shape.draw()
+
+        for your_unit_field_shape in self.your_unit_field_shapes:
+            your_unit_field_shape.draw()
+
+        for battle_field_environment_shape in self.battle_field_environment_shapes:
+            battle_field_environment_shape.draw()
 
         self.tkSwapBuffers()
 
