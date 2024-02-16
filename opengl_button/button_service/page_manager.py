@@ -10,3 +10,9 @@ class PageManager:
 
     def get_current_page(self):
         return self.current_page
+
+    def init_current_page_next_button(self):
+        self.current_page = 2
+
+    def init_current_page_previous_button(self):
+        self.current_page = 1

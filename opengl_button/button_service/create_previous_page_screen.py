@@ -21,28 +21,29 @@ class CreatePreviousPageScreen:
                     self.handle_page_transition()
 
 
+
         except Exception as e:
             print(f"create deck register Error : {e}")
 
     def handle_page_transition(self):
         current_page = self.page_manager.get_current_page()
-        print(f"이전 페이지 버튼 클릭! -> 첫 시작 페이지는?: {current_page}")
+        #print(f"이전 페이지 버튼 클릭! -> 첫 시작 페이지는?: {current_page}")
 
-        if current_page == 4:
-            self.my_card_main_frame.show_fifth_page_card_screen = False
-            self.my_card_main_frame.clear_screen()
-            self.my_card_main_frame.show_fourth_page_card_screen = True
-            self.my_card_main_frame.fourth_page_card_draw()
-            print("현재 4 번째 페이지 입니다.")
+        # if current_page == 4:
+        #     self.my_card_main_frame.show_fifth_page_card_screen = False
+        #     self.my_card_main_frame.clear_screen()
+        #     self.my_card_main_frame.show_fourth_page_card_screen = True
+        #     self.my_card_main_frame.fourth_page_card_draw()
+        #     print("현재 4 번째 페이지 입니다.")
+        #
+        # elif current_page == 3:
+        #     self.my_card_main_frame.show_fourth_page_card_screen = False
+        #     self.my_card_main_frame.clear_screen()
+        #     self.my_card_main_frame.show_third_page_card_screen = True
+        #     self.my_card_main_frame.third_page_card_draw()
+        #     print("현재 3 번째 페이지 입니다.")
 
-        elif current_page == 3:
-            self.my_card_main_frame.show_fourth_page_card_screen = False
-            self.my_card_main_frame.clear_screen()
-            self.my_card_main_frame.show_third_page_card_screen = True
-            self.my_card_main_frame.third_page_card_draw()
-            print("현재 3 번째 페이지 입니다.")
-
-        elif current_page == 2:
+        if current_page == 2:
             self.my_card_main_frame.show_third_page_card_screen = False
             self.my_card_main_frame.clear_screen()
             self.my_card_main_frame.show_second_page_card_screen = True
@@ -55,6 +56,12 @@ class CreatePreviousPageScreen:
             self.my_card_main_frame.show_first_page_card_screen = True
             self.my_card_main_frame.drawMyCardMainFrame()
             print("현재 1 번째 페이지 입니다.")
+
+        # 첫 번째 페이지 에서 이전 버튼 눌렀을 때 current_page 횟수 줄어듬 방지.
+        elif current_page < 1:
+            self.page_manager.init_current_page_previous_button()
+            print("현재 1 번째 페이지 입니다. 더 이상 이동할 페이지가 없습니다.")
+
 
 
     def check_collision(self, x, y, vertices):
