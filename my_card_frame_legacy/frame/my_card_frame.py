@@ -3,9 +3,9 @@ import os
 from pyopengltk import OpenGLFrame
 from OpenGL import GL, GLU
 
-from my_card_frame.entity.my_card_frame_scene import MyCardFrameScene
-from my_card_frame.entity.rectangle import Rectangle
-from my_card_frame.renderer.my_card_frame_renderer import MyCardFrameRenderer
+from my_card_frame_legacy.entity.my_card_frame_scene import MyCardFrameScene
+from my_card_frame_legacy.entity.rectangle import Rectangle
+from my_card_frame_legacy.renderer.my_card_frame_renderer import MyCardFrameRenderer
 
 
 class MyCardFrame(OpenGLFrame):
