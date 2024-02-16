@@ -1,7 +1,7 @@
 import tkinter
 
-from tests.my_card_frame_legacy.repository.my_card_frame_repository_impl import MyCardFrameRepositoryImpl
-from tests.my_card_frame_legacy.service.my_card_frame_service import MyCardFrameService
+from tests.ljl.my_card_frame_legacy.repository.my_card_frame_repository_impl import MyCardFrameRepositoryImpl
+from tests.ljl.my_card_frame_legacy.service.my_card_frame_service import MyCardFrameService
 from card_merge_frame.service.card_merge_frame_service_impl import CardMergeFrameServiceImpl
 
 

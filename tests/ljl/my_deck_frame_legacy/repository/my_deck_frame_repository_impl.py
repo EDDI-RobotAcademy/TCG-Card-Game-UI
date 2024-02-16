@@ -1,5 +1,5 @@
-from tests.my_deck_frame_legacy.entity.my_deck_frame import MyDeckFrame
-from tests.my_deck_frame_legacy.repository.my_deck_frame_repository import MyDeckFrameRepository
+from tests.ljl.my_deck_frame_legacy.entity.my_deck_frame import MyDeckFrame
+from tests.ljl.my_deck_frame_legacy.repository.my_deck_frame_repository import MyDeckFrameRepository
 
 
 class MyDeckFrameRepositoryImpl(MyDeckFrameRepository):

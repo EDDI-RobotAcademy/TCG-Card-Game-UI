@@ -1,5 +1,5 @@
-from tests.my_card_frame_legacy.entity.my_card_frame import MyCardFrame
-from tests.my_card_frame_legacy.repository.my_card_frame_repository import MyCardFrameRepository
+from tests.ljl.my_card_frame_legacy.entity.my_card_frame import MyCardFrame
+from tests.ljl.my_card_frame_legacy.repository.my_card_frame_repository import MyCardFrameRepository
 
 
 class MyCardFrameRepositoryImpl(MyCardFrameRepository):
