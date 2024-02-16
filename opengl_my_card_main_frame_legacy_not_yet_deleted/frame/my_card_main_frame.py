@@ -13,8 +13,8 @@ from tkinter_shape.alpha_rectangle import AlphaRectangle
 from tkinter_shape.image_rectangle_element import ImageRectangel
 from opengl_my_card_main_frame_legacy_not_yet_deleted.entity.my_card_main_scene import MyCardMainScene
 from opengl_my_card_main_frame_legacy_not_yet_deleted.renderer.my_card_main_frame_renderer import MyCardMainFrameRenderer
-from text_field.text_box import TextBox
-from text_field.text_render import TextRender
+from text_field_legacy.text_box import TextBox
+from text_field_legacy.text_render import TextRender
 
 
 class MyCardMainFrame(OpenGLFrame):
