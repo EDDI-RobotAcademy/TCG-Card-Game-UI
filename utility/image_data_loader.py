@@ -24,3 +24,15 @@ class ImageDataLoader:
         except Exception as e:
             print(f"Error loading image data: {e}")
             return None
+
+    @staticmethod
+    def load_circle_image_data(image_path):
+        try:
+            print(f"load_circle_image_data: {image_path}")
+            image = Image.open(image_path)
+            width, height = image.size
+            image_data = image.tobytes("raw", "RGB", 0, 0)
+            return width, height, image_data
+        except Exception as e:
+            print(f"Error loading image data: {e}")
+            return None

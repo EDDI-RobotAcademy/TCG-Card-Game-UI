@@ -55,7 +55,6 @@ class CardInfoFromCsvRepositoryImpl(CardInfoFromCsvRepository):
                 print("Error : {0}".format(e))
 
     def getCardNumber(self):
-        print(f"self.__cardNumberDictionary : {self.__cardNumberDictionary}")
         return self.__cardNumberDictionary
 
     def getCardNameForCardNumber(self, cardNumber):
