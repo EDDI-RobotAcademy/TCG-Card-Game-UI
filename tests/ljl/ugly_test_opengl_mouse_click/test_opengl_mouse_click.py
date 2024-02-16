@@ -1,3 +1,4 @@
+import tkinter
 import unittest
 import tkinter as tk
 
@@ -53,9 +54,15 @@ class RectDrawingApp(OpenGLFrame):
                 print(f"Error creating card: {e}")
                 pass
 
+        self.show_alpha_rectangle = False
+        self.show_deck_register_rectangle = False
+
+        self.textbox_string = tk.StringVar()
+
+        self.bind("<Button-1>", self.mouse_click_event)
+
     def initgl(self):
         glClearColor(1.0, 1.0, 1.0, 1.0)
-        #gluOrtho2D(-1.0, 1.0, -1.0, 1.0)
         glOrtho(0, self.width, self.height, 0, -1, 1)
 
     def redraw(self):
@@ -64,6 +71,7 @@ class RectDrawingApp(OpenGLFrame):
         glClearColor(0.0, 1.0, 0.0, 0.0)
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
 
         # 배경 이미지 도형
         background_rectangle = ImageRectangleElement(image_path=os.path.join(project_root, "local_storage", "image", "battle_lobby", "background.png"),
@@ -79,6 +87,15 @@ class RectDrawingApp(OpenGLFrame):
                                     vertices=[(0.75*self.width, 0), (self.width, 0), (self.width, self.height), (0.75*self.width, self.height)])
         myDeck_rectangle.draw()
 
+        # 버튼
+        button_rectangle = Rectangle(color=(1.0, 0.0, 0.0, 1.0),
+                                     local_translation=(0, 0),
+                                     vertices=[(0.85 * self.width, 0.85*self.height),
+                                               (self.width, 0.85*self.height),
+                                               (self.width, self.height),
+                                               (0.85 * self.width, self.height)])
+        button_rectangle.draw()
+
         for card in self.card_list:
             attached_tool_card = card.get_tool_card()
             attached_tool_card.draw()
@@ -91,21 +108,24 @@ class RectDrawingApp(OpenGLFrame):
                 attached_shape.draw()
 
         # 검정 투명 화면
-        alpha_rectangle = Rectangle(color=(0.0, 0.0, 0.0, 0.8),
-                                     local_translation=(0, 0),
-                                     vertices=[(0, 0), (self.width, 0), (self.width, self.height), (0, self.height)])
-        alpha_rectangle.draw()
+        if self.show_alpha_rectangle is True:
+            print("왜자꾸이래 ")
+            alpha_rectangle = Rectangle(color=(0.0, 0.0, 0.0, 0.8),
+                                        local_translation=(0, 0),
+                                        vertices=[(0, 0), (self.width, 0), (self.width, self.height), (0, self.height)])
+            alpha_rectangle.draw()
 
-        center_x = 0.5*self.width
-        center_y = 0.5*self.height
         # 덱 생성 화면
-        deck_register_rectangle = Rectangle(color=(0.5137, 0.3608, 0.2314, 1.0),
-                                            local_translation=(0, 0),
-                                            vertices=[(center_x-0.5*0.5*self.width, center_y-0.5*0.5*self.height),
-                                                      (center_x+0.5*0.5*self.width, center_y-0.5*0.5*self.height),
-                                                      (center_x+0.5*0.5*self.width, center_y+0.5*0.5*self.height),
-                                                      (center_x-0.5*0.5*self.width, center_y+0.5*0.5*self.height)])
-        deck_register_rectangle.draw()
+        if self.show_deck_register_rectangle is True:
+            center_x = 0.5 * self.width
+            center_y = 0.5 * self.height
+            deck_register_rectangle = Rectangle(color=(0.5137, 0.3608, 0.2314, 1.0),
+                                                local_translation=(0, 0),
+                                                vertices=[(center_x-0.5*0.5*self.width, center_y-0.5*0.5*self.height),
+                                                          (center_x+0.5*0.5*self.width, center_y-0.5*0.5*self.height),
+                                                          (center_x+0.5*0.5*self.width, center_y+0.5*0.5*self.height),
+                                                          (center_x-0.5*0.5*self.width, center_y+0.5*0.5*self.height)])
+            deck_register_rectangle.draw()
 
         self.tkSwapBuffers()
 
@@ -114,12 +134,43 @@ class RectDrawingApp(OpenGLFrame):
         currentLocation = os.getcwd()
         print(f"currentLocation: {currentLocation}")
 
-        data_card = pandas.read_csv('../../local_storage/card/data.csv')
+        data_card = pandas.read_csv('../../../local_storage/card/data.csv')
         data_card_number = data_card['카드번호']
 
         print(data_card_number)
 
         return data_card_number
+
+    def text_box(self):
+        entry = tkinter.Entry(self.master, textvariable=self.textbox_string)
+        entry.place(relx=0.5, rely=0.5, width=300, height=100, anchor="center")
+
+    def check_collision(self, x, y, vertices):
+        print(f"checking collision: x:{x}, y:{y}")
+        x_min, y_min = min(v[0] for v in vertices), min(v[1] for v in vertices)
+        x_max, y_max = max(v[0] for v in vertices), max(v[1] for v in vertices)
+        return x_min <= x <= x_max and y_min <= -y <= y_max
+
+
+    def mouse_click_event(self, event):
+
+        try:
+            x, y = event.x, event.y
+            y = self.winfo_reqheight() - y
+
+            button_rectangle_vertices = [(0.85 * self.width, 0.85 * self.height),
+                                         (self.width, 0.85 * self.height),
+                                         (self.width, self.height),
+                                         (0.85 * self.width, self.height)]
+
+            if self.check_collision(x, y, button_rectangle_vertices):
+                self.show_alpha_rectangle = True
+                self.show_deck_register_rectangle = True
+                self.text_box()
+
+        except AttributeError:
+            pass
+
 
 class TestAppWindow(unittest.TestCase):
     def test_opengl_basic(self):
@@ -130,7 +181,10 @@ class TestAppWindow(unittest.TestCase):
         app = RectDrawingApp(root)
         app.pack(side="top", fill="both", expand=True)
         app.animate = 1
-        root.mainloop()
+        try:
+            root.mainloop()
+        except KeyboardInterrupt:
+            pass
 
 if __name__ == '__main__':
     unittest.main()

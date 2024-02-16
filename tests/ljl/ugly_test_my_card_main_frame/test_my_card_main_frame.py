@@ -99,7 +99,7 @@ class CardFrame(OpenGLFrame):
         currentLocation = os.getcwd()
         print(f"currentLocation: {currentLocation}")
 
-        data_card = pandas.read_csv('../../local_storage/card/data.csv')
+        data_card = pandas.read_csv('../../../local_storage/card/data.csv')
         data_card_number = data_card['카드번호']
 
         print(data_card_number)
