@@ -4,7 +4,7 @@ from pyopengltk import OpenGLFrame
 
 from common.utility import get_project_root
 from opengl_battle_field_card.card import Card
-from tests.ugly_test_card.renderer.card_frame_renderer import CardFrameRenderer
+from tests.jsh.ugly_test_card.renderer.card_frame_renderer import CardFrameRenderer
 
 
 class CardFrame(OpenGLFrame):
@@ -23,7 +23,7 @@ class CardFrame(OpenGLFrame):
         project_root = get_project_root()
 
         first_card = Card(local_translation=(100, 100))
-        first_card.init_card(20)
+        first_card.init_card(5)
 
         self.card_list.append(first_card)
 

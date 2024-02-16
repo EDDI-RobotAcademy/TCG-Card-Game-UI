@@ -1,8 +1,8 @@
-from tests.opengl_shape_legacy.entity.circle import Circle
-from tests.opengl_shape_legacy.entity.image_item import ImageItem
-from tests.opengl_shape_legacy.entity.rectangle import Rectangle
-from tests.opengl_shape_legacy.entity.shape_scene import ShapeDrawerScene
-from tests.opengl_shape_legacy.repository.shape_repository import ShapeRepository
+from tests.jsh.opengl_shape_legacy.entity.circle import Circle
+from tests.jsh.opengl_shape_legacy.entity.image_item import ImageItem
+from tests.jsh.opengl_shape_legacy.entity.rectangle import Rectangle
+from tests.jsh.opengl_shape_legacy.entity.shape_scene import ShapeDrawerScene
+from tests.jsh.opengl_shape_legacy.repository.shape_repository import ShapeRepository
 
 
 class ShapeRepositoryImpl(ShapeRepository):
