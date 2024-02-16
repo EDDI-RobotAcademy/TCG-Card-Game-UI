@@ -66,6 +66,10 @@ class ImageRectangleElement(Shape):
         resized_image = image.resize((300, 300))
 
         rgba_image = resized_image.convert("RGBA")
+
+        resized_image.close()
+        image.close()
+
         img_data = np.array(rgba_image)
 
         return img_data

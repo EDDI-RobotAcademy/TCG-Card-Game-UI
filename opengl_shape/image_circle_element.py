@@ -63,6 +63,8 @@ class ImageCircleElement(Shape):
         # image = image.convert("RGB")
         image_data = image.tobytes("raw", "RGB", 0, 1)# issue
 
+        image.close()
+
         texture_id = glGenTextures(1)
 
         glBindTexture(GL_TEXTURE_2D, texture_id)

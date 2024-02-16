@@ -57,6 +57,9 @@ class ImageOvalElement(Shape):
         image = Image.open(image_path)
         width, height = image.size
         image_data = image.tobytes("raw", "RGB", 0, 0)
+
+        image.close()
+
         texture_id = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D, texture_id)
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image_data)

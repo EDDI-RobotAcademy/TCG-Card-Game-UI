@@ -52,12 +52,12 @@ class ItemCard:
                                        center=(0, 0),
                                        radius=circle_radius)
 
-        self.create_item_race_illustration_circle(
-            image_path=os.path.join(project_root, "local_storage", "card_race_image", f"{self.cardInfoFromCsvRepositoryImpl.getCardRaceForCardNumber(card_number)}.png"),
-            center=(rectangle_width, 0),
-            radius=circle_radius)
-
-        self.create_item_type_illustration_circle(
-            image_path=os.path.join(project_root, "local_storage", "card_type_image", f"{self.cardInfoFromCsvRepositoryImpl.getCardTypeForCardNumber(card_number)}.png"),
-            center=(rectangle_width, rectangle_height),
-            radius=circle_radius)
+        # self.create_item_race_illustration_circle(
+        #     image_path=os.path.join(project_root, "local_storage", "card_race_image", f"{self.cardInfoFromCsvRepositoryImpl.getCardRaceForCardNumber(card_number)}.png"),
+        #     center=(rectangle_width, 0),
+        #     radius=circle_radius)
+        #
+        # self.create_item_type_illustration_circle(
+        #     image_path=os.path.join(project_root, "local_storage", "card_type_image", f"{self.cardInfoFromCsvRepositoryImpl.getCardTypeForCardNumber(card_number)}.png"),
+        #     center=(rectangle_width, rectangle_height),
+        #     radius=circle_radius)

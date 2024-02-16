@@ -99,6 +99,16 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.reshape(event.width, event.height)
 
     def draw_base(self):
+        glClearColor(1.0, 1.0, 1.0, 0.0)
+        glOrtho(0, self.width, self.height, 0, -1, 1)
+
+        glViewport(0, 0, self.width, self.height)
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+        gluOrtho2D(0, self.width, self.height, 0)
+        glMatrixMode(GL_MODELVIEW)
+        glLoadIdentity()
+
         for opponent_tomb_shape in self.opponent_tomb_shapes:
             opponent_tomb_shape.draw()
 
@@ -145,7 +155,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             battle_field_environment_shape.draw()
 
     def redraw(self):
-        # self.tkMakeCurrent()
+        self.tkMakeCurrent()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         self.draw_base()

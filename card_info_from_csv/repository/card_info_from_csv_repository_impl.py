@@ -29,8 +29,9 @@ class CardInfoFromCsvRepositoryImpl(CardInfoFromCsvRepository):
         return cls.__instance
 
     def readCardData(self, filePath):
-        dataFile = pd.read_csv(filePath, skiprows=0, index_col=4)
-        dataFile.fillna(0, inplace=True)
+        with open(filePath, 'r') as file:
+            dataFile = pd.read_csv(file, skiprows=0, index_col=4)
+            dataFile.fillna(0, inplace=True)
 
         return dataFile.itertuples()
 
