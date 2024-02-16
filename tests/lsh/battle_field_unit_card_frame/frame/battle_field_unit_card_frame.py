@@ -3,11 +3,11 @@ import os
 from pyopengltk import OpenGLFrame
 from OpenGL import GL, GLU
 
-from tests.battle_field_unit_card_frame.entity.battle_field_unit_card_scene import BattleFieldUnitCardScene
-from tests.battle_field_unit_card_frame.entity.circle import Circle
-from tests.battle_field_unit_card_frame.entity.image_item import ImageItem
-from tests.battle_field_unit_card_frame.entity.rectangle import Rectangle
-from tests.battle_field_unit_card_frame.renderer.battle_field_unit_card_frame_renderer import BattleFieldUnitCardFrameRenderer
+from tests.lsh.battle_field_unit_card_frame.entity.battle_field_unit_card_scene import BattleFieldUnitCardScene
+from tests.lsh.battle_field_unit_card_frame.entity.circle import Circle
+from tests.lsh.battle_field_unit_card_frame.entity.image_item import ImageItem
+from tests.lsh.battle_field_unit_card_frame.entity.rectangle import Rectangle
+from tests.lsh.battle_field_unit_card_frame.renderer.battle_field_unit_card_frame_renderer import BattleFieldUnitCardFrameRenderer
 
 
 class BattleFieldUnitCardFrame(OpenGLFrame):

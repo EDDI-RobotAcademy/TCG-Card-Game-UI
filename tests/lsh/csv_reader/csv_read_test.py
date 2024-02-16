@@ -10,7 +10,7 @@ class TestUglyCsvRead(unittest.TestCase):
         currentLocation = os.getcwd()
         print(f"currentLocation: {currentLocation}")
 
-        everycard = pandas.read_csv('../../local_storage/card_info/everycard.csv')
+        everycard = pandas.read_csv('../../../local_storage/card_info/every_card.csv')
         print(everycard)
 
         everycard_names = everycard['카드명']

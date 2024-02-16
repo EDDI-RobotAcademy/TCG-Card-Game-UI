@@ -1,14 +1,9 @@
-import os
-
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
 from common.utility import get_project_root
 from opengl_battle_field_card.card import Card
-from opengl_battle_field_unit.unit_card import UnitCard
-from opengl_pickable_shape.pickable_rectangle import PickableRectangle
-from tests.picking_card.renderer.picking_card_frame_renderer import PickingCardFrameRenderer
 from tests.ugly_test_card.renderer.card_frame_renderer import CardFrameRenderer
 
 

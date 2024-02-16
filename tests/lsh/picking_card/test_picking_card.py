@@ -1,7 +1,7 @@
 import tkinter
 import unittest
 
-from tests.picking_card.frame.picking_card_frame import PickingCardFrame
+from tests.lsh.picking_card.frame.picking_card_frame import PickingCardFrame
 
 
 class TestPickingCard(unittest.TestCase):
