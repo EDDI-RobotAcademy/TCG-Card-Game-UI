@@ -7,6 +7,13 @@ class Shape(abc.ABC):
         self.global_translation = global_translation
         self.local_translation = local_translation
         self.translation = self.local_translation + self.global_translation
+        self.attached_shapes = []
+
+    def set_attached_shapes(self, shape):
+        self.attached_shapes.append(shape)
+
+    def get_attached_shapes(self):
+        return self.attached_shapes
 
     def local_translate(self, local_translate):
         self.local_translation = local_translate

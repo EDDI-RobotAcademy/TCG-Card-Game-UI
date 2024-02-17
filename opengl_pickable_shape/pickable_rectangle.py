@@ -8,11 +8,11 @@ class PickableRectangle(Rectangle):
 
         self.attached_shapes = []
 
-    def set_attached_shapes(self, shape):
-        self.attached_shapes.append(shape)
+    # def set_attached_shapes(self, shape):
+    #     self.attached_shapes.append(shape)
 
-    def get_attached_shapes(self):
-        return self.attached_shapes
+    # def get_attached_shapes(self):
+    #     return self.attached_shapes
 
     # def is_point_inside(self, point):
     #     x, y = point
