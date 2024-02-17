@@ -20,34 +20,31 @@ class CardControllerImpl(CardController):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
 
-            cls.__cardTypeTable [
+            cls.__instance.__cardTypeTable [
                 CardType.UNIT.value] = cls.__instance.unitCardInitShapes
 
-            cls.__cardTypeTable[
+            cls.__instance.__cardTypeTable[
                 CardType.ITEM.value] = cls.__instance.itemCardInitShapes
 
-            cls.__cardTypeTable[
+            cls.__instance.__cardTypeTable[
                 CardType.TRAP.value] = cls.__instance.trapCardInitShapes
 
-            cls.__cardTypeTable[
+            cls.__instance.__cardTypeTable[
                 CardType.SUPPORT.value] = cls.__instance.supportCardInitShapes
 
-            cls.__cardTypeTable[
+            cls.__instance.__cardTypeTable[
                 CardType.TOOL.value] = cls.__instance.toolCardInitShapes
 
-            cls.__cardTypeTable[
+            cls.__instance.__cardTypeTable[
                 CardType.ENERGY.value] = cls.__instance.energyCardInitShapes
 
-            cls.__cardTypeTable[
+            cls.__instance.__cardTypeTable[
                 CardType.ENVIRONMENT.value] = cls.__instance.environmentCardInitShapes
 
-            cls.__cardTypeTable[
+            cls.__instance.__cardTypeTable[
                 CardType.TOKEN.value] = cls.__instance.tokenCardInitShapes
 
-
-    def __init__(self):
-        print("CardControllerImpl 생성")
-
+        return cls.__instance
 
     @classmethod
     def getInstance(cls):
