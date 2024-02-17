@@ -53,6 +53,7 @@ class CardControllerImpl(CardController):
 
         return cls.__instance
 
+    # TODO: 네이밍 이슈 존재함
     def getCardTypeTable(self, card_type):
         print("cardType을 찾아 옵니다")
         if self.__cardTypeTable[card_type] is not None:
