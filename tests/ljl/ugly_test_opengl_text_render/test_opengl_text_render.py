@@ -8,7 +8,7 @@ from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
 from common.utility import get_project_root
-from opengl_battle_field_card.card import Card
+from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_shape.image_rectangle_element import ImageRectangleElement
 from opengl_shape.rectangle import Rectangle
 
@@ -29,7 +29,7 @@ class RectDrawingApp(OpenGLFrame):
         y = 20
         for number in data_card_number:
             try:
-                card = Card(local_translation=(x, y))
+                card = PickableCard(local_translation=(x, y))
                 card.init_card(int(number))
                 self.card_list.append(card)
                 x += 390

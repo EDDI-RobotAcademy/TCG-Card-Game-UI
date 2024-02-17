@@ -11,7 +11,7 @@ from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from tests.lsh.ugly_draw_battle_field.test_draw_battle_field import ImageRectangleElementRefactor
 
 
-class Card:
+class PickableCard:
     __imagePath = None
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
     def __init__(self, local_translation=(0, 0), scale=200):
