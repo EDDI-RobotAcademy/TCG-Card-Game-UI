@@ -20,7 +20,7 @@ class PickableCard:
         self.local_translation = local_translation
         self.scale = scale
         self.card_number = None
-        self.card_info = CardInfoFromCsvRepositoryImpl()
+        self.card_info = CardInfoFromCsvRepositoryImpl.getInstance()
 
     def get_card_number(self):
         return self.card_number
@@ -87,7 +87,7 @@ class PickableCard:
         # csvInfo = cardInfo.readCardData(os.path.join(project_root, 'local_storage', 'card', 'data.csv'))
         # cardInfo.build_dictionaries(csvInfo)
 
-        CardControllerImpl()
+        # CardControllerImpl()
         card_controller = CardControllerImpl.getInstance()
 
         self.tool_card = self.create_attached_tool_card_rectangle(

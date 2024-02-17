@@ -8,6 +8,7 @@ from client_socket.service.client_socket_service_impl import ClientSocketService
 from account_login_frame.service.login_menu_frame_service_impl import LoginMenuFrameServiceImpl
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
 from music_player.controller.music_player_controller_impl import MusicPlayerControllerImpl
+from opengl_battle_field_card_controller.card_controller_impl import CardControllerImpl
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from receiver.controller.receiver_controller_impl import ReceiverControllerImpl
 from response_generator.repository.response_generator_repository_impl import ResponseGeneratorRepositoryImpl
@@ -76,10 +77,14 @@ class DomainInitializer:
         cardInfoFromCsvController = CardInfoFromCsvControllerImpl.getInstance()
         cardInfoFromCsvController.requestToCardInfoSettingInMemory()
 
-    @classmethod
-    def initPreDrawedImageDomain(cls):
+    @staticmethod
+    def initPreDrawedImageDomain():
         pre_drawed_image_manager = PreDrawedImage.getInstance()
         pre_drawed_image_manager.pre_draw_every_image()
+
+    @staticmethod
+    def initBattleFieldCardControllerDomain():
+        CardControllerImpl.getInstance()
 
     @staticmethod
     def initEachDomain():
@@ -113,7 +118,8 @@ class DomainInitializer:
         # Pre Drawed Image Domain
         DomainInitializer.initPreDrawedImageDomain()
 
-
+        # Battle Field Card Controller Domain
+        DomainInitializer.initBattleFieldCardControllerDomain()
 
 
 
