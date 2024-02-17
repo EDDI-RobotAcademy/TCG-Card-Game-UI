@@ -7,6 +7,9 @@ class YourHandRepository:
 
     current_hand_state = CurrentHandState()
     current_hand_card_list = []
+    current_hand_card_x_position = []
+
+    x_base = 300
 
     def __new__(cls):
         if cls.__instance is None:
@@ -23,6 +26,15 @@ class YourHandRepository:
         self.current_hand_state.add_to_hand(hand_list)
         print(f"Saved current hand state: {hand_list}")
 
+        # self.make_hand_card_list_location(len(hand_list))
+
+    # def make_hand_card_list_location(self, card_length):
+    #     current_x = self.x_base
+    #     increment_x_position = 135
+    #
+    #     for i in range(card_length):
+    #         self.current_hand_card_x_position.append((current_x + increment_x_position * i, 830))
+
     def get_current_hand_state(self):
         return self.current_hand_state.get_current_hand()
 
@@ -30,15 +42,18 @@ class YourHandRepository:
         current_hand = self.get_current_hand_state()
         print(f"current_hand: {current_hand}")
 
-        for card_number in current_hand:
-            print(f"card_number: {card_number}")
-            new_card = Card(local_translation=self.get_next_card_position())
+        for index, card_number in enumerate(current_hand):
+            print(f"index: {index}, card_number: {card_number}")
+            new_card = Card(local_translation=self.get_next_card_position(index))
             new_card.init_card(card_number)
             self.current_hand_card_list.append(new_card)
 
-    def get_next_card_position(self):
+    def get_next_card_position(self, index):
         # TODO: 배치 간격 고려
-        return (100, 100)
+        current_y = 830
+        x_increment = 170
+        next_x = self.x_base + x_increment * index
+        return (next_x, current_y)
 
     def get_current_hand_card_list(self):
         return self.current_hand_card_list
