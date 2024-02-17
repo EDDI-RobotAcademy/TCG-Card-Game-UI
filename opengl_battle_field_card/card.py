@@ -80,6 +80,9 @@ class Card:
         rectangle_width = self.scale / 1.618
         project_root = get_project_root()
 
+        print(f"rectangle_width: {rectangle_width}")
+        print(f"rectangle_height: {rectangle_height}")
+
         # cardInfo = CardInfoFromCsvRepositoryImpl.getInstance()
         # csvInfo = cardInfo.readCardData(os.path.join(project_root, 'local_storage', 'card', 'data.csv'))
         # cardInfo.build_dictionaries(csvInfo)
