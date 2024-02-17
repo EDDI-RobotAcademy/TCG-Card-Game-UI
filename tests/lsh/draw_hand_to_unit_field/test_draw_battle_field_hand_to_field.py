@@ -59,9 +59,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
 
-        # add fixed field unit
-        self.battle_field_unit = FixedFieldCard(local_translation=(300, 580))
-        self.battle_field_unit.init_card(32)
+        # # add fixed field unit
+        # self.battle_field_unit = FixedFieldCard(local_translation=(300, 580))
+        # self.battle_field_unit.init_card(32)
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -140,27 +140,22 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.draw_base()
 
-        # 필드 배치 유닛 시작
-        attached_tool_card = self.battle_field_unit.get_tool_card()
-        if attached_tool_card is not None:
-            attached_tool_card.draw()
-
-        fixed_card_base = self.battle_field_unit.get_fixed_card_base()
-        fixed_card_base.draw()
-
-        attached_shape_list = fixed_card_base.get_attached_shapes()
-
-        for attached_shape in attached_shape_list:
-            attached_shape.draw()
-
-        # 필드 배치 유닛 끝
+        # # 필드 배치 유닛 시작
+        # attached_tool_card = self.battle_field_unit.get_tool_card()
+        # if attached_tool_card is not None:
+        #     attached_tool_card.draw()
+        #
+        # fixed_card_base = self.battle_field_unit.get_fixed_card_base()
+        # fixed_card_base.draw()
+        #
+        # attached_shape_list = fixed_card_base.get_attached_shapes()
+        #
+        # for attached_shape in attached_shape_list:
+        #     attached_shape.draw()
+        #
+        # # 필드 배치 유닛 끝
 
         for hand_card in self.hand_card_list:
-            # Hand에서는 도구를 붙일 수 없음
-            # attached_tool_card = hand_card.get_tool_card()
-            # if attached_tool_card is not None:
-            #     attached_tool_card.draw()
-
             pickable_card_base = hand_card.get_pickable_card_base()
             pickable_card_base.draw()
 
@@ -174,10 +169,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             # TODO: Ugly -> Need to Refactor
             if isinstance(self.selected_object, FixedFieldCard):
-                print(f"redraw -> card base type: {type(self.selected_object)}")
                 card_base = self.selected_object.get_fixed_card_base()
             elif isinstance(self.selected_object, PickableCard):
-                print(f"redraw -> card base type: {type(self.selected_object)}")
                 card_base = self.selected_object.get_pickable_card_base()
 
             self.lightning_border.set_padding(50)
@@ -223,7 +216,40 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             # self.redraw()
 
     def on_canvas_release(self, event):
-        self.drag_start = None
+        x, y = event.x, event.y
+        y = self.winfo_reqheight() - y
+
+        if self.selected_object and self.drag_start:
+            y *= -1
+
+            if self.is_drop_location_valid(x, y):
+                print(f"Place success: {self.selected_object.get_card_number()}")
+
+                self.your_hand_repository.remove_card_by_id(self.selected_object.get_card_number())
+                self.selected_object = False
+
+    def is_drop_location_valid(self, x, y):
+        valid_area_vertices = [(300, 580), (1600, 580), (1600, 730), (300, 730)]
+
+        return self.point_inside_polygon(x, y, valid_area_vertices)
+
+    def point_inside_polygon(self, x, y, poly):
+        n = len(poly)
+        inside = False
+
+        p1x, p1y = poly[0]
+        for i in range(1, n + 1):
+            p2x, p2y = poly[i % n]
+            if y > min(p1y, p2y):
+                if y <= max(p1y, p2y):
+                    if x <= max(p1x, p2x):
+                        if p1y != p2y:
+                            xinters = (y - p1y) * (p2x - p1x) / (p2y - p1y) + p1x
+                        if p1x == p2x or x <= xinters:
+                            inside = not inside
+            p1x, p1y = p2x, p2y
+
+        return inside
 
     def on_canvas_left_click(self, event):
         try:
@@ -252,24 +278,24 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                     break
 
-            # Field Unit
-            print("let's find field unit")
-            if isinstance(self.battle_field_unit, FixedFieldCard):
-                self.battle_field_unit.selected = False
-
-            print(f"type(fixed_card_base) = {type(self.battle_field_unit)}")
-
-            fixed_card_base = self.battle_field_unit.get_fixed_card_base()
-
-            if fixed_card_base.is_point_inside((x, y)):
-                # fixed_card_base.selected = not fixed_card_base.selected
-                self.battle_field_unit.selected = not self.battle_field_unit.selected
-                self.selected_object = self.battle_field_unit
-                print("selected fixed field unit")
-
-                if self.selected_object != self.prev_selected_object:
-                    self.active_panel_rectangle = None
-                    self.prev_selected_object = self.selected_object
+            # # Field Unit
+            # print("let's find field unit")
+            # if isinstance(self.battle_field_unit, FixedFieldCard):
+            #     self.battle_field_unit.selected = False
+            #
+            # print(f"type(fixed_card_base) = {type(self.battle_field_unit)}")
+            #
+            # fixed_card_base = self.battle_field_unit.get_fixed_card_base()
+            #
+            # if fixed_card_base.is_point_inside((x, y)):
+            #     # fixed_card_base.selected = not fixed_card_base.selected
+            #     self.battle_field_unit.selected = not self.battle_field_unit.selected
+            #     self.selected_object = self.battle_field_unit
+            #     print("selected fixed field unit")
+            #
+            #     if self.selected_object != self.prev_selected_object:
+            #         self.active_panel_rectangle = None
+            #         self.prev_selected_object = self.selected_object
 
         except Exception as e:
             print(f"Exception in on_canvas_click: {e}")
@@ -317,7 +343,6 @@ class TestDrawBattleFieldHandList(unittest.TestCase):
         def animate():
             pre_drawed_battle_field_frame.redraw()
             root.after(17, animate)
-            # root.after(33, animate)
 
         root.after(0, animate)
 

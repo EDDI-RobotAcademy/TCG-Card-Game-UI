@@ -48,6 +48,17 @@ class YourHandRepository:
             new_card.init_card(card_number)
             self.current_hand_card_list.append(new_card)
 
+    def remove_card_by_id(self, card_id):
+        card_list = self.get_current_hand_card_list()
+
+        for card in card_list:
+            if card.get_card_number() == card_id:
+                card_list.remove(card)
+
+        self.current_hand_state.remove_from_hand(card_id)
+
+        print(f"after clear -> current_hand_list: {self.current_hand_card_list}, current_hand_state: {self.get_current_hand_state()}")
+
     def get_next_card_position(self, index):
         # TODO: 배치 간격 고려
         current_y = 830
