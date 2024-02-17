@@ -7,6 +7,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
+from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from initializer.init_domain import DomainInitializer
@@ -62,6 +63,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         # # add fixed field unit
         # self.battle_field_unit = FixedFieldCard(local_translation=(300, 580))
         # self.battle_field_unit.init_card(32)
+
+        self.your_field_unit_repository = YourFieldUnitRepository.getInstance()
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -140,7 +143,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.draw_base()
 
-        # # 필드 배치 유닛 시작
+        # 필드 배치 유닛 시작
         # attached_tool_card = self.battle_field_unit.get_tool_card()
         # if attached_tool_card is not None:
         #     attached_tool_card.draw()
@@ -152,8 +155,17 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         #
         # for attached_shape in attached_shape_list:
         #     attached_shape.draw()
-        #
-        # # 필드 배치 유닛 끝
+
+        for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
+            fixed_card_base = field_unit.get_fixed_card_base()
+            fixed_card_base.draw()
+
+            attached_shape_list = fixed_card_base.get_attached_shapes()
+
+            for attached_shape in attached_shape_list:
+                attached_shape.draw()
+
+        # 필드 배치 유닛 끝
 
         for hand_card in self.hand_card_list:
             pickable_card_base = hand_card.get_pickable_card_base()
@@ -219,14 +231,20 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         x, y = event.x, event.y
         y = self.winfo_reqheight() - y
 
-        if self.selected_object and self.drag_start:
+        # if self.selected_object and self.drag_start:
+        if isinstance(self.selected_object, PickableCard):
             y *= -1
 
             if self.is_drop_location_valid(x, y):
-                print(f"Place success: {self.selected_object.get_card_number()}")
+                placed_card_id = self.selected_object.get_card_number()
+                print(f"Place success: {placed_card_id}")
 
-                self.your_hand_repository.remove_card_by_id(self.selected_object.get_card_number())
-                self.selected_object = False
+                # TODO: Memory Leak 발생하지 않도록 좀 더 꼼꼼하게 리소스 해제 하는지 확인해야함
+                self.your_hand_repository.remove_card_by_id(placed_card_id)
+                self.your_field_unit_repository.create_field_unit_card(placed_card_id)
+                self.your_field_unit_repository.save_current_field_unit_state(placed_card_id)
+
+                self.selected_object = None
 
     def is_drop_location_valid(self, x, y):
         valid_area_vertices = [(300, 580), (1600, 580), (1600, 730), (300, 730)]
@@ -296,6 +314,26 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             #     if self.selected_object != self.prev_selected_object:
             #         self.active_panel_rectangle = None
             #         self.prev_selected_object = self.selected_object
+
+            for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
+                if isinstance(field_unit, FixedFieldCard):
+                    field_unit.selected = False
+
+            for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
+                print(f"type(field_unit) = {type(field_unit)}")
+                fixed_card_base = field_unit.get_fixed_card_base()
+                print(f"type(fixed_card_base) = {type(fixed_card_base)}")
+
+                if fixed_card_base.is_point_inside((x, y)):
+                    field_unit.selected = not field_unit.selected
+                    self.selected_object = field_unit
+                    self.drag_start = (x, y)
+
+                    if self.selected_object != self.prev_selected_object:
+                        self.active_panel_rectangle = None
+                        self.prev_selected_object = self.selected_object
+
+                    break
 
         except Exception as e:
             print(f"Exception in on_canvas_click: {e}")

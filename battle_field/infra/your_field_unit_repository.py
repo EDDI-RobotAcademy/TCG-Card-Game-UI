@@ -29,6 +29,12 @@ class YourFieldUnitRepository:
     def get_current_field_unit_state(self):
         return self.current_field_unit_state.get_current_field_unit_list()
 
+    def create_field_unit_card(self, card_id):
+        index = len(self.current_field_unit_list)
+        new_card = FixedFieldCard(local_translation=self.get_next_card_position(index))
+        new_card.init_card(card_id)
+        self.current_field_unit_list.append(new_card)
+
     def create_field_unit_card_list(self):
         current_field_unit = self.get_current_field_unit_state()
         print(f"current_field_unit: {current_field_unit}")
@@ -38,6 +44,9 @@ class YourFieldUnitRepository:
             new_card = FixedFieldCard(local_translation=self.get_next_card_position(index))
             new_card.init_card(card_number)
             self.current_field_unit_list.append(new_card)
+
+    def get_current_field_unit_list(self):
+        return self.current_field_unit_list
 
     def get_next_card_position(self, index):
         # TODO: 배치 간격 고려
