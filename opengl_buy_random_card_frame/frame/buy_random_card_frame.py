@@ -10,7 +10,7 @@ from common.utility import get_project_root
 from opengl_buy_random_card_frame.entity.buy_random_card_scene import BuyRandomCardScene
 
 
-from opengl_battle_field_card.card import Card
+from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_buy_random_card_frame.renderer.buy_random_card_frame_renderer import BuyRandomCardFrameRenderer
 from opengl_shape.image_rectangle_element import ImageRectangleElement
 from opengl_shape.rectangle import Rectangle
@@ -87,7 +87,7 @@ class BuyRandomCardFrame(OpenGLFrame):
         for i, number in enumerate(response_card_number):
             try:
                 print(f"index: {i}, card number: {number}")
-                card = Card(local_translation=(x, y), scale=250)
+                card = PickableCard(local_translation=(x, y), scale=250)
                 card.init_card(number)
                 self.buy_random_card_scene.add_card_list(card)
                 print(f"카드 리스트: {self.buy_random_card_scene.get_card_list()}")

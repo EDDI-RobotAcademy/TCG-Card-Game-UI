@@ -1,5 +1,5 @@
 from battle_field.state.current_hand import CurrentHandState
-from opengl_battle_field_card.card import Card
+from opengl_battle_field_pickable_card.pickable_card import PickableCard
 
 
 class YourHandRepository:
@@ -44,7 +44,7 @@ class YourHandRepository:
 
         for index, card_number in enumerate(current_hand):
             print(f"index: {index}, card_number: {card_number}")
-            new_card = Card(local_translation=self.get_next_card_position(index))
+            new_card = PickableCard(local_translation=self.get_next_card_position(index))
             new_card.init_card(card_number)
             self.current_hand_card_list.append(new_card)
 

@@ -6,7 +6,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
-from opengl_battle_field_card.card import Card
+from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from initializer.init_domain import DomainInitializer
 
 DomainInitializer.initEachDomain()
@@ -79,12 +79,12 @@ class PickingCardLightningBorderFrame(OpenGLFrame):
         self.width = screen_width
         self.height = screen_height
 
-        first_unit = Card(local_translation=(100, 100))
+        first_unit = PickableCard(local_translation=(100, 100))
         first_unit.init_card(6)
 
         self.unit_card_list.append(first_unit)
 
-        second_unit = Card(local_translation=(400, 400))
+        second_unit = PickableCard(local_translation=(400, 400))
         second_unit.init_card(8)
 
         self.unit_card_list.append(second_unit)
@@ -265,7 +265,7 @@ class PickingCardLightningBorderFrame(OpenGLFrame):
             y = self.winfo_reqheight() - y
 
             for unit_card in self.unit_card_list:
-                if isinstance(unit_card, Card):
+                if isinstance(unit_card, PickableCard):
                     unit_card.selected = False
 
             self.selected_object = None

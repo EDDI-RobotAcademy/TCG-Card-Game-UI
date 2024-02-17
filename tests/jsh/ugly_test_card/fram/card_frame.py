@@ -3,7 +3,7 @@ from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
 from common.utility import get_project_root
-from opengl_battle_field_card.card import Card
+from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from tests.jsh.ugly_test_card.renderer.card_frame_renderer import CardFrameRenderer
 
 
@@ -22,12 +22,12 @@ class CardFrame(OpenGLFrame):
 
         project_root = get_project_root()
 
-        first_card = Card(local_translation=(100, 100))
+        first_card = PickableCard(local_translation=(100, 100))
         first_card.init_card(6)
 
         self.card_list.append(first_card)
 
-        second_card = Card(local_translation=(400, 400))
+        second_card = PickableCard(local_translation=(400, 400))
         second_card.init_card(8)
 
         self.card_list.append(second_card)
@@ -164,7 +164,7 @@ class CardFrame(OpenGLFrame):
             y = self.winfo_reqheight() - y
 
             for card in self.card_list:
-                if isinstance(card, Card):
+                if isinstance(card, PickableCard):
                     card.selected = False
 
             self.selected_object = None

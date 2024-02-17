@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock, call
 
 from battle_field.infra.your_hand_repository import YourHandRepository
 from initializer.init_domain import DomainInitializer
-from opengl_battle_field_card.card import Card
+from opengl_battle_field_pickable_card.pickable_card import PickableCard
 
 
 class TestYourHandRepository(unittest.TestCase):
@@ -59,7 +59,7 @@ class TestYourHandRepository(unittest.TestCase):
         repository.save_current_hand_state([6, 8])
 
         repository.create_hand_card_list()
-        expected_card_list = [Card(local_translation=(100, 100)) for _ in range(2)]
+        expected_card_list = [PickableCard(local_translation=(100, 100)) for _ in range(2)]
 
 if __name__ == '__main__':
     unittest.main()
