@@ -212,6 +212,26 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             self.drag_start = (x, y)
 
+    def return_to_initial_location(self):
+        pickable_card_base = self.selected_object.get_pickable_card_base()
+        print(f"pickable_card_base: {pickable_card_base.vertices}")
+
+        intiial_vertices = pickable_card_base.get_initial_vertices()
+        print(f"revert position -> initial_position: {intiial_vertices}")
+
+        pickable_card_base.update_vertices(intiial_vertices)
+
+        tool_card = self.selected_object.get_tool_card()
+        if tool_card is not None:
+            tool_intiial_vertices = tool_card.get_initial_vertices()
+            tool_card.update_vertices(tool_intiial_vertices)
+
+        for attached_shape in pickable_card_base.get_attached_shapes():
+            attached_shape_intiial_vertices = attached_shape.get_initial_vertices()
+            attached_shape.update_vertices(attached_shape_intiial_vertices)
+
+        self.drag_start = None
+
     def on_canvas_release(self, event):
         x, y = event.x, event.y
         y = self.winfo_reqheight() - y
@@ -226,24 +246,26 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 if card_type != CardType.UNIT.value:
                     # TODO: Ugly (Need to Refactor -> However we have no time)
 
-                    pickable_card_base = self.selected_object.get_pickable_card_base()
-                    print(f"pickable_card_base: {pickable_card_base.vertices}")
+                    # pickable_card_base = self.selected_object.get_pickable_card_base()
+                    # print(f"pickable_card_base: {pickable_card_base.vertices}")
+                    #
+                    # intiial_vertices = pickable_card_base.get_initial_vertices()
+                    # print(f"revert position -> initial_position: {intiial_vertices}")
+                    #
+                    # pickable_card_base.update_vertices(intiial_vertices)
+                    #
+                    # tool_card = self.selected_object.get_tool_card()
+                    # if tool_card is not None:
+                    #     tool_intiial_vertices = tool_card.get_initial_vertices()
+                    #     tool_card.update_vertices(tool_intiial_vertices)
+                    #
+                    # for attached_shape in pickable_card_base.get_attached_shapes():
+                    #     attached_shape_intiial_vertices = attached_shape.get_initial_vertices()
+                    #     attached_shape.update_vertices(attached_shape_intiial_vertices)
+                    #
+                    # self.drag_start = None
 
-                    intiial_vertices = pickable_card_base.get_initial_vertices()
-                    print(f"revert position -> initial_position: {intiial_vertices}")
-
-                    pickable_card_base.update_vertices(intiial_vertices)
-
-                    tool_card = self.selected_object.get_tool_card()
-                    if tool_card is not None:
-                        tool_intiial_vertices = tool_card.get_initial_vertices()
-                        tool_card.update_vertices(tool_intiial_vertices)
-
-                    for attached_shape in pickable_card_base.get_attached_shapes():
-                        attached_shape_intiial_vertices = attached_shape.get_initial_vertices()
-                        attached_shape.update_vertices(attached_shape_intiial_vertices)
-
-                    self.drag_start = None
+                    self.return_to_initial_location()
                     return
 
                 # TODO: Memory Leak 발생하지 않도록 좀 더 꼼꼼하게 리소스 해제 하는지 확인해야함
@@ -252,6 +274,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 self.your_field_unit_repository.save_current_field_unit_state(placed_card_id)
 
                 self.selected_object = None
+
+            else:
+                self.return_to_initial_location()
 
     def is_drop_location_valid(self, x, y):
         valid_area_vertices = [(300, 580), (1600, 580), (1600, 730), (300, 730)]
