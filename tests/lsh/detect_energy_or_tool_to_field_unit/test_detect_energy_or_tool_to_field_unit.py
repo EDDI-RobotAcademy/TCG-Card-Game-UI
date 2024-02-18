@@ -212,17 +212,71 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             self.drag_start = (x, y)
 
+    def return_to_initial_location(self):
+        pickable_card_base = self.selected_object.get_pickable_card_base()
+        print(f"pickable_card_base: {pickable_card_base.vertices}")
+
+        intiial_vertices = pickable_card_base.get_initial_vertices()
+        print(f"revert position -> initial_position: {intiial_vertices}")
+
+        pickable_card_base.update_vertices(intiial_vertices)
+
+        tool_card = self.selected_object.get_tool_card()
+        if tool_card is not None:
+            tool_intiial_vertices = tool_card.get_initial_vertices()
+            tool_card.update_vertices(tool_intiial_vertices)
+
+        for attached_shape in pickable_card_base.get_attached_shapes():
+            attached_shape_intiial_vertices = attached_shape.get_initial_vertices()
+            attached_shape.update_vertices(attached_shape_intiial_vertices)
+
+        self.drag_start = None
+
     def on_canvas_release(self, event):
         x, y = event.x, event.y
         y = self.winfo_reqheight() - y
 
         if isinstance(self.selected_object, PickableCard):
+            current_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
+            current_field_unit_list_length = len(current_field_unit_list)
+
+            # 현재 Your Field Unit에게 에너지 부착 및 도구 부착
+            if current_field_unit_list_length > 0:
+                for current_field_unit in current_field_unit_list:
+                    # print(f"type(current_field_unit): {type(current_field_unit)}")
+                    fixed_card_base = current_field_unit.get_fixed_card_base()
+                    if fixed_card_base.is_point_inside((x, y)):
+                        print("fixed field unit detect something comes inside!")
+
+                        placed_card_id = self.selected_object.get_card_number()
+                        card_type = self.card_info.getCardTypeForCardNumber(placed_card_id)
+
+                        if card_type == CardType.TOOL.value:
+                            # TODO: 배포덱에서는 도구를 사용하지 않음
+                            print("도구를 붙입니다!")
+                            self.your_hand_repository.remove_card_by_id(placed_card_id)
+                        elif card_type == CardType.ENERGY.value:
+                            print("에너지를 붙입니다!")
+                            self.your_hand_repository.remove_card_by_id(placed_card_id)
+
+                            # TODO: 에너지 붙인 것을 표현해야함
+                        else:
+                            self.return_to_initial_location()
+
+                        # self.your_field_unit_repository.create_field_unit_card(placed_card_id)
+                        # self.your_field_unit_repository.save_current_field_unit_state(placed_card_id)
+
+                        self.selected_object = None
+
             y *= -1
 
-            if self.is_drop_location_valid(x, y):
+            # TODO: 현재 마우스 포인트(점)로 감지하나 추후 면으로 감지하도록 만들어야 함
+            if self.is_drop_location_valid_your_unit_field(x, y):
                 placed_card_id = self.selected_object.get_card_number()
                 card_type = self.card_info.getCardTypeForCardNumber(placed_card_id)
+
                 if card_type != CardType.UNIT.value:
+                    self.return_to_initial_location()
                     return
 
                 # TODO: Memory Leak 발생하지 않도록 좀 더 꼼꼼하게 리소스 해제 하는지 확인해야함
@@ -232,7 +286,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                 self.selected_object = None
 
-    def is_drop_location_valid(self, x, y):
+            else:
+                self.return_to_initial_location()
+
+    def is_drop_location_valid_your_unit_field(self, x, y):
         valid_area_vertices = [(300, 580), (1600, 580), (1600, 730), (300, 730)]
 
         return self.point_inside_polygon(x, y, valid_area_vertices)
@@ -333,9 +390,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         return new_rectangle
 
 
-class TestDrawHandToUnitFieldWithWrongLocation(unittest.TestCase):
+class TestDetectEnergyOrToolToFieldUnit(unittest.TestCase):
 
-    def test_draw_hand_to_unit_field_with_wrong_location(self):
+    def test_detect_energy_or_tool_to_field_unit(self):
         DomainInitializer.initEachDomain()
 
         root = tkinter.Tk()
