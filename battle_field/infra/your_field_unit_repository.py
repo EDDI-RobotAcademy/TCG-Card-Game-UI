@@ -1,9 +1,13 @@
+from battle_field.state.attached_energy_info import AttachedEnergyInfoState
 from battle_field.state.current_field_unit import CurrentFieldUnitState
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 
 
 class YourFieldUnitRepository:
     __instance = None
+
+    # TODO: 당장 구현이 매우 촉바가므로 에너지의 경우 종족에 관련한 사항은 배제하고 수치값만 고려
+    attached_energy_info = AttachedEnergyInfoState()
 
     current_field_unit_state = CurrentFieldUnitState()
     current_field_unit_list = []
@@ -54,3 +58,9 @@ class YourFieldUnitRepository:
         x_increment = 170
         next_x = self.x_base + x_increment * index
         return (next_x, current_y)
+
+    def attach_energy(self, unit_index, energy_count):
+        self.attached_energy_info.add_energy_at_index(unit_index, energy_count)
+
+    def detach_energy(self, unit_index, energy_count):
+        self.attached_energy_info.remove_energy_at_index(unit_index, energy_count)
