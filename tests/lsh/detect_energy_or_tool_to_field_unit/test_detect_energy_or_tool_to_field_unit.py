@@ -242,7 +242,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             # 현재 Your Field Unit에게 에너지 부착 및 도구 부착
             if current_field_unit_list_length > 0:
-                for current_field_unit in current_field_unit_list:
+                for unit_index, current_field_unit in enumerate(current_field_unit_list):
                     # print(f"type(current_field_unit): {type(current_field_unit)}")
                     fixed_card_base = current_field_unit.get_fixed_card_base()
                     if fixed_card_base.is_point_inside((x, y)):
@@ -258,8 +258,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         elif card_type == CardType.ENERGY.value:
                             print("에너지를 붙입니다!")
                             self.your_hand_repository.remove_card_by_id(placed_card_id)
+                            self.your_field_unit_repository.attached_energy_info(unit_index, 1)
+                            # TODO: attached_energy 값 UI에 표현 (이미지 작업 미완료)
 
-                            # TODO: 에너지 붙인 것을 표현해야함
+                            # TODO: 특수 에너지 붙인 것을 어떻게 표현 할 것인가 ? (아직 미정)
                         else:
                             self.return_to_initial_location()
 
