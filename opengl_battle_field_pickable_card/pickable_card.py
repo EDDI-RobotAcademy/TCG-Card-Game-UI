@@ -20,6 +20,7 @@ class PickableCard:
         self.local_translation = local_translation
         self.scale = scale
         self.card_number = None
+        self.initial_vertices = None
         self.card_info = CardInfoFromCsvRepositoryImpl.getInstance()
 
     def get_card_number(self):
@@ -27,6 +28,13 @@ class PickableCard:
 
     def set_card_number(self, card_number):
         self.card_number = card_number
+
+    # TODO: Need to consider place this function
+    # def set_initial_vertices(self, initial_pickable_card_base_vertices):
+    #     self.initial_vertices = initial_pickable_card_base_vertices
+    #
+    # def get_initial_vertices(self):
+    #     return self.initial_vertices
         
     def change_local_translation(self, _translation):
         self.local_translation = _translation
@@ -44,6 +52,7 @@ class PickableCard:
                                        vertices=vertices)
         attached_tool_card.set_draw_gradient(True)
         attached_tool_card.set_visible(False)
+        attached_tool_card.set_initial_vertices(vertices)
         return attached_tool_card
 
     def create_card_background_rectangle(self, image_path, vertices, local_translation):
@@ -57,13 +66,16 @@ class PickableCard:
         pickable_card_base = PickableRectangle(color=color,
                                                local_translation=local_translation,
                                                vertices=vertices)
+        # print(f"create_card_base_pickable_rectangle -> pickable_card_base: {pickable_card_base.vertices}")
         pickable_card_base.set_draw_gradient(True)
+        pickable_card_base.set_initial_vertices(vertices)
         return pickable_card_base
 
     def create_illustration(self, image_data, vertices, local_translation):
         card_illustration = RectangleImage(image_data=image_data,
                                            local_translation=local_translation,
                                            vertices=vertices)
+        card_illustration.set_initial_vertices(vertices)
         return card_illustration
 
     def create_equipped_mark(self, image_path, vertices, local_translation):
@@ -83,6 +95,8 @@ class PickableCard:
         print(f"rectangle_width: {rectangle_width}")
         print(f"rectangle_height: {rectangle_height}")
 
+        # self.set_initial_position()
+
         # cardInfo = CardInfoFromCsvRepositoryImpl.getInstance()
         # csvInfo = cardInfo.readCardData(os.path.join(project_root, 'local_storage', 'card', 'data.csv'))
         # cardInfo.build_dictionaries(csvInfo)
@@ -95,11 +109,14 @@ class PickableCard:
             local_translation=self.local_translation,
             vertices=[(15, 15), (rectangle_width + 15, 15), (rectangle_width + 15, rectangle_height + 15), (15, rectangle_height + 15)])
 
+        basic_pickable_card_base_vertices = [(0, 0), (rectangle_width, 0), (rectangle_width, rectangle_height), (0, rectangle_height)]
+        # self.set_initial_vertices(basic_pickable_card_base_vertices)
+
         self.pickable_card_base = (
             self.create_card_base_pickable_rectangle(
                 color=(0.0, 0.78, 0.34, 1.0),
                 local_translation=self.local_translation,
-                vertices=[(0, 0), (rectangle_width, 0), (rectangle_width, rectangle_height), (0, rectangle_height)]
+                vertices=basic_pickable_card_base_vertices
             )
         )
 
