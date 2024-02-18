@@ -44,8 +44,10 @@ class YourHandRepository:
 
         for index, card_number in enumerate(current_hand):
             print(f"index: {index}, card_number: {card_number}")
-            new_card = PickableCard(local_translation=self.get_next_card_position(index))
+            initial_position = self.get_next_card_position(index)
+            new_card = PickableCard(local_translation=initial_position)
             new_card.init_card(card_number)
+            # new_card.set_initial_position(initial_position)
             self.current_hand_card_list.append(new_card)
 
     def remove_card_by_id(self, card_id):
