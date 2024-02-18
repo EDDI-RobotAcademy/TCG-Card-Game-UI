@@ -4,10 +4,18 @@ import abc
 class Shape(abc.ABC):
     def __init__(self, vertices, global_translation=(0, 0), local_translation=(0, 0)):
         self.vertices = vertices
+        self.initial_vertices = None
+
         self.global_translation = global_translation
         self.local_translation = local_translation
         self.translation = self.local_translation + self.global_translation
         self.attached_shapes = []
+
+    def set_initial_vertices(self, vertices):
+        self.initial_vertices = vertices
+
+    def get_initial_vertices(self):
+        return self.initial_vertices
 
     def set_attached_shapes(self, shape):
         self.attached_shapes.append(shape)
