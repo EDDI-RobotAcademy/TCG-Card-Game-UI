@@ -7,11 +7,14 @@ from utility.image_data_loader import ImageDataLoader
 
 class PreDrawedImage:
     __instance = None
-    __card_info_from_csv_repository_impl = CardInfoFromCsvRepositoryImpl().getInstance()
+    __card_info_from_csv_repository = CardInfoFromCsvRepositoryImpl().getInstance()
 
     __project_root = get_project_root()
 
     __pre_drawed_card_illustration = {}
+    __pre_drawed_card_race = {}
+    __pre_drawed_card_type = {}
+
     __pre_drawed_opponent_tomb = None
     __pre_drawed_opponent_lost_zone = None
     __pre_drawed_opponent_trap = None
@@ -102,9 +105,36 @@ class PreDrawedImage:
         self.__pre_drawed_battle_field_environment = ImageDataLoader.load_rectangle_image_data(battle_field_environment_image_path)
 
     def pre_draw_card_illustration(self):
-        for card_number in self.__card_info_from_csv_repository_impl.getCardNumber():
-            card_illustration_image_path = os.path.join(self.__project_root, "local_storage", "card_images", f"{card_number}.png")
-            self.__pre_drawed_card_illustration[card_number] = ImageDataLoader.load_rectangle_image_data(card_illustration_image_path)
+        for card_number in self.__card_info_from_csv_repository.getCardNumber():
+            card_illustration_image_data = os.path.join(self.__project_root, "local_storage", "card_images", f"{card_number}.png")
+            self.__pre_drawed_card_illustration[card_number] = ImageDataLoader.load_rectangle_image_data(card_illustration_image_data)
+
+    def pre_draw_card_race(self):
+        image_dir = os.path.join(self.__project_root, "local_storage", "card_race_image")
+        file_list = os.listdir(image_dir)
+        png_files = [file for file in file_list if file.lower().endswith('.png')]
+
+        card_race_image_data_list = {}
+
+        for png_file in png_files:
+            race_number = int(png_file[:-4])
+            print(f"race_number: {race_number}")
+            card_race_image_data = os.path.join(self.__project_root, "local_storage", "card_race_image", f"{png_file}")
+            card_race_image_data_list[race_number] = ImageDataLoader.load_circle_image_data(card_race_image_data)
+
+        for card_number in self.__card_info_from_csv_repository.getCardNumber():
+            race_number = self.__card_info_from_csv_repository.getCardRaceForCardNumber(card_number)
+            print(f"race_number: {race_number}, card_number: {card_number}")
+            self.__pre_drawed_card_race[card_number] = card_race_image_data_list[race_number]
+
+    def pre_draw_card_type(self):
+        pass
+        # os.path.join(project_root, "local_storage", "card_type_image",
+        #              f"{self.cardInfoFromCsvRepositoryImpl.getCardTypeForCardNumber(card_number)}.png")
+        # for card_number in self.__card_info_from_csv_repository.getCardNumber():
+        #     card_type_image_data = os.path.join(self.__project_root, "local_storage", "card_type_image",
+        #                                         f"{xxxxx}.png")
+        #     self.__pre_drawed_card_race[card_number] = ImageDataLoader.load_circle_image_data(card_race_image_data)
 
 
     def pre_draw_every_image(self):
@@ -125,7 +155,9 @@ class PreDrawedImage:
         self.pre_draw_your_unit_field()
 
         self.pre_draw_battle_field_environment()
+
         self.pre_draw_card_illustration()
+        self.pre_draw_card_race()
 
     def get_pre_draw_opponent_tomb(self):
         return self.__pre_drawed_opponent_tomb
@@ -174,3 +206,6 @@ class PreDrawedImage:
 
     def get_pre_draw_card_illustration_for_card_number(self, card_number):
         return self.__pre_drawed_card_illustration[card_number]
+
+    def get_pre_draw_card_race_with_card_number(self, card_number):
+        return self.__pre_drawed_card_race[card_number]

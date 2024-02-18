@@ -14,6 +14,7 @@ from tests.lsh.ugly_draw_battle_field.test_draw_battle_field import ImageRectang
 class PickableCard:
     __imagePath = None
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
+
     def __init__(self, local_translation=(0, 0), scale=200):
         self.tool_card = None
         self.pickable_card_base = None
