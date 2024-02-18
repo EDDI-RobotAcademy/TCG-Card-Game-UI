@@ -10,6 +10,7 @@ class Circle(Shape):
         self.color = color
         self.radius = radius
         self.draw_border = True
+        self.set_initial_vertices([center])
 
     def set_draw_border(self, value):
         self.draw_border = value
