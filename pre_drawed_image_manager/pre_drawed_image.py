@@ -122,19 +122,29 @@ class PreDrawedImage:
             card_race_image_data = os.path.join(self.__project_root, "local_storage", "card_race_image", f"{png_file}")
             card_race_image_data_list[race_number] = ImageDataLoader.load_circle_image_data(card_race_image_data)
 
+
         for card_number in self.__card_info_from_csv_repository.getCardNumber():
             race_number = self.__card_info_from_csv_repository.getCardRaceForCardNumber(card_number)
             print(f"race_number: {race_number}, card_number: {card_number}")
             self.__pre_drawed_card_race[card_number] = card_race_image_data_list[race_number]
 
     def pre_draw_card_type(self):
-        pass
-        # os.path.join(project_root, "local_storage", "card_type_image",
-        #              f"{self.cardInfoFromCsvRepositoryImpl.getCardTypeForCardNumber(card_number)}.png")
-        # for card_number in self.__card_info_from_csv_repository.getCardNumber():
-        #     card_type_image_data = os.path.join(self.__project_root, "local_storage", "card_type_image",
-        #                                         f"{xxxxx}.png")
-        #     self.__pre_drawed_card_race[card_number] = ImageDataLoader.load_circle_image_data(card_race_image_data)
+        image_dir = os.path.join(self.__project_root, "local_storage", "card_type_image")
+        file_list = os.listdir(image_dir)
+        png_files = [file for file in file_list if file.lower().endswith('.png')]
+
+        card_type_image_data_list = {}
+
+        for png_file in png_files:
+            type_number = int(png_file[:-4])
+            print(f"type_number: {type_number}")
+            card_type_image_data = os.path.join(self.__project_root, "local_storage", "card_type_image", f"{png_file}")
+            card_type_image_data_list[type_number] = ImageDataLoader.load_circle_image_data(card_type_image_data)
+
+        for card_number in self.__card_info_from_csv_repository.getCardNumber():
+            type_number = self.__card_info_from_csv_repository.getCardTypeForCardNumber(card_number)
+            print(f"type_number: {type_number}, card_number: {card_number}")
+            self.__pre_drawed_card_type[card_number] = card_type_image_data_list[type_number]
 
 
     def pre_draw_every_image(self):
@@ -158,6 +168,7 @@ class PreDrawedImage:
 
         self.pre_draw_card_illustration()
         self.pre_draw_card_race()
+        self.pre_draw_card_type()
 
     def get_pre_draw_opponent_tomb(self):
         return self.__pre_drawed_opponent_tomb
@@ -209,3 +220,6 @@ class PreDrawedImage:
 
     def get_pre_draw_card_race_with_card_number(self, card_number):
         return self.__pre_drawed_card_race[card_number]
+
+    def get_pre_draw_card_type_with_card_number(self, card_number):
+        return self.__pre_drawed_card_type[card_number]
