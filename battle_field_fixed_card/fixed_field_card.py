@@ -20,12 +20,19 @@ class FixedFieldCard:
         self.scale = scale
         self.card_number = None
         self.card_info = CardInfoFromCsvRepositoryImpl.getInstance()
+        self.index = 0
 
     def get_card_number(self):
         return self.card_number
 
     def set_card_number(self, card_number):
         self.card_number = card_number
+
+    def get_index(self):
+        return self.index
+
+    def set_index(self, index):
+        self.index = index
 
     def change_local_translation(self, _translation):
         self.local_translation = _translation
