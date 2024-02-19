@@ -14,9 +14,11 @@ from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_type import CardType
 from image_shape.circle_image import CircleImage
+from image_shape.circle_number_image import CircleNumberImage
 from initializer.init_domain import DomainInitializer
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
+from opengl_shape.circle import Circle
 from opengl_shape.rectangle import Rectangle
 
 
@@ -168,8 +170,15 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             for attached_shape in attached_shape_list:
                 # if isinstance(attached_shape, CircleImage):
-                    # print(f"attached_shape: {attached_shape.vertices}")
-                    # print(f"attached_shape: {attached_shape.center}")
+                #     print(f"attached_shape: {attached_shape.vertices}")
+                #     # print(f"attached_shape: {attached_shape.center}")
+                #
+                # if isinstance(attached_shape, CircleNumberImage):
+                #     print(f"attached_shape: {attached_shape.vertices}")
+                #
+                # if isinstance(attached_shape, Circle):
+                #     print(f"attached_shape: {attached_shape.vertices}")
+
                 attached_shape.draw()
 
         if self.selected_object:
@@ -245,6 +254,12 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         for attached_shape in pickable_card_base.get_attached_shapes():
             if isinstance(attached_shape, CircleImage):
+                attached_circle_shape_initial_center = attached_shape.get_initial_center()
+                # print(f"attached_circle_image_shape: {attached_circle_shape_initial_center}")
+                attached_shape.update_circle_vertices(attached_circle_shape_initial_center)
+                continue
+
+            if isinstance(attached_shape, CircleNumberImage):
                 attached_circle_shape_initial_center = attached_shape.get_initial_center()
                 # print(f"attached_circle_image_shape: {attached_circle_shape_initial_center}")
                 attached_shape.update_circle_vertices(attached_circle_shape_initial_center)
