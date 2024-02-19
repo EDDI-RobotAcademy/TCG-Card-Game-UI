@@ -26,12 +26,6 @@ class ItemCard:
         self.shapes.append(shape)
         # extend
 
-    def create_item_energy_circle(self, color, center, radius):
-        item_energy_circle = Circle(color=color,
-                                    center=center,
-                                    radius=radius)
-        self.add_shape(item_energy_circle)
-
     def create_item_race_illustration_circle(self, image_data, center, radius):
         item_race_circle = CircleImage(image_data=image_data,
                                        center=center,
@@ -45,10 +39,6 @@ class ItemCard:
         self.add_shape(item_type_circle)
 
     def init_shapes(self, circle_radius, card_number, rectangle_height, rectangle_width):
-
-        self.create_item_energy_circle(color=(1.0, 0.33, 0.34, 1.0),
-                                       center=(0, 0),
-                                       radius=circle_radius)
 
         self.create_item_race_illustration_circle(
             image_data=self.__pre_drawed_image_instance.get_pre_draw_card_race_with_card_number(card_number),
