@@ -255,21 +255,27 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             # TODO: 배포덱에서는 도구를 사용하지 않음
                             print("도구를 붙입니다!")
                             self.your_hand_repository.remove_card_by_id(placed_card_id)
+
+                            self.selected_object = None
+                            return
                         elif card_type == CardType.ENERGY.value:
                             print("에너지를 붙입니다!")
                             self.selected_object = None
                             self.your_hand_repository.remove_card_by_id(placed_card_id)
-                            self.your_field_unit_repository.attached_energy_info(unit_index, 1)
+                            self.your_field_unit_repository.get_attached_energy_info().add_energy_at_index(unit_index, 1)
                             # TODO: attached_energy 값 UI에 표현 (이미지 작업 미완료)
 
                             # TODO: 특수 에너지 붙인 것을 어떻게 표현 할 것인가 ? (아직 미정)
+
+                            return
                         else:
                             self.return_to_initial_location()
+                            return
 
                         # self.your_field_unit_repository.create_field_unit_card(placed_card_id)
                         # self.your_field_unit_repository.save_current_field_unit_state(placed_card_id)
 
-                        self.selected_object = None
+                        # self.selected_object = None
 
             y *= -1
 

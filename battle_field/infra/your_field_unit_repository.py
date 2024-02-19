@@ -64,3 +64,6 @@ class YourFieldUnitRepository:
 
     def detach_energy(self, unit_index, energy_count):
         self.attached_energy_info.remove_energy_at_index(unit_index, energy_count)
+
+    def get_attached_energy_info(self):
+        return self.attached_energy_info
