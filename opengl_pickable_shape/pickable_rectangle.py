@@ -59,16 +59,18 @@ class PickableRectangle(Rectangle):
                 translated_vertices[0][1] <= y <= translated_vertices[2][1]):
             return False
 
-        count = 0
-        num_vertices = len(translated_vertices)
+        # count = 0
+        # num_vertices = len(translated_vertices)
+        #
+        # for i in range(num_vertices):
+        #     x1, y1 = translated_vertices[i]
+        #     x2, y2 = translated_vertices[(i + 1) % num_vertices]
+        #
+        #     if ((y1 <= y < y2) or (y2 <= y < y1)) and (x < (x2 - x1) * (y - y1) / (y2 - y1) + x1):
+        #         count += 1
+        #
+        # return count % 2 == 1
 
-        for i in range(num_vertices):
-            x1, y1 = translated_vertices[i]
-            x2, y2 = translated_vertices[(i + 1) % num_vertices]
-
-            if ((y1 <= y < y2) or (y2 <= y < y1)) and (x < (x2 - x1) * (y - y1) / (y2 - y1) + x1):
-                count += 1
-
-        return count % 2 == 1
+        return True
 
 
