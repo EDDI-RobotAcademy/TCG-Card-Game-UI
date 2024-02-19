@@ -35,6 +35,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.prev_selected_object = None
         self.drag_start = None
 
+        self.active_panel_rectangle = []
+
         self.lightning_border = LightningBorder()
 
         self.battle_field_scene = BattleFieldScene()
@@ -143,6 +145,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
     def redraw(self):
         self.tkMakeCurrent()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         self.draw_base()
 
@@ -405,14 +409,14 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             convert_y = self.winfo_reqheight() - y
             fixed_card_base = self.selected_object.get_fixed_card_base()
             if fixed_card_base.is_point_inside((x, convert_y)):
-                new_rectangle = self.create_opengl_rectangle((x, y))
+                new_rectangle = self.create_opengl_rectangle((x + 70, y - 80))
                 self.active_panel_rectangle = new_rectangle
 
     def create_opengl_rectangle(self, start_point):
-        rectangle_size = 50
-        rectangle_color = (1.0, 0.0, 0.0, 1.0)
+        rectangle_size = 100
+        rectangle_color = (0.0, 0.0, 0.0, 0.8)
 
-        end_point = (start_point[0] + rectangle_size, start_point[1] + rectangle_size)
+        end_point = (start_point[0] + rectangle_size, start_point[1] + rectangle_size * 2)
 
         new_rectangle = Rectangle(rectangle_color, [
             (start_point[0], start_point[1]),
