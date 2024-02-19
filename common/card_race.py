@@ -2,7 +2,8 @@ from enum import Enum
 
 
 class CardRace(Enum):
-    All = 1
-    HUMAN = 2
+    HUMAN = 1
+    UNDEAD = 2
     TRANT = 3
-    UNDEAD = 4
+
+    # todo 상점 리펙토링 필요합니다.
