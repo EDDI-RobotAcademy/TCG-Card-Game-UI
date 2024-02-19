@@ -44,7 +44,7 @@ class Shape(abc.ABC):
         return self.attached_shapes
 
     def local_translate(self, local_translate):
-        print(f"shape -> local_translate: {local_translate}")
+        # print(f"shape -> local_translate: {local_translate}")
         self.local_translation = local_translate
 
     def global_translate(self, global_translate):
