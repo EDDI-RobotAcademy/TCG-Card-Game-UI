@@ -5,6 +5,7 @@ class Shape(abc.ABC):
     def __init__(self, vertices, global_translation=(0, 0), local_translation=(0, 0)):
         self.vertices = vertices
         self.initial_vertices = None
+        self.initial_center = None
 
         self.global_translation = global_translation
         self.local_translation = local_translation
@@ -16,6 +17,12 @@ class Shape(abc.ABC):
 
     def get_initial_vertices(self):
         return self.initial_vertices
+
+    def set_initial_center(self, vertices):
+        self.initial_center = [vertices[0][0], vertices[0][1]]
+
+    def get_initial_center(self):
+        return self.initial_center
 
     def set_attached_shapes(self, shape):
         self.attached_shapes.append(shape)

@@ -142,6 +142,7 @@ class CircleImage(Shape):
         super().__init__([center], global_translation, local_translation)
         self.radius = radius
         self.center = center
+        self.initial_center = [center]
 
         print(f"CircleImage vertices: {self.vertices}")
         self.image_data = image_data
@@ -155,6 +156,13 @@ class CircleImage(Shape):
     def get_visible(self):
         return self.is_visible
 
+    def update_circle_vertices(self, calculated_initial_vertices):
+        print(f"update_circle_vertices: {calculated_initial_vertices}")
+        print(f"update_circle_vertices[0]: {calculated_initial_vertices[0]}")
+        print(f"update_circle_vertices[0][0]: {calculated_initial_vertices[0][0]}")
+        print(f"update_circle_vertices[0][1]: {calculated_initial_vertices[0][1]}")
+        self.vertices = calculated_initial_vertices
+
     def delete_texture(self):
         if self.texture_id is not None:
             GL.glDeleteTextures([self.texture_id])
@@ -162,12 +170,12 @@ class CircleImage(Shape):
 
     def draw(self):
         if self.get_visible():
-            white_rect = Circle(color=(1.0, 1.0, 1.0, 1.0),
-                                center=[self.vertices[0][0], self.vertices[0][1]],
-                                radius=self.radius,
-                                local_translation=self.local_translation,
-                                global_translation=self.global_translation)
-            white_rect.draw()
+            # white_rect = Circle(color=(1.0, 1.0, 1.0, 1.0),
+            #                     center=[self.vertices[0][0], self.vertices[0][1]],
+            #                     radius=self.radius,
+            #                     local_translation=self.local_translation,
+            #                     global_translation=self.global_translation)
+            # white_rect.draw()
 
             image_info = self.image_data
 

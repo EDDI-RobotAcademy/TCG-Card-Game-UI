@@ -228,12 +228,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             tool_card.update_vertices(tool_intiial_vertices)
 
         for attached_shape in pickable_card_base.get_attached_shapes():
-            attached_shape_intiial_vertices = attached_shape.get_initial_vertices()
             if isinstance(attached_shape, CircleImage):
-                print(f"attached_shape: {attached_shape_intiial_vertices}")
-                attached_shape.update_circle_vertices(attached_shape_intiial_vertices)
+                attached_circle_shape_initial_center = attached_shape.get_initial_center()
+                print(f"attached_circle_image_shape: {attached_circle_shape_initial_center}")
+                attached_shape.update_circle_vertices(attached_circle_shape_initial_center)
                 continue
 
+            attached_shape_intiial_vertices = attached_shape.get_initial_vertices()
             attached_shape.update_vertices(attached_shape_intiial_vertices)
 
         self.drag_start = None
