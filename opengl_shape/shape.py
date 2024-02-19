@@ -7,10 +7,23 @@ class Shape(abc.ABC):
         self.initial_vertices = None
         self.initial_center = None
 
+        # self.width = 0
+        # self.height = 0
+
         self.global_translation = global_translation
         self.local_translation = local_translation
         self.translation = self.local_translation + self.global_translation
         self.attached_shapes = []
+
+    # def calculate_width_height(self):
+    #     if len(self.vertices) == 4:
+    #         x_values = [vertex[0] for vertex in self.vertices]
+    #         y_values = [vertex[1] for vertex in self.vertices]
+    #         width = max(x_values) - min(x_values)
+    #         height = max(y_values) - min(y_values)
+    #         return width, height
+    #     else:
+    #         raise ValueError("A rectangle should have exactly 4 vertices.")
 
     def set_initial_vertices(self, vertices):
         self.initial_vertices = vertices
@@ -31,6 +44,7 @@ class Shape(abc.ABC):
         return self.attached_shapes
 
     def local_translate(self, local_translate):
+        print(f"shape -> local_translate: {local_translate}")
         self.local_translation = local_translate
 
     def global_translate(self, global_translate):

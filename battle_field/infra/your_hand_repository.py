@@ -1,4 +1,5 @@
 from battle_field.state.current_hand import CurrentHandState
+from image_shape.circle_image import CircleImage
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 
 
@@ -70,4 +71,34 @@ class YourHandRepository:
 
     def get_current_hand_card_list(self):
         return self.current_hand_card_list
+
+    def replace_hand_card_position(self):
+        current_y = 830
+        x_increment = 170
+
+        for index, current_hand_card in enumerate(self.current_hand_card_list):
+            next_x = self.x_base + x_increment * index
+            local_translation = (next_x, current_y)
+            print(f"replace_hand_card_position -> local_translation: {local_translation}")
+
+            tool_card = current_hand_card.get_tool_card()
+            tool_card.local_translate(local_translation)
+            # tool_intiial_vertices = tool_card.get_initial_vertices()
+            # tool_card.update_vertices(tool_intiial_vertices)
+
+            pickable_card_base = current_hand_card.get_pickable_card_base()
+            pickable_card_base.local_translate(local_translation)
+
+            for attached_shape in pickable_card_base.get_attached_shapes():
+                # if isinstance(attached_shape, CircleImage):
+                #     # TODO: 동그라미는 별도 처리해야함
+                #     attached_circle_shape_initial_center = attached_shape.get_initial_center()
+                #     attached_shape.update_circle_vertices(attached_circle_shape_initial_center)
+                #     continue
+
+                attached_shape.local_translate(local_translation)
+                # attached_shape_intiial_vertices = attached_shape.get_initial_vertices()
+                # attached_shape.update_vertices(attached_shape_intiial_vertices)
+
+            # current_hand_card.change_local_translation((next_x, current_y))
 
