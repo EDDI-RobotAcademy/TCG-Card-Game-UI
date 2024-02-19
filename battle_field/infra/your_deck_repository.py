@@ -26,3 +26,7 @@ class YourDeckRepository:
     def get_current_deck_state(self):
         return self.current_deck_state
 
+    def find_card_from_deck(self, card_id, count):
+        print(f"find_card_from_deck(): {card_id}")
+        return self.current_deck_state.find_card_by_id_with_count(card_id, count)
+

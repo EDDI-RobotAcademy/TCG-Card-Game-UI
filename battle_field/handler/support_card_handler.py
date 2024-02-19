@@ -1,8 +1,15 @@
+from battle_field.infra.your_deck_repository import YourDeckRepository
+from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
+
+
 class SupportCardHandler:
     __instance = None
 
     # 에너지 부스트(2), 덱 드로우(20), 유닛 검색(30), 상대 필드 에너지 파괴(36)
     __supportCardHandlerTable = {}
+
+    __yourDeckRepository = YourDeckRepository.getInstance()
+    __yourFieldUnitRepository = YourFieldUnitRepository.getInstance()
 
     def __new__(cls):
         if cls.__instance is None:
@@ -27,9 +34,16 @@ class SupportCardHandler:
         else:
             print(f"이 카드 타입({card_id}) 를 처리 할 수 있는 함수가 없습니다.")
 
-    def energy_boost_from_deck_as_possible(self):
+    def energy_boost_from_deck_as_possible(self, target_unit_index):
         print("에너지 부스팅")
-        pass
+
+        print(f"deck state: {self.__yourDeckRepository.get_current_deck_state().get_current_deck()}")
+        found_list = self.__yourDeckRepository.find_card_from_deck(93, 2)
+        print(f"found_list: {found_list}")
+        self.__yourFieldUnitRepository.attach_energy(target_unit_index, len(found_list))
+
+        print(f"attached energy info: {self.__yourFieldUnitRepository.get_attached_energy_info().get_energy_at_index(target_unit_index)}")
+        print(f"deck state: {self.__yourDeckRepository.get_current_deck_state().get_current_deck()}")
 
     def draw_card_from_deck(self):
         print("덱에서 드로우")
