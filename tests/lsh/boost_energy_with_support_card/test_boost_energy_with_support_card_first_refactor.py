@@ -18,6 +18,7 @@ from common.card_type import CardType
 from image_shape.circle_image import CircleImage
 from image_shape.circle_number_image import CircleNumberImage
 from initializer.init_domain import DomainInitializer
+from left_click.left_click_detector import LeftClickDetector
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.rectangle import Rectangle
@@ -81,6 +82,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.support_card_handler = SupportCardHandler.getInstance()
         self.current_process_card_id = 0
+
+        self.left_click_detector = LeftClickDetector.getInstance()
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -392,25 +395,24 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             x, y = event.x, event.y
             y = self.winfo_reqheight() - y
 
-            for hand_card in self.hand_card_list:
-                if isinstance(hand_card, PickableCard):
-                    hand_card.selected = False
+            for card in self.hand_card_list:
+                card.selected = False
 
             self.selected_object = None
 
-            for hand_card in reversed(self.hand_card_list):
-                pickable_card_base = hand_card.get_pickable_card_base()
+            selected_object = self.left_click_detector.which_one_select_is_in_hand_list_area((x, y),
+                                                                                             self.hand_card_list,
+                                                                                             self.winfo_reqheight())
 
-                if pickable_card_base.is_point_inside((x, y)):
-                    hand_card.selected = not hand_card.selected
-                    self.selected_object = hand_card
-                    self.drag_start = (x, y)
+            if selected_object:
+                selected_object.selected = not selected_object.selected
+                self.selected_object = selected_object
+                self.drag_start = (x, y)
 
-                    if self.selected_object != self.prev_selected_object:
-                        self.active_panel_rectangle = None
-                        self.prev_selected_object = self.selected_object
+                if self.selected_object != self.prev_selected_object:
+                    self.active_panel_rectangle = None
+                    self.prev_selected_object = self.selected_object
 
-                    break
 
             # Field Unit
             for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
@@ -421,15 +423,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 fixed_card_base = field_unit.get_fixed_card_base()
 
                 if fixed_card_base.is_point_inside((x, y)):
-                    if self.boost_selection:
-                        self.your_lightning_border_list = []
-                        print("덱에서 에너지 검색해서 부스팅 진행")
-
-                        proper_handler = self.support_card_handler.getSupportCardHandler(self.current_process_card_id)
-                        # def energy_boost_from_deck_as_possible(self, target_unit_index)
-                        proper_handler(field_unit.get_index())
-                        break
-
                     field_unit.selected = not field_unit.selected
                     self.selected_object = field_unit
                     self.drag_start = (x, y)
@@ -437,6 +430,16 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     if self.selected_object != self.prev_selected_object:
                         self.active_panel_rectangle = None
                         self.prev_selected_object = self.selected_object
+
+                        if self.boost_selection:
+                            self.your_lightning_border_list = []
+                            print("덱에서 에너지 검색해서 부스팅 진행")
+
+                            proper_handler = self.support_card_handler.getSupportCardHandler(
+                                self.current_process_card_id)
+                            # def energy_boost_from_deck_as_possible(self, target_unit_index)
+                            proper_handler(field_unit.get_index())
+                            self.boost_selection = False
 
                     break
 
@@ -469,9 +472,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         return new_rectangle
 
 
-class TestBoostEnergyWithSupportCard(unittest.TestCase):
+class TestBoostEnergyWithSupportCardFirstRefactor(unittest.TestCase):
 
-    def test_boost_energy_with_support_card(self):
+    def test_boost_energy_with_support_card_first_refactor(self):
         DomainInitializer.initEachDomain()
 
         root = tkinter.Tk()
