@@ -9,6 +9,7 @@ from pyopengltk import OpenGLFrame
 
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
+from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_type import CardType
@@ -64,6 +65,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
 
         self.your_field_unit_repository = YourFieldUnitRepository.getInstance()
+
+        self.your_tomb_repository = YourTombRepository.getInstance()
         # TODO: Naming Issue
         self.card_info = CardInfoFromCsvRepositoryImpl.getInstance()
 
@@ -244,6 +247,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         y = self.winfo_reqheight() - y
 
         if isinstance(self.selected_object, PickableCard):
+            print("I'm PickableCard")
             current_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
             current_field_unit_list_length = len(current_field_unit_list)
 
@@ -276,9 +280,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                             # TODO: 특수 에너지 붙인 것을 어떻게 표현 할 것인가 ? (아직 미정)
                             return
-                        else:
-                            self.return_to_initial_location()
-                            return
+                        # else:
+                        #     self.return_to_initial_location()
 
                         # self.your_field_unit_repository.create_field_unit_card(placed_card_id)
                         # self.your_field_unit_repository.save_current_field_unit_state(placed_card_id)
@@ -289,19 +292,32 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             # TODO: 현재 마우스 포인트(점)로 감지하나 추후 면으로 감지하도록 만들어야 함
             if self.is_drop_location_valid_your_unit_field(x, y):
-                placed_card_id = self.selected_object.get_card_number()
-                card_type = self.card_info.getCardTypeForCardNumber(placed_card_id)
+                if self.selected_object:
+                    placed_card_id = self.selected_object.get_card_number()
+                    print(f"my card number is {placed_card_id}")
+                    card_type = self.card_info.getCardTypeForCardNumber(placed_card_id)
+                    print(f"my card type is {card_type}")
 
-                if card_type != CardType.UNIT.value:
+                    if card_type == CardType.UNIT.value:
+                        # TODO: Memory Leak 발생하지 않도록 좀 더 꼼꼼하게 리소스 해제 하는지 확인해야함
+                        self.your_hand_repository.remove_card_by_id(placed_card_id)
+                        self.your_field_unit_repository.create_field_unit_card(placed_card_id)
+                        self.your_field_unit_repository.save_current_field_unit_state(placed_card_id)
+
+                        self.selected_object = None
+                        return
+
+                    if card_type == CardType.SUPPORT.value:
+                        print("서포트 카드 사용 감지!")
+                        self.selected_object = None
+                        self.your_hand_repository.remove_card_by_id(placed_card_id)
+
+                        tomb_state = self.your_tomb_repository.current_tomb_state
+                        tomb_state.place_unit_to_tomb(placed_card_id)
+
+                        return
+
                     self.return_to_initial_location()
-                    return
-
-                # TODO: Memory Leak 발생하지 않도록 좀 더 꼼꼼하게 리소스 해제 하는지 확인해야함
-                self.your_hand_repository.remove_card_by_id(placed_card_id)
-                self.your_field_unit_repository.create_field_unit_card(placed_card_id)
-                self.your_field_unit_repository.save_current_field_unit_state(placed_card_id)
-
-                self.selected_object = None
 
             else:
                 self.return_to_initial_location()
