@@ -157,10 +157,10 @@ class CircleImage(Shape):
         return self.is_visible
 
     def update_circle_vertices(self, calculated_initial_vertices):
-        print(f"update_circle_vertices: {calculated_initial_vertices}")
-        print(f"update_circle_vertices[0]: {calculated_initial_vertices[0]}")
-        print(f"update_circle_vertices[0][0]: {calculated_initial_vertices[0][0]}")
-        print(f"update_circle_vertices[0][1]: {calculated_initial_vertices[0][1]}")
+        # print(f"update_circle_vertices: {calculated_initial_vertices}")
+        # print(f"update_circle_vertices[0]: {calculated_initial_vertices[0]}")
+        # print(f"update_circle_vertices[0][0]: {calculated_initial_vertices[0][0]}")
+        # print(f"update_circle_vertices[0][1]: {calculated_initial_vertices[0][1]}")
         self.vertices = calculated_initial_vertices
 
     def delete_texture(self):
