@@ -95,29 +95,30 @@ class UnitCard:
 
     def init_shapes(self, circle_radius, card_number, rectangle_height, rectangle_width):
 
-        self.create_unit_energy_circle(color=(0.2, 0.33, 1.0, 1.0),
-                                       center=(circle_radius / 3, 5 * circle_radius / 4),
-                                       radius=circle_radius / 4)
-
-        self.create_unit_energy_circle(color=(0.2, 0.33, 1.0, 1.0),
-                                       center=(circle_radius/3, 7*circle_radius/4),
-                                       radius=circle_radius/4)
-
-        self.create_unit_energy_circle(color=(1, 0.6, 0.34, 1.0),
-                                       center=(circle_radius/3, 9 * circle_radius/4 ),
-                                       radius=circle_radius/4)
-
-        self.create_unit_energy_circle(color=(1.0, 0.6, 0.34, 1.0),
-                                       center=(circle_radius/3, 11 * circle_radius / 4),
-                                       radius=circle_radius / 4)
-
-
-
-        self.create_unit_hp_circle(
-            image_data=self.__pre_drawed_image_instance.get_pre_draw_card_hp_with_card_number(card_number),
-            hp_number=self.__card_info_from_csv_repository.getCardHpForCardNumber(card_number),
-            center=(0, 0),
-            radius=circle_radius)
+        # todo: 에너지와 관련된 이미지는 battle_field에서 만들어지도록 한다.
+        # self.create_unit_energy_circle(color=(0.2, 0.33, 1.0, 1.0),
+        #                                center=(circle_radius / 3, 5 * circle_radius / 4),
+        #                                radius=circle_radius / 4)
+        #
+        # self.create_unit_energy_circle(color=(0.2, 0.33, 1.0, 1.0),
+        #                                center=(circle_radius/3, 7*circle_radius/4),
+        #                                radius=circle_radius/4)
+        #
+        # self.create_unit_energy_circle(color=(1, 0.6, 0.34, 1.0),
+        #                                center=(circle_radius/3, 9 * circle_radius/4 ),
+        #                                radius=circle_radius/4)
+        #
+        # self.create_unit_energy_circle(color=(1.0, 0.6, 0.34, 1.0),
+        #                                center=(circle_radius/3, 11 * circle_radius / 4),
+        #                                radius=circle_radius / 4)
+        #
+        #
+        #
+        # self.create_unit_hp_circle(
+        #     image_data=self.__pre_drawed_image_instance.get_pre_draw_card_hp_with_card_number(card_number),
+        #     hp_number=self.__card_info_from_csv_repository.getCardHpForCardNumber(card_number),
+        #     center=(0, 0),
+        #     radius=circle_radius)
 
 
         self.create_unit_race_illustration_circle(
