@@ -76,7 +76,7 @@ class OvalIllustrationApp(OpenGLFrame):
         glColor3f(1.0, 1.0, 1.0)
 
         radius_x = 320
-        radius_y = 128.0
+        radius_y = 128
 
         for i in range(361):
             angle = i * pi / 180.0

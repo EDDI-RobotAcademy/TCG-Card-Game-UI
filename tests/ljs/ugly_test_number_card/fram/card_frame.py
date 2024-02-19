@@ -4,7 +4,7 @@ from pyopengltk import OpenGLFrame
 
 from common.utility import get_project_root
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
-from tests.jsh.ugly_test_card.renderer.card_frame_renderer import CardFrameRenderer
+from tests.ljs.ugly_test_number_card.renderer.card_frame_renderer import CardFrameRenderer
 
 
 class CardFrame(OpenGLFrame):
@@ -28,7 +28,7 @@ class CardFrame(OpenGLFrame):
         self.card_list.append(first_card)
 
         second_card = PickableCard(local_translation=(400, 400))
-        second_card.init_card(8)
+        second_card.init_card(6)
 
         self.card_list.append(second_card)
 

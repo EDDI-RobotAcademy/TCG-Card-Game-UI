@@ -1,16 +1,23 @@
 import os
 
+from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.utility import get_project_root
+from image_shape.circle_image import CircleImage
+from image_shape.circle_number_image import CircleNumberImage
 from opengl_pickable_shape.pickable_rectangle import PickableRectangle
 from opengl_shape.circle import Circle
 from opengl_shape.image_rectangle_element import ImageRectangleElement
 from opengl_shape.rectangle import Rectangle
+from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
+
+
 #from tests.ugly_text_field.test_ugly_text_field_rectangle import TextFieldRectangle
 
 
 class UnitCard:
     __imagePath = None
-
+    __pre_drawed_image_instance = PreDrawedImage.getInstance()
+    __card_info_from_csv_repository = CardInfoFromCsvRepositoryImpl.getInstance()
     def __init__(self, local_translation=(0, 0)):
         self.shapes = []
         self.local_translation = local_translation
@@ -66,38 +73,67 @@ class UnitCard:
                                     radius=radius)
         self.add_shape(unit_energy_circle)
 
-    def create_unit_race_circle(self, color, center, radius):
-        unit_race_circle = Circle(color=color,
-                                  center=center,
-                                  radius=radius)
-        self.add_shape(unit_race_circle)
+    def create_unit_race_illustration_circle(self, image_data, center, radius):
+        item_race_circle = CircleImage(image_data=image_data,
+                                       center=center,
+                                       radius=radius)
+        self.add_shape(item_race_circle)
 
-    def create_unit_attack_circle(self, color, center, radius):
-        unit_attack_circle = Circle(color=color,
+    def create_unit_attack_circle(self, image_data, attack_number, center, radius):
+        unit_attack_circle = CircleNumberImage(image_data=image_data,
                                     center=center,
-                                    radius=radius)
+                                    radius=radius,
+                                    number= attack_number)
         self.add_shape(unit_attack_circle)
 
-    def create_unit_hp_circle(self, color, center, radius):
-        unit_hp_circle = Circle(color=color,
+    def create_unit_hp_circle(self, image_data, hp_number, center, radius):
+        unit_hp_circle = CircleNumberImage(image_data=image_data,
                                 center=center,
-                                radius=radius)
+                                radius=radius,
+                                number=hp_number)
         self.add_shape(unit_hp_circle)
 
     def init_shapes(self, circle_radius, card_number, rectangle_height, rectangle_width):
-        self.create_unit_energy_circle(color=(1.0, 0.33, 0.34, 1.0),
-                                       center=(0, 0),
-                                       radius=circle_radius)
 
-        self.create_unit_race_circle(color=(0.678, 0.847, 0.902, 1.0),
+        self.create_unit_energy_circle(color=(0.2, 0.33, 1.0, 1.0),
+                                       center=(circle_radius / 3, 5 * circle_radius / 4),
+                                       radius=circle_radius / 4)
+
+        self.create_unit_energy_circle(color=(0.2, 0.33, 1.0, 1.0),
+                                       center=(circle_radius/3, 7*circle_radius/4),
+                                       radius=circle_radius/4)
+
+        self.create_unit_energy_circle(color=(1, 0.6, 0.34, 1.0),
+                                       center=(circle_radius/3, 9 * circle_radius/4 ),
+                                       radius=circle_radius/4)
+
+        self.create_unit_energy_circle(color=(1.0, 0.6, 0.34, 1.0),
+                                       center=(circle_radius/3, 11 * circle_radius / 4),
+                                       radius=circle_radius / 4)
+
+
+
+        self.create_unit_hp_circle(
+            image_data=self.__pre_drawed_image_instance.get_pre_draw_card_hp_with_card_number(card_number),
+            hp_number=self.__card_info_from_csv_repository.getCardHpForCardNumber(card_number),
+            center=(0, 0),
+            radius=circle_radius)
+
+
+        self.create_unit_race_illustration_circle(
+            image_data=self.__pre_drawed_image_instance.get_pre_draw_card_race_with_card_number(card_number),
                                      center=(rectangle_width, 0),
                                      radius=circle_radius)
 
-        self.create_unit_attack_circle(color=(0.988, 0.976, 0.800, 1.0),
+        self.create_unit_attack_circle(
+            image_data=self.__pre_drawed_image_instance.get_pre_draw_card_attack_with_card_number(card_number),
+            attack_number=self.__card_info_from_csv_repository.getCardAttackForCardNumber(card_number),
                                        center=(rectangle_width, rectangle_height),
                                        radius=circle_radius)
 
-        self.create_unit_hp_circle(color=(0.267, 0.839, 0.475, 1.0),
+        self.create_unit_hp_circle(
+            image_data=self.__pre_drawed_image_instance.get_pre_draw_card_hp_with_card_number(card_number),
+            hp_number=self.__card_info_from_csv_repository.getCardHpForCardNumber(card_number),
                                    center=(0, rectangle_height),
                                    radius=circle_radius)
 
