@@ -62,8 +62,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_hand_repository.save_current_hand_state([8, 19, 151, 2, 9, 20, 30, 36])
         self.your_hand_repository.create_hand_card_list()
 
-        # self.your_deck_repository = YourDeckRepository.getInstance()
-
         self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
 
         self.your_field_unit_repository = YourFieldUnitRepository.getInstance()
@@ -270,7 +268,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             # TODO: 배포덱에서는 도구를 사용하지 않음
                             print("도구를 붙입니다!")
                             self.your_hand_repository.remove_card_by_id(placed_card_id)
-                            self.your_hand_repository.replace_hand_card_position()
 
                             return
                         elif card_type == CardType.ENERGY.value:
@@ -279,7 +276,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             print("에너지를 붙입니다!")
                             self.your_hand_repository.remove_card_by_id(placed_card_id)
                             self.your_field_unit_repository.get_attached_energy_info().add_energy_at_index(unit_index, 1)
-                            self.your_hand_repository.replace_hand_card_position()
                             # TODO: attached_energy 값 UI에 표현 (이미지 작업 미완료)
 
                             # TODO: 특수 에너지 붙인 것을 어떻게 표현 할 것인가 ? (아직 미정)
@@ -308,9 +304,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         self.your_field_unit_repository.create_field_unit_card(placed_card_id)
                         self.your_field_unit_repository.save_current_field_unit_state(placed_card_id)
 
-                        # 카드 구성하는 모든 도형에 local_translation 적용
-                        self.your_hand_repository.replace_hand_card_position()
-
                         self.selected_object = None
                         return
 
@@ -321,7 +314,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                         tomb_state = self.your_tomb_repository.current_tomb_state
                         tomb_state.place_unit_to_tomb(placed_card_id)
-                        self.your_hand_repository.replace_hand_card_position()
 
                         return
 
@@ -426,9 +418,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         return new_rectangle
 
 
-class TestBoostEnergyWithSupportCard(unittest.TestCase):
+class TestUseSupportCard(unittest.TestCase):
 
-    def test_boost_energy_with_support_card(self):
+    def test_use_support_card(self):
         DomainInitializer.initEachDomain()
 
         root = tkinter.Tk()

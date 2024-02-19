@@ -95,6 +95,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
     def on_resize(self, event):
         self.reshape(event.width, event.height)
+        glDisable(GL_DEPTH_TEST)
 
     def draw_base(self):
         for opponent_tomb_shape in self.opponent_tomb_shapes:
@@ -145,8 +146,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
     def redraw(self):
         self.tkMakeCurrent()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         self.draw_base()
 
@@ -187,7 +186,17 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             self.lightning_border.draw_lightning_border()
 
         if self.active_panel_rectangle:
+            print("is active_panel_rectangle alive ?")
+
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
             self.active_panel_rectangle.draw()
+
+            print(f"Blend Enabled: {glIsEnabled(GL_BLEND)}")
+            print(f"Blend Src: {glGetInteger(GL_BLEND_SRC)}")
+            print(f"Blend Dst: {glGetInteger(GL_BLEND_DST)}")
+            print(f"Depth Test Enabled: {glIsEnabled(GL_DEPTH_TEST)}")
 
         self.tkSwapBuffers()
 
@@ -196,7 +205,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         x, y = event.x, event.y
         y = self.winfo_reqheight() - y
 
-        if self.selected_object and self.drag_start:
+        if isinstance(self.selected_object, PickableCard) and self.drag_start:
             pickable_card = self.selected_object.get_pickable_card_base()
 
             dx = x - self.drag_start[0]
@@ -414,7 +423,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
     def create_opengl_rectangle(self, start_point):
         rectangle_size = 100
-        rectangle_color = (0.0, 0.0, 0.0, 0.8)
+        rectangle_color = (0.0, 0.0, 0.0, 0.75)
 
         end_point = (start_point[0] + rectangle_size, start_point[1] + rectangle_size * 2)
 
