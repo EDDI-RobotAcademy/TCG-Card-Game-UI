@@ -7,6 +7,8 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
+from battle_field.handler.support_card_handler import SupportCardHandler
+from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
@@ -60,10 +62,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.battle_field_environment_shapes = self.battle_field_scene.get_battle_field_environment()
 
         self.your_hand_repository = YourHandRepository.getInstance()
-        self.your_hand_repository.save_current_hand_state([8, 19, 151, 2, 9, 20, 30, 36])
+        self.your_hand_repository.save_current_hand_state([8, 19, 151, 2, 9, 20, 30, 6])
         self.your_hand_repository.create_hand_card_list()
 
-        # self.your_deck_repository = YourDeckRepository.getInstance()
+        self.your_deck_repository = YourDeckRepository.getInstance()
+        self.your_deck_repository.save_deck_state([93, 93, 93, 5])
 
         self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
 
@@ -74,6 +77,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.card_info = CardInfoFromCsvRepositoryImpl.getInstance()
 
         self.your_lightning_border_list = []
+        self.boost_selection = False
+
+        self.support_card_handler = SupportCardHandler.getInstance()
+        self.current_process_card_id = 0
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -262,6 +269,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         x, y = event.x, event.y
         y = self.winfo_reqheight() - y
 
+        # if self.boost_selection:
+
         if isinstance(self.selected_object, PickableCard):
             print("I'm PickableCard")
             current_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
@@ -337,12 +346,15 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             print("에너지 부스팅 준비")
                             card_base = fixed_field_unit_card.get_fixed_card_base()
                             self.your_lightning_border_list.append(card_base)
+                            self.current_process_card_id = placed_card_id
 
                         self.your_hand_repository.remove_card_by_id(placed_card_id)
 
                         tomb_state = self.your_tomb_repository.current_tomb_state
                         tomb_state.place_unit_to_tomb(placed_card_id)
                         self.your_hand_repository.replace_hand_card_position()
+
+                        self.boost_selection = True
 
                         return
 
@@ -408,6 +420,14 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 fixed_card_base = field_unit.get_fixed_card_base()
 
                 if fixed_card_base.is_point_inside((x, y)):
+                    if self.boost_selection:
+                        self.your_lightning_border_list = []
+                        print("덱에서 에너지 검색해서 부스팅 진행")
+
+                        proper_handler = self.support_card_handler.getSupportCardHandler(self.current_process_card_id)
+                        # def energy_boost_from_deck_as_possible(self, target_unit_index)
+                        proper_handler(field_unit.get_index())
+
                     field_unit.selected = not field_unit.selected
                     self.selected_object = field_unit
                     self.drag_start = (x, y)
