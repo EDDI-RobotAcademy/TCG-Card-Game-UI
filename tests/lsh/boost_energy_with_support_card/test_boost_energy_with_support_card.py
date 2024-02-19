@@ -73,6 +73,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         # TODO: Naming Issue
         self.card_info = CardInfoFromCsvRepositoryImpl.getInstance()
 
+        self.your_lightning_border_list = []
+
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
         self.bind("<ButtonRelease-1>", self.on_canvas_release)
@@ -187,6 +189,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         if self.active_panel_rectangle:
             self.active_panel_rectangle.draw()
+
+        for your_lightning_border in self.your_lightning_border_list:
+            self.lightning_border.set_padding(20)
+            self.lightning_border.update_shape(your_lightning_border)
+            self.lightning_border.draw_lightning_border()
 
         self.tkSwapBuffers()
 
@@ -324,6 +331,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     if card_type == CardType.SUPPORT.value:
                         print("서포트 카드 사용 감지!")
                         self.selected_object = None
+
+                        # 현재 필드에 존재하는 모든 유닛에 Lightning Border
+                        for fixed_field_unit_card in self.your_field_unit_repository.get_current_field_unit_list():
+                            print("에너지 부스팅 준비")
+                            card_base = fixed_field_unit_card.get_fixed_card_base()
+                            self.your_lightning_border_list.append(card_base)
+
                         self.your_hand_repository.remove_card_by_id(placed_card_id)
 
                         tomb_state = self.your_tomb_repository.current_tomb_state

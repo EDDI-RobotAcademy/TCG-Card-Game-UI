@@ -37,6 +37,7 @@ class YourFieldUnitRepository:
         index = len(self.current_field_unit_list)
         new_card = FixedFieldCard(local_translation=self.get_next_card_position(index))
         new_card.init_card(card_id)
+        new_card.set_index(index)
         self.current_field_unit_list.append(new_card)
 
     def create_field_unit_card_list(self):
@@ -47,6 +48,7 @@ class YourFieldUnitRepository:
             print(f"index: {index}, card_number: {card_number}")
             new_card = FixedFieldCard(local_translation=self.get_next_card_position(index))
             new_card.init_card(card_number)
+            new_card.set_index(index)
             self.current_field_unit_list.append(new_card)
 
     def get_current_field_unit_list(self):
