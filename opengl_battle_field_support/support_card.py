@@ -13,8 +13,7 @@ class SupportCard():
     def __init__(self, local_translation=(0, 0)):
         self.shapes = []
         self.local_translation = local_translation
-        self.cardInfoFromCsvRepositoryImpl = CardInfoFromCsvRepositoryImpl()
-
+        
     def change_local_translation(self, _translation):
         self.local_translation = _translation
 
@@ -46,8 +45,7 @@ class SupportCard():
             center=(rectangle_width, 0),
             radius=circle_radius)
 
-        # self.create_support_type_illustration_circle(
-        #     image_data=os.path.join(project_root, "local_storage", "card_type_image",
-        #                             f"{self.cardInfoFromCsvRepositoryImpl.getCardTypeForCardNumber(card_number)}.png"),
-        #     center=(rectangle_width, rectangle_height),
-        #     radius=circle_radius)
+        self.create_support_type_illustration_circle(
+            image_data=self.__pre_drawed_image_instance.get_pre_draw_card_type_with_card_number(card_number),
+            center=(rectangle_width, rectangle_height),
+            radius=circle_radius)
