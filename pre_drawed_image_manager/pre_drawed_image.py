@@ -14,6 +14,8 @@ class PreDrawedImage:
     __pre_drawed_card_illustration = {}
     __pre_drawed_card_race = {}
     __pre_drawed_card_type = {}
+    __pre_drawed_card_attack = {}
+    __pre_drawed_card_hp = {}
 
     __pre_drawed_opponent_tomb = None
     __pre_drawed_opponent_lost_zone = None
@@ -146,6 +148,42 @@ class PreDrawedImage:
             print(f"type_number: {type_number}, card_number: {card_number}")
             self.__pre_drawed_card_type[card_number] = card_type_image_data_list[type_number]
 
+    def pre_draw_card_attack(self):
+        image_dir = os.path.join(self.__project_root, "local_storage", "card_number_image")
+        file_list = os.listdir(image_dir)
+        png_files = [file for file in file_list if file.lower().endswith('.png')]
+
+        card_attack_image_data_list = {}
+
+        for png_file in png_files:
+            attack_number = int(png_file[:-4])
+            print(f"number images: {attack_number}")
+            card_attack_image_data = os.path.join(self.__project_root, "local_storage", "card_number_image", f"{png_file}")
+            card_attack_image_data_list[attack_number] = ImageDataLoader.load_circle_image_data(card_attack_image_data)
+
+        for card_number in self.__card_info_from_csv_repository.getCardNumber():
+            attack_number = self.__card_info_from_csv_repository.getCardAttackForCardNumber(card_number)
+            print(f"attack_number: {attack_number}, card_number: {card_number}")
+            self.__pre_drawed_card_attack[card_number] = card_attack_image_data_list[attack_number]
+
+    def pre_draw_card_hp(self):
+        image_dir = os.path.join(self.__project_root, "local_storage", "card_number_image")
+        file_list = os.listdir(image_dir)
+        png_files = [file for file in file_list if file.lower().endswith('.png')]
+
+        card_hp_image_data_list = {}
+
+        for png_file in png_files:
+            hp_number = int(png_file[:-4])
+            print(f"number images: {hp_number}")
+            card_hp_image_data = os.path.join(self.__project_root, "local_storage", "card_number_image", f"{png_file}")
+            card_hp_image_data_list[hp_number] = ImageDataLoader.load_circle_image_data(card_hp_image_data)
+
+        for card_number in self.__card_info_from_csv_repository.getCardNumber():
+            hp_number = self.__card_info_from_csv_repository.getCardHpForCardNumber(card_number)
+            print(f"hp_number: {hp_number}, card_number: {card_number}")
+            self.__pre_drawed_card_hp[card_number] = card_hp_image_data_list[hp_number]
+
 
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
@@ -169,6 +207,8 @@ class PreDrawedImage:
         self.pre_draw_card_illustration()
         self.pre_draw_card_race()
         self.pre_draw_card_type()
+        self.pre_draw_card_hp()
+        self.pre_draw_card_attack()
 
     def get_pre_draw_opponent_tomb(self):
         return self.__pre_drawed_opponent_tomb
@@ -223,3 +263,9 @@ class PreDrawedImage:
 
     def get_pre_draw_card_type_with_card_number(self, card_number):
         return self.__pre_drawed_card_type[card_number]
+
+    def get_pre_draw_card_attack_with_card_number(self, card_number):
+        return self.__pre_drawed_card_attack[card_number]
+
+    def get_pre_draw_card_hp_with_card_number(self, card_number):
+        return self.__pre_drawed_card_hp[card_number]
