@@ -14,7 +14,6 @@ from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_type import CardType
 from image_shape.circle_image import CircleImage
-from image_shape.circle_number_image import CircleNumberImage
 from initializer.init_domain import DomainInitializer
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
@@ -62,8 +61,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_hand_repository = YourHandRepository.getInstance()
         self.your_hand_repository.save_current_hand_state([8, 19, 151, 2, 9, 20, 30, 36])
         self.your_hand_repository.create_hand_card_list()
-
-        # self.your_deck_repository = YourDeckRepository.getInstance()
 
         self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
 
@@ -235,12 +232,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         for attached_shape in pickable_card_base.get_attached_shapes():
             if isinstance(attached_shape, CircleImage):
-                attached_circle_shape_initial_center = attached_shape.get_initial_center()
-                # print(f"attached_circle_image_shape: {attached_circle_shape_initial_center}")
-                attached_shape.update_circle_vertices(attached_circle_shape_initial_center)
-                continue
-
-            if isinstance(attached_shape, CircleNumberImage):
                 attached_circle_shape_initial_center = attached_shape.get_initial_center()
                 # print(f"attached_circle_image_shape: {attached_circle_shape_initial_center}")
                 attached_shape.update_circle_vertices(attached_circle_shape_initial_center)
@@ -433,9 +424,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         return new_rectangle
 
 
-class TestBoostEnergyWithSupportCard(unittest.TestCase):
+class TestReplaceHandWhenUsage(unittest.TestCase):
 
-    def test_boost_energy_with_support_card(self):
+    def test_replace_hand_when_usage(self):
         DomainInitializer.initEachDomain()
 
         root = tkinter.Tk()
