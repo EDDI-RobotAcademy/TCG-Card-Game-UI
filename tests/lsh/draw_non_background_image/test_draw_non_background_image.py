@@ -383,6 +383,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     self.prev_selected_object = self.selected_object
 
                     if self.boost_selection:
+                        print("self.boost_selection operate ?")
                         self.your_lightning_border_list = []
                         print("덱에서 에너지 검색해서 부스팅 진행")
 

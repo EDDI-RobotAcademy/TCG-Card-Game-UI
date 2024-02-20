@@ -28,7 +28,7 @@ class SupportCardHandler:
         return cls.__instance
 
     def getSupportCardHandler(self, card_id):
-        print("cardType을 찾아 옵니다")
+        print(f"cardType을 찾아 옵니다 -> card_id: {card_id}")
         if self.__supportCardHandlerTable[card_id] is not None:
             return self.__supportCardHandlerTable[card_id]
         else:
