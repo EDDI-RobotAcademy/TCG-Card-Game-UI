@@ -69,5 +69,7 @@ class FixedUnitCardInsideHandler:
         self.your_hand_repository.remove_card_by_id(placed_card_id)
         self.your_field_unit_repository.get_attached_energy_info().add_energy_at_index(unit_index, 1)
         self.your_hand_repository.replace_hand_card_position()
+
+        print(f"에너지 상태: {self.your_field_unit_repository.get_attached_energy_info().get_energy_at_index(unit_index)}")
         # TODO: attached_energy 값 UI에 표현 (이미지 작업 미완료)
         # TODO: 특수 에너지 붙인 것을 어떻게 표현 할 것인가 ? (아직 미정)
