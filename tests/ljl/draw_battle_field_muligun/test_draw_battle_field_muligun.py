@@ -44,6 +44,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.prev_selected_object = None
         self.drag_start = None
 
+        self.click_card_effect_rectangles = []
+        self.selected_objects = []
+
         self.lightning_border = LightningBorder()
 
         self.battle_field_scene = BattleFieldScene()
@@ -178,20 +181,37 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             for attached_shape in attached_shape_list:
                 attached_shape.draw()
 
-        if self.selected_object:
-            pickable_card_base = self.selected_object.get_pickable_card_base()
 
-            self.lightning_border.set_padding(50)
-            self.lightning_border.update_shape(pickable_card_base)
-            self.lightning_border.draw_lightning_border()
+        for hand_card, click_card_effect_rectangle in zip(self.selected_objects, self.click_card_effect_rectangles):
+            if hand_card:
+                pickable_card_base = hand_card.get_pickable_card_base()
 
-            if self.click_card_effect_rectangle:
+                self.lightning_border.set_padding(50)
+                self.lightning_border.update_shape(pickable_card_base)
+                self.lightning_border.draw_lightning_border()
+
+            if click_card_effect_rectangle:
                 print("is active_panel_rectangle alive ?")
 
                 glEnable(GL_BLEND)
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-                self.click_card_effect_rectangle.draw()
+                click_card_effect_rectangle.draw()
+
+        # if self.selected_object:
+        #     pickable_card_base = self.selected_object.get_pickable_card_base()
+        #
+        #     self.lightning_border.set_padding(50)
+        #     self.lightning_border.update_shape(pickable_card_base)
+        #     self.lightning_border.draw_lightning_border()
+        #
+        #     if self.click_card_effect_rectangle:
+        #         print("is active_panel_rectangle alive ?")
+        #
+        #         glEnable(GL_BLEND)
+        #         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        #
+        #         self.click_card_effect_rectangle.draw()
 
         self.tkSwapBuffers()
 
@@ -215,11 +235,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 if pickable_card_base.is_point_inside((x, y)):
                     hand_card.selected = not hand_card.selected
                     self.selected_object = hand_card
+                    self.selected_objects.append(hand_card)
 
                 # if self.selected_object:
                     fixed_x, fixed_y = pickable_card_base.get_local_translation()
                     new_rectangle = self.create_change_card_expression((fixed_x, fixed_y))
                     self.click_card_effect_rectangle = new_rectangle
+                    self.click_card_effect_rectangles.append(new_rectangle)
 
                     if self.selected_object != self.prev_selected_object:
                         self.click_card_effect_rectangle = None
