@@ -54,6 +54,9 @@ class FieldAreaInsideHandler:
     def get_action_set_card_id(self):
         return self.__action_set_card_id
 
+    def clear_action_set_card_id(self):
+        self.__action_set_card_id = 0
+
     def get_field_area_action(self):
         print(f"get_field_area_action: {self.__field_area_action}")
         return self.__field_area_action
@@ -89,6 +92,7 @@ class FieldAreaInsideHandler:
         return self.__field_area_action
 
     def handle_support_card_energy_boost(self, placed_card_id):
+        print(f"handle_support_card_energy_boost -> placed_card_id: {placed_card_id}")
         for fixed_field_unit_card in self.your_field_unit_repository.get_current_field_unit_list():
             card_base = fixed_field_unit_card.get_fixed_card_base()
             self.__lightning_border_list.append(card_base)

@@ -341,9 +341,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             self.selected_object = None
 
-            selected_object = self.left_click_detector.which_one_select_is_in_hand_list_area((x, y),
-                                                                                             self.hand_card_list,
-                                                                                             self.winfo_reqheight())
+            selected_object = self.left_click_detector.which_one_select_is_in_your_hand_list_area((x, y),
+                                                                                                  self.hand_card_list,
+                                                                                                  self.winfo_reqheight())
 
             if selected_object:
                 selected_object.selected = not selected_object.selected
@@ -360,9 +360,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 field_unit.selected = False
 
             selected_field_unit = (self.left_click_detector
-                                   .which_one_select_is_in_field_unit_list_area((x, y),
-                                                                                self.your_field_unit_repository.get_current_field_unit_list(),
-                                                                                self.winfo_reqheight()))
+                                   .which_one_select_is_in_your_field_unit_list_area((x, y),
+                                                                                     self.your_field_unit_repository.get_current_field_unit_list(),
+                                                                                     self.winfo_reqheight()))
 
             if selected_field_unit:
                 selected_field_unit.selected = not selected_field_unit.selected
@@ -373,18 +373,25 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     self.field_area_inside_handler.clear_lightning_border_list()
                     self.field_area_inside_handler.clear_field_area_action()
 
+                    print(f"덱에서 에너지 검색해서 부스팅 진행 -> current_process_card_id: {self.field_area_inside_handler.get_action_set_card_id()}")
+
+                    proper_handler = self.support_card_handler.getSupportCardHandler(
+                        self.field_area_inside_handler.get_action_set_card_id())
+                    print(f"proper_handler: {proper_handler}")
+                    proper_handler(selected_field_unit.get_index())
+
                 if self.selected_object != self.prev_selected_object:
                     self.active_panel_rectangle = None
                     self.prev_selected_object = self.selected_object
 
-                    if self.boost_selection:
-                        self.your_lightning_border_list = []
-                        print("덱에서 에너지 검색해서 부스팅 진행")
-
-                        proper_handler = self.support_card_handler.getSupportCardHandler(
-                            self.current_process_card_id)
-                        proper_handler(selected_field_unit.get_index())
-                        self.boost_selection = False
+                    # if self.boost_selection:
+                    #     self.your_lightning_border_list = []
+                    #     print("덱에서 에너지 검색해서 부스팅 진행")
+                    #
+                    #     proper_handler = self.support_card_handler.getSupportCardHandler(
+                    #         self.current_process_card_id)
+                    #     proper_handler(selected_field_unit.get_index())
+                    #     self.boost_selection = False
 
         except Exception as e:
             print(f"Exception in on_canvas_click: {e}")

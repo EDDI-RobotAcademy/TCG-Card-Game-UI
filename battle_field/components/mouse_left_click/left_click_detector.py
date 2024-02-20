@@ -12,7 +12,7 @@ class LeftClickDetector:
             cls.__instance = cls()
         return cls.__instance
 
-    def which_one_select_is_in_hand_list_area(self, click_point, hand_card_list, canvas_height):
+    def which_one_select_is_in_your_hand_list_area(self, click_point, hand_card_list, canvas_height):
         x, y = click_point
         y = canvas_height - y
         y *= -1
@@ -26,7 +26,7 @@ class LeftClickDetector:
 
         return None
 
-    def which_one_select_is_in_field_unit_list_area(self, click_point, field_unit_list, canvas_height):
+    def which_one_select_is_in_your_field_unit_list_area(self, click_point, field_unit_list, canvas_height):
         x, y = click_point
         y = canvas_height - y
         y *= -1

@@ -35,6 +35,9 @@ class CircleNumberImage(Shape):
     def set_visible(self, visible):
         self.is_visible = visible
 
+    def set_image_data(self, image_data):
+        self.image_data = image_data
+
     def get_visible(self):
         return self.is_visible
 
