@@ -34,6 +34,7 @@ class PreDrawedImage:
     __pre_drawed_your_unit_field = None
 
     __pre_drawed_battle_field_environment = None
+    __pre_drawed_turn_end_button = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -105,6 +106,10 @@ class PreDrawedImage:
     def pre_draw_battle_field_environment(self):
         battle_field_environment_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "environment.jpeg")
         self.__pre_drawed_battle_field_environment = ImageDataLoader.load_rectangle_image_data(battle_field_environment_image_path)
+
+    def pre_draw_turn_end_button(self):
+        turn_end_button_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "turn_end_button.png")
+        self.__pre_drawed_turn_end_button = ImageDataLoader.load_rectangle_image_data(turn_end_button_image_path)
 
     def pre_draw_card_illustration(self):
         for card_number in self.__card_info_from_csv_repository.getCardNumber():
@@ -203,6 +208,7 @@ class PreDrawedImage:
         self.pre_draw_your_unit_field()
 
         self.pre_draw_battle_field_environment()
+        self.pre_draw_turn_end_button()
 
         self.pre_draw_card_illustration()
         self.pre_draw_card_race()
@@ -255,6 +261,9 @@ class PreDrawedImage:
     def get_pre_draw_battle_field_environment(self):
         return self.__pre_drawed_battle_field_environment
 
+    def get_pre_draw_turn_end_button(self):
+        return self.__pre_drawed_turn_end_button
+
     def get_pre_draw_card_illustration_for_card_number(self, card_number):
         return self.__pre_drawed_card_illustration[card_number]
 
@@ -269,3 +278,4 @@ class PreDrawedImage:
 
     def get_pre_draw_card_hp_with_card_number(self, card_number):
         return self.__pre_drawed_card_hp[card_number]
+

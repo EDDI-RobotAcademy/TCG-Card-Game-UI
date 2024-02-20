@@ -6,6 +6,7 @@ from battle_field.entity.opponent_main_character import OpponentMainCharacter
 from battle_field.entity.opponent_tomb import OpponentTomb
 from battle_field.entity.opponent_trap import OpponentTrap
 from battle_field.entity.opponent_unit_field import OpponentUnitField
+from battle_field.entity.turn_end_button import TurnEndButton
 from battle_field.entity.your_deck import YourDeck
 from battle_field.entity.your_hand_panel import YourHandPanel
 from battle_field.entity.your_lost_zone import YourLostZone
@@ -32,6 +33,7 @@ class BattleFieldScene:
         self.your_hand_panel = None
 
         self.battle_field_environment = None
+        self.turn_end_button = None
 
     def create_battle_field_scene(self):
         self.create_opponent_tomb()
@@ -51,6 +53,7 @@ class BattleFieldScene:
         self.create_your_unit_field()
 
         self.create_battle_field_environment()
+        self.create_turn_end_button()
 
     def create_opponent_tomb(self):
         self.opponent_tomb = OpponentTomb()
@@ -112,6 +115,10 @@ class BattleFieldScene:
         self.battle_field_environment = BattleFieldEnvironment()
         self.battle_field_environment.init_shapes()
 
+    def create_turn_end_button(self):
+        self.turn_end_button = TurnEndButton()
+        self.turn_end_button.init_shapes()
+
     def get_opponent_tomb(self):
         return self.opponent_tomb.get_tomb_shapes()
 
@@ -156,3 +163,6 @@ class BattleFieldScene:
 
     def get_battle_field_environment(self):
         return self.battle_field_environment.get_environment_shapes()
+
+    def get_turn_end_button(self):
+        return self.turn_end_button.get_turn_end_button_shapes()
