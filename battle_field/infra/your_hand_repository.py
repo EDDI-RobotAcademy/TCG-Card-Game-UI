@@ -11,6 +11,7 @@ class YourHandRepository:
     current_hand_card_x_position = []
 
     x_base = 300
+    x_base_muligun = 150 # 멀리건에서의 맨 처음 카드 위치.
 
     def __new__(cls):
         if cls.__instance is None:
@@ -51,6 +52,18 @@ class YourHandRepository:
             # new_card.set_initial_position(initial_position)
             self.current_hand_card_list.append(new_card)
 
+    # 멀리건 화면에서의 카드 리스트
+    def create_hand_card_list_muligun(self):
+        current_hand = self.get_current_hand_state()
+        print(f"current_hand: {current_hand}")
+
+        for index, card_number in enumerate(current_hand):
+            print(f"index: {index}, card_number: {card_number}")
+            initial_position = self.get_start_hand_card_position(index)
+            new_card = PickableCard(local_translation=initial_position, scale=300)
+            new_card.init_card_scale(card_number)
+            self.current_hand_card_list.append(new_card)
+
     def remove_card_by_id(self, card_id):
         card_list = self.get_current_hand_card_list()
 
@@ -67,6 +80,13 @@ class YourHandRepository:
         current_y = 830
         x_increment = 170
         next_x = self.x_base + x_increment * index
+        return (next_x, current_y)
+
+    # 멀리건 화면에서 카드 배치
+    def get_start_hand_card_position(self, index):
+        current_y = 300
+        x_increment = 340
+        next_x = self.x_base_muligun + x_increment * index
         return (next_x, current_y)
 
     def get_current_hand_card_list(self):
