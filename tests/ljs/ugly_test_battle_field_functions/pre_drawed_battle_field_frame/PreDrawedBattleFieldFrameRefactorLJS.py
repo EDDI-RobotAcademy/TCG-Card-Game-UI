@@ -497,7 +497,8 @@ class PreDrawedBattleFieldFrameRefactorLJS(OpenGLFrame):
                                                                                          self.battle_field_repository.get_battle_field_button_list(),
                                                                                          self.winfo_reqheight())
             if selected_button:
-                print("버튼눌림!!!!! ")
+                selected_button.invoke_click_event()
+
 
         except Exception as e:
             print(f"Exception in on_canvas_click: {e}")

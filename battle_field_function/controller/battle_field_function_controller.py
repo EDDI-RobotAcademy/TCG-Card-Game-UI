@@ -12,6 +12,10 @@ class BattleFieldFunctionController(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def callTurnEnd(self):
+        pass
+
+    @abc.abstractmethod
     def callFirstTurnDrawCard(self):
         pass
 

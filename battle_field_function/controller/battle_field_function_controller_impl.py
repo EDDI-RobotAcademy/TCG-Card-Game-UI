@@ -30,3 +30,6 @@ class BattleFieldFunctionControllerImpl(BattleFieldFunctionController):
 
     def useCard(self, cardId):
         pass
+
+    def callTurnEnd(self):
+        self.__battleFieldFunctionService.turnEnd()

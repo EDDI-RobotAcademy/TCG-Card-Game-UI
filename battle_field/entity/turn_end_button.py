@@ -1,10 +1,11 @@
+from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
 from battle_field_ui_button.battle_field_button import BattleFieldButton
-from image_shape.rectangle_image import RectangleImage
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
 class TurnEndButton:
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
+    __battle_field_function_controller = BattleFieldFunctionControllerImpl.getInstance()
 
     def __init__(self, local_translation=(0, 0), scale=1):
         self.shapes = []
@@ -31,3 +32,8 @@ class TurnEndButton:
 
     def get_button_base(self):
         return self.button_base
+
+
+    def invoke_click_event(self):
+        print("turn_end_button.invoke_click_event!!!!")
+        self.__battle_field_function_controller.callTurnEnd()
