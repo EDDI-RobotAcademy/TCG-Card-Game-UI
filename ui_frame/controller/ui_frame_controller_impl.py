@@ -1,6 +1,11 @@
 from account_register_frame.service.account_register_frame_service_impl import AccountRegisterFrameServiceImpl
 from app_window.service.window_service_impl import WindowServiceImpl
 from account_login_frame.service.login_menu_frame_service_impl import LoginMenuFrameServiceImpl
+from battle_field.infra.battle_field_repository import BattleFieldRepository
+from battle_field.infra.your_deck_repository import YourDeckRepository
+from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
+from battle_field.infra.your_hand_repository import YourHandRepository
+from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field_function.service.battle_field_function_service_impl import BattleFieldFunctionServiceImpl
 from battle_lobby_frame.service.battle_lobby_frame_service_impl import BattleLobbyFrameServiceImpl
 from card_shop_frame.service.card_shop_service_impl import CardShopMenuFrameServiceImpl
@@ -42,6 +47,12 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__battleFieldFrame = BattleFieldFrame
             cls.__instance.__sessionService = SessionServiceImpl.getInstance()
             cls.__instance.__matchingWindowService = MatchingWindowServiceImpl.getInstance()
+            cls.__instance.__battleFieldRepository = BattleFieldRepository.getInstance()
+            cls.__instance.__yourDeckRepository = YourDeckRepository.getInstance()
+            cls.__instance.__yourFieldUnitRepository = YourFieldUnitRepository.getInstance()
+            cls.__instance.__yourHandRepository = YourHandRepository.getInstance()
+            cls.__instance.__yourTombRepository = YourTombRepository.getInstance()
+
         return cls.__instance
 
     @classmethod
@@ -116,6 +127,12 @@ class UiFrameControllerImpl(UiFrameController):
 
         self.__cardShopMenuFrameService.injectTransmitIpcChannel(transmitIpcChannel)
 
+        self.__battleFieldRepository.saveTransmitIpcChannel(transmitIpcChannel)
+        self.__yourDeckRepository.saveTransmitIpcChannel(transmitIpcChannel)
+        self.__yourFieldUnitRepository.saveTransmitIpcChannel(transmitIpcChannel)
+        self.__yourHandRepository.saveTransmitIpcChannel(transmitIpcChannel)
+        self.__yourTombRepository.saveTransmitIpcChannel(transmitIpcChannel)
+
 
     def requestToInjectReceiveIpcChannel(self, receiveIpcChannel):
         print("UiFrameControllerImpl: requestToInjectReceiveIpcChannel()")
@@ -134,6 +151,12 @@ class UiFrameControllerImpl(UiFrameController):
         self.__matchingWindowService.injectReceiveIpcChannel(receiveIpcChannel)
 
         self.__cardShopMenuFrameService.injectReceiveIpcChannel(receiveIpcChannel)
+
+        self.__battleFieldRepository.saveReceiveIpcChannel(receiveIpcChannel)
+        self.__yourDeckRepository.saveReceiveIpcChannel(receiveIpcChannel)
+        self.__yourFieldUnitRepository.saveReceiveIpcChannel(receiveIpcChannel)
+        self.__yourHandRepository.saveReceiveIpcChannel(receiveIpcChannel)
+        self.__yourTombRepository.saveReceiveIpcChannel(receiveIpcChannel)
 
 
     def requestToInjectMusicPlayIpcChannel(self, musicPlayIpcChannel):
