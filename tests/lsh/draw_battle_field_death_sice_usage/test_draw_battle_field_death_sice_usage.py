@@ -24,6 +24,7 @@ from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
+from common.card_type import CardType
 
 from initializer.init_domain import DomainInitializer
 
@@ -116,6 +117,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             self.your_hand_repository,
             self.opponent_field_unit_repository,
             self.card_info_repository)
+
+        self.selected_object_for_check_required_energy = []
+        self.selected_object_index_for_check_required_energy = []
+        self.required_energy_select_lightning_border_list = []
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -250,6 +255,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             self.lightning_border.update_shape(your_hand_lightning_border)
             self.lightning_border.draw_lightning_border()
 
+        for required_energy_selection_border in self.required_energy_select_lightning_border_list:
+            self.lightning_border.set_padding(20)
+            self.lightning_border.update_shape(required_energy_selection_border)
+            self.lightning_border.draw_lightning_border()
+
         self.tkSwapBuffers()
 
 
@@ -341,6 +351,66 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             # 상대에게 어떤 카드 사용 시 에너지가 필요하다면
             if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() is OpponentFieldAreaAction.REQUIRE_ENERGY_TO_USAGE:
                 print("카드를 사용하기 위해 에너지가 필요합니다!")
+
+                selected_card_id = self.selected_object.get_card_number()
+
+                if self.card_info_repository.getCardTypeForCardNumber(selected_card_id) is not CardType.ENERGY.value:
+                    return
+
+                required_energy_race = self.opponent_fixed_unit_card_inside_handler.get_required_energy_race()
+                if self.card_info_repository.getCardRaceForCardNumber(selected_card_id) is not required_energy_race.value:
+                    return
+
+                self.selected_object_for_check_required_energy.append(self.selected_object)
+                self.selected_object_index_for_check_required_energy.append(
+                    self.your_hand_repository.find_index_by_selected_object(
+                        self.selected_object))
+
+                card_base = self.selected_object.get_pickable_card_base()
+                self.required_energy_select_lightning_border_list.append(card_base)
+
+                self.opponent_fixed_unit_card_inside_handler.decrease_required_energy()
+                required_energy_count = self.opponent_fixed_unit_card_inside_handler.get_required_energy()
+
+                if required_energy_count == 0:
+                    # self.your_hand_repository.remove_card_by_index(
+                    #     self.opponent_fixed_unit_card_inside_handler.get_action_set_card_index())
+
+                    usage_card_index = self.opponent_fixed_unit_card_inside_handler.get_action_set_card_index()
+                    # print(f"usage_card_index: {usage_card_index}")
+
+                    # # TODO: Ugly (Need to Refactor)
+                    # self.your_hand_repository.remove_card_by_index(self.selected_object_index_for_check_required_energy[0])
+                    # self.your_hand_repository.remove_card_by_index(self.selected_object_index_for_check_required_energy[1])
+
+                    # print(f"first selected energy index: {self.selected_object_index_for_check_required_energy[0]}")
+                    # print(f"second selected energy index: {self.selected_object_index_for_check_required_energy[1]}")
+
+                    self.your_hand_repository.remove_card_by_multiple_index(
+                        [
+                            usage_card_index,
+                            self.selected_object_index_for_check_required_energy[0],
+                            self.selected_object_index_for_check_required_energy[1]
+                        ])
+
+                    self.opponent_field_unit_repository.remove_current_field_unit_card(
+                        self.opponent_fixed_unit_card_inside_handler.get_opponent_unit_index())
+
+                    self.your_hand_repository.replace_hand_card_position()
+
+                    self.selected_object_for_check_required_energy = []
+                    self.selected_object_index_for_check_required_energy = []
+                    self.required_energy_select_lightning_border_list = []
+
+                    self.opponent_fixed_unit_card_inside_handler.clear_opponent_unit_index()
+                    self.opponent_fixed_unit_card_inside_handler.clear_action_set_card_index()
+                    self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+                    self.opponent_fixed_unit_card_inside_handler.clear_required_energy_race()
+                    self.opponent_fixed_unit_card_inside_handler.clear_required_energy()
+                    self.opponent_fixed_unit_card_inside_handler.clear_lightning_border_list()
+
+                    self.selected_object = None
+                    return
 
             # FixedFieldCard (Field Unit Card List)
             for your_field_unit in self.your_field_unit_repository.get_current_field_unit_list():
