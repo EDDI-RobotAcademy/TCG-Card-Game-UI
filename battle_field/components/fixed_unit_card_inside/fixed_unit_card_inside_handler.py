@@ -31,6 +31,16 @@ class FixedUnitCardInsideHandler:
         return cls.__instance
 
     def handle_pickable_card_inside_unit(self, selected_object, x, y):
+        print(f"handle_pickable_card_inside_unit: {selected_object}, {x}, {y}")
+        card_type = self.card_info.getCardTypeForCardNumber(selected_object.get_card_number())
+        print(f"card_type: {card_type}")
+        print(f"TOOL value: {CardType.TOOL.value}, ENERGY value: {CardType.ENERGY.value}")
+
+        if card_type not in [CardType.TOOL.value, CardType.ENERGY.value]:
+            return
+
+        print("can I pass uppon condition ?")
+
         field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
 
         for unit_index, field_unit in enumerate(field_unit_list):
