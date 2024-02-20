@@ -186,7 +186,8 @@ class PickableCard:
         )
 
         card_controller_shapes = self.card_controller.getCardTypeTable(
-            self.card_info.getCardTypeForCardNumber(card_number))
+            self.card_info.getCardTypeForCardNumber(card_number)
+        )
         card_shapes = card_controller_shapes(self.local_translation, card_number, rectangle_height, rectangle_width)
         for shape in card_shapes:
             self.pickable_card_base.set_attached_shapes(shape)
