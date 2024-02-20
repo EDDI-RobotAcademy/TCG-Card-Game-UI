@@ -1,3 +1,7 @@
+from battle_field.components.init_location.location_initializer import LocationInitializer
+from battle_field.components.mouse_drag.drag_handler import DragHandler
+from battle_field.components.mouse_left_click.left_click_detector import LeftClickDetector
+from battle_field.components.mouse_release.release_handler import ReleaseHandler
 from battle_field.entity.battle_field_scene import BattleFieldScene
 
 import tkinter
@@ -18,7 +22,7 @@ from common.card_type import CardType
 from image_shape.circle_image import CircleImage
 from image_shape.circle_number_image import CircleNumberImage
 from initializer.init_domain import DomainInitializer
-from left_click.left_click_detector import LeftClickDetector
+
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.rectangle import Rectangle
@@ -213,58 +217,71 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         y = self.winfo_reqheight() - y
 
         if self.selected_object and self.drag_start:
-            pickable_card = self.selected_object.get_pickable_card_base()
+            drag_handler = DragHandler(self.selected_object, self.drag_start)
 
             dx = x - self.drag_start[0]
             dy = y - self.drag_start[1]
             dy *= -1
 
-            new_vertices = [
-                (vx + dx, vy + dy) for vx, vy in pickable_card.vertices
-            ]
-            pickable_card.update_vertices(new_vertices)
-
-            tool_card = self.selected_object.get_tool_card()
-            if tool_card is not None:
-                new_tool_card_vertices = [
-                    (vx + dx, vy + dy) for vx, vy in tool_card.vertices
-                ]
-                tool_card.update_vertices(new_tool_card_vertices)
-
-            for attached_shape in pickable_card.get_attached_shapes():
-                new_attached_shape_vertices = [
-                    (vx + dx, vy + dy) for vx, vy in attached_shape.vertices
-                ]
-                attached_shape.update_vertices(new_attached_shape_vertices)
+            drag_handler.update_selected_object_vertices_with_drag(dx, dy)
 
             self.drag_start = (x, y)
 
+        # if self.selected_object and self.drag_start:
+        #     pickable_card = self.selected_object.get_pickable_card_base()
+        #
+        #     dx = x - self.drag_start[0]
+        #     dy = y - self.drag_start[1]
+        #     dy *= -1
+        #
+        #     new_vertices = [
+        #         (vx + dx, vy + dy) for vx, vy in pickable_card.vertices
+        #     ]
+        #     pickable_card.update_vertices(new_vertices)
+        #
+        #     tool_card = self.selected_object.get_tool_card()
+        #     if tool_card is not None:
+        #         new_tool_card_vertices = [
+        #             (vx + dx, vy + dy) for vx, vy in tool_card.vertices
+        #         ]
+        #         tool_card.update_vertices(new_tool_card_vertices)
+        #
+        #     for attached_shape in pickable_card.get_attached_shapes():
+        #         new_attached_shape_vertices = [
+        #             (vx + dx, vy + dy) for vx, vy in attached_shape.vertices
+        #         ]
+        #         attached_shape.update_vertices(new_attached_shape_vertices)
+        #
+        #     self.drag_start = (x, y)
+
     def return_to_initial_location(self):
-        pickable_card_base = self.selected_object.get_pickable_card_base()
-        intiial_vertices = pickable_card_base.get_initial_vertices()
+        # pickable_card_base = self.selected_object.get_pickable_card_base()
+        # intiial_vertices = pickable_card_base.get_initial_vertices()
+        #
+        # pickable_card_base.update_vertices(intiial_vertices)
+        #
+        # tool_card = self.selected_object.get_tool_card()
+        # if tool_card is not None:
+        #     tool_intiial_vertices = tool_card.get_initial_vertices()
+        #     tool_card.update_vertices(tool_intiial_vertices)
+        #
+        # for attached_shape in pickable_card_base.get_attached_shapes():
+        #     if isinstance(attached_shape, CircleImage):
+        #         attached_circle_shape_initial_center = attached_shape.get_initial_center()
+        #         # print(f"attached_circle_image_shape: {attached_circle_shape_initial_center}")
+        #         attached_shape.update_circle_vertices(attached_circle_shape_initial_center)
+        #         continue
+        #
+        #     if isinstance(attached_shape, CircleNumberImage):
+        #         attached_circle_shape_initial_center = attached_shape.get_initial_center()
+        #         # print(f"attached_circle_image_shape: {attached_circle_shape_initial_center}")
+        #         attached_shape.update_circle_vertices(attached_circle_shape_initial_center)
+        #         continue
+        #
+        #     attached_shape_intiial_vertices = attached_shape.get_initial_vertices()
+        #     attached_shape.update_vertices(attached_shape_intiial_vertices)
 
-        pickable_card_base.update_vertices(intiial_vertices)
-
-        tool_card = self.selected_object.get_tool_card()
-        if tool_card is not None:
-            tool_intiial_vertices = tool_card.get_initial_vertices()
-            tool_card.update_vertices(tool_intiial_vertices)
-
-        for attached_shape in pickable_card_base.get_attached_shapes():
-            if isinstance(attached_shape, CircleImage):
-                attached_circle_shape_initial_center = attached_shape.get_initial_center()
-                # print(f"attached_circle_image_shape: {attached_circle_shape_initial_center}")
-                attached_shape.update_circle_vertices(attached_circle_shape_initial_center)
-                continue
-
-            if isinstance(attached_shape, CircleNumberImage):
-                attached_circle_shape_initial_center = attached_shape.get_initial_center()
-                # print(f"attached_circle_image_shape: {attached_circle_shape_initial_center}")
-                attached_shape.update_circle_vertices(attached_circle_shape_initial_center)
-                continue
-
-            attached_shape_intiial_vertices = attached_shape.get_initial_vertices()
-            attached_shape.update_vertices(attached_shape_intiial_vertices)
+        LocationInitializer.return_to_initial_location(self.selected_object)
 
         self.drag_start = None
 
@@ -273,6 +290,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         y = self.winfo_reqheight() - y
 
         # if self.boost_selection:
+
+        # release_handler = ReleaseHandler(self.selected_object, self.your_hand_repository,
+        #                                  self.your_field_unit_repository, self.card_info)
+        # release_handler.handle_release(x, y)
 
         if isinstance(self.selected_object, PickableCard):
             # print("I'm PickableCard")
@@ -350,8 +371,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             print("에너지 부스팅 준비")
                             card_base = fixed_field_unit_card.get_fixed_card_base()
                             self.your_lightning_border_list.append(card_base)
-                            self.current_process_card_id = placed_card_id
 
+                        self.current_process_card_id = placed_card_id
                         self.your_hand_repository.remove_card_by_id(placed_card_id)
 
                         tomb_state = self.your_tomb_repository.current_tomb_state
@@ -395,6 +416,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             x, y = event.x, event.y
             y = self.winfo_reqheight() - y
 
+            # PickableCard (Hand Card List)
             for card in self.hand_card_list:
                 card.selected = False
 
@@ -414,34 +436,56 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     self.prev_selected_object = self.selected_object
 
 
-            # Field Unit
+            # FixedFieldCard (Field Unit Card List)
             for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
-                if isinstance(field_unit, FixedFieldCard):
-                    field_unit.selected = False
+                field_unit.selected = False
 
-            for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
-                fixed_card_base = field_unit.get_fixed_card_base()
+            # for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
+            #     fixed_card_base = field_unit.get_fixed_card_base()
+            #
+            #     if fixed_card_base.is_point_inside((x, y)):
+            #         field_unit.selected = not field_unit.selected
+            #         self.selected_object = field_unit
+            #         self.drag_start = (x, y)
+            #
+            #         if self.selected_object != self.prev_selected_object:
+            #             self.active_panel_rectangle = None
+            #             self.prev_selected_object = self.selected_object
+            #
+            #             if self.boost_selection:
+            #                 self.your_lightning_border_list = []
+            #                 print("덱에서 에너지 검색해서 부스팅 진행")
+            #
+            #                 proper_handler = self.support_card_handler.getSupportCardHandler(
+            #                     self.current_process_card_id)
+            #                 # def energy_boost_from_deck_as_possible(self, target_unit_index)
+            #                 proper_handler(field_unit.get_index())
+            #                 self.boost_selection = False
+            #
+            #         break
 
-                if fixed_card_base.is_point_inside((x, y)):
-                    field_unit.selected = not field_unit.selected
-                    self.selected_object = field_unit
-                    self.drag_start = (x, y)
+            selected_field_unit = (self.left_click_detector
+                                   .which_one_select_is_in_field_unit_list_area((x, y),
+                                                                                self.your_field_unit_repository.get_current_field_unit_list(),
+                                                                                self.winfo_reqheight()))
 
-                    if self.selected_object != self.prev_selected_object:
-                        self.active_panel_rectangle = None
-                        self.prev_selected_object = self.selected_object
+            if selected_field_unit:
+                selected_field_unit.selected = not selected_field_unit.selected
+                self.selected_object = selected_field_unit
+                self.drag_start = (x, y)
 
-                        if self.boost_selection:
-                            self.your_lightning_border_list = []
-                            print("덱에서 에너지 검색해서 부스팅 진행")
+                if self.selected_object != self.prev_selected_object:
+                    self.active_panel_rectangle = None
+                    self.prev_selected_object = self.selected_object
 
-                            proper_handler = self.support_card_handler.getSupportCardHandler(
-                                self.current_process_card_id)
-                            # def energy_boost_from_deck_as_possible(self, target_unit_index)
-                            proper_handler(field_unit.get_index())
-                            self.boost_selection = False
+                    if self.boost_selection:
+                        self.your_lightning_border_list = []
+                        print("덱에서 에너지 검색해서 부스팅 진행")
 
-                    break
+                        proper_handler = self.support_card_handler.getSupportCardHandler(
+                            self.current_process_card_id)
+                        proper_handler(selected_field_unit.get_index())
+                        self.boost_selection = False
 
         except Exception as e:
             print(f"Exception in on_canvas_click: {e}")

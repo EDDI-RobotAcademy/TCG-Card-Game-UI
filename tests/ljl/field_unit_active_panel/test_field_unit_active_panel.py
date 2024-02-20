@@ -32,7 +32,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.width = screen_width
         self.height = screen_height
 
-        self.active_panel_rectangle = None
+        #self.active_panel_rectangle = None
         self.selected_object = None
         self.prev_selected_object = None
         self.drag_start = None
@@ -200,7 +200,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             glEnable(GL_BLEND)
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-            self.active_panel_rectangle.draw()
+            for rectangle in self.active_panel_rectangle:
+                rectangle.draw()
 
             print(f"Blend Enabled: {glIsEnabled(GL_BLEND)}")
             print(f"Blend Src: {glGetInteger(GL_BLEND_SRC)}")
@@ -399,7 +400,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     self.drag_start = (x, y)
 
                     if self.selected_object != self.prev_selected_object:
-                        self.active_panel_rectangle = None
+                        self.active_panel_rectangle = []
                         self.prev_selected_object = self.selected_object
 
                     break
@@ -418,7 +419,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     self.drag_start = (x, y)
 
                     if self.selected_object != self.prev_selected_object:
-                        self.active_panel_rectangle = None
+                        self.active_panel_rectangle = []
                         self.prev_selected_object = self.selected_object
 
                     break
@@ -433,14 +434,68 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             convert_y = self.winfo_reqheight() - y
             fixed_card_base = self.selected_object.get_fixed_card_base()
             if fixed_card_base.is_point_inside((x, convert_y)):
-                new_rectangle = self.create_opengl_rectangle((x + 70, y - 80))
-                self.active_panel_rectangle = new_rectangle
+                # 액티브 패널 위치 고정을 위해 카드 local translation에 맞춰 위치 조정.
+                print(f"fixed_card_base의 local_translation 가져오기: {fixed_card_base.get_local_translation()}")
+                fixed_x, fixed_y = fixed_card_base.get_local_translation()
+
+                # 액티브 패널 검정 배경 도형
+                background_rectangle = self.create_opengl_rectangle((fixed_x + 120, fixed_y - 70))
+                self.active_panel_rectangle.append(background_rectangle)
+
+                # 패시브 버튼
+                passive_rectangle = self.active_select_button_rectangle((fixed_x + 133, fixed_y - 40))
+                self.active_panel_rectangle.append(passive_rectangle)
+
+                # 스킬1 버튼
+                skill1_rectangle = self.active_select_button_rectangle((fixed_x + 133, fixed_y + 10))
+                self.active_panel_rectangle.append(skill1_rectangle)
+
+                # 스킬2 버튼
+                skill2_rectangle = self.active_select_button_rectangle((fixed_x + 133, fixed_y + 60))
+                self.active_panel_rectangle.append(skill2_rectangle)
+
+                # 스킬3 버튼
+                skill3_rectangle = self.active_select_button_rectangle((fixed_x + 133, fixed_y + 110))
+                self.active_panel_rectangle.append(skill3_rectangle)
+
+                # 확인 버튼
+                ok_rectangle = self.ok_button_rectangle((fixed_x + 163, fixed_y + 170))
+                self.active_panel_rectangle.append(ok_rectangle)
 
     def create_opengl_rectangle(self, start_point):
-        rectangle_size = 100
+        rectangle_size = 150
         rectangle_color = (0.0, 0.0, 0.0, 0.75)
 
-        end_point = (start_point[0] + rectangle_size, start_point[1] + rectangle_size * 2)
+        end_point = (start_point[0] + rectangle_size * 1.2, start_point[1] + rectangle_size * 2)
+
+        new_rectangle = Rectangle(rectangle_color, [
+            (start_point[0], start_point[1]),
+            (end_point[0], start_point[1]),
+            (end_point[0], end_point[1]),
+            (start_point[0], end_point[1])
+        ])
+        new_rectangle.created_by_right_click = True
+        return new_rectangle
+
+    def active_select_button_rectangle(self, start_point):
+        rectangle_size = 70
+        rectangle_color = (0.7686, 0.6431, 0.4549, 1.0)
+
+        end_point = (start_point[0] + rectangle_size * 2.2, start_point[1] + rectangle_size * 0.55)
+
+        new_rectangle = Rectangle(rectangle_color, [
+            (start_point[0], start_point[1]),
+            (end_point[0], start_point[1]),
+            (end_point[0], end_point[1]),
+            (start_point[0], end_point[1])
+        ])
+        new_rectangle.created_by_right_click = True
+        return new_rectangle
+
+    def ok_button_rectangle(self, start_point):
+        rectangle_size = 60
+        rectangle_color = (0.8314, 0.7686, 0.6588, 1.0)
+        end_point = (start_point[0] + rectangle_size * 1.5, start_point[1] + rectangle_size * 0.55)
 
         new_rectangle = Rectangle(rectangle_color, [
             (start_point[0], start_point[1]),

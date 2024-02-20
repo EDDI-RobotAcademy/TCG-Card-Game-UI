@@ -2,7 +2,6 @@ import math
 import random
 import tkinter as tk
 import unittest
-
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
@@ -62,20 +61,25 @@ def generate_lightning(start_point, end_point, maximum_offset, num_generations, 
     return segment_list
 
 class RectDrawingApp(OpenGLFrame):
-
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
-        self.inner_left = -30
-        self.inner_right = 30
+        self.inner_left = -29.5
+        self.inner_right = 29.5
+        self.core_left = -29
+        self.core_right = 29
+        self.outer_left = -28.5
+        self.outer_right = 28.5
 
     def initgl(self):
         glClearColor(0.0, 0.0, 0.0, 0.0)
         gluOrtho2D(-100.0, 100.0, -100.0, 100.0)
 
     def redraw(self):
+        # 배경
         glClear(GL_COLOR_BUFFER_BIT)
-        glColor3f(1.0, 1.0, 1.0)
+        glColor3f(0, 0, 0)
 
+        # 내부 선
         glBegin(GL_POLYGON)
         glVertex2f(self.inner_left, -50)
         glVertex2f(self.inner_right, -50)
@@ -83,20 +87,45 @@ class RectDrawingApp(OpenGLFrame):
         glVertex2f(self.inner_left, 50)
         glEnd()
 
-        lightning_segments = generate_lightning((self.inner_left, -50), (self.inner_right, 50), 10, 5, 0.2, 0.7)
-        for segment in lightning_segments:
-            self.draw_lightning_segment(segment)
+        # 중심 선
+        glBegin(GL_POLYGON)
+        glVertex2f(self.core_left, -50)
+        glVertex2f(self.core_right, -50)
+        glVertex2f(self.core_right, 50)
+        glVertex2f(self.core_left, 50)
+        glEnd()
+
+        # 외부 선
+        glBegin(GL_POLYGON)
+        glVertex2f(self.outer_left, -50)
+        glVertex2f(self.outer_right, -50)
+        glVertex2f(self.outer_right, 50)
+        glVertex2f(self.outer_left, 50)
+        glEnd()
+
+        lightning_segments_inner = generate_lightning((self.inner_left, -50), (self.inner_right, 50), 10, 5, 0.2, 0.7)
+        lightning_segments_core = generate_lightning((self.core_left, -50), (self.core_right, 50), 10, 5, 0.2, 0.7)
+        lightning_segments_outer = generate_lightning((self.outer_left, -50), (self.outer_right, 50), 10, 5, 0.2, 0.7)
+
+
+        for segment in lightning_segments_inner:
+            self.draw_lightning_segment(segment, (255, 255, 0))  # 내부 번개는 노란색으로 지정
+
+        for segment in lightning_segments_core:
+            self.draw_lightning_segment(segment, (255, 255, 255))  # 외부 번개는 흰색으로 지정
+
+        for segment in lightning_segments_outer:
+            self.draw_lightning_segment(segment, (255, 255, 0))  # 외부 번개는 노란색으로 지정
 
         self.tkSwapBuffers()
 
-    def draw_lightning_segment(self, segment):
-        glLineWidth(6.0)
-        neon_color = (0.0, 1.0, 0.0, segment.brightness)
+    def draw_lightning_segment(self, segment, color):
+        glLineWidth(3)
 
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-        glColor4fv(neon_color)
+        glColor4fv(color + (segment.brightness,))
 
         glBegin(GL_LINE_STRIP)
         glVertex2f(segment.start[0], segment.start[1])
@@ -110,7 +139,7 @@ class TestNeonLightning(unittest.TestCase):
         root = tk.Tk()
         root.title("OpenGL Rectangle Drawing")
 
-        app = RectDrawingApp(root, width=400, height=400)
+        app = RectDrawingApp(root, width=800, height=800)
         app.pack(side="top", fill="both", expand=True)
         app.animate = 1
         root.mainloop()
