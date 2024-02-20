@@ -70,7 +70,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.battle_field_environment_shapes = self.battle_field_scene.get_battle_field_environment()
 
         self.your_hand_repository = YourHandRepository.getInstance()
-        self.your_hand_repository.save_current_hand_state([8, 19, 151, 2, 9, 20, 30, 6])
+        self.your_hand_repository.save_current_hand_state([8, 19, 151, 93, 9, 20, 30, 93])
         self.your_hand_repository.create_hand_card_list()
 
         self.your_deck_repository = YourDeckRepository.getInstance()

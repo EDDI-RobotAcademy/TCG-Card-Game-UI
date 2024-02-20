@@ -48,3 +48,8 @@ class OpponentFieldUnitRepository:
     def get_current_field_unit_card_object_list(self):
         return self.current_field_unit_card_object_list
 
+    def remove_current_field_unit_card(self, unit_index):
+        # TODO: 이 부분 Memory Leak 발생 우려 (카드 구성 객체 정리 방안 구성 필요)
+        del self.current_field_unit_card_object_list[unit_index]
+        self.current_field_unit_state.delete_current_field_unit_list(unit_index)
+

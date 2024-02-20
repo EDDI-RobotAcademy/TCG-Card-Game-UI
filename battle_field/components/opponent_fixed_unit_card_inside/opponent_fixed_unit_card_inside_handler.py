@@ -47,14 +47,18 @@ class OpponentFixedUnitCardInsideHandler:
 
         return False
 
-    def handle_inside_field_unit(self, selected_object, unit_index):
+    def handle_inside_field_unit(self, selected_object, opponent_unit_index):
         placed_card_id = selected_object.get_card_number()
         card_type = self.card_info.getCardTypeForCardNumber(placed_card_id)
 
         if card_type == CardType.ITEM.value:
-            self.handle_item_card(placed_card_id, unit_index)
+            self.handle_item_card(placed_card_id, opponent_unit_index)
 
     def handle_item_card(self, placed_card_id, unit_index):
-        print("아이템을 사용합니다!")
+        print("아이템 카드를 사용합니다!")
+
+        self.your_hand_repository.remove_card_by_id(placed_card_id)
+        self.opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
+        self.your_hand_repository.replace_hand_card_position()
 
 
