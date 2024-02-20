@@ -13,7 +13,7 @@ from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 class FixedFieldCard:
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
 
-    def __init__(self, local_translation=(0, 0), scale=200):
+    def __init__(self, local_translation=(0, 0), scale=1):
         self.tool_card = None
         self.fixed_card_base = None
         self.local_translation = local_translation
@@ -127,6 +127,7 @@ class FixedFieldCard:
         card_controller_shapes = card_controller.getCardTypeTable(self.card_info.getCardTypeForCardNumber(card_number))
         card_shapes = card_controller_shapes(self.local_translation, card_number, rectangle_height, rectangle_width)
         for shape in card_shapes:
+            shape.set_visible(True)
             self.fixed_card_base.set_attached_shapes(shape)
 
         # self.pickable_card_base.set_attached_shapes(
