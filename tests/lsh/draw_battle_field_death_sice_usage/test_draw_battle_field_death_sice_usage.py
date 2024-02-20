@@ -4,6 +4,7 @@ from battle_field.components.fixed_unit_card_inside.fixed_unit_card_inside_handl
 from battle_field.components.init_location.location_initializer import LocationInitializer
 from battle_field.components.mouse_drag.drag_handler import DragHandler
 from battle_field.components.mouse_left_click.left_click_detector import LeftClickDetector
+from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area_action import OpponentFieldAreaAction
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
     OpponentFixedUnitCardInsideHandler
 from battle_field.entity.battle_field_scene import BattleFieldScene
@@ -239,9 +240,14 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         if self.active_panel_rectangle:
             self.active_panel_rectangle.draw()
 
-        for your_lightning_border in self.field_area_inside_handler.get_lightning_border_list():
+        for your_field_lightning_border in self.field_area_inside_handler.get_lightning_border_list():
             self.lightning_border.set_padding(20)
-            self.lightning_border.update_shape(your_lightning_border)
+            self.lightning_border.update_shape(your_field_lightning_border)
+            self.lightning_border.draw_lightning_border()
+
+        for your_hand_lightning_border in self.opponent_fixed_unit_card_inside_handler.get_lightning_border_list():
+            self.lightning_border.set_padding(20)
+            self.lightning_border.update_shape(your_hand_lightning_border)
             self.lightning_border.draw_lightning_border()
 
         self.tkSwapBuffers()
@@ -332,6 +338,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     self.active_panel_rectangle = None
                     self.prev_selected_object = self.selected_object
 
+            # 상대에게 어떤 카드 사용 시 에너지가 필요하다면
+            if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() is OpponentFieldAreaAction.REQUIRE_ENERGY_TO_USAGE:
+                print("카드를 사용하기 위해 에너지가 필요합니다!")
 
             # FixedFieldCard (Field Unit Card List)
             for your_field_unit in self.your_field_unit_repository.get_current_field_unit_list():
