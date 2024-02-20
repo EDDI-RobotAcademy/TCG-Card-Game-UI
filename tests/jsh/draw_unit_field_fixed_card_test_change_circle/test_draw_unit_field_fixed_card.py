@@ -9,6 +9,7 @@ from pyopengltk import OpenGLFrame
 
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
+from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
 from initializer.init_domain import DomainInitializer
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
@@ -306,8 +307,14 @@ class PreDrawedBattleFieldFrameTestCircle(OpenGLFrame):
 
 
     def change_energy_circle(self, energy):
-        for energy_circle in self.battle_field_unit.get_fixed_card_base().get_attached_shapes:
-            print(energy_circle)
+        fixed_card_base = self.battle_field_unit.get_fixed_card_base()
+        fixed_card_base_attached_shapes = fixed_card_base.get_attached_shapes()
+        for shape in fixed_card_base_attached_shapes:
+            if isinstance(shape, CircleNumberImage):
+                if shape.get_circle_kinds() is CircleKinds.ENERGY:
+                    shape.set_image_data(self.__pre_drawed_image_instance.get_pre_draw_number_image(energy))
+                    print(f"changed energy{shape.get_circle_kinds()}")
+
 
 class TestDrawBattleFieldFixedCard(unittest.TestCase):
 
