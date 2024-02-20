@@ -30,6 +30,17 @@ class YourDeckRepository:
         print(f"find_card_from_deck(): {card_id}")
         return self.current_deck_state.find_card_by_id_with_count(card_id, count)
 
+    def draw_deck(self):
+        self.current_deck_state.draw_card()
+
+    def draw_deck_with_count(self, count):
+        drawn_list = []
+
+        for _ in range(count):
+            drawn_list.append(self.current_deck_state.draw_card())
+
+        return drawn_list
+
     def saveReceiveIpcChannel(self, receiveIpcChannel):
         self.__receiveIpcChannel = receiveIpcChannel
 
