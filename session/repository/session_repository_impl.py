@@ -24,7 +24,7 @@ class SessionRepositoryImpl(SessionRepository):
         return cls.__instance
 
     def get_session_info(self):
-        print("SessionRepositoryImpl: get_session_info()")
+        print("SessionRepositoryImpl: get_session_info() :", self.__session.get_session_id())
 
         return self.__session.get_session_id()
 

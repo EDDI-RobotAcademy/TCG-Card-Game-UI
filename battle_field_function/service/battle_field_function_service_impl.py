@@ -13,6 +13,7 @@ from battle_field_function.service.request.use_tool_card_request import UseToolC
 from battle_field_function.service.request.use_trap_card_request import UseTrapCardRequest
 from battle_field_function.service.request.use_unit_card_request import UseUnitCardRequest
 from session.repository.session_repository_impl import SessionRepositoryImpl
+from session.service.session_service_impl import SessionServiceImpl
 
 
 class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
@@ -22,6 +23,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             cls.__instance = super().__new__(cls)
             cls.__instance.__battleFieldFunctionRepository = BattleFieldFunctionRepositoryImpl.getInstance()
             cls.__instance.__sessionRepository = SessionRepositoryImpl.getInstance()
+            cls.__instance.__sessionService = SessionServiceImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -43,7 +45,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
         print(f"battleFieldFunctionServiceImpl: Surrender")
         response = self.__battleFieldFunctionRepository.requestSurrender(
             SurrenderRequest(
-                self.__sessionRepository.get_session_info()
+                self.__sessionService.getSessionInfo()
             )
         )
         # Todo : switchFrameWithMenuName('lobby-menu') 를 호출 할 수 있어야합니다.
@@ -76,7 +78,9 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
     def turnEnd(self):
         try:
             turnEndResponse = self.__battleFieldFunctionRepository.requestTurnEnd(
-                TurnEndRequest(_sessionInfo=self.__sessionRepository)
+                TurnEndRequest(
+                    #_sessionInfo=self.__sessionService.getSessionInfo())
+                    _sessionInfo=self.__sessionRepository.get_session_info())
             )
         except Exception as e:
             print(f"turnEnd Error: {e}")

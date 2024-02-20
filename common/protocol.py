@@ -24,7 +24,7 @@ class CustomProtocol(Enum):
     FREE_BUY_CARD = 73
 
     MULLIGAN_CARD = 1012
-    TURN_END = 1013
+
 
     USE_UNIT_CARD = 1004
     USE_ITEM_CARD = 1005
@@ -39,7 +39,7 @@ class CustomProtocol(Enum):
     UNIT_FIRST_SKILL = 1022
     UNIT_SECOND_SKILL = 1023
 
-
+    TURN_END = 3333
     SURRENDER = 4443
     PROGRAM_EXIT = 4444
 

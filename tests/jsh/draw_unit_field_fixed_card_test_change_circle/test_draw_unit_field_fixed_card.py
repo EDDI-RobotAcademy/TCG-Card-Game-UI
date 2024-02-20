@@ -9,13 +9,16 @@ from pyopengltk import OpenGLFrame
 
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
+from image_shape.circle_number_image import CircleNumberImage
 from initializer.init_domain import DomainInitializer
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.rectangle import Rectangle
+from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
 class PreDrawedBattleFieldFrameTestCircle(OpenGLFrame):
+    __pre_drawed_image_instance = PreDrawedImage.getInstance()
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
 
@@ -276,6 +279,7 @@ class PreDrawedBattleFieldFrameTestCircle(OpenGLFrame):
 
     def on_canvas_right_click(self, event):
         x, y = event.x, event.y
+        self.change_energy_circle(3)
 
         print(f"selected_object: {self.selected_object}")
         if self.selected_object and isinstance(self.selected_object, FixedFieldCard):
@@ -300,6 +304,10 @@ class PreDrawedBattleFieldFrameTestCircle(OpenGLFrame):
         new_rectangle.created_by_right_click = True
         return new_rectangle
 
+
+    def change_energy_circle(self, energy):
+        for energy_circle in self.battle_field_unit.get_fixed_card_base().get_attached_shapes:
+            print(energy_circle)
 
 class TestDrawBattleFieldFixedCard(unittest.TestCase):
 

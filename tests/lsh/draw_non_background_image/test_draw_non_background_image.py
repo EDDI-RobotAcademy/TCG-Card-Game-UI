@@ -21,11 +21,13 @@ from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_type import CardType
+from image_shape.non_background_image import NonBackgroundImage
 from initializer.init_domain import DomainInitializer
 
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.rectangle import Rectangle
+from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
 class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
@@ -96,6 +98,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             self.your_field_unit_repository,
             self.card_info,
             self.your_tomb_repository)
+
+        # 임시용
+        self.pre_drawed_image = PreDrawedImage.getInstance();
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -373,25 +378,19 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     self.field_area_inside_handler.clear_lightning_border_list()
                     self.field_area_inside_handler.clear_field_area_action()
 
-                    print(f"덱에서 에너지 검색해서 부스팅 진행 -> current_process_card_id: {self.field_area_inside_handler.get_action_set_card_id()}")
-
-                    proper_handler = self.support_card_handler.getSupportCardHandler(
-                        self.field_area_inside_handler.get_action_set_card_id())
-                    print(f"proper_handler: {proper_handler}")
-                    proper_handler(selected_field_unit.get_index())
-
                 if self.selected_object != self.prev_selected_object:
                     self.active_panel_rectangle = None
                     self.prev_selected_object = self.selected_object
 
-                    # if self.boost_selection:
-                    #     self.your_lightning_border_list = []
-                    #     print("덱에서 에너지 검색해서 부스팅 진행")
-                    #
-                    #     proper_handler = self.support_card_handler.getSupportCardHandler(
-                    #         self.current_process_card_id)
-                    #     proper_handler(selected_field_unit.get_index())
-                    #     self.boost_selection = False
+                    if self.boost_selection:
+                        print("self.boost_selection operate ?")
+                        self.your_lightning_border_list = []
+                        print("덱에서 에너지 검색해서 부스팅 진행")
+
+                        proper_handler = self.support_card_handler.getSupportCardHandler(
+                            self.current_process_card_id)
+                        proper_handler(selected_field_unit.get_index())
+                        self.boost_selection = False
 
         except Exception as e:
             print(f"Exception in on_canvas_click: {e}")
@@ -403,16 +402,16 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             convert_y = self.winfo_reqheight() - y
             fixed_card_base = self.selected_object.get_fixed_card_base()
             if fixed_card_base.is_point_inside((x, convert_y)):
-                new_rectangle = self.create_opengl_rectangle((x, y))
+                new_rectangle = self.create_non_background_image((x, y))
                 self.active_panel_rectangle = new_rectangle
 
-    def create_opengl_rectangle(self, start_point):
+    def create_non_background_image(self, start_point):
         rectangle_size = 50
-        rectangle_color = (1.0, 0.0, 0.0, 1.0)
 
+        image_data = self.pre_drawed_image.get_pre_draw_prev_button()
         end_point = (start_point[0] + rectangle_size, start_point[1] + rectangle_size)
 
-        new_rectangle = Rectangle(rectangle_color, [
+        new_rectangle = NonBackgroundImage(image_data, [
             (start_point[0], start_point[1]),
             (end_point[0], start_point[1]),
             (end_point[0], end_point[1]),
@@ -422,9 +421,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         return new_rectangle
 
 
-class TestBoostEnergyWithSupportCardFirstRefactor(unittest.TestCase):
+class TestDrawNonBackgroundImage(unittest.TestCase):
 
-    def test_boost_energy_with_support_card_first_refactor(self):
+    def test_draw_non_background_image(self):
         DomainInitializer.initEachDomain()
 
         root = tkinter.Tk()
