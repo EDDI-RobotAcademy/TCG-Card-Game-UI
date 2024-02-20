@@ -1,7 +1,7 @@
 from battle_field.components.init_location.location_initializer import LocationInitializer
 from battle_field.components.mouse_drag.drag_handler import DragHandler
 from battle_field.components.mouse_left_click.left_click_detector import LeftClickDetector
-from battle_field.components.mouse_release.release_handler import ReleaseHandler
+#from battle_field.components.mouse_release.release_handler import ReleaseHandler
 from battle_field.entity.battle_field_scene import BattleFieldScene
 
 import tkinter
