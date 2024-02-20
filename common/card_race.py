@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class CardRace(Enum):
+    DUMMY = -1
     HUMAN = 1
     UNDEAD = 2
     TRANT = 3
