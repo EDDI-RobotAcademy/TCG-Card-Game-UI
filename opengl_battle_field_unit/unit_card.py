@@ -67,10 +67,12 @@ class UnitCard:
     #     unit_equipped_mark.set_visible(False)
     #     return unit_equipped_mark
 
-    def create_unit_energy_circle(self, color, center, radius):
-        unit_energy_circle = Circle(color=color,
-                                    center=center,
-                                    radius=radius)
+    def create_unit_energy_circle(self, image_data, energy_number, center, radius):
+        unit_energy_circle = CircleNumberImage(image_data=image_data,
+                                               center=center,
+                                               radius=radius,
+                                               number=energy_number)
+        unit_energy_circle.set_visible(False)
         self.add_shape(unit_energy_circle)
 
     def create_unit_race_illustration_circle(self, image_data, center, radius):
@@ -81,21 +83,22 @@ class UnitCard:
 
     def create_unit_attack_circle(self, image_data, attack_number, center, radius):
         unit_attack_circle = CircleNumberImage(image_data=image_data,
-                                    center=center,
-                                    radius=radius,
-                                    number= attack_number)
+                                               center=center,
+                                               radius=radius,
+                                               number=attack_number)
         self.add_shape(unit_attack_circle)
 
     def create_unit_hp_circle(self, image_data, hp_number, center, radius):
         unit_hp_circle = CircleNumberImage(image_data=image_data,
-                                center=center,
-                                radius=radius,
-                                number=hp_number)
+                                           center=center,
+                                           radius=radius,
+                                           number=hp_number)
         self.add_shape(unit_hp_circle)
 
     def init_shapes(self, circle_radius, card_number, rectangle_height, rectangle_width):
 
         # todo: 에너지와 관련된 이미지는 battle_field에서 만들어지도록 한다.
+        # 변경사항: 에너지를 미리 그려놓고 visible을 Flase로 놓는다.
         # self.create_unit_energy_circle(color=(0.2, 0.33, 1.0, 1.0),
         #                                center=(circle_radius / 3, 5 * circle_radius / 4),
         #                                radius=circle_radius / 4)
@@ -120,23 +123,30 @@ class UnitCard:
         #     center=(0, 0),
         #     radius=circle_radius)
 
+        self.create_unit_energy_circle(
+            image_data=self.__pre_drawed_image_instance.get_pre_draw_card_attack_with_card_number(card_number),
+            energy_number=0,
+            center=(0, 0),
+            radius=circle_radius
+        )
+
 
         self.create_unit_race_illustration_circle(
             image_data=self.__pre_drawed_image_instance.get_pre_draw_card_race_with_card_number(card_number),
-                                     center=(rectangle_width, 0),
-                                     radius=circle_radius)
+            center=(rectangle_width, 0),
+            radius=circle_radius)
 
         self.create_unit_attack_circle(
             image_data=self.__pre_drawed_image_instance.get_pre_draw_card_attack_with_card_number(card_number),
             attack_number=self.__card_info_from_csv_repository.getCardAttackForCardNumber(card_number),
-                                       center=(rectangle_width, rectangle_height),
-                                       radius=circle_radius)
+            center=(rectangle_width, rectangle_height),
+            radius=circle_radius)
 
         self.create_unit_hp_circle(
             image_data=self.__pre_drawed_image_instance.get_pre_draw_card_hp_with_card_number(card_number),
             hp_number=self.__card_info_from_csv_repository.getCardHpForCardNumber(card_number),
-                                   center=(0, rectangle_height),
-                                   radius=circle_radius)
+            center=(0, rectangle_height),
+            radius=circle_radius)
 
         # self.__imagePath = image_path
         # self.tool_card = self.create_attached_tool_card_rectangle(
