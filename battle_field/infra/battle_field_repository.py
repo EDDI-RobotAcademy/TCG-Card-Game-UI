@@ -31,3 +31,12 @@ class BattleFieldRepository:
     def get_current_deck_state(self):
         return self.current_deck_state.get_current_deck()
 
+
+
+
+
+    def saveReceiveIpcChannel(self, receiveIpcChannel):
+        self.__receiveIpcChannel = receiveIpcChannel
+
+    def saveTransmitIpcChannel(self, transmitIpcChannel):
+        self.__transmitIpcChannel = transmitIpcChannel

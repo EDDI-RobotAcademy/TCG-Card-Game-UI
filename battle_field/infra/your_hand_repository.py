@@ -102,3 +102,8 @@ class YourHandRepository:
 
             # current_hand_card.change_local_translation((next_x, current_y))
 
+    def saveReceiveIpcChannel(self, receiveIpcChannel):
+        self.__receiveIpcChannel = receiveIpcChannel
+
+    def saveTransmitIpcChannel(self, transmitIpcChannel):
+        self.__transmitIpcChannel = transmitIpcChannel
