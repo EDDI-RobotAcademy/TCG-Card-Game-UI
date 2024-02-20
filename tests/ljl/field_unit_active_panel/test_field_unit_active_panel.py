@@ -14,9 +14,11 @@ from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_type import CardType
 from image_shape.circle_image import CircleImage
+from image_shape.circle_number_image import CircleNumberImage
 from initializer.init_domain import DomainInitializer
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
+from opengl_shape.circle import Circle
 from opengl_shape.rectangle import Rectangle
 
 
@@ -34,6 +36,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.selected_object = None
         self.prev_selected_object = None
         self.drag_start = None
+
+        self.active_panel_rectangle = []
 
         self.lightning_border = LightningBorder()
 
@@ -93,6 +97,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
     def on_resize(self, event):
         self.reshape(event.width, event.height)
+        glDisable(GL_DEPTH_TEST)
 
     def draw_base(self):
         for opponent_tomb_shape in self.opponent_tomb_shapes:
@@ -165,8 +170,15 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             for attached_shape in attached_shape_list:
                 # if isinstance(attached_shape, CircleImage):
-                    # print(f"attached_shape: {attached_shape.vertices}")
-                    # print(f"attached_shape: {attached_shape.center}")
+                #     print(f"attached_shape: {attached_shape.vertices}")
+                #     # print(f"attached_shape: {attached_shape.center}")
+                #
+                # if isinstance(attached_shape, CircleNumberImage):
+                #     print(f"attached_shape: {attached_shape.vertices}")
+                #
+                # if isinstance(attached_shape, Circle):
+                #     print(f"attached_shape: {attached_shape.vertices}")
+
                 attached_shape.draw()
 
         if self.selected_object:
@@ -183,7 +195,17 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             self.lightning_border.draw_lightning_border()
 
         if self.active_panel_rectangle:
+            print("is active_panel_rectangle alive ?")
+
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
             self.active_panel_rectangle.draw()
+
+            print(f"Blend Enabled: {glIsEnabled(GL_BLEND)}")
+            print(f"Blend Src: {glGetInteger(GL_BLEND_SRC)}")
+            print(f"Blend Dst: {glGetInteger(GL_BLEND_DST)}")
+            print(f"Depth Test Enabled: {glIsEnabled(GL_DEPTH_TEST)}")
 
         self.tkSwapBuffers()
 
@@ -192,7 +214,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         x, y = event.x, event.y
         y = self.winfo_reqheight() - y
 
-        if self.selected_object and self.drag_start:
+        if isinstance(self.selected_object, PickableCard) and self.drag_start:
             pickable_card = self.selected_object.get_pickable_card_base()
 
             dx = x - self.drag_start[0]
@@ -232,6 +254,12 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         for attached_shape in pickable_card_base.get_attached_shapes():
             if isinstance(attached_shape, CircleImage):
+                attached_circle_shape_initial_center = attached_shape.get_initial_center()
+                # print(f"attached_circle_image_shape: {attached_circle_shape_initial_center}")
+                attached_shape.update_circle_vertices(attached_circle_shape_initial_center)
+                continue
+
+            if isinstance(attached_shape, CircleNumberImage):
                 attached_circle_shape_initial_center = attached_shape.get_initial_center()
                 # print(f"attached_circle_image_shape: {attached_circle_shape_initial_center}")
                 attached_shape.update_circle_vertices(attached_circle_shape_initial_center)
@@ -405,14 +433,14 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             convert_y = self.winfo_reqheight() - y
             fixed_card_base = self.selected_object.get_fixed_card_base()
             if fixed_card_base.is_point_inside((x, convert_y)):
-                new_rectangle = self.create_opengl_rectangle((x, y))
+                new_rectangle = self.create_opengl_rectangle((x + 70, y - 80))
                 self.active_panel_rectangle = new_rectangle
 
     def create_opengl_rectangle(self, start_point):
-        rectangle_size = 50
-        rectangle_color = (1.0, 0.0, 0.0, 1.0)
+        rectangle_size = 100
+        rectangle_color = (0.0, 0.0, 0.0, 0.75)
 
-        end_point = (start_point[0] + rectangle_size, start_point[1] + rectangle_size)
+        end_point = (start_point[0] + rectangle_size, start_point[1] + rectangle_size * 2)
 
         new_rectangle = Rectangle(rectangle_color, [
             (start_point[0], start_point[1]),

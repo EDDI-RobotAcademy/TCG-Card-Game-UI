@@ -20,12 +20,19 @@ class FixedFieldCard:
         self.scale = scale
         self.card_number = None
         self.card_info = CardInfoFromCsvRepositoryImpl.getInstance()
+        self.index = 0
 
     def get_card_number(self):
         return self.card_number
 
     def set_card_number(self, card_number):
         self.card_number = card_number
+
+    def get_index(self):
+        return self.index
+
+    def set_index(self, index):
+        self.index = index
 
     def change_local_translation(self, _translation):
         self.local_translation = _translation
@@ -73,8 +80,8 @@ class FixedFieldCard:
 
     def init_card(self, card_number):
         self.set_card_number(card_number)
-        rectangle_height = self.scale
-        rectangle_width = self.scale / 1.618
+        rectangle_height = 170
+        rectangle_width = 105
 
         print(f"rectangle_width: {rectangle_width}")
         print(f"rectangle_height: {rectangle_height}")
@@ -89,14 +96,15 @@ class FixedFieldCard:
         self.tool_card = self.create_attached_tool_card_rectangle(
             color=(0.6, 0.4, 0.6, 1.0),
             local_translation=self.local_translation,
-            vertices=[(15, 15), (rectangle_width + 15, 15), (rectangle_width + 15, rectangle_height + 15),
-                      (15, rectangle_height + 15)])
+            vertices=[(15, 15), (120, 15), (120, 185), (15, 185)])
+
+        basic_fixed_card_base_vertices = [(0, 0), (105, 0), (105, 170), (0, 170)]
 
         self.fixed_card_base = (
             self.create_fixed_card_base_rectangle(
                 color=(0.0, 0.78, 0.34, 1.0),
                 local_translation=self.local_translation,
-                vertices=[(0, 0), (rectangle_width, 0), (rectangle_width, rectangle_height), (0, rectangle_height)]
+                vertices=basic_fixed_card_base_vertices
             )
         )
 
@@ -104,8 +112,7 @@ class FixedFieldCard:
             self.create_illustration(
                 image_data=self.__pre_drawed_image_instance.get_pre_draw_card_illustration_for_card_number(card_number),
                 local_translation=self.local_translation,
-                vertices=[(15, 15), (rectangle_width - 15, 15), (rectangle_width - 15, rectangle_width - 15),
-                          (15, rectangle_width - 15)]
+                vertices=[(15, 15), (90, 15), (90, 90), (15, 90)]
             )
         )
 

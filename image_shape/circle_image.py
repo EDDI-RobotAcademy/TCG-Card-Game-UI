@@ -170,12 +170,12 @@ class CircleImage(Shape):
 
     def draw(self):
         if self.get_visible():
-            # white_rect = Circle(color=(1.0, 1.0, 1.0, 1.0),
-            #                     center=[self.vertices[0][0], self.vertices[0][1]],
-            #                     radius=self.radius,
-            #                     local_translation=self.local_translation,
-            #                     global_translation=self.global_translation)
-            # white_rect.draw()
+            white_rect = Circle(color=(1.0, 1.0, 1.0, 1.0),
+                                center=[self.vertices[0][0], self.vertices[0][1]],
+                                radius=self.radius,
+                                local_translation=self.local_translation,
+                                global_translation=self.global_translation)
+            white_rect.draw()
 
             image_info = self.image_data
 

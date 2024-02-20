@@ -1,3 +1,4 @@
+from battle_field.components.drag.drag_handler import DragHandler
 from battle_field.entity.battle_field_scene import BattleFieldScene
 
 import tkinter
@@ -7,14 +8,18 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
+from battle_field.handler.support_card_handler import SupportCardHandler
+from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
+from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_type import CardType
 from image_shape.circle_image import CircleImage
 from image_shape.circle_number_image import CircleNumberImage
 from initializer.init_domain import DomainInitializer
+from left_click.left_click_detector import LeftClickDetector
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.rectangle import Rectangle
@@ -59,14 +64,27 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.battle_field_environment_shapes = self.battle_field_scene.get_battle_field_environment()
 
         self.your_hand_repository = YourHandRepository.getInstance()
-        self.your_hand_repository.save_current_hand_state([6, 8, 19, 151])
+        self.your_hand_repository.save_current_hand_state([8, 19, 151, 2, 9, 20, 30, 6])
         self.your_hand_repository.create_hand_card_list()
+
+        self.your_deck_repository = YourDeckRepository.getInstance()
+        self.your_deck_repository.save_deck_state([93, 93, 93, 5])
 
         self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
 
         self.your_field_unit_repository = YourFieldUnitRepository.getInstance()
+
+        self.your_tomb_repository = YourTombRepository.getInstance()
         # TODO: Naming Issue
         self.card_info = CardInfoFromCsvRepositoryImpl.getInstance()
+
+        self.your_lightning_border_list = []
+        self.boost_selection = False
+
+        self.support_card_handler = SupportCardHandler.getInstance()
+        self.current_process_card_id = 0
+
+        self.left_click_detector = LeftClickDetector.getInstance()
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -162,6 +180,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             attached_shape_list = pickable_card_base.get_attached_shapes()
 
             for attached_shape in attached_shape_list:
+                # if isinstance(attached_shape, CircleImage):
+                    # print(f"attached_shape: {attached_shape.vertices}")
+                    # print(f"attached_shape: {attached_shape.center}")
                 attached_shape.draw()
 
         if self.selected_object:
@@ -180,6 +201,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         if self.active_panel_rectangle:
             self.active_panel_rectangle.draw()
 
+        for your_lightning_border in self.your_lightning_border_list:
+            self.lightning_border.set_padding(20)
+            self.lightning_border.update_shape(your_lightning_border)
+            self.lightning_border.draw_lightning_border()
+
         self.tkSwapBuffers()
 
 
@@ -188,38 +214,46 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         y = self.winfo_reqheight() - y
 
         if self.selected_object and self.drag_start:
-            pickable_card = self.selected_object.get_pickable_card_base()
+            drag_handler = DragHandler(self.selected_object, self.drag_start)
 
             dx = x - self.drag_start[0]
             dy = y - self.drag_start[1]
             dy *= -1
 
-            new_vertices = [
-                (vx + dx, vy + dy) for vx, vy in pickable_card.vertices
-            ]
-            pickable_card.update_vertices(new_vertices)
-
-            tool_card = self.selected_object.get_tool_card()
-            if tool_card is not None:
-                new_tool_card_vertices = [
-                    (vx + dx, vy + dy) for vx, vy in tool_card.vertices
-                ]
-                tool_card.update_vertices(new_tool_card_vertices)
-
-            for attached_shape in pickable_card.get_attached_shapes():
-                new_attached_shape_vertices = [
-                    (vx + dx, vy + dy) for vx, vy in attached_shape.vertices
-                ]
-                attached_shape.update_vertices(new_attached_shape_vertices)
+            drag_handler.update_selected_object_vertices_with_drag(dx, dy)
 
             self.drag_start = (x, y)
 
+        # if self.selected_object and self.drag_start:
+        #     pickable_card = self.selected_object.get_pickable_card_base()
+        #
+        #     dx = x - self.drag_start[0]
+        #     dy = y - self.drag_start[1]
+        #     dy *= -1
+        #
+        #     new_vertices = [
+        #         (vx + dx, vy + dy) for vx, vy in pickable_card.vertices
+        #     ]
+        #     pickable_card.update_vertices(new_vertices)
+        #
+        #     tool_card = self.selected_object.get_tool_card()
+        #     if tool_card is not None:
+        #         new_tool_card_vertices = [
+        #             (vx + dx, vy + dy) for vx, vy in tool_card.vertices
+        #         ]
+        #         tool_card.update_vertices(new_tool_card_vertices)
+        #
+        #     for attached_shape in pickable_card.get_attached_shapes():
+        #         new_attached_shape_vertices = [
+        #             (vx + dx, vy + dy) for vx, vy in attached_shape.vertices
+        #         ]
+        #         attached_shape.update_vertices(new_attached_shape_vertices)
+        #
+        #     self.drag_start = (x, y)
+
     def return_to_initial_location(self):
         pickable_card_base = self.selected_object.get_pickable_card_base()
-        print(f"pickable_card_base: {pickable_card_base.vertices}")
-
         intiial_vertices = pickable_card_base.get_initial_vertices()
-        print(f"revert position -> initial_position: {intiial_vertices}")
 
         pickable_card_base.update_vertices(intiial_vertices)
 
@@ -227,10 +261,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         if tool_card is not None:
             tool_intiial_vertices = tool_card.get_initial_vertices()
             tool_card.update_vertices(tool_intiial_vertices)
-        #
-        # for attached_shape in pickable_card_base.get_attached_shapes():
-        #     attached_shape_intiial_vertices = attached_shape.get_initial_vertices()
-        #     attached_shape.update_vertices(attached_shape_intiial_vertices)
 
         for attached_shape in pickable_card_base.get_attached_shapes():
             if isinstance(attached_shape, CircleImage):
@@ -250,13 +280,14 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.drag_start = None
 
-        self.drag_start = None
-
     def on_canvas_release(self, event):
         x, y = event.x, event.y
         y = self.winfo_reqheight() - y
 
+        # if self.boost_selection:
+
         if isinstance(self.selected_object, PickableCard):
+            # print("I'm PickableCard")
             current_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
             current_field_unit_list_length = len(current_field_unit_list)
 
@@ -272,25 +303,27 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         card_type = self.card_info.getCardTypeForCardNumber(placed_card_id)
 
                         if card_type == CardType.TOOL.value:
+                            self.selected_object = None
+
                             # TODO: 배포덱에서는 도구를 사용하지 않음
                             print("도구를 붙입니다!")
                             self.your_hand_repository.remove_card_by_id(placed_card_id)
+                            self.your_hand_repository.replace_hand_card_position()
 
-                            self.selected_object = None
                             return
                         elif card_type == CardType.ENERGY.value:
-                            print("에너지를 붙입니다!")
                             self.selected_object = None
+
+                            print("에너지를 붙입니다!")
                             self.your_hand_repository.remove_card_by_id(placed_card_id)
                             self.your_field_unit_repository.get_attached_energy_info().add_energy_at_index(unit_index, 1)
+                            self.your_hand_repository.replace_hand_card_position()
                             # TODO: attached_energy 값 UI에 표현 (이미지 작업 미완료)
 
                             # TODO: 특수 에너지 붙인 것을 어떻게 표현 할 것인가 ? (아직 미정)
-
                             return
-                        else:
-                            self.return_to_initial_location()
-                            return
+                        # else:
+                        #     self.return_to_initial_location()
 
                         # self.your_field_unit_repository.create_field_unit_card(placed_card_id)
                         # self.your_field_unit_repository.save_current_field_unit_state(placed_card_id)
@@ -301,19 +334,47 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             # TODO: 현재 마우스 포인트(점)로 감지하나 추후 면으로 감지하도록 만들어야 함
             if self.is_drop_location_valid_your_unit_field(x, y):
-                placed_card_id = self.selected_object.get_card_number()
-                card_type = self.card_info.getCardTypeForCardNumber(placed_card_id)
+                if self.selected_object:
+                    placed_card_id = self.selected_object.get_card_number()
+                    print(f"my card number is {placed_card_id}")
+                    card_type = self.card_info.getCardTypeForCardNumber(placed_card_id)
+                    print(f"my card type is {card_type}")
 
-                if card_type != CardType.UNIT.value:
+                    if card_type == CardType.UNIT.value:
+                        # TODO: Memory Leak 발생하지 않도록 좀 더 꼼꼼하게 리소스 해제 하는지 확인해야함
+                        self.your_hand_repository.remove_card_by_id(placed_card_id)
+                        self.your_field_unit_repository.create_field_unit_card(placed_card_id)
+                        self.your_field_unit_repository.save_current_field_unit_state(placed_card_id)
+
+                        # 카드 구성하는 모든 도형에 local_translation 적용
+                        self.your_hand_repository.replace_hand_card_position()
+
+                        self.selected_object = None
+                        return
+
+                    if card_type == CardType.SUPPORT.value:
+                        print("서포트 카드 사용 감지!")
+                        self.selected_object = None
+                        self.prev_selected_object = None
+
+                        # 현재 필드에 존재하는 모든 유닛에 Lightning Border
+                        for fixed_field_unit_card in self.your_field_unit_repository.get_current_field_unit_list():
+                            print("에너지 부스팅 준비")
+                            card_base = fixed_field_unit_card.get_fixed_card_base()
+                            self.your_lightning_border_list.append(card_base)
+
+                        self.current_process_card_id = placed_card_id
+                        self.your_hand_repository.remove_card_by_id(placed_card_id)
+
+                        tomb_state = self.your_tomb_repository.current_tomb_state
+                        tomb_state.place_unit_to_tomb(placed_card_id)
+                        self.your_hand_repository.replace_hand_card_position()
+
+                        self.boost_selection = True
+
+                        return
+
                     self.return_to_initial_location()
-                    return
-
-                # TODO: Memory Leak 발생하지 않도록 좀 더 꼼꼼하게 리소스 해제 하는지 확인해야함
-                self.your_hand_repository.remove_card_by_id(placed_card_id)
-                self.your_field_unit_repository.create_field_unit_card(placed_card_id)
-                self.your_field_unit_repository.save_current_field_unit_state(placed_card_id)
-
-                self.selected_object = None
 
             else:
                 self.return_to_initial_location()
@@ -346,48 +407,76 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             x, y = event.x, event.y
             y = self.winfo_reqheight() - y
 
-            for hand_card in self.hand_card_list:
-                if isinstance(hand_card, PickableCard):
-                    hand_card.selected = False
+            # PickableCard (Hand Card List)
+            for card in self.hand_card_list:
+                card.selected = False
 
             self.selected_object = None
 
-            for hand_card in reversed(self.hand_card_list):
-                print(f"type(hand_card) = {type(hand_card)}")
-                pickable_card_base = hand_card.get_pickable_card_base()
-                print(f"type(pickable_card_base) = {type(pickable_card_base)}")
+            selected_object = self.left_click_detector.which_one_select_is_in_hand_list_area((x, y),
+                                                                                             self.hand_card_list,
+                                                                                             self.winfo_reqheight())
 
-                if pickable_card_base.is_point_inside((x, y)):
-                    hand_card.selected = not hand_card.selected
-                    self.selected_object = hand_card
-                    self.drag_start = (x, y)
+            if selected_object:
+                selected_object.selected = not selected_object.selected
+                self.selected_object = selected_object
+                self.drag_start = (x, y)
 
-                    if self.selected_object != self.prev_selected_object:
-                        self.active_panel_rectangle = None
-                        self.prev_selected_object = self.selected_object
+                if self.selected_object != self.prev_selected_object:
+                    self.active_panel_rectangle = None
+                    self.prev_selected_object = self.selected_object
 
-                    break
 
-            # Field Unit
+            # FixedFieldCard (Field Unit Card List)
             for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
-                if isinstance(field_unit, FixedFieldCard):
-                    field_unit.selected = False
+                field_unit.selected = False
 
-            for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
-                print(f"type(field_unit) = {type(field_unit)}")
-                fixed_card_base = field_unit.get_fixed_card_base()
-                print(f"type(fixed_card_base) = {type(fixed_card_base)}")
+            # for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
+            #     fixed_card_base = field_unit.get_fixed_card_base()
+            #
+            #     if fixed_card_base.is_point_inside((x, y)):
+            #         field_unit.selected = not field_unit.selected
+            #         self.selected_object = field_unit
+            #         self.drag_start = (x, y)
+            #
+            #         if self.selected_object != self.prev_selected_object:
+            #             self.active_panel_rectangle = None
+            #             self.prev_selected_object = self.selected_object
+            #
+            #             if self.boost_selection:
+            #                 self.your_lightning_border_list = []
+            #                 print("덱에서 에너지 검색해서 부스팅 진행")
+            #
+            #                 proper_handler = self.support_card_handler.getSupportCardHandler(
+            #                     self.current_process_card_id)
+            #                 # def energy_boost_from_deck_as_possible(self, target_unit_index)
+            #                 proper_handler(field_unit.get_index())
+            #                 self.boost_selection = False
+            #
+            #         break
 
-                if fixed_card_base.is_point_inside((x, y)):
-                    field_unit.selected = not field_unit.selected
-                    self.selected_object = field_unit
-                    self.drag_start = (x, y)
+            selected_field_unit = (self.left_click_detector
+                                   .which_one_select_is_in_field_unit_list_area((x, y),
+                                                                                self.your_field_unit_repository.get_current_field_unit_list(),
+                                                                                self.winfo_reqheight()))
 
-                    if self.selected_object != self.prev_selected_object:
-                        self.active_panel_rectangle = None
-                        self.prev_selected_object = self.selected_object
+            if selected_field_unit:
+                selected_field_unit.selected = not selected_field_unit.selected
+                self.selected_object = selected_field_unit
+                self.drag_start = (x, y)
 
-                    break
+                if self.selected_object != self.prev_selected_object:
+                    self.active_panel_rectangle = None
+                    self.prev_selected_object = self.selected_object
+
+                    if self.boost_selection:
+                        self.your_lightning_border_list = []
+                        print("덱에서 에너지 검색해서 부스팅 진행")
+
+                        proper_handler = self.support_card_handler.getSupportCardHandler(
+                            self.current_process_card_id)
+                        proper_handler(selected_field_unit.get_index())
+                        self.boost_selection = False
 
         except Exception as e:
             print(f"Exception in on_canvas_click: {e}")
@@ -395,7 +484,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
     def on_canvas_right_click(self, event):
         x, y = event.x, event.y
 
-        print(f"selected_object: {self.selected_object}")
         if self.selected_object and isinstance(self.selected_object, FixedFieldCard):
             convert_y = self.winfo_reqheight() - y
             fixed_card_base = self.selected_object.get_fixed_card_base()
@@ -419,9 +507,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         return new_rectangle
 
 
-class TestDetectEnergyOrToolToFieldUnit(unittest.TestCase):
+class TestBoostEnergyWithSupportCardFirstRefactor(unittest.TestCase):
 
-    def test_detect_energy_or_tool_to_field_unit(self):
+    def test_boost_energy_with_support_card_first_refactor(self):
         DomainInitializer.initEachDomain()
 
         root = tkinter.Tk()
