@@ -69,3 +69,9 @@ class YourFieldUnitRepository:
 
     def get_attached_energy_info(self):
         return self.attached_energy_info
+
+    def saveReceiveIpcChannel(self, receiveIpcChannel):
+        self.__receiveIpcChannel = receiveIpcChannel
+
+    def saveTransmitIpcChannel(self, transmitIpcChannel):
+        self.__transmitIpcChannel = transmitIpcChannel
