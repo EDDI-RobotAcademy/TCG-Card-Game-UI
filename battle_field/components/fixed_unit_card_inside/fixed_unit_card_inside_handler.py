@@ -50,26 +50,30 @@ class FixedUnitCardInsideHandler:
 
         return False
 
-    def handle_inside_field_unit(self, selected_object, unit_index):
+    def handle_inside_field_unit(self, selected_object, your_unit_index):
         placed_card_id = selected_object.get_card_number()
         card_type = self.card_info.getCardTypeForCardNumber(placed_card_id)
 
+        placed_card_index = self.your_hand_repository.find_index_by_selected_object(selected_object)
+
         if card_type == CardType.TOOL.value:
-            self.handle_tool_card(placed_card_id)
+            self.handle_tool_card(placed_card_index)
         elif card_type == CardType.ENERGY.value:
-            self.handle_energy_card(placed_card_id, unit_index)
+            self.handle_energy_card(placed_card_index, your_unit_index)
 
-    def handle_tool_card(self, placed_card_id):
+    def handle_tool_card(self, placed_card_index):
         print("도구를 붙입니다!")
-        self.your_hand_repository.remove_card_by_id(placed_card_id)
+        # self.your_hand_repository.remove_card_by_id(placed_card_id)
+        self.your_hand_repository.remove_card_by_index(placed_card_index)
         self.your_hand_repository.replace_hand_card_position()
 
-    def handle_energy_card(self, placed_card_id, unit_index):
+    def handle_energy_card(self, placed_card_index, your_unit_index):
         print("에너지를 붙입니다!")
-        self.your_hand_repository.remove_card_by_id(placed_card_id)
-        self.your_field_unit_repository.get_attached_energy_info().add_energy_at_index(unit_index, 1)
+        # self.your_hand_repository.remove_card_by_id(placed_card_id)
+        self.your_hand_repository.remove_card_by_index(placed_card_index)
+        self.your_field_unit_repository.get_attached_energy_info().add_energy_at_index(your_unit_index, 1)
         self.your_hand_repository.replace_hand_card_position()
 
-        print(f"에너지 상태: {self.your_field_unit_repository.get_attached_energy_info().get_energy_at_index(unit_index)}")
+        print(f"에너지 상태: {self.your_field_unit_repository.get_attached_energy_info().get_energy_at_index(your_unit_index)}")
         # TODO: attached_energy 값 UI에 표현 (이미지 작업 미완료)
         # TODO: 특수 에너지 붙인 것을 어떻게 표현 할 것인가 ? (아직 미정)
