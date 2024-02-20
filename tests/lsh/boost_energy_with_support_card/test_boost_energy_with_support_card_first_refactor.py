@@ -1,4 +1,7 @@
-from battle_field.components.drag.drag_handler import DragHandler
+from battle_field.components.init_location.location_initializer import LocationInitializer
+from battle_field.components.mouse_drag.drag_handler import DragHandler
+from battle_field.components.mouse_left_click.left_click_detector import LeftClickDetector
+from battle_field.components.mouse_release.release_handler import ReleaseHandler
 from battle_field.entity.battle_field_scene import BattleFieldScene
 
 import tkinter
@@ -19,7 +22,7 @@ from common.card_type import CardType
 from image_shape.circle_image import CircleImage
 from image_shape.circle_number_image import CircleNumberImage
 from initializer.init_domain import DomainInitializer
-from left_click.left_click_detector import LeftClickDetector
+
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.rectangle import Rectangle
@@ -252,31 +255,33 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         #     self.drag_start = (x, y)
 
     def return_to_initial_location(self):
-        pickable_card_base = self.selected_object.get_pickable_card_base()
-        intiial_vertices = pickable_card_base.get_initial_vertices()
+        # pickable_card_base = self.selected_object.get_pickable_card_base()
+        # intiial_vertices = pickable_card_base.get_initial_vertices()
+        #
+        # pickable_card_base.update_vertices(intiial_vertices)
+        #
+        # tool_card = self.selected_object.get_tool_card()
+        # if tool_card is not None:
+        #     tool_intiial_vertices = tool_card.get_initial_vertices()
+        #     tool_card.update_vertices(tool_intiial_vertices)
+        #
+        # for attached_shape in pickable_card_base.get_attached_shapes():
+        #     if isinstance(attached_shape, CircleImage):
+        #         attached_circle_shape_initial_center = attached_shape.get_initial_center()
+        #         # print(f"attached_circle_image_shape: {attached_circle_shape_initial_center}")
+        #         attached_shape.update_circle_vertices(attached_circle_shape_initial_center)
+        #         continue
+        #
+        #     if isinstance(attached_shape, CircleNumberImage):
+        #         attached_circle_shape_initial_center = attached_shape.get_initial_center()
+        #         # print(f"attached_circle_image_shape: {attached_circle_shape_initial_center}")
+        #         attached_shape.update_circle_vertices(attached_circle_shape_initial_center)
+        #         continue
+        #
+        #     attached_shape_intiial_vertices = attached_shape.get_initial_vertices()
+        #     attached_shape.update_vertices(attached_shape_intiial_vertices)
 
-        pickable_card_base.update_vertices(intiial_vertices)
-
-        tool_card = self.selected_object.get_tool_card()
-        if tool_card is not None:
-            tool_intiial_vertices = tool_card.get_initial_vertices()
-            tool_card.update_vertices(tool_intiial_vertices)
-
-        for attached_shape in pickable_card_base.get_attached_shapes():
-            if isinstance(attached_shape, CircleImage):
-                attached_circle_shape_initial_center = attached_shape.get_initial_center()
-                # print(f"attached_circle_image_shape: {attached_circle_shape_initial_center}")
-                attached_shape.update_circle_vertices(attached_circle_shape_initial_center)
-                continue
-
-            if isinstance(attached_shape, CircleNumberImage):
-                attached_circle_shape_initial_center = attached_shape.get_initial_center()
-                # print(f"attached_circle_image_shape: {attached_circle_shape_initial_center}")
-                attached_shape.update_circle_vertices(attached_circle_shape_initial_center)
-                continue
-
-            attached_shape_intiial_vertices = attached_shape.get_initial_vertices()
-            attached_shape.update_vertices(attached_shape_intiial_vertices)
+        LocationInitializer.return_to_initial_location(self.selected_object)
 
         self.drag_start = None
 
@@ -285,6 +290,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         y = self.winfo_reqheight() - y
 
         # if self.boost_selection:
+
+        # release_handler = ReleaseHandler(self.selected_object, self.your_hand_repository,
+        #                                  self.your_field_unit_repository, self.card_info)
+        # release_handler.handle_release(x, y)
 
         if isinstance(self.selected_object, PickableCard):
             # print("I'm PickableCard")
