@@ -1,3 +1,4 @@
+from battle_field.components.fixed_unit_card_inside.fixed_unit_card_inside_handler import FixedUnitCardInsideHandler
 from battle_field.components.init_location.location_initializer import LocationInitializer
 from battle_field.components.mouse_drag.drag_handler import DragHandler
 from battle_field.components.mouse_left_click.left_click_detector import LeftClickDetector
@@ -88,6 +89,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.current_process_card_id = 0
 
         self.left_click_detector = LeftClickDetector.getInstance()
+        self.fixed_unit_card_inside_handler = FixedUnitCardInsideHandler.getInstance(
+            self.your_hand_repository, self.your_field_unit_repository, self.card_info)
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -302,42 +305,48 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             # 현재 Your Field Unit에게 에너지 부착 및 도구 부착
             if current_field_unit_list_length > 0:
-                for unit_index, current_field_unit in enumerate(current_field_unit_list):
-                    # print(f"type(current_field_unit): {type(current_field_unit)}")
-                    fixed_card_base = current_field_unit.get_fixed_card_base()
-                    if fixed_card_base.is_point_inside((x, y)):
-                        print("fixed field unit detect something comes inside!")
+                is_pickable_card_inside_unit = self.fixed_unit_card_inside_handler.handle_pickable_card_inside_unit(
+                    self.selected_object, x, y)
 
-                        placed_card_id = self.selected_object.get_card_number()
-                        card_type = self.card_info.getCardTypeForCardNumber(placed_card_id)
+                if is_pickable_card_inside_unit:
+                    self.selected_object = None
 
-                        if card_type == CardType.TOOL.value:
-                            self.selected_object = None
-
-                            # TODO: 배포덱에서는 도구를 사용하지 않음
-                            print("도구를 붙입니다!")
-                            self.your_hand_repository.remove_card_by_id(placed_card_id)
-                            self.your_hand_repository.replace_hand_card_position()
-
-                            return
-                        elif card_type == CardType.ENERGY.value:
-                            self.selected_object = None
-
-                            print("에너지를 붙입니다!")
-                            self.your_hand_repository.remove_card_by_id(placed_card_id)
-                            self.your_field_unit_repository.get_attached_energy_info().add_energy_at_index(unit_index, 1)
-                            self.your_hand_repository.replace_hand_card_position()
-                            # TODO: attached_energy 값 UI에 표현 (이미지 작업 미완료)
-
-                            # TODO: 특수 에너지 붙인 것을 어떻게 표현 할 것인가 ? (아직 미정)
-                            return
-                        # else:
-                        #     self.return_to_initial_location()
-
-                        # self.your_field_unit_repository.create_field_unit_card(placed_card_id)
-                        # self.your_field_unit_repository.save_current_field_unit_state(placed_card_id)
-
-                        # self.selected_object = None
+                # for unit_index, current_field_unit in enumerate(current_field_unit_list):
+                #     # print(f"type(current_field_unit): {type(current_field_unit)}")
+                #     fixed_card_base = current_field_unit.get_fixed_card_base()
+                #     if fixed_card_base.is_point_inside((x, y)):
+                #         print("fixed field unit detect something comes inside!")
+                #
+                #         placed_card_id = self.selected_object.get_card_number()
+                #         card_type = self.card_info.getCardTypeForCardNumber(placed_card_id)
+                #
+                #         if card_type == CardType.TOOL.value:
+                #             self.selected_object = None
+                #
+                #             # TODO: 배포덱에서는 도구를 사용하지 않음
+                #             print("도구를 붙입니다!")
+                #             self.your_hand_repository.remove_card_by_id(placed_card_id)
+                #             self.your_hand_repository.replace_hand_card_position()
+                #
+                #             return
+                #         elif card_type == CardType.ENERGY.value:
+                #             self.selected_object = None
+                #
+                #             print("에너지를 붙입니다!")
+                #             self.your_hand_repository.remove_card_by_id(placed_card_id)
+                #             self.your_field_unit_repository.get_attached_energy_info().add_energy_at_index(unit_index, 1)
+                #             self.your_hand_repository.replace_hand_card_position()
+                #             # TODO: attached_energy 값 UI에 표현 (이미지 작업 미완료)
+                #
+                #             # TODO: 특수 에너지 붙인 것을 어떻게 표현 할 것인가 ? (아직 미정)
+                #             return
+                #         # else:
+                #         #     self.return_to_initial_location()
+                #
+                #         # self.your_field_unit_repository.create_field_unit_card(placed_card_id)
+                #         # self.your_field_unit_repository.save_current_field_unit_state(placed_card_id)
+                #
+                #         # self.selected_object = None
 
             y *= -1
 
