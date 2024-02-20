@@ -1,3 +1,4 @@
+from battle_field.components.drag.drag_handler import DragHandler
 from battle_field.entity.battle_field_scene import BattleFieldScene
 
 import tkinter
@@ -213,31 +214,42 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         y = self.winfo_reqheight() - y
 
         if self.selected_object and self.drag_start:
-            pickable_card = self.selected_object.get_pickable_card_base()
+            drag_handler = DragHandler(self.selected_object, self.drag_start)
 
             dx = x - self.drag_start[0]
             dy = y - self.drag_start[1]
             dy *= -1
 
-            new_vertices = [
-                (vx + dx, vy + dy) for vx, vy in pickable_card.vertices
-            ]
-            pickable_card.update_vertices(new_vertices)
-
-            tool_card = self.selected_object.get_tool_card()
-            if tool_card is not None:
-                new_tool_card_vertices = [
-                    (vx + dx, vy + dy) for vx, vy in tool_card.vertices
-                ]
-                tool_card.update_vertices(new_tool_card_vertices)
-
-            for attached_shape in pickable_card.get_attached_shapes():
-                new_attached_shape_vertices = [
-                    (vx + dx, vy + dy) for vx, vy in attached_shape.vertices
-                ]
-                attached_shape.update_vertices(new_attached_shape_vertices)
+            drag_handler.update_selected_object_vertices_with_drag(dx, dy)
 
             self.drag_start = (x, y)
+
+        # if self.selected_object and self.drag_start:
+        #     pickable_card = self.selected_object.get_pickable_card_base()
+        #
+        #     dx = x - self.drag_start[0]
+        #     dy = y - self.drag_start[1]
+        #     dy *= -1
+        #
+        #     new_vertices = [
+        #         (vx + dx, vy + dy) for vx, vy in pickable_card.vertices
+        #     ]
+        #     pickable_card.update_vertices(new_vertices)
+        #
+        #     tool_card = self.selected_object.get_tool_card()
+        #     if tool_card is not None:
+        #         new_tool_card_vertices = [
+        #             (vx + dx, vy + dy) for vx, vy in tool_card.vertices
+        #         ]
+        #         tool_card.update_vertices(new_tool_card_vertices)
+        #
+        #     for attached_shape in pickable_card.get_attached_shapes():
+        #         new_attached_shape_vertices = [
+        #             (vx + dx, vy + dy) for vx, vy in attached_shape.vertices
+        #         ]
+        #         attached_shape.update_vertices(new_attached_shape_vertices)
+        #
+        #     self.drag_start = (x, y)
 
     def return_to_initial_location(self):
         pickable_card_base = self.selected_object.get_pickable_card_base()
