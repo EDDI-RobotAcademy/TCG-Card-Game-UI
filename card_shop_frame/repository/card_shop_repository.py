@@ -15,13 +15,17 @@ class CardShopMenuFrameRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def requestCheckGameMoney(self, CheckGameMoneyRequest):
-        pass
-
-    @abc.abstractmethod
     def setRace(self, race):
         pass
 
     @abc.abstractmethod
     def getRace(self):
+        pass
+
+    @abc.abstractmethod
+    def setMyMoney(self, myMoney):
+        pass
+
+    @abc.abstractmethod
+    def getMyMoney(self):
         pass

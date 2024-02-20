@@ -20,7 +20,6 @@ class ResponseGeneratorRepositoryImpl(ResponseGeneratorRepository):
 
     def generate_response(self, decodedData):
         print("ResponseGeneratorRepositoryImpl: generate_response()")
-
         data_dict = json.loads(decodedData)
 
         for response_type in ResponseGeneration:

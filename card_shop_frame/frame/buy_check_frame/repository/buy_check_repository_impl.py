@@ -4,6 +4,8 @@ from card_shop_frame.frame.buy_check_frame.repository.buy_check_repository impor
 
 class BuyCheckRepositoryImpl(BuyCheckRepository):
     __instance = None
+    __transmitIpcChannel = None
+    __receiveIpcChannel = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -21,3 +23,22 @@ class BuyCheckRepositoryImpl(BuyCheckRepository):
         buyCheckFrame = BuyCheckFrame(rootWindow)
 
         return buyCheckFrame
+
+    def requestUseGameMoney(self, UseGameMoneyRequest):
+        print(f"BuyCheckRepositoryImpl: requestCheckGameMoney() -> {UseGameMoneyRequest}")
+        self.__transmitIpcChannel.put(UseGameMoneyRequest)
+        return self.__receiveIpcChannel.get()
+
+    def requestBuyRandomCard(self, buyRandomCardRequest):
+        print(f"BuyCheckRepositoryImpl: requestBuyRandomCard() -> {buyRandomCardRequest}")
+
+        self.__transmitIpcChannel.put(buyRandomCardRequest)
+        return self.__receiveIpcChannel.get()
+
+    def saveTransmitIpcChannel(self, transmitIpcChannel):
+        print("BuyCheckRepositoryImpl: saveTransmitIpcChannel()")
+        self.__transmitIpcChannel = transmitIpcChannel
+
+    def saveReceiveIpcChannel(self, receiveIpcChannel):
+        print("BuyCheckRepositoryImpl: saveReceiveIpcChannel()")
+        self.__receiveIpcChannel = receiveIpcChannel

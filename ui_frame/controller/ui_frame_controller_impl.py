@@ -9,13 +9,13 @@ from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field_function.service.battle_field_function_service_impl import BattleFieldFunctionServiceImpl
 from battle_lobby_frame.service.battle_lobby_frame_service_impl import BattleLobbyFrameServiceImpl
 from card_shop_frame.service.card_shop_service_impl import CardShopMenuFrameServiceImpl
+from card_shop_frame.frame.buy_check_frame.service.buy_check_service_impl import BuyCheckServiceImpl
 from lobby_frame.service.lobby_menu_frame_service_impl import LobbyMenuFrameServiceImpl
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
 from matching_window.service.matching_window_service_impl import MatchingWindowServiceImpl
 from opengl_battle_field.frame.battle_field_frame import BattleFieldFrame
 from opengl_my_card_main_frame.service.my_card_main_frame_service_impl import MyCardMainFrameServiceImpl
 from opengl_buy_random_card_frame.service.buy_random_card_frame_service_impl import BuyRandomCardFrameServiceImpl
-# from card_random_frame.service.card_random_frame_service_impl import CardRandomFrameServiceImpl
 from opengl_my_deck_register_frame.service.my_deck_register_frame_service_impl import MyDeckRegisterFrameServiceImpl
 
 
@@ -39,9 +39,9 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__lobbyMenuFrameService = LobbyMenuFrameServiceImpl.getInstance()
             cls.__instance.__battleLobbyFrameService = BattleLobbyFrameServiceImpl.getInstance()
             cls.__instance.__cardShopMenuFrameService = CardShopMenuFrameServiceImpl.getInstance()
+            cls.__instance.__buyCheckService = BuyCheckServiceImpl.getInstance()
             cls.__instance.__myCardMainFrameService = MyCardMainFrameServiceImpl.getInstance()
             cls.__instance.__buyRandomCardFrameService = BuyRandomCardFrameServiceImpl.getInstance()
-            # cls.__instance.__cardRandomFrameService = CardRandomFrameServiceImpl.getInstance()
             cls.__instance.__battleFieldFunctionService = BattleFieldFunctionServiceImpl.getInstance()
             cls.__instance.__myDeckRegisterFrameService = MyDeckRegisterFrameServiceImpl.getInstance()
             cls.__instance.__battleFieldFrame = BattleFieldFrame
@@ -125,7 +125,8 @@ class UiFrameControllerImpl(UiFrameController):
         self.__myDeckRegisterFrameService.injectTransmitIpcChannel(transmitIpcChannel)
         self.__matchingWindowService.injectTransmitIpcChannel(transmitIpcChannel)
 
-        self.__cardShopMenuFrameService.injectTransmitIpcChannel(transmitIpcChannel)
+        self.__buyCheckService.injectTransmitIpcChannel(transmitIpcChannel)
+
 
         self.__battleFieldRepository.saveTransmitIpcChannel(transmitIpcChannel)
         self.__yourDeckRepository.saveTransmitIpcChannel(transmitIpcChannel)
@@ -150,7 +151,8 @@ class UiFrameControllerImpl(UiFrameController):
         self.__myDeckRegisterFrameService.injectReceiveIpcChannel(receiveIpcChannel)
         self.__matchingWindowService.injectReceiveIpcChannel(receiveIpcChannel)
 
-        self.__cardShopMenuFrameService.injectReceiveIpcChannel(receiveIpcChannel)
+        self.__buyCheckService.injectReceiveIpcChannel(receiveIpcChannel)
+
 
         self.__battleFieldRepository.saveReceiveIpcChannel(receiveIpcChannel)
         self.__yourDeckRepository.saveReceiveIpcChannel(receiveIpcChannel)

@@ -18,5 +18,9 @@ class ResponseGeneration(Enum):
     ACCOUNT_CARD_LIST = 31
     ACCOUNT_DECK_REGISTER = 41
 
+    DATA_TO_DISPLAY_IN_SHOP_RESPONSE = 71
+    BUY_CARD = 72
+    FREE_BUY_CARD = 73
+
     PROGRAM_EXIT = 4444
 
