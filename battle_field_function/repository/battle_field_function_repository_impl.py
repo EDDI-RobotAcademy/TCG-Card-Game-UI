@@ -39,8 +39,10 @@ class BattleFieldFunctionRepositoryImpl(BattleFieldFunctionRepository):
 
 
     def requestTurnEnd(self, turnEndRequest):
+        print(f"턴 종료 요청함 : {turnEndRequest}")
         self.__transmitIpcChannel.put(turnEndRequest)
         return self.__receiveIpcChannel.get()
+
 
 
     def requestUseUnitCard(self, useUnitCardRequest):

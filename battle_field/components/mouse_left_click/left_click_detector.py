@@ -38,3 +38,18 @@ class LeftClickDetector:
                 return field_unit
 
         return None
+
+
+    def which_one_select_is_in_extra_area(self, click_point, battle_field_button_list, canvas_height):
+        x, y = click_point
+        y = canvas_height - y
+        y *= -1
+        print(f"click_point: {click_point}, button_list: {battle_field_button_list}, height: {canvas_height}")
+        print(f"x: {x}, y: {y}")
+
+        for button in battle_field_button_list:
+            button_base = button.get_button_base()
+            if button_base.is_point_inside((x, y)):
+                return button
+
+        return None

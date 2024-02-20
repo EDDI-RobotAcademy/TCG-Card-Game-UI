@@ -14,9 +14,11 @@ from battle_field.entity.your_main_character import YourMainCharacter
 from battle_field.entity.your_tomb import YourTomb
 from battle_field.entity.your_trap import YourTrap
 from battle_field.entity.your_unit_field import YourUnitField
+from battle_field.infra.battle_field_repository import BattleFieldRepository
 
 
 class BattleFieldScene:
+    __battle_field_repository = BattleFieldRepository.getInstance()
     def __init__(self):
         self.opponent_tomb = None
         self.opponent_lost_zone = None
@@ -118,6 +120,8 @@ class BattleFieldScene:
     def create_turn_end_button(self):
         self.turn_end_button = TurnEndButton()
         self.turn_end_button.init_shapes()
+        self.__battle_field_repository.add_battle_field_button(button=self.turn_end_button)
+
 
     def get_opponent_tomb(self):
         return self.opponent_tomb.get_tomb_shapes()

@@ -6,7 +6,7 @@ from tests.ljs.ugly_test_battle_field_functions.pre_drawed_battle_field_frame.Pr
     PreDrawedBattleFieldFrameRefactorLJS
 
 
-class TestSurrender(unittest.TestCase):
+class TestTurnEnd(unittest.TestCase):
 
     def test_boost_energy_with_support_card(self):
         DomainInitializer.initEachDomain()

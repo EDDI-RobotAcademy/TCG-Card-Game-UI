@@ -16,5 +16,4 @@ class TurnEndRequest:
         }
 
     def __str__(self):
-        return f"TurnEndRequest(protocolNumber={self.__protocolNumber}, roomNumber={self.__roomNumber}, \
-                                sessionInfo={self.__sessionInfo})"
+        return f"TurnEndRequest(protocolNumber={self.__protocolNumber}, roomNumber={self.__roomNumber}, sessionInfo={self.__sessionInfo})"
