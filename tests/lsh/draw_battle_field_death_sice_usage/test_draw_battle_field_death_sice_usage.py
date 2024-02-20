@@ -4,6 +4,8 @@ from battle_field.components.fixed_unit_card_inside.fixed_unit_card_inside_handl
 from battle_field.components.init_location.location_initializer import LocationInitializer
 from battle_field.components.mouse_drag.drag_handler import DragHandler
 from battle_field.components.mouse_left_click.left_click_detector import LeftClickDetector
+from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
+    OpponentFixedUnitCardInsideHandler
 from battle_field.entity.battle_field_scene import BattleFieldScene
 
 import tkinter
@@ -99,13 +101,20 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.left_click_detector = LeftClickDetector.getInstance()
         self.fixed_unit_card_inside_handler = FixedUnitCardInsideHandler.getInstance(
-            self.your_hand_repository, self.your_field_unit_repository, self.card_info_repository)
+            self.your_hand_repository,
+            self.your_field_unit_repository,
+            self.card_info_repository)
 
         self.field_area_inside_handler = FieldAreaInsideHandler.getInstance(
             self.your_hand_repository,
             self.your_field_unit_repository,
             self.card_info_repository,
             self.your_tomb_repository)
+
+        self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance(
+            self.your_hand_repository,
+            self.opponent_field_unit_repository,
+            self.card_info_repository)
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -265,6 +274,19 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         y = self.winfo_reqheight() - y
 
         if isinstance(self.selected_object, PickableCard):
+            # Opponent에 적용하는 카드 시작
+            current_opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+            current_opponent_field_unit_list_length = len(current_opponent_field_unit_list)
+
+            if current_opponent_field_unit_list_length > 0:
+                is_pickable_card_inside_unit = self.opponent_fixed_unit_card_inside_handler.handle_pickable_card_inside_unit(
+                    self.selected_object, x, y)
+
+                if is_pickable_card_inside_unit:
+                    self.selected_object = None
+                    return
+            # Opponent에 적용하는 카드 끝
+
             current_your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
             current_your_field_unit_list_length = len(current_your_field_unit_list)
 
