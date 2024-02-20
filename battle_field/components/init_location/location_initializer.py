@@ -1,10 +1,14 @@
 from image_shape.circle_image import CircleImage
 from image_shape.circle_number_image import CircleNumberImage
+from opengl_battle_field_pickable_card.pickable_card import PickableCard
 
 
 class LocationInitializer:
     @staticmethod
     def return_to_initial_location(selected_object):
+        if not isinstance(selected_object, PickableCard):
+            return
+
         pickable_card_base = selected_object.get_pickable_card_base()
         initial_vertices = pickable_card_base.get_initial_vertices()
         pickable_card_base.update_vertices(initial_vertices)

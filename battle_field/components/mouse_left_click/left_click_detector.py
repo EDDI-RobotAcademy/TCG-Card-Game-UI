@@ -16,14 +16,11 @@ class LeftClickDetector:
         x, y = click_point
         y = canvas_height - y
         y *= -1
-        print(f"click_point: {click_point}, card_list: {hand_card_list}, height: {canvas_height}")
-        print(f"x: {x}, y: {y}")
 
         for hand_card in reversed(hand_card_list):
             card_base = hand_card.get_pickable_card_base()
 
             if card_base.is_point_inside((x, y)):
-                print("is it inside hand!")
                 hand_card.selected = not hand_card.selected
                 return hand_card
 
@@ -33,8 +30,6 @@ class LeftClickDetector:
         x, y = click_point
         y = canvas_height - y
         y *= -1
-        print(f"click_point: {click_point}, card_list: {field_unit_list}, height: {canvas_height}")
-        print(f"x: {x}, y: {y}")
 
         for field_unit in reversed(field_unit_list):
             fixed_card_base = field_unit.get_fixed_card_base()

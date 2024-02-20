@@ -1,9 +1,15 @@
+from opengl_battle_field_pickable_card.pickable_card import PickableCard
+
+
 class DragHandler:
     def __init__(self, selected_object, drag_start):
         self.selected_object = selected_object
         self.drag_start = drag_start
 
     def update_selected_object_vertices_with_drag(self, dx, dy):
+        if not isinstance(self.selected_object, PickableCard):
+            return
+
         pickable_card = self.selected_object.get_pickable_card_base()
 
         new_vertices = [
