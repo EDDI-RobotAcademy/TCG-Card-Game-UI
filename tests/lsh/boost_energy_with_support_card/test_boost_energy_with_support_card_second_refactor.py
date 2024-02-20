@@ -94,6 +94,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.field_area_inside_handler = FieldAreaInsideHandler.getInstance(
             self.your_hand_repository,
             self.your_field_unit_repository,
+            self.your_deck_repository,
             self.card_info,
             self.your_tomb_repository)
 
@@ -422,9 +423,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         return new_rectangle
 
 
-class TestBoostEnergyWithSupportCardFirstRefactor(unittest.TestCase):
+class TestBoostEnergyWithSupportCardSecondRefactor(unittest.TestCase):
 
-    def test_boost_energy_with_support_card_first_refactor(self):
+    def test_boost_energy_with_support_card_second_refactor(self):
         DomainInitializer.initEachDomain()
 
         root = tkinter.Tk()
