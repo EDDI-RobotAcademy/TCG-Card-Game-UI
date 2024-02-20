@@ -16,6 +16,7 @@ class FieldAreaInsideHandler:
     def __new__(cls,
                 your_hand_repository,
                 your_field_unit_repository,
+                your_deck_repository,
                 card_info,
                 your_tomb_repository):
 
@@ -24,10 +25,12 @@ class FieldAreaInsideHandler:
 
             cls.__instance.your_hand_repository = your_hand_repository
             cls.__instance.your_field_unit_repository = your_field_unit_repository
+            cls.__instance.your_deck_repository = your_deck_repository
             cls.__instance.card_info = card_info
             cls.__instance.your_tomb_repository = your_tomb_repository
 
             cls.__field_area_inside_handler_table[2] = cls.__instance.handle_support_card_energy_boost
+            cls.__field_area_inside_handler_table[20] = cls.__instance.handle_support_card_draw_deck
 
         return cls.__instance
 
@@ -35,12 +38,14 @@ class FieldAreaInsideHandler:
     def getInstance(cls,
                     your_hand_repository,
                     your_field_unit_repository,
+                    your_deck_repository,
                     card_info,
                     your_tomb_repository):
 
         if cls.__instance is None:
             cls.__instance = cls(your_hand_repository,
                                  your_field_unit_repository,
+                                 your_deck_repository,
                                  card_info,
                                  your_tomb_repository)
         return cls.__instance
@@ -73,16 +78,18 @@ class FieldAreaInsideHandler:
         card_type = self.card_info.getCardTypeForCardNumber(placed_card_id)
         print(f"my card type is {card_type}")
 
+        placed_card_index = self.your_hand_repository.find_index_by_selected_object(selected_object)
+
         if card_type == CardType.UNIT.value:
-            return self.handle_unit_card(placed_card_id)
+            return self.handle_unit_card(placed_card_id, placed_card_index)
         elif card_type == CardType.SUPPORT.value:
-            return self.handle_support_card(placed_card_id)
+            return self.handle_support_card(placed_card_id, placed_card_index)
         else:
             return FieldAreaAction.Dummy
 
-    def handle_unit_card(self, placed_card_id):
+    def handle_unit_card(self, placed_card_id, placed_card_index):
         # TODO: Memory Leak에 대한 추가 작업이 필요할 수 있음
-        self.your_hand_repository.remove_card_by_id(placed_card_id)
+        self.your_hand_repository.remove_card_by_index(placed_card_index)
         self.your_field_unit_repository.create_field_unit_card(placed_card_id)
         self.your_field_unit_repository.save_current_field_unit_state(placed_card_id)
 
@@ -91,23 +98,36 @@ class FieldAreaInsideHandler:
         self.__field_area_action = FieldAreaAction.PLACE_UNIT
         return self.__field_area_action
 
-    def handle_support_card_energy_boost(self, placed_card_id):
+    def handle_support_card_energy_boost(self, placed_card_id, placed_card_index):
         print(f"handle_support_card_energy_boost -> placed_card_id: {placed_card_id}")
         for fixed_field_unit_card in self.your_field_unit_repository.get_current_field_unit_list():
             card_base = fixed_field_unit_card.get_fixed_card_base()
             self.__lightning_border_list.append(card_base)
 
         self.__action_set_card_id = placed_card_id
-        self.your_hand_repository.remove_card_by_id(placed_card_id)
+        self.your_hand_repository.remove_card_by_id(placed_card_index)
 
         self.__field_area_action = FieldAreaAction.ENERGY_BOOST
         return self.__field_area_action
 
-    def handle_support_card(self, placed_card_id):
+    def handle_support_card_draw_deck(self, placed_card_id, placed_card_index):
+        print(f"handle_support_card_draw_deck -> placed_card_id: {placed_card_id}")
+
+        self.your_hand_repository.remove_card_by_id(placed_card_index)
+
+        # TODO: Summary와 연동하도록 재구성 필요
+        drawn_deck_card_list = self.your_deck_repository.draw_deck_with_count(3)
+        self.your_hand_repository.create_additional_hand_card_list(drawn_deck_card_list)
+        self.your_hand_repository.remove_card_by_index(placed_card_index)
+
+        self.__field_area_action = FieldAreaAction.DRAW_DECK
+        return self.__field_area_action
+
+    def handle_support_card(self, placed_card_id, placed_card_index):
         print("서포트 카드 사용 감지!")
 
         support_card_handler = self.__field_area_inside_handler_table[placed_card_id]
-        support_card_action = support_card_handler(placed_card_id)
+        support_card_action = support_card_handler(placed_card_id, placed_card_index)
 
         tomb_state = self.your_tomb_repository.current_tomb_state
         tomb_state.place_unit_to_tomb(placed_card_id)
