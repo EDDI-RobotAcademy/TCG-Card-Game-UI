@@ -47,7 +47,7 @@ class SupportCardHandler:
 
     def draw_card_from_deck(self):
         print("덱에서 드로우")
-        pass
+        return 3
 
     def search_unit_from_deck(self):
         print("덱에서 유닛 검색")

@@ -40,6 +40,17 @@ class YourHandRepository:
     def get_current_hand_state(self):
         return self.current_hand_state.get_current_hand()
 
+    def create_additional_hand_card_list(self, card_list):
+        current_hand_card_list_length = len(self.current_hand_card_list)
+
+        for index, card_id in enumerate(card_list):
+            print(f"index: {index}, card_number: {card_id}")
+            initial_position = self.get_next_card_position(current_hand_card_list_length + index)
+            new_card = PickableCard(local_translation=initial_position)
+            new_card.init_card(card_id)
+            # new_card.set_initial_position(initial_position)
+            self.current_hand_card_list.append(new_card)
+
     def create_hand_card_list(self):
         current_hand = self.get_current_hand_state()
         print(f"current_hand: {current_hand}")
