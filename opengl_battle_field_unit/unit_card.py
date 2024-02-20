@@ -124,7 +124,7 @@ class UnitCard:
         #     radius=circle_radius)
 
         self.create_unit_energy_circle(
-            image_data=self.__pre_drawed_image_instance.get_pre_draw_card_attack_with_card_number(card_number),
+            image_data=self.__pre_drawed_image_instance.get_pre_draw_number_image(),
             energy_number=0,
             center=(0, 0),
             radius=circle_radius
