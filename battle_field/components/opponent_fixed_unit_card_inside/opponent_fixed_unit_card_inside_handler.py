@@ -10,7 +10,7 @@ class OpponentFixedUnitCardInsideHandler:
     __required_energy_race = CardRace.DUMMY
     __opponent_field_area_action = None
     __opponent_unit_index = -1
-    __action_set_card_id = -1
+    __action_set_card_index = -1
 
     __lightning_border_list = []
 
@@ -47,6 +47,9 @@ class OpponentFixedUnitCardInsideHandler:
     def get_required_energy(self):
         return self.__required_energy
 
+    def decrease_required_energy(self):
+        self.__required_energy -= 1
+
     def clear_required_energy(self):
         self.__required_energy = -1
 
@@ -68,11 +71,11 @@ class OpponentFixedUnitCardInsideHandler:
     def clear_opponent_unit_index(self):
         self.__opponent_unit_index = -1
 
-    def get_action_set_card_id(self):
-        return self.__action_set_card_id
+    def get_action_set_card_index(self):
+        return self.__action_set_card_index
 
-    def clear_action_set_card_id(self):
-        self.__action_set_card_id = -1
+    def clear_action_set_card_index(self):
+        self.__action_set_card_index = -1
 
     def get_lightning_border_list(self):
         return self.__lightning_border_list
@@ -101,27 +104,31 @@ class OpponentFixedUnitCardInsideHandler:
         placed_card_id = selected_object.get_card_number()
         card_type = self.card_info.getCardTypeForCardNumber(placed_card_id)
 
-        if card_type == CardType.ITEM.value:
-            self.handle_item_card(placed_card_id, opponent_unit_index)
+        placed_card_index = self.your_hand_repository.find_index_by_selected_object(selected_object)
 
-    def handle_item_card(self, placed_card_id, unit_index):
+        if card_type == CardType.ITEM.value:
+            self.handle_item_card(placed_card_id, opponent_unit_index, placed_card_index)
+
+    def handle_item_card(self, placed_card_id, unit_index, placed_card_index):
         print("아이템 카드를 사용합니다!")
 
         proper_handler = self.__opponent_fixed_unit_card_inside_handler_table[placed_card_id]
-        proper_handler(placed_card_id, unit_index)
+        proper_handler(placed_card_index, unit_index)
 
         # self.your_hand_repository.remove_card_by_id(placed_card_id)
         # self.opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
         # self.your_hand_repository.replace_hand_card_position()
 
-    def death_sice_need_two_undead_energy(self, placed_card_id, unit_index):
+    def death_sice_need_two_undead_energy(self, placed_card_index, unit_index):
         self.__required_energy = 2
         self.__required_energy_race = CardRace.UNDEAD
         self.__opponent_field_area_action = OpponentFieldAreaAction.REQUIRE_ENERGY_TO_USAGE
         self.__opponent_unit_index = unit_index
-        self.__action_set_card_id = placed_card_id
+        self.__action_set_card_index = placed_card_index
 
-        for your_current_hand_card in self.your_hand_repository.get_current_hand_card_list():
+        your_current_hand_card_list = self.your_hand_repository.get_current_hand_card_list()
+
+        for your_current_hand_card in your_current_hand_card_list:
             your_hand_card_id = your_current_hand_card.get_card_number()
             if your_hand_card_id == 93:
                 card_base = your_current_hand_card.get_pickable_card_base()
