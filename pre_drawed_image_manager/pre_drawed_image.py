@@ -37,6 +37,7 @@ class PreDrawedImage:
     __pre_drawed_battle_field_environment = None
     __pre_drawed_turn_end_button = None
 
+    __pre_drawed_prev_button = None
 
 
     def __new__(cls):
@@ -201,7 +202,9 @@ class PreDrawedImage:
             print(f"image data = {number_image_data}")
             self.__pre_drawed_numbers[number] = ImageDataLoader.load_circle_image_data(number_image_data)
 
-
+    def pre_draw_prev_button(self):
+        prev_button_image_data = os.path.join(self.__project_root, "local_storage", "button_image", "prev_button.png")
+        self.__pre_drawed_prev_button = ImageDataLoader.load_rectangle_image_data(prev_button_image_data)
 
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
@@ -230,6 +233,8 @@ class PreDrawedImage:
         self.pre_draw_card_attack()
 
         self.pre_draw_numbers()
+
+        self.pre_draw_prev_button()
 
     def get_pre_draw_opponent_tomb(self):
         return self.__pre_drawed_opponent_tomb
@@ -296,4 +301,7 @@ class PreDrawedImage:
 
     def get_pre_draw_number_image(self, number=0):
         return self.__pre_drawed_numbers[number]
+
+    def get_pre_draw_prev_button(self):
+        return self.__pre_drawed_prev_button
 
