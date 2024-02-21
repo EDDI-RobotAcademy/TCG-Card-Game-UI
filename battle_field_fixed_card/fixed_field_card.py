@@ -47,6 +47,12 @@ class FixedFieldCard:
     def get_tool_card(self):
         return self.tool_card
 
+    def creat_fixed_card_dark_flame_image_circle(self, image_data, local_translation, vertices):
+        pass
+
+    def creat_fixed_card_freezing_image_circle(self, image_data, local_translation, vertices):
+        pass
+
     def creat_fixed_card_energy_race_circle(self, color, vertices, local_translation):
         attached_energy_circle = Circle(color=color,
                                         local_translation=local_translation,
