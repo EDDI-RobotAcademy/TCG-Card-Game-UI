@@ -29,4 +29,4 @@ class BattleFieldMuligunBackground:
         self.__pre_drawed_image_instance.pre_draw_opponent_tomb()
 
         self.create_battle_field_muligun_background(image_data=self.__pre_drawed_image_instance.get_pre_draw_battle_field_muligun_background(),
-                                                    vertices=[(0, 0), (1920, 0), (1920, 1043), (0, 1043)])
+                                                    vertices=[(0, 0), (1850, 0), (1850, 1016), (0, 1016)])

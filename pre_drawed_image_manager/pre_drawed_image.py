@@ -225,7 +225,7 @@ class PreDrawedImage:
 
     def pre_draw_battle_field_muligun_background(self):
         muligun_battle_field_background = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "muligun_battle_field_background.png")
-        self.__pre_drawed_battle_field_muligun_background = ImageDataLoader.load_rectangle_image_data(muligun_battle_field_background)
+        self.__pre_drawed_battle_field_muligun_background = ImageDataLoader.load_background_image_data(muligun_battle_field_background)
 
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()

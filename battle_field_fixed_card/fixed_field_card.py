@@ -4,6 +4,7 @@ from card_info_from_csv.repository.card_info_from_csv_repository_impl import Car
 from image_shape.rectangle_image import RectangleImage
 from opengl_pickable_shape.pickable_rectangle import PickableRectangle
 from common.utility import get_project_root
+from opengl_shape.circle import Circle
 from opengl_shape.image_rectangle_element import ImageRectangleElement
 from opengl_shape.rectangle import Rectangle
 from opengl_battle_field_card_controller.card_controller_impl import CardControllerImpl
@@ -37,12 +38,21 @@ class FixedFieldCard:
     def change_local_translation(self, _translation):
         self.local_translation = _translation
 
+    def get_local_translation(self):
+        return self.local_translation
+
     def get_fixed_card_base(self):
         return self.fixed_card_base
 
     def get_tool_card(self):
         return self.tool_card
 
+    def creat_fixed_card_energy_race_circle(self, color, vertices, local_translation):
+        attached_energy_circle = Circle(color=color,
+                                        local_translation=local_translation,
+                                        center=vertices,
+                                        radius=5)
+        return attached_energy_circle
     def create_attached_tool_card_rectangle(self, color, vertices, local_translation):
         attached_tool_card = Rectangle(color=color,
                                        local_translation=local_translation,
