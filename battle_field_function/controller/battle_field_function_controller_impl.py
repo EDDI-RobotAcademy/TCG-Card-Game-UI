@@ -33,3 +33,6 @@ class BattleFieldFunctionControllerImpl(BattleFieldFunctionController):
 
     def callTurnEnd(self):
         self.__battleFieldFunctionService.turnEnd()
+
+    def callGameEndReward(self):
+        self.__battleFieldFunctionService.gameEndReward()
