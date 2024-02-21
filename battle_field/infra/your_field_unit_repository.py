@@ -67,6 +67,12 @@ class YourFieldUnitRepository:
     def detach_energy(self, unit_index, energy_count):
         self.attached_energy_info.remove_energy_at_index(unit_index, energy_count)
 
+    def find_field_unit_by_index(self, index):
+        for unit in self.current_field_unit_list:
+            if unit.get_index() == index:
+                return unit
+        return None
+
     def get_attached_energy_info(self):
         return self.attached_energy_info
 
