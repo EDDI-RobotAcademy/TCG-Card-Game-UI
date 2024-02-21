@@ -1,5 +1,5 @@
 from battle_field.entity.battle_field_environment import BattleFieldEnvironment
-from battle_field.entity.battle_field_scene import BattleFieldScene
+from battle_field.entity.battle_field_scene_legacy import BattleFieldSceneLegacy
 from battle_field.entity.opponent_deck import OpponentDeck
 from battle_field.entity.opponent_hand_panel import OpponentHandPanel
 from battle_field.entity.opponent_lost_zone import OpponentLostZone
@@ -33,7 +33,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.width = screen_width
         self.height = screen_height
 
-        self.battle_field_scene = BattleFieldScene()
+        self.battle_field_scene = BattleFieldSceneLegacy()
         self.battle_field_scene.create_battle_field_scene()
 
         self.opponent_tomb_shapes = self.battle_field_scene.get_opponent_tomb()

@@ -1,4 +1,4 @@
-from battle_field.entity.battle_field_scene import BattleFieldScene
+from battle_field.entity.battle_field_scene_legacy import BattleFieldSceneLegacy
 
 import tkinter
 import unittest
@@ -41,7 +41,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.lightning_border = LightningBorder()
 
-        self.battle_field_scene = BattleFieldScene()
+        self.battle_field_scene = BattleFieldSceneLegacy()
         self.battle_field_scene.create_battle_field_scene()
 
         self.opponent_tomb_shapes = self.battle_field_scene.get_opponent_tomb()

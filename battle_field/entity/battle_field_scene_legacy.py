@@ -17,7 +17,7 @@ from battle_field.entity.your_unit_field import YourUnitField
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 
 
-class BattleFieldScene:
+class BattleFieldSceneLegacy:
     __battle_field_repository = BattleFieldRepository.getInstance()
     def __init__(self):
         self.opponent_tomb = None
