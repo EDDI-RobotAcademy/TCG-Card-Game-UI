@@ -52,19 +52,22 @@ class ResizableRectangle(OpenGLFrame):
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
 
+    def init_first_window(self, width, height):
+        self.width = width
+        self.height = height
+
+        self.current_width = self.width
+        self.current_height = self.height
+
+        self.prev_width = self.width
+        self.prev_height = self.height
+        self.is_reshape_not_complete = False
+
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
 
         if self.is_reshape_not_complete:
-            self.width = width
-            self.height = height
-
-            self.current_width = self.width
-            self.current_height = self.height
-
-            self.prev_width = self.width
-            self.prev_height = self.height
-            self.is_reshape_not_complete = False
+            self.init_first_window(width, height)
 
         self.prev_width = self.current_width
         self.prev_height = self.current_height
@@ -84,9 +87,6 @@ class ResizableRectangle(OpenGLFrame):
         self.redraw()
 
     def redraw(self):
-        if self.is_reshape_not_complete:
-            return
-
         self.tkMakeCurrent()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
@@ -114,8 +114,6 @@ class FullScreenWindow(tkinter.Tk):
 
 class TestCustomRectangleWithCalculatedRatio(unittest.TestCase):
     def test_custom_rectangle_with_calculated_ratio(self):
-        monitor_3 = get_monitors()[2]
-
         root = FullScreenWindow()
 
         resizable_rectangle = ResizableRectangle(root)
