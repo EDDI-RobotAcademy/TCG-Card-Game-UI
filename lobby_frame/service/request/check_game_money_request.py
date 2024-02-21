@@ -13,4 +13,4 @@ class CheckGameMoneyRequest:
         }
 
     def __str__(self):
-        return f"BuyRandomCardRequest(protocolNumber={self.__protocolNumber}, sessionInfo={self.__sessionInfo})"
+        return f"CheckGameMoneyRequest(protocolNumber={self.__protocolNumber}, sessionInfo={self.__sessionInfo})"

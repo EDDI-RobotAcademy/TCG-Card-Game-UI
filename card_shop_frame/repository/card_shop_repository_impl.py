@@ -9,7 +9,7 @@ class CardShopMenuFrameRepositoryImpl(CardShopMenuFrameRepository):
 
     def __init__(self):
         self.__race = None
-
+        self.__myMoney = None
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -35,10 +35,6 @@ class CardShopMenuFrameRepositoryImpl(CardShopMenuFrameRepository):
         print("CardShopFrameRepositoryImpl: saveReceiveIpcChannel()")
         self.__receiveIpcChannel = receiveIpcChannel
 
-    def requestCheckGameMoney(self, CheckGameMoneyRequest):
-        print(f"CardShopFrameRepositoryImpl: requestCheckGameMoney() -> {CheckGameMoneyRequest}")
-        self.__transmitIpcChannel.put(CheckGameMoneyRequest)
-        return self.__receiveIpcChannel.get()
 
     def setRace(self, race):
         print(f"CardShopFrameRepositoryImpl race set {race}")
@@ -46,3 +42,10 @@ class CardShopMenuFrameRepositoryImpl(CardShopMenuFrameRepository):
 
     def getRace(self):
         return self.__race
+
+    def setMyMoney(self, myMoney):
+        print(f"LobbyMenuFrameRepositoryImpl myMoney set {myMoney}")
+        self.__myMoney = myMoney
+
+    def getMyMoney(self):
+        return self.__myMoney
