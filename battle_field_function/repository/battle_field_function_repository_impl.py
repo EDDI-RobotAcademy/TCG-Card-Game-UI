@@ -32,8 +32,7 @@ class BattleFieldFunctionRepositoryImpl(BattleFieldFunctionRepository):
         self.__transmitIpcChannel = transmitIpcChannel
 
     def requestSurrender(self, surrenderRequest):
-        print(f"battleFieldFunctionRepositoryImpl: surrender")
-        print(f"battleFieldFunctionRepositoryImpl: {surrenderRequest}")
+        print(f"항복 요청함 : {surrenderRequest}")
         self.__transmitIpcChannel.put(surrenderRequest)
         return self.__receiveIpcChannel.get()
 
