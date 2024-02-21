@@ -11,7 +11,7 @@ class YourHandRepository:
     current_hand_card_x_position = []
 
     x_base = 300
-    x_base_muligun = 150 # 멀리건에서의 맨 처음 카드 위치.
+    x_base_muligun = 120 # 멀리건에서의 맨 처음 카드 위치.
 
     def __new__(cls):
         if cls.__instance is None:
