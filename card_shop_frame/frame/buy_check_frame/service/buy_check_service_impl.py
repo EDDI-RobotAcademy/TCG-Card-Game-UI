@@ -6,6 +6,7 @@ from card_shop_frame.repository.card_shop_repository_impl import CardShopMenuFra
 from card_shop_frame.frame.buy_check_frame.service.request.free_random_card_request import FreeRandomCardRequest
 from card_shop_frame.frame.buy_check_frame.service.request.buy_random_card_request import BuyRandomCardRequest
 from session.repository.session_repository_impl import SessionRepositoryImpl
+from opengl_buy_random_card_frame.service.buy_random_card_frame_service_impl import BuyRandomCardFrameServiceImpl
 
 
 class BuyCheckServiceImpl(BuyCheckService):
@@ -18,6 +19,7 @@ class BuyCheckServiceImpl(BuyCheckService):
             cls.__instance.__cardShopMenuFrameService = CardShopMenuFrameServiceImpl.getInstance()
             cls.__instance.__cardShopMenuFrameRepository = CardShopMenuFrameRepositoryImpl.getInstance()
             cls.__instance.__sessionRepository = SessionRepositoryImpl.getInstance()
+            cls.__instance.__buyRandomCardFrameService = BuyRandomCardFrameServiceImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -43,8 +45,16 @@ class BuyCheckServiceImpl(BuyCheckService):
         def yes_click_button(buyCheckFrame):
 
             responseData = self.__buyCheckRepository.requestBuyRandomCard(
-                BuyRandomCardRequest(sessionInfo=self.__sessionRepository.get_session_info(), race=self.findRace())),
-            if responseData is True:
+                BuyRandomCardRequest(sessionInfo=self.__sessionRepository.get_session_info(), race_name="Undead",is_confirmed_upper_legend=True)),
+            print(f"responseData: {responseData}")
+            #is_success = responseData[0]['is_success']
+            is_success = True
+            #testcards = responseData[0]['card_id_list']
+            testcards = [76, 51, 76, 6, 77, 62, 53, 49, 72, 52]
+            print(f"testcards: {testcards}")
+            if is_success == True:
+                #self.__buyRandomCardFrameService.setRandomCardNumbers(testcards)
+                self.__buyRandomCardFrameService.findRandomCardNumbers(testcards)
                 self.__cardShopMenuFrameService.RestoreCardShopUiButton()
                 switchFrameWithMenuName("buy-random-card")
                 buyCheckFrame.destroy()

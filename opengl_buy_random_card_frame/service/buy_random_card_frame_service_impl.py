@@ -28,12 +28,22 @@ class BuyRandomCardFrameServiceImpl(BuyRandomCardFrameService):
             cls.__instance = cls()
         return cls.__instance
 
-    def createBuyRandomCardUiFrame(self, rootWindow, switchFrameWithMenuName):
-        # responseData = self.buyRandomCardRequest()
-        # print(responseData)
-        # self.__buyRandomCardScene.add_card_list(responseData)
+    def __init__(self):
+        self.card_numbers = None
 
+
+
+    def findRandomCardNumbers(self, card_numbers):
+        print(f"card_numbers: {card_numbers}")
+        self.card_numbers = card_numbers
+        randomNumbers = self.card_numbers
+        print(f"randomNumbers: {randomNumbers}")
+
+
+    def createBuyRandomCardUiFrame(self, rootWindow, switchFrameWithMenuName):
         buyRandomCardrame = self.__buyRandomCardFrame(rootWindow)
+        buyRandomCardrame.set_random_card_numbers([76, 51, 76, 6, 77, 62, 53, 49, 72, 52])
+        print(f"buyRandomCardrame.random_card_numbers: {buyRandomCardrame.random_card_numbers}")
 
         buttonBinding = BuyRandomCardFrameButtonBind(master=rootWindow, frame=buyRandomCardrame)
         buttonBinding.button_bind()

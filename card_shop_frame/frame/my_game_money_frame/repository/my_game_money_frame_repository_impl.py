@@ -1,5 +1,5 @@
-from my_game_money_frame.entity.my_game_money_frame import MyGameMoneyFrame
-from my_game_money_frame.repository.my_game_money_frame_repository import MyGameMoneyFrameRepository
+from card_shop_frame.frame.my_game_money_frame.entity.my_game_money_frame import MyGameMoneyFrame
+from card_shop_frame.frame.my_game_money_frame.repository.my_game_money_frame_repository import MyGameMoneyFrameRepository
 
 
 class MyGameMoneyFrameRepositoryImpl(MyGameMoneyFrameRepository):

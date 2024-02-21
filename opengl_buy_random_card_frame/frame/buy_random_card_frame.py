@@ -9,14 +9,16 @@ from OpenGL.GLUT import *
 from common.utility import get_project_root
 from opengl_buy_random_card_frame.entity.buy_random_card_scene import BuyRandomCardScene
 
-
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_buy_random_card_frame.renderer.buy_random_card_frame_renderer import BuyRandomCardFrameRenderer
 from opengl_shape.image_rectangle_element import ImageRectangleElement
 from opengl_shape.rectangle import Rectangle
 
 
+
 class BuyRandomCardFrame(OpenGLFrame):
+    __instance = None
+
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
         self.buy_random_card_scene = BuyRandomCardScene()
@@ -28,8 +30,7 @@ class BuyRandomCardFrame(OpenGLFrame):
         self.width = screen_width
         self.height = screen_height
 
-        self.random_card_number = [2, 5, 8, 9, 10, 11, 13, 14, 15, 16]
-
+        self.random_card_numbers = []
 
 
     def initgl(self):
@@ -41,6 +42,8 @@ class BuyRandomCardFrame(OpenGLFrame):
         self.render = BuyRandomCardFrameRenderer(self.buy_random_card_scene, self)
         self.render.render()
 
+    def set_random_card_numbers(self, card_numbers):
+        self.random_card_numbers = card_numbers
 
     def make_card_main_frame(self):
         project_root = get_project_root()
@@ -76,7 +79,8 @@ class BuyRandomCardFrame(OpenGLFrame):
         self.buy_random_card_scene.add_button_list(go_to_back_button)
         print(f"버튼 도형 잘 들어갔니?:{self.buy_random_card_scene.get_button_list()}")
 
-        response_card_number = self.getRandomCardNumber()
+        response_card_number = self.random_card_numbers
+        print(f"response_card_number: {response_card_number}")
 
         x = 50
         y = 50
@@ -109,10 +113,4 @@ class BuyRandomCardFrame(OpenGLFrame):
             self.make_card_main_frame()
             self.render_after = BuyRandomCardFrameRenderer(self.buy_random_card_scene, self)
             self.render_after.render()
-
-    def setRandomCardNumber(self, random_card_number):
-        self.random_card_number = random_card_number
-
-    def getRandomCardNumber(self):
-        return self.random_card_number
 
