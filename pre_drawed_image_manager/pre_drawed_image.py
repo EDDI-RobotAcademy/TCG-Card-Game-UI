@@ -39,7 +39,6 @@ class PreDrawedImage:
 
     __pre_drawed_win_text = None
     __pre_drawed_lose_text = None
-    __pre_drawed_confirm_button = None
 
     __pre_drawed_prev_button = None
     __pre_drawed_battle_field_muligun_background = None
@@ -123,10 +122,6 @@ class PreDrawedImage:
     def pre_draw_lose_text(self):
         lose_text_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "lose_text.png")
         self.__pre_drawed_lose_text = ImageDataLoader.load_rectangle_image_data(lose_text_image_path)
-
-    def pre_draw_confirm_button(self):
-        confirm_button_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "confirm_button.png")
-        self.__pre_drawed_confirm_button = ImageDataLoader.load_rectangle_image_data(confirm_button_image_path)
 
     def pre_draw_turn_end_button(self):
         turn_end_button_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "turn_end_button.png")
@@ -223,9 +218,11 @@ class PreDrawedImage:
         prev_button_image_data = os.path.join(self.__project_root, "local_storage", "button_image", "prev_button.png")
         self.__pre_drawed_prev_button = ImageDataLoader.load_rectangle_image_data(prev_button_image_data)
 
-    def pre_draw_battle_field_muligun_background(self):
+    def pre_draw_battle_field_muligun_background(self, width, height):
+        print(f"pre_draw_battle_field_muligun_background -> width = {width}, height = {height}")
+
         muligun_battle_field_background = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "muligun_battle_field_background.png")
-        self.__pre_drawed_battle_field_muligun_background = ImageDataLoader.load_background_image_data(muligun_battle_field_background)
+        self.__pre_drawed_battle_field_muligun_background = ImageDataLoader.load_background_image_data(muligun_battle_field_background, width, height)
 
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
@@ -248,7 +245,6 @@ class PreDrawedImage:
         self.pre_draw_turn_end_button()
         self.pre_draw_win_text()
         self.pre_draw_lose_text()
-        self.pre_draw_confirm_button()
 
         self.pre_draw_card_illustration()
         self.pre_draw_card_race()
@@ -260,7 +256,8 @@ class PreDrawedImage:
 
         self.pre_draw_prev_button()
 
-        self.pre_draw_battle_field_muligun_background()
+        # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
+        # self.pre_draw_battle_field_muligun_background()
 
     def get_pre_draw_opponent_tomb(self):
         return self.__pre_drawed_opponent_tomb
@@ -340,7 +337,4 @@ class PreDrawedImage:
 
     def get_pre_draw_lose_text(self):
         return self.__pre_drawed_lose_text
-
-    def get_pre_draw_confirm_button(self):
-        return self.__pre_drawed_confirm_button
 

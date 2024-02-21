@@ -4,10 +4,10 @@ from PIL import Image
 
 class ImageDataLoader:
     @staticmethod
-    def load_background_image_data(path):
+    def load_background_image_data(path, width, height):
         try:
             image = Image.open(path)
-            resized_image = image.resize((1920, 1080))
+            resized_image = image.resize((width, height))
 
             rgba_image = resized_image.convert("RGBA")
             img_data = np.array(rgba_image)
