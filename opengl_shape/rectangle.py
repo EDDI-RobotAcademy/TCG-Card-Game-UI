@@ -8,19 +8,19 @@ class Rectangle(Shape):
     def __init__(self, color, vertices, global_translation=(0, 0), local_translation=(0, 0)):
         super().__init__(vertices, global_translation, local_translation)
 
-        self.width_ratio = 1
-        self.height_ratio = 1
+        # self.width_ratio = 1
+        # self.height_ratio = 1
 
         self.color = color
         self.draw_border = True
         self.draw_gradient = False
         self.is_visible = True
 
-    def set_width_ratio(self, width_ratio):
-        self.width_ratio = width_ratio
-
-    def set_height_ratio(self, height_ratio):
-        self.height_ratio = height_ratio
+    # def set_width_ratio(self, width_ratio):
+    #     self.width_ratio = width_ratio
+    #
+    # def set_height_ratio(self, height_ratio):
+    #     self.height_ratio = height_ratio
 
     def set_visible(self, visible):
         self.is_visible = visible

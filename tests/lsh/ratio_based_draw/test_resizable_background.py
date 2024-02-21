@@ -1,3 +1,5 @@
+from screeninfo import get_monitors
+
 from battle_field.entity.battle_field_environment import BattleFieldEnvironment
 from battle_field.entity.battle_field_scene_legacy import BattleFieldSceneLegacy
 from battle_field.entity.opponent_deck import OpponentDeck
@@ -34,32 +36,26 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
 
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
+        monitors = get_monitors()
+        target_monitor = monitors[2] if len(monitors) > 2 else monitors[0]
 
-        self.width = screen_width
-        self.height = screen_height
+        self.width = target_monitor.width
+        self.height = target_monitor.height
 
-        self.click_card_effect_rectangle = None
-        self.selected_object = None
-        self.prev_selected_object = None
-        self.drag_start = None
+        self.is_reshape_not_complete = True
 
-        self.click_card_effect_rectangles = []
-        self.selected_objects = []
-        self.checking_draw_effect = {}
+        self.current_width = self.width
+        self.current_height = self.height
 
-        self.lightning_border = LightningBorder()
+        self.prev_width = self.width
+        self.prev_height = self.height
+
+        self.width_ratio = 1.0
+        self.height_ratio = 1.0
 
         self.battle_field_muligun_scene = BattleFieldMuligunScene()
         self.battle_field_muligun_scene.create_battle_field_muligun_scene(self.width, self.height)
         self.battle_field_muligun_background_shape_list = self.battle_field_muligun_scene.get_battle_field_muligun_background()
-
-        self.your_hand_repository = YourHandRepository.getInstance()
-        self.your_hand_repository.save_current_hand_state([6, 8, 19, 20, 151])
-        self.your_hand_repository.create_hand_card_list_muligun()
-
-        self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
 
         self.bind("<Configure>", self.on_resize)
 
@@ -69,8 +65,39 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.tkMakeCurrent()
 
+    def init_first_window(self, width, height):
+        print("Operate Only Once!")
+        self.width = width
+        self.height = height
+
+        self.current_width = self.width
+        self.current_height = self.height
+
+        self.prev_width = self.width
+        self.prev_height = self.height
+        self.is_reshape_not_complete = False
+
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
+
+        if self.is_reshape_not_complete:
+            self.init_first_window(width, height)
+
+        self.current_width = width
+        self.current_height = height
+
+        self.width_ratio = self.current_width / self.prev_width
+        self.height_ratio = self.current_height / self.prev_height
+
+        self.width_ratio = min(self.width_ratio, 1.0)
+        self.height_ratio = min(self.height_ratio, 1.0)
+
+        print(f"Reshaping window to width_ratio={self.width_ratio}, height_ratio={self.height_ratio}")
+        print(f"current_width={self.current_width}, prev_width={self.prev_width}")
+
+        self.prev_width = self.current_width
+        self.prev_height = self.current_height
+
         glViewport(0, 0, width, height)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
@@ -79,40 +106,25 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         glLoadIdentity()
 
     def on_resize(self, event):
+        print("Handling resize event")
         self.reshape(event.width, event.height)
 
     def draw_base(self):
         for battle_field_muligun_background_shape in self.battle_field_muligun_background_shape_list:
+            battle_field_muligun_background_shape.set_width_ratio(self.width_ratio)
+            battle_field_muligun_background_shape.set_height_ratio(self.height_ratio)
             battle_field_muligun_background_shape.draw()
 
     def redraw(self):
         self.tkMakeCurrent()
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         self.draw_base()
 
-        glDisable(GL_BLEND)
-
-        for hand_card in self.hand_card_list:
-            attached_tool_card = hand_card.get_tool_card()
-            if attached_tool_card is not None:
-                attached_tool_card.draw()
-
-            pickable_card_base = hand_card.get_pickable_card_base()
-            pickable_card_base.draw()
-
-            attached_shape_list = pickable_card_base.get_attached_shapes()
-
-            for attached_shape in attached_shape_list:
-                attached_shape.draw()
-
         self.tkSwapBuffers()
 
-class TestDrawBattleFieldMuligunWithNewBackground(unittest.TestCase):
+class TestResizableBackground(unittest.TestCase):
 
-    def test_draw_battle_field_muligun_with_new_background(self):
+    def test_resizable_background(self):
         DomainInitializer.initEachDomain()
 
         root = tkinter.Tk()

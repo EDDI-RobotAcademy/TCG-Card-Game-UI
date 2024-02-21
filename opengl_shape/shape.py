@@ -10,6 +10,9 @@ class Shape(abc.ABC):
         # self.width = 0
         # self.height = 0
 
+        self.width_ratio = 1
+        self.height_ratio = 1
+
         self.global_translation = global_translation
         self.local_translation = local_translation
         self.translation = self.local_translation + self.global_translation
@@ -24,6 +27,12 @@ class Shape(abc.ABC):
     #         return width, height
     #     else:
     #         raise ValueError("A rectangle should have exactly 4 vertices.")
+
+    def set_width_ratio(self, width_ratio):
+        self.width_ratio = width_ratio
+
+    def set_height_ratio(self, height_ratio):
+        self.height_ratio = height_ratio
 
     def set_initial_vertices(self, vertices):
         self.initial_vertices = vertices
