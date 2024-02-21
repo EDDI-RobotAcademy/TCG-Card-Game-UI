@@ -8,6 +8,13 @@ class CurrentHandState:
             # print(f"add_to_hand: {card}")
             self.current_hand_list.append(card)
 
+    def remove_hand_by_index(self, index):
+        if 0 <= index < len(self.current_hand_list):
+            removed_card = self.current_hand_list.pop(index)
+            print(f"Removed card index {index}: {removed_card}")
+        else:
+            print(f"Invalid index: {index}. 지울 것이 없다")
+
     def remove_from_hand(self, *cards):
         for card in cards:
             if card in self.current_hand_list:

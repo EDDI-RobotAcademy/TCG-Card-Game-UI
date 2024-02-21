@@ -94,6 +94,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.field_area_inside_handler = FieldAreaInsideHandler.getInstance(
             self.your_hand_repository,
             self.your_field_unit_repository,
+            self.your_deck_repository,
             self.card_info,
             self.your_tomb_repository)
 
@@ -341,9 +342,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             self.selected_object = None
 
-            selected_object = self.left_click_detector.which_one_select_is_in_hand_list_area((x, y),
-                                                                                             self.hand_card_list,
-                                                                                             self.winfo_reqheight())
+            selected_object = self.left_click_detector.which_one_select_is_in_your_hand_list_area((x, y),
+                                                                                                  self.hand_card_list,
+                                                                                                  self.winfo_reqheight())
 
             if selected_object:
                 selected_object.selected = not selected_object.selected
@@ -360,9 +361,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 field_unit.selected = False
 
             selected_field_unit = (self.left_click_detector
-                                   .which_one_select_is_in_field_unit_list_area((x, y),
-                                                                                self.your_field_unit_repository.get_current_field_unit_list(),
-                                                                                self.winfo_reqheight()))
+                                   .which_one_select_is_in_your_field_unit_list_area((x, y),
+                                                                                     self.your_field_unit_repository.get_current_field_unit_list(),
+                                                                                     self.winfo_reqheight()))
 
             if selected_field_unit:
                 selected_field_unit.selected = not selected_field_unit.selected
@@ -422,9 +423,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         return new_rectangle
 
 
-class TestBoostEnergyWithSupportCardFirstRefactor(unittest.TestCase):
+class TestBoostEnergyWithSupportCardSecondRefactor(unittest.TestCase):
 
-    def test_boost_energy_with_support_card_first_refactor(self):
+    def test_boost_energy_with_support_card_second_refactor(self):
         DomainInitializer.initEachDomain()
 
         root = tkinter.Tk()

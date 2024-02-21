@@ -11,6 +11,7 @@ class YourHandRepository:
     current_hand_card_x_position = []
 
     x_base = 300
+    x_base_muligun = 150 # 멀리건에서의 맨 처음 카드 위치.
 
     def __new__(cls):
         if cls.__instance is None:
@@ -39,6 +40,17 @@ class YourHandRepository:
     def get_current_hand_state(self):
         return self.current_hand_state.get_current_hand()
 
+    def create_additional_hand_card_list(self, card_list):
+        current_hand_card_list_length = len(self.current_hand_card_list)
+
+        for index, card_id in enumerate(card_list):
+            print(f"index: {index}, card_number: {card_id}")
+            initial_position = self.get_next_card_position(current_hand_card_list_length + index)
+            new_card = PickableCard(local_translation=initial_position)
+            new_card.init_card(card_id)
+            # new_card.set_initial_position(initial_position)
+            self.current_hand_card_list.append(new_card)
+
     def create_hand_card_list(self):
         current_hand = self.get_current_hand_state()
         print(f"current_hand: {current_hand}")
@@ -49,6 +61,27 @@ class YourHandRepository:
             new_card = PickableCard(local_translation=initial_position)
             new_card.init_card(card_number)
             # new_card.set_initial_position(initial_position)
+            self.current_hand_card_list.append(new_card)
+
+    def remove_card_by_index(self, card_placed_index):
+        if 0 <= card_placed_index < len(self.current_hand_card_list):
+            del self.current_hand_card_list[card_placed_index]
+            self.current_hand_state.remove_hand_by_index(card_placed_index)
+
+            print(f"Removed card index {card_placed_index} -> current_hand_list: {self.current_hand_card_list}, current_hand_state: {self.get_current_hand_state()}")
+        else:
+            print(f"Invalid index: {card_placed_index}. 지울 것이 없다.")
+
+    # 멀리건 화면에서의 카드 리스트
+    def create_hand_card_list_muligun(self):
+        current_hand = self.get_current_hand_state()
+        print(f"current_hand: {current_hand}")
+
+        for index, card_number in enumerate(current_hand):
+            print(f"index: {index}, card_number: {card_number}")
+            initial_position = self.get_start_hand_card_position(index)
+            new_card = PickableCard(local_translation=initial_position, scale=300)
+            new_card.init_card_scale(card_number)
             self.current_hand_card_list.append(new_card)
 
     def remove_card_by_id(self, card_id):
@@ -62,11 +95,31 @@ class YourHandRepository:
 
         print(f"after clear -> current_hand_list: {self.current_hand_card_list}, current_hand_state: {self.get_current_hand_state()}")
 
+    def remove_card_by_multiple_index(self, card_index_list):
+        for index in sorted(card_index_list, reverse=True):
+            if 0 <= index < len(self.current_hand_card_list):
+                # Remove the card from the list
+                del self.current_hand_card_list[index]
+
+                # Update the state to remove the card at the corresponding index
+                self.current_hand_state.remove_hand_by_index(index)
+            else:
+                print(f"Invalid index: {index}. No card removed for this index.")
+
+        print(f"Removed cards at indices {card_index_list} -> current_hand_list: {self.current_hand_card_list}, current_hand_state: {self.get_current_hand_state()}")
+
     def get_next_card_position(self, index):
         # TODO: 배치 간격 고려
         current_y = 830
         x_increment = 170
         next_x = self.x_base + x_increment * index
+        return (next_x, current_y)
+
+    # 멀리건 화면에서 카드 배치
+    def get_start_hand_card_position(self, index):
+        current_y = 300
+        x_increment = 340
+        next_x = self.x_base_muligun + x_increment * index
         return (next_x, current_y)
 
     def get_current_hand_card_list(self):
@@ -101,6 +154,12 @@ class YourHandRepository:
                 # attached_shape.update_vertices(attached_shape_intiial_vertices)
 
             # current_hand_card.change_local_translation((next_x, current_y))
+
+    def find_index_by_selected_object(self, selected_object):
+        for index, card in enumerate(self.current_hand_card_list):
+            if card == selected_object:
+                return index
+        return -1
 
     def saveReceiveIpcChannel(self, receiveIpcChannel):
         self.__receiveIpcChannel = receiveIpcChannel
