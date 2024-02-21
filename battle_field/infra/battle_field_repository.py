@@ -10,6 +10,7 @@ class BattleFieldRepository:
 
     battle_field_button_list = []
     is_game_over = False
+    is_win = False
 
     def __new__(cls):
         if cls.__instance is None:

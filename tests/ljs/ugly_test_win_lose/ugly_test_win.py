@@ -1,6 +1,7 @@
 import tkinter
 import unittest
 
+from image_shape.rectangle_image import RectangleImage
 from initializer.init_domain import DomainInitializer
 from tests.ljs.ugly_test_battle_field_functions.pre_drawed_battle_field_frame.PreDrawedBattleFieldFrameRefactorLJS import \
     PreDrawedBattleFieldFrameRefactorLJS
@@ -97,7 +98,7 @@ class BattleFieldSceneForWinTest:
 
         self.create_battle_field_environment()
         self.create_turn_end_button()
-        self.create_win_panel()
+        #self.create_win_panel()
 
     def create_opponent_tomb(self):
         self.opponent_tomb = OpponentTomb()
@@ -263,7 +264,7 @@ class PreDrawedBattleFieldFrameRefactorForWinTest(OpenGLFrame):
 
         self.battle_field_environment_shapes = self.battle_field_scene.get_battle_field_environment()
         self.turn_end_button_shapes = self.battle_field_scene.get_turn_end_button()
-        self.win_panel_shapes = self.battle_field_scene.get_win_panel()
+
 
         self.your_hand_repository = YourHandRepository.getInstance()
         self.your_hand_repository.save_current_hand_state([8, 19, 151, 2, 9, 20, 30, 6])
@@ -363,6 +364,9 @@ class PreDrawedBattleFieldFrameRefactorForWinTest(OpenGLFrame):
         for turn_end_button_shape in self.turn_end_button_shapes:
             turn_end_button_shape.draw()
 
+
+
+
     def redraw(self):
         self.tkMakeCurrent()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -420,6 +424,9 @@ class PreDrawedBattleFieldFrameRefactorForWinTest(OpenGLFrame):
 
         if self.battle_field_repository.is_game_over:
             self.alpha_background.draw()
+            self.battle_field_scene.create_win_panel()
+            for win_panel_shape in self.battle_field_scene.get_win_panel():
+                win_panel_shape.draw()
 
         self.tkSwapBuffers()
 
@@ -742,6 +749,8 @@ class PreDrawedBattleFieldFrameRefactorForWinTest(OpenGLFrame):
         return new_rectangle
 
 class WinPanel:
+    __pre_drawed_image_instance = PreDrawedImage.getInstance()
+    __battle_field_repository = BattleFieldRepository.getInstance()
     __battle_field_function_controller = BattleFieldFunctionControllerImpl.getInstance()
 
     def __init__(self, local_translation=(0, 0), scale=1):
@@ -756,15 +765,31 @@ class WinPanel:
         shape.local_translate(self.local_translation)
         self.shapes.append(shape)
 
-    def create_win_panel(self, color, vertices):
-        win_panel = Rectangle(color=color,
-                                                vertices=vertices)
+    def create_win_panel(self, is_win):
+        win_panel = RectangleImage(self.__pre_drawed_image_instance.get_pre_draw_your_card_deck(),
+                                                vertices=[(750, 300), (1150, 300), (1150,600), (750,600)])
         self.add_shape(win_panel)
 
 
+        text_vertices = [(850,380),(1050, 380), (1050, 530), (850,530)]
+        if is_win:
+            text_image = RectangleImage(
+                image_data=self.__pre_drawed_image_instance.get_pre_draw_win_text(),
+                vertices=text_vertices
+            )
+        else:
+            text_image = RectangleImage(
+                image_data=self.__pre_drawed_image_instance.get_pre_draw_lose_text(),
+                vertices=text_vertices
+            )
+        self.add_shape(text_image)
+
+
+
+
     def init_shapes(self):
-            self.create_win_panel(color = (0,0,0,0.65),
-                              vertices=[(800, 490), (900, 490), (900, 590), (800, 590)])
+            self.create_win_panel(
+                              is_win=self.__battle_field_repository.is_win)
 
 
 class UglyTestWin(unittest.TestCase):
@@ -797,9 +822,11 @@ class UglyTestWin(unittest.TestCase):
         close_button.place(relx=0.5, rely=0.5, anchor="center")
         def win(event):
             BattleFieldRepository.getInstance().is_game_over=True
+            BattleFieldRepository.getInstance().is_win=True
 
         def lose(event):
             BattleFieldRepository.getInstance().is_game_over=True
+            BattleFieldRepository.getInstance().is_win = False
 
         def close(event):
             BattleFieldRepository.getInstance().is_game_over=False
