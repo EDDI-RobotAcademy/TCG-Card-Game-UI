@@ -10,7 +10,7 @@ class YourHandRepository:
     current_hand_card_list = []
     current_hand_card_x_position = []
 
-    x_base = 300
+    x_base = 0
     x_base_muligun = 120 # 멀리건에서의 맨 처음 카드 위치.
 
     def __new__(cls):
@@ -23,6 +23,9 @@ class YourHandRepository:
         if cls.__instance is None:
             cls.__instance = cls()
         return cls.__instance
+
+    def set_x_base(self, x_base):
+        self.x_base = x_base
 
     def save_current_hand_state(self, hand_list):
         self.current_hand_state.add_to_hand(hand_list)
@@ -108,6 +111,9 @@ class YourHandRepository:
 
         print(f"Removed cards at indices {card_index_list} -> current_hand_list: {self.current_hand_card_list}, current_hand_state: {self.get_current_hand_state()}")
 
+    # 1848 기준 -> 1848 - 105 * 5 + 170 * 4 = 643
+    # 643 / 2 = 321.5
+    # 321.5 / 1848 = 17.4% => 0.174
     def get_next_card_position(self, index):
         # TODO: 배치 간격 고려
         current_y = 830
