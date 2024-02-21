@@ -460,9 +460,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         return new_rectangle
 
 
-class TestDrawBattleFieldDeckDrawWithSupport(unittest.TestCase):
+class TestDrawBattleFieldMuligunRefactor(unittest.TestCase):
 
-    def test_draw_battle_field_deck_draw_with_support(self):
+    def test_draw_battle_field_muligun_refactor(self):
         DomainInitializer.initEachDomain()
 
         root = tkinter.Tk()
@@ -476,6 +476,7 @@ class TestDrawBattleFieldDeckDrawWithSupport(unittest.TestCase):
         def animate():
             pre_drawed_battle_field_frame.redraw()
             root.after(17, animate)
+            # root.after(33, animate)
 
         root.after(0, animate)
 

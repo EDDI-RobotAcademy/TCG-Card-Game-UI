@@ -38,6 +38,7 @@ class PreDrawedImage:
     __pre_drawed_turn_end_button = None
 
     __pre_drawed_prev_button = None
+    __pre_drawed_battle_field_muligun_background = None
 
 
     def __new__(cls):
@@ -206,6 +207,10 @@ class PreDrawedImage:
         prev_button_image_data = os.path.join(self.__project_root, "local_storage", "button_image", "prev_button.png")
         self.__pre_drawed_prev_button = ImageDataLoader.load_rectangle_image_data(prev_button_image_data)
 
+    def pre_draw_battle_field_muligun_background(self):
+        muligun_battle_field_background = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "muligun_battle_field_background.png")
+        self.__pre_drawed_battle_field_muligun_background = ImageDataLoader.load_rectangle_image_data(muligun_battle_field_background)
+
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
         self.pre_draw_opponent_lost_zone()
@@ -235,6 +240,8 @@ class PreDrawedImage:
         self.pre_draw_numbers()
 
         self.pre_draw_prev_button()
+
+        self.pre_draw_battle_field_muligun_background()
 
     def get_pre_draw_opponent_tomb(self):
         return self.__pre_drawed_opponent_tomb
@@ -305,4 +312,7 @@ class PreDrawedImage:
 
     def get_pre_draw_prev_button(self):
         return self.__pre_drawed_prev_button
+
+    def get_pre_draw_battle_field_muligun_background(self):
+        return self.__pre_drawed_battle_field_muligun_background
 

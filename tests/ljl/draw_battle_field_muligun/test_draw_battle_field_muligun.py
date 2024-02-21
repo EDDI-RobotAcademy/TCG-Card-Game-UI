@@ -1,5 +1,5 @@
 from battle_field.entity.battle_field_environment import BattleFieldEnvironment
-from battle_field.entity.battle_field_scene import BattleFieldScene
+from battle_field.entity.battle_field_scene_legacy import BattleFieldSceneLegacy
 from battle_field.entity.opponent_deck import OpponentDeck
 from battle_field.entity.opponent_hand_panel import OpponentHandPanel
 from battle_field.entity.opponent_lost_zone import OpponentLostZone
@@ -50,11 +50,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.lightning_border = LightningBorder()
 
-        self.battle_field_scene = BattleFieldScene()
+        self.battle_field_scene = BattleFieldSceneLegacy()
         self.battle_field_scene.create_battle_field_scene()
 
         self.alpha_background = self.create_opengl_alpha_background()
-        self.ok_button = self.create_ok_button()
 
         self.opponent_tomb_shapes = self.battle_field_scene.get_opponent_tomb()
         self.opponent_lost_zone_shapes = self.battle_field_scene.get_opponent_lost_zone()
@@ -170,7 +169,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.draw_base()
         self.alpha_background.draw()
-        self.ok_button.draw()
 
         # 처음 드로우한 5장의 카드 그리는 부분
         for hand_card in self.hand_card_list:
@@ -254,21 +252,17 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                     fixed_x, fixed_y = pickable_card_base.get_local_translation()
                     new_rectangle = self.create_change_card_expression((fixed_x, fixed_y))
-                    self.click_card_effect_rectangle = new_rectangle
-                    # self.click_card_effect_rectangles.append(new_rectangle)
+                    # self.click_card_effect_rectangle = new_rectangle
+                    self.click_card_effect_rectangles.append(new_rectangle)
 
-                    # 교체할 카드 이미 효과 있으면 지우기.
-                    if hand_card_id in self.checking_draw_effect:
-                        del self.checking_draw_effect[hand_card_id]
-                        print(self.checking_draw_effect)
-                        print(list(self.checking_draw_effect.keys()))
-
-                    else:
-                        fixed_x, fixed_y = pickable_card_base.get_local_translation()
-                        new_rectangle = self.create_change_card_expression((fixed_x, fixed_y))
+                    if hand_card_id not in self.checking_draw_effect:
                         self.checking_draw_effect[hand_card_id] = new_rectangle
                         print(self.checking_draw_effect)
                         print(list(self.checking_draw_effect.keys()))
+
+                    if hand_card_id in self.checking_draw_effect:
+                        break
+
 
         except Exception as e:
             print(f"Exception in on_canvas_click: {e}")
@@ -309,22 +303,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         new_rectangle = Rectangle(rectangle_color,
                                   [(0, 0), (self.width, 0), (self.width, self.height), (0, self.height)])
-        return new_rectangle
-
-    def create_ok_button(self):
-        rectangle_size = 100
-        rectangle_color = (0.8314, 0.7686, 0.6588, 1.0)
-
-        start_point = (850, 900)  # 확인 버튼 위치는 고정.
-        end_point = (start_point[0] + rectangle_size * 2.0, start_point[1] + rectangle_size * 0.55)
-
-        new_rectangle = Rectangle(rectangle_color, [
-            (start_point[0], start_point[1]),
-            (end_point[0], start_point[1]),
-            (end_point[0], end_point[1]),
-            (start_point[0], end_point[1])
-        ])
-        new_rectangle.created_by_right_click = True
         return new_rectangle
 
 
