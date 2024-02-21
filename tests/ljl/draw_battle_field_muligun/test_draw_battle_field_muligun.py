@@ -46,6 +46,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.click_card_effect_rectangles = []
         self.selected_objects = []
+        self.checking_draw_effect = {}
 
         self.lightning_border = LightningBorder()
 
@@ -78,9 +79,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_hand_repository.create_hand_card_list_muligun()
 
         self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
+        print(f"뭐가 나오냐?{self.hand_card_list}")
 
         self.bind("<Configure>", self.on_resize)
-        self.bind("<ButtonRelease-1>", self.on_canvas_release)
+        # self.bind("<ButtonRelease-1>", self.on_canvas_release)
         self.bind("<Button-1>", self.on_canvas_left_click)
         # self.bind("<Button-3>", self.on_canvas_right_click)
 
@@ -168,6 +170,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.draw_base()
         self.alpha_background.draw()
 
+        # 처음 드로우한 5장의 카드 그리는 부분
         for hand_card in self.hand_card_list:
             attached_tool_card = hand_card.get_tool_card()
             if attached_tool_card is not None:
@@ -181,8 +184,32 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             for attached_shape in attached_shape_list:
                 attached_shape.draw()
 
+        #self.draw_pick_card_effect()
+        self.draw_pick_card_effect_dict()
 
-        for hand_card, click_card_effect_rectangle in zip(self.selected_objects, self.click_card_effect_rectangles):
+
+        self.tkSwapBuffers()
+
+    # 바꿀 카드 클릭 했을 때 효과
+    # def draw_pick_card_effect(self):
+    #     for hand_card, click_card_effect_rectangle in zip(self.selected_objects, self.click_card_effect_rectangles):
+    #         if hand_card:
+    #             pickable_card_base = hand_card.get_pickable_card_base()
+    #
+    #             self.lightning_border.set_padding(50)
+    #             self.lightning_border.update_shape(pickable_card_base)
+    #             self.lightning_border.draw_lightning_border()
+    #
+    #         if click_card_effect_rectangle:
+    #
+    #             glEnable(GL_BLEND)
+    #             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+    #
+    #             click_card_effect_rectangle.draw()
+
+    def draw_pick_card_effect_dict(self):
+        for hand_card_id, click_card_effect_rectangle in self.checking_draw_effect.items():
+            hand_card = self.get_hand_card_by_id(hand_card_id)
             if hand_card:
                 pickable_card_base = hand_card.get_pickable_card_base()
 
@@ -191,32 +218,16 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 self.lightning_border.draw_lightning_border()
 
             if click_card_effect_rectangle:
-                print("is active_panel_rectangle alive ?")
-
                 glEnable(GL_BLEND)
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
                 click_card_effect_rectangle.draw()
 
-        # if self.selected_object:
-        #     pickable_card_base = self.selected_object.get_pickable_card_base()
-        #
-        #     self.lightning_border.set_padding(50)
-        #     self.lightning_border.update_shape(pickable_card_base)
-        #     self.lightning_border.draw_lightning_border()
-        #
-        #     if self.click_card_effect_rectangle:
-        #         print("is active_panel_rectangle alive ?")
-        #
-        #         glEnable(GL_BLEND)
-        #         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        #
-        #         self.click_card_effect_rectangle.draw()
-
-        self.tkSwapBuffers()
-
-    def on_canvas_release(self, event):
-        self.drag_start = None
+    def get_hand_card_by_id(self, hand_card_id):
+        for hand_card in self.hand_card_list:
+            if id(hand_card) == hand_card_id:
+                return hand_card
+        return None
 
     def on_canvas_left_click(self, event):
         try:
@@ -235,19 +246,23 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 if pickable_card_base.is_point_inside((x, y)):
                     hand_card.selected = not hand_card.selected
                     self.selected_object = hand_card
-                    self.selected_objects.append(hand_card)
+                    hand_card_id = id(hand_card)
+                    # self.selected_objects.append(hand_card_id)
+                    print(f"교체할 카드가 뭐야? : {self.selected_objects}")
 
-                # if self.selected_object:
                     fixed_x, fixed_y = pickable_card_base.get_local_translation()
                     new_rectangle = self.create_change_card_expression((fixed_x, fixed_y))
-                    self.click_card_effect_rectangle = new_rectangle
+                    # self.click_card_effect_rectangle = new_rectangle
                     self.click_card_effect_rectangles.append(new_rectangle)
 
-                    if self.selected_object != self.prev_selected_object:
-                        self.click_card_effect_rectangle = None
-                        self.prev_selected_object = self.selected_object
+                    if hand_card_id not in self.checking_draw_effect:
+                        self.checking_draw_effect[hand_card_id] = new_rectangle
+                        print(self.checking_draw_effect)
+                        print(list(self.checking_draw_effect.keys()))
 
-                    break
+                    if hand_card_id in self.checking_draw_effect:
+                        break
+
 
         except Exception as e:
             print(f"Exception in on_canvas_click: {e}")
