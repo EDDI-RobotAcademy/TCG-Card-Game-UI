@@ -1,8 +1,12 @@
 from common.card_type import CardType
+from image_shape.circle_kinds import CircleKinds
+from image_shape.circle_number_image import CircleNumberImage
+from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
 class FixedUnitCardInsideHandler:
     __instance = None
+    __pre_drawed_image_instance = PreDrawedImage.getInstance()
 
     def __new__(cls,
                 your_hand_repository,
@@ -59,7 +63,7 @@ class FixedUnitCardInsideHandler:
         if card_type == CardType.TOOL.value:
             self.handle_tool_card(placed_card_index)
         elif card_type == CardType.ENERGY.value:
-            self.handle_energy_card(placed_card_index, your_unit_index)
+            self.handle_energy_card(placed_card_index, your_unit_index, selected_object)
 
     def handle_tool_card(self, placed_card_index):
         print("도구를 붙입니다!")
@@ -67,12 +71,25 @@ class FixedUnitCardInsideHandler:
         self.your_hand_repository.remove_card_by_index(placed_card_index)
         self.your_hand_repository.replace_hand_card_position()
 
-    def handle_energy_card(self, placed_card_index, your_unit_index):
+    def handle_energy_card(self, placed_card_index, your_unit_index, selected_object):
         print("에너지를 붙입니다!")
         # self.your_hand_repository.remove_card_by_id(placed_card_id)
         self.your_hand_repository.remove_card_by_index(placed_card_index)
         self.your_field_unit_repository.get_attached_energy_info().add_energy_at_index(your_unit_index, 1)
         self.your_hand_repository.replace_hand_card_position()
+
+        your_fixed_field_unit = self.your_field_unit_repository.find_field_unit_by_index(your_unit_index)
+        fixed_card_base = your_fixed_field_unit.get_fixed_card_base()
+        fixed_card_attached_shape_list = fixed_card_base.get_attached_shapes()
+
+        attached_energy_count = self.your_field_unit_repository.get_attached_energy_info().get_energy_at_index(your_unit_index)
+
+        for fixed_card_attached_shape in fixed_card_attached_shape_list:
+            if isinstance(fixed_card_attached_shape, CircleNumberImage):
+                if fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+                    fixed_card_attached_shape.set_image_data(self.__pre_drawed_image_instance.get_pre_draw_number_image(attached_energy_count))
+                    print(f"changed energy: {fixed_card_attached_shape.get_circle_kinds()}")
+
 
         print(f"에너지 상태: {self.your_field_unit_repository.get_attached_energy_info().get_energy_at_index(your_unit_index)}")
         # TODO: attached_energy 값 UI에 표현 (이미지 작업 미완료)

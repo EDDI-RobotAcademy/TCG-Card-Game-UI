@@ -45,6 +45,8 @@ class CircleNumberImage(Shape):
 
     def set_image_data(self, image_data):
         self.image_data = image_data
+        self.texture_initialized = False
+        self.delete_texture()
 
     def get_visible(self):
         return self.is_visible
