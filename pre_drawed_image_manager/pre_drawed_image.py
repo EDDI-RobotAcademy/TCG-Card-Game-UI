@@ -300,7 +300,7 @@ class PreDrawedImage:
         return self.__pre_drawed_card_hp[card_number]
 
     def get_pre_draw_number_image(self, number=0):
-        print(f"pre_drawed_number_images: {self.__pre_drawed_numbers[number]}")
+        # print(f"pre_drawed_number_images: {self.__pre_drawed_numbers[number]}")
         return self.__pre_drawed_numbers[number]
 
     def get_pre_draw_prev_button(self):

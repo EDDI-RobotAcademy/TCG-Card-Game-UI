@@ -12,6 +12,7 @@ class ReceiverRepositoryImpl(ReceiverRepository):
     __instance = None
     __uiIpcChannel = None
     __clientSocket = None
+    __noWaitIpcChannel = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -38,6 +39,10 @@ class ReceiverRepositoryImpl(ReceiverRepository):
         print("TransmitterRepositoryImpl: saveIpcChannel()")
         self.__uiIpcChannel = uiIpcChannel
 
+    def saveUiNoWaitIpcChannel(self, noWaitIpcChannel):
+        print("TransmitterRepositoryImpl: saveUiNoWaitIpcChannel()")
+        self.__noWaitIpcChannel = noWaitIpcChannel
+
     def receiveCommand(self):
         print("ReceiverRepositoryImpl: receiveCommand()")
 
@@ -60,6 +65,7 @@ class ReceiverRepositoryImpl(ReceiverRepository):
                 print(f"{Fore.RED}수신된 정보:{Fore.GREEN} {decodedData}{Style.RESET_ALL}")
 
                 responseData = responseGeneratorRepository.generate_response(decodedData)
+                self.__noWaitIpcChannel.put(responseData)
                 self.__uiIpcChannel.put(responseData)
 
                 try:
