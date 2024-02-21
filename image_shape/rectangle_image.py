@@ -289,20 +289,20 @@ class RectangleImage(Shape):
 
             GL.glBegin(GL.GL_QUADS)
             GL.glTexCoord2f(0, 0)
-            GL.glVertex2f(self.vertices[0][0] * self.width_ratio  + self.local_translation[0] + self.global_translation[0],
-                          self.vertices[0][1] * self.height_ratio + self.local_translation[1] + self.global_translation[1])
+            GL.glVertex2f(self.vertices[0][0] * self.width_ratio  + self.local_translation[0] * self.width_ratio  + self.global_translation[0],
+                          self.vertices[0][1] * self.height_ratio + self.local_translation[1] * self.height_ratio + self.global_translation[1])
 
             GL.glTexCoord2f(1, 0)
-            GL.glVertex2f(self.vertices[1][0] * self.width_ratio  + self.local_translation[0] + self.global_translation[0],
-                          self.vertices[1][1] * self.height_ratio + self.local_translation[1] + self.global_translation[1])
+            GL.glVertex2f(self.vertices[1][0] * self.width_ratio  + self.local_translation[0] * self.width_ratio  + self.global_translation[0],
+                          self.vertices[1][1] * self.height_ratio + self.local_translation[1] * self.height_ratio + self.global_translation[1])
 
             GL.glTexCoord2f(1, 1)
-            GL.glVertex2f(self.vertices[2][0] * self.width_ratio  + self.local_translation[0] + self.global_translation[0],
-                          self.vertices[2][1] * self.height_ratio + self.local_translation[1] + self.global_translation[1])
+            GL.glVertex2f(self.vertices[2][0] * self.width_ratio  + self.local_translation[0] * self.width_ratio  + self.global_translation[0],
+                          self.vertices[2][1] * self.height_ratio + self.local_translation[1] * self.height_ratio + self.global_translation[1])
 
             GL.glTexCoord2f(0, 1)
-            GL.glVertex2f(self.vertices[3][0] * self.width_ratio  + self.local_translation[0] + self.global_translation[0],
-                          self.vertices[3][1] * self.height_ratio + self.local_translation[1] + self.global_translation[1])
+            GL.glVertex2f(self.vertices[3][0] * self.width_ratio  + self.local_translation[0] * self.width_ratio  + self.global_translation[0],
+                          self.vertices[3][1] * self.height_ratio + self.local_translation[1] * self.height_ratio + self.global_translation[1])
             GL.glEnd()
 
             GL.glDisable(GL.GL_TEXTURE_2D)

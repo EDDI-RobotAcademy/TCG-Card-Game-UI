@@ -41,18 +41,19 @@ class Rectangle(Shape):
         # print(f"width_ratio: {self.width_ratio}, height_ratio: {self.height_ratio}")
 
         if self.draw_border:
+            # print(f"width_ratio: {self.width_ratio}, height_ratio: {self.height_ratio}")
             # Draw border
             glLineWidth(2.0)
             glColor4f(0.0, 0.0, 0.0, 1.0)
             glBegin(GL_LINE_LOOP)
-            glVertex2f(self.vertices[0][0] * self.width_ratio  + self.global_translation[0] + self.local_translation[0] - 1,
-                       self.vertices[0][1] * self.height_ratio + self.global_translation[1] + self.local_translation[1] - 1)
-            glVertex2f(self.vertices[1][0] * self.width_ratio  + self.global_translation[0] + self.local_translation[0] + 1,
-                       self.vertices[1][1] * self.height_ratio + self.global_translation[1] + self.local_translation[1] - 1)
-            glVertex2f(self.vertices[2][0] * self.width_ratio  + self.global_translation[0] + self.local_translation[0] + 1,
-                       self.vertices[2][1] * self.height_ratio + self.global_translation[1] + self.local_translation[1] + 1)
-            glVertex2f(self.vertices[3][0] * self.width_ratio  + self.global_translation[0] + self.local_translation[0] - 1,
-                       self.vertices[3][1] * self.height_ratio + self.global_translation[1] + self.local_translation[1] + 1)
+            glVertex2f(self.vertices[0][0] * self.width_ratio  + self.global_translation[0] + self.local_translation[0] * self.width_ratio - 1,
+                       self.vertices[0][1] * self.height_ratio + self.global_translation[1] + self.local_translation[1] * self.height_ratio - 1)
+            glVertex2f(self.vertices[1][0] * self.width_ratio  + self.global_translation[0] + self.local_translation[0] * self.width_ratio + 1,
+                       self.vertices[1][1] * self.height_ratio + self.global_translation[1] + self.local_translation[1] * self.height_ratio - 1)
+            glVertex2f(self.vertices[2][0] * self.width_ratio  + self.global_translation[0] + self.local_translation[0] * self.width_ratio + 1,
+                       self.vertices[2][1] * self.height_ratio + self.global_translation[1] + self.local_translation[1] * self.height_ratio + 1)
+            glVertex2f(self.vertices[3][0] * self.width_ratio  + self.global_translation[0] + self.local_translation[0] * self.width_ratio - 1,
+                       self.vertices[3][1] * self.height_ratio + self.global_translation[1] + self.local_translation[1] * self.height_ratio + 1)
             glEnd()
 
         glBegin(GL_QUADS)
@@ -67,13 +68,13 @@ class Rectangle(Shape):
                                       zip(self.color, colored_border)]
 
                 glColor4f(*interpolated_color)
-                glVertex2f(vertex[0] * self.width_ratio  + self.global_translation[0] + self.local_translation[0],
-                           vertex[1] * self.height_ratio + self.global_translation[1] + self.local_translation[1])
+                glVertex2f(vertex[0] * self.width_ratio  + self.global_translation[0] + self.local_translation[0] * self.width_ratio,
+                           vertex[1] * self.height_ratio + self.global_translation[1] + self.local_translation[1] * self.height_ratio)
         else:
             for vertex in self.vertices:
                 glColor4f(*self.color)
-                glVertex2f(vertex[0] * self.width_ratio  + self.global_translation[0] + self.local_translation[0],
-                           vertex[1] * self.height_ratio + self.global_translation[1] + self.local_translation[1])
+                glVertex2f(vertex[0] * self.width_ratio  + self.global_translation[0] + self.local_translation[0] * self.width_ratio,
+                           vertex[1] * self.height_ratio + self.global_translation[1] + self.local_translation[1] * self.height_ratio)
 
         glEnd()
 
