@@ -96,6 +96,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.field_area_inside_handler = FieldAreaInsideHandler.getInstance(
             self.your_hand_repository,
             self.your_field_unit_repository,
+            self.your_deck_repository,
             self.card_info,
             self.your_tomb_repository)
 
