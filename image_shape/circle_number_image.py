@@ -5,6 +5,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from OpenGL.raw.GLUT import glutSwapBuffers
 
+from image_shape.circle_kinds import CircleKinds
 from opengl_shape.circle import Circle
 from opengl_shape.shape import Shape
 
@@ -12,6 +13,7 @@ from PIL import Image
 from OpenGL import GL
 
 class CircleNumberImage(Shape):
+    __circle_kinds = None
     def __init__(self, image_data, center, radius, number, global_translation=(0, 0), local_translation=(0, 0)):
         super().__init__([center], global_translation, local_translation)
         self.radius = radius
@@ -32,11 +34,19 @@ class CircleNumberImage(Shape):
         self.texture_id = None
         self.texture_initialized = False
 
+    def set_circle_kinds(self, circle_kinds):
+        self.__circle_kinds = circle_kinds
+
+    def get_circle_kinds(self):
+        return self.__circle_kinds
+
     def set_visible(self, visible):
         self.is_visible = visible
 
     def set_image_data(self, image_data):
         self.image_data = image_data
+        self.texture_initialized = False
+        self.delete_texture()
 
     def get_visible(self):
         return self.is_visible

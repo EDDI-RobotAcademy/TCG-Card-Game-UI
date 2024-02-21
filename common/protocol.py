@@ -19,8 +19,9 @@ class CustomProtocol(Enum):
     ACCOUNT_CARD_LIST = 31
     ACCOUNT_DECK_REGISTER = 41
 
+    CHECK_MONEY = 71
     BUY_CARD = 72
-    CHECK_MONEY = 73
+    FREE_BUY_CARD = 73
 
     MULLIGAN_CARD = 1012
 

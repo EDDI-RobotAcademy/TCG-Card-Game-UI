@@ -9,13 +9,16 @@ from battle_lobby_frame.service.request.request_deck_name_list_for_battle import
 from lobby_frame.repository.lobby_menu_frame_repository_impl import LobbyMenuFrameRepositoryImpl
 from lobby_frame.service.lobby_menu_frame_service import LobbyMenuFrameService
 from lobby_frame.service.request.card_list_request import CardListRequest
+from lobby_frame.service.request.check_game_money_request import CheckGameMoneyRequest
 from matching_window.controller.matching_window_controller_impl import MatchingWindowControllerImpl
 from lobby_frame.service.request.exit_request import ExitRequest
 from session.repository.session_repository_impl import SessionRepositoryImpl
+from card_shop_frame.repository.card_shop_repository_impl import CardShopMenuFrameRepositoryImpl
 
 
 imageWidth = 256
 imageHeight = 256
+
 
 class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
     __instance = None
@@ -30,6 +33,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             cls.__instance.__battleLobbyFrameRepository = BattleLobbyFrameRepositoryImpl.getInstance()
             cls.__instance.__battleLobbyFrameController = BattleLobbyFrameControllerImpl.getInstance()
             cls.__instance.__matchingWindowController = MatchingWindowControllerImpl.getInstance()
+            cls.__instance.__cardShopFrameRepository = CardShopMenuFrameRepositoryImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -63,6 +67,8 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             self.__matchingWindowController.makeMatchingWindow(rootWindow)
             self.__matchingWindowController.matching(rootWindow)
 
+
+
         battle_entrance_button.bind("<Button-1>", onClickEntrance)
 
         my_card_button = tkinter.Button(lobbyMenuFrame, text="내 카드", bg="#2E2BE2", fg="white", width=36,
@@ -70,8 +76,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
         my_card_button.place(relx=0.5, rely=0.5, anchor="center")
 
         card_shop_button = tkinter.Button(lobbyMenuFrame, text="상점", bg="#2E2BE2", fg="white",
-                                          command=lambda: switchFrameWithMenuName("card-shop-menu"), width=36,
-                                          height=2)
+                                          width=36, height=2)
         card_shop_button.place(relx=0.5, rely=0.65, anchor="center")
 
         exit_button = tkinter.Button(lobbyMenuFrame, text="종료", bg="#C62828", fg="white", width=36, height=2)
@@ -125,6 +130,26 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                 print(f"An error occurred: {e}")
 
         my_card_button.bind("<Button-1>", onClickMyCard)
+
+        def onClickCardShop(event):
+            try:
+                responseData = self.__lobbyMenuFrameRepository.requestCheckGameMoney(CheckGameMoneyRequest
+                                                                                     (self.__sessionRepository.get_session_info()))
+
+                print(f"responseData: {responseData}")
+
+                if responseData:
+                    self.__cardShopFrameRepository.setMyMoney(responseData.get("account_point"))
+                    from card_shop_frame.service.card_shop_service_impl import CardShopMenuFrameServiceImpl
+                    CardShopMenuFrameServiceImpl.getInstance().findMyMoney()
+                    switchFrameWithMenuName("card-shop-menu")
+                else:
+                    print("checkGameMoney responseData not found")
+
+            except Exception as e:
+                print(f"An error occurred: {e}")
+
+        card_shop_button.bind("<Button-1>", onClickCardShop)
 
         return lobbyMenuFrame
 

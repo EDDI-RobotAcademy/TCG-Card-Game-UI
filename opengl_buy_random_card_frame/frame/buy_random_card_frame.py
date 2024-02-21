@@ -28,7 +28,7 @@ class BuyRandomCardFrame(OpenGLFrame):
         self.width = screen_width
         self.height = screen_height
 
-        self.random_card = [2, 5, 8, 9, 10, 11, 13, 14, 15, 16]
+        self.random_card_number = [2, 5, 8, 9, 10, 11, 13, 14, 15, 16]
 
 
 
@@ -76,10 +76,7 @@ class BuyRandomCardFrame(OpenGLFrame):
         self.buy_random_card_scene.add_button_list(go_to_back_button)
         print(f"버튼 도형 잘 들어갔니?:{self.buy_random_card_scene.get_button_list()}")
 
-
-
-        # 모든 카드
-        response_card_number = self.random_card
+        response_card_number = self.getRandomCardNumber()
 
         x = 50
         y = 50
@@ -113,7 +110,9 @@ class BuyRandomCardFrame(OpenGLFrame):
             self.render_after = BuyRandomCardFrameRenderer(self.buy_random_card_scene, self)
             self.render_after.render()
 
+    def setRandomCardNumber(self, random_card_number):
+        self.random_card_number = random_card_number
 
-
-
+    def getRandomCardNumber(self):
+        return self.random_card_number
 

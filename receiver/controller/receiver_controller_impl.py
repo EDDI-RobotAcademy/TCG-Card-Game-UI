@@ -25,6 +25,9 @@ class ReceiverControllerImpl(ReceiverController):
         print("ReceiverControllerImpl: requestToInjectIpcChannel()")
         self.__receiverService.injectUiIpcChannel(uiIpcChannel)
 
+    def requestToInjectUiNoWaitIpcChannel(self, noWaitIpcChannel):
+        self.__receiverService.injectUiNoWaitIpcChannel(noWaitIpcChannel)
+
     def requestToReceiveCommand(self):
         print("ReceiverControllerImpl: requestToReceiveCommand()")
         self.__receiverService.startToReceiveCommand()

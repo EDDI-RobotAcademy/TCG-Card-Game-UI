@@ -12,6 +12,7 @@ class LobbyMenuFrameRepositoryImpl(LobbyMenuFrameRepository):
             cls.__instance = super().__new__(cls)
         return cls.__instance
 
+
     @classmethod
     def getInstance(cls):
         if cls.__instance is None:
@@ -23,6 +24,7 @@ class LobbyMenuFrameRepositoryImpl(LobbyMenuFrameRepository):
         lobbyMenuFrame = LobbyMenuFrame(rootWindow)
 
         return lobbyMenuFrame
+
 
     def requestDeckNameList(self, deckNameRequest):
         self.__transmitIpcChannel.put(deckNameRequest)
@@ -37,13 +39,14 @@ class LobbyMenuFrameRepositoryImpl(LobbyMenuFrameRepository):
         self.__transmitIpcChannel.put(cardListRequest)
         return self.__receiveIpcChannel.get()
 
+    def requestCheckGameMoney(self, CheckGameMoneyRequest):
+        print(f"LobbyMenuFrameRepositoryImpl: requestCheckGameMoney() -> {CheckGameMoneyRequest}")
+        self.__transmitIpcChannel.put(CheckGameMoneyRequest)
+        return self.__receiveIpcChannel.get()
+
     def saveReceiveIpcChannel(self, receiveIpcChannel):
         self.__receiveIpcChannel = receiveIpcChannel
 
     def saveTransmitIpcChannel(self, transmitIpcChannel):
         self.__transmitIpcChannel = transmitIpcChannel
-
-
-
-
 

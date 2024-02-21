@@ -26,6 +26,10 @@ class LobbyMenuFrameRepository(abc.ABC):
     def requestAccountCardList(self, cardListRequest):
         pass
 
+    @abc.abstractmethod
+    def requestCheckGameMoney(self, CheckGameMoneyRequest):
+        pass
+
 
 
 
