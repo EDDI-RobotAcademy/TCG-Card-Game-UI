@@ -1,6 +1,7 @@
 import os
 
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
+from image_shape.circle_image import CircleImage
 from image_shape.rectangle_image import RectangleImage
 from opengl_pickable_shape.pickable_rectangle import PickableRectangle
 from common.utility import get_project_root
@@ -48,10 +49,18 @@ class FixedFieldCard:
         return self.tool_card
 
     def creat_fixed_card_dark_flame_image_circle(self, image_data, local_translation, vertices):
-        pass
+        attached_dark_flame_image = CircleImage(image_data=image_data,
+                                                local_translation=local_translation,
+                                                center=vertices,
+                                                radius=5)
+        return attached_dark_flame_image
 
     def creat_fixed_card_freezing_image_circle(self, image_data, local_translation, vertices):
-        pass
+        attached_dark_flame_image = CircleImage(image_data=image_data,
+                                                local_translation=local_translation,
+                                                center=vertices,
+                                                radius=5)
+        return attached_dark_flame_image
 
     def creat_fixed_card_energy_race_circle(self, color, vertices, local_translation):
         attached_energy_circle = Circle(color=color,
