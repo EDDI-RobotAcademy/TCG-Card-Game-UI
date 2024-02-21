@@ -9,6 +9,7 @@ class BattleFieldRepository:
     current_deck_state = CurrentDeckState()
 
     battle_field_button_list = []
+    is_game_over = False
 
     def __new__(cls):
         if cls.__instance is None:

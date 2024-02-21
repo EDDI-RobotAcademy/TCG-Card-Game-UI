@@ -34,6 +34,7 @@ class MatchingWindowServiceImpl(MatchingWindowService):
             cls.__instance = cls()
         return cls.__instance
 
+    #todo : 추후 nowait 통신으로 변경 하면 깔끔할 것으로 생각됨.
     def __waitForPrepareBattle(self):
         while True:
             print("LobbyMenuFrameServiceImpl: __waitForPrepareBattle()")
