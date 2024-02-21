@@ -1,3 +1,4 @@
+from common.card_race import CardRace
 from common.card_type import CardType
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
@@ -65,6 +66,7 @@ class FixedUnitCardInsideHandler:
         elif card_type == CardType.ENERGY.value:
             self.handle_energy_card(placed_card_index, your_unit_index, selected_object)
 
+
     def handle_tool_card(self, placed_card_index):
         print("도구를 붙입니다!")
         # self.your_hand_repository.remove_card_by_id(placed_card_id)
@@ -89,6 +91,15 @@ class FixedUnitCardInsideHandler:
                 if fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
                     fixed_card_attached_shape.set_image_data(self.__pre_drawed_image_instance.get_pre_draw_number_image(attached_energy_count))
                     print(f"changed energy: {fixed_card_attached_shape.get_circle_kinds()}")
+
+        placed_card_id = selected_object.get_card_number()
+        card_race = self.card_info.getCardRaceForCardNumber(placed_card_id)
+        if card_race == CardRace.UNDEAD.value:
+            card_race_circle = your_fixed_field_unit.creat_fixed_card_energy_race_circle(color=(0, 0, 0, 1),
+                                                                                         vertices=(0, (attached_energy_count * 10) + 20),
+                                                                                         local_translation= fixed_card_base.get_local_translation())
+            fixed_card_base.set_attached_shapes(card_race_circle)
+            fixed_card_base.draw()
 
 
         print(f"에너지 상태: {self.your_field_unit_repository.get_attached_energy_info().get_energy_at_index(your_unit_index)}")
