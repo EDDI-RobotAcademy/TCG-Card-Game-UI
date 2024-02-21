@@ -54,6 +54,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.battle_field_scene.create_battle_field_scene()
 
         self.alpha_background = self.create_opengl_alpha_background()
+        self.ok_button = self.create_ok_button()
 
         self.opponent_tomb_shapes = self.battle_field_scene.get_opponent_tomb()
         self.opponent_lost_zone_shapes = self.battle_field_scene.get_opponent_lost_zone()
@@ -79,7 +80,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_hand_repository.create_hand_card_list_muligun()
 
         self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
-        print(f"뭐가 나오냐?{self.hand_card_list}")
+        self.hand_card_state = self.your_hand_repository.get_current_hand_state()
+
+        print(f"현재 카드 오브젝트 뭐임?{self.hand_card_list}")
+        print(f"현재 카드 리스트 뭐임?: {self.your_hand_repository.get_current_hand_state()}")
 
         self.bind("<Configure>", self.on_resize)
         # self.bind("<ButtonRelease-1>", self.on_canvas_release)
@@ -169,6 +173,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.draw_base()
         self.alpha_background.draw()
+        self.ok_button.draw()
 
         # 처음 드로우한 5장의 카드 그리는 부분
         for hand_card in self.hand_card_list:
@@ -247,7 +252,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     hand_card.selected = not hand_card.selected
                     self.selected_object = hand_card
                     hand_card_id = id(hand_card)
-                    # self.selected_objects.append(hand_card_id)
+                    self.selected_objects.append(hand_card)
                     print(f"교체할 카드가 뭐야? : {self.selected_objects}")
 
                     fixed_x, fixed_y = pickable_card_base.get_local_translation()
@@ -255,13 +260,18 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     # self.click_card_effect_rectangle = new_rectangle
                     self.click_card_effect_rectangles.append(new_rectangle)
 
-                    if hand_card_id not in self.checking_draw_effect:
-                        self.checking_draw_effect[hand_card_id] = new_rectangle
+                    # 교체할 카드 이미 효과 있으면 지우기.
+                    if hand_card_id in self.checking_draw_effect:
+                        del self.checking_draw_effect[hand_card_id]
                         print(self.checking_draw_effect)
                         print(list(self.checking_draw_effect.keys()))
 
-                    if hand_card_id in self.checking_draw_effect:
-                        break
+                    else:
+                        fixed_x, fixed_y = pickable_card_base.get_local_translation()
+                        new_rectangle = self.create_change_card_expression((fixed_x, fixed_y))
+                        self.checking_draw_effect[hand_card_id] = new_rectangle
+                        print(self.checking_draw_effect)
+                        print(list(self.checking_draw_effect.keys()))
 
 
         except Exception as e:
@@ -305,6 +315,25 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                   [(0, 0), (self.width, 0), (self.width, self.height), (0, self.height)])
         return new_rectangle
 
+    def create_ok_button(self):
+        rectangle_size = 100
+        rectangle_color = (0.8314, 0.7686, 0.6588, 1.0)
+
+        start_point = (850, 900)  # 확인 버튼 위치는 고정.
+        end_point = (start_point[0] + rectangle_size * 2.0, start_point[1] + rectangle_size * 0.55)
+
+        new_rectangle = Rectangle(rectangle_color, [
+            (start_point[0], start_point[1]),
+            (end_point[0], start_point[1]),
+            (end_point[0], end_point[1]),
+            (start_point[0], end_point[1])
+        ])
+        new_rectangle.created_by_right_click = True
+        return new_rectangle
+
+    def get_change_card_number_list(self):
+        for object in self.selected_objects:
+            self.hand_card_list.index(object)
 
 class TestDrawBattleFieldMuligun(unittest.TestCase):
 
