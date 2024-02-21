@@ -3,6 +3,7 @@ import os
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.utility import get_project_root
 from image_shape.circle_image import CircleImage
+from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
 from opengl_pickable_shape.pickable_rectangle import PickableRectangle
 from opengl_shape.circle import Circle
@@ -72,6 +73,7 @@ class UnitCard:
                                                center=center,
                                                radius=radius,
                                                number=energy_number)
+        unit_energy_circle.set_circle_kinds(CircleKinds.ENERGY)
         unit_energy_circle.set_visible(False)
         self.add_shape(unit_energy_circle)
 
@@ -86,6 +88,7 @@ class UnitCard:
                                                center=center,
                                                radius=radius,
                                                number=attack_number)
+        unit_attack_circle.set_circle_kinds(CircleKinds.ATTACK)
         self.add_shape(unit_attack_circle)
 
     def create_unit_hp_circle(self, image_data, hp_number, center, radius):
@@ -93,6 +96,7 @@ class UnitCard:
                                            center=center,
                                            radius=radius,
                                            number=hp_number)
+        unit_hp_circle.set_circle_kinds(CircleKinds.HP)
         self.add_shape(unit_hp_circle)
 
     def init_shapes(self, circle_radius, card_number, rectangle_height, rectangle_width):
