@@ -86,6 +86,17 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             print(f"turnEnd Error: {e}")
 
 
+    def gameEndReward(self):
+        try:
+            gameEndRewardResponse = self.__battleFieldFunctionRepository.requestGameEnd(
+                TurnEndRequest(
+                    # _sessionInfo=self.__sessionService.getSessionInfo())
+                    _sessionInfo=self.__sessionRepository.get_session_info())
+            )
+        except Exception as e:
+            print(f"turnEnd Error: {e}")
+
+
     def useEnvironmentCard(self, cardNumber):
         try:
             useEnvironmentCardResponse = self.__battleFieldFunctionRepository.requestUseEnvironmentCard(
