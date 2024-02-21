@@ -32,11 +32,12 @@ class DomainInitializer:
         LoginMenuFrameServiceImpl.getInstance()
 
     @staticmethod
-    def initUiFrameDomain(uiTransmitIpcChannel, uiReceiveIpcChannel, uiMusicPlayIpcChannel):
+    def initUiFrameDomain(uiTransmitIpcChannel, uiReceiveIpcChannel, uiMusicPlayIpcChannel, uiNoWaitIpcChannel):
         uiFrameController = UiFrameControllerImpl.getInstance()
         uiFrameController.requestToInjectTransmitIpcChannel(uiTransmitIpcChannel)
         uiFrameController.requestToInjectReceiveIpcChannel(uiReceiveIpcChannel)
         uiFrameController.requestToInjectMusicPlayIpcChannel(uiMusicPlayIpcChannel)
+        uiFrameController.requestToInjectNoWaitIpcChannel(uiNoWaitIpcChannel)
 
     @staticmethod
     def initAccountRegisterFrameDomain():
@@ -53,9 +54,10 @@ class DomainInitializer:
         transmitterController.requestToInjectUiIpcChannel(uiTransmitIpcChannel)
 
     @staticmethod
-    def initReceiverDomain(uiReceiveIpcChannel):
+    def initReceiverDomain(uiReceiveIpcChannel, uiNoWaitIpcChannel):
         receiverController = ReceiverControllerImpl.getInstance()
         receiverController.requestToInjectUiIpcChannel(uiReceiveIpcChannel)
+        receiverController.requestToInjectUiNoWaitIpcChannel(uiNoWaitIpcChannel)
 
     @staticmethod
     def initMusicPlayerDomain(uiMusicPlayIpcChannel):
@@ -92,18 +94,19 @@ class DomainInitializer:
         uiTransmitIpcChannel = multiprocessing.Queue()
         uiReceiveIpcChannel = multiprocessing.Queue()
         uiMusicPlayIpcChannel = multiprocessing.Queue()
+        uiNoWaitIpcChannel = multiprocessing.Queue()
 
         # UI Frame Domain
         DomainInitializer.initRootWindowDomain()
         DomainInitializer.initMainMenuFrameDomain()
         DomainInitializer.initLoginMenuFrameDomain()
         DomainInitializer.initAccountRegisterFrameDomain()
-        DomainInitializer.initUiFrameDomain(uiTransmitIpcChannel, uiReceiveIpcChannel, uiMusicPlayIpcChannel)
+        DomainInitializer.initUiFrameDomain(uiTransmitIpcChannel, uiReceiveIpcChannel, uiMusicPlayIpcChannel, uiNoWaitIpcChannel)
 
         # Socket Domain
         DomainInitializer.initClientSocketDomain()
         DomainInitializer.initTransmitterDomain(uiTransmitIpcChannel)
-        DomainInitializer.initReceiverDomain(uiReceiveIpcChannel)
+        DomainInitializer.initReceiverDomain(uiReceiveIpcChannel, uiNoWaitIpcChannel)
         DomainInitializer.initMusicPlayerDomain(uiMusicPlayIpcChannel)
 
         # Task Worker Domain

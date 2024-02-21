@@ -165,3 +165,8 @@ class UiFrameControllerImpl(UiFrameController):
         print("UiFrameControllerImpl: requestToInjectMusicPlayIpcChannel()")
 
         self.__uiFrameService.injectMusicPlayIpcChannel(musicPlayIpcChannel)
+
+    def requestToInjectNoWaitIpcChannel(self, uiNoWaitIpcChannel):
+        print("UiFrameControllerImpl: requestToInjectMusicPlayIpcChannel()")
+
+        self.__battleFieldRepository.injectNoWaitIpcChannel(uiNoWaitIpcChannel)

@@ -45,3 +45,6 @@ class BattleFieldRepository:
 
     def saveTransmitIpcChannel(self, transmitIpcChannel):
         self.__transmitIpcChannel = transmitIpcChannel
+
+    def injectNoWaitIpcChannel(self, noWaitIpcChannel):
+        self.__noWaitIpcChannel = noWaitIpcChannel
