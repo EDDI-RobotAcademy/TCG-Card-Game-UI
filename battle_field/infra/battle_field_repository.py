@@ -38,14 +38,14 @@ class BattleFieldRepository:
         self.__noWaitIpcChannel = noWaitIpcChannel
 
 
-    def start_get_no_wait_data(self):
+    def __start_get_no_wait_data(self):
         while self.__is_in_game:
             self.__noWaitIpcChannel.get_nowait()
 
 
     def start_game(self):
         self.__is_in_game = True
-        self.start_get_no_wait_data()
+        self.__start_get_no_wait_data()
 
     def game_end(self):
         self.__is_in_game = False

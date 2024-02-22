@@ -56,7 +56,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
         else:
             print(f"항복 요청함!!! 응답: {surrender_response}")
             self.gameEndReward()
-            
+
 
 
     def mulligan(self, cardCount):
@@ -102,6 +102,8 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
                     _sessionInfo=self.__sessionRepository.get_session_info())
             )
             print(f"게임 끝! 응답: {gameEndRewardResponse}")
+            if gameEndRewardResponse:
+                BattleFieldRepository.getInstance().game_end()
         except Exception as e:
             print(f"turnEnd Error: {e}")
 
