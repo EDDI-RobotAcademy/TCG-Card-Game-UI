@@ -64,9 +64,13 @@ class ReceiverRepositoryImpl(ReceiverRepository):
                 decodedData = data.decode()
                 print(f"{Fore.RED}수신된 정보:{Fore.GREEN} {decodedData}{Style.RESET_ALL}")
 
-                responseData = responseGeneratorRepository.generate_response(decodedData)
-                self.__noWaitIpcChannel.put(responseData)
-                self.__uiIpcChannel.put(responseData)
+
+
+                if "NOTIFY" in decodedData:
+                    self.__noWaitIpcChannel.put(decodedData)
+                else:
+                    responseData = responseGeneratorRepository.generate_response(decodedData)
+                    self.__uiIpcChannel.put(responseData)
 
                 try:
                     json_data = json.loads(decodedData)

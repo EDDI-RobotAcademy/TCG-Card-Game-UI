@@ -39,8 +39,16 @@ class BattleFieldRepository:
 
 
     def __start_get_no_wait_data(self):
-        while self.__is_in_game:
-            self.__noWaitIpcChannel.get_nowait()
+        pass
+        #todo : 루프를 돌면서 notify를 대기해야함
+        # 여차하면 task나 thread를 분리해야할수도??
+        #
+        # while self.__is_in_game:
+        #     try:
+        #         self.__noWaitIpcChannel.get_nowait()
+        #     except Exception as e:
+        #         print("큐 대기중")
+
 
 
     def start_game(self):
