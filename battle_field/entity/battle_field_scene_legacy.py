@@ -88,7 +88,7 @@ class BattleFieldSceneLegacy:
     def create_your_tomb(self):
         self.your_tomb = YourTomb()
         self.your_tomb.init_shapes()
-        self.__battle_field_repository.add_your_tomb_button(button=self.your_tomb)
+        self.__battle_field_repository.add_battle_field_button(button=self.your_tomb)
 
     def create_your_lost_zone(self):
         self.your_lost_zone = YourLostZone()
@@ -122,7 +122,6 @@ class BattleFieldSceneLegacy:
         self.turn_end_button = TurnEndButton()
         self.turn_end_button.init_shapes()
         self.__battle_field_repository.add_battle_field_button(button=self.turn_end_button)
-
 
     def get_opponent_tomb(self):
         return self.opponent_tomb.get_tomb_shapes()

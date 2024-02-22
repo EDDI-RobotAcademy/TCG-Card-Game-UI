@@ -27,6 +27,7 @@ class YourTombRepository:
 
     def place_unit_in_tomb(self, unit_card_id):
         self.current_tomb_unit_list.append(unit_card_id)
+
     def saveReceiveIpcChannel(self, receiveIpcChannel):
         self.__receiveIpcChannel = receiveIpcChannel
 
