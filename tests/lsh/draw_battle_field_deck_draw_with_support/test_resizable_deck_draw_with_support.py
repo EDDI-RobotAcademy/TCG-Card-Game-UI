@@ -390,6 +390,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                         placed_card_id = self.selected_object.get_card_number()
                         card_type = self.card_info_repository.getCardTypeForCardNumber(placed_card_id)
+                        placed_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
 
                         if card_type == CardType.TOOL.value:
                             # TODO: 배포덱에서는 도구를 사용하지 않음
@@ -403,7 +404,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         elif card_type == CardType.ENERGY.value:
                             print("에너지를 붙입니다!")
                             # self.selected_object = None
-                            self.your_hand_repository.remove_card_by_id(placed_card_id)
+                            self.your_hand_repository.remove_card_by_index(placed_index)
                             self.your_field_unit_repository.get_attached_energy_info().add_energy_at_index(unit_index, 1)
 
                             your_fixed_field_unit = self.your_field_unit_repository.find_field_unit_by_index(unit_index)
