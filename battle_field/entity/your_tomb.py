@@ -2,7 +2,6 @@ import os
 
 from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
 from battle_field_ui_button.battle_field_button import BattleFieldButton
-from common.utility import get_project_root
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
@@ -15,7 +14,6 @@ class YourTomb:
         self.shapes = []
         self.local_translation = local_translation
         self.scale = scale
-        self.your_tomb_button_base = None
 
     def get_tomb_shapes(self):
         return self.shapes
@@ -36,7 +34,7 @@ class YourTomb:
     def init_shapes(self):
         self.your_tomb_button_base = (
             self.create_your_tomb_button(image_data=self.__pre_drawed_image_instance.get_pre_draw_your_tomb(),
-                              vertices=[(1870, 1030), (1720, 1030), (1720, 830), (1870, 830)]))
+                              vertices=[(1720, 830), (1870, 830), (1870, 1030), (1720, 1030)]))
 
     def get_button_base(self):
         return self.your_tomb_button_base

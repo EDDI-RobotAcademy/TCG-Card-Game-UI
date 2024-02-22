@@ -1,5 +1,5 @@
 from battle_field.components.mouse_left_click.left_click_detector import LeftClickDetector
-from battle_field.entity.battle_field_scene import BattleFieldScene
+from battle_field.entity.battle_field_scene_legacy import BattleFieldSceneLegacy
 
 import tkinter
 import unittest
@@ -44,7 +44,7 @@ class HandToTomb(OpenGLFrame):
 
         self.lightning_border = LightningBorder()
 
-        self.battle_field_scene = BattleFieldScene()
+        self.battle_field_scene = BattleFieldSceneLegacy()
         self.your_tomb = YourTomb()
         self.battle_field_scene.create_battle_field_scene()
 
@@ -463,6 +463,7 @@ class HandToTomb(OpenGLFrame):
             print(f"selected_button: {selected_button}")
             if selected_button:
                 selected_button.invoke_click_event()
+
                 # for your_tomb in self.battle_field_scene.your_tomb:
                 #     if isinstance(your_tomb, YourTomb):
                 #         your_tomb.selected = False

@@ -54,27 +54,4 @@ class LeftClickDetector:
             if button_base.is_point_inside((x, y)):
                 return button
 
-        # for your_tomb_button in battle_field_button_list:
-        #     print(f"your_tomb_button: {your_tomb_button}")
-        #     your_tomb_button_base = your_tomb_button.get_your_tomb_button_base()
-        #     print(f"your_tomb_button_base: {your_tomb_button_base}")
-        #     if your_tomb_button_base.is_point_inside((x, y)):
-        #         return your_tomb_button_base
-
         return None
-
-    # def which_one_select_is_in_tomb_area(self, click_point, battle_field_button_list, canvas_height):
-    #     x, y = click_point
-    #     y = canvas_height - y
-    #     y *= -1
-    #     print(f"click_point: {click_point}, button_list: {battle_field_button_list}, height: {canvas_height}")
-    #     print(f"x: {x}, y: {y}")
-    #
-    #     for your_tomb_button in battle_field_button_list:
-    #         print(f"your_tomb_button: {your_tomb_button}")
-    #         your_tomb_button_base = your_tomb_button.get_your_tomb_button_base()
-    #         print(f"your_tomb_button_base: {your_tomb_button_base}")
-    #         if your_tomb_button_base.is_point_inside((x, y)):
-    #             return your_tomb_button_base
-    #
-    #     return None
