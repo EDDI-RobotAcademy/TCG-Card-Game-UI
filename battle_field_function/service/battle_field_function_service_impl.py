@@ -1,5 +1,6 @@
 from battle_field_function.repository.battle_field_function_repository_impl import BattleFieldFunctionRepositoryImpl
 from battle_field_function.service.battle_field_function_service import BattleFieldFunctionService
+from battle_field_function.service.request.game_end_reward_request import GameEndRewardRequest
 from battle_field_function.service.request.mulligan_request import MulliganRequest
 from battle_field_function.service.request.surrender_request import SurrenderRequest
 from battle_field_function.service.request.turn_end_request import TurnEndRequest
@@ -89,7 +90,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
     def gameEndReward(self):
         try:
             gameEndRewardResponse = self.__battleFieldFunctionRepository.requestGameEnd(
-                TurnEndRequest(
+                GameEndRewardRequest(
                     # _sessionInfo=self.__sessionService.getSessionInfo())
                     _sessionInfo=self.__sessionRepository.get_session_info())
             )

@@ -5,6 +5,8 @@ from battle_field.state.current_hand import CurrentHandState
 class BattleFieldRepository:
     __instance = None
 
+    __is_in_game = False
+
     battle_field_button_list = []
     is_game_over = False
     is_win = False
@@ -34,3 +36,16 @@ class BattleFieldRepository:
 
     def injectNoWaitIpcChannel(self, noWaitIpcChannel):
         self.__noWaitIpcChannel = noWaitIpcChannel
+
+
+    def start_get_no_wait_data(self):
+        while self.__is_in_game:
+            self.__noWaitIpcChannel.get_nowait()
+
+
+    def start_game(self):
+        self.__is_in_game = True
+        self.start_get_no_wait_data()
+
+    def game_end(self):
+        self.__is_in_game = False
