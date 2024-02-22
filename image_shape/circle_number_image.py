@@ -136,7 +136,7 @@ class CircleNumberImage(Shape):
         else:
             self.y_value = 0.47
 
-        print(f"CircleImage vertices: {self.vertices}")
+        # print(f"CircleImage vertices: {self.vertices}")
         self.image_data = image_data
         self.is_visible = True
         self.texture_id = None

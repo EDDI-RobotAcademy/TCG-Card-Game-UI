@@ -142,10 +142,10 @@ class CircleImage(Shape):
         super().__init__([center], global_translation, local_translation)
         self.radius = radius
         self.center = center
-        print("CircleImage -> center = ", self.center)
+        # print("CircleImage -> center = ", self.center)
         self.initial_center = [center]
 
-        print(f"CircleImage vertices: {self.vertices}")
+        # print(f"CircleImage vertices: {self.vertices}")
         self.image_data = image_data
         self.is_visible = True
         self.texture_id = None
