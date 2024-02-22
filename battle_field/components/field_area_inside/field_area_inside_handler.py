@@ -24,6 +24,9 @@ class FieldAreaInsideHandler:
 
     __field_area_inside_handler_table = {}
 
+    __width_ratio = 1
+    __height_ratio = 1
+
     def __new__(cls):
 
         if cls.__instance is None:
@@ -60,8 +63,15 @@ class FieldAreaInsideHandler:
     def clear_field_area_action(self):
         self.__field_area_action = None
 
-    def handle_card_drop(self, x, y, selected_object):
-        if not self.is_drop_location_valid_your_unit_field(x, y) or not selected_object:
+    def set_width_ratio(self, width_ratio):
+        self.__width_ratio = width_ratio
+
+    def set_height_ratio(self, height_ratio):
+        self.__height_ratio = height_ratio
+
+    def handle_card_drop(self, x, y, selected_object, your_battle_field_panel):
+        print("handle_card_drop()")
+        if not self.is_drop_location_valid_your_unit_field(x, y, your_battle_field_panel) or not selected_object:
             return None
 
         placed_card_id = selected_object.get_card_number()
@@ -126,9 +136,24 @@ class FieldAreaInsideHandler:
 
         return support_card_action
 
-    def is_drop_location_valid_your_unit_field(self, x, y):
-        valid_area_vertices = [(300, 580), (1600, 580), (1600, 730), (300, 730)]
-        poly = Polygon(valid_area_vertices)
+    def is_drop_location_valid_your_unit_field(self, x, y, your_battle_field_panel):
+        print(f"is_drop_location_valid_your_unit_field -> x: {x}, y: {y}, your_battle_field_panel: {your_battle_field_panel}")
+        # valid_area_vertices = [(300, 580), (1600, 580), (1600, 730), (300, 730)]
+        valid_your_field = your_battle_field_panel.get_vertices()
+        print(f"valid_your_field: {valid_your_field}")
+
+        # width_ratio = your_battle_field_panel.get_width_ratio()
+        # height_ratio = your_battle_field_panel.get_height_ratio()
+        ratio_applied_valid_your_field = [(x * self.__width_ratio, y * self.__height_ratio) for x, y in valid_your_field]
+        print(f"ratio_applied_valid_your_field: {ratio_applied_valid_your_field}")
+        print(f"x: {x * self.__width_ratio}, y: {y * self.__height_ratio}")
+
+        # ratio_applied_valid_your_field = [
+        #     (valid_your_field[0][0] * self.__width_ratio, valid_your_field[0][1] * self.__height_ratio)
+        # ]
+        # print(f"ratio_applied_valid_your_field: {ratio_applied_valid_your_field}")
+
+        poly = Polygon(ratio_applied_valid_your_field)
         point = Point(x, y)
 
         return point.within(poly)

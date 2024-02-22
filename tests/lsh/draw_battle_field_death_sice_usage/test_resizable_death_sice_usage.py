@@ -1,5 +1,9 @@
 from screeninfo import get_monitors
 
+from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
+from battle_field.components.field_area_inside.field_area_inside_handler import FieldAreaInsideHandler
+from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
+    OpponentFixedUnitCardInsideHandler
 from battle_field.entity.battle_field_environment import BattleFieldEnvironment
 from battle_field.entity.battle_field_scene_legacy import BattleFieldSceneLegacy
 from battle_field.entity.opponent_deck import OpponentDeck
@@ -100,6 +104,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_tomb_repository = YourTombRepository.getInstance()
 
         self.opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
+        # self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance()
+        self.field_area_inside_handler = FieldAreaInsideHandler.getInstance()
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -437,48 +443,57 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             y *= -1
 
-            if self.is_drop_location_valid_battle_field_panel(x, y):
-                placed_card_id = self.selected_object.get_card_number()
-                print(f"on_canvas_release -> placed_card_id: {placed_card_id}")
+            # if self.is_drop_location_valid_battle_field_panel(x, y):
+            #     placed_card_id = self.selected_object.get_card_number()
+            #     print(f"on_canvas_release -> placed_card_id: {placed_card_id}")
+            #
+            #     card_type = self.card_info_repository.getCardTypeForCardNumber(placed_card_id)
+            #     if card_type == CardType.UNIT.value:
+            #         # TODO: Memory Leak 발생하지 않도록 좀 더 꼼꼼하게 리소스 해제 하는지 확인해야함
+            #         self.your_hand_repository.remove_card_by_id(placed_card_id)
+            #         self.your_field_unit_repository.create_field_unit_card(placed_card_id)
+            #         self.your_field_unit_repository.save_current_field_unit_state(placed_card_id)
+            #
+            #         # 카드 구성하는 모든 도형에 local_translation 적용
+            #         self.your_hand_repository.replace_hand_card_position()
+            #
+            #         self.selected_object = None
+            #         return
+            #
+            #     if card_type == CardType.SUPPORT.value:
+            #         print("서포트 카드 사용 감지!")
+            #         self.selected_object = None
+            #         self.prev_selected_object = None
+            #
+            #         # 현재 필드에 존재하는 모든 유닛에 Lightning Border
+            #         for fixed_field_unit_card in self.your_field_unit_repository.get_current_field_unit_list():
+            #             print("에너지 부스팅 준비")
+            #             card_base = fixed_field_unit_card.get_fixed_card_base()
+            #             self.your_field_unit_lightning_border_list.append(card_base)
+            #             self.current_process_card_id = placed_card_id
+            #
+            #         self.your_hand_repository.remove_card_by_id(placed_card_id)
+            #
+            #         tomb_state = self.your_tomb_repository.current_tomb_state
+            #         tomb_state.place_unit_to_tomb(placed_card_id)
+            #         self.your_hand_repository.replace_hand_card_position()
+            #
+            #         self.boost_selection = True
+            #
+            #         return
+            #
+            #     self.return_to_initial_location()
+            # else:
+            #     self.return_to_initial_location()
 
-                card_type = self.card_info_repository.getCardTypeForCardNumber(placed_card_id)
-                if card_type == CardType.UNIT.value:
-                    # TODO: Memory Leak 발생하지 않도록 좀 더 꼼꼼하게 리소스 해제 하는지 확인해야함
-                    self.your_hand_repository.remove_card_by_id(placed_card_id)
-                    self.your_field_unit_repository.create_field_unit_card(placed_card_id)
-                    self.your_field_unit_repository.save_current_field_unit_state(placed_card_id)
-
-                    # 카드 구성하는 모든 도형에 local_translation 적용
-                    self.your_hand_repository.replace_hand_card_position()
-
-                    self.selected_object = None
-                    return
-
-                if card_type == CardType.SUPPORT.value:
-                    print("서포트 카드 사용 감지!")
-                    self.selected_object = None
-                    self.prev_selected_object = None
-
-                    # 현재 필드에 존재하는 모든 유닛에 Lightning Border
-                    for fixed_field_unit_card in self.your_field_unit_repository.get_current_field_unit_list():
-                        print("에너지 부스팅 준비")
-                        card_base = fixed_field_unit_card.get_fixed_card_base()
-                        self.your_field_unit_lightning_border_list.append(card_base)
-                        self.current_process_card_id = placed_card_id
-
-                    self.your_hand_repository.remove_card_by_id(placed_card_id)
-
-                    tomb_state = self.your_tomb_repository.current_tomb_state
-                    tomb_state.place_unit_to_tomb(placed_card_id)
-                    self.your_hand_repository.replace_hand_card_position()
-
-                    self.boost_selection = True
-
-                    return
-
+            # 당신(Your) Field에 던진 카드
+            drop_action_result = self.field_area_inside_handler.handle_card_drop(x, y, self.selected_object)
+            if drop_action_result is None or drop_action_result is FieldAreaAction.Dummy:
+                print("self.field_area_inside_handler.get_field_area_action() = None")
                 self.return_to_initial_location()
             else:
-                self.return_to_initial_location()
+                print("self.field_area_inside_handler.get_field_area_action() = Some Action")
+                self.selected_object = None
 
     def return_to_initial_location(self):
         pickable_card_base = self.selected_object.get_pickable_card_base()

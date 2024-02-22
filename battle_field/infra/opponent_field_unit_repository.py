@@ -27,7 +27,7 @@ class OpponentFieldUnitRepository:
 
     def place_field_unit(self, field_unit_id):
         self.current_field_unit_state.place_unit_to_field(field_unit_id)
-        print(f"Saved current field_unit state: {field_unit_id}")
+        # print(f"Saved current field_unit state: {field_unit_id}")
 
     def create_field_unit_card(self, field_unit_id):
         index = len(self.current_field_unit_card_object_list)
