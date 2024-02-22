@@ -55,3 +55,13 @@ class LeftClickDetector:
                 return button
 
         return None
+
+    def which_one_select_is_in_your_tomb_area(self, click_point, your_tomb, canvas_height):
+        x, y = click_point
+        y = canvas_height - y
+        y *= -1
+
+        if your_tomb.is_point_inside((x, y)):
+            return your_tomb
+
+        return None

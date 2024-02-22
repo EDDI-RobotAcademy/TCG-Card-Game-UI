@@ -10,7 +10,7 @@ class YourTombRepository:
     current_tomb_unit_list = []
     current_tomb_unit_x_position = []
 
-    x_base = 265
+    x_base = 400
 
     def __new__(cls):
         if cls.__instance is None:
@@ -22,6 +22,7 @@ class YourTombRepository:
         if cls.__instance is None:
             cls.__instance = cls()
         return cls.__instance
+
     def save_current_tomb_state(self, hand_card_id):
         self.current_tomb_state.place_unit_to_tomb(hand_card_id)
         print(f"Saved current tomb_card state: {hand_card_id}")
@@ -35,6 +36,8 @@ class YourTombRepository:
         new_card.init_card(card_id)
         new_card.set_index(index)
         self.current_tomb_unit_list.append(new_card)
+
+        self.save_current_tomb_state(card_id)
 
     def create_tomb_card_list(self):
         current_tomb_card = self.get_current_tomb_state()
@@ -52,7 +55,7 @@ class YourTombRepository:
 
     def get_next_card_position(self, index):
         # TODO: 배치 간격 고려
-        current_y = 200
+        current_y = 300
         x_increment = 170
         next_x = self.x_base + x_increment * index
         return (next_x, current_y)
