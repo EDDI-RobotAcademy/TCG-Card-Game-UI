@@ -84,7 +84,17 @@ class YourFieldUnitRepository:
 
         self.current_field_unit_state.delete_current_field_unit_list(card_id)
 
-        print(f"after clear -> current_hand_list: {self.current_field_unit_state}, current_hand_state: {self.get_current_field_unit_state()}")
+        # print(f"after clear -> current_hand_list: {self.current_field_unit_state}, current_hand_state: {self.get_current_field_unit_state()}")
+
+    def remove_card_by_index(self, card_placed_index):
+        if 0 <= card_placed_index < len(self.current_field_unit_list):
+            del self.current_field_unit_list[card_placed_index]
+            self.current_field_unit_state.remove_field_unit_by_index(card_placed_index)
+
+            # print(f"Removed card index {card_placed_index} -> current_hand_list: {self.current_field_unit_list}, current_hand_state: {self.get_current_field_unit_state()}")
+        else:
+            print(f"Invalid index: {card_placed_index}. 지울 것이 없다.")
+
     def replace_field_card_position(self):
         current_y = 580
         x_increment = 170
