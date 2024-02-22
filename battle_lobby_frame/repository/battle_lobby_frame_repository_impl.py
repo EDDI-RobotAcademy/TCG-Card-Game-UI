@@ -1,5 +1,6 @@
 import tkinter
 
+from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
 from battle_lobby_frame.entity.battle_lobby_frame import BattleLobbyFrame
 from battle_lobby_frame.repository.battle_lobby_frame_repository import BattleLobbyFrameRepository
 from utility.image_generator import ImageGenerator
@@ -64,7 +65,8 @@ class BattleLobbyFrameRepositoryImpl(BattleLobbyFrameRepository):
             self.__transmitIpcChannel.put(RequestDeckCardList)
             return self.__receiveIpcChannel.get()
         else:
-            print('덱을 골라주세요!!')
+            print('덱을 안골랐으니 패배합니다~~')
+            BattleFieldFunctionControllerImpl.getInstance().callSurrender()
 
     def exitBattleLobby(self):
         print(f"exitBattleLobby")
