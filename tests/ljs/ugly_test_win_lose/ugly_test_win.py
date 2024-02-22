@@ -1,10 +1,4 @@
-import tkinter
-import unittest
-
 from image_shape.rectangle_image import RectangleImage
-from initializer.init_domain import DomainInitializer
-from tests.ljs.ugly_test_battle_field_functions.pre_drawed_battle_field_frame.PreDrawedBattleFieldFrameRefactorLJS import \
-    PreDrawedBattleFieldFrameRefactorLJS
 
 from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
 from battle_field_ui_button.battle_field_button import BattleFieldButton
@@ -23,7 +17,6 @@ from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
 from battle_field.handler.support_card_handler import SupportCardHandler
-from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
@@ -31,29 +24,27 @@ from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_type import CardType
-from image_shape.circle_image import CircleImage
-from image_shape.circle_number_image import CircleNumberImage
 from initializer.init_domain import DomainInitializer
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.rectangle import Rectangle
 
-from battle_field.entity.battle_field_environment import BattleFieldEnvironment
-from battle_field.entity.opponent_deck import OpponentDeck
-from battle_field.entity.opponent_hand_panel import OpponentHandPanel
-from battle_field.entity.opponent_lost_zone import OpponentLostZone
-from battle_field.entity.opponent_main_character import OpponentMainCharacter
-from battle_field.entity.opponent_tomb import OpponentTomb
-from battle_field.entity.opponent_trap import OpponentTrap
-from battle_field.entity.opponent_unit_field import OpponentUnitField
-from battle_field.entity.turn_end_button import TurnEndButton
-from battle_field.entity.your_deck import YourDeck
-from battle_field.entity.your_hand_panel import YourHandPanel
-from battle_field.entity.your_lost_zone import YourLostZone
-from battle_field.entity.your_main_character import YourMainCharacter
-from battle_field.entity.your_tomb import YourTomb
-from battle_field.entity.your_trap import YourTrap
-from battle_field.entity.your_unit_field import YourUnitField
+from battle_field.entity.legacy.battle_field_environment import BattleFieldEnvironment
+from battle_field.entity.legacy.opponent_deck import OpponentDeck
+from battle_field.entity.legacy.opponent_hand_panel import OpponentHandPanel
+from battle_field.entity.legacy.opponent_lost_zone import OpponentLostZone
+from battle_field.entity.legacy.opponent_main_character import OpponentMainCharacter
+from battle_field.entity.legacy.opponent_tomb import OpponentTomb
+from battle_field.entity.legacy.opponent_trap import OpponentTrap
+from battle_field.entity.legacy.opponent_unit_field import OpponentUnitField
+from battle_field.entity.legacy.turn_end_button import TurnEndButton
+from battle_field.entity.legacy.your_deck import YourDeck
+from battle_field.entity.legacy.your_hand_panel import YourHandPanel
+from battle_field.entity.legacy.your_lost_zone import YourLostZone
+from battle_field.entity.legacy.your_main_character import YourMainCharacter
+from battle_field.entity.legacy.your_tomb import YourTomb
+from battle_field.entity.legacy.your_trap import YourTrap
+from battle_field.entity.legacy.your_unit_field import YourUnitField
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 
 

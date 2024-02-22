@@ -1,5 +1,5 @@
 from battle_field.components.mouse_left_click.left_click_detector import LeftClickDetector
-from battle_field.entity.battle_field_scene_legacy import BattleFieldSceneLegacy
+from battle_field.entity.legacy.battle_field_scene_legacy import BattleFieldSceneLegacy
 
 import tkinter
 import unittest
@@ -8,7 +8,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
-from battle_field.entity.your_tomb import YourTomb
+from battle_field.entity.legacy.your_tomb import YourTomb
 from battle_field.handler.support_card_handler import SupportCardHandler
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository

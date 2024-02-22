@@ -2,24 +2,6 @@ from screeninfo import get_monitors
 
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
 from battle_field.components.field_area_inside.field_area_inside_handler import FieldAreaInsideHandler
-from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
-    OpponentFixedUnitCardInsideHandler
-from battle_field.entity.battle_field_environment import BattleFieldEnvironment
-from battle_field.entity.battle_field_scene_legacy import BattleFieldSceneLegacy
-from battle_field.entity.opponent_deck import OpponentDeck
-from battle_field.entity.opponent_hand_panel import OpponentHandPanel
-from battle_field.entity.opponent_lost_zone import OpponentLostZone
-from battle_field.entity.opponent_main_character import OpponentMainCharacter
-from battle_field.entity.opponent_tomb import OpponentTomb
-from battle_field.entity.opponent_trap import OpponentTrap
-from battle_field.entity.opponent_unit_field import OpponentUnitField
-from battle_field.entity.your_deck import YourDeck
-from battle_field.entity.your_hand_panel import YourHandPanel
-from battle_field.entity.your_lost_zone import YourLostZone
-from battle_field.entity.your_main_character import YourMainCharacter
-from battle_field.entity.your_tomb import YourTomb
-from battle_field.entity.your_trap import YourTrap
-from battle_field.entity.your_unit_field import YourUnitField
 
 import tkinter
 import unittest

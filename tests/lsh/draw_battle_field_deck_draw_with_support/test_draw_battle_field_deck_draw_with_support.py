@@ -7,7 +7,7 @@ from battle_field.components.mouse_left_click.left_click_detector import LeftCli
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area_action import OpponentFieldAreaAction
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
     OpponentFixedUnitCardInsideHandler
-from battle_field.entity.battle_field_scene_legacy import BattleFieldSceneLegacy
+from battle_field.entity.legacy.battle_field_scene_legacy import BattleFieldSceneLegacy
 
 import tkinter
 import unittest
