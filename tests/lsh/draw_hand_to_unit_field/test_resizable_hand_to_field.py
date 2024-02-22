@@ -24,8 +24,11 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
+from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
+from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
+from common.card_type import CardType
 from image_shape.circle_image import CircleImage
 from image_shape.circle_number_image import CircleNumberImage
 from initializer.init_domain import DomainInitializer
@@ -57,6 +60,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.height_ratio = 1.0
 
         self.battle_field_muligun_background_shape_list = None
+        self.battle_field_unit_place_panel = None
 
         self.active_panel_rectangle = None
         self.selected_object = None
@@ -67,6 +71,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.your_hand_repository = YourHandRepository.getInstance()
         self.hand_card_list = None
+
+        self.your_field_unit_repository = YourFieldUnitRepository.getInstance()
+
+        self.card_info_repository = CardInfoFromCsvRepositoryImpl.getInstance()
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -96,11 +104,21 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         battle_field_muligun_scene.create_battle_field_muligun_scene(self.width, self.height)
         self.battle_field_muligun_background_shape_list = battle_field_muligun_scene.get_battle_field_muligun_background()
 
+        self.battle_field_unit_place_panel = Rectangle(
+            (0.0, 0.0, 0.0, 0.1),
+            [(245, 460), (245, 690), (1675, 690), (1675, 460)],
+            (0, 0),
+            (0, 0))
+        self.battle_field_unit_place_panel.set_draw_border(False)
+
         # 1848 기준 -> 1848 - (105 * 5 + 170 * 4) = 643
         # 643 / 2 = 321.5
         # 321.5 / 1848 = 17.4% => 0.174
         # 위 수식은 적합하지 않음 (0.286 포함)
-        self.your_hand_repository.set_x_base(530)
+        # 실제로 카드 좌측 하단 기준으로 170 이동이였음 (그러므로 카드간 간격은 65)
+        # 1920 기준 -> 1920 - (105 * 5 + 65 * 4) = 1135
+        # 1135 / 2 = 567.5
+        self.your_hand_repository.set_x_base(567.5)
         self.your_hand_repository.save_current_hand_state([6, 8, 19, 151, 93])
         # self.your_hand_repository.save_current_hand_state([151])
         self.your_hand_repository.create_hand_card_list()
@@ -141,6 +159,16 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             battle_field_muligun_background_shape.set_height_ratio(self.height_ratio)
             battle_field_muligun_background_shape.draw()
 
+        # TODO: 메인 로직에선 제거해야함 (현재는 개발 편의상 배치)
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+        self.battle_field_unit_place_panel.set_width_ratio(self.width_ratio)
+        self.battle_field_unit_place_panel.set_height_ratio(self.height_ratio)
+        self.battle_field_unit_place_panel.draw()
+
+        glDisable(GL_BLEND)
+
     def redraw(self):
         if self.is_reshape_not_complete:
             return
@@ -149,6 +177,25 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         self.draw_base()
+
+        for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
+            attached_tool_card = field_unit.get_tool_card()
+            if attached_tool_card is not None:
+                attached_tool_card.set_width_ratio(self.width_ratio)
+                attached_tool_card.set_height_ratio(self.height_ratio)
+                attached_tool_card.draw()
+
+            fixed_card_base = field_unit.get_fixed_card_base()
+            fixed_card_base.set_width_ratio(self.width_ratio)
+            fixed_card_base.set_height_ratio(self.height_ratio)
+            fixed_card_base.draw()
+
+            attached_shape_list = fixed_card_base.get_attached_shapes()
+
+            for attached_shape in attached_shape_list:
+                attached_shape.set_width_ratio(self.width_ratio)
+                attached_shape.set_height_ratio(self.height_ratio)
+                attached_shape.draw()
 
         for hand_card in self.hand_card_list:
             attached_tool_card = hand_card.get_tool_card()
@@ -241,7 +288,59 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             self.drag_start = (x, y)
 
     def on_canvas_release(self, event):
-        self.drag_start = None
+        x, y = event.x, event.y
+        y = self.winfo_reqheight() - y
+
+        if isinstance(self.selected_object, PickableCard):
+            y *= -1
+
+            if self.is_drop_location_valid(x, y):
+                placed_card_id = self.selected_object.get_card_number()
+                # print(f"on_canvas_release -> placed_card_id: {placed_card_id}")
+
+                card_type = self.card_info_repository.getCardTypeForCardNumber(placed_card_id)
+                # print(f"card_type: {card_type}")
+                if card_type != CardType.UNIT.value:
+                    return
+
+                # TODO: Memory Leak 발생하지 않도록 좀 더 꼼꼼하게 리소스 해제 하는지 확인해야함
+                self.your_hand_repository.remove_card_by_id(placed_card_id)
+                self.your_field_unit_repository.create_field_unit_card(placed_card_id)
+                self.your_field_unit_repository.save_current_field_unit_state(placed_card_id)
+
+                self.selected_object = None
+
+    def is_drop_location_valid(self, x, y):
+        valid_area_vertices = self.battle_field_unit_place_panel.get_vertices()
+        return self.point_inside_polygon(x, y, valid_area_vertices)
+
+    def is_point_to_left_of_intersection(self, x, y, p1x, p1y, p2x, p2y):
+        return p1y != p2y and (x <= (y - p1y) * (p2x - p1x) / (p2y - p1y) + p1x or p1x == p2x)
+
+    def point_inside_polygon(self, x, y, poly):
+        n = len(poly)
+        inside = False
+
+        for i in range(n):
+            p1x, p1y = poly[i]
+            p2x, p2y = poly[(i + 1) % n]
+
+            p1x *= self.width_ratio
+            p2x *= self.width_ratio
+
+            p1y *= self.height_ratio
+            p2y *= self.height_ratio
+
+            # Point의 y 좌표가 현재 도형 테두리(가장자리) y 범위 내에 있는지 확인
+            y_range_condition = (y > min(p1y, p2y)) and (y <= max(p1y, p2y))
+
+            # Point의 x 좌표가 교점의 왼쪽에 있는지 확인
+            x_condition = x <= max(p1x, p2x)
+
+            if y_range_condition and x_condition and self.is_point_to_left_of_intersection(x, y, p1x, p1y, p2x, p2y):
+                inside = not inside
+
+        return inside
 
     def on_canvas_left_click(self, event):
         try:
@@ -299,9 +398,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         return new_rectangle
 
 
-class TestDrawPickableHandWithResize(unittest.TestCase):
+class TestResizableHandToField(unittest.TestCase):
 
-    def test_draw_pickable_hand_with_resize(self):
+    def test_resizable_hand_to_field(self):
         DomainInitializer.initEachDomain()
 
         root = tkinter.Tk()
