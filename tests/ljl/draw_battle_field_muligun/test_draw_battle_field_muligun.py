@@ -44,11 +44,14 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.selected_object = None
         self.prev_selected_object = None
         self.drag_start = None
+        self.execute_pick_card_effect = True
+        self.ok_button_visible = True
 
         self.click_card_effect_rectangles = []
         self.selected_objects = []
         self.checking_draw_effect = {}
         self.click_card_index_list = []
+        self.change_card_object_list = {}
 
         self.lightning_border = LightningBorder()
 
@@ -175,7 +178,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.draw_base()
         self.alpha_background.draw()
-        self.ok_button.draw()
+        if self.ok_button_visible is True:
+            self.ok_button.draw()
 
         # 처음 드로우한 5장의 카드 그리는 부분
         for hand_card in self.hand_card_list:
@@ -192,8 +196,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 attached_shape.draw()
 
         #self.draw_pick_card_effect()
-        self.draw_pick_card_effect_dict()
-
+        if self.execute_pick_card_effect is True:
+            self.draw_pick_card_effect_dict()
 
         self.tkSwapBuffers()
 
@@ -241,8 +245,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             x, y = event.x, event.y
             y = self.winfo_reqheight() - y
 
-            selected_cards = []
-
             for hand_card in self.hand_card_list:
                 if isinstance(hand_card, PickableCard):
                     hand_card.selected = False
@@ -255,41 +257,52 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 if pickable_card_base.is_point_inside((x, y)):
                     hand_card.selected = not hand_card.selected
                     self.selected_object = hand_card
-                    hand_card_id = id(hand_card)
-                    selected_cards.append(hand_card)
-                    print(f"교체할 카드가 뭐야? : {self.selected_objects}")
+                    hand_card_index = self.hand_card_list.index(hand_card)
+                    self.change_card_object_list[hand_card_index] = hand_card
 
                     fixed_x, fixed_y = pickable_card_base.get_local_translation()
                     new_rectangle = self.create_change_card_expression((fixed_x, fixed_y))
                     # self.click_card_effect_rectangle = new_rectangle
                     self.click_card_effect_rectangles.append(new_rectangle)
 
-                    # 교체할 카드 이미 효과 있으면 지우기.
-                    if hand_card_id in self.checking_draw_effect:
-                        del self.checking_draw_effect[hand_card_id]
-                        print(self.checking_draw_effect)
-                        print(list(self.checking_draw_effect.keys()))
+                    # 교체할 카드 이미 효과 있으면 지우기.(즉 선택 취소 기능)
+                    if hand_card_index in self.checking_draw_effect:
+                        del self.checking_draw_effect[hand_card_index]
+                        # print(self.checking_draw_effect)
+                        # print(list(self.checking_draw_effect.keys()))
+
+                        # 선택한 카드 리스트에 담긴 것을 다시 지워야 함.
+                        if hand_card_index in self.change_card_object_list:
+                            del self.change_card_object_list[self.hand_card_list.index(hand_card)]
 
                     else:
                         fixed_x, fixed_y = pickable_card_base.get_local_translation()
                         new_rectangle = self.create_change_card_expression((fixed_x, fixed_y))
-                        self.checking_draw_effect[hand_card_id] = new_rectangle
+                        self.checking_draw_effect[hand_card_index] = new_rectangle
                         print(self.checking_draw_effect)
                         print(list(self.checking_draw_effect.keys()))
 
-            if selected_cards:
-                self.get_change_card_number_index_list(selected_cards)
+
+            # 확인 버튼 기능
+            if self.ok_button.is_point_inside((x, y)):
+                self.on_canvas_ok_button_click(event)
+
 
         except Exception as e:
             print(f"Exception in on_canvas_click: {e}")
 
 
     def on_canvas_ok_button_click(self, event):
-        x, y = event.x, event.y
-        y = self.winfo_reqheight() - y
+        self.delete_select_card()
 
-        if self.ok_button.is_point_inside((x, y)):
-            print("ok 버튼 클릭 잘됨?")
+        # TODO: 새로 받을 카드 임의로 지정. 나중에는 서버에서 받아야 함. 임의로 넣었기 때문에 현재 2개만 교체 가능
+        self.redraw_card([2, 15])
+
+        # 그려져 있는 카드 선택 효과, 그려져 있는 버튼은 지워야 함. 
+        self.click_card_effect_rectangles = []
+        self.checking_draw_effect = {}
+        self.ok_button_visible = False
+        self.execute_pick_card_effect = False
 
 
     # 멀리건 화면에서 교체하려는 카드 클릭시 나타나는 표현
@@ -307,6 +320,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         ])
         return new_rectangle
 
+    # 검정 투명 배경 화면
     def create_opengl_alpha_background(self):
         rectangle_color = (0.0, 0.0, 0.0, 0.65)
 
@@ -314,6 +328,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                   [(0, 0), (self.width, 0), (self.width, self.height), (0, self.height)])
         return new_rectangle
 
+    # 확인 버튼
     def create_ok_button(self):
         rectangle_size = 100
         rectangle_color = (0.8314, 0.7686, 0.6588, 1.0)
@@ -329,22 +344,17 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         ])
         return new_rectangle
 
-    # TODO: 확인 버튼 이후의 기능 미리 적었으나 확인 버튼을 구현하지 못해 제대로 만들었는지 확인은 불가
-    # 교체할 카드 인덱스 가져오기.
-    def get_change_card_number_index_list(self, select_cards):
-        for object in select_cards:
-            object_index = self.hand_card_list.index(object)
-            print(object_index)
-            self.click_card_index_list.append(object_index)
-
-        print(self.click_card_index_list)
 
     # 처음 뽑은 5장 카드 리스트에서 뽑은 카드 삭제
     def delete_select_card(self):
-        change_card_index_list = self.click_card_index_list
-        for index in change_card_index_list:
+        change_card_index_list = self.change_card_object_list
+        print(f"바꿀 카드 잘 들어왔냐는?: {change_card_index_list}")
+        print(f"before- 상태: {self.hand_card_state}, 오브젝트: {self.hand_card_list}")
+        for index in sorted(change_card_index_list.keys(), reverse=True):
             self.hand_card_state.pop(index)
             self.hand_card_list.pop(index)
+
+        print(f"after- 상태: {self.hand_card_state}, 오브젝트: {self.hand_card_list}")
 
     # 서버로 전달 받으면 다시 그릴 카드 리스트에 담기
     def redraw_card(self, new_card_number_list):

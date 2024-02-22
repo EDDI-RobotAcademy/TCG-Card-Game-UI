@@ -138,7 +138,7 @@ class YourHandRepository:
         for index, current_hand_card in enumerate(self.current_hand_card_list):
             next_x = self.x_base + x_increment * index
             local_translation = (next_x, current_y)
-            print(f"replace_hand_card_position -> local_translation: {local_translation}")
+            # print(f"replace_hand_card_position -> local_translation: {local_translation}")
 
             tool_card = current_hand_card.get_tool_card()
             tool_card.local_translate(local_translation)
