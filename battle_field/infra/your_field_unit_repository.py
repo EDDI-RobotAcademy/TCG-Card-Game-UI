@@ -56,7 +56,7 @@ class YourFieldUnitRepository:
 
     def get_next_card_position(self, index):
         # TODO: 배치 간격 고려
-        current_y = 480
+        current_y = 490
         x_increment = 170
         next_x = self.x_base + x_increment * index
         return (next_x, current_y)

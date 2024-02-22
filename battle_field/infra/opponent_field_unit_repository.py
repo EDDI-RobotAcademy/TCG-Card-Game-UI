@@ -12,7 +12,7 @@ class OpponentFieldUnitRepository:
     current_field_unit_card_object_list = []
     current_field_unit_x_position = []
 
-    x_base = 300
+    x_base = 265
 
     def __new__(cls):
         if cls.__instance is None:
@@ -40,7 +40,7 @@ class OpponentFieldUnitRepository:
         self.current_field_unit_card_object_list.append(new_card)
 
     def get_next_card_position(self, index):
-        current_y = 350
+        current_y = 270
         x_increment = 170
         next_x = self.x_base + x_increment * index
         return (next_x, current_y)
