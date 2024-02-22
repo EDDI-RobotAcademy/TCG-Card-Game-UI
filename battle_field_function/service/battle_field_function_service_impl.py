@@ -1,5 +1,7 @@
+from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field_function.repository.battle_field_function_repository_impl import BattleFieldFunctionRepositoryImpl
 from battle_field_function.service.battle_field_function_service import BattleFieldFunctionService
+from battle_field_function.service.request.game_end_reward_request import GameEndRewardRequest
 from battle_field_function.service.request.mulligan_request import MulliganRequest
 from battle_field_function.service.request.surrender_request import SurrenderRequest
 from battle_field_function.service.request.turn_end_request import TurnEndRequest
@@ -41,15 +43,20 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
 
 
 
-    def surrender(self, switchFrameWithMenuName):
+    def surrender(self, switchFrameWithMenuName = None):
         print(f"battleFieldFunctionServiceImpl: Surrender")
-        response = self.__battleFieldFunctionRepository.requestSurrender(
+        surrender_response = self.__battleFieldFunctionRepository.requestSurrender(
             SurrenderRequest(
                 self.__sessionService.getSessionInfo()
             )
         )
         # Todo : switchFrameWithMenuName('lobby-menu') 를 호출 할 수 있어야합니다.
-        switchFrameWithMenuName("lobby-menu")
+        if switchFrameWithMenuName is not None:
+            switchFrameWithMenuName("lobby-menu")
+        else:
+            print(f"항복 요청함!!! 응답: {surrender_response}")
+            self.gameEndReward()
+
 
 
     def mulligan(self, cardCount):
@@ -82,6 +89,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
                     #_sessionInfo=self.__sessionService.getSessionInfo())
                     _sessionInfo=self.__sessionRepository.get_session_info())
             )
+
         except Exception as e:
             print(f"turnEnd Error: {e}")
 
@@ -89,10 +97,13 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
     def gameEndReward(self):
         try:
             gameEndRewardResponse = self.__battleFieldFunctionRepository.requestGameEnd(
-                TurnEndRequest(
+                GameEndRewardRequest(
                     # _sessionInfo=self.__sessionService.getSessionInfo())
                     _sessionInfo=self.__sessionRepository.get_session_info())
             )
+            print(f"게임 끝! 응답: {gameEndRewardResponse}")
+            if gameEndRewardResponse:
+                BattleFieldRepository.getInstance().game_end()
         except Exception as e:
             print(f"turnEnd Error: {e}")
 

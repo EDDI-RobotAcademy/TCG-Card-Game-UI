@@ -2,7 +2,7 @@ import sys
 import time
 import tkinter
 
-
+from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_lobby_frame.controller.battle_lobby_frame_controller_impl import BattleLobbyFrameControllerImpl
 from battle_lobby_frame.repository.battle_lobby_frame_repository_impl import BattleLobbyFrameRepositoryImpl
 from battle_lobby_frame.service.request.request_deck_name_list_for_battle import RequestDeckNameListForBattle
@@ -173,6 +173,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             )
             if deckNameResponse is not None and deckNameResponse != "":
                 print(f"switchToBattleLobby : 호출됨 {deckNameResponse}")
+                BattleFieldRepository.getInstance().start_game()
                 self.__battleLobbyFrameController.startCheckTime()
                 self.__battleLobbyFrameController.createDeckButtons(deckNameResponse, self.__switchFrameWithMenuName)
                 self.__switchFrameWithMenuName("battle-lobby")
