@@ -78,7 +78,7 @@ class HandToTomb(OpenGLFrame):
         self.your_field_unit_repository = YourFieldUnitRepository.getInstance()
 
         self.your_tomb_repository = YourTombRepository.getInstance()
-        self.tomb_card_list = self.your_tomb_repository.get_current_tomb_state().get_current_tomb_unit_list()
+        self.tomb_card_list = self.your_tomb_repository.get_current_tomb_state()
         # TODO: Naming Issue
         self.card_info = CardInfoFromCsvRepositoryImpl.getInstance()
 
@@ -96,6 +96,9 @@ class HandToTomb(OpenGLFrame):
 
         self.left_click_detector = LeftClickDetector.getInstance()
         self.battle_field_repository = BattleFieldRepository.getInstance()
+        self.tomb_panel_rectangle = []
+        self.current_tomb_state = CurrentTombState()
+
     def initgl(self):
         glClearColor(1.0, 1.0, 1.0, 0.0)
         glOrtho(0, self.width, self.height, 0, -1, 1)
@@ -209,6 +212,20 @@ class HandToTomb(OpenGLFrame):
             self.lightning_border.set_padding(20)
             self.lightning_border.update_shape(your_lightning_border)
             self.lightning_border.draw_lightning_border()
+
+        if self.tomb_panel_rectangle:
+
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+            for rectangle in self.tomb_panel_rectangle:
+                rectangle.draw()
+
+                for tomb_card in self.your_tomb_repository.current_tomb_unit_list:
+                    print(f"tomb_card_number_redraw: {tomb_card}")
+                    tomb_card_base = tomb_card.get_fixed_card_base()
+                    print(f"tomb_card_base:: {tomb_card_base}")
+                    tomb_card_base.draw()
 
         self.tkSwapBuffers()
 
@@ -355,6 +372,7 @@ class HandToTomb(OpenGLFrame):
                         for fixed_field_unit_card in self.your_field_unit_repository.get_current_field_unit_list():
                             print("에너지 부스팅 준비")
                             card_base = fixed_field_unit_card.get_fixed_card_base()
+                            assert isinstance(card_base, object)
                             self.your_lightning_border_list.append(card_base)
                             self.current_process_card_id = placed_card_id
 
@@ -453,32 +471,22 @@ class HandToTomb(OpenGLFrame):
                         self.prev_selected_object = self.selected_object
 
                     self.your_field_unit_repository.remove_card_by_id(placed_card_id)
-                    tomb_state = self.your_tomb_repository.save_current_tomb_state(placed_card_id)
+                    self.your_tomb_repository.create_tomb_card(placed_card_id)
+                    self.your_tomb_repository.save_current_tomb_state(placed_card_id)
                     self.your_field_unit_repository.replace_field_card_position()
-                    print(f"current_tomb_unit_list{self.your_tomb_repository.get_current_tomb_state().get_current_tomb_unit_list()}")
+                    print(f"current_tomb_unit_list{self.your_tomb_repository.get_current_tomb_state()}")
 
             selected_button = self.left_click_detector.which_one_select_is_in_extra_area((x, y),
                                                                                          self.battle_field_repository.get_battle_field_button_list(),
                                                                                          self.winfo_reqheight())
             print(f"selected_button: {selected_button}")
+            # print(f"current_tomb_unit_list test: {self.your_tomb_repository.get_current_tomb_state()}")
             if selected_button:
-                selected_button.invoke_click_event()
+                print(f"current_tomb_unit_list test: {self.your_tomb_repository.current_tomb_unit_list}")
+                tomb_background_rectangle = self.create_opengl_tomb_rectangle((100, 100))
+                print(f"tomb_background_rectangle: {tomb_background_rectangle}")
+                self.tomb_panel_rectangle.append(tomb_background_rectangle)
 
-                # for your_tomb in self.battle_field_scene.your_tomb:
-                #     if isinstance(your_tomb, YourTomb):
-                #         your_tomb.selected = False
-
-            # for your_tomb in self.battle_field_scene.your_tomb:
-            #     print(f"your_tomb{your_tomb}")
-            #     your_tomb_base = self.battle_field_scene.your_tomb
-            #     print(f"your_tomb_shape_base1{your_tomb_base}")
-            #
-            #     if your_tomb_base.is_point_inside((x, y)):
-            #         print(f"your_tomb_shape_base2{your_tomb_base}")
-            #         your_tomb.selected = not your_tomb.selected
-            #         self.selected_object = your_tomb
-            #         self.drag_start = (x, y)
-            #         break
 
         except Exception as e:
             print(f"Exception in on_canvas_click: {e}")
@@ -508,7 +516,22 @@ class HandToTomb(OpenGLFrame):
         new_rectangle.created_by_right_click = True
 
         return new_rectangle
+    def create_opengl_tomb_rectangle(self, start_point):
+        rectangle_size = 800
+        rectangle_color = (1.0, 0.0, 0.0, 1.0)
 
+        end_point = (start_point[0] + rectangle_size, start_point[1] + rectangle_size)
+
+        new_rectangle = Rectangle(rectangle_color, [
+            (start_point[0], start_point[1]),
+            (end_point[0], start_point[1]),
+            (end_point[0], end_point[1]),
+            (start_point[0], end_point[1])
+        ])
+
+        new_rectangle.created_by_left_click = True
+
+        return new_rectangle
     def handle_dead_button_click(self, rectangle):
         pass
 
