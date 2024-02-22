@@ -1,4 +1,4 @@
-from battle_field.entity.battle_field_scene_legacy import BattleFieldSceneLegacy
+from battle_field.entity.legacy.battle_field_scene_legacy import BattleFieldSceneLegacy
 
 import tkinter
 import unittest
@@ -18,7 +18,6 @@ from image_shape.circle_number_image import CircleNumberImage
 from initializer.init_domain import DomainInitializer
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
-from opengl_shape.circle import Circle
 from opengl_shape.rectangle import Rectangle
 
 

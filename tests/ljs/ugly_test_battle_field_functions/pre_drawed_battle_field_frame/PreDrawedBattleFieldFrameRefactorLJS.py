@@ -1,10 +1,7 @@
 from battle_field.components.init_location.location_initializer import LocationInitializer
 from battle_field.components.mouse_drag.drag_handler import DragHandler
 from battle_field.components.mouse_left_click.left_click_detector import LeftClickDetector
-from battle_field.entity.battle_field_scene_legacy import BattleFieldSceneLegacy
-
-import tkinter
-import unittest
+from battle_field.entity.legacy.battle_field_scene_legacy import BattleFieldSceneLegacy
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -19,9 +16,6 @@ from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_type import CardType
-from image_shape.circle_image import CircleImage
-from image_shape.circle_number_image import CircleNumberImage
-from initializer.init_domain import DomainInitializer
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.rectangle import Rectangle
