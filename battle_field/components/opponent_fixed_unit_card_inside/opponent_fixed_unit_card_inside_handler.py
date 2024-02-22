@@ -1,4 +1,7 @@
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area_action import OpponentFieldAreaAction
+from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
+from battle_field.infra.your_hand_repository import YourHandRepository
+from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_race import CardRace
 from common.card_type import CardType
 
@@ -12,36 +15,32 @@ class OpponentFixedUnitCardInsideHandler:
     __opponent_unit_index = -1
     __action_set_card_index = -1
 
+    __your_hand_repository = YourHandRepository.getInstance()
+    __opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
+    __card_info_repository = CardInfoFromCsvRepositoryImpl.getInstance()
+
     __lightning_border_list = []
 
     __opponent_fixed_unit_card_inside_handler_table = {}
 
-    def __new__(cls,
-                your_hand_repository,
-                opponent_field_unit_repository,
-                card_info):
+    def __new__(cls):
 
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
 
-            cls.__instance.your_hand_repository = your_hand_repository
-            cls.__instance.opponent_field_unit_repository = opponent_field_unit_repository
-            cls.__instance.card_info = card_info
+            # cls.__instance.your_hand_repository = your_hand_repository
+            # cls.__instance.opponent_field_unit_repository = opponent_field_unit_repository
+            # cls.__instance.card_info = card_info
 
             cls.__instance.__opponent_fixed_unit_card_inside_handler_table[8] = cls.__instance.death_sice_need_two_undead_energy
 
         return cls.__instance
 
     @classmethod
-    def getInstance(cls,
-                    your_hand_repository,
-                    opponent_field_unit_repository,
-                    card_info):
+    def getInstance(cls):
 
         if cls.__instance is None:
-            cls.__instance = cls(your_hand_repository,
-                                 opponent_field_unit_repository,
-                                 card_info)
+            cls.__instance = cls()
         return cls.__instance
 
     def get_required_energy(self):
@@ -85,13 +84,13 @@ class OpponentFixedUnitCardInsideHandler:
 
     def handle_pickable_card_inside_unit(self, selected_object, x, y):
         print(f"handle_pickable_card_inside_unit: {selected_object}, {x}, {y}")
-        card_type = self.card_info.getCardTypeForCardNumber(selected_object.get_card_number())
+        card_type = self.__card_info_repository.getCardTypeForCardNumber(selected_object.get_card_number())
         print(f"card_type: {card_type}")
 
         if card_type not in [CardType.ITEM.value]:
             return
 
-        opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+        opponent_field_unit_list = self.__opponent_field_unit_repository.get_current_field_unit_card_object_list()
 
         for opponent_unit_index, opponent_field_unit in enumerate(opponent_field_unit_list):
             if opponent_field_unit.get_fixed_card_base().is_point_inside((x, y)):
@@ -102,9 +101,9 @@ class OpponentFixedUnitCardInsideHandler:
 
     def handle_inside_field_unit(self, selected_object, opponent_unit_index):
         placed_card_id = selected_object.get_card_number()
-        card_type = self.card_info.getCardTypeForCardNumber(placed_card_id)
+        card_type = self.__card_info_repository.getCardTypeForCardNumber(placed_card_id)
 
-        placed_card_index = self.your_hand_repository.find_index_by_selected_object(selected_object)
+        placed_card_index = self.__your_hand_repository.find_index_by_selected_object(selected_object)
 
         if card_type == CardType.ITEM.value:
             self.handle_item_card(placed_card_id, opponent_unit_index, placed_card_index)
@@ -126,7 +125,7 @@ class OpponentFixedUnitCardInsideHandler:
         self.__opponent_unit_index = unit_index
         self.__action_set_card_index = placed_card_index
 
-        your_current_hand_card_list = self.your_hand_repository.get_current_hand_card_list()
+        your_current_hand_card_list = self.__your_hand_repository.get_current_hand_card_list()
 
         for your_current_hand_card in your_current_hand_card_list:
             your_hand_card_id = your_current_hand_card.get_card_number()
