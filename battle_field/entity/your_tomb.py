@@ -45,10 +45,14 @@ class YourTomb:
         return self.tomb_panel_popup_rectangle
 
     def create_tomb_panel_popup_rectangle(self):
-        width_left_margin_20 = self.popup_width * 0.2 * self.width_ratio
-        width_right_margin_80 = self.popup_width * 0.8 * self.width_ratio
-        height_top_margin_20 = self.popup_height * 0.2 * self.height_ratio
-        height_bottom_margin_80 = self.popup_height * 0.8 * self.height_ratio
+        # width_left_margin_20 = self.popup_width * 0.2 * self.width_ratio
+        # width_right_margin_80 = self.popup_width * 0.8 * self.width_ratio
+        # height_top_margin_20 = self.popup_height * 0.2 * self.height_ratio
+        # height_bottom_margin_80 = self.popup_height * 0.8 * self.height_ratio
+        width_left_margin_20 = self.popup_width * 0.2
+        width_right_margin_80 = self.popup_width * 0.8
+        height_top_margin_20 = self.popup_height * 0.2
+        height_bottom_margin_80 = self.popup_height * 0.8
 
         self.tomb_panel_popup_rectangle = Rectangle(
             (0.0, 0.0, 0.0, 0.8),
