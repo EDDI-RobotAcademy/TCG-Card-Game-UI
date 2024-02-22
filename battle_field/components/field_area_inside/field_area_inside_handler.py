@@ -75,9 +75,9 @@ class FieldAreaInsideHandler:
             return None
 
         placed_card_id = selected_object.get_card_number()
-        print(f"my card number is {placed_card_id}")
+        # print(f"my card number is {placed_card_id}")
         card_type = self.__card_info_repository.getCardTypeForCardNumber(placed_card_id)
-        print(f"my card type is {card_type}")
+        # print(f"my card type is {card_type}")
 
         placed_card_index = self.__your_hand_repository.find_index_by_selected_object(selected_object)
 
@@ -113,8 +113,6 @@ class FieldAreaInsideHandler:
 
     def handle_support_card_draw_deck(self, placed_card_id, placed_card_index):
         print(f"handle_support_card_draw_deck -> placed_card_id: {placed_card_id}")
-
-        self.__your_hand_repository.remove_card_by_id(placed_card_index)
 
         # TODO: Summary와 연동하도록 재구성 필요
         drawn_deck_card_list = self.__your_deck_repository.draw_deck_with_count(3)
