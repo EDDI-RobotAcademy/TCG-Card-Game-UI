@@ -2,24 +2,6 @@ from screeninfo import get_monitors
 
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
 from battle_field.components.field_area_inside.field_area_inside_handler import FieldAreaInsideHandler
-from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
-    OpponentFixedUnitCardInsideHandler
-from battle_field.entity.battle_field_environment import BattleFieldEnvironment
-from battle_field.entity.battle_field_scene_legacy import BattleFieldSceneLegacy
-from battle_field.entity.opponent_deck import OpponentDeck
-from battle_field.entity.opponent_hand_panel import OpponentHandPanel
-from battle_field.entity.opponent_lost_zone import OpponentLostZone
-from battle_field.entity.opponent_main_character import OpponentMainCharacter
-from battle_field.entity.opponent_tomb import OpponentTomb
-from battle_field.entity.opponent_trap import OpponentTrap
-from battle_field.entity.opponent_unit_field import OpponentUnitField
-from battle_field.entity.your_deck import YourDeck
-from battle_field.entity.your_hand_panel import YourHandPanel
-from battle_field.entity.your_lost_zone import YourLostZone
-from battle_field.entity.your_main_character import YourMainCharacter
-from battle_field.entity.your_tomb import YourTomb
-from battle_field.entity.your_trap import YourTrap
-from battle_field.entity.your_unit_field import YourUnitField
 
 import tkinter
 import unittest
@@ -28,6 +10,9 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
+from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area_action import OpponentFieldAreaAction
+from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
+    OpponentFixedUnitCardInsideHandler
 from battle_field.handler.support_card_handler import SupportCardHandler
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
@@ -106,6 +91,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
         # self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance()
         self.field_area_inside_handler = FieldAreaInsideHandler.getInstance()
+        self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance()
+
+        self.selected_object_for_check_required_energy = []
+        self.selected_object_index_for_check_required_energy = []
+        self.required_energy_select_lightning_border_list = []
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -306,12 +296,27 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             # self.active_panel_rectangle.set_height_ratio(self.height_ratio)
             self.active_panel_rectangle.draw()
 
+        # For Energy Boost
         for your_field_unit_lightning_border in self.your_field_unit_lightning_border_list:
             your_field_unit_lightning_border.set_width_ratio(self.width_ratio)
             your_field_unit_lightning_border.set_height_ratio(self.height_ratio)
 
             self.lightning_border.set_padding(20)
             self.lightning_border.update_shape(your_field_unit_lightning_border)
+            self.lightning_border.draw_lightning_border()
+
+        for your_hand_lightning_border in self.opponent_fixed_unit_card_inside_handler.get_lightning_border_list():
+            self.lightning_border.set_padding(20)
+            self.lightning_border.update_shape(your_hand_lightning_border)
+            self.lightning_border.draw_lightning_border()
+
+        # For Death Sice
+        for required_energy_selection_border in self.required_energy_select_lightning_border_list:
+            required_energy_selection_border.set_width_ratio(self.width_ratio)
+            required_energy_selection_border.set_height_ratio(self.height_ratio)
+
+            self.lightning_border.set_padding(20)
+            self.lightning_border.update_shape(required_energy_selection_border)
             self.lightning_border.draw_lightning_border()
 
         self.tkSwapBuffers()
@@ -374,10 +379,27 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             self.drag_start = (x, y)
 
     def on_canvas_release(self, event):
+        if isinstance(self.selected_object, FixedFieldCard):
+            return
+
         x, y = event.x, event.y
         y = self.winfo_reqheight() - y
 
         if isinstance(self.selected_object, PickableCard):
+            # Opponent에 적용하는 카드 시작
+            current_opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+            current_opponent_field_unit_list_length = len(current_opponent_field_unit_list)
+            print(f"current_opponent_field_unit_list_length: {current_opponent_field_unit_list_length}")
+
+            if current_opponent_field_unit_list_length > 0:
+                is_pickable_card_inside_unit = self.opponent_fixed_unit_card_inside_handler.handle_pickable_card_inside_unit(
+                    self.selected_object, x, y)
+
+                if is_pickable_card_inside_unit:
+                    self.selected_object = None
+                    return
+            # Opponent에 적용하는 카드 끝
+
             current_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
             current_field_unit_list_length = len(current_field_unit_list)
 
@@ -443,51 +465,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             y *= -1
 
-            # if self.is_drop_location_valid_battle_field_panel(x, y):
-            #     placed_card_id = self.selected_object.get_card_number()
-            #     print(f"on_canvas_release -> placed_card_id: {placed_card_id}")
-            #
-            #     card_type = self.card_info_repository.getCardTypeForCardNumber(placed_card_id)
-            #     if card_type == CardType.UNIT.value:
-            #         # TODO: Memory Leak 발생하지 않도록 좀 더 꼼꼼하게 리소스 해제 하는지 확인해야함
-            #         self.your_hand_repository.remove_card_by_id(placed_card_id)
-            #         self.your_field_unit_repository.create_field_unit_card(placed_card_id)
-            #         self.your_field_unit_repository.save_current_field_unit_state(placed_card_id)
-            #
-            #         # 카드 구성하는 모든 도형에 local_translation 적용
-            #         self.your_hand_repository.replace_hand_card_position()
-            #
-            #         self.selected_object = None
-            #         return
-            #
-            #     if card_type == CardType.SUPPORT.value:
-            #         print("서포트 카드 사용 감지!")
-            #         self.selected_object = None
-            #         self.prev_selected_object = None
-            #
-            #         # 현재 필드에 존재하는 모든 유닛에 Lightning Border
-            #         for fixed_field_unit_card in self.your_field_unit_repository.get_current_field_unit_list():
-            #             print("에너지 부스팅 준비")
-            #             card_base = fixed_field_unit_card.get_fixed_card_base()
-            #             self.your_field_unit_lightning_border_list.append(card_base)
-            #             self.current_process_card_id = placed_card_id
-            #
-            #         self.your_hand_repository.remove_card_by_id(placed_card_id)
-            #
-            #         tomb_state = self.your_tomb_repository.current_tomb_state
-            #         tomb_state.place_unit_to_tomb(placed_card_id)
-            #         self.your_hand_repository.replace_hand_card_position()
-            #
-            #         self.boost_selection = True
-            #
-            #         return
-            #
-            #     self.return_to_initial_location()
-            # else:
-            #     self.return_to_initial_location()
+            self.field_area_inside_handler.set_width_ratio(self.width_ratio)
+            self.field_area_inside_handler.set_height_ratio(self.height_ratio)
 
-            # 당신(Your) Field에 던진 카드
-            drop_action_result = self.field_area_inside_handler.handle_card_drop(x, y, self.selected_object)
+            drop_action_result = self.field_area_inside_handler.handle_card_drop(x, y, self.selected_object, self.battle_field_unit_place_panel)
             if drop_action_result is None or drop_action_result is FieldAreaAction.Dummy:
                 print("self.field_area_inside_handler.get_field_area_action() = None")
                 self.return_to_initial_location()
@@ -590,7 +571,58 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         self.active_panel_rectangle = None
                         self.prev_selected_object = self.selected_object
 
-                    break
+            if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() is OpponentFieldAreaAction.REQUIRE_ENERGY_TO_USAGE:
+                print("카드를 사용하기 위해 에너지가 필요합니다!")
+
+                selected_card_id = self.selected_object.get_card_number()
+
+                if self.card_info_repository.getCardTypeForCardNumber(selected_card_id) is not CardType.ENERGY.value:
+                    return
+
+                required_energy_race = self.opponent_fixed_unit_card_inside_handler.get_required_energy_race()
+                if self.card_info_repository.getCardRaceForCardNumber(
+                        selected_card_id) is not required_energy_race.value:
+                    return
+
+                self.selected_object_for_check_required_energy.append(self.selected_object)
+                self.selected_object_index_for_check_required_energy.append(
+                    self.your_hand_repository.find_index_by_selected_object(
+                        self.selected_object))
+
+                card_base = self.selected_object.get_pickable_card_base()
+                self.required_energy_select_lightning_border_list.append(card_base)
+
+                self.opponent_fixed_unit_card_inside_handler.decrease_required_energy()
+                required_energy_count = self.opponent_fixed_unit_card_inside_handler.get_required_energy()
+
+                if required_energy_count == 0:
+                    usage_card_index = self.opponent_fixed_unit_card_inside_handler.get_action_set_card_index()
+
+                    self.your_hand_repository.remove_card_by_multiple_index(
+                        [
+                            usage_card_index,
+                            self.selected_object_index_for_check_required_energy[0],
+                            self.selected_object_index_for_check_required_energy[1]
+                        ])
+
+                    self.opponent_field_unit_repository.remove_current_field_unit_card(
+                        self.opponent_fixed_unit_card_inside_handler.get_opponent_unit_index())
+
+                    self.your_hand_repository.replace_hand_card_position()
+
+                    self.selected_object_for_check_required_energy = []
+                    self.selected_object_index_for_check_required_energy = []
+                    self.required_energy_select_lightning_border_list = []
+
+                    self.opponent_fixed_unit_card_inside_handler.clear_opponent_unit_index()
+                    self.opponent_fixed_unit_card_inside_handler.clear_action_set_card_index()
+                    self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+                    self.opponent_fixed_unit_card_inside_handler.clear_required_energy_race()
+                    self.opponent_fixed_unit_card_inside_handler.clear_required_energy()
+                    self.opponent_fixed_unit_card_inside_handler.clear_lightning_border_list()
+
+                    self.selected_object = None
+                    return
 
             your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
             for your_field_unit in your_field_unit_list:
