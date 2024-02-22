@@ -1,4 +1,5 @@
-from battle_field.entity.battle_field_scene_legacy import BattleFieldSceneLegacy
+from battle_field.components.mouse_left_click.left_click_detector import LeftClickDetector
+from battle_field.entity.battle_field_scene import BattleFieldScene
 
 import tkinter
 import unittest
@@ -7,11 +8,14 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
+from battle_field.entity.your_tomb import YourTomb
 from battle_field.handler.support_card_handler import SupportCardHandler
+from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
+from battle_field.state.current_tomb import CurrentTombState
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_type import CardType
@@ -23,7 +27,7 @@ from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.rectangle import Rectangle
 
 
-class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
+class HandToTomb(OpenGLFrame):
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
 
@@ -40,7 +44,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.lightning_border = LightningBorder()
 
-        self.battle_field_scene = BattleFieldSceneLegacy()
+        self.battle_field_scene = BattleFieldScene()
+        self.your_tomb = YourTomb()
         self.battle_field_scene.create_battle_field_scene()
 
         self.opponent_tomb_shapes = self.battle_field_scene.get_opponent_tomb()
@@ -73,6 +78,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_field_unit_repository = YourFieldUnitRepository.getInstance()
 
         self.your_tomb_repository = YourTombRepository.getInstance()
+        self.tomb_card_list = self.your_tomb_repository.get_current_tomb_state().get_current_tomb_unit_list()
         # TODO: Naming Issue
         self.card_info = CardInfoFromCsvRepositoryImpl.getInstance()
 
@@ -88,6 +94,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.bind("<Button-1>", self.on_canvas_left_click)
         self.bind("<Button-3>", self.on_canvas_right_click)
 
+        self.left_click_detector = LeftClickDetector.getInstance()
+        self.battle_field_repository = BattleFieldRepository.getInstance()
     def initgl(self):
         glClearColor(1.0, 1.0, 1.0, 0.0)
         glOrtho(0, self.width, self.height, 0, -1, 1)
@@ -238,14 +246,14 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
     def return_to_initial_location(self):
         pickable_card_base = self.selected_object.get_pickable_card_base()
-        intiial_vertices = pickable_card_base.get_initial_vertices()
+        initial_vertices = pickable_card_base.get_initial_vertices()
 
-        pickable_card_base.update_vertices(intiial_vertices)
+        pickable_card_base.update_vertices(initial_vertices)
 
         tool_card = self.selected_object.get_tool_card()
         if tool_card is not None:
-            tool_intiial_vertices = tool_card.get_initial_vertices()
-            tool_card.update_vertices(tool_intiial_vertices)
+            tool_initial_vertices = tool_card.get_initial_vertices()
+            tool_card.update_vertices(tool_initial_vertices)
 
         for attached_shape in pickable_card_base.get_attached_shapes():
             if isinstance(attached_shape, CircleImage):
@@ -260,8 +268,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 attached_shape.update_circle_vertices(attached_circle_shape_initial_center)
                 continue
 
-            attached_shape_intiial_vertices = attached_shape.get_initial_vertices()
-            attached_shape.update_vertices(attached_shape_intiial_vertices)
+            attached_shape_initial_vertices = attached_shape.get_initial_vertices()
+            attached_shape.update_vertices(attached_shape_initial_vertices)
 
         self.drag_start = None
 
@@ -400,6 +408,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             self.selected_object = None
 
             for hand_card in reversed(self.hand_card_list):
+                # print(f"hand_card: {hand_card}")
                 pickable_card_base = hand_card.get_pickable_card_base()
 
                 if pickable_card_base.is_point_inside((x, y)):
@@ -419,7 +428,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     field_unit.selected = False
 
             for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
+                print(f"field_unit{field_unit}")
                 fixed_card_base = field_unit.get_fixed_card_base()
+                print(f"fixed_card_base{fixed_card_base}")
+                placed_card_id = field_unit.get_card_number()
+                print(f"placed_card_id {placed_card_id}")
 
                 if fixed_card_base.is_point_inside((x, y)):
                     if self.boost_selection:
@@ -439,7 +452,32 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         self.active_panel_rectangle = None
                         self.prev_selected_object = self.selected_object
 
-                    break
+                    self.your_field_unit_repository.remove_card_by_id(placed_card_id)
+                    tomb_state = self.your_tomb_repository.save_current_tomb_state(placed_card_id)
+                    self.your_field_unit_repository.replace_field_card_position()
+                    print(f"current_tomb_unit_list{self.your_tomb_repository.get_current_tomb_state().get_current_tomb_unit_list()}")
+
+            selected_button = self.left_click_detector.which_one_select_is_in_extra_area((x, y),
+                                                                                         self.battle_field_repository.get_battle_field_button_list(),
+                                                                                         self.winfo_reqheight())
+            print(f"selected_button: {selected_button}")
+            if selected_button:
+                selected_button.invoke_click_event()
+                # for your_tomb in self.battle_field_scene.your_tomb:
+                #     if isinstance(your_tomb, YourTomb):
+                #         your_tomb.selected = False
+
+            # for your_tomb in self.battle_field_scene.your_tomb:
+            #     print(f"your_tomb{your_tomb}")
+            #     your_tomb_base = self.battle_field_scene.your_tomb
+            #     print(f"your_tomb_shape_base1{your_tomb_base}")
+            #
+            #     if your_tomb_base.is_point_inside((x, y)):
+            #         print(f"your_tomb_shape_base2{your_tomb_base}")
+            #         your_tomb.selected = not your_tomb.selected
+            #         self.selected_object = your_tomb
+            #         self.drag_start = (x, y)
+            #         break
 
         except Exception as e:
             print(f"Exception in on_canvas_click: {e}")
@@ -453,9 +491,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             if fixed_card_base.is_point_inside((x, convert_y)):
                 new_rectangle = self.create_opengl_rectangle((x, y))
                 self.active_panel_rectangle = new_rectangle
-
     def create_opengl_rectangle(self, start_point):
-        rectangle_size = 50
+        rectangle_size = 100
         rectangle_color = (1.0, 0.0, 0.0, 1.0)
 
         end_point = (start_point[0] + rectangle_size, start_point[1] + rectangle_size)
@@ -466,20 +503,25 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             (end_point[0], end_point[1]),
             (start_point[0], end_point[1])
         ])
+
         new_rectangle.created_by_right_click = True
+
         return new_rectangle
 
+    def handle_dead_button_click(self, rectangle):
+        pass
 
-class TestBoostEnergyWithSupportCard(unittest.TestCase):
 
-    def test_boost_energy_with_support_card(self):
+class TestHandCardToTomb(unittest.TestCase):
+
+    def test_hand_card_to_tomb(self):
         DomainInitializer.initEachDomain()
 
         root = tkinter.Tk()
         root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}-0-0")
         root.deiconify()
 
-        pre_drawed_battle_field_frame = PreDrawedBattleFieldFrameRefactor(root)
+        pre_drawed_battle_field_frame = HandToTomb(root)
         pre_drawed_battle_field_frame.pack(fill=tkinter.BOTH, expand=1)
         root.update_idletasks()
 

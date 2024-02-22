@@ -88,6 +88,7 @@ class BattleFieldSceneLegacy:
     def create_your_tomb(self):
         self.your_tomb = YourTomb()
         self.your_tomb.init_shapes()
+        self.__battle_field_repository.add_your_tomb_button(button=self.your_tomb)
 
     def create_your_lost_zone(self):
         self.your_lost_zone = YourLostZone()
