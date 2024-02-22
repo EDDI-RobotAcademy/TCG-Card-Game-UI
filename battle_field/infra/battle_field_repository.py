@@ -28,6 +28,10 @@ class BattleFieldRepository:
     def add_battle_field_button(self, button):
         self.battle_field_button_list.append(button)
 
+
+    def add_your_tomb_button(self, button):
+        self.battle_field_button_list.append(button)
+
     def saveReceiveIpcChannel(self, receiveIpcChannel):
         self.__receiveIpcChannel = receiveIpcChannel
 

@@ -18,13 +18,15 @@ class YourTombRepository:
         if cls.__instance is None:
             cls.__instance = cls()
         return cls.__instance
+    def save_current_tomb_state(self, hand_card_id):
+        self.current_tomb_state.place_unit_to_tomb(hand_card_id)
+        print(f"Saved current field_unit state: {hand_card_id}")
 
     def get_current_tomb_state(self):
         return self.current_tomb_state
 
     def place_unit_in_tomb(self, unit_card_id):
         self.current_tomb_unit_list.append(unit_card_id)
-
     def saveReceiveIpcChannel(self, receiveIpcChannel):
         self.__receiveIpcChannel = receiveIpcChannel
 

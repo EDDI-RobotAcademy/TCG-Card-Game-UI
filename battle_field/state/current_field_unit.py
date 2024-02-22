@@ -15,3 +15,9 @@ class CurrentFieldUnitState:
         else:
             print(f"Invalid index: {unit_index}. No unit!")
 
+    def remove_from_field(self, *cards):
+        for card in cards:
+            if card in self.current_field_unit_list:
+                self.current_field_unit_list.remove(card)
+            else:
+                print(f"Card '{card}' not found in the current hand.")
