@@ -6,9 +6,13 @@ class Shape(abc.ABC):
         self.vertices = vertices
         self.initial_vertices = None
         self.initial_center = None
+        # self.center = [vertices[0][0], vertices[0][1]]
 
         # self.width = 0
         # self.height = 0
+
+        self.width_ratio = 1
+        self.height_ratio = 1
 
         self.global_translation = global_translation
         self.local_translation = local_translation
@@ -24,6 +28,12 @@ class Shape(abc.ABC):
     #         return width, height
     #     else:
     #         raise ValueError("A rectangle should have exactly 4 vertices.")
+
+    def set_width_ratio(self, width_ratio):
+        self.width_ratio = width_ratio
+
+    def set_height_ratio(self, height_ratio):
+        self.height_ratio = height_ratio
 
     def set_initial_vertices(self, vertices):
         self.initial_vertices = vertices
@@ -60,7 +70,28 @@ class Shape(abc.ABC):
             self.color = self.color + (new_alpha,)
 
     def update_vertices(self, new_vertices):
+        # print(f"shape -> update_vertices: {new_vertices}")
         self.vertices = new_vertices
+
+    def update_center(self, new_center):
+        # print(f"shape -> update_center: {new_center}")
+        self.vertices = [[new_center[0], new_center[1]]]
+
+        # print(f"update_center -> vertices: {self.vertices}")
+        # print(f"update_center -> vertices[0][0]: {self.vertices[0][0]}, vertices[0][1]: {self.vertices[0][1]}")
+
+    def get_vertices(self):
+        return self.vertices
+
+    # def update_circle_vertices(self, calculated_initial_vertices):
+    #     print(f"update_circle_vertices: {calculated_initial_vertices}")
+    #     print(f"update_circle_vertices[0]: {calculated_initial_vertices[0]}")
+    #     print(f"update_circle_vertices[0][0]: {calculated_initial_vertices[0][0]}")
+    #     print(f"update_circle_vertices[0][1]: {calculated_initial_vertices[0][1]}")
+    #     self.center = calculated_initial_vertices[0]
+    #
+    # def get_circle_vertices(self):
+    #     return self.center
 
     def get_local_translation(self):
         return self.local_translation

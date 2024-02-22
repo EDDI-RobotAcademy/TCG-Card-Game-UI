@@ -1,19 +1,19 @@
-from battle_field.entity.battle_field_environment import BattleFieldEnvironment
-from battle_field.entity.opponent_deck import OpponentDeck
-from battle_field.entity.opponent_hand_panel import OpponentHandPanel
-from battle_field.entity.opponent_lost_zone import OpponentLostZone
-from battle_field.entity.opponent_main_character import OpponentMainCharacter
-from battle_field.entity.opponent_tomb import OpponentTomb
-from battle_field.entity.opponent_trap import OpponentTrap
-from battle_field.entity.opponent_unit_field import OpponentUnitField
-from battle_field.entity.turn_end_button import TurnEndButton
-from battle_field.entity.your_deck import YourDeck
-from battle_field.entity.your_hand_panel import YourHandPanel
-from battle_field.entity.your_lost_zone import YourLostZone
-from battle_field.entity.your_main_character import YourMainCharacter
-from battle_field.entity.your_tomb import YourTomb
-from battle_field.entity.your_trap import YourTrap
-from battle_field.entity.your_unit_field import YourUnitField
+from battle_field.entity.legacy.battle_field_environment import BattleFieldEnvironment
+from battle_field.entity.legacy.opponent_deck import OpponentDeck
+from battle_field.entity.legacy.opponent_hand_panel import OpponentHandPanel
+from battle_field.entity.legacy.opponent_lost_zone import OpponentLostZone
+from battle_field.entity.legacy.opponent_main_character import OpponentMainCharacter
+from battle_field.entity.legacy.opponent_tomb import OpponentTomb
+from battle_field.entity.legacy.opponent_trap import OpponentTrap
+from battle_field.entity.legacy.opponent_unit_field import OpponentUnitField
+from battle_field.entity.legacy.turn_end_button import TurnEndButton
+from battle_field.entity.legacy.your_deck import YourDeck
+from battle_field.entity.legacy.your_hand_panel import YourHandPanel
+from battle_field.entity.legacy.your_lost_zone import YourLostZone
+from battle_field.entity.legacy.your_main_character import YourMainCharacter
+from battle_field.entity.legacy.your_tomb import YourTomb
+from battle_field.entity.legacy.your_trap import YourTrap
+from battle_field.entity.legacy.your_unit_field import YourUnitField
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 
 
@@ -88,6 +88,7 @@ class BattleFieldSceneLegacy:
     def create_your_tomb(self):
         self.your_tomb = YourTomb()
         self.your_tomb.init_shapes()
+        self.__battle_field_repository.add_battle_field_button(button=self.your_tomb)
 
     def create_your_lost_zone(self):
         self.your_lost_zone = YourLostZone()
@@ -121,7 +122,6 @@ class BattleFieldSceneLegacy:
         self.turn_end_button = TurnEndButton()
         self.turn_end_button.init_shapes()
         self.__battle_field_repository.add_battle_field_button(button=self.turn_end_button)
-
 
     def get_opponent_tomb(self):
         return self.opponent_tomb.get_tomb_shapes()

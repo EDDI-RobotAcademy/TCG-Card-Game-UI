@@ -1,4 +1,4 @@
-from battle_field.entity.battle_field_scene_legacy import BattleFieldSceneLegacy
+from battle_field.entity.legacy.battle_field_scene_legacy import BattleFieldSceneLegacy
 
 import tkinter
 import unittest

@@ -254,6 +254,8 @@ class RectangleImage(Shape):
                                    vertices=self.vertices,
                                    global_translation=self.global_translation,
                                    local_translation=self.local_translation)
+            white_rect.set_width_ratio(self.width_ratio)
+            white_rect.set_height_ratio(self.height_ratio)
             white_rect.draw()
 
             #             image_data = self.image_data
@@ -269,6 +271,7 @@ class RectangleImage(Shape):
             #             GL.glBindTexture(GL.GL_TEXTURE_2D, texture_ids)
 
             image_data = self.image_data
+            # print(f"image_data: {image_data}")
 
             if self.texture_id is None:
                 self.texture_id = GL.glGenTextures(1)
@@ -286,20 +289,20 @@ class RectangleImage(Shape):
 
             GL.glBegin(GL.GL_QUADS)
             GL.glTexCoord2f(0, 0)
-            GL.glVertex2f(self.vertices[0][0] + self.local_translation[0] + self.global_translation[0],
-                          self.vertices[0][1] + self.local_translation[1] + self.global_translation[1])
+            GL.glVertex2f(self.vertices[0][0] * self.width_ratio  + self.local_translation[0] * self.width_ratio  + self.global_translation[0],
+                          self.vertices[0][1] * self.height_ratio + self.local_translation[1] * self.height_ratio + self.global_translation[1])
 
             GL.glTexCoord2f(1, 0)
-            GL.glVertex2f(self.vertices[1][0] + self.local_translation[0] + self.global_translation[0],
-                          self.vertices[1][1] + self.local_translation[1] + self.global_translation[1])
+            GL.glVertex2f(self.vertices[1][0] * self.width_ratio  + self.local_translation[0] * self.width_ratio  + self.global_translation[0],
+                          self.vertices[1][1] * self.height_ratio + self.local_translation[1] * self.height_ratio + self.global_translation[1])
 
             GL.glTexCoord2f(1, 1)
-            GL.glVertex2f(self.vertices[2][0] + self.local_translation[0] + self.global_translation[0],
-                          self.vertices[2][1] + self.local_translation[1] + self.global_translation[1])
+            GL.glVertex2f(self.vertices[2][0] * self.width_ratio  + self.local_translation[0] * self.width_ratio  + self.global_translation[0],
+                          self.vertices[2][1] * self.height_ratio + self.local_translation[1] * self.height_ratio + self.global_translation[1])
 
             GL.glTexCoord2f(0, 1)
-            GL.glVertex2f(self.vertices[3][0] + self.local_translation[0] + self.global_translation[0],
-                          self.vertices[3][1] + self.local_translation[1] + self.global_translation[1])
+            GL.glVertex2f(self.vertices[3][0] * self.width_ratio  + self.local_translation[0] * self.width_ratio  + self.global_translation[0],
+                          self.vertices[3][1] * self.height_ratio + self.local_translation[1] * self.height_ratio + self.global_translation[1])
             GL.glEnd()
 
             GL.glDisable(GL.GL_TEXTURE_2D)

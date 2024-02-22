@@ -16,7 +16,7 @@ class BattleFieldFunctionControllerImpl(BattleFieldFunctionController):
             cls.__instance = cls()
         return cls.__instance
 
-    def callSurrender(self, switchFrameWithMenuName):
+    def callSurrender(self, switchFrameWithMenuName=None):
         self.__battleFieldFunctionService.surrender(switchFrameWithMenuName)
 
     def callShuffleDeck(self):
@@ -33,3 +33,6 @@ class BattleFieldFunctionControllerImpl(BattleFieldFunctionController):
 
     def callTurnEnd(self):
         self.__battleFieldFunctionService.turnEnd()
+
+    def callGameEndReward(self):
+        self.__battleFieldFunctionService.gameEndReward()

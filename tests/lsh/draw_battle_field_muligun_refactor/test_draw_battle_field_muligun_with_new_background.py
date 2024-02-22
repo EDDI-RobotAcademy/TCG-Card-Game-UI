@@ -1,20 +1,3 @@
-from battle_field.entity.battle_field_environment import BattleFieldEnvironment
-from battle_field.entity.battle_field_scene_legacy import BattleFieldSceneLegacy
-from battle_field.entity.opponent_deck import OpponentDeck
-from battle_field.entity.opponent_hand_panel import OpponentHandPanel
-from battle_field.entity.opponent_lost_zone import OpponentLostZone
-from battle_field.entity.opponent_main_character import OpponentMainCharacter
-from battle_field.entity.opponent_tomb import OpponentTomb
-from battle_field.entity.opponent_trap import OpponentTrap
-from battle_field.entity.opponent_unit_field import OpponentUnitField
-from battle_field.entity.your_deck import YourDeck
-from battle_field.entity.your_hand_panel import YourHandPanel
-from battle_field.entity.your_lost_zone import YourLostZone
-from battle_field.entity.your_main_character import YourMainCharacter
-from battle_field.entity.your_tomb import YourTomb
-from battle_field.entity.your_trap import YourTrap
-from battle_field.entity.your_unit_field import YourUnitField
-
 import tkinter
 import unittest
 
@@ -25,9 +8,7 @@ from pyopengltk import OpenGLFrame
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
 from initializer.init_domain import DomainInitializer
-from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
-from opengl_shape.rectangle import Rectangle
 
 
 class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
@@ -52,7 +33,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.lightning_border = LightningBorder()
 
         self.battle_field_muligun_scene = BattleFieldMuligunScene()
-        self.battle_field_muligun_scene.create_battle_field_muligun_scene()
+        self.battle_field_muligun_scene.create_battle_field_muligun_scene(self.width, self.height)
         self.battle_field_muligun_background_shape_list = self.battle_field_muligun_scene.get_battle_field_muligun_background()
 
         self.your_hand_repository = YourHandRepository.getInstance()
@@ -92,6 +73,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         self.draw_base()
+
+        glDisable(GL_BLEND)
 
         for hand_card in self.hand_card_list:
             attached_tool_card = hand_card.get_tool_card()

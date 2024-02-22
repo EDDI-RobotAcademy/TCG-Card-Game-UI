@@ -4,6 +4,10 @@ import tkinter
 from tkinter import PhotoImage
 from PIL import ImageTk, Image
 
+from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
+from common.card_grade import CardGrade
+from common.utility import get_project_root
+
 
 class ImageGenerator:
     __instance = None
@@ -50,10 +54,13 @@ class ImageGenerator:
     def initImages(self):
         self.__selectedDeckImage = self.__setImageByDirectoryAndName("battle_lobby", "deck")
         self.__unselectedDeckImage = self.__setImageByDirectoryAndName("battle_lobby", "background")
-        for i in range(1, 9):
-            self.__randomCardImage.append(
-                self.generateCardImageByName("card" + str(i))
-            )
+        csv_repository = CardInfoFromCsvRepositoryImpl.getInstance()
+        for card_number in csv_repository.getCardNumber():
+            if csv_repository.getCardGradeForCardNumber(card_number) == CardGrade.MYTHICAL.value:
+                self.__randomCardImage.append(self.generateCardImageByName(str(card_number)))
+                #card_illustration_image_data = os.path.join(get_project_root(), "local_storage", "card_images", f"{card_number}.png")
+
+
 
         # openDeckImage = Image.open(os.path.join(os.getcwd(), "local_storage", "image", "battle_lobby", "deck.png"))
         # thumbnailImage = openDeckImage.copy()

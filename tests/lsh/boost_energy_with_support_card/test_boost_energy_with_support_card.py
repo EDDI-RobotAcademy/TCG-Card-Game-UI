@@ -1,4 +1,4 @@
-from battle_field.entity.battle_field_scene_legacy import BattleFieldSceneLegacy
+from battle_field.entity.legacy.battle_field_scene_legacy import BattleFieldSceneLegacy
 
 import tkinter
 import unittest
@@ -275,6 +275,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             # print("I'm PickableCard")
             current_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
             current_field_unit_list_length = len(current_field_unit_list)
+            print(f"current_field_unit_list_length: {current_field_unit_list_length}")
 
             # 현재 Your Field Unit에게 에너지 부착 및 도구 부착
             if current_field_unit_list_length > 0:

@@ -13,7 +13,7 @@ class YourFieldUnitRepository:
     current_field_unit_list = []
     current_field_unit_x_position = []
 
-    x_base = 300
+    x_base = 265
 
     def __new__(cls):
         if cls.__instance is None:
@@ -56,7 +56,7 @@ class YourFieldUnitRepository:
 
     def get_next_card_position(self, index):
         # TODO: 배치 간격 고려
-        current_y = 580
+        current_y = 490
         x_increment = 170
         next_x = self.x_base + x_increment * index
         return (next_x, current_y)
@@ -75,7 +75,45 @@ class YourFieldUnitRepository:
 
     def get_attached_energy_info(self):
         return self.attached_energy_info
+    def remove_card_by_id(self, card_id):
+        card_list = self.get_current_field_unit_list()
 
+        for card in card_list:
+            if card.get_card_number() == card_id:
+                card_list.remove(card)
+
+        self.current_field_unit_state.delete_current_field_unit_list(card_id)
+
+        print(f"after clear -> current_hand_list: {self.current_field_unit_state}, current_hand_state: {self.get_current_field_unit_state()}")
+    def replace_field_card_position(self):
+        current_y = 580
+        x_increment = 170
+
+        for index, current_field_unit in enumerate(self.current_field_unit_list):
+            next_x = self.x_base + x_increment * index
+            local_translation = (next_x, current_y)
+            print(f"replace_field_unit_position -> local_translation: {local_translation}")
+
+            tool_card = current_field_unit.get_tool_card()
+            tool_card.local_translate(local_translation)
+            # tool_intiial_vertices = tool_card.get_initial_vertices()
+            # tool_card.update_vertices(tool_intiial_vertices)
+
+            pickable_card_base = current_field_unit.get_pickable_card_base()
+            pickable_card_base.local_translate(local_translation)
+
+            for attached_shape in pickable_card_base.get_attached_shapes():
+                # if isinstance(attached_shape, CircleImage):
+                #     # TODO: 동그라미는 별도 처리해야함
+                #     attached_circle_shape_initial_center = attached_shape.get_initial_center()
+                #     attached_shape.update_circle_vertices(attached_circle_shape_initial_center)
+                #     continue
+
+                attached_shape.local_translate(local_translation)
+                # attached_shape_intiial_vertices = attached_shape.get_initial_vertices()
+                # attached_shape.update_vertices(attached_shape_intiial_vertices)
+
+            # current_hand_card.change_local_translation((next_x, current_y))
     def saveReceiveIpcChannel(self, receiveIpcChannel):
         self.__receiveIpcChannel = receiveIpcChannel
 

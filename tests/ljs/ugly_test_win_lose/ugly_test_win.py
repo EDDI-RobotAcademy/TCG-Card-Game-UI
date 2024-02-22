@@ -1,11 +1,4 @@
-import tkinter
-import unittest
-
 from image_shape.rectangle_image import RectangleImage
-from initializer.init_domain import DomainInitializer
-from tests.ljs.ugly_test_battle_field_functions.pre_drawed_battle_field_frame.PreDrawedBattleFieldFrameRefactorLJS import \
-    PreDrawedBattleFieldFrameRefactorLJS
-
 
 from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
 from battle_field_ui_button.battle_field_button import BattleFieldButton
@@ -14,7 +7,7 @@ from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from battle_field.components.init_location.location_initializer import LocationInitializer
 from battle_field.components.mouse_drag.drag_handler import DragHandler
 from battle_field.components.mouse_left_click.left_click_detector import LeftClickDetector
-from battle_field.entity.battle_field_scene import BattleFieldScene
+#from battle_field.entity.battle_field_scene import BattleFieldScene
 
 import tkinter
 import unittest
@@ -24,7 +17,6 @@ from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
 from battle_field.handler.support_card_handler import SupportCardHandler
-from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
@@ -32,34 +24,33 @@ from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_type import CardType
-from image_shape.circle_image import CircleImage
-from image_shape.circle_number_image import CircleNumberImage
 from initializer.init_domain import DomainInitializer
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.rectangle import Rectangle
 
-from battle_field.entity.battle_field_environment import BattleFieldEnvironment
-from battle_field.entity.opponent_deck import OpponentDeck
-from battle_field.entity.opponent_hand_panel import OpponentHandPanel
-from battle_field.entity.opponent_lost_zone import OpponentLostZone
-from battle_field.entity.opponent_main_character import OpponentMainCharacter
-from battle_field.entity.opponent_tomb import OpponentTomb
-from battle_field.entity.opponent_trap import OpponentTrap
-from battle_field.entity.opponent_unit_field import OpponentUnitField
-from battle_field.entity.turn_end_button import TurnEndButton
-from battle_field.entity.your_deck import YourDeck
-from battle_field.entity.your_hand_panel import YourHandPanel
-from battle_field.entity.your_lost_zone import YourLostZone
-from battle_field.entity.your_main_character import YourMainCharacter
-from battle_field.entity.your_tomb import YourTomb
-from battle_field.entity.your_trap import YourTrap
-from battle_field.entity.your_unit_field import YourUnitField
+from battle_field.entity.legacy.battle_field_environment import BattleFieldEnvironment
+from battle_field.entity.legacy.opponent_deck import OpponentDeck
+from battle_field.entity.legacy.opponent_hand_panel import OpponentHandPanel
+from battle_field.entity.legacy.opponent_lost_zone import OpponentLostZone
+from battle_field.entity.legacy.opponent_main_character import OpponentMainCharacter
+from battle_field.entity.legacy.opponent_tomb import OpponentTomb
+from battle_field.entity.legacy.opponent_trap import OpponentTrap
+from battle_field.entity.legacy.opponent_unit_field import OpponentUnitField
+from battle_field.entity.legacy.turn_end_button import TurnEndButton
+from battle_field.entity.legacy.your_deck import YourDeck
+from battle_field.entity.legacy.your_hand_panel import YourHandPanel
+from battle_field.entity.legacy.your_lost_zone import YourLostZone
+from battle_field.entity.legacy.your_main_character import YourMainCharacter
+from battle_field.entity.legacy.your_tomb import YourTomb
+from battle_field.entity.legacy.your_trap import YourTrap
+from battle_field.entity.legacy.your_unit_field import YourUnitField
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 
 
 class BattleFieldSceneForWinTest:
     __battle_field_repository = BattleFieldRepository.getInstance()
+
     def __init__(self):
         self.opponent_tomb = None
         self.opponent_lost_zone = None
@@ -98,7 +89,7 @@ class BattleFieldSceneForWinTest:
 
         self.create_battle_field_environment()
         self.create_turn_end_button()
-        #self.create_win_panel()
+        # self.create_win_panel()
 
     def create_opponent_tomb(self):
         self.opponent_tomb = OpponentTomb()
@@ -168,10 +159,15 @@ class BattleFieldSceneForWinTest:
     def create_win_panel(self):
         self.win_panel = WinPanel()
         self.win_panel.init_shapes()
+        self.confirm_button = GameEndConfirmButton()
+        self.confirm_button.init_shapes()
+        self.__battle_field_repository.add_battle_field_button(button=self.confirm_button)
 
     def get_win_panel(self):
         return self.win_panel.get_win_panel_shapes()
 
+    def get_confirm_button(self):
+        return self.confirm_button.get_confirm_button()
 
     def get_opponent_tomb(self):
         return self.opponent_tomb.get_tomb_shapes()
@@ -222,7 +218,6 @@ class BattleFieldSceneForWinTest:
         return self.turn_end_button.get_turn_end_button_shapes()
 
 
-
 class PreDrawedBattleFieldFrameRefactorForWinTest(OpenGLFrame):
 
     def __init__(self, master=None, **kwargs):
@@ -264,7 +259,6 @@ class PreDrawedBattleFieldFrameRefactorForWinTest(OpenGLFrame):
 
         self.battle_field_environment_shapes = self.battle_field_scene.get_battle_field_environment()
         self.turn_end_button_shapes = self.battle_field_scene.get_turn_end_button()
-
 
         self.your_hand_repository = YourHandRepository.getInstance()
         self.your_hand_repository.save_current_hand_state([8, 19, 151, 2, 9, 20, 30, 6])
@@ -364,9 +358,6 @@ class PreDrawedBattleFieldFrameRefactorForWinTest(OpenGLFrame):
         for turn_end_button_shape in self.turn_end_button_shapes:
             turn_end_button_shape.draw()
 
-
-
-
     def redraw(self):
         self.tkMakeCurrent()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
@@ -375,8 +366,6 @@ class PreDrawedBattleFieldFrameRefactorForWinTest(OpenGLFrame):
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         self.draw_base()
-
-
 
         # 필드 배치 유닛 시작
         for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
@@ -427,6 +416,8 @@ class PreDrawedBattleFieldFrameRefactorForWinTest(OpenGLFrame):
             self.battle_field_scene.create_win_panel()
             for win_panel_shape in self.battle_field_scene.get_win_panel():
                 win_panel_shape.draw()
+            for confirm_button_shape in self.battle_field_scene.get_confirm_button():
+                confirm_button_shape.draw()
 
         self.tkSwapBuffers()
 
@@ -712,7 +703,6 @@ class PreDrawedBattleFieldFrameRefactorForWinTest(OpenGLFrame):
                         proper_handler(selected_field_unit.get_index())
                         self.boost_selection = False
 
-
             selected_button = self.left_click_detector.which_one_select_is_in_extra_area((x, y),
                                                                                          self.battle_field_repository.get_battle_field_button_list(),
                                                                                          self.winfo_reqheight())
@@ -748,6 +738,7 @@ class PreDrawedBattleFieldFrameRefactorForWinTest(OpenGLFrame):
         new_rectangle.created_by_right_click = True
         return new_rectangle
 
+
 class WinPanel:
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
     __battle_field_repository = BattleFieldRepository.getInstance()
@@ -767,11 +758,10 @@ class WinPanel:
 
     def create_win_panel(self, is_win):
         win_panel = RectangleImage(self.__pre_drawed_image_instance.get_pre_draw_your_card_deck(),
-                                                vertices=[(750, 300), (1150, 300), (1150,600), (750,600)])
+                                   vertices=[(750, 200), (1150, 200), (1150, 700), (750, 700)])
         self.add_shape(win_panel)
 
-
-        text_vertices = [(850,380),(1050, 380), (1050, 530), (850,530)]
+        text_vertices = [(850, 250), (1050, 250), (1050, 400), (850, 400)]
         if is_win:
             text_image = RectangleImage(
                 image_data=self.__pre_drawed_image_instance.get_pre_draw_win_text(),
@@ -786,10 +776,51 @@ class WinPanel:
 
 
 
+        # button_image = BattleFieldButton(
+        #         image_data=self.__pre_drawed_image_instance.get_pre_draw_confirm_button(),
+        #         vertices=[(850, 490), (1050, 490), (1050, 590), (850, 590)]
+        #     )
+        #
+        # self.add_shape(button_image)
+         #self.__battle_field_repository.add_battle_field_button(button_image)
+
 
     def init_shapes(self):
-            self.create_win_panel(
-                              is_win=self.__battle_field_repository.is_win)
+        self.create_win_panel(is_win=self.__battle_field_repository.is_win)
+
+class GameEndConfirmButton:
+    __pre_drawed_image_instance = PreDrawedImage.getInstance()
+    __battle_field_function_controller = BattleFieldFunctionControllerImpl.getInstance()
+
+    def __init__(self, local_translation=(0, 0), scale=1):
+        self.shapes = []
+        self.local_translation = local_translation
+        self.scale = scale
+
+    def get_confirm_button(self):
+        return self.shapes
+
+    def add_shape(self, shape):
+        shape.local_translate(self.local_translation)
+        self.shapes.append(shape)
+
+    def create_confirm_button(self, image_data, vertices):
+        confirm_button = BattleFieldButton(image_data=image_data,
+                                            vertices=vertices)
+        self.add_shape(confirm_button)
+        return confirm_button
+
+    def init_shapes(self):
+        self.button_base = (
+            self.create_confirm_button(image_data=self.__pre_drawed_image_instance.get_pre_draw_confirm_button(),
+                vertices=[(850, 490), (1050, 490), (1050, 590), (850, 590)]))
+
+    def get_button_base(self):
+        return self.button_base
+
+    def invoke_click_event(self):
+        print("confirm_button.invoke_click_event!!!!")
+        self.__battle_field_function_controller.callGameEndReward()
 
 
 class UglyTestWin(unittest.TestCase):
@@ -801,7 +832,6 @@ class UglyTestWin(unittest.TestCase):
         root.deiconify()
 
         root.title("Win Test")
-
 
         pre_drawed_battle_field_frame = PreDrawedBattleFieldFrameRefactorForWinTest(root)
         pre_drawed_battle_field_frame.pack(fill=tkinter.BOTH, expand=1)
@@ -820,24 +850,23 @@ class UglyTestWin(unittest.TestCase):
 
         close_button = tkinter.Button(master=root, text="close")
         close_button.place(relx=0.5, rely=0.5, anchor="center")
+
         def win(event):
-            BattleFieldRepository.getInstance().is_game_over=True
-            BattleFieldRepository.getInstance().is_win=True
+            BattleFieldRepository.getInstance().is_game_over = True
+            BattleFieldRepository.getInstance().is_win = True
 
         def lose(event):
-            BattleFieldRepository.getInstance().is_game_over=True
+            BattleFieldRepository.getInstance().is_game_over = True
             BattleFieldRepository.getInstance().is_win = False
 
         def close(event):
-            BattleFieldRepository.getInstance().is_game_over=False
+            BattleFieldRepository.getInstance().is_game_over = False
 
         win_button.bind("<Button-1>", win)
         lose_button.bind("<Button-1>", lose)
         close_button.bind("<Button-1>", close)
 
         root.mainloop()
-
-
 
 
 if __name__ == '__main__':

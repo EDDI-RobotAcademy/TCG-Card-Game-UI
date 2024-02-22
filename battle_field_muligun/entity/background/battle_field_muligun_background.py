@@ -1,3 +1,5 @@
+from screeninfo import get_monitors
+
 from image_shape.rectangle_image import RectangleImage
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
@@ -11,6 +13,7 @@ class BattleFieldMuligunBackground:
         self.scale = scale
 
     def get_battle_field_muligun_background_shape_list(self):
+        print(f"get_battle_field_muligun_background_shape_list(): {self.shapes}")
         return self.shapes
 
     def change_local_translation(self, _translation):
@@ -25,8 +28,16 @@ class BattleFieldMuligunBackground:
                                            vertices=vertices)
         self.add_shape(tomb_illustration)
 
-    def init_shapes(self):
-        self.__pre_drawed_image_instance.pre_draw_opponent_tomb()
+    def init_shapes(self, width, height):
+        print(f"muligun_background init_shapes() -> width: {width}, height: {height}")
+
+        self.__pre_drawed_image_instance.pre_draw_battle_field_muligun_background(width, height)
+        # print(f"background: {self.__pre_drawed_image_instance.get_pre_draw_battle_field_muligun_background()}")
 
         self.create_battle_field_muligun_background(image_data=self.__pre_drawed_image_instance.get_pre_draw_battle_field_muligun_background(),
-                                                    vertices=[(0, 0), (1920, 0), (1920, 1043), (0, 1043)])
+                                                    vertices=[
+                                                        (0, 0),
+                                                        (width, 0),
+                                                        (width, height),
+                                                        (0, height)
+                                                    ])

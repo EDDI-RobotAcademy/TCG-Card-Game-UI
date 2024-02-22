@@ -1,3 +1,5 @@
+from common.card_grade import CardGrade
+from common.card_race import CardRace
 from common.card_type import CardType
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
@@ -65,6 +67,7 @@ class FixedUnitCardInsideHandler:
         elif card_type == CardType.ENERGY.value:
             self.handle_energy_card(placed_card_index, your_unit_index, selected_object)
 
+
     def handle_tool_card(self, placed_card_index):
         print("도구를 붙입니다!")
         # self.your_hand_repository.remove_card_by_id(placed_card_id)
@@ -81,14 +84,45 @@ class FixedUnitCardInsideHandler:
         your_fixed_field_unit = self.your_field_unit_repository.find_field_unit_by_index(your_unit_index)
         fixed_card_base = your_fixed_field_unit.get_fixed_card_base()
         fixed_card_attached_shape_list = fixed_card_base.get_attached_shapes()
+        placed_card_id = selected_object.get_card_number()
+        print(f"placed_card_id : {placed_card_id}")
+        print(f"card grade : {self.card_info.getCardGradeForCardNumber(placed_card_id)}")
 
         attached_energy_count = self.your_field_unit_repository.get_attached_energy_info().get_energy_at_index(your_unit_index)
 
+        # todo : 특수에너지의 갯수가 많아지면 카드 넘버로 특정 지어야 함
+        # todo : 이미지가 추가되면 pre_drawed를 설정 후 불러와야함
+        if self.card_info.getCardGradeForCardNumber(placed_card_id) == CardGrade.HERO.value:
+             # card_freezing_image_circle = your_fixed_field_unit.creat_fixed_card_freezing_image_circle(image_data=self.__pre_drawed_image_instance.,
+             #                                                                                           vertices=(45, 150),
+             #                                                                                           local_translation=fixed_card_base.get_local_translation()
+             #                                                                                           )
+             # card_dark_flame_image_circle = your_fixed_field_unit.creat_fixed_card_dark_flame_image_circle(image_data=self.__pre_drawed_image_instance.,
+             #                                                                                               vertices=(60, 150),
+             #                                                                                               local_translation=fixed_card_base.get_local_translation()
+             #                                                                                               )
+             # fixed_card_base.set_attached_shapes(card_freezing_image_circle)
+             # fixed_card_base.set_attached_shapes(card_dark_flame_image_circle)
+             pass
+
+        # 에너지 circle부분 확인 후 교체작업
         for fixed_card_attached_shape in fixed_card_attached_shape_list:
             if isinstance(fixed_card_attached_shape, CircleNumberImage):
                 if fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
                     fixed_card_attached_shape.set_image_data(self.__pre_drawed_image_instance.get_pre_draw_number_image(attached_energy_count))
                     print(f"changed energy: {fixed_card_attached_shape.get_circle_kinds()}")
+
+
+        # 에너지 카드의 종족의 따라 circle 색이 달라짐
+        # todo : race에 따른 circle color 추가 요망
+        card_race = self.card_info.getCardRaceForCardNumber(placed_card_id)
+        if card_race == CardRace.UNDEAD.value:
+            card_race_circle = your_fixed_field_unit.creat_fixed_card_energy_race_circle(color=(0, 0, 0, 1),
+                                                                                         vertices=(0, (attached_energy_count * 10) + 20),
+                                                                                         local_translation=fixed_card_base.get_local_translation())
+            fixed_card_base.set_attached_shapes(card_race_circle)
+
+        fixed_card_base.draw()
 
 
         print(f"에너지 상태: {self.your_field_unit_repository.get_attached_energy_info().get_energy_at_index(your_unit_index)}")

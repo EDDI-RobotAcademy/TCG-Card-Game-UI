@@ -78,6 +78,7 @@ class UnitCard:
         self.add_shape(unit_energy_circle)
 
     def create_unit_race_illustration_circle(self, image_data, center, radius):
+        # print(f"create_unit_race_illustration_circle -> center: {center}")
         unit_race_circle = CircleImage(image_data=image_data,
                                        center=center,
                                        radius=radius)

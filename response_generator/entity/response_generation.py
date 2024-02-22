@@ -22,5 +22,7 @@ class ResponseGeneration(Enum):
     EXECUTE_SHOP_GACHA_RESPONSE_FORM = 72
     FREE_BUY_CARD = 73
 
+    GAME_SURRENDER = 4443
+
     PROGRAM_EXIT = 4444
 

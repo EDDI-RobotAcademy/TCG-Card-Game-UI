@@ -48,7 +48,9 @@ class LeftClickDetector:
         print(f"x: {x}, y: {y}")
 
         for button in battle_field_button_list:
+            print(f"button: {button}")
             button_base = button.get_button_base()
+            print(f"button_base: {button_base}")
             if button_base.is_point_inside((x, y)):
                 return button
 
