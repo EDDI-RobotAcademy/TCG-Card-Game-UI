@@ -487,7 +487,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             #     self.return_to_initial_location()
 
             # 당신(Your) Field에 던진 카드
-            drop_action_result = self.field_area_inside_handler.handle_card_drop(x, y, self.selected_object)
+            self.field_area_inside_handler.set_width_ratio(self.width_ratio)
+            self.field_area_inside_handler.set_height_ratio(self.height_ratio)
+
+            drop_action_result = self.field_area_inside_handler.handle_card_drop(x, y, self.selected_object, self.battle_field_unit_place_panel)
             if drop_action_result is None or drop_action_result is FieldAreaAction.Dummy:
                 print("self.field_area_inside_handler.get_field_area_action() = None")
                 self.return_to_initial_location()
