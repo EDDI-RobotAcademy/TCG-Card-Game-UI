@@ -518,8 +518,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             attached_energy_count = self.your_field_unit_repository.get_attached_energy_info().get_energy_at_index(unit_index)
                             self.your_hand_repository.replace_hand_card_position()
 
-                            card_id = current_field_unit.get_card_number()
-                            self.your_tomb_repository.create_tomb_card(card_id)
+                            # card_id = current_field_unit.get_card_number()
+                            # self.your_tomb_repository.create_tomb_card(card_id)
                             self.your_tomb_repository.create_tomb_card(placed_card_id)
                             # TODO: attached_energy 값 UI에 표현 (이미지 작업 미완료)
 
