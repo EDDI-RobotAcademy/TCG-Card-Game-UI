@@ -119,6 +119,9 @@ class FieldAreaInsideHandler:
         self.__your_hand_repository.create_additional_hand_card_list(drawn_deck_card_list)
         self.__your_hand_repository.remove_card_by_index(placed_card_index)
 
+        self.__your_tomb_repository.create_tomb_card(20)
+        print(f"handle_support_card_draw_deck() -> current_tomb_unit_list: {self.__your_tomb_repository.get_current_tomb_state()}")
+
         self.__field_area_action = FieldAreaAction.DRAW_DECK
         return self.__field_area_action
 
@@ -128,8 +131,8 @@ class FieldAreaInsideHandler:
         support_card_handler = self.__field_area_inside_handler_table[placed_card_id]
         support_card_action = support_card_handler(placed_card_id, placed_card_index)
 
-        tomb_state = self.__your_tomb_repository.current_tomb_state
-        tomb_state.place_unit_to_tomb(placed_card_id)
+        # tomb_state = self.__your_tomb_repository.current_tomb_state
+        # tomb_state.place_unit_to_tomb(placed_card_id)
         self.__your_hand_repository.replace_hand_card_position()
 
         return support_card_action
