@@ -183,10 +183,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
 
-        self.your_tomb_repository.create_tomb_card(93)
-        self.your_tomb_repository.create_tomb_card(31)
-        self.your_tomb_repository.create_tomb_card(32)
-        self.your_tomb_repository.create_tomb_card_list()
+        # self.your_tomb_repository.create_tomb_card(93)
+        # self.your_tomb_repository.create_tomb_card(31)
+        # self.your_tomb_repository.create_tomb_card(32)
+        # self.your_tomb_repository.create_tomb_card_list()
 
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
@@ -357,6 +357,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             self.tomb_panel_popup_rectangle.draw()
 
             for tomb_unit in self.your_tomb_repository.get_current_tomb_unit_list():
+                print(f"tomb_unit: {tomb_unit}")
                 attached_tool_card = tomb_unit.get_tool_card()
                 if attached_tool_card is not None:
                     attached_tool_card.set_width_ratio(self.width_ratio)
@@ -481,7 +482,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             print("아군에게 아이템 사용")
 
                             # 우선 '사기 전환'이라 가정
-                            fixed_field_unit_hp = self.card_info_repository.getCardHpForCardNumber(current_field_unit.get_card_number())
+                            card_id = current_field_unit.get_card_number()
+                            fixed_field_unit_hp = self.card_info_repository.getCardHpForCardNumber(card_id)
                             acquire_energy = round(fixed_field_unit_hp / 5)
                             print(f"acquire_energy: {acquire_energy}")
 
@@ -490,6 +492,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             self.your_field_unit_repository.remove_card_by_index(unit_index)
 
                             self.your_hand_repository.replace_hand_card_position()
+
+                            self.your_tomb_repository.create_tomb_card(card_id)
+                            self.your_tomb_repository.create_tomb_card(placed_card_id)
 
                             print(f"사기 전환 이후 필드 에너지 수량: {self.your_field_energy_repository.get_your_field_energy()}")
 
@@ -512,6 +517,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                             attached_energy_count = self.your_field_unit_repository.get_attached_energy_info().get_energy_at_index(unit_index)
                             self.your_hand_repository.replace_hand_card_position()
+
+                            card_id = current_field_unit.get_card_number()
+                            self.your_tomb_repository.create_tomb_card(card_id)
+                            self.your_tomb_repository.create_tomb_card(placed_card_id)
                             # TODO: attached_energy 값 UI에 표현 (이미지 작업 미완료)
 
                             # TODO: 특수 에너지 붙인 것을 어떻게 표현 할 것인가 ? (아직 미정)
@@ -791,7 +800,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 self.winfo_reqheight())
 
             if self.tomb_panel_selected:
-                print(f"current_tomb_unit_list test: {self.your_tomb_repository.get_current_tomb_state()}")
+                print(f"on_canvas_left_click() -> current_tomb_unit_list: {self.your_tomb_repository.get_current_tomb_state()}")
                 self.your_tomb.create_tomb_panel_popup_rectangle()
                 self.tomb_panel_popup_rectangle = self.your_tomb.get_tomb_panel_popup_rectangle()
                 return
