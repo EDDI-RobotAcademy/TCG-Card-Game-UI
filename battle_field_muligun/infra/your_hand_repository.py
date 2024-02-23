@@ -9,6 +9,7 @@ class YourHandRepository:
     current_hand_card_list = []
     current_hand_card_x_position = []
     select_change_card_id_list = []
+    card_dic = {}
 
     x_base_muligun = 120 # 멀리건에서의 맨 처음 카드 위치.
 
@@ -51,12 +52,23 @@ class YourHandRepository:
         hand_card_state = self.get_current_hand_state() # 카드 number
         hand_card_list = self.get_current_hand_card_list() # 카드 object
 
-        for index in sorted(select_card_list.keys(), reverse=True):
+        for card_number, card_object in zip(hand_card_state, hand_card_list):
+            self.card_dic[card_object] = card_number
 
-            hand_card_state.pop(index)
-            hand_card_list.pop(index)
+        card_dic = self.get_card_dic()
+        print(f"card_dic: {card_dic}")
 
-        print(f"after- 상태: {hand_card_state}, 오브젝트: {hand_card_list}")
+        for card_object in select_card_list.values():
+            hand_card_list.remove(card_object)
+            if card_object in card_dic.keys():
+                hand_card_state.remove(card_dic.get(card_object))
+
+        print(f"<after> 상태: {hand_card_state}, 오브젝트: {hand_card_list}")
+
+    def get_card_dic(self):
+        return self.card_dic
+
+
 
     # 서버로 교체할 카드의 아이디를 보내주기 위해 저장.
     def select_card_id_list(self, select_card_list):
@@ -100,10 +112,8 @@ class YourHandRepository:
         print("BattleFieldMeligunFrameRepositoryImpl: saveReceiveIpcChannel()")
         self.__receiveIpcChannel = receiveIpcChannel
 
-    def requestBattleDeckCard(self, battleDeckCardRequest):
-        self.__transmitIpcChannel.put(battleDeckCardRequest)
-        return self.__receiveIpcChannel.get()
-
     def requestMuligun(self, muligunRequest):
         self.__transmitIpcChannel.put(muligunRequest)
+        print("여기까지 왔냐?")
         return self.__receiveIpcChannel.get()
+
