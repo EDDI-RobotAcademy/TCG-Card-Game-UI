@@ -1,19 +1,11 @@
 from battle_field.infra.battle_field_repository import BattleFieldRepository
+from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field_function.repository.battle_field_function_repository_impl import BattleFieldFunctionRepositoryImpl
 from battle_field_function.service.battle_field_function_service import BattleFieldFunctionService
 from battle_field_function.service.request.game_end_reward_request import GameEndRewardRequest
-from battle_field_function.service.request.mulligan_request import MulliganRequest
 from battle_field_function.service.request.surrender_request import SurrenderRequest
 from battle_field_function.service.request.turn_end_request import TurnEndRequest
-from battle_field_function.service.request.unit_attack_request import UnitAttackRequest
-from battle_field_function.service.request.use_energy_card_request import UseEnergyCardRequest
-from battle_field_function.service.request.use_environment_card_request import UseEnvironmentCardRequest
-from battle_field_function.service.request.use_item_card_request import UseItemCardRequest
-from battle_field_function.service.request.use_special_energy_card_request import UseSpecialEnergyCardRequest
-from battle_field_function.service.request.use_support_card_request import UseSupportCardRequest
-from battle_field_function.service.request.use_tool_card_request import UseToolCardRequest
-from battle_field_function.service.request.use_trap_card_request import UseTrapCardRequest
-from battle_field_function.service.request.use_unit_card_request import UseUnitCardRequest
+
 from session.repository.session_repository_impl import SessionRepositoryImpl
 from session.service.session_service_impl import SessionServiceImpl
 
@@ -26,6 +18,8 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             cls.__instance.__battleFieldFunctionRepository = BattleFieldFunctionRepositoryImpl.getInstance()
             cls.__instance.__sessionRepository = SessionRepositoryImpl.getInstance()
             cls.__instance.__sessionService = SessionServiceImpl.getInstance()
+            cls.__instance.__yourHandRepository = YourHandRepository.getInstance()
+            #cls.__instance.__opponentHandRepository = OpponentHandRepository.getInstance()
         return cls.__instance
 
     @classmethod
@@ -83,5 +77,53 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
                 BattleFieldRepository.getInstance().game_end()
         except Exception as e:
             print(f"turnEnd Error: {e}")
+
+    def drawYourCard(self, notify_dict_data):
+        for data in notify_dict_data.values():
+            card_list = data["You"]
+            self.__yourHandRepository.save_current_hand_state(card_list)
+
+    def drawOpponentCard(self, notify_dict_data):
+        #todo : 아직 opponentHandRepository가 없음.
+        # 상대가 뽑은 카드 갯수 만큼 rendering해야함
+        for data in notify_dict_data.values():
+            card_count = data["Opponent"]
+            #self.__opponentHandRepository.add_card_state(card_count)
+
+
+    def useHandCard(self, notify_dict_data):
+        for data in notify_dict_data.values():
+            card_data = data["Opponent"]
+            #todo : 상대방이 낸 카드를 사용하는 기능을 연결
+
+    def useDeckCardList(self, notify_dict_data):
+        for data in notify_dict_data.values():
+            card_list = data["Opponent"]
+            #Todo : 상대방의 덱에서 직접 카드를 사용하는 기능을 연결
+
+
+    def attachFieldUnitEnergy(self, notify_dict_data):
+        for data in notify_dict_data.values():
+            for target_character in data.keys():
+                for target_unit_index in data[target_character].keys():
+                    for energy_race in data[target_character][target_unit_index]["attached_energy_map"].keys():
+                        race_energy_count = data[target_character][target_unit_index]["attached_energy_map"][energy_race]
+                        total_energy_count = data[target_character][target_unit_index]["total_energy_map"]
+
+                        #todo :
+                        # target_character => You || Opponent
+                        # target_unit_index => 필드에 존재하는 유닛의 index값
+                        # energy_race => 에너지의 종족값
+                        # race_energy_count => 해당 종족 에너지의 총 갯수
+                        # total_energy_count => 모든 종족 에너지의 총 합
+
+    def searchOpponentCount(self, notify_dict_data):
+        for data in notify_dict_data.values():
+            search_count = data["Opponent"]
+
+
+    def searchYourCardList(self, notify_dict_data):
+        for data in notify_dict_data.values():
+            search_card_list = data["You"]
 
 
