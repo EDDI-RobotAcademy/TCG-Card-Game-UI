@@ -29,7 +29,7 @@ if __name__ == "__main__":
     receiverController.requestToInjectSocketClient(clientSocket)
 
     notifyReaderController = NotifyReaderControllerImpl.getInstance()
-
+    notifyReaderController.requestToMappingNoticeWithFunction()
 
     uiFrameController = UiFrameControllerImpl.getInstance()
     uiFrameController.requestToCreateUiFrame()

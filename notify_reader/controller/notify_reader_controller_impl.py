@@ -20,6 +20,7 @@ class NotifyReaderControllerImpl(NotifyReaderController):
 
     def requestToMappingNoticeWithFunction(self):
         #todo : 함수를 등록해주세요
+
         hand_use_function = "hand_use_function"
         self.__notifyReaderService.saveHandUseFunction(hand_use_function)
 
@@ -35,4 +36,4 @@ class NotifyReaderControllerImpl(NotifyReaderController):
         self.__notifyReaderService.readNoticeAndCallFunction()
 
     def requestToInjectNoWaitIpcChannel(self, no_wait_ipc_channel):
-        self.__notifyReaderService.requestToInjectNoWaitIpcChannel(no_wait_ipc_channel)
+        self.__notifyReaderService.injectNoWaitIpcChannel(no_wait_ipc_channel)
