@@ -15,6 +15,7 @@ from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
     OpponentFixedUnitCardInsideHandler
 from battle_field.entity.opponent_tomb import OpponentTomb
+from battle_field.entity.tomb_type import TombType
 from battle_field.entity.your_tomb import YourTomb
 from battle_field.handler.support_card_handler import SupportCardHandler
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
@@ -102,6 +103,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_tomb = OpponentTomb()
         self.opponent_tomb_popup_rectangle_panel = None
         self.opponent_tomb_panel_selected = False
+
+        self.selected_tomb = TombType.Dummy
 
         self.opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
         # self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance()
@@ -366,6 +369,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             self.lightning_border.draw_lightning_border()
 
         if self.tomb_panel_selected:
+        # if self.selected_tomb is TombType.Your:
             glEnable(GL_BLEND)
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
@@ -396,6 +400,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             glDisable(GL_BLEND)
 
         if self.opponent_tomb_panel_selected:
+        # elif self.selected_tomb is TombType.Opponent:
             glEnable(GL_BLEND)
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
@@ -689,9 +694,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             if self.tomb_panel_selected:
                 if self.your_tomb.is_point_inside_popup_rectangle((x, y)):
                     return
-                else:
-                    self.tomb_panel_selected = False
 
+            if self.opponent_tomb_panel_selected:
+                if self.opponent_tomb.is_point_inside_popup_rectangle((x, y)):
+                    return
+
+            self.tomb_panel_selected = False
+            self.opponent_tomb_panel_selected = False
 
             for hand_card in self.hand_card_list:
                 if isinstance(hand_card, PickableCard):
@@ -852,6 +861,20 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             self.tomb_panel_selected = False
             self.opponent_tomb_panel_selected = False
+
+            # self.selected_tomb = self.left_click_detector.which_tomb_did_you_select(
+            #     (x, y),
+            #     self.your_tomb,
+            #     self.opponent_tomb,
+            #     self.winfo_reqheight())
+            #
+            # if self.selected_tomb is TombType.Your:
+            #     self.your_tomb.create_tomb_panel_popup_rectangle()
+            #     self.tomb_panel_popup_rectangle = self.your_tomb.get_tomb_panel_popup_rectangle()
+            #
+            # elif self.selected_tomb is TombType.Opponent:
+            #     self.opponent_tomb.create_opponent_tomb_panel_popup_rectangle()
+            #     self.opponent_tomb_popup_rectangle_panel = self.opponent_tomb.get_opponent_tomb_panel_popup_rectangle()
 
         except Exception as e:
             print(f"Exception in on_canvas_click: {e}")
