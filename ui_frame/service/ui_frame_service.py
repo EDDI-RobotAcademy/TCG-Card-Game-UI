@@ -41,6 +41,9 @@ class UiFrameService(abc.ABC):
     # @abc.abstractmethod
     # def registerMyDeckRegisterUiFrame(self, myDeckRegisterFrame):
     #     pass
+    @abc.abstractmethod
+    def registerBattleFieldMuligunUiFrame(self, battleFieldMuligunFrame):
+        pass
 
     @abc.abstractmethod
     def injectTransmitIpcChannel(self, transmitIpcChannel):

@@ -14,9 +14,11 @@ from battle_field.components.mouse_left_click.left_click_detector import LeftCli
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area_action import OpponentFieldAreaAction
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
     OpponentFixedUnitCardInsideHandler
+from battle_field.entity.opponent_tomb import OpponentTomb
 from battle_field.entity.your_tomb import YourTomb
 from battle_field.handler.support_card_handler import SupportCardHandler
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
+from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
@@ -95,13 +97,19 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.tomb_panel_popup_rectangle = None
         self.tomb_panel_selected = False
 
+        self.opponent_tomb_repository = OpponentTombRepository.getInstance()
+        self.opponent_tomb_panel = None
+        self.opponent_tomb = OpponentTomb()
+        self.opponent_tomb_popup_rectangle_panel = None
+        self.opponent_tomb_panel_selected = False
+
         self.opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
         # self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance()
         self.field_area_inside_handler = FieldAreaInsideHandler.getInstance()
         # TODO: Your 카드에 집어넣는 경우도 이것으로 감지하는 것이 더 좋을 것임
         self.your_fixed_unit_card_inside_handler = None
         self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance()
-        self.your_tomb_repository = YourTombRepository.getInstance()
+        # self.your_tomb_repository = YourTombRepository.getInstance()
 
         self.left_click_detector = LeftClickDetector.getInstance()
 
@@ -159,6 +167,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_tomb.set_total_window_size(self.width, self.height)
         self.your_tomb.create_your_tomb_panel()
         self.your_tomb_panel = self.your_tomb.get_your_tomb_panel()
+
+        self.opponent_tomb.set_total_window_size(self.width, self.height)
+        self.opponent_tomb.create_opponent_tomb_panel()
+        self.opponent_tomb_panel = self.opponent_tomb.get_opponent_tomb_panel()
 
         # 1848 기준 -> 1848 - (105 * 5 + 170 * 4) = 643
         # 643 / 2 = 321.5
@@ -238,6 +250,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_tomb.set_height_ratio(self.height_ratio)
         self.your_tomb_panel.set_draw_border(False)
         self.your_tomb_panel.draw()
+
+        self.opponent_tomb.set_width_ratio(self.width_ratio)
+        self.opponent_tomb.set_height_ratio(self.height_ratio)
+        self.opponent_tomb_panel.set_draw_border(False)
+        self.opponent_tomb_panel.draw()
 
         glDisable(GL_BLEND)
 
@@ -357,7 +374,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             self.tomb_panel_popup_rectangle.draw()
 
             for tomb_unit in self.your_tomb_repository.get_current_tomb_unit_list():
-                print(f"tomb_unit: {tomb_unit}")
+                # print(f"tomb_unit: {tomb_unit}")
                 attached_tool_card = tomb_unit.get_tool_card()
                 if attached_tool_card is not None:
                     attached_tool_card.set_width_ratio(self.width_ratio)
@@ -365,6 +382,36 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     attached_tool_card.draw()
 
                 fixed_card_base = tomb_unit.get_fixed_card_base()
+                fixed_card_base.set_width_ratio(self.width_ratio)
+                fixed_card_base.set_height_ratio(self.height_ratio)
+                fixed_card_base.draw()
+
+                attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                for attached_shape in attached_shape_list:
+                    attached_shape.set_width_ratio(self.width_ratio)
+                    attached_shape.set_height_ratio(self.height_ratio)
+                    attached_shape.draw()
+
+            glDisable(GL_BLEND)
+
+        if self.opponent_tomb_panel_selected:
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+            self.opponent_tomb_popup_rectangle_panel.set_width_ratio(self.width_ratio)
+            self.opponent_tomb_popup_rectangle_panel.set_height_ratio(self.height_ratio)
+            self.opponent_tomb_popup_rectangle_panel.draw()
+
+            for opponent_tomb_unit in self.opponent_tomb_repository.get_opponent_tomb_unit_list():
+                # print(f"tomb_unit: {opponent_tomb_unit}")
+                attached_tool_card = opponent_tomb_unit.get_tool_card()
+                if attached_tool_card is not None:
+                    attached_tool_card.set_width_ratio(self.width_ratio)
+                    attached_tool_card.set_height_ratio(self.height_ratio)
+                    attached_tool_card.draw()
+
+                fixed_card_base = opponent_tomb_unit.get_fixed_card_base()
                 fixed_card_base.set_width_ratio(self.width_ratio)
                 fixed_card_base.set_height_ratio(self.height_ratio)
                 fixed_card_base.draw()
@@ -549,49 +596,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             y *= -1
 
-            # if self.is_drop_location_valid_battle_field_panel(x, y):
-            #     placed_card_id = self.selected_object.get_card_number()
-            #     print(f"on_canvas_release -> placed_card_id: {placed_card_id}")
-            #
-            #     card_type = self.card_info_repository.getCardTypeForCardNumber(placed_card_id)
-            #     if card_type == CardType.UNIT.value:
-            #         # TODO: Memory Leak 발생하지 않도록 좀 더 꼼꼼하게 리소스 해제 하는지 확인해야함
-            #         self.your_hand_repository.remove_card_by_id(placed_card_id)
-            #         self.your_field_unit_repository.create_field_unit_card(placed_card_id)
-            #         self.your_field_unit_repository.save_current_field_unit_state(placed_card_id)
-            #
-            #         # 카드 구성하는 모든 도형에 local_translation 적용
-            #         self.your_hand_repository.replace_hand_card_position()
-            #
-            #         self.selected_object = None
-            #         return
-            #
-            #     if card_type == CardType.SUPPORT.value:
-            #         print("서포트 카드 사용 감지!")
-            #         self.selected_object = None
-            #         self.prev_selected_object = None
-            #
-            #         # 현재 필드에 존재하는 모든 유닛에 Lightning Border
-            #         for fixed_field_unit_card in self.your_field_unit_repository.get_current_field_unit_list():
-            #             print("에너지 부스팅 준비")
-            #             card_base = fixed_field_unit_card.get_fixed_card_base()
-            #             self.your_field_unit_lightning_border_list.append(card_base)
-            #             self.current_process_card_id = placed_card_id
-            #
-            #         self.your_hand_repository.remove_card_by_id(placed_card_id)
-            #
-            #         tomb_state = self.your_tomb_repository.current_tomb_state
-            #         tomb_state.place_unit_to_tomb(placed_card_id)
-            #         self.your_hand_repository.replace_hand_card_position()
-            #
-            #         self.boost_selection = True
-            #
-            #         return
-            #
-            #     self.return_to_initial_location()
-            # else:
-            #     self.return_to_initial_location()
-
             # 당신(Your) Field에 던진 카드
             self.field_area_inside_handler.set_width_ratio(self.width_ratio)
             self.field_area_inside_handler.set_height_ratio(self.height_ratio)
@@ -680,6 +684,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         try:
             x, y = event.x, event.y
             y = self.winfo_reqheight() - y
+            print(f"x: {x}, y: {y}")
 
             if self.tomb_panel_selected:
                 if self.your_tomb.is_point_inside_popup_rectangle((x, y)):
@@ -766,8 +771,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     self.your_tomb_repository.create_tomb_card(
                         self.opponent_fixed_unit_card_inside_handler.get_your_hand_card_id())
                     # TODO: 상대편은 상대 무덤으로 이동해야함
-                    # self.opponent_tomb_repository.create_tomb_card(
-                    #     self.opponent_fixed_unit_card_inside_handler.get_opponent_unit_id())
+                    self.opponent_tomb_repository.create_opponent_tomb_card(
+                        self.opponent_fixed_unit_card_inside_handler.get_opponent_unit_id())
 
                     self.your_hand_repository.replace_hand_card_position()
 
@@ -827,9 +832,26 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 print(f"on_canvas_left_click() -> current_tomb_unit_list: {self.your_tomb_repository.get_current_tomb_state()}")
                 self.your_tomb.create_tomb_panel_popup_rectangle()
                 self.tomb_panel_popup_rectangle = self.your_tomb.get_tomb_panel_popup_rectangle()
+
+                self.opponent_tomb_panel_selected = False
+                return
+
+            self.opponent_tomb_panel_selected = self.left_click_detector.which_one_select_is_in_opponent_tomb_area(
+                (x, y),
+                self.opponent_tomb,
+                self.winfo_reqheight())
+
+            if self.opponent_tomb_panel_selected:
+                print(
+                    f"on_canvas_left_click() -> current_tomb_unit_list: {self.opponent_tomb_repository.get_opponent_tomb_state()}")
+                self.opponent_tomb.create_opponent_tomb_panel_popup_rectangle()
+                self.opponent_tomb_popup_rectangle_panel = self.opponent_tomb.get_opponent_tomb_panel_popup_rectangle()
+
+                self.tomb_panel_selected = False
                 return
 
             self.tomb_panel_selected = False
+            self.opponent_tomb_panel_selected = False
 
         except Exception as e:
             print(f"Exception in on_canvas_click: {e}")
@@ -860,9 +882,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         return new_rectangle
 
 
-class TestResizableUnitHpToFieldEnergy(unittest.TestCase):
+class TestResizableDeathSiceWithOpponentTomb(unittest.TestCase):
 
-    def test_resizable_unit_hp_to_field_energy(self):
+    def test_resizable_death_sice_with_opponent_tomb(self):
         DomainInitializer.initEachDomain()
 
         root = tkinter.Tk()

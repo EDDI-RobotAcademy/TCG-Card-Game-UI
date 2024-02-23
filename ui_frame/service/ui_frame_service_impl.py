@@ -63,6 +63,10 @@ class UiFrameServiceImpl(UiFrameService):
     #     print(f"{Fore.GREEN}UiFrameServiceImpl: registerMyDeckRegisterUiFrame(){Style.RESET_ALL}")
     #     self.__uiFrameRepository.registerUiFrame("my-deck-register", myDeckRegisterFrame)
 
+    def registerBattleFieldMuligunUiFrame(self, battleFieldMuligunFrame):
+        print(f"{Fore.GREEN}UiFrameServiceImpl: registerBuyRandomCardUiFrame(){Style.RESET_ALL}")
+        self.__uiFrameRepository.registerUiFrame("battle-field-muligun", battleFieldMuligunFrame)
+
     def registerBattleFieldUiFrame(self, battleFieldFrame):
         print(f"{Fore.GREEN}UiFrameServiceImpl: registerBattleFieldUiFrame(){Style.RESET_ALL}")
         self.__uiFrameRepository.registerUiFrame("battle-field", battleFieldFrame)
