@@ -50,5 +50,5 @@ if __name__ == "__main__":
     taskWorkerService.createTaskWorker("UI", uiFrameController.requestToStartPrintGameUi)
     taskWorkerService.executeTaskWorker("UI")
 
-    taskWorkerService.createTaskWorker("MusicPlayer", musicPlayerController.playBackgroundMusic)
-    taskWorkerService.executeTaskWorker("MusicPlayer")
+    # taskWorkerService.createTaskWorker("MusicPlayer", musicPlayerController.playBackgroundMusic)
+    # taskWorkerService.executeTaskWorker("MusicPlayer")

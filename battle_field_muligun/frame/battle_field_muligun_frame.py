@@ -1,9 +1,9 @@
 import tkinter
-import unittest
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
+from screeninfo import get_monitors
 
 from battle_field_muligun.infra.your_hand_repository import YourHandRepository
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
@@ -16,11 +16,22 @@ class BattleFieldMuligunFrame(OpenGLFrame):
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
 
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
+        monitors = get_monitors()
+        target_monitor = monitors[2] if len(monitors) > 2 else monitors[0]
 
-        self.width = screen_width
-        self.height = screen_height
+        self.width = target_monitor.width
+        self.height = target_monitor.height
+
+        self.is_reshape_not_complete = True
+
+        self.current_width = self.width
+        self.current_height = self.height
+
+        self.prev_width = self.width
+        self.prev_height = self.height
+
+        self.width_ratio = 1.0
+        self.height_ratio = 1.0
 
         self.click_card_effect_rectangle = None
         self.selected_object = None
@@ -42,11 +53,12 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         self.ok_button = self.create_ok_button()
 
         self.your_hand_repository = YourHandRepository.getInstance()
+        # print(f"your_hand_repo: {self.your_hand_repository.get_current_hand_state()}")
         # self.your_hand_repository.save_current_hand_state([6, 8, 19, 20, 151])
+        print("Call Muligun Frame Constructor")
 
-        self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
-        self.hand_card_state = self.your_hand_repository.get_current_hand_state()
-        self.your_hand_repository.create_hand_card_list()
+        self.hand_card_list = None
+        self.hand_card_state = None
 
         # self.select_card_id = self.your_hand_repository.select_card_id_list()
         # self.delete_select_card = self.your_hand_repository.delete_select_card()
@@ -61,14 +73,50 @@ class BattleFieldMuligunFrame(OpenGLFrame):
 
         self.tkMakeCurrent()
 
+    def init_first_window(self, width, height):
+        print(f"Operate Only Once -> width: {width}, height: {height}")
+        self.width = width
+        self.height = height
+
+        self.current_width = self.width
+        self.current_height = self.height
+
+        self.prev_width = self.width
+        self.prev_height = self.height
+        self.is_reshape_not_complete = False
+
+        self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
+        self.hand_card_state = self.your_hand_repository.get_current_hand_state()
+        self.your_hand_repository.create_hand_card_list()
+
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
+
+        if self.is_reshape_not_complete:
+            self.init_first_window(width, height)
+
+        self.current_width = width
+        self.current_height = height
+
+        self.width_ratio = self.current_width / self.prev_width
+        self.height_ratio = self.current_height / self.prev_height
+
+        self.width_ratio = min(self.width_ratio, 1.0)
+        self.height_ratio = min(self.height_ratio, 1.0)
+
+        self.prev_width = self.current_width
+        self.prev_height = self.current_height
+
         glViewport(0, 0, width, height)
         glMatrixMode(GL_PROJECTION)
         glLoadIdentity()
         gluOrtho2D(0, width, height, 0)
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
+
+    def start_redraw_loop(self):
+        print(f"start_redraw_loop")
+        self.after(17, self.redraw)
 
     def on_resize(self, event):
         self.reshape(event.width, event.height)
@@ -78,18 +126,20 @@ class BattleFieldMuligunFrame(OpenGLFrame):
             battle_field_muligun_background_shape.draw()
 
     def redraw(self):
-        print("프레임 잘 들어오냐고~~~~")
+        print("redrawing")
+        if self.is_reshape_not_complete:
+            return
+
         self.tkMakeCurrent()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         self.draw_base()
-        print("배경 그려짐?~~~~")
+        self.alpha_background.draw()
 
         # glDisable(GL_BLEND)
-
-        self.alpha_background.draw()
 
         if self.ok_button_visible is True:
             self.ok_button.draw()
