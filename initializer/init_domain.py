@@ -8,6 +8,7 @@ from client_socket.service.client_socket_service_impl import ClientSocketService
 from account_login_frame.service.login_menu_frame_service_impl import LoginMenuFrameServiceImpl
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
 from music_player.controller.music_player_controller_impl import MusicPlayerControllerImpl
+from notify_reader.controller.notify_reader_controller_impl import NotifyReaderControllerImpl
 from opengl_battle_field_card_controller.card_controller_impl import CardControllerImpl
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from receiver.controller.receiver_controller_impl import ReceiverControllerImpl
@@ -38,6 +39,11 @@ class DomainInitializer:
         uiFrameController.requestToInjectReceiveIpcChannel(uiReceiveIpcChannel)
         uiFrameController.requestToInjectMusicPlayIpcChannel(uiMusicPlayIpcChannel)
         uiFrameController.requestToInjectNoWaitIpcChannel(uiNoWaitIpcChannel)
+
+    @staticmethod
+    def initNotifyReaderDomain(noWaitIpcChannel):
+        notifyReaderController = NotifyReaderControllerImpl.getInstance()
+        notifyReaderController.requestToInjectNoWaitIpcChannel(noWaitIpcChannel)
 
     @staticmethod
     def initAccountRegisterFrameDomain():
@@ -108,6 +114,8 @@ class DomainInitializer:
         DomainInitializer.initTransmitterDomain(uiTransmitIpcChannel)
         DomainInitializer.initReceiverDomain(uiReceiveIpcChannel, uiNoWaitIpcChannel)
         DomainInitializer.initMusicPlayerDomain(uiMusicPlayIpcChannel)
+        DomainInitializer.initNotifyReaderDomain(uiNoWaitIpcChannel)
+
 
         # Task Worker Domain
         DomainInitializer.initTaskWorkerDomain()
