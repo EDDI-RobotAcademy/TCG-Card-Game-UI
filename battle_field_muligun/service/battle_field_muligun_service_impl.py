@@ -36,7 +36,8 @@ class BattleFieldMuligunFrameServiceImpl(BattleFieldMuligunFrameService):
                 print(f"responseData: {responseData}")
 
                 if responseData is not None:
-                    server_data = responseData.get("redrawn_card_id_list")
+                    server_data = responseData.get("redrawn_hand_card_list")
+                    print(f"서버에서 데이터 잘 들어옴{server_data}")
 
                     self.__battleFieldMuligunFrameRepository.save_current_hand_state(server_data)
                     # battleFieldMuligunFrame.on_canvas_ok_button_click()

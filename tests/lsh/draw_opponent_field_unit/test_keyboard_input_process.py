@@ -128,6 +128,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.bind("<Button-1>", self.on_canvas_left_click)
         self.bind("<Button-3>", self.on_canvas_right_click)
 
+        self.focus_set()
+        self.bind("<Key>", self.on_key_press)
+
     def initgl(self):
         glClearColor(1.0, 1.0, 1.0, 0.0)
         glOrtho(0, self.width, self.height, 0, -1, 1)
@@ -227,6 +230,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         gluOrtho2D(0, width, height, 0)
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
+
+    def on_key_press(self, event):
+        key = event.keysym
+        print(f"Key pressed: {key}")
 
     def on_resize(self, event):
         self.reshape(event.width, event.height)
@@ -905,7 +912,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         return new_rectangle
 
 
-class TestResizableDeathSiceWithOpponentTomb(unittest.TestCase):
+class TestKeyboardInputProcess(unittest.TestCase):
 
     def test_resizable_death_sice_with_opponent_tomb(self):
         DomainInitializer.initEachDomain()
