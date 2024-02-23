@@ -3,19 +3,47 @@ from collections import defaultdict
 
 class AttachedEnergyInfoState:
     def __init__(self):
-        self.attached_energy_info = defaultdict(lambda: defaultdict(int))
+        # self.attached_energy_info = defaultdict(lambda: defaultdict(int))
+        self.attached_energy_info = {}
         self.attached_energy_info_dictionary = {}
 
+    # def add_race_energy_at_index(self, index, energy_type, energy_quantity):
+    #     print(f"attached_energy_info: {self.attached_energy_info}")
+    #     self.attached_energy_info[index][energy_type] += energy_quantity
+    #
+    # def remove_race_energy_at_index(self, index, energy_type, energy_quantity):
+    #     self.attached_energy_info[index][energy_type] = max(0, self.attached_energy_info[index][
+    #         energy_type] - energy_quantity)
+    #
+    # def get_race_energy_at_index(self, index, energy_type):
+    #     return self.attached_energy_info[index][energy_type]
+
     def add_race_energy_at_index(self, index, energy_type, energy_quantity):
-        print(f"attached_energy_info: {self.attached_energy_info}")
-        self.attached_energy_info[index][energy_type] += energy_quantity
+        if index not in self.attached_energy_info:
+            self.attached_energy_info[index] = []
+
+        self.attached_energy_info[index].append((energy_type, energy_quantity))
 
     def remove_race_energy_at_index(self, index, energy_type, energy_quantity):
-        self.attached_energy_info[index][energy_type] = max(0, self.attached_energy_info[index][
-            energy_type] - energy_quantity)
+        if index in self.attached_energy_info:
+            self.attached_energy_info[index] = [(t, q - energy_quantity) for t, q in self.attached_energy_info[index] if
+                                                t != energy_type]
+
+    def get_total_energy_at_index(self, index):
+        return sum(q for t, q in self.attached_energy_info.get(index, [])) + self.attached_energy_info_dictionary.get(
+            index, 0)
+
+    def get_energy_info_at_index(self, index):
+        return self.attached_energy_info.get(index, [])
 
     def get_race_energy_at_index(self, index, energy_type):
-        return self.attached_energy_info[index][energy_type]
+        return sum(q for t, q in self.attached_energy_info.get(index, []) if t == energy_type)
+
+    # def get_total_energy_at_index(self, index):
+    #     return sum(self.attached_energy_info[index].values()) + self.attached_energy_info_dictionary.get(index, 0)
+    #
+    # def get_energy_info_at_index(self, index):
+    #     return self.attached_energy_info[index]
 
     def add_energy_at_index(self, index, energy_quantity):
         if index in self.attached_energy_info_dictionary:
@@ -29,6 +57,7 @@ class AttachedEnergyInfoState:
 
     def get_energy_at_index(self, index):
         return self.attached_energy_info_dictionary.get(index, 0)
+
 
 
 # class AttachedEnergyInfoState:

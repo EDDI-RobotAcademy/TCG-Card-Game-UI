@@ -79,6 +79,12 @@ class OpponentFieldUnitRepository:
     def detach_race_energy(self, opponent_field_unit_index, energy_race, energy_count):
         self.attached_energy_info.remove_race_energy_at_index(opponent_field_unit_index, energy_race, energy_count)
 
+    def get_total_energy_at_index(self, index):
+        return self.attached_energy_info.get_total_energy_at_index(index)
+
+    def get_energy_info_at_index(self, index):
+        return self.attached_energy_info.get_energy_info_at_index(index)
+
     def get_opponent_field_unit_race_energy(self, index, energy_race):
         return self.attached_energy_info.get_race_energy_at_index(index, energy_race)
 
