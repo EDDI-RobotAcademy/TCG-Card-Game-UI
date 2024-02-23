@@ -26,6 +26,9 @@ class NotifyReaderRepositoryImpl(NotifyReaderRepository):
     def saveNoWaitIpcChannel(self, noWaitIpcChannel):
         self.__noWaitIpcChannel = noWaitIpcChannel
 
+    def getNoWaitIpcChannel(self):
+        return self.__noWaitIpcChannel
+
 
     def registerFunctionWithNoticeName(self, noticeName, function):
         self.__functions_called_by_notice_table[noticeName] = function

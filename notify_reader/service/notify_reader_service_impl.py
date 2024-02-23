@@ -68,6 +68,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
                     for notice_type in NoticeType:
                         if notice_type.name in notice_dict:
+                            self.__notify_reader_repository.isFinish = True
                             print(f"noticeType: {notice_type.name}")
                             called_function = self.__notify_reader_repository.getFunctionByNoticeName(notice_type.name)
                             called_function(notice_dict[notice_type.name])

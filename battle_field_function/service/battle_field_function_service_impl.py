@@ -79,9 +79,14 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             print(f"turnEnd Error: {e}")
 
     def drawYourCard(self, notify_dict_data):
+        print(f"notify_dict_data : {notify_dict_data}")
         for data in notify_dict_data.values():
             card_list = data["You"]
+            print(f"card_list : {card_list}")
             self.__yourHandRepository.create_additional_hand_card_list(card_list)
+        print(f"hand list: {self.__yourHandRepository.get_current_hand_card_list()}")
+        print(f"hand state: {self.__yourHandRepository.get_current_hand_state()}")
+        #self.__yourHandRepository.replace_hand_card_position()
 
     def drawOpponentCard(self, notify_dict_data):
         #todo : 아직 opponentHandRepository가 없음.
