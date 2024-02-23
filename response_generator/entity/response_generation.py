@@ -22,6 +22,8 @@ class ResponseGeneration(Enum):
     BUY_CARD = 72
     FREE_BUY_CARD = 73
 
+    DRAW_CARD = 1013
+
     GAME_SURRENDER = 4443
 
     PROGRAM_EXIT = 4444

@@ -170,6 +170,10 @@ class YourHandRepository:
                 return index
         return -1
 
+    def requestDrawCardByUseSupportCard(self, drawCardRequest):
+        self.__transmitIpcChannel.put(drawCardRequest)
+        return self.__receiveIpcChannel.get()
+
     def saveReceiveIpcChannel(self, receiveIpcChannel):
         self.__receiveIpcChannel = receiveIpcChannel
 
