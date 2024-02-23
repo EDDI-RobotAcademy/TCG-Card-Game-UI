@@ -38,12 +38,15 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
     def readNoticeAndCallFunction(self):
         while True:
+
+
+
             try:
                 raw_notice_data = self.__notify_reader_repository.getNotice()
                 notice_dict = json.loads(raw_notice_data)
                 for notice_type in NoticeType:
                     if notice_type.name in notice_dict:
-                        called_function = self.__notify_reader_repository.callFunctionByNoticeName(notice_type.name)
+                        called_function = self.__notify_reader_repository.getFunctionByNoticeName(notice_type.name)
                         called_function(notice_dict[notice_type.name])
             except:
                 continue
