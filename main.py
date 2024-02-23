@@ -3,6 +3,7 @@ import colorama
 from client_socket.service.client_socket_service_impl import ClientSocketServiceImpl
 from initializer.init_domain import DomainInitializer
 from music_player.controller.music_player_controller_impl import MusicPlayerControllerImpl
+from notify_reader.controller.notify_reader_controller_impl import NotifyReaderControllerImpl
 from receiver.controller.receiver_controller_impl import ReceiverControllerImpl
 from task_worker.service.task_worker_service_impl import TaskWorkerServiceImpl
 from transmitter.controller.transmitter_controller_impl import TransmitterControllerImpl
@@ -27,6 +28,9 @@ if __name__ == "__main__":
     receiverController = ReceiverControllerImpl.getInstance()
     receiverController.requestToInjectSocketClient(clientSocket)
 
+    notifyReaderController = NotifyReaderControllerImpl.getInstance()
+
+
     uiFrameController = UiFrameControllerImpl.getInstance()
     uiFrameController.requestToCreateUiFrame()
 
@@ -39,6 +43,9 @@ if __name__ == "__main__":
 
     taskWorkerService.createTaskWorker("Receiver", receiverController.requestToReceiveCommand)
     taskWorkerService.executeTaskWorker("Receiver")
+
+    taskWorkerService.createTaskWorker("NotifyReader", notifyReaderController.requestToReadNotifyCommand)
+    taskWorkerService.executeTaskWorker("NotifyReader")
 
     taskWorkerService.createTaskWorker("UI", uiFrameController.requestToStartPrintGameUi)
     taskWorkerService.executeTaskWorker("UI")
