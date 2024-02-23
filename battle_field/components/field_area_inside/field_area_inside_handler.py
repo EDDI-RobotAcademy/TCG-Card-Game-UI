@@ -1,4 +1,5 @@
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
+from battle_field.infra.request.drawCardByUseSupportCardRequest import DrawCardByUseSupportCardRequest
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
@@ -8,6 +9,9 @@ from common.card_type import CardType
 
 # pip3 install shapely
 from shapely.geometry import Point, Polygon
+
+from session.repository.session_repository_impl import SessionRepositoryImpl
+
 
 class FieldAreaInsideHandler:
     __instance = None
@@ -21,7 +25,7 @@ class FieldAreaInsideHandler:
     __your_deck_repository = YourDeckRepository.getInstance()
     __card_info_repository = CardInfoFromCsvRepositoryImpl.getInstance()
     __your_tomb_repository = YourTombRepository.getInstance()
-
+    __session_info_repository = SessionRepositoryImpl.getInstance()
     __field_area_inside_handler_table = {}
 
     __width_ratio = 1
@@ -115,8 +119,21 @@ class FieldAreaInsideHandler:
         print(f"handle_support_card_draw_deck -> placed_card_id: {placed_card_id}")
 
         # TODO: Summary와 연동하도록 재구성 필요
-        drawn_deck_card_list = self.__your_deck_repository.draw_deck_with_count(3)
-        self.__your_hand_repository.create_additional_hand_card_list(drawn_deck_card_list)
+        drawn_card_list = self.__your_deck_repository.draw_deck_with_count(3)
+
+        try:
+            draw_card_response = self.__your_hand_repository.requestDrawCardByUseSupportCard(
+                DrawCardByUseSupportCardRequest(_sessionInfo=self.__session_info_repository.get_session_info(),
+                                         _cardId=placed_card_id)
+            )
+
+            if draw_card_response is not None:
+                drawn_card_list = draw_card_response
+
+        except Exception as e:
+            print(f"draw_card Error! {e}")
+
+        self.__your_hand_repository.create_additional_hand_card_list(drawn_card_list)
         self.__your_hand_repository.remove_card_by_index(placed_card_index)
 
         self.__your_tomb_repository.create_tomb_card(20)

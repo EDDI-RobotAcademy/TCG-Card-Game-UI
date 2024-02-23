@@ -61,18 +61,18 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         while True:
             try:
                 raw_notice_data = self.__notify_reader_repository.getNotice()
-                print(f"raw_notice_data: {raw_notice_data}")
-                if raw_notice_data:
 
+                if raw_notice_data:
+                    print(f"raw_notice_data: {raw_notice_data}")
                     notice_dict = json.loads(raw_notice_data)
 
                     for notice_type in NoticeType:
                         if notice_type.name in notice_dict:
+                            self.__notify_reader_repository.isFinish = True
                             print(f"noticeType: {notice_type.name}")
                             called_function = self.__notify_reader_repository.getFunctionByNoticeName(notice_type.name)
                             called_function(notice_dict[notice_type.name])
 
-                break
             except Exception as e:
                 print(e)
                 continue

@@ -1,4 +1,5 @@
 from battle_field.entity.legacy.battle_field_environment import BattleFieldEnvironment
+from battle_field.entity.legacy.game_end_panel import GameEndPanel, GameEndConfirmButton
 from battle_field.entity.legacy.opponent_deck import OpponentDeck
 from battle_field.entity.legacy.opponent_hand_panel import OpponentHandPanel
 from battle_field.entity.legacy.opponent_lost_zone import OpponentLostZone
@@ -123,6 +124,13 @@ class BattleFieldSceneLegacy:
         self.turn_end_button.init_shapes()
         self.__battle_field_repository.add_battle_field_button(button=self.turn_end_button)
 
+    def create_game_end_panel(self):
+        self.game_end_panel = GameEndPanel()
+        self.game_end_panel.init_shapes()
+        self.confirm_button = GameEndConfirmButton()
+        self.confirm_button.init_shapes()
+        self.__battle_field_repository.add_battle_field_button(button=self.confirm_button)
+
     def get_opponent_tomb(self):
         return self.opponent_tomb.get_tomb_shapes()
 
@@ -170,3 +178,6 @@ class BattleFieldSceneLegacy:
 
     def get_turn_end_button(self):
         return self.turn_end_button.get_turn_end_button_shapes()
+
+    def get_game_end_panel(self):
+        return self.game_end_panel.get_game_end_panel_shapes()
