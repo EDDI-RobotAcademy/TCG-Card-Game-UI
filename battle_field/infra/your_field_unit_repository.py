@@ -61,11 +61,28 @@ class YourFieldUnitRepository:
         next_x = self.x_base + x_increment * index
         return (next_x, current_y)
 
+    # TODO: Legacy <- 테스트 의존성 체크
     def attach_energy(self, unit_index, energy_count):
         self.attached_energy_info.add_energy_at_index(unit_index, energy_count)
 
+    # TODO: Legacy <- 테스트 의존성 체크
     def detach_energy(self, unit_index, energy_count):
         self.attached_energy_info.remove_energy_at_index(unit_index, energy_count)
+
+    def attach_race_energy(self, opponent_field_unit_index, energy_race, energy_count):
+        self.attached_energy_info.add_race_energy_at_index(opponent_field_unit_index, energy_race, energy_count)
+
+    def detach_race_energy(self, opponent_field_unit_index, energy_race, energy_count):
+        self.attached_energy_info.remove_race_energy_at_index(opponent_field_unit_index, energy_race, energy_count)
+
+    def get_total_energy_at_index(self, index):
+        return self.attached_energy_info.get_total_energy_at_index(index)
+
+    def get_energy_info_at_index(self, index):
+        return self.attached_energy_info.get_energy_info_at_index(index)
+
+    def get_your_field_unit_race_energy(self, index, energy_race):
+        return self.attached_energy_info.get_race_energy_at_index(index, energy_race)
 
     def find_field_unit_by_index(self, index):
         for unit in self.current_field_unit_list:
