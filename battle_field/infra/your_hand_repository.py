@@ -11,7 +11,7 @@ class YourHandRepository:
     current_hand_card_x_position = []
 
     x_base = 0
-    x_base_muligun = 120 # 멀리건에서의 맨 처음 카드 위치.
+    x_base_muligun = 120  # 멀리건에서의 맨 처음 카드 위치.
 
     def __new__(cls):
         if cls.__instance is None:
@@ -56,7 +56,6 @@ class YourHandRepository:
             # new_card.set_initial_position(initial_position)
             self.current_hand_card_list.append(new_card)
 
-
     def create_hand_card_list(self):
         current_hand = self.get_current_hand_state()
         print(f"current_hand: {current_hand}")
@@ -74,7 +73,8 @@ class YourHandRepository:
             del self.current_hand_card_list[card_placed_index]
             self.current_hand_state.remove_hand_by_index(card_placed_index)
 
-            print(f"Removed card index {card_placed_index} -> current_hand_list: {self.current_hand_card_list}, current_hand_state: {self.get_current_hand_state()}")
+            print(
+                f"Removed card index {card_placed_index} -> current_hand_list: {self.current_hand_card_list}, current_hand_state: {self.get_current_hand_state()}")
         else:
             print(f"Invalid index: {card_placed_index}. 지울 것이 없다.")
 
@@ -99,7 +99,8 @@ class YourHandRepository:
 
         self.current_hand_state.remove_from_hand(card_id)
 
-        print(f"after clear -> current_hand_list: {self.current_hand_card_list}, current_hand_state: {self.get_current_hand_state()}")
+        print(
+            f"after clear -> current_hand_list: {self.current_hand_card_list}, current_hand_state: {self.get_current_hand_state()}")
 
     def remove_card_by_multiple_index(self, card_index_list):
         for index in sorted(card_index_list, reverse=True):
@@ -112,7 +113,8 @@ class YourHandRepository:
             else:
                 print(f"Invalid index: {index}. No card removed for this index.")
 
-        print(f"Removed cards at indices {card_index_list} -> current_hand_list: {self.current_hand_card_list}, current_hand_state: {self.get_current_hand_state()}")
+        print(
+            f"Removed cards at indices {card_index_list} -> current_hand_list: {self.current_hand_card_list}, current_hand_state: {self.get_current_hand_state()}")
 
     # 1848 기준 -> 1848 - 105 * 5 + 170 * 4 = 643
     # 643 / 2 = 321.5
@@ -172,7 +174,7 @@ class YourHandRepository:
 
     def requestDrawCardByUseSupportCard(self, drawCardRequest):
         # todo : 테스트용 코드입니다. 추후에 아래의 put/get 방식으로 변경할 필요가 있습니다.
-        return [93,93,93]
+        return [93, 93, 93]
         # self.__transmitIpcChannel.put(drawCardRequest)
         # return self.__receiveIpcChannel.get()
 
