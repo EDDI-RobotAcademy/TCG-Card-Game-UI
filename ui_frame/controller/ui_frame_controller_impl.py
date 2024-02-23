@@ -112,6 +112,7 @@ class UiFrameControllerImpl(UiFrameController):
     def requestToStartPrintGameUi(self):
         print("UiFrameControllerImpl: requestToStartPrintGameUi()")
         rootWindow = self.__windowService.getRootWindow()
+
         rootWindow.mainloop()
 
     def requestToInjectTransmitIpcChannel(self, transmitIpcChannel):
