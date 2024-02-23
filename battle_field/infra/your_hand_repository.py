@@ -171,8 +171,10 @@ class YourHandRepository:
         return -1
 
     def requestDrawCardByUseSupportCard(self, drawCardRequest):
-        self.__transmitIpcChannel.put(drawCardRequest)
-        return self.__receiveIpcChannel.get()
+        # todo : 테스트용 코드입니다. 추후에 아래의 put/get 방식으로 변경할 필요가 있습니다.
+        return [93,93,93]
+        # self.__transmitIpcChannel.put(drawCardRequest)
+        # return self.__receiveIpcChannel.get()
 
     def saveReceiveIpcChannel(self, receiveIpcChannel):
         self.__receiveIpcChannel = receiveIpcChannel
