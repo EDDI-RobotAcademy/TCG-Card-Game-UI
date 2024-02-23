@@ -32,9 +32,10 @@ class YourTombRepository:
 
     def create_tomb_card(self, card_id):
         index = len(self.current_tomb_unit_list)
+        print(f"create_tomb_card() -> index: {index}, card_id: {card_id}")
         new_card = FixedFieldCard(local_translation=self.get_next_card_position(index))
         new_card.init_card(card_id)
-        new_card.set_index(index)
+        # new_card.set_index(index)
         self.current_tomb_unit_list.append(new_card)
 
         self.save_current_tomb_state(card_id)

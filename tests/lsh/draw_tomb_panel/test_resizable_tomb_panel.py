@@ -679,7 +679,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             if self.tomb_panel_selected:
                 self.your_tomb.set_total_window_size(self.width, self.height)
 
-                print(f"current_tomb_unit_list test: {self.your_tomb_repository.get_current_tomb_state()}")
+                print(f"current_tomb_unit_list: {self.your_tomb_repository.get_current_tomb_state()}")
                 self.your_tomb.create_tomb_panel_popup_rectangle()
                 self.tomb_panel_popup_rectangle = self.your_tomb.get_tomb_panel_popup_rectangle()
                 return

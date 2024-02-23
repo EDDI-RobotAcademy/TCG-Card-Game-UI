@@ -108,8 +108,8 @@ class FixedFieldCard:
         rectangle_height = 170
         rectangle_width = 105
 
-        print(f"rectangle_width: {rectangle_width}")
-        print(f"rectangle_height: {rectangle_height}")
+        # print(f"rectangle_width: {rectangle_width}")
+        # print(f"rectangle_height: {rectangle_height}")
 
         # cardInfo = CardInfoFromCsvRepositoryImpl.getInstance()
         # csvInfo = cardInfo.readCardData(os.path.join(project_root, 'local_storage', 'card', 'data.csv'))
