@@ -1,3 +1,5 @@
+from pyopengltk import OpenGLFrame
+
 from ui_frame.repository.ui_frame_repository import UiFrameRepository
 
 
@@ -47,7 +49,17 @@ class UiFrameRepositoryImpl(UiFrameRepository):
         foundUiFrame.pack(expand=True, fill="both")
         self.__currentFrame = foundUiFrame
 
-        self.__musicPlayIpcChannel.put(name)
+        # self.__musicPlayIpcChannel.put(name)
+
+        if isinstance(foundUiFrame, OpenGLFrame):
+            # foundUiFrame.start_redraw_loop()
+
+            def animate():
+                print(f"OpenGL redrawing")
+                foundUiFrame.redraw()
+                foundUiFrame.after(17, animate)
+
+            foundUiFrame.after(0, animate)
 
     def saveTransmitIpcChannel(self, transmitIpcChannel):
         print("UiFrameRepositoryImpl: saveTransmitIpcChannel()")

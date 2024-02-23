@@ -19,7 +19,7 @@ class NotifyReaderRepositoryImpl(NotifyReaderRepository):
 
     def getNotice(self):
         try:
-            return self.__noWaitIpcChannel.get()
+            return self.__noWaitIpcChannel.get_nowait()
         except:
             return None
 
