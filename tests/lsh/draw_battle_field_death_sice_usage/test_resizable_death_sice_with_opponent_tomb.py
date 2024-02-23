@@ -11,10 +11,16 @@ from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
 from battle_field.components.mouse_left_click.left_click_detector import LeftClickDetector
+from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area_action import OpponentFieldAreaAction
+from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
+    OpponentFixedUnitCardInsideHandler
+from battle_field.entity.opponent_tomb import OpponentTomb
 from battle_field.entity.your_tomb import YourTomb
 from battle_field.handler.support_card_handler import SupportCardHandler
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
+from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
+from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
@@ -91,12 +97,27 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.tomb_panel_popup_rectangle = None
         self.tomb_panel_selected = False
 
+        self.opponent_tomb_repository = OpponentTombRepository.getInstance()
+        self.opponent_tomb_panel = None
+        self.opponent_tomb = OpponentTomb()
+        self.opponent_tomb_popup_rectangle_panel = None
+        self.opponent_tomb_panel_selected = False
+
         self.opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
         # self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance()
         self.field_area_inside_handler = FieldAreaInsideHandler.getInstance()
-        self.your_tomb_repository = YourTombRepository.getInstance()
+        # TODO: Your 카드에 집어넣는 경우도 이것으로 감지하는 것이 더 좋을 것임
+        self.your_fixed_unit_card_inside_handler = None
+        self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance()
+        # self.your_tomb_repository = YourTombRepository.getInstance()
 
         self.left_click_detector = LeftClickDetector.getInstance()
+
+        self.selected_object_for_check_required_energy = []
+        self.selected_object_index_for_check_required_energy = []
+        self.required_energy_select_lightning_border_list = []
+
+        self.your_field_energy_repository = YourFieldEnergyRepository.getInstance()
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -143,8 +164,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         # (257, 969)
         # (415, 971)
         # (332, 791)
+        self.your_tomb.set_total_window_size(self.width, self.height)
         self.your_tomb.create_your_tomb_panel()
         self.your_tomb_panel = self.your_tomb.get_your_tomb_panel()
+
+        self.opponent_tomb.set_total_window_size(self.width, self.height)
+        self.opponent_tomb.create_opponent_tomb_panel()
+        self.opponent_tomb_panel = self.opponent_tomb.get_opponent_tomb_panel()
 
         # 1848 기준 -> 1848 - (105 * 5 + 170 * 4) = 643
         # 643 / 2 = 321.5
@@ -154,11 +180,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         # 1920 기준 -> 1920 - (105 * 5 + 65 * 4) = 1135
         # 1135 / 2 = 567.5
         self.your_hand_repository.set_x_base(567.5)
-        self.your_hand_repository.save_current_hand_state([8, 20, 19, 151, 93])
+        self.your_hand_repository.save_current_hand_state([8, 20, 31, 151, 93])
         # self.your_hand_repository.save_current_hand_state([151])
         self.your_hand_repository.create_hand_card_list()
 
-        self.your_deck_repository.save_deck_state([93, 93, 93, 5])
+        self.your_deck_repository.save_deck_state([93, 35, 93, 5])
 
         self.opponent_field_unit_repository.create_field_unit_card(33)
         self.opponent_field_unit_repository.create_field_unit_card(35)
@@ -169,10 +195,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
 
-        self.your_tomb_repository.create_tomb_card(93)
-        self.your_tomb_repository.create_tomb_card(31)
-        self.your_tomb_repository.create_tomb_card(32)
-        self.your_tomb_repository.create_tomb_card_list()
+        # self.your_tomb_repository.create_tomb_card(93)
+        # self.your_tomb_repository.create_tomb_card(31)
+        # self.your_tomb_repository.create_tomb_card(32)
+        # self.your_tomb_repository.create_tomb_card_list()
 
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
@@ -222,7 +248,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.your_tomb.set_width_ratio(self.width_ratio)
         self.your_tomb.set_height_ratio(self.height_ratio)
+        self.your_tomb_panel.set_draw_border(False)
         self.your_tomb_panel.draw()
+
+        self.opponent_tomb.set_width_ratio(self.width_ratio)
+        self.opponent_tomb.set_height_ratio(self.height_ratio)
+        self.opponent_tomb_panel.set_draw_border(False)
+        self.opponent_tomb_panel.draw()
 
         glDisable(GL_BLEND)
 
@@ -320,6 +352,19 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             self.lightning_border.update_shape(your_field_unit_lightning_border)
             self.lightning_border.draw_lightning_border()
 
+        for your_hand_lightning_border in self.opponent_fixed_unit_card_inside_handler.get_lightning_border_list():
+            self.lightning_border.set_padding(20)
+            self.lightning_border.update_shape(your_hand_lightning_border)
+            self.lightning_border.draw_lightning_border()
+
+        for required_energy_selection_border in self.required_energy_select_lightning_border_list:
+            required_energy_selection_border.set_width_ratio(self.width_ratio)
+            required_energy_selection_border.set_height_ratio(self.height_ratio)
+
+            self.lightning_border.set_padding(20)
+            self.lightning_border.update_shape(required_energy_selection_border)
+            self.lightning_border.draw_lightning_border()
+
         if self.tomb_panel_selected:
             glEnable(GL_BLEND)
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -329,6 +374,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             self.tomb_panel_popup_rectangle.draw()
 
             for tomb_unit in self.your_tomb_repository.get_current_tomb_unit_list():
+                # print(f"tomb_unit: {tomb_unit}")
                 attached_tool_card = tomb_unit.get_tool_card()
                 if attached_tool_card is not None:
                     attached_tool_card.set_width_ratio(self.width_ratio)
@@ -336,6 +382,36 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     attached_tool_card.draw()
 
                 fixed_card_base = tomb_unit.get_fixed_card_base()
+                fixed_card_base.set_width_ratio(self.width_ratio)
+                fixed_card_base.set_height_ratio(self.height_ratio)
+                fixed_card_base.draw()
+
+                attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                for attached_shape in attached_shape_list:
+                    attached_shape.set_width_ratio(self.width_ratio)
+                    attached_shape.set_height_ratio(self.height_ratio)
+                    attached_shape.draw()
+
+            glDisable(GL_BLEND)
+
+        if self.opponent_tomb_panel_selected:
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+            self.opponent_tomb_popup_rectangle_panel.set_width_ratio(self.width_ratio)
+            self.opponent_tomb_popup_rectangle_panel.set_height_ratio(self.height_ratio)
+            self.opponent_tomb_popup_rectangle_panel.draw()
+
+            for opponent_tomb_unit in self.opponent_tomb_repository.get_opponent_tomb_unit_list():
+                # print(f"tomb_unit: {opponent_tomb_unit}")
+                attached_tool_card = opponent_tomb_unit.get_tool_card()
+                if attached_tool_card is not None:
+                    attached_tool_card.set_width_ratio(self.width_ratio)
+                    attached_tool_card.set_height_ratio(self.height_ratio)
+                    attached_tool_card.draw()
+
+                fixed_card_base = opponent_tomb_unit.get_fixed_card_base()
                 fixed_card_base.set_width_ratio(self.width_ratio)
                 fixed_card_base.set_height_ratio(self.height_ratio)
                 fixed_card_base.draw()
@@ -413,9 +489,22 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         y = self.winfo_reqheight() - y
 
         if isinstance(self.selected_object, PickableCard):
+            current_opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+            current_opponent_field_unit_list_length = len(current_opponent_field_unit_list)
+            print(f"current_opponent_field_unit_list_length: {current_opponent_field_unit_list_length}")
+
+            if current_opponent_field_unit_list_length > 0:
+                is_pickable_card_inside_unit = self.opponent_fixed_unit_card_inside_handler.handle_pickable_card_inside_unit(
+                    self.selected_object, x, y)
+
+                if is_pickable_card_inside_unit:
+                    self.selected_object = None
+                    return
+
             current_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
             current_field_unit_list_length = len(current_field_unit_list)
 
+            # TODO: 이 부분이 YourFixedFieldUnitCardInsideHandler
             # 현재 Your Field Unit에게 에너지 부착 및 도구 부착
             if current_field_unit_list_length > 0:
                 for unit_index, current_field_unit in enumerate(current_field_unit_list):
@@ -436,6 +525,30 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             self.selected_object = None
                             return
 
+                        elif card_type == CardType.ITEM.value:
+                            print("아군에게 아이템 사용")
+
+                            # 우선 '사기 전환'이라 가정
+                            card_id = current_field_unit.get_card_number()
+                            fixed_field_unit_hp = self.card_info_repository.getCardHpForCardNumber(card_id)
+                            acquire_energy = round(fixed_field_unit_hp / 5)
+                            print(f"acquire_energy: {acquire_energy}")
+
+                            self.your_field_energy_repository.increase_your_field_energy(acquire_energy)
+                            self.your_hand_repository.remove_card_by_index(placed_index)
+                            self.your_field_unit_repository.remove_card_by_index(unit_index)
+
+                            self.your_hand_repository.replace_hand_card_position()
+
+                            self.your_tomb_repository.create_tomb_card(card_id)
+                            self.your_tomb_repository.create_tomb_card(placed_card_id)
+
+                            print(f"사기 전환 이후 필드 에너지 수량: {self.your_field_energy_repository.get_your_field_energy()}")
+
+                            self.selected_object = None
+                            return
+
+
                         elif card_type == CardType.ENERGY.value:
                             print("에너지를 붙입니다!")
                             # self.selected_object = None
@@ -451,6 +564,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                             attached_energy_count = self.your_field_unit_repository.get_attached_energy_info().get_energy_at_index(unit_index)
                             self.your_hand_repository.replace_hand_card_position()
+
+                            # card_id = current_field_unit.get_card_number()
+                            # self.your_tomb_repository.create_tomb_card(card_id)
+                            self.your_tomb_repository.create_tomb_card(placed_card_id)
                             # TODO: attached_energy 값 UI에 표현 (이미지 작업 미완료)
 
                             # TODO: 특수 에너지 붙인 것을 어떻게 표현 할 것인가 ? (아직 미정)
@@ -478,49 +595,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             return
 
             y *= -1
-
-            # if self.is_drop_location_valid_battle_field_panel(x, y):
-            #     placed_card_id = self.selected_object.get_card_number()
-            #     print(f"on_canvas_release -> placed_card_id: {placed_card_id}")
-            #
-            #     card_type = self.card_info_repository.getCardTypeForCardNumber(placed_card_id)
-            #     if card_type == CardType.UNIT.value:
-            #         # TODO: Memory Leak 발생하지 않도록 좀 더 꼼꼼하게 리소스 해제 하는지 확인해야함
-            #         self.your_hand_repository.remove_card_by_id(placed_card_id)
-            #         self.your_field_unit_repository.create_field_unit_card(placed_card_id)
-            #         self.your_field_unit_repository.save_current_field_unit_state(placed_card_id)
-            #
-            #         # 카드 구성하는 모든 도형에 local_translation 적용
-            #         self.your_hand_repository.replace_hand_card_position()
-            #
-            #         self.selected_object = None
-            #         return
-            #
-            #     if card_type == CardType.SUPPORT.value:
-            #         print("서포트 카드 사용 감지!")
-            #         self.selected_object = None
-            #         self.prev_selected_object = None
-            #
-            #         # 현재 필드에 존재하는 모든 유닛에 Lightning Border
-            #         for fixed_field_unit_card in self.your_field_unit_repository.get_current_field_unit_list():
-            #             print("에너지 부스팅 준비")
-            #             card_base = fixed_field_unit_card.get_fixed_card_base()
-            #             self.your_field_unit_lightning_border_list.append(card_base)
-            #             self.current_process_card_id = placed_card_id
-            #
-            #         self.your_hand_repository.remove_card_by_id(placed_card_id)
-            #
-            #         tomb_state = self.your_tomb_repository.current_tomb_state
-            #         tomb_state.place_unit_to_tomb(placed_card_id)
-            #         self.your_hand_repository.replace_hand_card_position()
-            #
-            #         self.boost_selection = True
-            #
-            #         return
-            #
-            #     self.return_to_initial_location()
-            # else:
-            #     self.return_to_initial_location()
 
             # 당신(Your) Field에 던진 카드
             self.field_area_inside_handler.set_width_ratio(self.width_ratio)
@@ -610,6 +684,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         try:
             x, y = event.x, event.y
             y = self.winfo_reqheight() - y
+            print(f"x: {x}, y: {y}")
 
             if self.tomb_panel_selected:
                 if self.your_tomb.is_point_inside_popup_rectangle((x, y)):
@@ -639,6 +714,83 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         self.prev_selected_object = self.selected_object
 
                     break
+
+            if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() is OpponentFieldAreaAction.REQUIRE_ENERGY_TO_USAGE:
+                print("카드를 사용하기 위해 에너지가 필요합니다!")
+
+                selected_card_id = self.selected_object.get_card_number()
+
+                if self.card_info_repository.getCardTypeForCardNumber(selected_card_id) is not CardType.ENERGY.value:
+                    return
+
+                required_energy_race = self.opponent_fixed_unit_card_inside_handler.get_required_energy_race()
+                if self.card_info_repository.getCardRaceForCardNumber(
+                        selected_card_id) is not required_energy_race.value:
+                    return
+
+                self.selected_object_for_check_required_energy.append(self.selected_object)
+                self.selected_object_index_for_check_required_energy.append(
+                    self.your_hand_repository.find_index_by_selected_object(
+                        self.selected_object))
+
+                card_base = self.selected_object.get_pickable_card_base()
+                self.required_energy_select_lightning_border_list.append(card_base)
+
+                self.opponent_fixed_unit_card_inside_handler.decrease_required_energy()
+                required_energy_count = self.opponent_fixed_unit_card_inside_handler.get_required_energy()
+
+                if required_energy_count == 0:
+                    print(f"required_energy_count: {required_energy_count}")
+                    usage_card_index = self.opponent_fixed_unit_card_inside_handler.get_action_set_card_index()
+
+                    selected_energy_index_list = []
+                    selected_energy_index_list.append(self.selected_object_index_for_check_required_energy[0])
+                    selected_energy_index_list.append(self.selected_object_index_for_check_required_energy[1])
+
+                    selected_energy_id_list = []
+                    selected_energy_id_list.append(self.selected_object_for_check_required_energy[0].get_card_number())
+                    selected_energy_id_list.append(self.selected_object_for_check_required_energy[1].get_card_number())
+                    # print(f"self.selected_object_for_check_required_energy[0]: {self.selected_object_for_check_required_energy[0]}")
+                    # print(f"self.selected_object_for_check_required_energy[1]: {self.selected_object_for_check_required_energy[1]}")
+
+                    self.your_hand_repository.remove_card_by_multiple_index(
+                        [
+                            usage_card_index,
+                            selected_energy_index_list[0],
+                            selected_energy_index_list[1]
+                        ])
+
+                    opponent_unit_card_index = self.opponent_fixed_unit_card_inside_handler.get_opponent_unit_index()
+
+                    self.opponent_field_unit_repository.remove_current_field_unit_card(
+                        opponent_unit_card_index)
+
+                    # print("isn't it operate ? (Death Sice)")
+                    self.your_tomb_repository.create_tomb_card(selected_energy_id_list[0])
+                    self.your_tomb_repository.create_tomb_card(selected_energy_id_list[1])
+                    self.your_tomb_repository.create_tomb_card(
+                        self.opponent_fixed_unit_card_inside_handler.get_your_hand_card_id())
+                    # TODO: 상대편은 상대 무덤으로 이동해야함
+                    self.opponent_tomb_repository.create_opponent_tomb_card(
+                        self.opponent_fixed_unit_card_inside_handler.get_opponent_unit_id())
+
+                    self.your_hand_repository.replace_hand_card_position()
+
+                    self.selected_object_for_check_required_energy = []
+                    self.selected_object_index_for_check_required_energy = []
+                    self.required_energy_select_lightning_border_list = []
+
+                    self.opponent_fixed_unit_card_inside_handler.clear_opponent_unit_index()
+                    self.opponent_fixed_unit_card_inside_handler.clear_action_set_card_index()
+                    self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+                    self.opponent_fixed_unit_card_inside_handler.clear_required_energy_race()
+                    self.opponent_fixed_unit_card_inside_handler.clear_required_energy()
+                    self.opponent_fixed_unit_card_inside_handler.clear_lightning_border_list()
+                    self.opponent_fixed_unit_card_inside_handler.clear_opponent_unit_id()
+                    self.opponent_fixed_unit_card_inside_handler.clear_your_hand_card_id()
+
+                    self.selected_object = None
+                    return
 
             your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
             for your_field_unit in your_field_unit_list:
@@ -677,14 +829,29 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 self.winfo_reqheight())
 
             if self.tomb_panel_selected:
-                self.your_tomb.set_total_window_size(self.width, self.height)
-
-                print(f"current_tomb_unit_list: {self.your_tomb_repository.get_current_tomb_state()}")
+                print(f"on_canvas_left_click() -> current_tomb_unit_list: {self.your_tomb_repository.get_current_tomb_state()}")
                 self.your_tomb.create_tomb_panel_popup_rectangle()
                 self.tomb_panel_popup_rectangle = self.your_tomb.get_tomb_panel_popup_rectangle()
+
+                self.opponent_tomb_panel_selected = False
+                return
+
+            self.opponent_tomb_panel_selected = self.left_click_detector.which_one_select_is_in_opponent_tomb_area(
+                (x, y),
+                self.opponent_tomb,
+                self.winfo_reqheight())
+
+            if self.opponent_tomb_panel_selected:
+                print(
+                    f"on_canvas_left_click() -> current_tomb_unit_list: {self.opponent_tomb_repository.get_opponent_tomb_state()}")
+                self.opponent_tomb.create_opponent_tomb_panel_popup_rectangle()
+                self.opponent_tomb_popup_rectangle_panel = self.opponent_tomb.get_opponent_tomb_panel_popup_rectangle()
+
+                self.tomb_panel_selected = False
                 return
 
             self.tomb_panel_selected = False
+            self.opponent_tomb_panel_selected = False
 
         except Exception as e:
             print(f"Exception in on_canvas_click: {e}")
@@ -715,9 +882,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         return new_rectangle
 
 
-class TestResizableDeckDrawWithSupport(unittest.TestCase):
+class TestResizableDeathSiceWithOpponentTomb(unittest.TestCase):
 
-    def test_resizable_deck_draw_with_support(self):
+    def test_resizable_death_sice_with_opponent_tomb(self):
         DomainInitializer.initEachDomain()
 
         root = tkinter.Tk()

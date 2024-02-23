@@ -21,3 +21,10 @@ class CurrentFieldUnitState:
                 self.current_field_unit_list.remove(card)
             else:
                 print(f"Card '{card}' not found in the current hand.")
+
+    def remove_field_unit_by_index(self, index):
+        if 0 <= index < len(self.current_field_unit_list):
+            removed_card = self.current_field_unit_list.pop(index)
+            print(f"Removed card index {index}: {removed_card}")
+        else:
+            print(f"Invalid index: {index}. 지울 것이 없다")

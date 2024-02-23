@@ -49,7 +49,7 @@ class PickableRectangle(Rectangle):
         x, y = point
         y *= -1
 
-        print(f"is_point_inside -> x: {x}, y: {y}, local_translation: {self.local_translation}")
+        # print(f"is_point_inside -> x: {x}, y: {y}, local_translation: {self.local_translation}")
 
         translated_vertices = [
             (x * self.width_ratio + self.global_translation[0] + self.local_translation[0] * self.width_ratio,

@@ -73,8 +73,22 @@ class Rectangle(Shape):
         else:
             for vertex in self.vertices:
                 glColor4f(*self.color)
+
                 glVertex2f(vertex[0] * self.width_ratio  + self.global_translation[0] + self.local_translation[0] * self.width_ratio,
                            vertex[1] * self.height_ratio + self.global_translation[1] + self.local_translation[1] * self.height_ratio)
+
+                # x = round(
+                #         vertex[0] * self.width_ratio +
+                #         self.global_translation[0] +
+                #         self.local_translation[0] * self.width_ratio
+                # )
+                # y = round(
+                #         vertex[1] * self.height_ratio +
+                #         self.global_translation[1] +
+                #         self.local_translation[1] * self.height_ratio
+                # )
+                # print(f"Rectangle -> x: {x}, y: {y}")
+                # glVertex2f(x, y)
 
         glEnd()
 
