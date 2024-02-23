@@ -101,3 +101,13 @@ class LeftClickDetector:
             return your_lost_zone
 
         return None
+
+    def which_one_select_is_in_opponent_lost_zone_area(self, click_point, opponent_lost_zone, canvas_height):
+        x, y = click_point
+        y = canvas_height - y
+        y *= -1
+
+        if opponent_lost_zone.is_point_inside((x, y)):
+            return opponent_lost_zone
+
+        return None
