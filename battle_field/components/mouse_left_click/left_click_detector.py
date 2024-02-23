@@ -1,3 +1,6 @@
+from battle_field.entity.tomb_type import TombType
+
+
 class LeftClickDetector:
     __instance = None
 
@@ -75,3 +78,16 @@ class LeftClickDetector:
             return opponent_tomb
 
         return None
+
+    def which_tomb_did_you_select(self, click_point, your_tomb, opponent_tomb, canvas_height):
+        x, y = click_point
+        y = canvas_height - y
+        y *= -1
+
+        if self.which_one_select_is_in_your_tomb_area((x, y), your_tomb, canvas_height):
+            return TombType.Your
+
+        if self.which_one_select_is_in_opponent_tomb_area((x, y), opponent_tomb, canvas_height):
+            return TombType.Opponent
+
+        return TombType.Dummy

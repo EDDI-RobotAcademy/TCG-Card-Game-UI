@@ -3,7 +3,7 @@ from common.protocol import CustomProtocol
 
 class MuligunRequest:
     def __init__(self, sessionInfo, cardList):
-        self.__protocolNumber = CustomProtocol.MULIGUN.value
+        self.__protocolNumber = CustomProtocol.CHANGE_FIRST_HAND.value
         self.__sessionInfo = sessionInfo
         self.__cardList = cardList
 

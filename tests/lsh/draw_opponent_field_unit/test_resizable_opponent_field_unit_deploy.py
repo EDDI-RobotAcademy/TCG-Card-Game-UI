@@ -128,6 +128,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.bind("<Button-1>", self.on_canvas_left_click)
         self.bind("<Button-3>", self.on_canvas_right_click)
 
+        self.focus_set()
+        self.bind("<Key>", self.on_key_press)
+
     def initgl(self):
         glClearColor(1.0, 1.0, 1.0, 0.0)
         glOrtho(0, self.width, self.height, 0, -1, 1)
@@ -189,11 +192,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.your_deck_repository.save_deck_state([93, 35, 93, 5])
 
-        self.opponent_field_unit_repository.create_field_unit_card(33)
-        self.opponent_field_unit_repository.create_field_unit_card(35)
-        self.opponent_field_unit_repository.create_field_unit_card(36)
-        self.opponent_field_unit_repository.create_field_unit_card(25)
-        self.opponent_field_unit_repository.create_field_unit_card(26)
+        # self.opponent_field_unit_repository.create_field_unit_card(33)
+        # self.opponent_field_unit_repository.create_field_unit_card(35)
+        # self.opponent_field_unit_repository.create_field_unit_card(36)
+        # self.opponent_field_unit_repository.create_field_unit_card(25)
+        # self.opponent_field_unit_repository.create_field_unit_card(26)
         self.opponent_field_unit_repository.create_field_unit_card(27)
 
         self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
@@ -227,6 +230,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         gluOrtho2D(0, width, height, 0)
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
+
+    def on_key_press(self, event):
+        key = event.keysym
+        print(f"Key pressed: {key}")
+
+        if key.lower() == 'a':
+            self.opponent_field_unit_repository.create_field_unit_card(26)
 
     def on_resize(self, event):
         self.reshape(event.width, event.height)
@@ -797,6 +807,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     self.opponent_fixed_unit_card_inside_handler.clear_lightning_border_list()
                     self.opponent_fixed_unit_card_inside_handler.clear_opponent_unit_id()
                     self.opponent_fixed_unit_card_inside_handler.clear_your_hand_card_id()
+
+                    self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
                     self.selected_object = None
                     return
