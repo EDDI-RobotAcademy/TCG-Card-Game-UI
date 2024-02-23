@@ -53,7 +53,7 @@ class BuyCheckServiceImpl(BuyCheckService):
             testcards = [76, 51, 76, 6, 77, 62, 53, 49, 72, 52]
             print(f"testcards: {testcards}")
             if is_success == True:
-                #self.__buyRandomCardFrameService.setRandomCardNumbers(testcards)
+                self.__buyCheckRepository.setRandomCardList(testcards)
                 self.__buyRandomCardFrameService.findRandomCardNumbers(testcards)
                 self.__cardShopMenuFrameService.RestoreCardShopUiButton()
                 switchFrameWithMenuName("buy-random-card")

@@ -3,7 +3,7 @@ from common.protocol import CustomProtocol
 
 class FreeRandomCardRequest:
     def __init__(self, sessionInfo):
-        self.__protocolNumber = CustomProtocol.FREE_BUY_CARD.value
+        self.__protocolNumber = CustomProtocol.FREE_GACHA.value
         self.__sessionInfo = sessionInfo
 
     def toDictionary(self):

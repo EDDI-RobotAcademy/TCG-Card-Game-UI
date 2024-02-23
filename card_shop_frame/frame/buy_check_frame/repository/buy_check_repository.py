@@ -21,3 +21,11 @@ class BuyCheckRepository(abc.ABC):
     @abc.abstractmethod
     def saveReceiveIpcChannel(self, receiveIpcChannel):
         pass
+
+    @abc.abstractmethod
+    def setRandomCardList(self, randomCardList):
+        pass
+
+    @abc.abstractmethod
+    def getRandomCardList(self):
+        pass

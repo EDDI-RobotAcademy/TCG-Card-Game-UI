@@ -3,7 +3,7 @@ from common.protocol import CustomProtocol
 
 class BuyRandomCardRequest:
     def __init__(self, sessionInfo, race_name, is_confirmed_upper_legend):
-        self.__protocolNumber = CustomProtocol.BUY_CARD.value
+        self.__protocolNumber = CustomProtocol.SHOP_GACHA.value
         self.__sessionInfo = sessionInfo
         self.__race_name = race_name
         self.__is_confirmed_upper_legend = is_confirmed_upper_legend

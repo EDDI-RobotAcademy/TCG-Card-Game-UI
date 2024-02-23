@@ -5,7 +5,7 @@ from card_shop_frame.frame.buy_check_frame.service.request.buy_random_card_reque
 from opengl_button.button_binding.buy_random_card_button_bind import BuyRandomCardFrameButtonBind
 
 from session.repository.session_repository_impl import SessionRepositoryImpl
-from card_shop_frame.repository.card_shop_repository_impl import CardShopMenuFrameRepositoryImpl
+from card_shop_frame.frame.buy_check_frame.repository.buy_check_repository_impl import BuyCheckRepositoryImpl
 
 
 class BuyRandomCardFrameServiceImpl(BuyRandomCardFrameService):
@@ -19,7 +19,7 @@ class BuyRandomCardFrameServiceImpl(BuyRandomCardFrameService):
             cls.__instance.__buyRandomCardFrame = BuyRandomCardFrame
             cls.__instance.__buyRandomCardScene = BuyRandomCardScene()
             cls.__instance.__sessionRepository = SessionRepositoryImpl.getInstance()
-            cls.__instance.__cardShopMenuFrameRepository = CardShopMenuFrameRepositoryImpl.getInstance()
+            cls.__instance.__buyCheckRepository = BuyCheckRepositoryImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -36,13 +36,12 @@ class BuyRandomCardFrameServiceImpl(BuyRandomCardFrameService):
     def findRandomCardNumbers(self, card_numbers):
         print(f"card_numbers: {card_numbers}")
         self.card_numbers = card_numbers
-        randomNumbers = self.card_numbers
-        print(f"randomNumbers: {randomNumbers}")
-
+        self.__buyRandomCardFrame().set_random_card_numbers(self.__buyCheckRepository.getRandomCardList())
+        self.createBuyRandomCardUiFrame(rootWindow, switchFrameWithMenuName)
 
     def createBuyRandomCardUiFrame(self, rootWindow, switchFrameWithMenuName):
         buyRandomCardrame = self.__buyRandomCardFrame(rootWindow)
-        buyRandomCardrame.set_random_card_numbers([76, 51, 76, 6, 77, 62, 53, 49, 72, 52])
+        buyRandomCardrame.set_random_card_numbers(self.__buyCheckRepository.getRandomCardList())
         print(f"buyRandomCardrame.random_card_numbers: {buyRandomCardrame.random_card_numbers}")
 
         buttonBinding = BuyRandomCardFrameButtonBind(master=rootWindow, frame=buyRandomCardrame)
