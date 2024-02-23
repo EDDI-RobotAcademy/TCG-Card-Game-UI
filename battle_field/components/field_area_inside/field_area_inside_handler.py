@@ -115,14 +115,8 @@ class FieldAreaInsideHandler:
         print(f"handle_support_card_draw_deck -> placed_card_id: {placed_card_id}")
 
         # TODO: Summary와 연동하도록 재구성 필요
-        # drawn_deck_card_list = self.__your_deck_repository.draw_deck_with_count(3)
-        # self.__your_hand_repository.create_additional_hand_card_list(drawn_deck_card_list)
-
-        from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
-        noWaitIpcChannel = NotifyReaderRepositoryImpl.getInstance()
-        noWaitIpcChannel.getNoWaitIpcChannel().put(
-            '{"NOTIFY_DRAWN_CARD_LIST": {"player_drawn_card_list_map": {"You": [93, 93, 93]}}}'
-        )
+        drawn_deck_card_list = self.__your_deck_repository.draw_deck_with_count(3)
+        self.__your_hand_repository.create_additional_hand_card_list(drawn_deck_card_list)
 
 
         self.__your_hand_repository.remove_card_by_index(placed_card_index)
