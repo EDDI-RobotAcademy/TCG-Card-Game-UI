@@ -38,6 +38,7 @@ class OpponentFieldUnitRepository:
         new_card.set_index(index)
 
         self.current_field_unit_card_object_list.append(new_card)
+        self.current_field_unit_state.place_unit_to_field(field_unit_id)
 
     def get_next_card_position(self, index):
         current_y = 270
@@ -70,5 +71,21 @@ class OpponentFieldUnitRepository:
 
             for attached_shape in fixed_card_base.get_attached_shapes():
                 attached_shape.local_translate(local_translation)
+
+    def attach_race_energy(self, opponent_field_unit_index, energy_race, energy_count):
+        self.attached_energy_info.add_race_energy_at_index(opponent_field_unit_index, energy_race, energy_count)
+        print(f"attached_energy_info after attach_race_energy: {self.attached_energy_info}")
+
+    def detach_race_energy(self, opponent_field_unit_index, energy_race, energy_count):
+        self.attached_energy_info.remove_race_energy_at_index(opponent_field_unit_index, energy_race, energy_count)
+
+    def get_opponent_field_unit_race_energy(self, index, energy_race):
+        return self.attached_energy_info.get_race_energy_at_index(index, energy_race)
+
+    def find_opponent_field_unit_by_index(self, index):
+        if 0 <= index < len(self.current_field_unit_card_object_list):
+            return self.current_field_unit_card_object_list[index]
+        else:
+            return None
 
 
