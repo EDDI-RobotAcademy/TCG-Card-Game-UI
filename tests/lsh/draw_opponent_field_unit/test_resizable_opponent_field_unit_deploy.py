@@ -808,6 +808,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     self.opponent_fixed_unit_card_inside_handler.clear_opponent_unit_id()
                     self.opponent_fixed_unit_card_inside_handler.clear_your_hand_card_id()
 
+                    self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
                     self.selected_object = None
                     return
 

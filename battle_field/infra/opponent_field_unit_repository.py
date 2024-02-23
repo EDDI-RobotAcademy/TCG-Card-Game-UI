@@ -53,3 +53,22 @@ class OpponentFieldUnitRepository:
         del self.current_field_unit_card_object_list[unit_index]
         self.current_field_unit_state.delete_current_field_unit_list(unit_index)
 
+    def replace_opponent_field_unit_card_position(self):
+        current_y = 270
+        x_increment = 170
+
+        for index, current_field_unit_card in enumerate(self.current_field_unit_card_object_list):
+            next_x = self.x_base + x_increment * index
+            print(f"next_x: {next_x}")
+            local_translation = (next_x, current_y)
+
+            tool_card = current_field_unit_card.get_tool_card()
+            tool_card.local_translate(local_translation)
+
+            fixed_card_base = current_field_unit_card.get_fixed_card_base()
+            fixed_card_base.local_translate(local_translation)
+
+            for attached_shape in fixed_card_base.get_attached_shapes():
+                attached_shape.local_translate(local_translation)
+
+
