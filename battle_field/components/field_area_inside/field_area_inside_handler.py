@@ -1,5 +1,5 @@
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
-from battle_field.infra.request.drawCardByUseSupportCardRequest import DrawCardByUseSupportCard
+from battle_field.infra.request.drawCardByUseSupportCardRequest import DrawCardByUseSupportCardRequest
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
@@ -123,7 +123,7 @@ class FieldAreaInsideHandler:
 
         try:
             draw_card_response = self.__your_hand_repository.requestDrawCardByUseSupportCard(
-                DrawCardByUseSupportCard(_sessionInfo=self.__session_info_repository.get_session_info(),
+                DrawCardByUseSupportCardRequest(_sessionInfo=self.__session_info_repository.get_session_info(),
                                          _cardId=placed_card_id)
             )
 
