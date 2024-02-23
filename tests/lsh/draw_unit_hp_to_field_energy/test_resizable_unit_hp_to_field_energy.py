@@ -156,6 +156,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         # (257, 969)
         # (415, 971)
         # (332, 791)
+        self.your_tomb.set_total_window_size(self.width, self.height)
         self.your_tomb.create_your_tomb_panel()
         self.your_tomb_panel = self.your_tomb.get_your_tomb_panel()
 
@@ -235,6 +236,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.your_tomb.set_width_ratio(self.width_ratio)
         self.your_tomb.set_height_ratio(self.height_ratio)
+        self.your_tomb_panel.set_draw_border(False)
         self.your_tomb_panel.draw()
 
         glDisable(GL_BLEND)
@@ -789,8 +791,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 self.winfo_reqheight())
 
             if self.tomb_panel_selected:
-                self.your_tomb.set_total_window_size(self.width, self.height)
-
                 print(f"current_tomb_unit_list test: {self.your_tomb_repository.get_current_tomb_state()}")
                 self.your_tomb.create_tomb_panel_popup_rectangle()
                 self.tomb_panel_popup_rectangle = self.your_tomb.get_tomb_panel_popup_rectangle()
