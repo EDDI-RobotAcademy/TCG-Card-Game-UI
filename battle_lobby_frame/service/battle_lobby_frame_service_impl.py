@@ -1,7 +1,7 @@
 import tkinter
 
 from battle_field.infra.battle_field_repository import BattleFieldRepository
-from battle_field.infra.your_hand_repository import YourHandRepository
+from battle_field_muligun.infra.your_hand_repository import YourHandRepository
 from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
 from battle_lobby_frame.repository.battle_lobby_frame_repository_impl import BattleLobbyFrameRepositoryImpl
 from battle_lobby_frame.service.battle_lobby_frame_service import BattleLobbyFrameService
@@ -69,7 +69,7 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
 
                     # opponentId = response.get("opponentSessionId")
                     # TODO : battleField 도메인을 호출하여 프레임을 전환해야합니다.
-                    switchFrameWithMenuName('battle-field')
+                    switchFrameWithMenuName('battle-field-muligun')
                     # TODO : 또한 opponentId를 넘겨주어 상대편 아이디가 표시되게 합니다.
                     # self.__battleFieldService.someFunction(opponentId)
 

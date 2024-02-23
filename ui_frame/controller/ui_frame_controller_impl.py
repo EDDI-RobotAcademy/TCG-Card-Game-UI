@@ -4,9 +4,10 @@ from account_login_frame.service.login_menu_frame_service_impl import LoginMenuF
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
-from battle_field.infra.your_hand_repository import YourHandRepository
+from battle_field_muligun.infra.your_hand_repository import YourHandRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field_function.service.battle_field_function_service_impl import BattleFieldFunctionServiceImpl
+from battle_field_muligun.service.battle_field_muligun_service_impl import BattleFieldMuligunFrameServiceImpl
 from battle_lobby_frame.service.battle_lobby_frame_service_impl import BattleLobbyFrameServiceImpl
 from card_shop_frame.service.card_shop_service_impl import CardShopMenuFrameServiceImpl
 from card_shop_frame.frame.buy_check_frame.service.buy_check_service_impl import BuyCheckServiceImpl
@@ -52,6 +53,7 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__yourFieldUnitRepository = YourFieldUnitRepository.getInstance()
             cls.__instance.__yourHandRepository = YourHandRepository.getInstance()
             cls.__instance.__yourTombRepository = YourTombRepository.getInstance()
+            cls.__instance.__battleFieldMuligunFrameServiece = BattleFieldMuligunFrameServiceImpl.getInstance()
 
         return cls.__instance
 
@@ -98,6 +100,9 @@ class UiFrameControllerImpl(UiFrameController):
         battleFieldFrame = self.__battleFieldFrame()
         self.__uiFrameService.registerBattleFieldUiFrame(battleFieldFrame)
 
+        battleFieldMuligunFrame = self.__battleFieldMuligunFrameServiece.createBattleFieldMuligunFrame(rootWindow, self.switchFrameWithMenuName)
+        self.__uiFrameService.registerBattleFieldMuligunUiFrame(battleFieldMuligunFrame)
+
         self.switchFrameWithMenuName("main-menu")
 
     def switchFrameWithMenuName(self, name):
@@ -126,7 +131,7 @@ class UiFrameControllerImpl(UiFrameController):
         self.__matchingWindowService.injectTransmitIpcChannel(transmitIpcChannel)
 
         self.__buyCheckService.injectTransmitIpcChannel(transmitIpcChannel)
-
+        self.__battleFieldMuligunFrameServiece.injectReceiveIpcChannel(transmitIpcChannel)
 
         self.__battleFieldRepository.saveTransmitIpcChannel(transmitIpcChannel)
         self.__yourDeckRepository.saveTransmitIpcChannel(transmitIpcChannel)
@@ -152,7 +157,7 @@ class UiFrameControllerImpl(UiFrameController):
         self.__matchingWindowService.injectReceiveIpcChannel(receiveIpcChannel)
 
         self.__buyCheckService.injectReceiveIpcChannel(receiveIpcChannel)
-
+        self.__battleFieldMuligunFrameServiece.injectReceiveIpcChannel(receiveIpcChannel)
 
         self.__battleFieldRepository.saveReceiveIpcChannel(receiveIpcChannel)
         self.__yourDeckRepository.saveReceiveIpcChannel(receiveIpcChannel)
