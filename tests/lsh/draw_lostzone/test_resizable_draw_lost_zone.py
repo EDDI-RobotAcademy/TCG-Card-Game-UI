@@ -14,12 +14,14 @@ from battle_field.components.mouse_left_click.left_click_detector import LeftCli
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area_action import OpponentFieldAreaAction
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
     OpponentFixedUnitCardInsideHandler
+from battle_field.entity.opponent_lost_zone import OpponentLostZone
 from battle_field.entity.opponent_tomb import OpponentTomb
 from battle_field.entity.tomb_type import TombType
 from battle_field.entity.your_lost_zone import YourLostZone
 from battle_field.entity.your_tomb import YourTomb
 from battle_field.handler.support_card_handler import SupportCardHandler
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
+from battle_field.infra.opponent_lost_zone_repository import OpponentLostZoneRepository
 from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
@@ -131,6 +133,12 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_lost_zone_popup_panel = None
         self.your_lost_zone_panel_selected = False
 
+        self.opponent_lost_zone_repository = OpponentLostZoneRepository.getInstance()
+        self.opponent_lost_zone_panel = None
+        self.opponent_lost_zone = OpponentLostZone()
+        self.opponent_lost_zone_popup_panel = None
+        self.opponent_lost_zone_panel_selected = False
+
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
         self.bind("<ButtonRelease-1>", self.on_canvas_release)
@@ -219,6 +227,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_lost_zone.set_total_window_size(self.width, self.height)
         self.your_lost_zone.create_your_lost_zone_panel()
         self.your_lost_zone_panel = self.your_lost_zone.get_your_lost_zone_panel()
+
+        self.opponent_lost_zone.set_total_window_size(self.width, self.height)
+        self.opponent_lost_zone.create_opponent_lost_zone_panel()
+        self.opponent_lost_zone_panel = self.opponent_lost_zone.get_opponent_lost_zone_panel()
 
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
@@ -328,20 +340,35 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.battle_field_opponent_unit_place_panel.set_height_ratio(self.height_ratio)
         self.battle_field_opponent_unit_place_panel.draw()
 
+        # 현재 Tomb 와 Lost Zone은 전부 비율 기반이다.
+        # 그러므로 사각형의 width_ratio를 계산할 필요는 없다 (마우스 포인터가 내부에 있나 계산하는 부분 제외)
         self.your_tomb.set_width_ratio(self.width_ratio)
         self.your_tomb.set_height_ratio(self.height_ratio)
+        self.your_tomb_panel.set_width_ratio(self.width_ratio)
+        self.your_tomb_panel.set_height_ratio(self.height_ratio)
         self.your_tomb_panel.set_draw_border(False)
         self.your_tomb_panel.draw()
 
         self.opponent_tomb.set_width_ratio(self.width_ratio)
         self.opponent_tomb.set_height_ratio(self.height_ratio)
+        self.opponent_tomb_panel.set_width_ratio(self.width_ratio)
+        self.opponent_tomb_panel.set_height_ratio(self.height_ratio)
         self.opponent_tomb_panel.set_draw_border(False)
         self.opponent_tomb_panel.draw()
 
         self.your_lost_zone.set_width_ratio(self.width_ratio)
         self.your_lost_zone.set_height_ratio(self.height_ratio)
+        self.your_lost_zone_panel.set_width_ratio(self.width_ratio)
+        self.your_lost_zone_panel.set_height_ratio(self.height_ratio)
         self.your_lost_zone_panel.set_draw_border(False)
         self.your_lost_zone_panel.draw()
+
+        self.opponent_lost_zone.set_width_ratio(self.width_ratio)
+        self.opponent_lost_zone.set_height_ratio(self.height_ratio)
+        self.opponent_lost_zone_panel.set_width_ratio(self.width_ratio)
+        self.opponent_lost_zone_panel.set_height_ratio(self.height_ratio)
+        self.opponent_lost_zone_panel.set_draw_border(False)
+        self.opponent_lost_zone_panel.draw()
 
         glDisable(GL_BLEND)
 
@@ -530,6 +557,35 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     attached_tool_card.draw()
 
                 fixed_card_base = your_lost_zone_unit.get_fixed_card_base()
+                fixed_card_base.set_width_ratio(self.width_ratio)
+                fixed_card_base.set_height_ratio(self.height_ratio)
+                fixed_card_base.draw()
+
+                attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                for attached_shape in attached_shape_list:
+                    attached_shape.set_width_ratio(self.width_ratio)
+                    attached_shape.set_height_ratio(self.height_ratio)
+                    attached_shape.draw()
+
+            glDisable(GL_BLEND)
+
+        if self.opponent_lost_zone_panel_selected:
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+            self.opponent_lost_zone_popup_panel.set_width_ratio(self.width_ratio)
+            self.opponent_lost_zone_popup_panel.set_height_ratio(self.height_ratio)
+            self.opponent_lost_zone_popup_panel.draw()
+
+            for opponent_lost_zone_unit in self.opponent_lost_zone_repository.get_opponent_lost_zone_card_list():
+                attached_tool_card = opponent_lost_zone_unit.get_tool_card()
+                if attached_tool_card is not None:
+                    attached_tool_card.set_width_ratio(self.width_ratio)
+                    attached_tool_card.set_height_ratio(self.height_ratio)
+                    attached_tool_card.draw()
+
+                fixed_card_base = opponent_lost_zone_unit.get_fixed_card_base()
                 fixed_card_base.set_width_ratio(self.width_ratio)
                 fixed_card_base.set_height_ratio(self.height_ratio)
                 fixed_card_base.draw()
@@ -832,9 +888,14 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 if self.your_lost_zone.is_point_inside_popup_rectangle((x, y)):
                     return
 
+            if self.opponent_lost_zone_panel_selected:
+                if self.opponent_lost_zone.is_point_inside_popup_rectangle((x, y)):
+                    return
+
             self.tomb_panel_selected = False
             self.opponent_tomb_panel_selected = False
             self.your_lost_zone_panel_selected = False
+            self.opponent_lost_zone_panel_selected = False
 
             for hand_card in self.hand_card_list:
                 if isinstance(hand_card, PickableCard):
@@ -980,6 +1041,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                 self.opponent_tomb_panel_selected = False
                 self.your_lost_zone_panel_selected = False
+                self.opponent_lost_zone_panel_selected = False
                 return
 
             self.opponent_tomb_panel_selected = self.left_click_detector.which_one_select_is_in_opponent_tomb_area(
@@ -995,6 +1057,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                 self.tomb_panel_selected = False
                 self.your_lost_zone_panel_selected = False
+                self.opponent_lost_zone_panel_selected = False
                 return
 
             self.your_lost_zone_panel_selected = self.left_click_detector.which_one_select_is_in_your_lost_zone_area(
@@ -1010,11 +1073,29 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                 self.tomb_panel_selected = False
                 self.opponent_tomb_panel_selected = False
+                self.opponent_lost_zone_panel_selected = False
+                return
+
+            self.opponent_lost_zone_panel_selected = self.left_click_detector.which_one_select_is_in_opponent_lost_zone_area(
+                (x, y),
+                self.opponent_lost_zone,
+                self.winfo_reqheight())
+
+            if self.opponent_lost_zone_panel_selected:
+                print(
+                    f"on_canvas_left_click() -> current_lost_zone_card_list: {self.opponent_lost_zone_repository.get_opponent_lost_zone_card_list()}")
+                self.opponent_lost_zone.create_opponent_lost_zone_popup_panel()
+                self.opponent_lost_zone_popup_panel = self.opponent_lost_zone.get_opponent_lost_zone_popup_panel()
+
+                self.tomb_panel_selected = False
+                self.opponent_tomb_panel_selected = False
+                self.your_lost_zone_panel_selected = False
                 return
 
             self.tomb_panel_selected = False
             self.opponent_tomb_panel_selected = False
             self.your_lost_zone_panel_selected = False
+            self.opponent_lost_zone_panel_selected = False
 
             # self.selected_tomb = self.left_click_detector.which_tomb_did_you_select(
             #     (x, y),

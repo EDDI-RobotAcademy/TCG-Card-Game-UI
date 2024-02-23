@@ -2,13 +2,13 @@ from battle_field.state.current_lost_zone import CurrentLostZoneState
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 
 
-class YourLostZoneRepository:
+class OpponentLostZoneRepository:
     __instance = None
 
-    your_lost_zone_state = CurrentLostZoneState()
+    opponent_lost_zone_state = CurrentLostZoneState()
 
-    your_lost_zone_card_list = []
-    your_lost_zone_card_x_position = []
+    opponent_lost_zone_card_list = []
+    opponent_lost_zone_card_x_position = []
 
     x_base = 400
 
@@ -23,37 +23,37 @@ class YourLostZoneRepository:
             cls.__instance = cls()
         return cls.__instance
 
-    def save_your_lost_zone_state(self, hand_card_id):
-        self.your_lost_zone_state.place_card_to_lost_zone(hand_card_id)
+    def save_opponent_lost_zone_state(self, hand_card_id):
+        self.opponent_lost_zone_state.place_card_to_lost_zone(hand_card_id)
         print(f"Saved current lost zone card state: {hand_card_id}")
 
-    def get_your_lost_zone_state(self):
-        return self.your_lost_zone_state.get_current_lost_zone_card_list()
+    def get_opponent_lost_zone_state(self):
+        return self.opponent_lost_zone_state.get_current_lost_zone_card_list()
 
-    def create_your_lost_zone_card(self, card_id):
-        index = len(self.your_lost_zone_card_list)
-        print(f"create_your_lost_zone_card() -> index: {index}, card_id: {card_id}")
+    def create_opponent_lost_zone_card(self, card_id):
+        index = len(self.opponent_lost_zone_card_list)
+        print(f"create_opponent_lost_zone_card() -> index: {index}, card_id: {card_id}")
 
         new_card = FixedFieldCard(local_translation=self.get_next_card_position(index))
         new_card.init_card(card_id)
 
-        self.your_lost_zone_card_list.append(new_card)
+        self.opponent_lost_zone_card_list.append(new_card)
 
-        self.save_your_lost_zone_state(card_id)
+        self.save_opponent_lost_zone_state(card_id)
 
-    def create_your_lost_zone_card_list(self):
-        current_your_lost_zone_card_list = self.get_your_lost_zone_state()
-        print(f"current_your_lost_zone_card_list: {current_your_lost_zone_card_list}")
+    def create_opponent_lost_zone_card_list(self):
+        current_opponent_lost_zone_card_list = self.get_opponent_lost_zone_state()
+        print(f"current_opponent_lost_zone_card_list: {current_opponent_lost_zone_card_list}")
 
-        for index, card_number in enumerate(current_your_lost_zone_card_list):
+        for index, card_number in enumerate(current_opponent_lost_zone_card_list):
             print(f"index: {index}, card_number: {card_number}")
             new_card = FixedFieldCard(local_translation=self.get_next_card_position(index))
             new_card.init_card(card_number)
             new_card.set_index(index)
-            self.your_lost_zone_card_list.append(new_card)
+            self.opponent_lost_zone_card_list.append(new_card)
 
-    def get_your_lost_zone_card_list(self):
-        return self.your_lost_zone_card_list
+    def get_opponent_lost_zone_card_list(self):
+        return self.opponent_lost_zone_card_list
 
     def get_next_card_position(self, index):
         # TODO: 배치 간격 고려
@@ -63,7 +63,7 @@ class YourLostZoneRepository:
         return (next_x, current_y)
 
     def place_card_in_lost_zone(self, unit_card_id):
-        self.your_lost_zone_card_list.append(unit_card_id)
+        self.opponent_lost_zone_card_list.append(unit_card_id)
 
     def saveReceiveIpcChannel(self, receiveIpcChannel):
         self.__receiveIpcChannel = receiveIpcChannel
