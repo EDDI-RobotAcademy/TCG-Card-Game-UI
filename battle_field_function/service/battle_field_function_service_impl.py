@@ -81,7 +81,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
     def drawYourCard(self, notify_dict_data):
         for data in notify_dict_data.values():
             card_list = data["You"]
-            self.__yourHandRepository.save_current_hand_state(card_list)
+            self.__yourHandRepository.create_additional_hand_card_list(card_list)
 
     def drawOpponentCard(self, notify_dict_data):
         #todo : 아직 opponentHandRepository가 없음.
