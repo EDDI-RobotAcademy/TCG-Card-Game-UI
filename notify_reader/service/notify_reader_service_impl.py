@@ -26,13 +26,16 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         self.__notify_reader_repository.saveNoWaitIpcChannel(nowaitIpcChannel)
 
     def saveHandUseFunction(self, hand_use_function):
+        print(f"saveHandUseFunction: {hand_use_function}")
         self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_HAND_USE.name, hand_use_function)
 
     def saveDrawCountFunction(self, draw_count_function):
+        print(f"saveDrawCountFunction: {draw_count_function}")
         self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_DRAW_COUNT.name, draw_count_function)
 
     def saveDrawnCardListFunction(self, drawn_card_list_function):
-        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_DRAWN_CARD_LIST, drawn_card_list_function)
+        print(f"saveDrawnCardListFunction: {drawn_card_list_function}")
+        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_DRAWN_CARD_LIST.name, drawn_card_list_function)
 
 
 
@@ -40,10 +43,14 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         while True:
             try:
                 raw_notice_data = self.__notify_reader_repository.getNotice()
+                print(f"raw_notice_data: {raw_notice_data}")
                 notice_dict = json.loads(raw_notice_data)
+
                 for notice_type in NoticeType:
                     if notice_type.name in notice_dict:
-                        called_function = self.__notify_reader_repository.callFunctionByNoticeName(notice_type.name)
+                        print(f"noticeType: {notice_type.name}")
+                        called_function = self.__notify_reader_repository.getFunctionByNoticeName(notice_type.name)
                         called_function(notice_dict[notice_type.name])
-            except:
+            except Exception as e:
+                print(e)
                 continue
