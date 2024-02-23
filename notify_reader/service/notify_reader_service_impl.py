@@ -25,9 +25,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
     def injectNoWaitIpcChannel(self, nowaitIpcChannel):
         self.__notify_reader_repository.saveNoWaitIpcChannel(nowaitIpcChannel)
 
-    def saveHandUseFunction(self, hand_use_function):
-        print(f"saveHandUseFunction: {hand_use_function}")
-        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_HAND_USE.name, hand_use_function)
+    def saveHandCardUseFunction(self, hand_card_use_function):
+        print(f"saveHandCardUseFunction: {hand_card_use_function}")
+        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_HAND_CARD_USE.name, hand_card_use_function)
 
     def saveDrawCountFunction(self, draw_count_function):
         print(f"saveDrawCountFunction: {draw_count_function}")
@@ -38,19 +38,41 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_DRAWN_CARD_LIST.name, drawn_card_list_function)
 
 
+    def saveDeckCardUseListFunction(self, deck_card_list_use_function):
+        print(f"saveDeckCardListUseFunction: {deck_card_list_use_function}")
+        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_DECK_CARD_LIST_USE.name, deck_card_list_use_function)
+
+    def saveFieldUnitEnergyFunction(self, field_unit_energy_function):
+        print(f"saveFieldUnitEnergy: {field_unit_energy_function}")
+        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_FIELD_UNIT_ENERGY.name, field_unit_energy_function)
+
+    def saveSearchCountFunction(self, search_count_function):
+        print(f"saveSearchCount: {search_count_function}")
+        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_SEARCH_COUNT.name, search_count_function)
+
+    def saveSearchCardListFunction(self, search_card_list_function):
+        print(f"saveSearchCardListFunction: {search_card_list_function}")
+        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_SEARCH_CARD_LIST.name, search_card_list_function)
+
+
+
 
     def readNoticeAndCallFunction(self):
         while True:
             try:
                 raw_notice_data = self.__notify_reader_repository.getNotice()
                 print(f"raw_notice_data: {raw_notice_data}")
-                notice_dict = json.loads(raw_notice_data)
+                if raw_notice_data:
 
-                for notice_type in NoticeType:
-                    if notice_type.name in notice_dict:
-                        print(f"noticeType: {notice_type.name}")
-                        called_function = self.__notify_reader_repository.getFunctionByNoticeName(notice_type.name)
-                        called_function(notice_dict[notice_type.name])
+                    notice_dict = json.loads(raw_notice_data)
+
+                    for notice_type in NoticeType:
+                        if notice_type.name in notice_dict:
+                            print(f"noticeType: {notice_type.name}")
+                            called_function = self.__notify_reader_repository.getFunctionByNoticeName(notice_type.name)
+                            called_function(notice_dict[notice_type.name])
+
+                break
             except Exception as e:
                 print(e)
                 continue
