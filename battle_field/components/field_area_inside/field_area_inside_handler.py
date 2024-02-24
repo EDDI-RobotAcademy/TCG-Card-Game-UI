@@ -110,7 +110,7 @@ class FieldAreaInsideHandler:
             self.__lightning_border_list.append(card_base)
 
         self.__action_set_card_id = placed_card_id
-        self.__your_hand_repository.remove_card_by_id(placed_card_index)
+        self.__your_hand_repository.remove_card_by_index(placed_card_index)
 
         self.__field_area_action = FieldAreaAction.ENERGY_BOOST
         return self.__field_area_action
@@ -144,7 +144,7 @@ class FieldAreaInsideHandler:
         return self.__field_area_action
 
     def handle_support_card(self, placed_card_id, placed_card_index):
-        print("서포트 카드 사용 감지!")
+        print("서포트 카드 사용 감지! handle_support_card() -> ")
 
         support_card_handler = self.__field_area_inside_handler_table[placed_card_id]
         support_card_action = support_card_handler(placed_card_id, placed_card_index)

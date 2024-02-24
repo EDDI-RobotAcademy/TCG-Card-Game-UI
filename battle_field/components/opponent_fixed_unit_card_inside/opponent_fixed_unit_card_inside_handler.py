@@ -4,6 +4,9 @@ from battle_field.infra.your_hand_repository import YourHandRepository
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_race import CardRace
 from common.card_type import CardType
+from image_shape.circle_kinds import CircleKinds
+from image_shape.circle_number_image import CircleNumberImage
+from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
 class OpponentFixedUnitCardInsideHandler:
@@ -20,6 +23,7 @@ class OpponentFixedUnitCardInsideHandler:
     __your_hand_repository = YourHandRepository.getInstance()
     __opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
     __card_info_repository = CardInfoFromCsvRepositoryImpl.getInstance()
+    __pre_drawed_image_instance = PreDrawedImage.getInstance()
 
     __lightning_border_list = []
 
@@ -35,6 +39,7 @@ class OpponentFixedUnitCardInsideHandler:
             # cls.__instance.card_info = card_info
 
             cls.__instance.__opponent_fixed_unit_card_inside_handler_table[8] = cls.__instance.death_sice_need_two_undead_energy
+            # cls.__instance.__opponent_fixed_unit_card_inside_handler_table[20] = cls.__instance.contract_of_doom
 
         return cls.__instance
 
@@ -135,8 +140,12 @@ class OpponentFixedUnitCardInsideHandler:
 
     def death_sice_need_two_undead_energy(self, placed_card_index, unit_index, placed_card_id):
         print("death_sice operates")
+
+        # TODO: 실제로 여기서 조정하면 됨 (필요한 에너지 값)
         self.__required_energy = 2
         self.__required_energy_race = CardRace.UNDEAD
+
+        # 뭔가 작업을 위해 대기가 필요한 상황 (에너지가 필요하다던지)
         self.__opponent_field_area_action = OpponentFieldAreaAction.REQUIRE_ENERGY_TO_USAGE
         self.__opponent_unit_index = unit_index
         self.__action_set_card_index = placed_card_index
@@ -149,5 +158,42 @@ class OpponentFixedUnitCardInsideHandler:
             if your_hand_card_id == 93 or your_hand_card_id == 151:
                 card_base = your_current_hand_card.get_pickable_card_base()
                 self.__lightning_border_list.append(card_base)
+
+    # def contract_of_doom(self, placed_card_index, placed_card_id):
+    #     print(f"contract_of_doom() -> placed_card_index: {placed_card_index}, placed_card_id: {placed_card_id}")
+    #
+    #     self.__required_energy = 0
+    #
+    #     damage = 15
+    #
+    #     # TODO: 즉발이므로 대기 액션이 필요없음 (서버와의 통신을 위해 대기가 발생 할 수 있긴함) 그 때 가서 추가
+    #     for index, opponent_field_unit_list in enumerate(self.__opponent_field_unit_repository.get_current_field_unit_card_object_list()):
+    #         remove_from_field = False
+    #
+    #         fixed_card_base = opponent_field_unit_list.get_fixed_card_base()
+    #         attached_shape_list = fixed_card_base.get_attached_shapes()
+    #
+    #         # TODO: 가만 보면 이 부분이 은근히 많이 사용되고 있음 (중복 많이 발생함)
+    #         for attached_shape in attached_shape_list:
+    #             if isinstance(attached_shape, CircleNumberImage):
+    #                 if attached_shape.get_circle_kinds() is CircleKinds.HP:
+    #
+    #                     hp_number = attached_shape.get_number()
+    #                     hp_number -= damage
+    #
+    #                     # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
+    #                     # (지금 당장 불사가 존재하지 않음)
+    #                     if hp_number <= 0:
+    #                         remove_from_field = True
+    #                         break
+    #
+    #                     attached_shape.set_image_data(
+    #                         # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+    #                         self.__pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
+    #
+    #         if remove_from_field:
+    #             self.__opponent_field_unit_repository.remove_current_field_unit_card(index)
+
+
 
 
