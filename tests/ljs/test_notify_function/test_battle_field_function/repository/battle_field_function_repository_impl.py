@@ -28,6 +28,9 @@ class BattleFieldFunctionRepositoryImpl(BattleFieldFunctionRepository):
     def saveReceiveIpcChannel(self, receiveIpcChannel):
         self.__receiveIpcChannel = receiveIpcChannel
 
+    def getReceiveIpcChannel(self):
+        return self.__receiveIpcChannel
+
     def saveTransmitIpcChannel(self, transmitIpcChannel):
         self.__transmitIpcChannel = transmitIpcChannel
 

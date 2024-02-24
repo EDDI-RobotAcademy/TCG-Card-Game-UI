@@ -24,7 +24,7 @@ class BattleFieldMuligunFrameServiceImpl(BattleFieldMuligunFrameService):
 
     def createBattleFieldMuligunFrame(self, rootWindow, switchFrameWithMenuName):
 
-        battleFieldMuligunFrame = self.__battleFieldMuligunFrame(rootWindow)
+        battleFieldMuligunFrame = self.__battleFieldMuligunFrame(master=rootWindow, switchFrameWithMenuName=switchFrameWithMenuName)
 
         try:
             session_info = self.__sessionRepository.get_session_info()

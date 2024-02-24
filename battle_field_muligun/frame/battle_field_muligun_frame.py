@@ -13,9 +13,9 @@ from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.rectangle import Rectangle
 
 class BattleFieldMuligunFrame(OpenGLFrame):
-    def __init__(self, master=None, **kwargs):
+    def __init__(self,  master=None, switchFrameWithMenuName=None, **kwargs):
         super().__init__(master, **kwargs)
-
+        self.__switchFrameWithMenuName = switchFrameWithMenuName
         monitors = get_monitors()
         target_monitor = monitors[2] if len(monitors) > 2 else monitors[0]
 
@@ -242,6 +242,8 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         self.checking_draw_effect = {}
         self.ok_button_visible = False
         self.execute_pick_card_effect = False
+
+        self.master.after(2000, self.__switchFrameWithMenuName('decision-first'))
 
 
     # 멀리건 화면에서 교체하려는 카드 클릭시 나타나는 표현

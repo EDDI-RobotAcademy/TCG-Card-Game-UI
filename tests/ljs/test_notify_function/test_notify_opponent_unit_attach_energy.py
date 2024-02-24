@@ -37,13 +37,18 @@ from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
 from initializer.init_domain import DomainInitializer
-from tests.ljs.test_notify_function.test_notify_reader.controller.notify_reader_controller_impl import NotifyReaderControllerImpl
+from tests.ljs.test_notify_function.test_battle_field_function.service.battle_field_function_service_impl import \
+    BattleFieldFunctionServiceImpl
+from tests.ljs.test_notify_function.test_notify_reader.controller.notify_reader_controller_impl import \
+    NotifyReaderControllerImpl
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.circle import Circle
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from task_worker.service.task_worker_service_impl import TaskWorkerServiceImpl
+from tests.ljs.test_notify_function.test_notify_reader.repository.notify_reader_repository_impl import \
+    NotifyReaderRepositoryImpl
 
 
 class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
@@ -245,16 +250,24 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         if key.lower() == 'e':
             print("attach undead energy")
+            notify_raw_data = '''{
+                "NOTIFY_FIELD_UNIT_ENERGY":
+                    {"player_field_unit_energy_map":
+                         {"Opponent":
+                              {"0":
+                                   {"attached_energy_map":
+                                        {"2": 2}, "total_energy_count": 2}}}}}'''
             notify_dict = {"player_field_unit_energy_map":
-            {"Opponent":
-            {"0":
-            {"attached_energy_map":{"2":2},"total_energy_count":2}}}}
-            from battle_field_function.service.battle_field_function_service_impl import BattleFieldFunctionServiceImpl
-            attach_energy_data = BattleFieldFunctionServiceImpl.getInstance().attachFieldUnitEnergy(notify_dict)
-            print("attach_energy_count : ",attach_energy_data)
-            self.attach_energy(attach_energy_data)
+                               {"Opponent":
+                                    {"0":
+                                         {"attached_energy_map": {"2": 2}, "total_energy_count": 2}}}}
 
-
+            NotifyReaderRepositoryImpl.getInstance().getNoWaitIpcChannel().put(notify_raw_data)
+            NotifyReaderControllerImpl.getInstance().requestToReadNotifyCommand()
+            # from battle_field_function.service.battle_field_function_service_impl import BattleFieldFunctionServiceImpl
+            # attach_energy_data = BattleFieldFunctionServiceImpl.getInstance().attachFieldUnitEnergy(notify_dict)
+            # print("attach_energy_count : ",attach_energy_data)
+            # self.attach_energy(attach_energy_data)
 
     def on_resize(self, event):
         self.reshape(event.width, event.height)
@@ -397,7 +410,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             self.lightning_border.draw_lightning_border()
 
         if self.tomb_panel_selected:
-        # if self.selected_tomb is TombType.Your:
+            # if self.selected_tomb is TombType.Your:
             glEnable(GL_BLEND)
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
@@ -428,7 +441,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             glDisable(GL_BLEND)
 
         if self.opponent_tomb_panel_selected:
-        # elif self.selected_tomb is TombType.Opponent:
+            # elif self.selected_tomb is TombType.Opponent:
             glEnable(GL_BLEND)
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
@@ -608,7 +621,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             print(f"card grade : {self.card_info_repository.getCardGradeForCardNumber(placed_card_id)}")
 
                             # attached_energy_count = self.your_field_unit_repository.get_attached_energy_info().get_energy_at_index(unit_index)
-                            total_attached_energy_count = self.your_field_unit_repository.get_total_energy_at_index(unit_index)
+                            total_attached_energy_count = self.your_field_unit_repository.get_total_energy_at_index(
+                                unit_index)
                             print(f"total_attached_energy_count: {total_attached_energy_count}")
                             # undead_attach_energy_count = self.your_field_unit_repository.get_your_field_unit_race_energy(
                             #     unit_index, race)
@@ -649,7 +663,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             self.field_area_inside_handler.set_width_ratio(self.width_ratio)
             self.field_area_inside_handler.set_height_ratio(self.height_ratio)
 
-            drop_action_result = self.field_area_inside_handler.handle_card_drop(x, y, self.selected_object, self.battle_field_unit_place_panel)
+            drop_action_result = self.field_area_inside_handler.handle_card_drop(x, y, self.selected_object,
+                                                                                 self.battle_field_unit_place_panel)
             if drop_action_result is None or drop_action_result is FieldAreaAction.Dummy:
                 print("self.field_area_inside_handler.get_field_area_action() = None")
                 self.return_to_initial_location()
@@ -884,7 +899,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 self.winfo_reqheight())
 
             if self.tomb_panel_selected:
-                print(f"on_canvas_left_click() -> current_tomb_unit_list: {self.your_tomb_repository.get_current_tomb_state()}")
+                print(
+                    f"on_canvas_left_click() -> current_tomb_unit_list: {self.your_tomb_repository.get_current_tomb_state()}")
                 self.your_tomb.create_tomb_panel_popup_rectangle()
                 self.tomb_panel_popup_rectangle = self.your_tomb.get_tomb_panel_popup_rectangle()
 
@@ -953,7 +969,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
     def attach_energy(self, attach_energy_data):
 
         # TODO: Change it to ENUM Value (Not just integer)
-        #card_race = self.card_info_repository.getCardRaceForCardNumber(93)
+        # card_race = self.card_info_repository.getCardRaceForCardNumber(93)
         card_race = attach_energy_data['energy_race']
         print(f"card_race: {card_race}")
 
@@ -977,7 +993,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         # after_attach_energy_count = self.opponent_field_unit_repository.get_opponent_field_unit_race_energy(
         #     0, EnergyType.Undead)
-        total_attached_energy_count = attach_energy_data['total_energy_count']#self.opponent_field_unit_repository.get_total_energy_at_index(0)
+        total_attached_energy_count = attach_energy_data[
+            'total_energy_count']  # self.opponent_field_unit_repository.get_total_energy_at_index(0)
         total_attached_energy_count = self.opponent_field_unit_repository.get_total_energy_at_index(opponent_unit_index)
         print(
             f"opponent_field_unit_attached_undead_energy_count: {total_attached_energy_count}")
@@ -1003,7 +1020,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             for energy_count in range(0, attach_energy_count):
                 card_race_circle = opponent_field_unit.creat_fixed_card_energy_race_circle(
                     color=(0, 0, 0, 1),
-                    vertices=(0, ((total_attached_energy_count-energy_count) * 10) + 20),
+                    vertices=(0, ((total_attached_energy_count - energy_count) * 10) + 20),
                     local_translation=opponent_fixed_card_base.get_local_translation())
                 opponent_fixed_card_base.set_attached_shapes(card_race_circle)
 
@@ -1031,26 +1048,28 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 class TestNotifyOpponentUnitAttachEnergy(unittest.TestCase):
 
     def setUp(self):
-        DomainInitializer.initEachDomain()
-        self.noWaitIpcChannel = multiprocessing.Queue()
-        notifyReaderController = NotifyReaderControllerImpl.getInstance()
-        notifyReaderController.requestToMappingNoticeWithFunction()
-        notifyReaderController.requestToInjectNoWaitIpcChannel(self.noWaitIpcChannel)
 
-        taskWorkerService = TaskWorkerServiceImpl.getInstance()
-        taskWorkerService.createTaskWorker("NotifyReader", notifyReaderController.requestToReadNotifyCommand)
-        taskWorkerService.executeTaskWorker("NotifyReader")
+        pass
 
     def test_notify_opponent_unit_attach_energy(self):
-
-
+        DomainInitializer.initEachDomain()
         root = tkinter.Tk()
         root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}-0-0")
         root.deiconify()
 
         pre_drawed_battle_field_frame = PreDrawedBattleFieldFrameRefactor(root)
+        BattleFieldFunctionServiceImpl.getInstance().saveFrame(pre_drawed_battle_field_frame)
         pre_drawed_battle_field_frame.pack(fill=tkinter.BOTH, expand=1)
         root.update_idletasks()
+
+        self.noWaitIpcChannel = multiprocessing.Queue()
+        notifyReaderController = NotifyReaderControllerImpl.getInstance()
+        notifyReaderController.requestToMappingNoticeWithFunction()
+        notifyReaderController.requestToInjectNoWaitIpcChannel(self.noWaitIpcChannel)
+
+        # taskWorkerService = TaskWorkerServiceImpl.getInstance()
+        # taskWorkerService.createTaskWorker("NotifyReader", notifyReaderController.requestToReadNotifyCommand)
+        # taskWorkerService.executeTaskWorker("NotifyReader")
 
         def animate():
             pre_drawed_battle_field_frame.redraw()
@@ -1063,4 +1082,3 @@ class TestNotifyOpponentUnitAttachEnergy(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

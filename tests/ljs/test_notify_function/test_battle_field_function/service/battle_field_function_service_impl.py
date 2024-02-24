@@ -13,6 +13,7 @@ from session.service.session_service_impl import SessionServiceImpl
 
 class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
     __instance = None
+    preDrawedBattleFieldFrameRefactor = None
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -36,7 +37,8 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
         self.__battleFieldFunctionRepository.saveReceiveIpcChannel(receiveIpcChannel)
 
 
-
+    def saveFrame(self, frame):
+        self.preDrawedBattleFieldFrameRefactor = frame
 
     def surrender(self, switchFrameWithMenuName = None):
         print(f"battleFieldFunctionServiceImpl: Surrender")
@@ -127,8 +129,12 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
                         total_energy_count = data[target_character][target_unit_index]["total_energy_count"]
                         print(f"race_energy_count: {race_energy_count}")
                         print(f"total_energy_count: {total_energy_count}")
-                        return {'energy_race' : int(energy_race), 'race_energy_count': int(race_energy_count),
+
+
+                        result_data = {'energy_race' : int(energy_race), 'race_energy_count': int(race_energy_count),
                                 'total_energy_count': int(total_energy_count), 'target_unit_index': int(target_unit_index)}
+
+                        self.preDrawedBattleFieldFrameRefactor.attach_energy(result_data)
                         #todo :
                         # target_character => You || Opponent
                         # target_unit_index => 필드에 존재하는 유닛의 index값

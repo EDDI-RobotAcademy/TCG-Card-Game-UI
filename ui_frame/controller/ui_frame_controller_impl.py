@@ -11,6 +11,7 @@ from battle_field_muligun.service.battle_field_muligun_service_impl import Battl
 from battle_lobby_frame.service.battle_lobby_frame_service_impl import BattleLobbyFrameServiceImpl
 from card_shop_frame.service.card_shop_service_impl import CardShopMenuFrameServiceImpl
 from card_shop_frame.frame.buy_check_frame.service.buy_check_service_impl import BuyCheckServiceImpl
+from decision_first_strike.decision_first_strike_frame_service import DecisionFirstStrikeFrameService
 from lobby_frame.service.lobby_menu_frame_service_impl import LobbyMenuFrameServiceImpl
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
 from matching_window.service.matching_window_service_impl import MatchingWindowServiceImpl
@@ -54,6 +55,8 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__yourHandRepository = YourHandRepository.getInstance()
             cls.__instance.__yourTombRepository = YourTombRepository.getInstance()
             cls.__instance.__battleFieldMuligunFrameServiece = BattleFieldMuligunFrameServiceImpl.getInstance()
+
+            cls.__instance.__decisionFirstStrikeFrameService = DecisionFirstStrikeFrameService.getInstance()
 
         return cls.__instance
 
@@ -102,6 +105,9 @@ class UiFrameControllerImpl(UiFrameController):
 
         battleFieldMuligunFrame = self.__battleFieldMuligunFrameServiece.createBattleFieldMuligunFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerBattleFieldMuligunUiFrame(battleFieldMuligunFrame)
+
+        decisionFirstStrikeFrame = self.__decisionFirstStrikeFrameService.create_decision_first_strike_frame(rootWindow, self.switchFrameWithMenuName)
+        self.__uiFrameService.registerDecisionFirstStrikeFrame(decisionFirstStrikeFrame)
 
         self.switchFrameWithMenuName("main-menu")
 
@@ -176,3 +182,6 @@ class UiFrameControllerImpl(UiFrameController):
         print("UiFrameControllerImpl: requestToInjectMusicPlayIpcChannel()")
 
         self.__battleFieldRepository.injectNoWaitIpcChannel(uiNoWaitIpcChannel)
+
+    def requestToSavePipe(self, conn_from_notify):
+        self.__battleFieldFunctionService.savePipe(conn_from_notify)
