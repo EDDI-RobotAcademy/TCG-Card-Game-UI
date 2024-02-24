@@ -94,6 +94,20 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
             print("Fake Battle Field Frame Response:", create_fake_battle_field_response)
 
+            if create_fake_battle_field_response:
+                first_fake_redis_token = create_fake_battle_field_response.get("first_fake_session")
+                second_fake_redis_token = create_fake_battle_field_response.get("second_fake_session")
+
+                if first_fake_redis_token is not None and isinstance(first_fake_redis_token, str) and first_fake_redis_token != "":
+                    print(f"First Fake redis_token received: {first_fake_redis_token}")
+
+                    self.__sessionRepository.writeFirstFakeRedisTokenSessionInfoToFile(first_fake_redis_token)
+
+                if second_fake_redis_token is not None and isinstance(second_fake_redis_token, str) and second_fake_redis_token != "":
+                    print(f"Second Fake redis_token received: {second_fake_redis_token}")
+
+                    self.__sessionRepository.writeSecondFakeRedisTokenSessionInfoToFile(second_fake_redis_token)
+
             switchFrameWithMenuName("fake-battle-field")
 
         fake_battle_field_button = tkinter.Button(lobbyMenuFrame, text="개발 테스트용 전장", bg="#2E2BE2", fg="white",
