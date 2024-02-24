@@ -9,3 +9,4 @@ class FieldAreaAction(Enum):
     SEARCH_UNIT_CARD = 4
     DESTORY_OPPONENT_FIELD_ENERGY = 5
 
+
