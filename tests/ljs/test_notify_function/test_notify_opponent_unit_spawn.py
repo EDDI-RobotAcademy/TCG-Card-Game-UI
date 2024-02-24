@@ -141,10 +141,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.focus_set()
         self.bind("<Key>", self.on_key_press)
 
-        def animate():
+        def get_notify():
             NotifyReaderControllerImpl.getInstance().requestToReadNotifyCommand()
-            self.master.after(17, animate)
-        self.master.after(0,animate)
+            self.master.after(17, get_notify)
+        self.master.after(0,get_notify)
 
 
     def initgl(self):
@@ -252,7 +252,14 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         print(f"Key pressed: {key}")
 
         if key.lower() == 'a':
-            self.opponent_field_unit_repository.create_field_unit_card(26)
+            notify_raw_data = '''{
+                "NOTIFY_UNIT_SPAWN":
+                    {"player_spawn_unit_map":
+                        {"Opponent" : "26"}
+                    }
+            }'''
+            NotifyReaderRepositoryImpl.getInstance().getNoWaitIpcChannel().put(notify_raw_data)
+            #self.opponent_field_unit_repository.create_field_unit_card(26)
 
         if key.lower() == 'e':
             print("attach undead energy")
@@ -1051,13 +1058,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         #         fixed_card_base.set_attached_shapes(card_race_circle)
 
 
-class TestNotifyOpponentUnitAttachEnergy(unittest.TestCase):
+class TestNotifyOpponentUnitSpawn(unittest.TestCase):
 
     def setUp(self):
 
         pass
 
-    def test_notify_opponent_unit_attach_energy(self):
+    def test_notify_opponent_unit_spawn(self):
         DomainInitializer.initEachDomain()
         root = tkinter.Tk()
         root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}-0-0")
