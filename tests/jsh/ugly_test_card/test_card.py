@@ -12,7 +12,6 @@ class TestCard(unittest.TestCase):
         root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}-0-0")
         root.deiconify()
         DomainInitializer.initEachDomain()
-        PreDrawedImage.getInstance().pre_draw_every_image()
 
         # picking_app = PickingCardFrame(root, width=f"{root.winfo_screenwidth()}", height=f"{root.winfo_screenheight()}", bg="white")
         picking_app = CardFrame(root)
