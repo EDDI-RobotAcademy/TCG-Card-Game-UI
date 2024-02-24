@@ -5,14 +5,19 @@ from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 from screeninfo import get_monitors
 
-from battle_field_muligun.infra.your_hand_repository import YourHandRepository
+from battle_field_muligun.infra.muligun_your_hand_repository import YourHandRepository
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
+from battle_field_muligun.service.request.muligun_request import MuligunRequest
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_pickable_shape.pickable_rectangle import PickableRectangle
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.rectangle import Rectangle
+from session.repository.session_repository_impl import SessionRepositoryImpl
+
 
 class BattleFieldMuligunFrame(OpenGLFrame):
+    sessionRepository = SessionRepositoryImpl.getInstance()
+
     def __init__(self,  master=None, switchFrameWithMenuName=None, **kwargs):
         super().__init__(master, **kwargs)
         self.__switchFrameWithMenuName = switchFrameWithMenuName
@@ -59,6 +64,8 @@ class BattleFieldMuligunFrame(OpenGLFrame):
 
         self.hand_card_list = None
         self.hand_card_state = None
+
+        self.button_click_processing = False
 
         # self.select_card_id = self.your_hand_repository.select_card_id_list()
         # self.delete_select_card = self.your_hand_repository.delete_select_card()
@@ -126,7 +133,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
             battle_field_muligun_background_shape.draw()
 
     def redraw(self):
-        print("redrawing")
+        # print("redrawing")
         if self.is_reshape_not_complete:
             return
 
@@ -231,11 +238,38 @@ class BattleFieldMuligunFrame(OpenGLFrame):
             print(f"Exception in on_canvas_click: {e}")
 
     def on_canvas_ok_button_click(self, event):
-        self.your_hand_repository.select_card_id_list(self.change_card_object_list)# 서버에 보내줄 카드 아이디 리스트로 저장.
+        # self.your_hand_repository.select_card_id_list(self.change_card_object_list)# 서버에 보내줄 카드 아이디 리스트로 저장.
+        print(f"your_hand select_card: {self.change_card_object_list}")
+
+        # card_id_list = []
+        # change_card_object_list_length = len(self.change_card_object_list)
+        # print(f"change_card_object_list_length: {change_card_object_list_length}")
+        #
+        # for index in range(change_card_object_list_length):
+        #     card_id_list.append(self.change_card_object_list[index])
+
+        card_id_list = [str(card.get_card_number()) for card in self.change_card_object_list.values()]
+        change_card_object_list_length = len(card_id_list)
+        print(f"card_id_list: {card_id_list}")
+
         self.your_hand_repository.delete_select_card(self.change_card_object_list)# 처음 드로우한 5장의 카드 리스트에서 교체할 카드 삭제.
+        self.your_hand_repository.replace_hand_card_position()
+
+        responseData = self.your_hand_repository.requestMuligun(
+            MuligunRequest(self.sessionRepository.get_session_info(),
+                           card_id_list))
+
+        print("muligun responseData:", responseData)
+
+        redrawn_hand_card_list = responseData['redrawn_hand_card_list']
+        print("redrawn_hand_card_list:", redrawn_hand_card_list)
+
+        for redrawn_hand_card_id in redrawn_hand_card_list:
+            print(f"redrawn_hand_card_id: {redrawn_hand_card_id}")
+            self.your_hand_repository.create_muligun_hand_unit_card(redrawn_hand_card_id)
 
         # TODO: 새로 받을 카드 임의로 지정. 나중에는 서버에서 받아야 함. 임의로 넣었기 때문에 현재 2개만 교체 가능
-        self.redraw_card()
+        # self.redraw_card()
 
         # 그려져 있는 카드 선택 효과, 그려져 있는 버튼은 지워야 함.
         self.click_card_effect_rectangles = []
@@ -243,7 +277,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         self.ok_button_visible = False
         self.execute_pick_card_effect = False
 
-        self.master.after(2000, self.__switchFrameWithMenuName('decision-first'))
+        # self.master.after(2000, self.__switchFrameWithMenuName('decision-first'))
 
 
     # 멀리건 화면에서 교체하려는 카드 클릭시 나타나는 표현
@@ -298,8 +332,8 @@ class BattleFieldMuligunFrame(OpenGLFrame):
     #     print(f"after- 상태: {self.hand_card_state}, 오브젝트: {self.hand_card_list}")
 
     # 서버로 전달 받으면 다시 그릴 카드 리스트에 담기
-    def redraw_card(self):
-        # self.your_hand_repository.save_current_hand_state(new_card_number_list)
-        # print(f"현재 카드 뭐 있니?: {self.hand_card_state}")
-        self.your_hand_repository.create_hand_card_list()
-        return self.hand_card_list
+    # def redraw_card(self):
+    #     # self.your_hand_repository.save_current_hand_state(new_card_number_list)
+    #     # print(f"현재 카드 뭐 있니?: {self.hand_card_state}")
+    #     self.your_hand_repository.create_hand_card_list()
+    #     return self.hand_card_list
