@@ -893,6 +893,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 self.return_to_initial_location()
             elif drop_action_result is FieldAreaAction.ENERGY_BOOST:
                 print("self.field_area_inside_handler.get_field_area_action() = EnergyBoost")
+                self.selected_object = None
             else:
                 print("self.field_area_inside_handler.get_field_area_action() = Some Action")
                 self.selected_object = None
@@ -1103,19 +1104,24 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     your_field_unit.selected = False
 
             for your_field_unit in your_field_unit_list:
-                print(f"type(field_unit) = {type(your_field_unit)}")
+                print(f"your field unit (field_unit) = {type(your_field_unit)}")
                 fixed_card_base = your_field_unit.get_fixed_card_base()
-                print(f"type(fixed_card_base) = {type(fixed_card_base)}")
+                print(f"your field unit type (fixed_card_base) = {type(fixed_card_base)}")
 
                 if fixed_card_base.is_point_inside((x, y)):
-                    if self.boost_selection:
+                    if self.field_area_inside_handler.get_field_area_action() is FieldAreaAction.ENERGY_BOOST:
+                        self.field_area_inside_handler.clear_lightning_border_list()
+                        self.field_area_inside_handler.clear_field_area_action()
                         self.your_field_unit_lightning_border_list = []
                         print("덱에서 에너지 검색해서 부스팅 진행")
 
-                        proper_handler = self.support_card_handler.getSupportCardHandler(self.current_process_card_id)
+                        current_process_card_id = self.field_area_inside_handler.get_action_set_card_id()
+                        proper_handler = self.support_card_handler.getSupportCardHandler(current_process_card_id)
                         proper_handler(your_field_unit.get_index())
 
-                        self.boost_selection = False
+                        self.your_tomb_repository.create_tomb_card(current_process_card_id)
+
+                        # self.boost_selection = False
                         break
 
                     your_field_unit.selected = not your_field_unit.selected
