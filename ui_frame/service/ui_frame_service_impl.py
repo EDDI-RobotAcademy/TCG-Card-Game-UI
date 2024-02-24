@@ -71,6 +71,9 @@ class UiFrameServiceImpl(UiFrameService):
         print(f"{Fore.GREEN}UiFrameServiceImpl: registerBattleFieldUiFrame(){Style.RESET_ALL}")
         self.__uiFrameRepository.registerUiFrame("battle-field", battleFieldFrame)
 
+    def registerDecisionFirstStrikeFrame(self, decisionFirstStrikeFrame):
+        self.__uiFrameRepository.registerUiFrame("decision-first", decisionFirstStrikeFrame)
+
     def injectTransmitIpcChannel(self, transmitIpcChannel):
         print(f"{Fore.GREEN}UiFrameServiceImpl: injectTransmitIpcChannel(){Style.RESET_ALL}")
         self.__uiFrameRepository.saveTransmitIpcChannel(transmitIpcChannel)
@@ -82,4 +85,5 @@ class UiFrameServiceImpl(UiFrameService):
     def injectMusicPlayIpcChannel(self, musicPlayIpcChannel):
         print(f"{Fore.GREEN}UiFrameServiceImpl: injectMusicPlayIpcChannel(){Style.RESET_ALL}")
         self.__uiFrameRepository.saveMusicPlayIpcChannel(musicPlayIpcChannel)
+
 

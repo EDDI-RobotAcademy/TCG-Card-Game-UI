@@ -124,7 +124,7 @@ class FieldAreaInsideHandler:
         try:
             draw_card_response = self.__your_hand_repository.requestDrawCardByUseSupportCard(
                 DrawCardByUseSupportCardRequest(_sessionInfo=self.__session_info_repository.get_session_info(),
-                                         _cardId=placed_card_id)
+                                                _cardId=placed_card_id)
             )
 
             if draw_card_response is not None:
@@ -137,7 +137,8 @@ class FieldAreaInsideHandler:
         self.__your_hand_repository.remove_card_by_index(placed_card_index)
 
         self.__your_tomb_repository.create_tomb_card(20)
-        print(f"handle_support_card_draw_deck() -> current_tomb_unit_list: {self.__your_tomb_repository.get_current_tomb_state()}")
+        print(
+            f"handle_support_card_draw_deck() -> current_tomb_unit_list: {self.__your_tomb_repository.get_current_tomb_state()}")
 
         self.__field_area_action = FieldAreaAction.DRAW_DECK
         return self.__field_area_action
@@ -155,14 +156,16 @@ class FieldAreaInsideHandler:
         return support_card_action
 
     def is_drop_location_valid_your_unit_field(self, x, y, your_battle_field_panel):
-        print(f"is_drop_location_valid_your_unit_field -> x: {x}, y: {y}, your_battle_field_panel: {your_battle_field_panel}")
+        print(
+            f"is_drop_location_valid_your_unit_field -> x: {x}, y: {y}, your_battle_field_panel: {your_battle_field_panel}")
         # valid_area_vertices = [(300, 580), (1600, 580), (1600, 730), (300, 730)]
         valid_your_field = your_battle_field_panel.get_vertices()
         print(f"valid_your_field: {valid_your_field}")
 
         # width_ratio = your_battle_field_panel.get_width_ratio()
         # height_ratio = your_battle_field_panel.get_height_ratio()
-        ratio_applied_valid_your_field = [(x * self.__width_ratio, y * self.__height_ratio) for x, y in valid_your_field]
+        ratio_applied_valid_your_field = [(x * self.__width_ratio, y * self.__height_ratio) for x, y in
+                                          valid_your_field]
         print(f"ratio_applied_valid_your_field: {ratio_applied_valid_your_field}")
         print(f"x: {x * self.__width_ratio}, y: {y * self.__height_ratio}")
 
@@ -175,7 +178,6 @@ class FieldAreaInsideHandler:
         point = Point(x, y)
 
         return point.within(poly)
-
 
     #     return self.point_inside_polygon(x, y, valid_area_vertices)
     #
