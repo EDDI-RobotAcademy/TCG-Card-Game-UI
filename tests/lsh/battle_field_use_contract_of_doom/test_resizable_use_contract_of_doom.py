@@ -205,7 +205,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         # 1920 기준 -> 1920 - (105 * 5 + 65 * 4) = 1135
         # 1135 / 2 = 567.5
         self.your_hand_repository.set_x_base(567.5)
-        self.your_hand_repository.save_current_hand_state([25, 20, 31, 151, 93])
+        self.your_hand_repository.save_current_hand_state([25, 31, 2, 151, 93])
         # self.your_hand_repository.save_current_hand_state([151])
         self.your_hand_repository.create_hand_card_list()
 
@@ -461,6 +461,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             # self.active_panel_rectangle.set_width_ratio(self.width_ratio)
             # self.active_panel_rectangle.set_height_ratio(self.height_ratio)
             self.active_panel_rectangle.draw()
+
+        for your_lightning_border in self.field_area_inside_handler.get_lightning_border_list():
+            self.lightning_border.set_padding(20)
+            self.lightning_border.update_shape(your_lightning_border)
+            self.lightning_border.draw_lightning_border()
 
         for your_field_unit_lightning_border in self.your_field_unit_lightning_border_list:
             your_field_unit_lightning_border.set_width_ratio(self.width_ratio)
@@ -747,6 +752,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     self.your_hand_repository.replace_hand_card_position()
                     self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
+                    # 실제 날리는 데이터의 경우 서버로부터 응답 받은 정보를 로스트 존으로 배치
+                    self.opponent_lost_zone_repository.create_opponent_lost_zone_card(32)
+
                     self.selected_object = None
                     return
 
@@ -883,6 +891,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             if drop_action_result is None or drop_action_result is FieldAreaAction.Dummy:
                 print("self.field_area_inside_handler.get_field_area_action() = None")
                 self.return_to_initial_location()
+            elif drop_action_result is FieldAreaAction.ENERGY_BOOST:
+                print("self.field_area_inside_handler.get_field_area_action() = EnergyBoost")
             else:
                 print("self.field_area_inside_handler.get_field_area_action() = Some Action")
                 self.selected_object = None
