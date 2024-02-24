@@ -156,6 +156,22 @@ class CircleNumberImage(Shape):
         self.texture_initialized = False
         self.delete_texture()
 
+    def change_texture_y_coordinate(self):
+        if self.number//100 == 0:
+            if self.number // 10 == 0:
+                self.y_value = 0.43
+            else:
+                self.y_value = 0.445
+        else:
+            self.y_value = 0.47
+
+    def get_number(self):
+        return self.number
+
+    def set_number(self, number):
+        self.number = number
+        self.change_texture_y_coordinate()
+
     def get_visible(self):
         return self.is_visible
 
