@@ -1,5 +1,5 @@
 
-class CurrentYourHPState:
+class CurrentYourHpState:
     def __init__(self):
         self.health = 100
 

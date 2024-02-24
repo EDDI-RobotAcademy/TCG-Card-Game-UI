@@ -49,6 +49,8 @@ from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from task_worker.service.task_worker_service_impl import TaskWorkerServiceImpl
 from tests.ljs.test_notify_function.test_notify_reader.repository.notify_reader_repository_impl import \
     NotifyReaderRepositoryImpl
+from tests.ljs.ugly_test_character_hp.entity.your_hp import YourHp
+from tests.ljs.ugly_test_character_hp.repository.your_hp_repository import YourHpRepository
 
 
 class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
@@ -131,6 +133,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.required_energy_select_lightning_border_list = []
 
         self.your_field_energy_repository = YourFieldEnergyRepository.getInstance()
+
+        self.your_hp = YourHp()
+        self.your_hp_repository = YourHpRepository.getInstance()
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -217,6 +222,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
 
+        self.your_hp_repository.set_first_hp_state()
+        self.your_hp.draw_current_your_hp_panel()
+        self.your_hp_panel = self.your_hp.get_your_hp_panel()
+
+
         # self.your_tomb_repository.create_tomb_card(93)
         # self.your_tomb_repository.create_tomb_card(31)
         # self.your_tomb_repository.create_tomb_card(32)
@@ -250,6 +260,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
     def on_key_press(self, event):
         key = event.keysym
         print(f"Key pressed: {key}")
+
+        if key.lower() == 'd':
+            self.your_hp_repository.take_damage()
 
         if key.lower() == 'a':
             notify_raw_data = '''{
@@ -312,6 +325,12 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_tomb.set_height_ratio(self.height_ratio)
         self.opponent_tomb_panel.set_draw_border(False)
         self.opponent_tomb_panel.draw()
+
+        self.your_hp.set_width_ratio(self.width_ratio)
+        self.your_hp.set_height_ratio(self.height_ratio)
+        self.your_hp_panel.draw()
+
+
 
         glDisable(GL_BLEND)
 
