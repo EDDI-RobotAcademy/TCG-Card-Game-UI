@@ -32,7 +32,7 @@ class UiFrameRepositoryImpl(UiFrameRepository):
     def registerUiFrame(self, name, newFrame):
         print("UiFrameRepositoryImpl: registerUiFrame()")
         self.__windowFrameList[name] = newFrame
-        self.__currentFrame = newFrame
+        # self.__currentFrame = newFrame
 
     def switchFrameWithMenuName(self, name: str):
         print("UiFrameRepositoryImpl: switchFrameWithMenuName()")
@@ -55,7 +55,7 @@ class UiFrameRepositoryImpl(UiFrameRepository):
             # foundUiFrame.start_redraw_loop()
 
             def animate():
-                print(f"OpenGL redrawing")
+                # print(f"OpenGL redrawing")
                 foundUiFrame.redraw()
                 foundUiFrame.after(17, animate)
 

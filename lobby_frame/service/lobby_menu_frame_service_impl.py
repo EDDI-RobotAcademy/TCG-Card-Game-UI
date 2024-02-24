@@ -6,6 +6,8 @@ from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_lobby_frame.controller.battle_lobby_frame_controller_impl import BattleLobbyFrameControllerImpl
 from battle_lobby_frame.repository.battle_lobby_frame_repository_impl import BattleLobbyFrameRepositoryImpl
 from battle_lobby_frame.service.request.request_deck_name_list_for_battle import RequestDeckNameListForBattle
+from fake_battle_field.infra.fake_battle_field_frame_repository_impl import FakeBattleFieldFrameRepositoryImpl
+from fake_battle_field.service.request.create_fake_battle_room_request import CreateFakeBattleRoomRequest
 from lobby_frame.repository.lobby_menu_frame_repository_impl import LobbyMenuFrameRepositoryImpl
 from lobby_frame.service.lobby_menu_frame_service import LobbyMenuFrameService
 from lobby_frame.service.request.card_list_request import CardListRequest
@@ -34,6 +36,8 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             cls.__instance.__battleLobbyFrameController = BattleLobbyFrameControllerImpl.getInstance()
             cls.__instance.__matchingWindowController = MatchingWindowControllerImpl.getInstance()
             cls.__instance.__cardShopFrameRepository = CardShopMenuFrameRepositoryImpl.getInstance()
+
+            cls.__instance.__fakeBattleFieldFrameRepository = FakeBattleFieldFrameRepositoryImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -82,10 +86,22 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
         exit_button = tkinter.Button(lobbyMenuFrame, text="종료", bg="#C62828", fg="white", width=36, height=2)
         exit_button.place(relx=0.5, rely=0.8, anchor="center")
 
-        battle_field_button = tkinter.Button(lobbyMenuFrame, text="전장", bg="#2E2BE2", fg="white",
-                                          command=lambda: switchFrameWithMenuName("battle-field"), width=36,
-                                          height=2)
-        battle_field_button.place(relx=0.2, rely=0.65, anchor="center")
+        def on_fake_battle_field_button_click():
+            print("Fake Battle Field Frame Start!")
+
+            create_fake_battle_field_response = self.__fakeBattleFieldFrameRepository.requestCreateFakeBattleRoom(
+                CreateFakeBattleRoomRequest())
+
+            print("Fake Battle Field Frame Response:", create_fake_battle_field_response)
+
+            switchFrameWithMenuName("fake-battle-field")
+
+        fake_battle_field_button = tkinter.Button(lobbyMenuFrame, text="개발 테스트용 전장", bg="#2E2BE2", fg="white",
+                                          # command=lambda: switchFrameWithMenuName("fake-battle-field"), width=36,
+                                            command=on_fake_battle_field_button_click,
+                                            width=36,
+                                            height=2)
+        fake_battle_field_button.place(relx=0.2, rely=0.65, anchor="center")
 
         def onClickExit(event):
             try:

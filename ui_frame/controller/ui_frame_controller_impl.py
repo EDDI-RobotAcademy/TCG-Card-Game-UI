@@ -12,6 +12,7 @@ from battle_lobby_frame.service.battle_lobby_frame_service_impl import BattleLob
 from card_shop_frame.service.card_shop_service_impl import CardShopMenuFrameServiceImpl
 from card_shop_frame.frame.buy_check_frame.service.buy_check_service_impl import BuyCheckServiceImpl
 from decision_first_strike.decision_first_strike_frame_service import DecisionFirstStrikeFrameService
+from fake_battle_field.service.fake_battle_field_frame_service_impl import FakeBattleFieldFrameServiceImpl
 from lobby_frame.service.lobby_menu_frame_service_impl import LobbyMenuFrameServiceImpl
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
 from matching_window.service.matching_window_service_impl import MatchingWindowServiceImpl
@@ -30,11 +31,17 @@ from ui_frame.service.ui_frame_service_impl import UiFrameServiceImpl
 class UiFrameControllerImpl(UiFrameController):
     __instance = None
 
+    __receiveIpcChannel = None
+    __transmitIpcChannel = None
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
             cls.__instance.__uiFrameService = UiFrameServiceImpl.getInstance()
             cls.__instance.__windowService = WindowServiceImpl.getInstance()
+
+            cls.__instance.__fakeBattleFieldFrameServiece = FakeBattleFieldFrameServiceImpl.getInstance()
+
             cls.__instance.__mainMenuFrameService = MainMenuFrameServiceImpl.getInstance()
             cls.__instance.__loginMenuFrameService = LoginMenuFrameServiceImpl.getInstance()
             cls.__instance.__accountRegisterFrameService = AccountRegisterFrameServiceImpl.getInstance()
@@ -109,6 +116,11 @@ class UiFrameControllerImpl(UiFrameController):
         decisionFirstStrikeFrame = self.__decisionFirstStrikeFrameService.create_decision_first_strike_frame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerDecisionFirstStrikeFrame(decisionFirstStrikeFrame)
 
+        # TODO: 매칭 없이 통합 테스트를 진행하기 위한 별도의 가짜 방 (지속적으로 업데이트 해야함)
+        fakeBattleFieldFrame = self.__fakeBattleFieldFrameServiece.createFakeBattleFieldFrame(rootWindow, self.switchFrameWithMenuName)
+        self.__uiFrameService.registerFakeBattleFieldUiFrame(fakeBattleFieldFrame)
+
+    def first_main_window(self):
         self.switchFrameWithMenuName("main-menu")
 
     def switchFrameWithMenuName(self, name):
@@ -146,6 +158,8 @@ class UiFrameControllerImpl(UiFrameController):
         self.__yourHandRepository.saveTransmitIpcChannel(transmitIpcChannel)
         self.__yourTombRepository.saveTransmitIpcChannel(transmitIpcChannel)
 
+        self.__fakeBattleFieldFrameServiece.injectTransmitIpcChannel(transmitIpcChannel)
+
 
     def requestToInjectReceiveIpcChannel(self, receiveIpcChannel):
         print("UiFrameControllerImpl: requestToInjectReceiveIpcChannel()")
@@ -172,6 +186,7 @@ class UiFrameControllerImpl(UiFrameController):
         self.__yourHandRepository.saveReceiveIpcChannel(receiveIpcChannel)
         self.__yourTombRepository.saveReceiveIpcChannel(receiveIpcChannel)
 
+        self.__fakeBattleFieldFrameServiece.injectReceiveIpcChannel(receiveIpcChannel)
 
     def requestToInjectMusicPlayIpcChannel(self, musicPlayIpcChannel):
         print("UiFrameControllerImpl: requestToInjectMusicPlayIpcChannel()")
@@ -185,3 +200,9 @@ class UiFrameControllerImpl(UiFrameController):
 
     def requestToSavePipe(self, conn_from_notify):
         self.__battleFieldFunctionService.savePipe(conn_from_notify)
+
+    # def register_fake_battle_field_frame_which_one_has_socket_communication(self):
+    #     rootWindow = self.__windowService.getRootWindow()
+    #
+    #     fakeBattleFieldFrame = self.__fakeBattleFieldFrameServiece.createFakeBattleFieldFrame(rootWindow, self.switchFrameWithMenuName)
+    #     self.__uiFrameService.registerFakeBattleFieldUiFrame(fakeBattleFieldFrame)
