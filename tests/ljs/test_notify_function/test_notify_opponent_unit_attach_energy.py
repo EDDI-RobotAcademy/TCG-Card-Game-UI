@@ -1,3 +1,5 @@
+import multiprocessing
+
 from screeninfo import get_monitors
 
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
@@ -35,11 +37,13 @@ from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
 from initializer.init_domain import DomainInitializer
+from tests.ljs.test_notify_function.test_notify_reader.controller.notify_reader_controller_impl import NotifyReaderControllerImpl
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.circle import Circle
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
+from task_worker.service.task_worker_service_impl import TaskWorkerServiceImpl
 
 
 class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
@@ -1026,8 +1030,19 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
 class TestNotifyOpponentUnitAttachEnergy(unittest.TestCase):
 
-    def test_notify_opponent_unit_attach_energy(self):
+    def setUp(self):
         DomainInitializer.initEachDomain()
+        self.noWaitIpcChannel = multiprocessing.Queue()
+        notifyReaderController = NotifyReaderControllerImpl.getInstance()
+        notifyReaderController.requestToMappingNoticeWithFunction()
+        notifyReaderController.requestToInjectNoWaitIpcChannel(self.noWaitIpcChannel)
+
+        taskWorkerService = TaskWorkerServiceImpl.getInstance()
+        taskWorkerService.createTaskWorker("NotifyReader", notifyReaderController.requestToReadNotifyCommand)
+        taskWorkerService.executeTaskWorker("NotifyReader")
+
+    def test_notify_opponent_unit_attach_energy(self):
+
 
         root = tkinter.Tk()
         root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}-0-0")
