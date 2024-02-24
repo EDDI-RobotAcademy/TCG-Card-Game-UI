@@ -10,7 +10,7 @@ class OpponentHp:
 
     def __init__(self):
         self.opponent_hp_panel = None
-        self.current_opponent_hp_state = self.__opponent_hp_repository.get_current_your_hp_state()
+        self.current_opponent_hp_state = self.__opponent_hp_repository.get_current_opponent_hp_state()
 
         self.total_width = None
         self.total_height = None
@@ -45,15 +45,12 @@ class OpponentHp:
         self.current_opponent_hp_state = current_opponent_hp_state
 
     def draw_current_opponent_hp_panel(self):
-        left_x_point = self.total_width * 0.58
-        right_x_point = self.total_width * 0.67
-        top_y_point = self.total_height * 0.689
-        bottom_y_point = self.total_height * 0.76
+
 
         left_x_point = self.total_width * 0.33
         right_x_point = self.total_width * 0.42
-        top_y_point = self.total_height * 0.24
-        bottom_y_point = self.total_height * 0.311
+        top_y_point = self.total_height * 0.135
+        bottom_y_point = self.total_height * 0.206
 
         self.opponent_hp_panel = RectangleImage(
             image_data=self.__pre_drawed_image.get_pre_draw_character_hp_image(self.current_opponent_hp_state.get_current_health()),
