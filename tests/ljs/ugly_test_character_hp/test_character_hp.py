@@ -50,7 +50,9 @@ from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from task_worker.service.task_worker_service_impl import TaskWorkerServiceImpl
 from tests.ljs.test_notify_function.test_notify_reader.repository.notify_reader_repository_impl import \
     NotifyReaderRepositoryImpl
+from tests.ljs.ugly_test_character_hp.entity.opponent_hp import OpponentHp
 from tests.ljs.ugly_test_character_hp.entity.your_hp import YourHp
+from tests.ljs.ugly_test_character_hp.repository.opponent_hp_repository import OpponentHpRepository
 from tests.ljs.ugly_test_character_hp.repository.your_hp_repository import YourHpRepository
 
 
@@ -138,6 +140,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_hp_panel = None
         self.your_hp = YourHp()
         self.your_hp_repository = YourHpRepository.getInstance()
+
+        self.opponent_hp_panel = None
+        self.opponent_hp = OpponentHp()
+        self.opponent_hp_repository = OpponentHpRepository.getInstance()
 
 
         self.bind("<Configure>", self.on_resize)
@@ -229,17 +235,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_hp_repository.set_first_hp_state()
         self.your_hp.draw_current_your_hp_panel()
         self.your_hp_panel = self.your_hp.get_your_hp_panel()
-        # self.your_hp_panel = RectangleImage(
-        #     image_data=self.pre_drawed_image_instance.get_pre_draw_character_hp_image(100),
-        #     vertices=[
-        #         (1050, 690),
-        #         (1150, 690),
-        #         (1150, 790),
-        #         (1050, 790)
-        #     ],
-        #     global_translation=(0, 0),
-        #     local_translation=(0, 0))
 
+        self.opponent_hp.set_total_window_size(self.width, self.height)
+        self.opponent_hp_repository.set_first_hp_state()
+        self.opponent_hp.draw_current_opponent_hp_panel()
+        self.opponent_hp_panel = self.opponent_hp.get_opponent_hp_panel()
 
         # self.your_tomb_repository.create_tomb_card(93)
         # self.your_tomb_repository.create_tomb_card(31)
@@ -277,6 +277,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         if key.lower() == 'd':
             self.your_hp_repository.take_damage()
+
+        if key.lower() == 'o':
+            self.opponent_hp_repository.take_damage()
 
 
         if key.lower() == 'a':
@@ -344,18 +347,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_hp.set_width_ratio(self.width_ratio)
         self.your_hp.set_height_ratio(self.height_ratio)
         self.your_hp.draw_current_your_hp_panel()
-        # self.your_hp_panel = RectangleImage(
-        #     image_data=self.pre_drawed_image_instance.get_pre_draw_your_tomb(),
-        #     vertices=[
-        #         (1050, 790),
-        #         (1050, 690),
-        #         (1150, 690),
-        #         (1150, 790)
-        #     ])
 
-        # self.your_hp_panel.draw()
-
-
+        self.opponent_hp.set_width_ratio(self.width_ratio)
+        self.opponent_hp.set_height_ratio(self.height_ratio)
+        self.opponent_hp.draw_current_opponent_hp_panel()
 
         glDisable(GL_BLEND)
 
