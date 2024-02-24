@@ -1,4 +1,5 @@
 from screeninfo import get_monitors
+from shapely import Polygon, Point
 
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
 from battle_field.components.field_area_inside.field_area_inside_handler import FieldAreaInsideHandler
@@ -14,17 +15,22 @@ from battle_field.components.mouse_left_click.left_click_detector import LeftCli
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area_action import OpponentFieldAreaAction
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
     OpponentFixedUnitCardInsideHandler
+from battle_field.entity.opponent_lost_zone import OpponentLostZone
 from battle_field.entity.opponent_tomb import OpponentTomb
 from battle_field.entity.tomb_type import TombType
+from battle_field.entity.your_lost_zone import YourLostZone
 from battle_field.entity.your_tomb import YourTomb
 from battle_field.handler.support_card_handler import SupportCardHandler
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
+from battle_field.infra.opponent_lost_zone_repository import OpponentLostZoneRepository
 from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
+from battle_field.infra.your_lost_zone_repository import YourLostZoneRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
+from battle_field.state.energy_type import EnergyType
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
@@ -122,11 +128,27 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.your_field_energy_repository = YourFieldEnergyRepository.getInstance()
 
+        self.your_lost_zone_repository = YourLostZoneRepository.getInstance()
+        self.your_lost_zone_panel = None
+        self.your_lost_zone = YourLostZone()
+        self.your_lost_zone_popup_panel = None
+        self.your_lost_zone_panel_selected = False
+
+        self.opponent_lost_zone_repository = OpponentLostZoneRepository.getInstance()
+        self.opponent_lost_zone_panel = None
+        self.opponent_lost_zone = OpponentLostZone()
+        self.opponent_lost_zone_popup_panel = None
+        self.opponent_lost_zone_panel_selected = False
+
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
         self.bind("<ButtonRelease-1>", self.on_canvas_release)
         self.bind("<Button-1>", self.on_canvas_left_click)
         self.bind("<Button-3>", self.on_canvas_right_click)
+
+        # TODO: 이 부분은 임시 방편입니다 (상대방 행동 했다 가정하고 키보드 입력 받기 위함)
+        self.focus_set()
+        self.bind("<Key>", self.on_key_press)
 
     def initgl(self):
         glClearColor(1.0, 1.0, 1.0, 0.0)
@@ -183,17 +205,17 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         # 1920 기준 -> 1920 - (105 * 5 + 65 * 4) = 1135
         # 1135 / 2 = 567.5
         self.your_hand_repository.set_x_base(567.5)
-        self.your_hand_repository.save_current_hand_state([8, 20, 31, 151, 93])
+        self.your_hand_repository.save_current_hand_state([25, 31, 2, 151, 93])
         # self.your_hand_repository.save_current_hand_state([151])
         self.your_hand_repository.create_hand_card_list()
 
         self.your_deck_repository.save_deck_state([93, 35, 93, 5])
 
-        self.opponent_field_unit_repository.create_field_unit_card(33)
-        self.opponent_field_unit_repository.create_field_unit_card(35)
-        self.opponent_field_unit_repository.create_field_unit_card(36)
-        self.opponent_field_unit_repository.create_field_unit_card(25)
-        self.opponent_field_unit_repository.create_field_unit_card(26)
+        # self.opponent_field_unit_repository.create_field_unit_card(33)
+        # self.opponent_field_unit_repository.create_field_unit_card(35)
+        # self.opponent_field_unit_repository.create_field_unit_card(36)
+        # self.opponent_field_unit_repository.create_field_unit_card(25)
+        # self.opponent_field_unit_repository.create_field_unit_card(26)
         self.opponent_field_unit_repository.create_field_unit_card(27)
 
         self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
@@ -202,6 +224,14 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         # self.your_tomb_repository.create_tomb_card(31)
         # self.your_tomb_repository.create_tomb_card(32)
         # self.your_tomb_repository.create_tomb_card_list()
+
+        self.your_lost_zone.set_total_window_size(self.width, self.height)
+        self.your_lost_zone.create_your_lost_zone_panel()
+        self.your_lost_zone_panel = self.your_lost_zone.get_your_lost_zone_panel()
+
+        self.opponent_lost_zone.set_total_window_size(self.width, self.height)
+        self.opponent_lost_zone.create_opponent_lost_zone_panel()
+        self.opponent_lost_zone_panel = self.opponent_lost_zone.get_opponent_lost_zone_panel()
 
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
@@ -228,6 +258,71 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
 
+    def on_key_press(self, event):
+        key = event.keysym
+        print(f"Key pressed: {key}")
+
+        if key.lower() == 'a':
+            self.opponent_field_unit_repository.create_field_unit_card(26)
+
+        if key.lower() == 'n':
+            self.opponent_field_unit_repository.create_field_unit_card(19)
+
+        if key.lower() == 'e':
+            print("attach undead energy")
+
+            # TODO: Change it to ENUM Value (Not just integer)
+            card_race = self.card_info_repository.getCardRaceForCardNumber(93)
+            print(f"card_race: {card_race}")
+
+            attach_energy_count = 1
+            opponent_unit_index = 0
+
+            # self.opponent_field_unit_repository.attach_race_energy(opponent_unit_index, EnergyType.Undead, attach_energy_count)
+            # opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(0)
+            #
+            # opponent_field_unit_attached_undead_energy_count = self.opponent_field_unit_repository.get_opponent_field_unit_race_energy(0, EnergyType.Undead)
+            # print(f"opponent_field_unit_attached_undead_energy_count: {opponent_field_unit_attached_undead_energy_count}")
+
+            before_attach_energy_count = self.opponent_field_unit_repository.get_opponent_field_unit_race_energy(
+                0, EnergyType.Undead)
+
+            self.opponent_field_unit_repository.attach_race_energy(
+                opponent_unit_index,
+                EnergyType.Undead,
+                attach_energy_count)
+            opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(0)
+
+            # after_attach_energy_count = self.opponent_field_unit_repository.get_opponent_field_unit_race_energy(
+            #     0, EnergyType.Undead)
+            total_attached_energy_count = self.opponent_field_unit_repository.get_total_energy_at_index(0)
+            print(
+                f"opponent_field_unit_attached_undead_energy_count: {total_attached_energy_count}")
+
+            opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+            opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+
+            for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                if isinstance(opponent_fixed_card_attached_shape, CircleNumberImage):
+                    if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+                        opponent_fixed_card_attached_shape.set_image_data(
+                            self.pre_drawed_image_instance.get_pre_draw_number_image(
+                                total_attached_energy_count))
+                        print(f"changed energy: {opponent_fixed_card_attached_shape.get_circle_kinds()}")
+
+            # after_attach_energy_count
+            # before_attach_energy_count
+
+            every_energy = self.opponent_field_unit_repository.get_energy_info_at_index(0)
+            print(f"every_energy: {every_energy}")
+
+            if card_race == CardRace.UNDEAD.value:
+                card_race_circle = opponent_field_unit.creat_fixed_card_energy_race_circle(
+                    color=(0, 0, 0, 1),
+                    vertices=(0, (total_attached_energy_count * 10) + 20),
+                    local_translation=opponent_fixed_card_base.get_local_translation())
+                opponent_fixed_card_base.set_attached_shapes(card_race_circle)
+
     def on_resize(self, event):
         self.reshape(event.width, event.height)
 
@@ -249,15 +344,35 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.battle_field_opponent_unit_place_panel.set_height_ratio(self.height_ratio)
         self.battle_field_opponent_unit_place_panel.draw()
 
+        # 현재 Tomb 와 Lost Zone은 전부 비율 기반이다.
+        # 그러므로 사각형의 width_ratio를 계산할 필요는 없다 (마우스 포인터가 내부에 있나 계산하는 부분 제외)
         self.your_tomb.set_width_ratio(self.width_ratio)
         self.your_tomb.set_height_ratio(self.height_ratio)
+        self.your_tomb_panel.set_width_ratio(self.width_ratio)
+        self.your_tomb_panel.set_height_ratio(self.height_ratio)
         self.your_tomb_panel.set_draw_border(False)
         self.your_tomb_panel.draw()
 
         self.opponent_tomb.set_width_ratio(self.width_ratio)
         self.opponent_tomb.set_height_ratio(self.height_ratio)
+        self.opponent_tomb_panel.set_width_ratio(self.width_ratio)
+        self.opponent_tomb_panel.set_height_ratio(self.height_ratio)
         self.opponent_tomb_panel.set_draw_border(False)
         self.opponent_tomb_panel.draw()
+
+        self.your_lost_zone.set_width_ratio(self.width_ratio)
+        self.your_lost_zone.set_height_ratio(self.height_ratio)
+        self.your_lost_zone_panel.set_width_ratio(self.width_ratio)
+        self.your_lost_zone_panel.set_height_ratio(self.height_ratio)
+        self.your_lost_zone_panel.set_draw_border(False)
+        self.your_lost_zone_panel.draw()
+
+        self.opponent_lost_zone.set_width_ratio(self.width_ratio)
+        self.opponent_lost_zone.set_height_ratio(self.height_ratio)
+        self.opponent_lost_zone_panel.set_width_ratio(self.width_ratio)
+        self.opponent_lost_zone_panel.set_height_ratio(self.height_ratio)
+        self.opponent_lost_zone_panel.set_draw_border(False)
+        self.opponent_lost_zone_panel.draw()
 
         glDisable(GL_BLEND)
 
@@ -347,6 +462,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             # self.active_panel_rectangle.set_height_ratio(self.height_ratio)
             self.active_panel_rectangle.draw()
 
+        for your_lightning_border in self.field_area_inside_handler.get_lightning_border_list():
+            self.lightning_border.set_padding(20)
+            self.lightning_border.update_shape(your_lightning_border)
+            self.lightning_border.draw_lightning_border()
+
         for your_field_unit_lightning_border in self.your_field_unit_lightning_border_list:
             your_field_unit_lightning_border.set_width_ratio(self.width_ratio)
             your_field_unit_lightning_border.set_height_ratio(self.height_ratio)
@@ -430,6 +550,64 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             glDisable(GL_BLEND)
 
+        if self.your_lost_zone_panel_selected:
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+            self.your_lost_zone_popup_panel.set_width_ratio(self.width_ratio)
+            self.your_lost_zone_popup_panel.set_height_ratio(self.height_ratio)
+            self.your_lost_zone_popup_panel.draw()
+
+            for your_lost_zone_unit in self.your_lost_zone_repository.get_your_lost_zone_card_list():
+                attached_tool_card = your_lost_zone_unit.get_tool_card()
+                if attached_tool_card is not None:
+                    attached_tool_card.set_width_ratio(self.width_ratio)
+                    attached_tool_card.set_height_ratio(self.height_ratio)
+                    attached_tool_card.draw()
+
+                fixed_card_base = your_lost_zone_unit.get_fixed_card_base()
+                fixed_card_base.set_width_ratio(self.width_ratio)
+                fixed_card_base.set_height_ratio(self.height_ratio)
+                fixed_card_base.draw()
+
+                attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                for attached_shape in attached_shape_list:
+                    attached_shape.set_width_ratio(self.width_ratio)
+                    attached_shape.set_height_ratio(self.height_ratio)
+                    attached_shape.draw()
+
+            glDisable(GL_BLEND)
+
+        if self.opponent_lost_zone_panel_selected:
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+            self.opponent_lost_zone_popup_panel.set_width_ratio(self.width_ratio)
+            self.opponent_lost_zone_popup_panel.set_height_ratio(self.height_ratio)
+            self.opponent_lost_zone_popup_panel.draw()
+
+            for opponent_lost_zone_unit in self.opponent_lost_zone_repository.get_opponent_lost_zone_card_list():
+                attached_tool_card = opponent_lost_zone_unit.get_tool_card()
+                if attached_tool_card is not None:
+                    attached_tool_card.set_width_ratio(self.width_ratio)
+                    attached_tool_card.set_height_ratio(self.height_ratio)
+                    attached_tool_card.draw()
+
+                fixed_card_base = opponent_lost_zone_unit.get_fixed_card_base()
+                fixed_card_base.set_width_ratio(self.width_ratio)
+                fixed_card_base.set_height_ratio(self.height_ratio)
+                fixed_card_base.draw()
+
+                attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                for attached_shape in attached_shape_list:
+                    attached_shape.set_width_ratio(self.width_ratio)
+                    attached_shape.set_height_ratio(self.height_ratio)
+                    attached_shape.draw()
+
+            glDisable(GL_BLEND)
+
         self.tkSwapBuffers()
 
     def on_canvas_drag(self, event):
@@ -489,11 +667,99 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             self.drag_start = (x, y)
 
+    # TODO: 임시 방편
+    def is_point_inside_opponent_field_area(self, point, opponent_battle_field_area):
+        x, y = point
+        y *= -1
+
+        opponent_battle_field_area_vertices = opponent_battle_field_area.get_vertices()
+
+        ratio_applied_valid_your_field = [(x * self.width_ratio, y * self.height_ratio) for x, y in opponent_battle_field_area_vertices]
+        print(f"ratio_applied_valid_your_field: {ratio_applied_valid_your_field}")
+        print(f"x: {x * self.width_ratio}, y: {y * self.height_ratio}")
+
+        poly = Polygon(ratio_applied_valid_your_field)
+        point = Point(x, y)
+
+        return point.within(poly)
+
     def on_canvas_release(self, event):
         x, y = event.x, event.y
         y = self.winfo_reqheight() - y
 
         if isinstance(self.selected_object, PickableCard):
+            # Opponent Field Area 시작
+            # is_pickable_card_inside_opponent_field =
+
+            your_card_id = self.selected_object.get_card_number()
+            card_type = self.card_info_repository.getCardTypeForCardNumber(your_card_id)
+            print(f"opponent field area -> card_type: {card_type}")
+
+            if card_type in [CardType.ITEM.value]:
+                # opponent_field_area_vertices = self.battle_field_opponent_unit_place_panel.get_vertices()
+                # print(f"opponent_field_area_vertices: {opponent_field_area_vertices}")
+
+                # TODO: 추후 변경이 필요함
+                # if opponent_field_area_vertices.is_point_inside((x, y)):
+                if self.is_point_inside_opponent_field_area((x, y), self.battle_field_opponent_unit_place_panel):
+                    print("파멸의 계약 사용")
+                    self.__required_energy = 0
+
+                    damage = 15
+
+                    # TODO: 즉발이므로 대기 액션이 필요없음 (서버와의 통신을 위해 대기가 발생 할 수 있긴함) 그 때 가서 추가
+                    for index in range(
+                            len(self.opponent_field_unit_repository.get_current_field_unit_card_object_list()) - 1, -1,
+                            -1):
+                        opponent_field_unit = \
+                        self.opponent_field_unit_repository.get_current_field_unit_card_object_list()[index]
+                        remove_from_field = False
+
+                        fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                        attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                        # TODO: 가만 보면 이 부분이 은근히 많이 사용되고 있음 (중복 많이 발생함)
+                        for attached_shape in attached_shape_list:
+                            if isinstance(attached_shape, CircleNumberImage):
+                                if attached_shape.get_circle_kinds() is CircleKinds.HP:
+
+                                    hp_number = attached_shape.get_number()
+                                    hp_number -= damage
+
+                                    # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
+                                    # (지금 당장 불사가 존재하지 않음)
+                                    if hp_number <= 0:
+                                        remove_from_field = True
+                                        break
+
+                                    print(f"contract_of_doom -> hp_number: {hp_number}")
+                                    attached_shape.set_number(hp_number)
+
+                                    attached_shape.set_image_data(
+                                        # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+                                        self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
+
+                        if remove_from_field:
+                            card_id = opponent_field_unit.get_card_number()
+
+                            self.opponent_field_unit_repository.remove_current_field_unit_card(index)
+                            self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+
+                    your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
+                    self.your_hand_repository.remove_card_by_index(your_card_index)
+                    self.your_tomb_repository.create_tomb_card(your_card_id)
+
+                    self.your_hand_repository.replace_hand_card_position()
+                    self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                    # 실제 날리는 데이터의 경우 서버로부터 응답 받은 정보를 로스트 존으로 배치
+                    self.opponent_lost_zone_repository.create_opponent_lost_zone_card(32)
+
+                    self.selected_object = None
+                    return
+
+            # Opponent Field Area 끝
+
             current_opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
             current_opponent_field_unit_list_length = len(current_opponent_field_unit_list)
             print(f"current_opponent_field_unit_list_length: {current_opponent_field_unit_list_length}")
@@ -558,7 +824,19 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             print("에너지를 붙입니다!")
                             # self.selected_object = None
                             self.your_hand_repository.remove_card_by_index(placed_index)
-                            self.your_field_unit_repository.get_attached_energy_info().add_energy_at_index(unit_index, 1)
+                            # self.your_field_unit_repository.get_attached_energy_info().add_energy_at_index(unit_index, 1)
+
+                            # TODO: 에너지 enum으로 처리해야함
+                            race = None
+                            card_race = self.card_info_repository.getCardRaceForCardNumber(placed_card_id)
+                            print(f"card_race: {card_race}")
+                            if card_race == 2:
+                                race = EnergyType.Undead
+
+                            self.your_field_unit_repository.attach_race_energy(
+                                unit_index,
+                                race,
+                                1)
 
                             your_fixed_field_unit = self.your_field_unit_repository.find_field_unit_by_index(unit_index)
                             fixed_card_base = your_fixed_field_unit.get_fixed_card_base()
@@ -567,7 +845,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             print(f"placed_card_id : {placed_card_id}")
                             print(f"card grade : {self.card_info_repository.getCardGradeForCardNumber(placed_card_id)}")
 
-                            attached_energy_count = self.your_field_unit_repository.get_attached_energy_info().get_energy_at_index(unit_index)
+                            # attached_energy_count = self.your_field_unit_repository.get_attached_energy_info().get_energy_at_index(unit_index)
+                            total_attached_energy_count = self.your_field_unit_repository.get_total_energy_at_index(unit_index)
+                            print(f"total_attached_energy_count: {total_attached_energy_count}")
+                            # undead_attach_energy_count = self.your_field_unit_repository.get_your_field_unit_race_energy(
+                            #     unit_index, race)
                             self.your_hand_repository.replace_hand_card_position()
 
                             # card_id = current_field_unit.get_card_number()
@@ -581,14 +863,14 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                     if fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
                                         fixed_card_attached_shape.set_image_data(
                                             self.pre_drawed_image_instance.get_pre_draw_number_image(
-                                                attached_energy_count))
+                                                total_attached_energy_count))
                                         print(f"changed energy: {fixed_card_attached_shape.get_circle_kinds()}")
 
                             card_race = self.card_info_repository.getCardRaceForCardNumber(placed_card_id)
                             if card_race == CardRace.UNDEAD.value:
                                 card_race_circle = your_fixed_field_unit.creat_fixed_card_energy_race_circle(
                                     color=(0, 0, 0, 1),
-                                    vertices=(0, (attached_energy_count * 10) + 20),
+                                    vertices=(0, (total_attached_energy_count * 10) + 20),
                                     local_translation=fixed_card_base.get_local_translation())
                                 fixed_card_base.set_attached_shapes(card_race_circle)
 
@@ -609,6 +891,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             if drop_action_result is None or drop_action_result is FieldAreaAction.Dummy:
                 print("self.field_area_inside_handler.get_field_area_action() = None")
                 self.return_to_initial_location()
+            elif drop_action_result is FieldAreaAction.ENERGY_BOOST:
+                print("self.field_area_inside_handler.get_field_area_action() = EnergyBoost")
             else:
                 print("self.field_area_inside_handler.get_field_area_action() = Some Action")
                 self.selected_object = None
@@ -699,8 +983,18 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 if self.opponent_tomb.is_point_inside_popup_rectangle((x, y)):
                     return
 
+            if self.your_lost_zone_panel_selected:
+                if self.your_lost_zone.is_point_inside_popup_rectangle((x, y)):
+                    return
+
+            if self.opponent_lost_zone_panel_selected:
+                if self.opponent_lost_zone.is_point_inside_popup_rectangle((x, y)):
+                    return
+
             self.tomb_panel_selected = False
             self.opponent_tomb_panel_selected = False
+            self.your_lost_zone_panel_selected = False
+            self.opponent_lost_zone_panel_selected = False
 
             for hand_card in self.hand_card_list:
                 if isinstance(hand_card, PickableCard):
@@ -798,6 +1092,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     self.opponent_fixed_unit_card_inside_handler.clear_opponent_unit_id()
                     self.opponent_fixed_unit_card_inside_handler.clear_your_hand_card_id()
 
+                    self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
                     self.selected_object = None
                     return
 
@@ -843,6 +1139,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 self.tomb_panel_popup_rectangle = self.your_tomb.get_tomb_panel_popup_rectangle()
 
                 self.opponent_tomb_panel_selected = False
+                self.your_lost_zone_panel_selected = False
+                self.opponent_lost_zone_panel_selected = False
                 return
 
             self.opponent_tomb_panel_selected = self.left_click_detector.which_one_select_is_in_opponent_tomb_area(
@@ -857,10 +1155,46 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 self.opponent_tomb_popup_rectangle_panel = self.opponent_tomb.get_opponent_tomb_panel_popup_rectangle()
 
                 self.tomb_panel_selected = False
+                self.your_lost_zone_panel_selected = False
+                self.opponent_lost_zone_panel_selected = False
+                return
+
+            self.your_lost_zone_panel_selected = self.left_click_detector.which_one_select_is_in_your_lost_zone_area(
+                (x, y),
+                self.your_lost_zone,
+                self.winfo_reqheight())
+
+            if self.your_lost_zone_panel_selected:
+                print(
+                    f"on_canvas_left_click() -> current_lost_zone_card_list: {self.your_lost_zone_repository.get_your_lost_zone_card_list()}")
+                self.your_lost_zone.create_your_lost_zone_popup_panel()
+                self.your_lost_zone_popup_panel = self.your_lost_zone.get_your_lost_zone_popup_panel()
+
+                self.tomb_panel_selected = False
+                self.opponent_tomb_panel_selected = False
+                self.opponent_lost_zone_panel_selected = False
+                return
+
+            self.opponent_lost_zone_panel_selected = self.left_click_detector.which_one_select_is_in_opponent_lost_zone_area(
+                (x, y),
+                self.opponent_lost_zone,
+                self.winfo_reqheight())
+
+            if self.opponent_lost_zone_panel_selected:
+                print(
+                    f"on_canvas_left_click() -> current_lost_zone_card_list: {self.opponent_lost_zone_repository.get_opponent_lost_zone_card_list()}")
+                self.opponent_lost_zone.create_opponent_lost_zone_popup_panel()
+                self.opponent_lost_zone_popup_panel = self.opponent_lost_zone.get_opponent_lost_zone_popup_panel()
+
+                self.tomb_panel_selected = False
+                self.opponent_tomb_panel_selected = False
+                self.your_lost_zone_panel_selected = False
                 return
 
             self.tomb_panel_selected = False
             self.opponent_tomb_panel_selected = False
+            self.your_lost_zone_panel_selected = False
+            self.opponent_lost_zone_panel_selected = False
 
             # self.selected_tomb = self.left_click_detector.which_tomb_did_you_select(
             #     (x, y),
@@ -905,9 +1239,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         return new_rectangle
 
 
-class TestResizableDeathSiceWithOpponentTomb(unittest.TestCase):
+class TestResizableUseContractOfDoom(unittest.TestCase):
 
-    def test_resizable_death_sice_with_opponent_tomb(self):
+    def test_resizable_use_contract_of_doom(self):
         DomainInitializer.initEachDomain()
 
         root = tkinter.Tk()

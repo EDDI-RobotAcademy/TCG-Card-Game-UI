@@ -1,3 +1,6 @@
+from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
+from battle_field.infra.your_hand_repository import YourHandRepository
+from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_grade import CardGrade
 from common.card_race import CardRace
 from common.card_type import CardType
@@ -9,6 +12,8 @@ from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 class FixedUnitCardInsideHandler:
     __instance = None
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
+    __opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
+
 
     def __new__(cls,
                 your_hand_repository,
@@ -128,3 +133,33 @@ class FixedUnitCardInsideHandler:
         print(f"에너지 상태: {self.your_field_unit_repository.get_attached_energy_info().get_energy_at_index(your_unit_index)}")
         # TODO: attached_energy 값 UI에 표현 (이미지 작업 미완료)
         # TODO: 특수 에너지 붙인 것을 어떻게 표현 할 것인가 ? (아직 미정)
+
+    def field_fixed_unit_card_choice_opponent_unit(self, selected_object, x, y):
+        print(f"field_fixed_card_inside_unit: {selected_object}, {x}, {y}")
+        card_type = self.card_info.getCardTypeForCardNumber(selected_object.get_card_number())
+        print(f"card_type: {card_type}")
+
+        if card_type not in [CardType.UNIT.value]:
+            return
+
+        opponent_field_unit_list = self.__opponent_field_unit_repository.get_current_field_unit_card_object_list()
+
+        for opponent_unit_index, opponent_field_unit in enumerate(opponent_field_unit_list):
+            if opponent_field_unit.get_fixed_card_base().is_point_inside((x, y)):
+                self.field_inside_field_unit(selected_object, opponent_unit_index)
+                self.__opponent_unit_id = opponent_field_unit.get_card_number()
+                return True
+
+        return False
+
+    def field_inside_field_unit(self, selected_object, opponent_unit_index):
+        placed_card_id = selected_object.get_card_number()
+        card_type = self.card_info.getCardTypeForCardNumber(placed_card_id)
+
+        placed_card_index = self.your_hand_repository.find_index_by_selected_object(selected_object)
+
+        # if card_type == CardType.UNIT.value:
+        #     self.field_fixed_unit_card(placed_card_id, opponent_unit_index, placed_card_index)
+
+
+

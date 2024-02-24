@@ -1,3 +1,6 @@
+from battle_field.entity.tomb_type import TombType
+
+
 class LeftClickDetector:
     __instance = None
 
@@ -73,5 +76,38 @@ class LeftClickDetector:
 
         if opponent_tomb.is_point_inside((x, y)):
             return opponent_tomb
+
+        return None
+
+    def which_tomb_did_you_select(self, click_point, your_tomb, opponent_tomb, canvas_height):
+        x, y = click_point
+        y = canvas_height - y
+        y *= -1
+
+        if self.which_one_select_is_in_your_tomb_area((x, y), your_tomb, canvas_height):
+            return TombType.Your
+
+        if self.which_one_select_is_in_opponent_tomb_area((x, y), opponent_tomb, canvas_height):
+            return TombType.Opponent
+
+        return TombType.Dummy
+
+    def which_one_select_is_in_your_lost_zone_area(self, click_point, your_lost_zone, canvas_height):
+        x, y = click_point
+        y = canvas_height - y
+        y *= -1
+
+        if your_lost_zone.is_point_inside((x, y)):
+            return your_lost_zone
+
+        return None
+
+    def which_one_select_is_in_opponent_lost_zone_area(self, click_point, opponent_lost_zone, canvas_height):
+        x, y = click_point
+        y = canvas_height - y
+        y *= -1
+
+        if opponent_lost_zone.is_point_inside((x, y)):
+            return opponent_lost_zone
 
         return None

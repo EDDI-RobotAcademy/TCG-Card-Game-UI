@@ -25,6 +25,7 @@ from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepos
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
+from battle_field.state.energy_type import EnergyType
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
@@ -128,6 +129,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.bind("<Button-1>", self.on_canvas_left_click)
         self.bind("<Button-3>", self.on_canvas_right_click)
 
+        self.focus_set()
+        self.bind("<Key>", self.on_key_press)
+
     def initgl(self):
         glClearColor(1.0, 1.0, 1.0, 0.0)
         glOrtho(0, self.width, self.height, 0, -1, 1)
@@ -189,11 +193,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.your_deck_repository.save_deck_state([93, 35, 93, 5])
 
-        self.opponent_field_unit_repository.create_field_unit_card(33)
-        self.opponent_field_unit_repository.create_field_unit_card(35)
-        self.opponent_field_unit_repository.create_field_unit_card(36)
-        self.opponent_field_unit_repository.create_field_unit_card(25)
-        self.opponent_field_unit_repository.create_field_unit_card(26)
+        # self.opponent_field_unit_repository.create_field_unit_card(33)
+        # self.opponent_field_unit_repository.create_field_unit_card(35)
+        # self.opponent_field_unit_repository.create_field_unit_card(36)
+        # self.opponent_field_unit_repository.create_field_unit_card(25)
+        # self.opponent_field_unit_repository.create_field_unit_card(26)
         self.opponent_field_unit_repository.create_field_unit_card(27)
 
         self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
@@ -227,6 +231,88 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         gluOrtho2D(0, width, height, 0)
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
+
+    def on_key_press(self, event):
+        key = event.keysym
+        print(f"Key pressed: {key}")
+
+        if key.lower() == 'a':
+            self.opponent_field_unit_repository.create_field_unit_card(26)
+
+        if key.lower() == 'e':
+            print("attach undead energy")
+
+            # TODO: Change it to ENUM Value (Not just integer)
+            card_race = self.card_info_repository.getCardRaceForCardNumber(93)
+            print(f"card_race: {card_race}")
+
+            attach_energy_count = 1
+            opponent_unit_index = 0
+
+            # self.opponent_field_unit_repository.attach_race_energy(opponent_unit_index, EnergyType.Undead, attach_energy_count)
+            # opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(0)
+            #
+            # opponent_field_unit_attached_undead_energy_count = self.opponent_field_unit_repository.get_opponent_field_unit_race_energy(0, EnergyType.Undead)
+            # print(f"opponent_field_unit_attached_undead_energy_count: {opponent_field_unit_attached_undead_energy_count}")
+
+            before_attach_energy_count = self.opponent_field_unit_repository.get_opponent_field_unit_race_energy(
+                0, EnergyType.Undead)
+
+            self.opponent_field_unit_repository.attach_race_energy(
+                opponent_unit_index,
+                EnergyType.Undead,
+                attach_energy_count)
+            opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(0)
+
+            # after_attach_energy_count = self.opponent_field_unit_repository.get_opponent_field_unit_race_energy(
+            #     0, EnergyType.Undead)
+            total_attached_energy_count = self.opponent_field_unit_repository.get_total_energy_at_index(0)
+            print(
+                f"opponent_field_unit_attached_undead_energy_count: {total_attached_energy_count}")
+
+            opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+            opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+
+            for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                if isinstance(opponent_fixed_card_attached_shape, CircleNumberImage):
+                    if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+                        opponent_fixed_card_attached_shape.set_image_data(
+                            self.pre_drawed_image_instance.get_pre_draw_number_image(
+                                total_attached_energy_count))
+                        print(f"changed energy: {opponent_fixed_card_attached_shape.get_circle_kinds()}")
+
+            # after_attach_energy_count
+            # before_attach_energy_count
+
+            every_energy = self.opponent_field_unit_repository.get_energy_info_at_index(0)
+            print(f"every_energy: {every_energy}")
+
+            if card_race == CardRace.UNDEAD.value:
+                card_race_circle = opponent_field_unit.creat_fixed_card_energy_race_circle(
+                    color=(0, 0, 0, 1),
+                    vertices=(0, (total_attached_energy_count * 10) + 20),
+                    local_translation=opponent_fixed_card_base.get_local_translation())
+                opponent_fixed_card_base.set_attached_shapes(card_race_circle)
+
+            # for current_opponent_field_unit in current_opponent_field_unit_list:
+            #     opponent_fixed_card_base = current_opponent_field_unit.get_fixed_card_base()
+            #     opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+            #
+            #     for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+            #         if isinstance(opponent_fixed_card_attached_shape, CircleNumberImage):
+            #             if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+            #                 opponent_fixed_card_attached_shape.set_image_data(
+            #                     self.pre_drawed_image_instance.get_pre_draw_number_image(
+            #                         attached_energy_count))
+            #                 print(f"changed energy: {fixed_card_attached_shape.get_circle_kinds()}")
+            #
+            #     card_race = self.card_info_repository.getCardRaceForCardNumber(placed_card_id)
+            #     if card_race == CardRace.UNDEAD.value:
+            #         card_race_circle = your_fixed_field_unit.creat_fixed_card_energy_race_circle(
+            #             color=(0, 0, 0, 1),
+            #             vertices=(0, (attached_energy_count * 10) + 20),
+            #             local_translation=fixed_card_base.get_local_translation())
+            #         fixed_card_base.set_attached_shapes(card_race_circle)
 
     def on_resize(self, event):
         self.reshape(event.width, event.height)
@@ -558,7 +644,19 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             print("에너지를 붙입니다!")
                             # self.selected_object = None
                             self.your_hand_repository.remove_card_by_index(placed_index)
-                            self.your_field_unit_repository.get_attached_energy_info().add_energy_at_index(unit_index, 1)
+                            # self.your_field_unit_repository.get_attached_energy_info().add_energy_at_index(unit_index, 1)
+
+                            # TODO: 에너지 enum으로 처리해야함
+                            race = None
+                            card_race = self.card_info_repository.getCardRaceForCardNumber(placed_card_id)
+                            print(f"card_race: {card_race}")
+                            if card_race == 2:
+                                race = EnergyType.Undead
+
+                            self.your_field_unit_repository.attach_race_energy(
+                                unit_index,
+                                race,
+                                1)
 
                             your_fixed_field_unit = self.your_field_unit_repository.find_field_unit_by_index(unit_index)
                             fixed_card_base = your_fixed_field_unit.get_fixed_card_base()
@@ -567,7 +665,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             print(f"placed_card_id : {placed_card_id}")
                             print(f"card grade : {self.card_info_repository.getCardGradeForCardNumber(placed_card_id)}")
 
-                            attached_energy_count = self.your_field_unit_repository.get_attached_energy_info().get_energy_at_index(unit_index)
+                            # attached_energy_count = self.your_field_unit_repository.get_attached_energy_info().get_energy_at_index(unit_index)
+                            total_attached_energy_count = self.your_field_unit_repository.get_total_energy_at_index(unit_index)
+                            print(f"total_attached_energy_count: {total_attached_energy_count}")
+                            # undead_attach_energy_count = self.your_field_unit_repository.get_your_field_unit_race_energy(
+                            #     unit_index, race)
                             self.your_hand_repository.replace_hand_card_position()
 
                             # card_id = current_field_unit.get_card_number()
@@ -581,14 +683,14 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                     if fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
                                         fixed_card_attached_shape.set_image_data(
                                             self.pre_drawed_image_instance.get_pre_draw_number_image(
-                                                attached_energy_count))
+                                                total_attached_energy_count))
                                         print(f"changed energy: {fixed_card_attached_shape.get_circle_kinds()}")
 
                             card_race = self.card_info_repository.getCardRaceForCardNumber(placed_card_id)
                             if card_race == CardRace.UNDEAD.value:
                                 card_race_circle = your_fixed_field_unit.creat_fixed_card_energy_race_circle(
                                     color=(0, 0, 0, 1),
-                                    vertices=(0, (attached_energy_count * 10) + 20),
+                                    vertices=(0, (total_attached_energy_count * 10) + 20),
                                     local_translation=fixed_card_base.get_local_translation())
                                 fixed_card_base.set_attached_shapes(card_race_circle)
 
@@ -798,6 +900,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     self.opponent_fixed_unit_card_inside_handler.clear_opponent_unit_id()
                     self.opponent_fixed_unit_card_inside_handler.clear_your_hand_card_id()
 
+                    self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
                     self.selected_object = None
                     return
 
@@ -905,9 +1009,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         return new_rectangle
 
 
-class TestResizableDeathSiceWithOpponentTomb(unittest.TestCase):
+class TestResizableOpponentUnitAttachEnergy(unittest.TestCase):
 
-    def test_resizable_death_sice_with_opponent_tomb(self):
+    def test_resizable_opponent_unit_attach_energy(self):
         DomainInitializer.initEachDomain()
 
         root = tkinter.Tk()

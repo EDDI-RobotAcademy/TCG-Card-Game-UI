@@ -27,7 +27,7 @@ class TestUglyNotifyReader(unittest.TestCase):
 
         def injectData(event):
             self.noWaitIpcChannel.put(
-                '{"NOTIFY_HAND_USE":{"player_hand_use_map":{"Opponent":{"card_id":20,"card_kind":4}}}}')
+                '{"NOTIFY_HAND_CARD_USE":{"player_hand_use_map":{"Opponent":{"card_id":20,"card_kind":4}}}}')
 
         btn.bind("<Button-1>", injectData)
 
