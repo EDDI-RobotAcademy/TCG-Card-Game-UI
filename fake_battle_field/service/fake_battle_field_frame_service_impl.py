@@ -1,5 +1,5 @@
 from battle_field_muligun.frame.battle_field_muligun_frame import BattleFieldMuligunFrame
-from battle_field_muligun.infra.your_hand_repository import YourHandRepository
+from battle_field_muligun.infra.muligun_your_hand_repository import YourHandRepository
 
 from battle_field_muligun.service.request.muligun_request import MuligunRequest
 from fake_battle_field.frame.fake_battle_field_frame import FakeBattleFieldFrame

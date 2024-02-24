@@ -22,6 +22,8 @@ class PickableCard:
         self.scale = scale
         self.card_number = None
         self.initial_vertices = None
+        self.index = 0
+
         self.card_info = CardInfoFromCsvRepositoryImpl.getInstance()
         self.card_controller = CardControllerImpl.getInstance()
 
@@ -30,6 +32,12 @@ class PickableCard:
 
     def set_card_number(self, card_number):
         self.card_number = card_number
+
+    def get_index(self):
+        return self.index
+
+    def set_index(self, index):
+        self.index = index
 
     # TODO: Need to consider place this function
     # def set_initial_vertices(self, initial_pickable_card_base_vertices):
