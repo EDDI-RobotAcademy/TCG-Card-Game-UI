@@ -18,6 +18,7 @@ class YourHp:
         self.width_ratio = 1
         self.height_ratio = 1
 
+
     def set_total_window_size(self, width, height):
         self.total_width = width
         self.total_height = height
@@ -45,19 +46,20 @@ class YourHp:
 
     def draw_current_your_hp_panel(self):
 
-        left_x_point = self.total_width * 0.6
-        right_x_point = self.total_width * 0.7
-        top_y_point = self.total_height * 0.8
-        bottom_y_point = self.total_height * 0.9
+        left_x_point = self.total_width * 0.58
+        right_x_point = self.total_width * 0.67
+        top_y_point = self.total_height * 0.689
+        bottom_y_point = self.total_height * 0.76
 
         self.your_hp_panel = RectangleImage(
-            self.__pre_drawed_image.get_pre_draw_number_image(self.current_your_hp_state.get_current_health()),
-            [
-                (left_x_point, bottom_y_point),
+            image_data=self.__pre_drawed_image.get_pre_draw_character_hp_image(self.current_your_hp_state.get_current_health()),
+            #image_data=self.__pre_drawed_image.get_pre_draw_number_image(self.current_your_hp_state.get_current_health()),
+            vertices=[
                 (left_x_point, top_y_point),
                 (right_x_point, top_y_point),
-                (right_x_point, bottom_y_point)
-            ],
-            (0, 0),
-            (0, 0))
+                (right_x_point, bottom_y_point),
+                (left_x_point, bottom_y_point)
+            ])
+
+        self.your_hp_panel.draw()
 

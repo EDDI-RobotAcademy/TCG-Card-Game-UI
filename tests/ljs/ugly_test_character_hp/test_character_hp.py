@@ -36,6 +36,7 @@ from common.card_type import CardType
 from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
+from image_shape.rectangle_image import RectangleImage
 from initializer.init_domain import DomainInitializer
 from tests.ljs.test_notify_function.test_battle_field_function.service.battle_field_function_service_impl import \
     BattleFieldFunctionServiceImpl
@@ -134,8 +135,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.your_field_energy_repository = YourFieldEnergyRepository.getInstance()
 
+        self.your_hp_panel = None
         self.your_hp = YourHp()
         self.your_hp_repository = YourHpRepository.getInstance()
+
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -222,9 +225,20 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
 
+        self.your_hp.set_total_window_size(self.width, self.height)
         self.your_hp_repository.set_first_hp_state()
         self.your_hp.draw_current_your_hp_panel()
         self.your_hp_panel = self.your_hp.get_your_hp_panel()
+        # self.your_hp_panel = RectangleImage(
+        #     image_data=self.pre_drawed_image_instance.get_pre_draw_character_hp_image(100),
+        #     vertices=[
+        #         (1050, 690),
+        #         (1150, 690),
+        #         (1150, 790),
+        #         (1050, 790)
+        #     ],
+        #     global_translation=(0, 0),
+        #     local_translation=(0, 0))
 
 
         # self.your_tomb_repository.create_tomb_card(93)
@@ -263,6 +277,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         if key.lower() == 'd':
             self.your_hp_repository.take_damage()
+
 
         if key.lower() == 'a':
             notify_raw_data = '''{
@@ -328,7 +343,17 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.your_hp.set_width_ratio(self.width_ratio)
         self.your_hp.set_height_ratio(self.height_ratio)
-        self.your_hp_panel.draw()
+        self.your_hp.draw_current_your_hp_panel()
+        # self.your_hp_panel = RectangleImage(
+        #     image_data=self.pre_drawed_image_instance.get_pre_draw_your_tomb(),
+        #     vertices=[
+        #         (1050, 790),
+        #         (1050, 690),
+        #         (1150, 690),
+        #         (1150, 790)
+        #     ])
+
+        # self.your_hp_panel.draw()
 
 
 

@@ -17,11 +17,12 @@ class YourHpRepository:
             cls.__instance = cls()
         return cls.__instance
 
-    def set_first_hp_state(self, hp):
+    def set_first_hp_state(self):
         self.current_hp_state.reset_health()
 
     def get_current_your_hp_state(self):
         return self.current_hp_state
 
-    def take_damage(self):
-        self.current_hp_state.damage_to_hp(5)
+    def take_damage(self, damage=5):
+        print("take damaged!!!")
+        self.current_hp_state.damage_to_hp(damage)
