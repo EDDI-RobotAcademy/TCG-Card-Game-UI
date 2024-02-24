@@ -141,6 +141,12 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.focus_set()
         self.bind("<Key>", self.on_key_press)
 
+        def animate():
+            NotifyReaderControllerImpl.getInstance().requestToReadNotifyCommand()
+            self.master.after(17, animate)
+        self.master.after(0,animate)
+
+
     def initgl(self):
         glClearColor(1.0, 1.0, 1.0, 0.0)
         glOrtho(0, self.width, self.height, 0, -1, 1)
@@ -263,7 +269,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                          {"attached_energy_map": {"2": 2}, "total_energy_count": 2}}}}
 
             NotifyReaderRepositoryImpl.getInstance().getNoWaitIpcChannel().put(notify_raw_data)
-            NotifyReaderControllerImpl.getInstance().requestToReadNotifyCommand()
+            #NotifyReaderControllerImpl.getInstance().requestToReadNotifyCommand()
             # from battle_field_function.service.battle_field_function_service_impl import BattleFieldFunctionServiceImpl
             # attach_energy_data = BattleFieldFunctionServiceImpl.getInstance().attachFieldUnitEnergy(notify_dict)
             # print("attach_energy_count : ",attach_energy_data)
