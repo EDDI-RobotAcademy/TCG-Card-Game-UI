@@ -31,3 +31,13 @@ class FakeBattleFieldFrameRepositoryImpl(FakeBattleFieldFrameRepository):
 
         self.__transmitIpcChannel.put(createFakeBattleRoomRequest)
         return self.__receiveIpcChannel.get()
+
+    def request_deck_name_list_for_fake_battle(self, requestDeckNameListForBattle):
+        self.__transmitIpcChannel.put(requestDeckNameListForBattle)
+        return self.__receiveIpcChannel.get()
+
+    def request_card_list(self, requestDeckNameListForBattle):
+        self.__transmitIpcChannel.put(requestDeckNameListForBattle)
+        return self.__receiveIpcChannel.get()
+
+
