@@ -11,6 +11,8 @@
 
 # exclude session_info.txt
 session_info.txt
+first_fake_session_info.txt
+second_fake_session_info.txt
 
 # exclude .env
 .env

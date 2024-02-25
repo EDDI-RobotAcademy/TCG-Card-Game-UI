@@ -57,10 +57,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.init_monitor_specification()
 
         self.battle_field_background_shape_list = None
+
         self.your_field_panel = None
         self.opponent_field_panel = None
-
-        self.battle_field_opponent_unit_place_panel = None
 
         self.active_panel_rectangle = None
         self.selected_object = None
