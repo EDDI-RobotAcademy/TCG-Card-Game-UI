@@ -201,7 +201,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         # self.your_hand_repository.save_current_hand_state([151])
         self.your_hand_repository.create_hand_card_list()
 
-        self.your_deck_repository.save_deck_state([93, 35, 93, 5])
+        # self.your_deck_repository.save_deck_state([93, 35, 93, 5])
 
         self.opponent_field_unit_repository.create_field_unit_card(27)
 
