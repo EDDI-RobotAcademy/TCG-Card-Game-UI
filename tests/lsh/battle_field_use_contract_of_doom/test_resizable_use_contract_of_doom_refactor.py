@@ -16,6 +16,7 @@ from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
     OpponentFixedUnitCardInsideHandler
 from battle_field.entity.battle_field_scene import BattleFieldScene
+from battle_field.entity.opponent_field_panel import OpponentFieldPanel
 from battle_field.entity.your_field_panel import YourFieldPanel
 from battle_field.entity.opponent_lost_zone import OpponentLostZone
 from battle_field.entity.opponent_tomb import OpponentTomb
@@ -57,6 +58,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.battle_field_background_shape_list = None
         self.your_field_panel = None
+        self.opponent_field_panel = None
 
         self.battle_field_opponent_unit_place_panel = None
 
@@ -188,6 +190,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         #     (0, 0),
         #     (0, 0))
         # self.battle_field_your_unit_place_panel.set_draw_border(False)
+
+        opponent_field_panel_instance = OpponentFieldPanel()
+        opponent_field_panel_instance.set_total_window_size(self.width, self.height)
+        opponent_field_panel_instance.create_opponent_field_panel()
+        self.opponent_field_panel = opponent_field_panel_instance.get_opponent_field_panel()
 
         self.battle_field_opponent_unit_place_panel = Rectangle(
             (0.0, 0.0, 0.0, 0.1),
@@ -350,9 +357,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_field_panel.set_height_ratio(self.height_ratio)
         self.your_field_panel.draw()
 
-        self.battle_field_opponent_unit_place_panel.set_width_ratio(self.width_ratio)
-        self.battle_field_opponent_unit_place_panel.set_height_ratio(self.height_ratio)
-        self.battle_field_opponent_unit_place_panel.draw()
+        self.opponent_field_panel.set_width_ratio(self.width_ratio)
+        self.opponent_field_panel.set_height_ratio(self.height_ratio)
+        self.opponent_field_panel.draw()
 
         # 현재 Tomb 와 Lost Zone은 전부 비율 기반이다.
         # 그러므로 사각형의 width_ratio를 계산할 필요는 없다 (마우스 포인터가 내부에 있나 계산하는 부분 제외)
@@ -711,7 +718,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                 # TODO: 추후 변경이 필요함
                 # if opponent_field_area_vertices.is_point_inside((x, y)):
-                if self.is_point_inside_opponent_field_area((x, y), self.battle_field_opponent_unit_place_panel):
+                if self.is_point_inside_opponent_field_area((x, y), self.opponent_field_panel):
                     print("파멸의 계약 사용")
                     self.__required_energy = 0
 
