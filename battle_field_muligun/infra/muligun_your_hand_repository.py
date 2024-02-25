@@ -31,7 +31,7 @@ class YourHandRepository:
         return -1
 
     def save_current_hand_state(self, hand_list):
-        self.current_hand_state.add_to_hand(hand_list)
+        self.current_hand_state.add_to_hand_list(hand_list)
         print(f"Saved current hand state: {hand_list}")
 
 
@@ -75,12 +75,46 @@ class YourHandRepository:
         index = len(self.current_hand_card_list)
         print(f"create_muligun_hand_unit_card() -> card_id: {card_id}, index: {index}")
         new_card = PickableCard(local_translation=self.get_start_hand_card_position(index), scale=300)
+        print("PickableCard 생성자 호출")
         new_card.init_card_scale(card_id)
+        print("new_card.init_card_scale(card_id)")
         # new_card.set_index(index)
         self.current_hand_card_list.append(new_card)
+        print("self.current_hand_card_list.append(new_card)")
 
         self.current_hand_state.add_to_hand(card_id)
         print(f"current_hand_state list: {self.get_current_hand_state()}")
+
+    # def remove_card_by_multiple_index(self, card_index_list):
+    #     print(f"remove_card_by_multiple_index -> card_index_list: {card_index_list}")
+    #     print(f"len(self.current_hand_card_list) = {len(self.current_hand_card_list)}")
+    #
+    #     for index in sorted(card_index_list, reverse=True):
+    #         if 0 <= index < len(self.current_hand_card_list):
+    #             removed_card = self.current_hand_card_list.pop(index)
+    #             self.current_hand_state.remove_hand_by_index(index)
+    #             print(f"Removed card at index {index}: {removed_card}")
+    #         else:
+    #             print(f"Invalid index: {index}. No card removed for this index.")
+    #
+    #     print(
+    #         f"Removed cards at indices {card_index_list} -> current_hand_list: {self.current_hand_card_list}, current_hand_state: {self.get_current_hand_state()}"
+    #     )
+
+    def remove_card_by_multiple_index(self, card_index_list):
+        print(f"remove_card_by_multiple_index -> card_index_list: {card_index_list}")
+        print(f"len(self.current_hand_card_list) = {len(self.current_hand_card_list)}")
+
+        self.current_hand_card_list[:] = [
+            card for index, card in enumerate(self.current_hand_card_list) if index not in card_index_list
+        ]
+
+        for index in sorted(card_index_list, reverse=True):
+            self.current_hand_state.remove_hand_by_index(index)
+
+        print(
+            f"Removed cards at indices {card_index_list} -> current_hand_list: {self.current_hand_card_list}, current_hand_state: {self.get_current_hand_state()}"
+        )
 
     def replace_hand_card_position(self):
         current_y = 300
