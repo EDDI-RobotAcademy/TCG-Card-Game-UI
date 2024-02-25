@@ -13,6 +13,9 @@ class YourFieldUnitRepository:
     current_field_unit_list = []
     current_field_unit_x_position = []
 
+    __receiveIpcChannel = None
+    __transmitIpcChannel = None
+
     x_base = 265
 
     def __new__(cls):
@@ -39,6 +42,10 @@ class YourFieldUnitRepository:
         new_card.init_card(card_id)
         new_card.set_index(index)
         self.current_field_unit_list.append(new_card)
+
+    def request_to_deploy_your_unit(self, deploy_unit_card_request):
+        response = self.__transmitIpcChannel.put(deploy_unit_card_request)
+        print(f"response = {response}")
 
     def create_field_unit_card_list(self):
         current_field_unit = self.get_current_field_unit_state()

@@ -353,7 +353,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         self.ok_button_visible = False
         self.execute_pick_card_effect = False
 
-        # self.master.after(2000, self.__switchFrameWithMenuName('decision-first'))
+        self.master.after(2000, self.__switchFrameWithMenuName('decision-first'))
 
 
     # 멀리건 화면에서 교체하려는 카드 클릭시 나타나는 표현

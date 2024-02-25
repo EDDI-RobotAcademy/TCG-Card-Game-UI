@@ -32,6 +32,9 @@ class SessionRepositoryImpl(SessionRepository):
     def get_session_info(self):
         print("SessionRepositoryImpl: get_session_info() :", self.__session.get_session_id())
 
+        if self.__first_fake_session is not None:
+            return self.__first_fake_session.get_session_id()
+
         return self.__session.get_session_id()
 
     def get_first_fake_session_info(self):
