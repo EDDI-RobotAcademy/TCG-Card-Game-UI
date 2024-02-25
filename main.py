@@ -33,6 +33,7 @@ if __name__ == "__main__":
 
     uiFrameController = UiFrameControllerImpl.getInstance()
     uiFrameController.requestToCreateUiFrame()
+    uiFrameController.first_main_window()
 
     musicPlayerController = MusicPlayerControllerImpl.getInstance()
     musicPlayerController.loadAllMusicFiles()
@@ -49,6 +50,8 @@ if __name__ == "__main__":
 
     taskWorkerService.createTaskWorker("UI", uiFrameController.requestToStartPrintGameUi)
     taskWorkerService.executeTaskWorker("UI")
+
+    # uiFrameController.register_fake_battle_field_frame_which_one_has_socket_communication()
 
     # taskWorkerService.createTaskWorker("MusicPlayer", musicPlayerController.playBackgroundMusic)
     # taskWorkerService.executeTaskWorker("MusicPlayer")

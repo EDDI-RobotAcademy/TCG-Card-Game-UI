@@ -47,5 +47,7 @@ class CustomProtocol(Enum):
     SURRENDER = 4443
     PROGRAM_EXIT = 4444
 
+    CREATE_FAKE_BATTLE_ROOM = 8001
+
 
 

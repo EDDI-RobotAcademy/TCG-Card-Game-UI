@@ -6,11 +6,17 @@ from session.repository.session_repository import SessionRepository
 
 class SessionRepositoryImpl(SessionRepository):
     __instance = None
+
     __session = None
+    __first_fake_session = None
+    __second_fake_session = None
+
     __transmitIpcChannel = None
     __receiveIpcChannel = None
 
     SESSION_INFO_FILE_PATH = 'local_storage/session_info.txt'
+    FIRST_FAKE_SESSION_INFO_FILE_PATH = 'local_storage/first_fake_session_info.txt'
+    SECOND_FAKE_SESSION_INFO_FILE_PATH = 'local_storage/second_fake_session_info.txt'
 
     def __new__(cls):
         if cls.__instance is None:
@@ -28,6 +34,12 @@ class SessionRepositoryImpl(SessionRepository):
 
         return self.__session.get_session_id()
 
+    def get_first_fake_session_info(self):
+        return self.__first_fake_session.get_session_id()
+
+    def get_second_fake_session_info(self):
+        return self.__second_fake_session.get_session_id()
+
     def writeRedisTokenSessionInfoToFile(self, redisTokenSessionInfo):
         print("SessionRepositoryImpl: writeRedisTokenSessionInfoToFile()")
 
@@ -36,6 +48,28 @@ class SessionRepositoryImpl(SessionRepository):
         try:
             with open(self.SESSION_INFO_FILE_PATH, 'w') as file:
                 file.write(str(redisTokenSessionInfo))
+        except Exception as e:
+            print(f"파일에 세션 작성 중 에러 발생: {e}")
+
+    def writeFirstFakeRedisTokenSessionInfoToFile(self, firstFakeRedisTokenSessionInfo):
+        print("SessionRepositoryImpl: writeFirstFakeRedisTokenSessionInfoToFile()")
+
+        self.__first_fake_session = Session(firstFakeRedisTokenSessionInfo)
+
+        try:
+            with open(self.FIRST_FAKE_SESSION_INFO_FILE_PATH, 'w') as file:
+                file.write(str(firstFakeRedisTokenSessionInfo))
+        except Exception as e:
+            print(f"파일에 세션 작성 중 에러 발생: {e}")
+
+    def writeSecondFakeRedisTokenSessionInfoToFile(self, secondFakeRedisTokenSessionInfo):
+        print("SessionRepositoryImpl: writeSecondFakeRedisTokenSessionInfoToFile()")
+
+        self.__second_fake_session = Session(secondFakeRedisTokenSessionInfo)
+
+        try:
+            with open(self.SECOND_FAKE_SESSION_INFO_FILE_PATH, 'w') as file:
+                file.write(str(secondFakeRedisTokenSessionInfo))
         except Exception as e:
             print(f"파일에 세션 작성 중 에러 발생: {e}")
 

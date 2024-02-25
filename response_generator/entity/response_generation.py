@@ -29,3 +29,5 @@ class ResponseGeneration(Enum):
 
     PROGRAM_EXIT = 4444
 
+    FAKE_BATTLE_ROOM_CREATION = 8001
+

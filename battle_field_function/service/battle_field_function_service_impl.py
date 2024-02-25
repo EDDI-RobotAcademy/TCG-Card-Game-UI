@@ -5,6 +5,7 @@ from battle_field_function.service.battle_field_function_service import BattleFi
 from battle_field_function.service.request.game_end_reward_request import GameEndRewardRequest
 from battle_field_function.service.request.surrender_request import SurrenderRequest
 from battle_field_function.service.request.turn_end_request import TurnEndRequest
+from common.card_race import CardRace
 
 from session.repository.session_repository_impl import SessionRepositoryImpl
 from session.service.session_service_impl import SessionServiceImpl
@@ -109,12 +110,25 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
 
     def attachFieldUnitEnergy(self, notify_dict_data):
         for data in notify_dict_data.values():
+            print(f"data: {data}")
             for target_character in data.keys():
+                print(f"target_character: {target_character}")
                 for target_unit_index in data[target_character].keys():
+                    print(f"target_unit_index: {target_unit_index}")
                     for energy_race in data[target_character][target_unit_index]["attached_energy_map"].keys():
-                        race_energy_count = data[target_character][target_unit_index]["attached_energy_map"][energy_race]
-                        total_energy_count = data[target_character][target_unit_index]["total_energy_map"]
+                        for race in CardRace:
+                            if race.value == int(energy_race):
+                                energy_race_data = race.name
 
+
+                        print(f"energy_race: {energy_race}")
+                        print(f"energy_race_data: {energy_race_data}")
+                        race_energy_count = data[target_character][target_unit_index]["attached_energy_map"][energy_race]
+                        total_energy_count = data[target_character][target_unit_index]["total_energy_count"]
+                        print(f"race_energy_count: {race_energy_count}")
+                        print(f"total_energy_count: {total_energy_count}")
+                        return {'energy_race' : int(energy_race), 'race_energy_count': int(race_energy_count),
+                                'total_energy_count': int(total_energy_count), 'target_unit_index': int(target_unit_index)}
                         #todo :
                         # target_character => You || Opponent
                         # target_unit_index => 필드에 존재하는 유닛의 index값

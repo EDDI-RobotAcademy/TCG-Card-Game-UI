@@ -1,1 +1,0 @@
-# Place every_card.csv at here

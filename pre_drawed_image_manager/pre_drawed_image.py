@@ -17,6 +17,7 @@ class PreDrawedImage:
     __pre_drawed_card_attack = {}
     __pre_drawed_card_hp = {}
     __pre_drawed_numbers = {}
+    __pre_drawed_character_hp = {}
 
     __pre_drawed_opponent_tomb = None
     __pre_drawed_opponent_lost_zone = None
@@ -131,6 +132,15 @@ class PreDrawedImage:
         for card_number in self.__card_info_from_csv_repository.getCardNumber():
             card_illustration_image_data = os.path.join(self.__project_root, "local_storage", "card_images", f"{card_number}.png")
             self.__pre_drawed_card_illustration[card_number] = ImageDataLoader.load_rectangle_image_data(card_illustration_image_data)
+
+    def pre_draw_character_hp(self):
+        image_dir = os.path.join(self.__project_root, "local_storage", "card_number_image")
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            number_image_data = os.path.join(self.__project_root, "local_storage", "card_number_image", f"{number}.png")
+            print(f"image data = {number_image_data}")
+            self.__pre_drawed_character_hp[number] = ImageDataLoader.load_rectangle_image_data(number_image_data)
 
     def pre_draw_card_race(self):
         image_dir = os.path.join(self.__project_root, "local_storage", "card_race_image")
@@ -253,6 +263,7 @@ class PreDrawedImage:
         self.pre_draw_card_attack()
 
         self.pre_draw_numbers()
+        self.pre_draw_character_hp()
 
         self.pre_draw_prev_button()
 
@@ -325,6 +336,9 @@ class PreDrawedImage:
     def get_pre_draw_number_image(self, number=0):
         # print(f"pre_drawed_number_images: {self.__pre_drawed_numbers[number]}")
         return self.__pre_drawed_numbers[number]
+
+    def get_pre_draw_character_hp_image(self, number=0):
+        return self.__pre_drawed_character_hp[number]
 
     def get_pre_draw_prev_button(self):
         return self.__pre_drawed_prev_button

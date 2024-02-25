@@ -1,1 +1,0 @@
-# You need to place card images here
