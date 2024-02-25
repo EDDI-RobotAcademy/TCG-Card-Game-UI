@@ -22,6 +22,7 @@ class ResponseGeneration(Enum):
     BUY_CARD = 72
     FREE_BUY_CARD = 73
 
+    DEPLOY_UNIT_USAGE = 1004
     DRAW_CARD = 1013
 
     GAME_SURRENDER = 4443
