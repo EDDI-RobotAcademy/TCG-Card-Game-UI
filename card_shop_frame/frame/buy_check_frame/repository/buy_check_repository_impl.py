@@ -13,7 +13,7 @@ class BuyCheckRepositoryImpl(BuyCheckRepository):
         return cls.__instance
 
     def __init__(self):
-        self.__randomCardList = []
+        self.__randomCardList = None
 
     @classmethod
     def getInstance(cls):

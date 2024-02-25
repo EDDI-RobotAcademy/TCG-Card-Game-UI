@@ -28,11 +28,21 @@ class BuyCheckServiceImpl(BuyCheckService):
             cls.__instance = cls()
         return cls.__instance
 
+    def __init__(self):
+        self.legend_stack_count = 10
+
 
     def findRace(self):
+        race_mapping = {
+            "전체": "Chaos",
+            "언데드": "Undead",
+            "트랜트": "Trent",
+            "휴먼": "Human"
+        }
         Race = self.__cardShopMenuFrameRepository.getRace()
-        print(f"Race: {Race}")
-        return Race
+        Eg_Race = race_mapping.get(Race, "Unknown")
+        print(f"Eg_Race: {Eg_Race}")
+        return Eg_Race
 
 
     def createBuyCheckUiFrame(self, rootWindow, switchFrameWithMenuName):
@@ -42,28 +52,41 @@ class BuyCheckServiceImpl(BuyCheckService):
             self.__cardShopMenuFrameService.RestoreCardShopUiButton()
             buyCheckFrame.destroy()
 
-        def yes_click_button(buyCheckFrame):
+        def count_down_confirmed_upper_legend():
+            self.legend_stack_count = self.legend_stack_count-1
 
-            responseData = self.__buyCheckRepository.requestBuyRandomCard(
-                BuyRandomCardRequest(sessionInfo=self.__sessionRepository.get_session_info(), race_name="Undead",is_confirmed_upper_legend=True)),
-            print(f"responseData: {responseData}")
+
+
+
+        def yes_click_button(buyCheckFrame):
+            if self.legend_stack_count == 0:
+                responseData = self.__buyCheckRepository.requestBuyRandomCard(
+                    BuyRandomCardRequest(sessionInfo=self.__sessionRepository.get_session_info(), race_name=self.findRace(), is_confirmed_upper_legend=True))
+                self.legend_stack_count = 10
+            else:
+                responseData = self.__buyCheckRepository.requestBuyRandomCard(
+                    BuyRandomCardRequest(sessionInfo=self.__sessionRepository.get_session_info(),
+                                         race_name=self.findRace(), is_confirmed_upper_legend=False))
+
             #is_success = responseData[0]['is_success']
             is_success = True
-            #testcards = responseData[0]['card_id_list']
-            testcards = [76, 51, 76, 6, 77, 62, 53, 49, 72, 52]
-            print(f"testcards: {testcards}")
+            #cardlist = responseData[0]['card_id_list']
+            cardlist = [76, 51, 76, 6, 77, 62, 53, 49, 72, 52]
+            print(f"cardlist: {cardlist}")
             if is_success == True:
-                self.__buyCheckRepository.setRandomCardList(testcards)
-                self.__buyRandomCardFrameService.findRandomCardNumbers(testcards)
+                self.__buyCheckRepository.setRandomCardList(cardlist)
+                count_down_confirmed_upper_legend()
                 self.__cardShopMenuFrameService.RestoreCardShopUiButton()
                 switchFrameWithMenuName("buy-random-card")
                 buyCheckFrame.destroy()
             else:
-                self.__cardShopMenuFrameService.RestoreCardShopUiButton()
-                buyCheckFrame.destroy()
+                not_have_money_label = tkinter.Label(buyCheckFrame, text="골드가 부족합니다.", font=("Helvetica", 10),
+                                                     fg="red", bg="#F7F8E0", anchor="center", justify="center")
+                not_have_money_label.place(relx=0.25, rely=0.8,  anchor="center", bordermode="outside")
 
-        check_label = tkinter.Label(buyCheckFrame, text="100골드를 사용하여\n"+self.findRace()+" 카드 뽑기를 구매하시겠습니까?",
-                                    font=("Helvetica", 28), fg="black",
+
+        check_label = tkinter.Label(buyCheckFrame, text="100골드를 사용하여\n"+self.__cardShopMenuFrameRepository.getRace()+" 카드 뽑기를 구매하시겠습니까?",
+                                    font=("Helvetica", 28), fg="black", bg="#F7F8E0",
                                     anchor="center", justify="center")
         check_label.place(relx=0.5, rely=0.3, anchor="center", bordermode="outside")
 
