@@ -184,28 +184,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         your_field_panel_instance.create_your_field_panel()
         self.your_field_panel = your_field_panel_instance.get_your_field_panel()
 
-        # self.battle_field_your_unit_place_panel = Rectangle(
-        #     (0.0, 0.0, 0.0, 0.1),
-        #     [(245, 470), (245, 700), (1675, 700), (1675, 470)],
-        #     (0, 0),
-        #     (0, 0))
-        # self.battle_field_your_unit_place_panel.set_draw_border(False)
-
         opponent_field_panel_instance = OpponentFieldPanel()
         opponent_field_panel_instance.set_total_window_size(self.width, self.height)
         opponent_field_panel_instance.create_opponent_field_panel()
         self.opponent_field_panel = opponent_field_panel_instance.get_opponent_field_panel()
 
-        self.battle_field_opponent_unit_place_panel = Rectangle(
-            (0.0, 0.0, 0.0, 0.1),
-            [(245, 230), (245, 460), (1675, 460), (1675, 230)],
-            (0, 0),
-            (0, 0))
-        self.battle_field_opponent_unit_place_panel.set_draw_border(False)
-
-        # (257, 969)
-        # (415, 971)
-        # (332, 791)
         self.your_tomb.set_total_window_size(self.width, self.height)
         self.your_tomb.create_your_tomb_panel()
         self.your_tomb_panel = self.your_tomb.get_your_tomb_panel()
@@ -214,13 +197,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_tomb.create_opponent_tomb_panel()
         self.opponent_tomb_panel = self.opponent_tomb.get_opponent_tomb_panel()
 
-        # 1848 기준 -> 1848 - (105 * 5 + 170 * 4) = 643
-        # 643 / 2 = 321.5
-        # 321.5 / 1848 = 17.4% => 0.174
-        # 위 수식은 적합하지 않음 (0.286 포함)
-        # 실제로 카드 좌측 하단 기준으로 170 이동이였음 (그러므로 카드간 간격은 65)
-        # 1920 기준 -> 1920 - (105 * 5 + 65 * 4) = 1135
-        # 1135 / 2 = 567.5
         self.your_hand_repository.set_x_base(567.5)
         self.your_hand_repository.save_current_hand_state([25, 31, 2, 151, 93])
         # self.your_hand_repository.save_current_hand_state([151])
