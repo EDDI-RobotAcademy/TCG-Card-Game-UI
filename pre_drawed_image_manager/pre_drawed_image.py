@@ -12,7 +12,9 @@ class PreDrawedImage:
     __project_root = get_project_root()
 
     __pre_drawed_card_frame ={}
+
     __pre_drawed_card_illustration = {}
+
     __pre_drawed_card_race = {}
     __pre_drawed_card_type = {}
     __pre_drawed_card_attack = {}
@@ -56,6 +58,11 @@ class PreDrawedImage:
         if cls.__instance is None:
             cls.__instance = cls()
         return cls.__instance
+
+    def pre_draw_card_frame(self):
+        for card_number in self.__card_info_from_csv_repository.getCardNumber():
+            card_frame_image_data = os.path.join(self.__project_root, "local_storage", "card_frame", f"{card_number}.png")
+            self.__pre_drawed_card_frame[card_number] = ImageDataLoader.load_rectangle_image_data(card_frame_image_data)
 
     def pre_draw_opponent_tomb(self):
         tomb_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "tomb.jpeg")
