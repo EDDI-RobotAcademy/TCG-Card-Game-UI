@@ -97,18 +97,22 @@ class FixedUnitCardInsideHandler:
 
         # todo : 특수에너지의 갯수가 많아지면 카드 넘버로 특정 지어야 함
         # todo : 이미지가 추가되면 pre_drawed를 설정 후 불러와야함
-        if self.card_info.getCardGradeForCardNumber(placed_card_id) == CardGrade.HERO.value:
-             # card_freezing_image_circle = your_fixed_field_unit.creat_fixed_card_freezing_image_circle(image_data=self.__pre_drawed_image_instance.,
-             #                                                                                           vertices=(45, 150),
-             #                                                                                           local_translation=fixed_card_base.get_local_translation()
-             #                                                                                           )
-             # card_dark_flame_image_circle = your_fixed_field_unit.creat_fixed_card_dark_flame_image_circle(image_data=self.__pre_drawed_image_instance.,
-             #                                                                                               vertices=(60, 150),
-             #                                                                                               local_translation=fixed_card_base.get_local_translation()
-             #                                                                                               )
-             # fixed_card_base.set_attached_shapes(card_freezing_image_circle)
-             # fixed_card_base.set_attached_shapes(card_dark_flame_image_circle)
-             pass
+        # if self.card_info.getCardGradeForCardNumber(placed_card_id) == CardGrade.HERO:
+        #      card_freezing_image_circle = (
+        #          your_fixed_field_unit.creat_fixed_card_freezing_image_circle(image_data=self.__pre_drawed_image_instance.get_pre_draw_freezing_energy(),
+        #                                                                       vertices=(0, 50),
+        #                                                                       local_translation=fixed_card_base.get_local_translation()
+        #                                                                       )
+        #      )
+        #      card_dark_flame_image_circle = (
+        #          your_fixed_field_unit.creat_fixed_card_dark_flame_image_circle(image_data=self.__pre_drawed_image_instance.get_pre_draw_dark_flame_energy(),
+        #                                                                         vertices=(0, 100),
+        #                                                                         local_translation=fixed_card_base.get_local_translation()
+        #                                                                         )
+        #      )
+        #      fixed_card_base.set_attached_shapes(card_freezing_image_circle)
+        #      fixed_card_base.set_attached_shapes(card_dark_flame_image_circle)
+        #      print(f"fixed_card_base.get_attached_shapes() : {fixed_card_base.get_attached_shapes()}")
 
         # 에너지 circle부분 확인 후 교체작업
         for fixed_card_attached_shape in fixed_card_attached_shape_list:
