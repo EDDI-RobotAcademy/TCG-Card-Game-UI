@@ -1,12 +1,23 @@
+import threading
+
+
 class CurrentHandState:
     def __init__(self):
         self.current_hand_list = []
+        # self.lock = threading.Lock()
 
-    def add_to_hand(self, card_list):
-        # print(f"add_to_hand: {card_list}")
+    def add_to_hand_list(self, card_list):
+        print(f"card_list: {card_list}")
         for card in card_list:
-            # print(f"add_to_hand: {card}")
+            print(f"card: {card}")
             self.current_hand_list.append(card)
+
+    def add_to_hand(self, card):
+        # with self.lock:
+        #     print(f"add_to_hand_list: {card_list}")
+        #     for card in card_list:
+        #         print(f"add_to_hand: {card}")
+        self.current_hand_list.append(card)
 
     def remove_hand_by_index(self, index):
         if 0 <= index < len(self.current_hand_list):
