@@ -5,6 +5,7 @@ import tkinter
 from decouple import config
 
 from battle_field.infra.battle_field_repository import BattleFieldRepository
+from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field_muligun.infra.muligun_your_hand_repository import YourHandRepository as MuligunHandRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field_muligun.service.request.muligun_request import MuligunRequest
@@ -49,6 +50,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
             # 이건 진짜 Hand를 Fake 용으로 사용하는 것
             cls.__instance.__fakeYourHandRepository = YourHandRepository.getInstance()
+            cls.__instance.__fakeYourDeckRepository = YourDeckRepository.getInstance()
         return cls.__instance
 
     @classmethod
@@ -142,12 +144,16 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                 hand_card_list = deckCardListResponse['hand_card_list']
                 print(f"hand card list: {hand_card_list}")
 
-                responseData = self.__muligunYourHandRepository.requestMuligun(
+                muligunResponseData = self.__muligunYourHandRepository.requestMuligun(
                     MuligunRequest(first_fake_redis_token,
                                    []))
 
-                print(f"muligun responseData: {responseData}")
+                print(f"muligun responseData: {muligunResponseData}")
                 self.__fakeYourHandRepository.save_current_hand_state(hand_card_list)
+
+                deck_card_list = muligunResponseData['updated_deck_card_list']
+
+                self.__fakeYourDeckRepository.save_deck_state(deck_card_list)
 
             switchFrameWithMenuName("fake-battle-field")
 
