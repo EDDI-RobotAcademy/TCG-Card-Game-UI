@@ -411,6 +411,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         key = event.keysym
         print(f"Key pressed: {key}")
 
+        if key.lower() == 'u':
+
+            self.your_field_energy_repository_for_test.increase_energy()
+
         if key.lower() == 'd':
             self.your_hp_repository.take_damage()
 
@@ -490,7 +494,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.your_field_energy.set_width_ratio(self.width_ratio)
         self.your_field_energy.set_height_ratio(self.height_ratio)
-        self.your_field_energy_panel.draw()
+        self.your_field_energy.create_your_field_energy_panel()
+        # self.your_field_energy_panel.draw()
 
         glDisable(GL_BLEND)
 
@@ -1123,6 +1128,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             if self.your_field_energy_panel_selected:
                 print(f"on_canvas_left_click() -> current_field_energy: {self.your_field_energy_repository_for_test.get_current_your_field_energy_state().get_current_your_field_energy()}")
+                self.your_field_energy_repository_for_test.reduce_energy()
+
 
 
             self.tomb_panel_selected = False

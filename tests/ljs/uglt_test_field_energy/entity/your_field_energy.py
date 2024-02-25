@@ -45,21 +45,23 @@ class YourFieldEnergy:
         # y1 = 0.767
         # y2 = 0.959
 
-        left_x_point = self.total_width * 0.8
-        right_x_point = self.total_width * 0.88
+        left_x_point = self.total_width * 0.88
+        right_x_point = self.total_width * 0.94
         top_y_point = self.total_height * 0.767
         bottom_y_point = self.total_height * 0.959
 
-        self.your_tomb_panel = RectangleImage(
-            self.__pre_drawed_image.get_pre_draw_rectangle_number_image(),
+        self.your_field_energy_panel = RectangleImage(
+            self.__pre_drawed_image.get_pre_draw_rectangle_number_image(self.__your_field_energy_repository.get_current_your_field_energy_state().get_current_your_field_energy()),
             [
-                (left_x_point, bottom_y_point),
                 (left_x_point, top_y_point),
                 (right_x_point, top_y_point),
-                (right_x_point, bottom_y_point)
+                (right_x_point, bottom_y_point),
+                (left_x_point, bottom_y_point)
             ],
             (0, 0),
             (0, 0))
+
+        self.your_field_energy_panel.draw()
 
     def get_your_field_energy_panel_popup_rectangle(self):
         return self.your_field_energy_popup
@@ -84,6 +86,8 @@ class YourFieldEnergy:
             ],
             (0, 0),
             (0, 0))
+
+
         # TODO: 가만 보니 border에 문제가 있는 것 같다 (울퉁 불퉁 해지는 경향이 있음)
         self.your_field_energy_popup.set_draw_border(False)
 
@@ -102,14 +106,15 @@ class YourFieldEnergy:
         # print(f"is_point_inside_popup_rectangle -> x: {point_x}, y: {point_y}")
         # print(f"is_point_inside_popup_rectangle -> translated_vertices: {translated_vertices}")
 
-        if not (translated_vertices[0][0] <= point_x <= translated_vertices[2][0] and
-                translated_vertices[0][1] <= point_y <= translated_vertices[1][1]):
+        if not (translated_vertices[0][0] <= point_x <= translated_vertices[1][0] and
+                translated_vertices[2][1] <= point_y <= translated_vertices[0][1]):
             return False
 
         print("your energy popup panel result -> True")
         return True
 
     def is_point_inside(self, point):
+
         point_x, point_y = point
         point_y *= -1
 
@@ -120,8 +125,8 @@ class YourFieldEnergy:
             for x, y in energy_panel.get_vertices()
         ]
 
-        if not (translated_vertices[0][0] <= point_x <= translated_vertices[2][0] and
-                translated_vertices[1][1] <= point_y <= translated_vertices[0][1]):
+        if not (translated_vertices[0][0] <= point_x <= translated_vertices[1][0] and
+                translated_vertices[0][1] <= point_y <= translated_vertices[2][1]):
             print("your field energy panel result -> False")
             return False
 

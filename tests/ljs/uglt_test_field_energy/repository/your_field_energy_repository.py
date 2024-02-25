@@ -26,3 +26,6 @@ class YourFieldEnergyRepositoryForTest:
     def reduce_energy(self, count = 1):
         print("Energy Used!!!")
         self.current_energy_state.reduce_current_your_field_energy(count)
+
+    def increase_energy(self, count = 1):
+        self.current_energy_state.increase_current_your_field_energy(count)
