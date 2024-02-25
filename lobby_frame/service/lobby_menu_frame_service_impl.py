@@ -2,9 +2,12 @@ import sys
 import time
 import tkinter
 
+from decouple import config
+
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_lobby_frame.controller.battle_lobby_frame_controller_impl import BattleLobbyFrameControllerImpl
 from battle_lobby_frame.repository.battle_lobby_frame_repository_impl import BattleLobbyFrameRepositoryImpl
+from battle_lobby_frame.service.request.request_deck_card_list import RequestDeckCardList
 from battle_lobby_frame.service.request.request_deck_name_list_for_battle import RequestDeckNameListForBattle
 from fake_battle_field.infra.fake_battle_field_frame_repository_impl import FakeBattleFieldFrameRepositoryImpl
 from fake_battle_field.service.request.create_fake_battle_room_request import CreateFakeBattleRoomRequest
@@ -107,6 +110,33 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                     print(f"Second Fake redis_token received: {second_fake_redis_token}")
 
                     self.__sessionRepository.writeSecondFakeRedisTokenSessionInfoToFile(second_fake_redis_token)
+
+                deckNameResponse = self.__fakeBattleFieldFrameRepository.request_deck_name_list_for_fake_battle(
+                    RequestDeckNameListForBattle(
+                        first_fake_redis_token
+                    )
+                )
+                if deckNameResponse is None or deckNameResponse == "":
+                    print("Fake Battle Room 테스트를 위한 기본 설정을 먼저 진행하세요!")
+
+                print(f"deck name response: {deckNameResponse}")
+
+                deckCardListResponse = self.__fakeBattleFieldFrameRepository.request_card_list(
+                    # 덱 Id 값을 Fake Test 목적으로 만든 숫자에 맞춰야함
+                    RequestDeckCardList(config('FAKE_DECK_ID'),
+                                        first_fake_redis_token)
+                )
+
+                print(f"deckCardListResponse: {deckCardListResponse}")
+                if deckCardListResponse is None or deckCardListResponse == "":
+                    print("Fake Battle Room 테스트를 위한 기본 설정을 먼저 진행하세요!")
+
+                hand_card_list = deckCardListResponse['hand_card_list']
+                print(f"hand card list: {hand_card_list}")
+
+
+
+
 
             switchFrameWithMenuName("fake-battle-field")
 
