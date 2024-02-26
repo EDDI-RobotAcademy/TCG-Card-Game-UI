@@ -29,10 +29,11 @@ class YourFieldEnergyRepository:
         self.__current_field_energy_race = CardRace.UNDEAD
 
     def increase_your_field_energy(self, count = 1):
-        self.your_field_energy_state.increase_field_energy(count)
+        return self.your_field_energy_state.increase_field_energy(count)
+
 
     def decrease_your_field_energy(self, count = 1):
-        self.your_field_energy_state.decrease_field_energy(count)
+        return self.your_field_energy_state.decrease_field_energy(count)
 
     def get_your_field_energy(self):
         return self.your_field_energy_state.get_your_field_energy_count()

@@ -1321,6 +1321,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 if self.your_field_energy_repository.decrease_your_field_energy():
                     self.your_hand_repository.create_additional_hand_card_list(
                         [self.your_field_energy_repository.get_current_field_energy_card_id()])
+                    print(f"current energy card : {self.your_field_energy_repository.get_current_field_energy_card_id()}, {self.your_field_energy_repository.get_current_field_energy_race()}")
                     print(
                         f"on_canvas_left_click() -> current_field_energy: {self.your_field_energy_repository.get_your_field_energy()}")
 
