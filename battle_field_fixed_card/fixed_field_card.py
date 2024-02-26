@@ -53,14 +53,14 @@ class FixedFieldCard:
         attached_dark_flame_image = CircleImage(image_data=image_data,
                                                 local_translation=local_translation,
                                                 center=vertices,
-                                                radius=20)
+                                                radius=15)
         return attached_dark_flame_image
 
     def creat_fixed_card_freezing_image_circle(self, image_data, local_translation, vertices):
         attached_freezing_image = CircleImage(image_data=image_data,
                                               local_translation=local_translation,
                                               center=vertices,
-                                              radius=20)
+                                              radius=15)
         return attached_freezing_image
 
     def creat_fixed_card_energy_race_circle(self, color, vertices, local_translation):

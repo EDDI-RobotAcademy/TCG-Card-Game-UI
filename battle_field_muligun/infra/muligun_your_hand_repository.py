@@ -117,7 +117,7 @@ class MuligunYourHandRepository:
         )
 
     def replace_hand_card_position(self):
-        current_y = 300
+        current_y = 260
         x_increment = 340
 
         for index, current_hand_card in enumerate(self.current_hand_card_list):
@@ -164,7 +164,7 @@ class MuligunYourHandRepository:
 
     # 멀리건 화면에서 카드 배치
     def get_start_hand_card_position(self, index):
-        current_y = 300
+        current_y = 260
         x_increment = 340
         next_x = self.x_base_muligun + x_increment * index
         return (next_x, current_y)
