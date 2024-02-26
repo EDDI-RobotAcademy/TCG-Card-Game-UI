@@ -269,7 +269,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
                     self.selected_object = hand_card
 
                     # 이미 선택 되어 있으면 카드 오브젝트 리스트에서 삭제. 아니면 카드 오브젝트에 추가
-                    self.remove_selected_card_is_already_selected(hand_card) 
+                    self.remove_selected_card_is_already_selected(hand_card)
                     # self.selected_object_list_for_muligun.append(hand_card)
 
                     print(f"self.selected_object_list_for_muligun: {self.selected_object_list_for_muligun}")
