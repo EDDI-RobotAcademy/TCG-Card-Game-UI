@@ -47,7 +47,9 @@ class PreDrawedImage:
     __pre_drawed_lose_text = None
 
     __pre_drawed_prev_button = None
+    __pre_drawed_reset_button = None
     __pre_drawed_battle_field_muligun_background = None
+    __pre_drawed_card_back_frame = None
 
 
     def __new__(cls):
@@ -252,6 +254,15 @@ class PreDrawedImage:
         freezing_energy_image_path = os.path.join(self.__project_root, "local_storage", "card_special_energy_image", "freezing.png")
         self.__pre_drawed_freezing = ImageDataLoader.load_rectangle_image_data(freezing_energy_image_path)
 
+    def pre_draw_reset_button(self):
+        reset_button_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "reset_button.png")
+        self.__pre_drawed_reset_button = ImageDataLoader.load_rectangle_image_data(reset_button_image_path)
+
+    def pre_draw_card_back_frame(self):
+        card_back_frame_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
+                                                  "card_back_frame.png")
+        self.__pre_drawed_card_back_frame = ImageDataLoader.load_rectangle_image_data(card_back_frame_image_path)
+
 
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
@@ -289,6 +300,9 @@ class PreDrawedImage:
         self.pre_draw_card_frame()
         self.pre_draw_dark_flame_energy()
         self.pre_draw_freezing_energy()
+
+        self.pre_draw_reset_button()
+        self.pre_draw_card_back_frame()
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
@@ -383,4 +397,10 @@ class PreDrawedImage:
 
     def get_pre_draw_freezing_energy(self):
         return self.__pre_drawed_freezing
+
+    def get_pre_draw_reset_button(self):
+        return self.__pre_drawed_reset_button
+
+    def get_pre_draw_card_back_frame(self):
+        return self.__pre_drawed_card_back_frame
 
