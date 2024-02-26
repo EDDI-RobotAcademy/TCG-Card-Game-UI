@@ -49,10 +49,27 @@ class OpponentFieldUnitRepository:
     def get_current_field_unit_card_object_list(self):
         return self.current_field_unit_card_object_list
 
+    def get_current_field_unit_state(self):
+        return self.current_field_unit_state
+
     def remove_current_field_unit_card(self, unit_index):
         # TODO: 이 부분 Memory Leak 발생 우려 (카드 구성 객체 정리 방안 구성 필요)
         del self.current_field_unit_card_object_list[unit_index]
         self.current_field_unit_state.delete_current_field_unit_list(unit_index)
+
+    def remove_card_by_multiple_index(self, card_index_list):
+        for index in sorted(card_index_list, reverse=True):
+            if 0 <= index < len(self.current_field_unit_card_object_list):
+                del self.current_field_unit_card_object_list[index]
+                self.current_field_unit_state.remove_field_unit_by_index(index)
+            else:
+                print(f"Invalid index: {index}. No card removed for this index.")
+
+        print(
+            f"Removed cards at indices {card_index_list} -> current_opponent_field_list: "
+            f"{self.current_field_unit_card_object_list}, "
+            f"current_opponent_field_state: {self.get_current_field_unit_state()}")
+
 
     def replace_opponent_field_unit_card_position(self):
         current_y = 270

@@ -121,6 +121,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.targeting_enemy_select_using_your_field_card_index = -1
         self.targeting_enemy_select_count = 0
 
+        self.opponent_you_selected_lightning_border_list = []
+        self.opponent_you_selected_object_list = []
+
         self.your_field_energy_repository = YourFieldEnergyRepository.getInstance()
 
         self.your_lost_zone_repository = YourLostZoneRepository.getInstance()
@@ -266,6 +269,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         if key.lower() == 'a':
             self.opponent_field_unit_repository.create_field_unit_card(26)
+
+        if key.lower() == 'q':
+            self.opponent_field_unit_repository.create_field_unit_card(31)
 
         if key.lower() == 'n':
             self.opponent_field_unit_repository.create_field_unit_card(19)
@@ -496,6 +502,14 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             self.lightning_border.set_padding(20)
             self.lightning_border.update_shape(targeting_enemy_select_support_lightning_border)
+            self.lightning_border.draw_lightning_border()
+
+        for opponent_you_selected in self.opponent_you_selected_lightning_border_list:
+            opponent_you_selected.set_width_ratio(self.width_ratio)
+            opponent_you_selected.set_height_ratio(self.height_ratio)
+
+            self.lightning_border.set_padding(20)
+            self.lightning_border.update_shape(opponent_you_selected)
             self.lightning_border.draw_lightning_border()
 
         if self.tomb_panel_selected:
@@ -842,6 +856,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                 self.targeting_ememy_select_using_hand_card_id = placed_card_id
                                 self.targeting_ememy_select_using_hand_card_index = placed_index
                                 self.targeting_enemy_select_using_your_field_card_index = unit_index
+                                self.targeting_enemy_for_sacrifice_unit_id = card_id
                                 self.targeting_enemy_select_count = 2
 
                                 # self.your_hand_repository.replace_hand_card_position()
@@ -1163,9 +1178,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     #
                     #     break
 
-                    if self.fixed_unit_card_inside_action is FixedUnitCardInsideAction.TARGETING_TWO_ENEMY_AS_POSSIBLE:
-                        print("적 유닛 2체까지 선택 가능")
-
                     your_field_unit.selected = not your_field_unit.selected
                     self.selected_object = your_field_unit
                     self.drag_start = (x, y)
@@ -1175,6 +1187,119 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         self.prev_selected_object = self.selected_object
 
                     break
+
+            if self.fixed_unit_card_inside_action is FixedUnitCardInsideAction.TARGETING_TWO_ENEMY_AS_POSSIBLE:
+                print("적 유닛 2체까지 선택 가능")
+
+                opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+                for opponent_field_unit_object in opponent_field_unit_object_list:
+                    if isinstance(opponent_field_unit_object, FixedFieldCard):
+                        opponent_field_unit_object.selected = False
+
+                for opponent_field_unit_object in opponent_field_unit_object_list:
+                    opponent_fixed_card_base = opponent_field_unit_object.get_fixed_card_base()
+
+                    # TODO: 1체라도 선택하면 확인 버튼이 나와야 합니다.
+                    if opponent_fixed_card_base.is_point_inside((x, y)):
+                        self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
+
+                        # opponent_you_select_unit_index = opponent_field_unit_object.get_index()
+                        self.opponent_you_selected_object_list.append(opponent_field_unit_object)
+
+                        self.targeting_enemy_select_count -= 1
+                        print(f"selected_opponent_unit index: {opponent_field_unit_object.get_index()}")
+
+                        if self.targeting_enemy_select_count == 0:
+                            remove_from_field_index_list = []
+                            remove_from_field_id_list = []
+
+                            for opponent_you_selected_object in self.opponent_you_selected_object_list:
+                                opponent_fixed_card_base = opponent_you_selected_object.get_fixed_card_base()
+
+                                opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+                                # remove_from_field = False
+
+                                for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                                    if isinstance(opponent_fixed_card_attached_shape, CircleNumberImage):
+                                        if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+
+                                            hp_number = opponent_fixed_card_attached_shape.get_number()
+                                            hp_number -= 10
+
+                                            # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
+                                            # (지금 당장 불사가 존재하지 않음)
+                                            if hp_number <= 0:
+                                                # remove_from_field = True
+                                                remove_from_field_index_list.append(
+                                                    opponent_you_selected_object.get_index())
+                                                remove_from_field_id_list.append(
+                                                    opponent_you_selected_object.get_card_number())
+
+                                                break
+
+                                            print(f"corpse explosion -> hp_number: {hp_number}")
+                                            opponent_fixed_card_attached_shape.set_number(hp_number)
+
+                                            opponent_fixed_card_attached_shape.set_image_data(
+                                                # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+                                                self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
+
+                                # if remove_from_field:
+                                #     card_id = opponent_you_selected_object.get_card_number()
+                                #
+                                #     self.opponent_field_unit_repository.remove_current_field_unit_card(opponent_you_selected_object.get_index())
+                                #     self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+
+                            # for remove_from_field in remove_from_field_list:
+
+                            print(f"corpse explosion index: {self.targeting_ememy_select_using_hand_card_index}")
+                            self.your_hand_repository.remove_card_by_index(
+                                self.targeting_ememy_select_using_hand_card_index)
+                            self.your_tomb_repository.create_tomb_card(
+                                self.targeting_ememy_select_using_hand_card_id)
+
+                            self.opponent_field_unit_repository.remove_card_by_multiple_index(remove_from_field_index_list)
+
+                            for remove_from_field_id in remove_from_field_id_list:
+                                self.opponent_tomb_repository.create_opponent_tomb_card(
+                                    remove_from_field_id)
+
+                            self.your_field_unit_repository.remove_card_by_index(self.targeting_enemy_select_using_your_field_card_index)
+                            self.your_tomb_repository.create_tomb_card(self.targeting_enemy_for_sacrifice_unit_id)
+
+                            self.your_hand_repository.replace_hand_card_position()
+                            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                            self.fixed_unit_card_inside_action = FixedUnitCardInsideAction.Dummy
+
+                            self.targeting_ememy_select_using_hand_card_id = -1
+                            self.targeting_ememy_select_using_hand_card_index = -1
+                            self.targeting_enemy_select_using_your_field_card_index = -1
+                            self.targeting_enemy_for_sacrifice_unit_id = -1
+
+                            self.targeting_enemy_select_support_lightning_border_list = []
+                            self.opponent_you_selected_lightning_border_list = []
+                            self.opponent_you_selected_object_list = []
+
+                            self.selected_object = None
+                            return
+
+                        # 두 체가 선택되면 묻지 않고 발동합니다.
+                        # if
+                        #
+                        # self.targeting_ememy_select_using_hand_card_id = placed_card_id
+                        # self.targeting_ememy_select_using_hand_card_index = placed_index
+                        # self.targeting_enemy_select_using_your_field_card_index = unit_index
+                        # self.targeting_enemy_select_count = 2
+
+                        # self.targeting_enemy_select_support_lightning_border_list = []
+                        #         self.targeting_ememy_select_using_hand_card_id = -1
+                        #         self.targeting_ememy_select_using_hand_card_index = -1
+                        #         self.targeting_enemy_select_using_your_field_card_index = -1
+                        #         self.targeting_enemy_select_count = 0
+                        #
+                        #         self.opponent_you_selected_lightning_border_list = []
+                        #         self.opponent_you_selected_index_list = []
 
             self.tomb_panel_selected = self.left_click_detector.which_one_select_is_in_your_tomb_area(
                 (x, y),
