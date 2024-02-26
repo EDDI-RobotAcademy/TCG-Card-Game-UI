@@ -61,5 +61,10 @@ class YourHp:
                 (left_x_point, bottom_y_point)
             ])
 
-        self.your_hp_panel.draw()
+
+
+       # self.your_hp_panel.draw()
+
+    def update_current_your_hp_panel(self):
+        self.your_hp_panel.set_image_data(self.__pre_drawed_image.get_pre_draw_character_hp_image(self.current_your_hp_state.get_current_health()))
 

@@ -62,5 +62,9 @@ class OpponentHp:
                 (left_x_point, bottom_y_point)
             ])
 
-        self.opponent_hp_panel.draw()
+        #self.opponent_hp_panel.draw()
+
+    def update_current_opponent_hp_panel(self):
+        self.opponent_hp_panel.set_image_data(self.__pre_drawed_image.get_pre_draw_character_hp_image(self.current_opponent_hp_state.get_current_health()))
+
 
