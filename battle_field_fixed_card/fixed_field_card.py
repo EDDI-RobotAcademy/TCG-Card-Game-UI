@@ -22,6 +22,7 @@ class FixedFieldCard:
         self.scale = scale
         self.card_number = None
         self.card_info = CardInfoFromCsvRepositoryImpl.getInstance()
+        self.card_controller = CardControllerImpl.getInstance()
         self.index = 0
 
     def get_card_number(self):
@@ -52,15 +53,15 @@ class FixedFieldCard:
         attached_dark_flame_image = CircleImage(image_data=image_data,
                                                 local_translation=local_translation,
                                                 center=vertices,
-                                                radius=5)
+                                                radius=20)
         return attached_dark_flame_image
 
     def creat_fixed_card_freezing_image_circle(self, image_data, local_translation, vertices):
-        attached_dark_flame_image = CircleImage(image_data=image_data,
-                                                local_translation=local_translation,
-                                                center=vertices,
-                                                radius=5)
-        return attached_dark_flame_image
+        attached_freezing_image = CircleImage(image_data=image_data,
+                                              local_translation=local_translation,
+                                              center=vertices,
+                                              radius=20)
+        return attached_freezing_image
 
     def creat_fixed_card_energy_race_circle(self, color, vertices, local_translation):
         attached_energy_circle = Circle(color=color,
@@ -90,6 +91,13 @@ class FixedFieldCard:
         fixed_card_base.set_draw_gradient(True)
         return fixed_card_base
 
+    def creat_frame(self, image_data, vertices, local_translation):
+        card_frame = RectangleImage(image_data=image_data,
+                                    local_translation=local_translation,
+                                    vertices=vertices)
+        card_frame.set_initial_vertices(vertices)
+        return card_frame
+
     def create_illustration(self, image_data, vertices, local_translation):
         card_illustration = RectangleImage(image_data=image_data,
                                            local_translation=local_translation,
@@ -108,16 +116,6 @@ class FixedFieldCard:
         rectangle_height = 170
         rectangle_width = 105
 
-        # print(f"rectangle_width: {rectangle_width}")
-        # print(f"rectangle_height: {rectangle_height}")
-
-        # cardInfo = CardInfoFromCsvRepositoryImpl.getInstance()
-        # csvInfo = cardInfo.readCardData(os.path.join(project_root, 'local_storage', 'card', 'data.csv'))
-        # cardInfo.build_dictionaries(csvInfo)
-
-        # CardControllerImpl()
-        card_controller = CardControllerImpl.getInstance()
-
         self.tool_card = self.create_attached_tool_card_rectangle(
             color=(0.6, 0.4, 0.6, 1.0),
             local_translation=self.local_translation,
@@ -134,10 +132,18 @@ class FixedFieldCard:
         )
 
         self.fixed_card_base.set_attached_shapes(
+            self.creat_frame(
+                image_data=self.__pre_drawed_image_instance.get_pre_draw_card_frame_for_card_number(card_number),
+                local_translation=self.local_translation,
+                vertices=basic_fixed_card_base_vertices
+            )
+        )
+
+        self.fixed_card_base.set_attached_shapes(
             self.create_illustration(
                 image_data=self.__pre_drawed_image_instance.get_pre_draw_card_illustration_for_card_number(card_number),
                 local_translation=self.local_translation,
-                vertices=[(15, 15), (90, 15), (90, 90), (15, 90)]
+                vertices=[(10, 25), (95, 25), (95, 100), (10, 100)]
             )
         )
 
@@ -149,7 +155,7 @@ class FixedFieldCard:
         #     )
         # )
 
-        card_controller_shapes = card_controller.getCardTypeTable(self.card_info.getCardTypeForCardNumber(card_number))
+        card_controller_shapes = (self.card_controller.getCardTypeTable(self.card_info.getCardTypeForCardNumber(card_number)))
         card_shapes = card_controller_shapes(self.local_translation, card_number, rectangle_height, rectangle_width)
         for shape in card_shapes:
             shape.set_visible(True)

@@ -1,9 +1,11 @@
-import colorama
 from screeninfo import get_monitors
 from shapely import Polygon, Point
 
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
 from battle_field.components.field_area_inside.field_area_inside_handler import FieldAreaInsideHandler
+
+import tkinter
+import unittest
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -13,6 +15,9 @@ from battle_field.components.mouse_left_click.left_click_detector import LeftCli
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area_action import OpponentFieldAreaAction
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
     OpponentFixedUnitCardInsideHandler
+from battle_field.entity.battle_field_scene import BattleFieldScene
+from battle_field.entity.opponent_field_panel import OpponentFieldPanel
+from battle_field.entity.your_field_panel import YourFieldPanel
 from battle_field.entity.opponent_lost_zone import OpponentLostZone
 from battle_field.entity.opponent_tomb import OpponentTomb
 from battle_field.entity.tomb_type import TombType
@@ -30,7 +35,6 @@ from battle_field.infra.your_lost_zone_repository import YourLostZoneRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field.state.energy_type import EnergyType
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
-
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_race import CardRace
@@ -38,42 +42,24 @@ from common.card_type import CardType
 from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
+from initializer.init_domain import DomainInitializer
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
-
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.circle import Circle
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
-
-class FakeBattleFieldFrame(OpenGLFrame):
-    def __init__(self, master=None, switchFrameWithMenuName=None, **kwargs):
+class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
+    def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
 
-        print("FakeBattleFieldFrame 생성자 호출")
+        self.init_monitor_specification()
 
-        monitors = get_monitors()
-        target_monitor = monitors[2] if len(monitors) > 2 else monitors[0]
+        self.battle_field_background_shape_list = None
 
-        self.width = target_monitor.width
-        self.height = target_monitor.height
-
-        self.is_reshape_not_complete = True
-
-        self.current_width = self.width
-        self.current_height = self.height
-
-        self.prev_width = self.width
-        self.prev_height = self.height
-
-        self.width_ratio = 1.0
-        self.height_ratio = 1.0
-
-        self.battle_field_muligun_background_shape_list = None
-        self.battle_field_unit_place_panel = None
-
-        self.battle_field_opponent_unit_place_panel = None
+        self.your_field_panel = None
+        self.opponent_field_panel = None
 
         self.active_panel_rectangle = None
         self.selected_object = None
@@ -152,6 +138,24 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.focus_set()
         self.bind("<Key>", self.on_key_press)
 
+    def init_monitor_specification(self):
+        monitors = get_monitors()
+        target_monitor = monitors[2] if len(monitors) > 2 else monitors[0]
+
+        self.width = target_monitor.width
+        self.height = target_monitor.height
+
+        self.is_reshape_not_complete = True
+
+        self.current_width = self.width
+        self.current_height = self.height
+
+        self.prev_width = self.width
+        self.prev_height = self.height
+
+        self.width_ratio = 1.0
+        self.height_ratio = 1.0
+
     def initgl(self):
         glClearColor(1.0, 1.0, 1.0, 0.0)
         glOrtho(0, self.width, self.height, 0, -1, 1)
@@ -170,23 +174,19 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.prev_height = self.height
         self.is_reshape_not_complete = False
 
-        battle_field_muligun_scene = BattleFieldMuligunScene()
-        battle_field_muligun_scene.create_battle_field_muligun_scene(self.width, self.height)
-        self.battle_field_muligun_background_shape_list = battle_field_muligun_scene.get_battle_field_muligun_background()
+        battle_field_scene = BattleFieldScene()
+        battle_field_scene.create_battle_field_cene(self.width, self.height)
+        self.battle_field_background_shape_list = battle_field_scene.get_battle_field_background()
 
-        self.battle_field_unit_place_panel = Rectangle(
-            (0.0, 0.0, 0.0, 0.1),
-            [(245, 470), (245, 700), (1675, 700), (1675, 470)],
-            (0, 0),
-            (0, 0))
-        self.battle_field_unit_place_panel.set_draw_border(False)
+        your_field_panel_instance = YourFieldPanel()
+        your_field_panel_instance.set_total_window_size(self.width, self.height)
+        your_field_panel_instance.create_your_field_panel()
+        self.your_field_panel = your_field_panel_instance.get_your_field_panel()
 
-        self.battle_field_opponent_unit_place_panel = Rectangle(
-            (0.0, 0.0, 0.0, 0.1),
-            [(245, 230), (245, 460), (1675, 460), (1675, 230)],
-            (0, 0),
-            (0, 0))
-        self.battle_field_opponent_unit_place_panel.set_draw_border(False)
+        opponent_field_panel_instance = OpponentFieldPanel()
+        opponent_field_panel_instance.set_total_window_size(self.width, self.height)
+        opponent_field_panel_instance.create_opponent_field_panel()
+        self.opponent_field_panel = opponent_field_panel_instance.get_opponent_field_panel()
 
         self.your_tomb.set_total_window_size(self.width, self.height)
         self.your_tomb.create_your_tomb_panel()
@@ -197,15 +197,25 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.opponent_tomb_panel = self.opponent_tomb.get_opponent_tomb_panel()
 
         self.your_hand_repository.set_x_base(567.5)
-        # self.your_hand_repository.save_current_hand_state([25, 31, 2, 151, 93])
+        self.your_hand_repository.save_current_hand_state([25, 31, 2, 151, 93])
         # self.your_hand_repository.save_current_hand_state([151])
         self.your_hand_repository.create_hand_card_list()
 
-        # self.your_deck_repository.save_deck_state([93, 35, 93, 5])
+        self.your_deck_repository.save_deck_state([93, 35, 93, 5])
 
+        # self.opponent_field_unit_repository.create_field_unit_card(33)
+        # self.opponent_field_unit_repository.create_field_unit_card(35)
+        # self.opponent_field_unit_repository.create_field_unit_card(36)
+        # self.opponent_field_unit_repository.create_field_unit_card(25)
+        # self.opponent_field_unit_repository.create_field_unit_card(26)
         self.opponent_field_unit_repository.create_field_unit_card(27)
 
         self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
+
+        # self.your_tomb_repository.create_tomb_card(93)
+        # self.your_tomb_repository.create_tomb_card(31)
+        # self.your_tomb_repository.create_tomb_card(32)
+        # self.your_tomb_repository.create_tomb_card_list()
 
         self.your_lost_zone.set_total_window_size(self.width, self.height)
         self.your_lost_zone.create_your_lost_zone_panel()
@@ -244,32 +254,87 @@ class FakeBattleFieldFrame(OpenGLFrame):
         key = event.keysym
         print(f"Key pressed: {key}")
 
-        if key.lower() == 'b':
-            pass
-
         if key.lower() == 'a':
             self.opponent_field_unit_repository.create_field_unit_card(26)
+
+        if key.lower() == 'n':
+            self.opponent_field_unit_repository.create_field_unit_card(19)
+
+        if key.lower() == 'e':
+            print("attach undead energy")
+
+            # TODO: Change it to ENUM Value (Not just integer)
+            card_race = self.card_info_repository.getCardRaceForCardNumber(93)
+            print(f"card_race: {card_race}")
+
+            attach_energy_count = 1
+            opponent_unit_index = 0
+
+            # self.opponent_field_unit_repository.attach_race_energy(opponent_unit_index, EnergyType.Undead, attach_energy_count)
+            # opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(0)
+            #
+            # opponent_field_unit_attached_undead_energy_count = self.opponent_field_unit_repository.get_opponent_field_unit_race_energy(0, EnergyType.Undead)
+            # print(f"opponent_field_unit_attached_undead_energy_count: {opponent_field_unit_attached_undead_energy_count}")
+
+            before_attach_energy_count = self.opponent_field_unit_repository.get_opponent_field_unit_race_energy(
+                0, EnergyType.Undead)
+
+            self.opponent_field_unit_repository.attach_race_energy(
+                opponent_unit_index,
+                EnergyType.Undead,
+                attach_energy_count)
+            opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(0)
+
+            # after_attach_energy_count = self.opponent_field_unit_repository.get_opponent_field_unit_race_energy(
+            #     0, EnergyType.Undead)
+            total_attached_energy_count = self.opponent_field_unit_repository.get_total_energy_at_index(0)
+            print(
+                f"opponent_field_unit_attached_undead_energy_count: {total_attached_energy_count}")
+
+            opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+            opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+
+            for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                if isinstance(opponent_fixed_card_attached_shape, CircleNumberImage):
+                    if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+                        opponent_fixed_card_attached_shape.set_image_data(
+                            self.pre_drawed_image_instance.get_pre_draw_number_image(
+                                total_attached_energy_count))
+                        print(f"changed energy: {opponent_fixed_card_attached_shape.get_circle_kinds()}")
+
+            # after_attach_energy_count
+            # before_attach_energy_count
+
+            every_energy = self.opponent_field_unit_repository.get_energy_info_at_index(0)
+            print(f"every_energy: {every_energy}")
+
+            if card_race == CardRace.UNDEAD.value:
+                card_race_circle = opponent_field_unit.creat_fixed_card_energy_race_circle(
+                    color=(0, 0, 0, 1),
+                    vertices=(0, (total_attached_energy_count * 10) + 20),
+                    local_translation=opponent_fixed_card_base.get_local_translation())
+                opponent_fixed_card_base.set_attached_shapes(card_race_circle)
 
     def on_resize(self, event):
         self.reshape(event.width, event.height)
 
     def draw_base(self):
-        for battle_field_muligun_background_shape in self.battle_field_muligun_background_shape_list:
-            battle_field_muligun_background_shape.set_width_ratio(self.width_ratio)
-            battle_field_muligun_background_shape.set_height_ratio(self.height_ratio)
-            battle_field_muligun_background_shape.draw()
+        for battle_field_background_shape in self.battle_field_background_shape_list:
+            battle_field_background_shape.set_width_ratio(self.width_ratio)
+            battle_field_background_shape.set_height_ratio(self.height_ratio)
+            battle_field_background_shape.draw()
 
         # TODO: 메인 로직에선 제거해야함 (현재는 개발 편의상 배치)
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-        self.battle_field_unit_place_panel.set_width_ratio(self.width_ratio)
-        self.battle_field_unit_place_panel.set_height_ratio(self.height_ratio)
-        self.battle_field_unit_place_panel.draw()
+        self.your_field_panel.set_width_ratio(self.width_ratio)
+        self.your_field_panel.set_height_ratio(self.height_ratio)
+        self.your_field_panel.draw()
 
-        self.battle_field_opponent_unit_place_panel.set_width_ratio(self.width_ratio)
-        self.battle_field_opponent_unit_place_panel.set_height_ratio(self.height_ratio)
-        self.battle_field_opponent_unit_place_panel.draw()
+        self.opponent_field_panel.set_width_ratio(self.width_ratio)
+        self.opponent_field_panel.set_height_ratio(self.height_ratio)
+        self.opponent_field_panel.draw()
 
         # 현재 Tomb 와 Lost Zone은 전부 비율 기반이다.
         # 그러므로 사각형의 width_ratio를 계산할 필요는 없다 (마우스 포인터가 내부에 있나 계산하는 부분 제외)
@@ -628,7 +693,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 # TODO: 추후 변경이 필요함
                 # if opponent_field_area_vertices.is_point_inside((x, y)):
-                if self.is_point_inside_opponent_field_area((x, y), self.battle_field_opponent_unit_place_panel):
+                if self.is_point_inside_opponent_field_area((x, y), self.opponent_field_panel):
                     print("파멸의 계약 사용")
                     self.__required_energy = 0
 
@@ -814,7 +879,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.field_area_inside_handler.set_width_ratio(self.width_ratio)
             self.field_area_inside_handler.set_height_ratio(self.height_ratio)
 
-            drop_action_result = self.field_area_inside_handler.handle_card_drop(x, y, self.selected_object, self.battle_field_unit_place_panel)
+            drop_action_result = self.field_area_inside_handler.handle_card_drop(x, y, self.selected_object, self.your_field_panel)
             if drop_action_result is None or drop_action_result is FieldAreaAction.Dummy:
                 print("self.field_area_inside_handler.get_field_area_action() = None")
                 self.return_to_initial_location()
@@ -866,7 +931,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
     def is_drop_location_valid_battle_field_panel(self, x, y):
         print(f"is_drop_location_valid_battle_field_panel -> x: {x}, y: {y}")
-        valid_area_vertices = self.battle_field_unit_place_panel.get_vertices()
+        valid_area_vertices = self.your_field_panel.get_vertices()
         return self.point_inside_polygon(x, y, valid_area_vertices)
 
     def is_point_to_left_of_intersection(self, x, y, p1x, p1y, p2x, p2y):
@@ -1170,3 +1235,30 @@ class FakeBattleFieldFrame(OpenGLFrame):
         ])
         new_rectangle.created_by_right_click = True
         return new_rectangle
+
+
+class TestResizableUseContractOfDoom(unittest.TestCase):
+
+    def test_resizable_use_contract_of_doom(self):
+        DomainInitializer.initEachDomain()
+
+        root = tkinter.Tk()
+        root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}-0-0")
+        root.deiconify()
+
+        pre_drawed_battle_field_frame = PreDrawedBattleFieldFrameRefactor(root)
+        pre_drawed_battle_field_frame.pack(fill=tkinter.BOTH, expand=1)
+        root.update_idletasks()
+
+        def animate():
+            pre_drawed_battle_field_frame.redraw()
+            root.after(17, animate)
+
+        root.after(0, animate)
+
+        root.mainloop()
+
+
+if __name__ == '__main__':
+    unittest.main()
+

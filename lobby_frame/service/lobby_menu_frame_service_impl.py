@@ -2,9 +2,16 @@ import sys
 import time
 import tkinter
 
+from decouple import config
+
 from battle_field.infra.battle_field_repository import BattleFieldRepository
+from battle_field.infra.your_deck_repository import YourDeckRepository
+from battle_field_muligun.infra.muligun_your_hand_repository import YourHandRepository as MuligunHandRepository
+from battle_field.infra.your_hand_repository import YourHandRepository
+from battle_field_muligun.service.request.muligun_request import MuligunRequest
 from battle_lobby_frame.controller.battle_lobby_frame_controller_impl import BattleLobbyFrameControllerImpl
 from battle_lobby_frame.repository.battle_lobby_frame_repository_impl import BattleLobbyFrameRepositoryImpl
+from battle_lobby_frame.service.request.request_deck_card_list import RequestDeckCardList
 from battle_lobby_frame.service.request.request_deck_name_list_for_battle import RequestDeckNameListForBattle
 from fake_battle_field.infra.fake_battle_field_frame_repository_impl import FakeBattleFieldFrameRepositoryImpl
 from fake_battle_field.service.request.create_fake_battle_room_request import CreateFakeBattleRoomRequest
@@ -37,7 +44,13 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             cls.__instance.__matchingWindowController = MatchingWindowControllerImpl.getInstance()
             cls.__instance.__cardShopFrameRepository = CardShopMenuFrameRepositoryImpl.getInstance()
 
+            # TODO: 이것은 Muligun 용 Hand를 사용하는 것으로 네이밍 이슈가 존재함 (변경 요망) -> MuligunYourHandRepository 권장
+            cls.__instance.__muligunYourHandRepository = MuligunHandRepository.getInstance()
             cls.__instance.__fakeBattleFieldFrameRepository = FakeBattleFieldFrameRepositoryImpl.getInstance()
+
+            # 이건 진짜 Hand를 Fake 용으로 사용하는 것
+            cls.__instance.__fakeYourHandRepository = YourHandRepository.getInstance()
+            cls.__instance.__fakeYourDeckRepository = YourDeckRepository.getInstance()
         return cls.__instance
 
     @classmethod
@@ -107,6 +120,40 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                     print(f"Second Fake redis_token received: {second_fake_redis_token}")
 
                     self.__sessionRepository.writeSecondFakeRedisTokenSessionInfoToFile(second_fake_redis_token)
+
+                deckNameResponse = self.__fakeBattleFieldFrameRepository.request_deck_name_list_for_fake_battle(
+                    RequestDeckNameListForBattle(
+                        first_fake_redis_token
+                    )
+                )
+                if deckNameResponse is None or deckNameResponse == "":
+                    print("Fake Battle Room 테스트를 위한 기본 설정을 먼저 진행하세요!")
+
+                print(f"deck name response: {deckNameResponse}")
+
+                deckCardListResponse = self.__fakeBattleFieldFrameRepository.request_card_list(
+                    # 덱 Id 값을 Fake Test 목적으로 만든 숫자에 맞춰야함
+                    RequestDeckCardList(config('FAKE_DECK_ID'),
+                                        first_fake_redis_token)
+                )
+
+                print(f"deckCardListResponse: {deckCardListResponse}")
+                if deckCardListResponse is None or deckCardListResponse == "":
+                    print("Fake Battle Room 테스트를 위한 기본 설정을 먼저 진행하세요!")
+
+                hand_card_list = deckCardListResponse['hand_card_list']
+                print(f"hand card list: {hand_card_list}")
+
+                muligunResponseData = self.__muligunYourHandRepository.requestMuligun(
+                    MuligunRequest(first_fake_redis_token,
+                                   []))
+
+                print(f"muligun responseData: {muligunResponseData}")
+                self.__fakeYourHandRepository.save_current_hand_state(hand_card_list)
+
+                deck_card_list = muligunResponseData['updated_deck_card_list']
+
+                self.__fakeYourDeckRepository.save_deck_state(deck_card_list)
 
             switchFrameWithMenuName("fake-battle-field")
 
