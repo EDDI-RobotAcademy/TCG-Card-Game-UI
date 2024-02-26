@@ -42,6 +42,8 @@ class PreDrawedImage:
     __pre_drawed_win_text = None
     __pre_drawed_lose_text = None
 
+    __pre_drawed_confirm_button = None
+
     __pre_drawed_prev_button = None
     __pre_drawed_battle_field_muligun_background = None
 
@@ -153,6 +155,9 @@ class PreDrawedImage:
             print(f"image data = {number_image_data}")
             self.__pre_drawed_rectangle_number[number] = ImageDataLoader.load_rectangle_image_data(number_image_data)
 
+    def pre_draw_confirm_button(self):
+        confirm_button_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "confirm_button.png")
+        self.__pre_drawed_turn_end_button = ImageDataLoader.load_rectangle_image_data(confirm_button_image_path)
 
     def pre_draw_card_race(self):
         image_dir = os.path.join(self.__project_root, "local_storage", "card_race_image")
@@ -279,6 +284,7 @@ class PreDrawedImage:
         self.pre_draw_rectangle_number_image()
 
         self.pre_draw_prev_button()
+        self.pre_draw_confirm_button()
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
@@ -368,3 +374,5 @@ class PreDrawedImage:
     def get_pre_draw_lose_text(self):
         return self.__pre_drawed_lose_text
 
+    def get_pre_drawed_confirm_button(self):
+        return self.__pre_drawed_confirm_button

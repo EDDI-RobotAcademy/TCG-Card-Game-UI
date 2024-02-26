@@ -159,15 +159,15 @@ class BattleFieldSceneForWinTest:
     def create_win_panel(self):
         self.win_panel = WinPanel()
         self.win_panel.init_shapes()
-        self.confirm_button = GameEndConfirmButton()
-        self.confirm_button.init_shapes()
-        self.__battle_field_repository.add_battle_field_button(button=self.confirm_button)
+        # self.confirm_button = GameEndConfirmButton()
+        # self.confirm_button.init_shapes()
+        # self.__battle_field_repository.add_battle_field_button(button=self.confirm_button)
 
     def get_win_panel(self):
         return self.win_panel.get_win_panel_shapes()
 
-    def get_confirm_button(self):
-        return self.confirm_button.get_confirm_button()
+    # def get_confirm_button(self):
+    #     return self.confirm_button.get_confirm_button()
 
     def get_opponent_tomb(self):
         return self.opponent_tomb.get_tomb_shapes()
@@ -238,6 +238,8 @@ class PreDrawedBattleFieldFrameRefactorForWinTest(OpenGLFrame):
 
         self.battle_field_scene = BattleFieldSceneForWinTest()
         self.battle_field_scene.create_battle_field_scene()
+
+        self.battle_field_function_controller = BattleFieldFunctionControllerImpl.getInstance()
 
         self.alpha_background = self.create_opengl_alpha_background()
 
@@ -416,8 +418,8 @@ class PreDrawedBattleFieldFrameRefactorForWinTest(OpenGLFrame):
             self.battle_field_scene.create_win_panel()
             for win_panel_shape in self.battle_field_scene.get_win_panel():
                 win_panel_shape.draw()
-            for confirm_button_shape in self.battle_field_scene.get_confirm_button():
-                confirm_button_shape.draw()
+            # for confirm_button_shape in self.battle_field_scene.get_confirm_button():
+            #     confirm_button_shape.draw()
 
         self.tkSwapBuffers()
 
@@ -630,6 +632,10 @@ class PreDrawedBattleFieldFrameRefactorForWinTest(OpenGLFrame):
 
     def on_canvas_left_click(self, event):
         try:
+            if self.battle_field_repository.is_game_over:
+                print("게임 끝!!! ")
+                BattleFieldFunctionControllerImpl.getInstance().callGameEndReward()
+
             x, y = event.x, event.y
             y = self.winfo_reqheight() - y
 
@@ -801,6 +807,7 @@ class GameEndConfirmButton:
         return self.shapes
 
     def add_shape(self, shape):
+        print(f"add shapes : {shape}")
         shape.local_translate(self.local_translation)
         self.shapes.append(shape)
 
@@ -812,8 +819,10 @@ class GameEndConfirmButton:
 
     def init_shapes(self):
         self.button_base = (
-            self.create_confirm_button(image_data=self.__pre_drawed_image_instance.get_pre_draw_confirm_button(),
+            self.create_confirm_button(image_data=self.__pre_drawed_image_instance.get_pre_drawed_confirm_button(),
                 vertices=[(850, 490), (1050, 490), (1050, 590), (850, 590)]))
+
+
 
     def get_button_base(self):
         return self.button_base
