@@ -4,6 +4,7 @@ from account_login_frame.service.login_menu_frame_service_impl import LoginMenuF
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
+from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field_function.service.battle_field_function_service_impl import BattleFieldFunctionServiceImpl
@@ -61,6 +62,7 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__yourFieldUnitRepository = YourFieldUnitRepository.getInstance()
             cls.__instance.__muligunYourHandRepository = MuligunYourHandRepository.getInstance()
             cls.__instance.__yourTombRepository = YourTombRepository.getInstance()
+            cls.__instance.__yourHandRepository = YourHandRepository.getInstance()
             cls.__instance.__battleFieldMuligunFrameServiece = BattleFieldMuligunFrameServiceImpl.getInstance()
 
             cls.__instance.__decisionFirstStrikeFrameService = DecisionFirstStrikeFrameService.getInstance()
@@ -152,11 +154,13 @@ class UiFrameControllerImpl(UiFrameController):
         self.__buyCheckService.injectTransmitIpcChannel(transmitIpcChannel)
         self.__battleFieldMuligunFrameServiece.injectReceiveIpcChannel(transmitIpcChannel)
 
+        # TODO: Ugly -> Need to Refactor
         self.__battleFieldRepository.saveTransmitIpcChannel(transmitIpcChannel)
         self.__yourDeckRepository.saveTransmitIpcChannel(transmitIpcChannel)
         self.__yourFieldUnitRepository.saveTransmitIpcChannel(transmitIpcChannel)
         self.__muligunYourHandRepository.saveTransmitIpcChannel(transmitIpcChannel)
         self.__yourTombRepository.saveTransmitIpcChannel(transmitIpcChannel)
+        self.__yourHandRepository.saveTransmitIpcChannel(transmitIpcChannel)
 
         self.__fakeBattleFieldFrameServiece.injectTransmitIpcChannel(transmitIpcChannel)
 
@@ -180,11 +184,13 @@ class UiFrameControllerImpl(UiFrameController):
         self.__buyCheckService.injectReceiveIpcChannel(receiveIpcChannel)
         self.__battleFieldMuligunFrameServiece.injectReceiveIpcChannel(receiveIpcChannel)
 
+        # TODO: Ugly -> Need to Refactor
         self.__battleFieldRepository.saveReceiveIpcChannel(receiveIpcChannel)
         self.__yourDeckRepository.saveReceiveIpcChannel(receiveIpcChannel)
         self.__yourFieldUnitRepository.saveReceiveIpcChannel(receiveIpcChannel)
         self.__muligunYourHandRepository.saveReceiveIpcChannel(receiveIpcChannel)
         self.__yourTombRepository.saveReceiveIpcChannel(receiveIpcChannel)
+        self.__yourHandRepository.saveReceiveIpcChannel(receiveIpcChannel)
 
         self.__fakeBattleFieldFrameServiece.injectReceiveIpcChannel(receiveIpcChannel)
 

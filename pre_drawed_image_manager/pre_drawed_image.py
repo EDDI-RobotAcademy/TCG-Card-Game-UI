@@ -21,6 +21,7 @@ class PreDrawedImage:
     __pre_drawed_card_hp = {}
     __pre_drawed_numbers = {}
     __pre_drawed_character_hp = {}
+    __pre_drawed_rectangle_number = {}
     __pre_drawed_dark_flame = None
     __pre_drawed_freezing = None
 
@@ -45,6 +46,8 @@ class PreDrawedImage:
 
     __pre_drawed_win_text = None
     __pre_drawed_lose_text = None
+
+    __pre_drawed_confirm_button = None
 
     __pre_drawed_prev_button = None
     __pre_drawed_reset_button = None
@@ -153,6 +156,20 @@ class PreDrawedImage:
             number_image_data = os.path.join(self.__project_root, "local_storage", "card_number_image", f"{number}.png")
             print(f"image data = {number_image_data}")
             self.__pre_drawed_character_hp[number] = ImageDataLoader.load_rectangle_image_data(number_image_data)
+
+
+    def pre_draw_rectangle_number_image(self):
+        image_dir = os.path.join(self.__project_root, "local_storage", "card_number_image")
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            number_image_data = os.path.join(self.__project_root, "local_storage", "card_number_image", f"{number}.png")
+            print(f"image data = {number_image_data}")
+            self.__pre_drawed_rectangle_number[number] = ImageDataLoader.load_rectangle_image_data(number_image_data)
+
+    def pre_draw_confirm_button(self):
+        confirm_button_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "confirm_button.png")
+        self.__pre_drawed_turn_end_button = ImageDataLoader.load_rectangle_image_data(confirm_button_image_path)
 
     def pre_draw_card_race(self):
         image_dir = os.path.join(self.__project_root, "local_storage", "card_race_image")
@@ -294,8 +311,10 @@ class PreDrawedImage:
 
         self.pre_draw_numbers()
         self.pre_draw_character_hp()
+        self.pre_draw_rectangle_number_image()
 
         self.pre_draw_prev_button()
+        self.pre_draw_confirm_button()
 
         self.pre_draw_card_frame()
         self.pre_draw_dark_flame_energy()
@@ -377,6 +396,9 @@ class PreDrawedImage:
     def get_pre_draw_character_hp_image(self, number=0):
         return self.__pre_drawed_character_hp[number]
 
+    def get_pre_draw_rectangle_number_image(self, number=0):
+        return self.__pre_drawed_rectangle_number[number]
+
     def get_pre_draw_prev_button(self):
         return self.__pre_drawed_prev_button
 
@@ -389,6 +411,10 @@ class PreDrawedImage:
     def get_pre_draw_lose_text(self):
         return self.__pre_drawed_lose_text
 
+
+    def get_pre_drawed_confirm_button(self):
+        return self.__pre_drawed_confirm_button
+
     def get_pre_draw_card_frame_for_card_number(self, card_number):
         return self.__pre_drawed_card_frame[card_number]
 
@@ -400,7 +426,7 @@ class PreDrawedImage:
 
     def get_pre_draw_reset_button(self):
         return self.__pre_drawed_reset_button
-
+      
     def get_pre_draw_card_back_frame(self):
         return self.__pre_drawed_card_back_frame
 

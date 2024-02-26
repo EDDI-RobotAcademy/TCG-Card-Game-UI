@@ -173,8 +173,8 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         self.tkSwapBuffers()
 
     def draw_pick_card_effect(self):
-        for hand_card_index, click_card_effect_rectangle in self.checking_draw_effect.items():
-            hand_card = self.get_hand_card_by_index(hand_card_index)
+        for hand_card_id, click_card_effect_rectangle in self.checking_draw_effect.items():
+            hand_card = self.get_hand_card_by_id(hand_card_id)
             if hand_card:
                 pickable_card_base = hand_card.get_pickable_card_base()
 
@@ -188,18 +188,35 @@ class BattleFieldMuligunFrame(OpenGLFrame):
 
                 click_card_effect_rectangle.draw()
 
-    def get_hand_card_by_index(self, hand_card_index):
+    def get_hand_card_by_id(self, hand_card_id):
         for hand_card in self.hand_card_list:
-            if self.hand_card_list.index(hand_card) == hand_card_index:
+            if id(hand_card) == hand_card_id:
                 return hand_card
         return None
 
+    # def remove_selected_card_is_already_selected(self, hand_card_object):
+    #     if hand_card_object in self.selected_object_list_for_muligun:
+    #         print(f"remove_selected_card_is_already_selected: {hand_card_object}")
+    #         self.selected_object_list_for_muligun.remove(hand_card_object)
+    #     else:
+    #         print(f"The specified object is not in the list.")
+
     def remove_selected_card_is_already_selected(self, hand_card_object):
         if hand_card_object in self.selected_object_list_for_muligun:
+            if id(hand_card_object) in self.checking_draw_effect.keys():
+                print(f"카드 클릭 했었니?{id(hand_card_object)}, 딕셔너리는 뭐니?: {self.checking_draw_effect}")
+                del self.checking_draw_effect[id(hand_card_object)]
+
+            print(f"카드 효과 잘 삭제 되었니?{self.checking_draw_effect}")
+
             print(f"remove_selected_card_is_already_selected: {hand_card_object}")
             self.selected_object_list_for_muligun.remove(hand_card_object)
         else:
             print(f"The specified object is not in the list.")
+            fixed_x, fixed_y = hand_card_object.get_pickable_card_base().get_local_translation()
+            new_rectangle = self.create_change_card_expression((fixed_x, fixed_y))
+            self.checking_draw_effect[id(hand_card_object)] = new_rectangle
+            self.selected_object_list_for_muligun.append(hand_card_object)
 
     def extract_card_id_list_in_hand_card_list(self, muligun_list, origin_list):
         card_id_list = []
@@ -250,8 +267,11 @@ class BattleFieldMuligunFrame(OpenGLFrame):
                     print("Selection Pickable Rectangle")
                     hand_card.selected = not hand_card.selected
                     self.selected_object = hand_card
+
+                    # 이미 선택 되어 있으면 카드 오브젝트 리스트에서 삭제. 아니면 카드 오브젝트에 추가
                     self.remove_selected_card_is_already_selected(hand_card)
-                    self.selected_object_list_for_muligun.append(hand_card)
+                    # self.selected_object_list_for_muligun.append(hand_card)
+
                     print(f"self.selected_object_list_for_muligun: {self.selected_object_list_for_muligun}")
 
                     break
@@ -350,10 +370,10 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         # 그려져 있는 카드 선택 효과, 그려져 있는 버튼은 지워야 함.
         self.click_card_effect_rectangles = []
         self.checking_draw_effect = {}
-        self.ok_button_visible = False
+        # self.ok_button_visible = False
         self.execute_pick_card_effect = False
 
-        self.master.after(2000, self.__switchFrameWithMenuName('decision-first'))
+        # self.master.after(2000, self.__switchFrameWithMenuName('decision-first'))
 
 
     # 멀리건 화면에서 교체하려는 카드 클릭시 나타나는 표현
@@ -369,6 +389,8 @@ class BattleFieldMuligunFrame(OpenGLFrame):
             (end_point[0], end_point[1]),
             (start_point[0], end_point[1])
         ])
+
+        print(f"사각형 안 만들어 지는 거니?:{new_rectangle}")
         return new_rectangle
 
     # 검정 투명 배경 화면
