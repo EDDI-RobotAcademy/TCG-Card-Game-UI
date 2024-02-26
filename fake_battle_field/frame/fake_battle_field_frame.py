@@ -760,7 +760,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         point = Point(x, y)
 
         return point.within(poly)
-refeactor: [이재승] 각종 test코드 메인 코드 병합 및 통합 테스트에 추가
+# refeactor: [이재승] 각종 test코드 메인 코드 병합 및 통합 테스트에 추가
     def on_canvas_release(self, event):
         x, y = event.x, event.y
         y = self.winfo_reqheight() - y
