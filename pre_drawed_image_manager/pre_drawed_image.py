@@ -49,6 +49,7 @@ class PreDrawedImage:
     __pre_drawed_prev_button = None
     __pre_drawed_reset_button = None
     __pre_drawed_battle_field_muligun_background = None
+    __pre_drawed_card_back_frame = None
 
 
     def __new__(cls):
@@ -242,7 +243,7 @@ class PreDrawedImage:
     def pre_draw_battle_field_muligun_background(self, width, height):
         print(f"pre_draw_battle_field_muligun_background -> width = {width}, height = {height}")
 
-        muligun_battle_field_background = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "배틀 기본 화면.png")
+        muligun_battle_field_background = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "muligun_battle_field_background.png")
         self.__pre_drawed_battle_field_muligun_background = ImageDataLoader.load_background_image_data(muligun_battle_field_background, width, height)
 
     def pre_draw_dark_flame_energy(self):
@@ -256,6 +257,11 @@ class PreDrawedImage:
     def pre_draw_reset_button(self):
         reset_button_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "reset_button.png")
         self.__pre_drawed_reset_button = ImageDataLoader.load_rectangle_image_data(reset_button_image_path)
+
+    def pre_draw_card_back_frame(self):
+        card_back_frame_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
+                                                  "card_back_frame.png")
+        self.__pre_drawed_card_back_frame = ImageDataLoader.load_rectangle_image_data(card_back_frame_image_path)
 
 
     def pre_draw_every_image(self):
@@ -296,6 +302,7 @@ class PreDrawedImage:
         self.pre_draw_freezing_energy()
 
         self.pre_draw_reset_button()
+        self.pre_draw_card_back_frame()
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
@@ -393,4 +400,7 @@ class PreDrawedImage:
 
     def get_pre_draw_reset_button(self):
         return self.__pre_drawed_reset_button
+
+    def get_pre_draw_card_back_frame(self):
+        return self.__pre_drawed_card_back_frame
 
