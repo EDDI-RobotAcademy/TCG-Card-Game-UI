@@ -313,10 +313,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.opponent_lost_zone_panel.set_draw_border(False)
         self.opponent_lost_zone_panel.draw()
 
-        self.muligun_reset_button.set_width_ratio(self.width_ratio)
-        self.muligun_reset_button.set_height_ratio(self.height_ratio)
-        self.muligun_reset_button.draw()
-
         glDisable(GL_BLEND)
 
     def redraw(self):
@@ -550,6 +546,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     attached_shape.draw()
 
             glDisable(GL_BLEND)
+
+        self.muligun_reset_button.set_width_ratio(self.width_ratio)
+        self.muligun_reset_button.set_height_ratio(self.height_ratio)
+        self.muligun_reset_button.draw()
 
         self.tkSwapBuffers()
 
