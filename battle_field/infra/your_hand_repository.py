@@ -13,6 +13,9 @@ class YourHandRepository:
     x_base = 0
     x_base_muligun = 120  # 멀리건에서의 맨 처음 카드 위치.
 
+    __transmitIpcChannel = None
+    __receiveIpcChannel = None
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -183,3 +186,8 @@ class YourHandRepository:
 
     def saveTransmitIpcChannel(self, transmitIpcChannel):
         self.__transmitIpcChannel = transmitIpcChannel
+
+    # TODO: 현재는 테스트용인데 구조가 좋지 않으므로 변경이 필요함
+    def request_fake_muligun(self, muligun_request):
+        self.__transmitIpcChannel.put(muligun_request)
+        return self.__receiveIpcChannel.get()
