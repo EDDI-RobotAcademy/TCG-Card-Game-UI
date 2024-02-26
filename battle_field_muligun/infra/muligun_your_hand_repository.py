@@ -2,7 +2,7 @@ from battle_field_muligun.state.current_hand import CurrentHandState
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 
 
-class YourHandRepository:
+class MuligunYourHandRepository:
     __instance = None
 
     current_hand_state = CurrentHandState()

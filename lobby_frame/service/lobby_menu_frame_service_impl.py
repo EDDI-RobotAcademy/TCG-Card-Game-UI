@@ -6,7 +6,7 @@ from decouple import config
 
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
-from battle_field_muligun.infra.muligun_your_hand_repository import YourHandRepository as MuligunHandRepository
+from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository as MuligunHandRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field_muligun.service.request.muligun_request import MuligunRequest
 from battle_lobby_frame.controller.battle_lobby_frame_controller_impl import BattleLobbyFrameControllerImpl
