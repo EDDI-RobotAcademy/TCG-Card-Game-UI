@@ -1129,6 +1129,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             if self.your_field_energy_panel_selected:
                 print(f"on_canvas_left_click() -> current_field_energy: {self.your_field_energy_repository_for_test.get_current_your_field_energy_state().get_current_your_field_energy()}")
                 self.your_field_energy_repository_for_test.reduce_energy()
+                self.your_hand_repository.create_additional_hand_card_list([93])
+
 
 
 
