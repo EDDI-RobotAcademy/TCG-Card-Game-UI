@@ -1,5 +1,5 @@
 from battle_field_muligun.frame.battle_field_muligun_frame import BattleFieldMuligunFrame
-from battle_field_muligun.infra.muligun_your_hand_repository import YourHandRepository
+from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
 from battle_field_muligun.service.battle_field_muligun_service import BattleFieldMuligunFrameService
 from battle_field_muligun.service.request.muligun_request import MuligunRequest
 from session.repository.session_repository_impl import SessionRepositoryImpl
@@ -11,7 +11,7 @@ class BattleFieldMuligunFrameServiceImpl(BattleFieldMuligunFrameService):
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
-            cls.__instance.__battleFieldMuligunFrameRepository = YourHandRepository()
+            cls.__instance.__battleFieldMuligunFrameRepository = MuligunYourHandRepository()
             cls.__instance.__battleFieldMuligunFrame = BattleFieldMuligunFrame
             cls.__instance.__sessionRepository = SessionRepositoryImpl.getInstance()
         return cls.__instance
