@@ -49,6 +49,8 @@ from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from task_worker.service.task_worker_service_impl import TaskWorkerServiceImpl
 from tests.ljs.test_notify_function.test_notify_reader.repository.notify_reader_repository_impl import \
     NotifyReaderRepositoryImpl
+from tests.ljs.uglt_test_field_energy.entity.next_field_energy_race import NextFieldEnergyRace
+from tests.ljs.uglt_test_field_energy.entity.prev_field_energy_race import PrevFieldEnergyRace
 from tests.ljs.uglt_test_field_energy.entity.your_field_energy import YourFieldEnergy
 from tests.ljs.uglt_test_field_energy.repository.your_field_energy_repository import YourFieldEnergyRepositoryForTest
 from tests.ljs.ugly_test_character_hp.entity.opponent_hp import OpponentHp
@@ -170,6 +172,8 @@ class LeftClickDetector:
 
         return None
 
+    #todo : 여기부터는 새로 짠 코드들
+
     def which_one_select_is_in_your_field_energy_area(self, click_point, your_field_energy_zone, canvas_height):
         x, y = click_point
         y = canvas_height - y
@@ -177,6 +181,49 @@ class LeftClickDetector:
 
         if your_field_energy_zone.is_point_inside((x, y)):
             return your_field_energy_zone
+
+        return None
+
+    def which_one_select_is_in_next_field_energy_race_area(self, click_point, next_field_energy_race_zone, canvas_height):
+        x, y = click_point
+        y = canvas_height - y
+        y *= -1
+
+        if next_field_energy_race_zone.is_point_inside((x, y)):
+            return next_field_energy_race_zone
+
+        return None
+
+    def which_one_select_is_in_prev_field_energy_race_area(self, click_point, prev_field_energy_race_zone,
+                                                           canvas_height):
+        x, y = click_point
+        y = canvas_height - y
+        y *= -1
+
+        if prev_field_energy_race_zone.is_point_inside((x, y)):
+            return prev_field_energy_race_zone
+
+        return None
+
+    def which_one_select_is_in_increase_field_energy_count_area(self, click_point, increase_field_energy_count_zone,
+                                                           canvas_height):
+        x, y = click_point
+        y = canvas_height - y
+        y *= -1
+
+        if increase_field_energy_count_zone.is_point_inside((x, y)):
+            return increase_field_energy_count_zone
+
+        return None
+
+    def which_one_select_is_in_decrease_field_energy_count_area(self, click_point, decrease_field_energy_count_zone,
+                                                                canvas_height):
+        x, y = click_point
+        y = canvas_height - y
+        y *= -1
+
+        if decrease_field_energy_count_zone.is_point_inside((x, y)):
+            return decrease_field_energy_count_zone
 
         return None
 
@@ -274,6 +321,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_field_energy = YourFieldEnergy()
         self.your_field_energy_repository_for_test = YourFieldEnergyRepositoryForTest()
         self.your_field_energy_panel_selected = False
+
+        self.next_field_energy_race_panel = None
+        self.next_field_energy_race = NextFieldEnergyRace()
+        self.prev_field_energy_race_panel = None
+        self.prev_field_energy_race = PrevFieldEnergyRace()
+        self.next_field_energy_race_panel_selected = False
+        self.prev_field_energy_race_panel_selected = False
 
 
         self.bind("<Configure>", self.on_resize)
@@ -377,6 +431,15 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_field_energy.create_your_field_energy_panel()
         self.your_field_energy_panel = self.your_field_energy.get_your_field_energy_panel()
 
+        self.next_field_energy_race.set_total_window_size(self.width, self.height)
+        self.next_field_energy_race.create_next_field_energy_race_panel()
+        self.next_field_energy_race_panel = self.next_field_energy_race.get_next_field_energy_race_panel()
+
+        self.prev_field_energy_race.set_total_window_size(self.width, self.height)
+        self.prev_field_energy_race.create_prev_field_energy_race_panel()
+        self.prev_field_energy_race_panel = self.prev_field_energy_race.get_prev_field_energy_race_panel()
+
+
         # self.your_tomb_repository.create_tomb_card(93)
         # self.your_tomb_repository.create_tomb_card(31)
         # self.your_tomb_repository.create_tomb_card(32)
@@ -411,8 +474,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         key = event.keysym
         print(f"Key pressed: {key}")
 
-        if key.lower() == 'u':
+        if key.lower() == 'h':
+            self.your_field_energy_repository_for_test.to_next_field_energy_race()
 
+        if key.lower() == 'u':
             self.your_field_energy_repository_for_test.increase_energy()
 
         if key.lower() == 'd':
@@ -486,15 +551,26 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.your_hp.set_width_ratio(self.width_ratio)
         self.your_hp.set_height_ratio(self.height_ratio)
-        self.your_hp.draw_current_your_hp_panel()
+        self.your_hp.update_current_your_hp_panel()
+        self.your_hp_panel.draw()
 
         self.opponent_hp.set_width_ratio(self.width_ratio)
         self.opponent_hp.set_height_ratio(self.height_ratio)
-        self.opponent_hp.draw_current_opponent_hp_panel()
+        self.opponent_hp.update_current_opponent_hp_panel()
+        self.opponent_hp_panel.draw()
 
         self.your_field_energy.set_width_ratio(self.width_ratio)
         self.your_field_energy.set_height_ratio(self.height_ratio)
-        self.your_field_energy.create_your_field_energy_panel()
+        self.your_field_energy.update_curent_field_energy_panel()
+        self.your_field_energy_panel.draw()
+
+        self.next_field_energy_race.set_width_ratio(self.width_ratio)
+        self.next_field_energy_race.set_height_ratio(self.width_ratio)
+        self.next_field_energy_race_panel.draw()
+
+        self.prev_field_energy_race.set_width_ratio(self.width_ratio)
+        self.prev_field_energy_race.set_height_ratio(self.height_ratio)
+        self.prev_field_energy_race_panel.draw()
         # self.your_field_energy_panel.draw()
 
         glDisable(GL_BLEND)
@@ -959,6 +1035,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             self.tomb_panel_selected = False
             self.opponent_tomb_panel_selected = False
             self.your_field_energy_panel_selected = False
+            self.next_field_energy_race_panel_selected = False
+            self.prev_field_energy_race_panel_selected = False
 
             for hand_card in self.hand_card_list:
                 if isinstance(hand_card, PickableCard):
@@ -1128,11 +1206,31 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             if self.your_field_energy_panel_selected:
                 print(f"on_canvas_left_click() -> current_field_energy: {self.your_field_energy_repository_for_test.get_current_your_field_energy_state().get_current_your_field_energy()}")
-                self.your_field_energy_repository_for_test.reduce_energy()
-                self.your_hand_repository.create_additional_hand_card_list([93])
+                if self.your_field_energy_repository_for_test.reduce_energy():
+                    self.your_hand_repository.create_additional_hand_card_list([self.your_field_energy_repository_for_test.get_current_field_energy_card_id()])
 
 
+            self.next_field_energy_race_panel_selected = self.left_click_detector.which_one_select_is_in_next_field_energy_race_area(
+                (x, y),
+                self.next_field_energy_race,
+                self.winfo_reqheight()
+            )
 
+            if self.next_field_energy_race_panel_selected:
+                self.your_field_energy_repository_for_test.to_next_field_energy_race()
+                print(
+                    f"on_canvas_left_click() -> to_next_field_energy_race: {self.your_field_energy_repository_for_test.get_current_field_energy_race()}")
+
+            self.prev_field_energy_race_panel_selected = self.left_click_detector.which_one_select_is_in_prev_field_energy_race_area(
+                (x, y),
+                self.prev_field_energy_race,
+                self.winfo_reqheight()
+            )
+
+            if self.prev_field_energy_race_panel_selected:
+                self.your_field_energy_repository_for_test.to_prev_field_energy_race()
+                print(
+                    f"on_canvas_left_click() -> to_prev_field_energy_race: {self.your_field_energy_repository_for_test.get_current_field_energy_race()}")
 
             self.tomb_panel_selected = False
             self.opponent_tomb_panel_selected = False

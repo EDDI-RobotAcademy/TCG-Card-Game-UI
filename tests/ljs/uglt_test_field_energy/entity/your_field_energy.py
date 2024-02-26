@@ -45,8 +45,8 @@ class YourFieldEnergy:
         # y1 = 0.767
         # y2 = 0.959
 
-        left_x_point = self.total_width * 0.88
-        right_x_point = self.total_width * 0.94
+        left_x_point = self.total_width * 0.905
+        right_x_point = self.total_width * 0.995
         top_y_point = self.total_height * 0.767
         bottom_y_point = self.total_height * 0.959
 
@@ -61,7 +61,7 @@ class YourFieldEnergy:
             (0, 0),
             (0, 0))
 
-        self.your_field_energy_panel.draw()
+        # self.your_field_energy_panel.draw()
 
     def get_your_field_energy_panel_popup_rectangle(self):
         return self.your_field_energy_popup
@@ -132,3 +132,8 @@ class YourFieldEnergy:
 
         print("your field energy panel result -> True")
         return True
+
+    def update_curent_field_energy_panel(self):
+        self.your_field_energy_panel.set_image_data(
+            self.__pre_drawed_image.get_pre_draw_rectangle_number_image(
+                self.__your_field_energy_repository.get_current_your_field_energy_state().get_current_your_field_energy()))
