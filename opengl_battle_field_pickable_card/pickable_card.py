@@ -22,6 +22,8 @@ class PickableCard:
         self.scale = scale
         self.card_number = None
         self.initial_vertices = None
+        self.index = 0
+
         self.card_info = CardInfoFromCsvRepositoryImpl.getInstance()
         self.card_controller = CardControllerImpl.getInstance()
 
@@ -30,6 +32,12 @@ class PickableCard:
 
     def set_card_number(self, card_number):
         self.card_number = card_number
+
+    def get_index(self):
+        return self.index
+
+    def set_index(self, index):
+        self.index = index
 
     # TODO: Need to consider place this function
     # def set_initial_vertices(self, initial_pickable_card_base_vertices):
@@ -80,6 +88,13 @@ class PickableCard:
         card_illustration.set_initial_vertices(vertices)
         return card_illustration
 
+    def creat_frame(self, image_data, vertices, local_translation):
+        card_frame = RectangleImage(image_data=image_data,
+                                    local_translation=local_translation,
+                                    vertices=vertices)
+        card_frame.set_initial_vertices(vertices)
+        return card_frame
+
     def create_equipped_mark(self, image_path, vertices, local_translation):
         card_equipped_mark = ImageRectangleElement(image_path=image_path,
                                                    local_translation=local_translation,
@@ -122,10 +137,18 @@ class PickableCard:
         )
 
         self.pickable_card_base.set_attached_shapes(
+            self.creat_frame(
+                image_data=self.__pre_drawed_image_instance.get_pre_draw_card_frame_for_card_number(card_number),
+                local_translation=self.local_translation,
+                vertices=basic_pickable_card_base_vertices
+            )
+        )
+
+        self.pickable_card_base.set_attached_shapes(
             self.create_illustration(
                 image_data=self.__pre_drawed_image_instance.get_pre_draw_card_illustration_for_card_number(card_number),
                 local_translation=self.local_translation,
-                vertices=[(15, 15), (90, 15), (90, 90), (15, 90)]
+                vertices=[(10, 25), (95, 25), (95, 100), (10, 100)]
             )
         )
 
@@ -170,6 +193,14 @@ class PickableCard:
         self.pickable_card_base = (
             self.create_card_base_pickable_rectangle(
                 color=(0.0, 0.78, 0.34, 1.0),
+                local_translation=self.local_translation,
+                vertices=basic_pickable_card_base_vertices
+            )
+        )
+
+        self.pickable_card_base.set_attached_shapes(
+            self.creat_frame(
+                image_data=self.__pre_drawed_image_instance.get_pre_draw_card_frame_for_card_number(card_number),
                 local_translation=self.local_translation,
                 vertices=basic_pickable_card_base_vertices
             )

@@ -11,7 +11,10 @@ class PreDrawedImage:
 
     __project_root = get_project_root()
 
+    __pre_drawed_card_frame ={}
+
     __pre_drawed_card_illustration = {}
+
     __pre_drawed_card_race = {}
     __pre_drawed_card_type = {}
     __pre_drawed_card_attack = {}
@@ -19,6 +22,8 @@ class PreDrawedImage:
     __pre_drawed_numbers = {}
     __pre_drawed_character_hp = {}
     __pre_drawed_rectangle_number = {}
+    __pre_drawed_dark_flame = None
+    __pre_drawed_freezing = None
 
     __pre_drawed_opponent_tomb = None
     __pre_drawed_opponent_lost_zone = None
@@ -45,6 +50,7 @@ class PreDrawedImage:
     __pre_drawed_confirm_button = None
 
     __pre_drawed_prev_button = None
+    __pre_drawed_reset_button = None
     __pre_drawed_battle_field_muligun_background = None
 
 
@@ -58,6 +64,11 @@ class PreDrawedImage:
         if cls.__instance is None:
             cls.__instance = cls()
         return cls.__instance
+
+    def pre_draw_card_frame(self):
+        for card_number in self.__card_info_from_csv_repository.getCardNumber():
+            card_frame_image_data = os.path.join(self.__project_root, "local_storage", "card_frame", f"{card_number}.png")
+            self.__pre_drawed_card_frame[card_number] = ImageDataLoader.load_rectangle_image_data(card_frame_image_data)
 
     def pre_draw_opponent_tomb(self):
         tomb_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "tomb.jpeg")
@@ -248,8 +259,21 @@ class PreDrawedImage:
     def pre_draw_battle_field_muligun_background(self, width, height):
         print(f"pre_draw_battle_field_muligun_background -> width = {width}, height = {height}")
 
-        muligun_battle_field_background = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "muligun_battle_field_background.png")
+        muligun_battle_field_background = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "배틀 기본 화면.png")
         self.__pre_drawed_battle_field_muligun_background = ImageDataLoader.load_background_image_data(muligun_battle_field_background, width, height)
+
+    def pre_draw_dark_flame_energy(self):
+        dark_flame_energy_image_path = os.path.join(self.__project_root, "local_storage", "card_special_energy_image", "dark_flame.png")
+        self.__pre_drawed_dark_flame = ImageDataLoader.load_rectangle_image_data(dark_flame_energy_image_path)
+
+    def pre_draw_freezing_energy(self):
+        freezing_energy_image_path = os.path.join(self.__project_root, "local_storage", "card_special_energy_image", "freezing.png")
+        self.__pre_drawed_freezing = ImageDataLoader.load_rectangle_image_data(freezing_energy_image_path)
+
+    def pre_draw_reset_button(self):
+        reset_button_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "reset_button.png")
+        self.__pre_drawed_reset_button = ImageDataLoader.load_rectangle_image_data(reset_button_image_path)
+
 
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
@@ -285,6 +309,12 @@ class PreDrawedImage:
 
         self.pre_draw_prev_button()
         self.pre_draw_confirm_button()
+
+        self.pre_draw_card_frame()
+        self.pre_draw_dark_flame_energy()
+        self.pre_draw_freezing_energy()
+
+        self.pre_draw_reset_button()
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
@@ -374,5 +404,20 @@ class PreDrawedImage:
     def get_pre_draw_lose_text(self):
         return self.__pre_drawed_lose_text
 
+
     def get_pre_drawed_confirm_button(self):
         return self.__pre_drawed_confirm_button
+
+    def get_pre_draw_card_frame_for_card_number(self, card_number):
+        return self.__pre_drawed_card_frame[card_number]
+
+    def get_pre_draw_dark_flame_energy(self):
+        return self.__pre_drawed_dark_flame
+
+    def get_pre_draw_freezing_energy(self):
+        return self.__pre_drawed_freezing
+
+    def get_pre_draw_reset_button(self):
+        return self.__pre_drawed_reset_button
+
+

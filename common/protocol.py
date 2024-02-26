@@ -27,7 +27,7 @@ class CustomProtocol(Enum):
     MULLIGAN_CARD = 1012
 
 
-    USE_UNIT_CARD = 1004
+    DEPLOY_UNIT_CARD = 1004
     USE_ITEM_CARD = 1005
     USE_TRAP_CARD = 1006
     USE_TOOL_CARD = 1007
@@ -45,6 +45,8 @@ class CustomProtocol(Enum):
     TURN_END = 3333
     SURRENDER = 4443
     PROGRAM_EXIT = 4444
+
+    CREATE_FAKE_BATTLE_ROOM = 8001
 
 
 

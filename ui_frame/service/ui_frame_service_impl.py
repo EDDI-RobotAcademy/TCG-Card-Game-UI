@@ -27,6 +27,12 @@ class UiFrameServiceImpl(UiFrameService):
         print(f"{Fore.GREEN}UiFrameServiceImpl: registerMainMenuUiFrame(){Style.RESET_ALL}")
         self.__uiFrameRepository.registerUiFrame("main-menu", mainMenuFrame)
 
+
+    def registerFakeBattleFieldUiFrame(self, fakeBattleFieldFrame):
+        print(f"{Fore.GREEN}UiFrameServiceImpl: registerFakeBattleFieldUiFrame(){Style.RESET_ALL}")
+        self.__uiFrameRepository.registerUiFrame("fake-battle-field", fakeBattleFieldFrame)
+
+
     def registerLoginMenuUiFrame(self, loginMenuFrame):
         print(f"{Fore.GREEN}UiFrameServiceImpl: registerLoginMenuUiFrame(){Style.RESET_ALL}")
         self.__uiFrameRepository.registerUiFrame("login-menu", loginMenuFrame)
