@@ -1,94 +1,66 @@
-import colorama
 from screeninfo import get_monitors
 from shapely import Polygon, Point
 
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
 from battle_field.components.field_area_inside.field_area_inside_handler import FieldAreaInsideHandler
 
+import tkinter
+import unittest
+
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
+from battle_field.components.fixed_unit_card_inside.fixed_unit_card_inside_action import FixedUnitCardInsideAction
 from battle_field.components.mouse_left_click.left_click_detector import LeftClickDetector
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area_action import OpponentFieldAreaAction
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
     OpponentFixedUnitCardInsideHandler
-from battle_field.entity.current_field_energy_race import CurrentFieldEnergyRace
-from battle_field.entity.next_field_energy_race import NextFieldEnergyRace
-from battle_field.entity.opponent_hp import OpponentHp
+from battle_field.entity.battle_field_scene import BattleFieldScene
+from battle_field.entity.opponent_field_panel import OpponentFieldPanel
+from battle_field.entity.your_field_panel import YourFieldPanel
 from battle_field.entity.opponent_lost_zone import OpponentLostZone
 from battle_field.entity.opponent_tomb import OpponentTomb
-from battle_field.entity.prev_field_energy_race import PrevFieldEnergyRace
 from battle_field.entity.tomb_type import TombType
-from battle_field.entity.your_field_energy import YourFieldEnergy
-from battle_field.entity.your_hp import YourHp
 from battle_field.entity.your_lost_zone import YourLostZone
 from battle_field.entity.your_tomb import YourTomb
 from battle_field.handler.support_card_handler import SupportCardHandler
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
-from battle_field.infra.opponent_hp_repository import OpponentHpRepository
 from battle_field.infra.opponent_lost_zone_repository import OpponentLostZoneRepository
 from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
-from battle_field.infra.your_hp_repository import YourHpRepository
 from battle_field.infra.your_lost_zone_repository import YourLostZoneRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field.state.energy_type import EnergyType
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
-
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
-from battle_field_muligun.service.request.muligun_request import MuligunRequest
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
-from common.card_grade import CardGrade
 from common.card_race import CardRace
 from common.card_type import CardType
-from fake_battle_field.entity.muligun_reset_button import MuligunResetButton
 from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
-from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
+from initializer.init_domain import DomainInitializer
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
-
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.circle import Circle
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
-from session.repository.session_repository_impl import SessionRepositoryImpl
 
 
-class FakeBattleFieldFrame(OpenGLFrame):
-    def __init__(self, master=None, switchFrameWithMenuName=None, **kwargs):
+class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
+    def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
 
-        print("FakeBattleFieldFrame 생성자 호출")
+        self.init_monitor_specification()
 
-        monitors = get_monitors()
-        target_monitor = monitors[2] if len(monitors) > 2 else monitors[0]
+        self.battle_field_background_shape_list = None
 
-        self.width = target_monitor.width
-        self.height = target_monitor.height
-
-        self.is_reshape_not_complete = True
-
-        self.current_width = self.width
-        self.current_height = self.height
-
-        self.prev_width = self.width
-        self.prev_height = self.height
-
-        self.width_ratio = 1.0
-        self.height_ratio = 1.0
-
-        self.muligun_reset_button = None
-        self.muligun_reset_button_clicked = False
-
-        self.battle_field_muligun_background_shape_list = None
-        self.battle_field_unit_place_panel = None
-
-        self.battle_field_opponent_unit_place_panel = None
+        self.your_field_panel = None
+        self.opponent_field_panel = None
 
         self.active_panel_rectangle = None
         self.selected_object = None
@@ -96,8 +68,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.drag_start = None
 
         self.lightning_border = LightningBorder()
-
-        self.session_repository = SessionRepositoryImpl.getInstance()
 
         self.your_hand_repository = YourHandRepository.getInstance()
         self.hand_card_list = None
@@ -145,7 +115,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.selected_object_index_for_check_required_energy = []
         self.required_energy_select_lightning_border_list = []
 
+        self.targeting_enemy_select_support_lightning_border_list = []
+        self.targeting_ememy_select_using_hand_card_id = -1
+        self.targeting_ememy_select_using_hand_card_index = -1
+        self.targeting_enemy_select_using_your_field_card_index = -1
+        self.targeting_enemy_select_count = 0
 
+        self.your_field_energy_repository = YourFieldEnergyRepository.getInstance()
 
         self.your_lost_zone_repository = YourLostZoneRepository.getInstance()
         self.your_lost_zone_panel = None
@@ -159,32 +135,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.opponent_lost_zone_popup_panel = None
         self.opponent_lost_zone_panel_selected = False
 
-
-        # todo : [이재승]
-
-        self.your_hp_panel = None
-        self.your_hp = YourHp()
-        self.your_hp_repository = YourHpRepository.getInstance()
-
-        self.opponent_hp_panel = None
-        self.opponent_hp = OpponentHp()
-        self.opponent_hp_repository = OpponentHpRepository.getInstance()
-
-        self.your_field_energy_panel = None
-        self.your_field_energy = YourFieldEnergy()
-        self.your_field_energy_repository = YourFieldEnergyRepository.getInstance()
-        self.your_field_energy_panel_selected = False
-
-        self.next_field_energy_race_panel = None
-        self.next_field_energy_race = NextFieldEnergyRace()
-        self.prev_field_energy_race_panel = None
-        self.prev_field_energy_race = PrevFieldEnergyRace()
-        self.next_field_energy_race_panel_selected = False
-        self.prev_field_energy_race_panel_selected = False
-
-        self.current_field_energy_race_panel = None
-        self.current_field_energy_race = CurrentFieldEnergyRace()
-
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
         self.bind("<ButtonRelease-1>", self.on_canvas_release)
@@ -194,6 +144,24 @@ class FakeBattleFieldFrame(OpenGLFrame):
         # TODO: 이 부분은 임시 방편입니다 (상대방 행동 했다 가정하고 키보드 입력 받기 위함)
         self.focus_set()
         self.bind("<Key>", self.on_key_press)
+
+    def init_monitor_specification(self):
+        monitors = get_monitors()
+        target_monitor = monitors[2] if len(monitors) > 2 else monitors[0]
+
+        self.width = target_monitor.width
+        self.height = target_monitor.height
+
+        self.is_reshape_not_complete = True
+
+        self.current_width = self.width
+        self.current_height = self.height
+
+        self.prev_width = self.width
+        self.prev_height = self.height
+
+        self.width_ratio = 1.0
+        self.height_ratio = 1.0
 
     def initgl(self):
         glClearColor(1.0, 1.0, 1.0, 0.0)
@@ -213,23 +181,21 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.prev_height = self.height
         self.is_reshape_not_complete = False
 
-        battle_field_muligun_scene = BattleFieldMuligunScene()
-        battle_field_muligun_scene.create_battle_field_muligun_scene(self.width, self.height)
-        self.battle_field_muligun_background_shape_list = battle_field_muligun_scene.get_battle_field_muligun_background()
+        battle_field_scene = BattleFieldScene()
+        battle_field_scene.create_battle_field_cene(self.width, self.height)
+        self.battle_field_background_shape_list = battle_field_scene.get_battle_field_background()
 
-        self.battle_field_unit_place_panel = Rectangle(
-            (0.0, 0.0, 0.0, 0.1),
-            [(245, 470), (245, 700), (1675, 700), (1675, 470)],
-            (0, 0),
-            (0, 0))
-        self.battle_field_unit_place_panel.set_draw_border(False)
+        your_field_panel_instance = YourFieldPanel()
+        your_field_panel_instance.set_total_window_size(self.width, self.height)
+        your_field_panel_instance.create_your_field_panel()
+        self.your_field_panel = your_field_panel_instance.get_your_field_panel()
 
-        self.battle_field_opponent_unit_place_panel = Rectangle(
-            (0.0, 0.0, 0.0, 0.1),
-            [(245, 230), (245, 460), (1675, 460), (1675, 230)],
-            (0, 0),
-            (0, 0))
-        self.battle_field_opponent_unit_place_panel.set_draw_border(False)
+        self.fixed_unit_card_inside_action = FixedUnitCardInsideAction.Dummy
+
+        opponent_field_panel_instance = OpponentFieldPanel()
+        opponent_field_panel_instance.set_total_window_size(self.width, self.height)
+        opponent_field_panel_instance.create_opponent_field_panel()
+        self.opponent_field_panel = opponent_field_panel_instance.get_opponent_field_panel()
 
         self.your_tomb.set_total_window_size(self.width, self.height)
         self.your_tomb.create_your_tomb_panel()
@@ -240,15 +206,26 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.opponent_tomb_panel = self.opponent_tomb.get_opponent_tomb_panel()
 
         self.your_hand_repository.set_x_base(567.5)
-        # self.your_hand_repository.save_current_hand_state([25, 31, 2, 151, 93])
+        self.your_hand_repository.save_current_hand_state([25, 33, 2, 151, 93])
         # self.your_hand_repository.save_current_hand_state([151])
         self.your_hand_repository.create_hand_card_list()
 
-        # self.your_deck_repository.save_deck_state([93, 35, 93, 5])
+        self.your_deck_repository.save_deck_state([93, 35, 93, 5])
 
+        # self.opponent_field_unit_repository.create_field_unit_card(33)
+        # self.opponent_field_unit_repository.create_field_unit_card(35)
+        # self.opponent_field_unit_repository.create_field_unit_card(36)
+        # self.opponent_field_unit_repository.create_field_unit_card(25)
+        # self.opponent_field_unit_repository.create_field_unit_card(26)
         self.opponent_field_unit_repository.create_field_unit_card(27)
+        self.your_field_unit_repository.create_field_unit_card(31)
 
         self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
+
+        # self.your_tomb_repository.create_tomb_card(93)
+        # self.your_tomb_repository.create_tomb_card(31)
+        # self.your_tomb_repository.create_tomb_card(32)
+        # self.your_tomb_repository.create_tomb_card_list()
 
         self.your_lost_zone.set_total_window_size(self.width, self.height)
         self.your_lost_zone.create_your_lost_zone_panel()
@@ -257,40 +234,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.opponent_lost_zone.set_total_window_size(self.width, self.height)
         self.opponent_lost_zone.create_opponent_lost_zone_panel()
         self.opponent_lost_zone_panel = self.opponent_lost_zone.get_opponent_lost_zone_panel()
-
-        muligun_reset_button_instance = MuligunResetButton()
-        muligun_reset_button_instance.set_total_window_size(self.width, self.height)
-        muligun_reset_button_instance.init_muligun_reset_button()
-        self.muligun_reset_button = muligun_reset_button_instance.get_muligun_reset_button()
-
-
-        #todo : [이재승]
-        self.your_hp.set_total_window_size(self.width, self.height)
-        self.your_hp_repository.set_first_hp_state()
-        self.your_hp.draw_current_your_hp_panel()
-        self.your_hp_panel = self.your_hp.get_your_hp_panel()
-
-        self.opponent_hp.set_total_window_size(self.width, self.height)
-        self.opponent_hp_repository.set_first_hp_state()
-        self.opponent_hp.draw_current_opponent_hp_panel()
-        self.opponent_hp_panel = self.opponent_hp.get_opponent_hp_panel()
-
-        self.your_field_energy.set_total_window_size(self.width, self.height)
-        self.your_field_energy_repository.reset_field_energy()
-        self.your_field_energy.create_your_field_energy_panel()
-        self.your_field_energy_panel = self.your_field_energy.get_your_field_energy_panel()
-
-        self.next_field_energy_race.set_total_window_size(self.width, self.height)
-        self.next_field_energy_race.create_next_field_energy_race_panel()
-        self.next_field_energy_race_panel = self.next_field_energy_race.get_next_field_energy_race_panel()
-
-        self.prev_field_energy_race.set_total_window_size(self.width, self.height)
-        self.prev_field_energy_race.create_prev_field_energy_race_panel()
-        self.prev_field_energy_race_panel = self.prev_field_energy_race.get_prev_field_energy_race_panel()
-
-        self.current_field_energy_race.set_total_window_size(self.width, self.height)
-        self.current_field_energy_race.create_current_field_energy_race_panel()
-        self.current_field_energy_race_panel = self.current_field_energy_race.get_current_field_energy_race_panel()
 
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
@@ -321,67 +264,87 @@ class FakeBattleFieldFrame(OpenGLFrame):
         key = event.keysym
         print(f"Key pressed: {key}")
 
-        if key.lower() == 'h':
-            self.your_field_energy_repository.to_next_field_energy_race()
-
-        if key.lower() == 'u':
-            self.your_field_energy_repository.increase_your_field_energy()
-
-        if key.lower() == 'd':
-            self.your_hp_repository.take_damage()
-
-        if key.lower() == 'o':
-            self.opponent_hp_repository.take_damage()
-
-        if key.lower() == 'p':
-            self.your_field_unit_repository.create_field_unit_card(17)
-
         if key.lower() == 'a':
-            notify_raw_data = '''{
-                       "NOTIFY_UNIT_SPAWN":
-                           {"player_spawn_unit_map":
-                               {"Opponent" : "26"}
-                           }
-                   }'''
-            NotifyReaderRepositoryImpl.getInstance().getNoWaitIpcChannel().put(notify_raw_data)
-            # self.opponent_field_unit_repository.create_field_unit_card(26)
+            self.opponent_field_unit_repository.create_field_unit_card(26)
+
+        if key.lower() == 'n':
+            self.opponent_field_unit_repository.create_field_unit_card(19)
 
         if key.lower() == 'e':
             print("attach undead energy")
-            notify_raw_data = '''{
-                       "NOTIFY_FIELD_UNIT_ENERGY":
-                           {"player_field_unit_energy_map":
-                                {"Opponent":
-                                     {"0":
-                                          {"attached_energy_map":
-                                               {"2": 2}, "total_energy_count": 2}}}}}'''
-            notify_dict = {"player_field_unit_energy_map":
-                               {"Opponent":
-                                    {"0":
-                                         {"attached_energy_map": {"2": 2}, "total_energy_count": 2}}}}
 
-            NotifyReaderRepositoryImpl.getInstance().getNoWaitIpcChannel().put(notify_raw_data)
+            # TODO: Change it to ENUM Value (Not just integer)
+            card_race = self.card_info_repository.getCardRaceForCardNumber(93)
+            print(f"card_race: {card_race}")
+
+            attach_energy_count = 1
+            opponent_unit_index = 0
+
+            # self.opponent_field_unit_repository.attach_race_energy(opponent_unit_index, EnergyType.Undead, attach_energy_count)
+            # opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(0)
+            #
+            # opponent_field_unit_attached_undead_energy_count = self.opponent_field_unit_repository.get_opponent_field_unit_race_energy(0, EnergyType.Undead)
+            # print(f"opponent_field_unit_attached_undead_energy_count: {opponent_field_unit_attached_undead_energy_count}")
+
+            before_attach_energy_count = self.opponent_field_unit_repository.get_opponent_field_unit_race_energy(
+                0, EnergyType.Undead)
+
+            self.opponent_field_unit_repository.attach_race_energy(
+                opponent_unit_index,
+                EnergyType.Undead,
+                attach_energy_count)
+            opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(0)
+
+            # after_attach_energy_count = self.opponent_field_unit_repository.get_opponent_field_unit_race_energy(
+            #     0, EnergyType.Undead)
+            total_attached_energy_count = self.opponent_field_unit_repository.get_total_energy_at_index(0)
+            print(
+                f"opponent_field_unit_attached_undead_energy_count: {total_attached_energy_count}")
+
+            opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+            opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+
+            for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                if isinstance(opponent_fixed_card_attached_shape, CircleNumberImage):
+                    if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+                        opponent_fixed_card_attached_shape.set_image_data(
+                            self.pre_drawed_image_instance.get_pre_draw_number_image(
+                                total_attached_energy_count))
+                        print(f"changed energy: {opponent_fixed_card_attached_shape.get_circle_kinds()}")
+
+            # after_attach_energy_count
+            # before_attach_energy_count
+
+            every_energy = self.opponent_field_unit_repository.get_energy_info_at_index(0)
+            print(f"every_energy: {every_energy}")
+
+            if card_race == CardRace.UNDEAD.value:
+                card_race_circle = opponent_field_unit.creat_fixed_card_energy_race_circle(
+                    color=(0, 0, 0, 1),
+                    vertices=(0, (total_attached_energy_count * 10) + 20),
+                    local_translation=opponent_fixed_card_base.get_local_translation())
+                opponent_fixed_card_base.set_attached_shapes(card_race_circle)
 
     def on_resize(self, event):
         self.reshape(event.width, event.height)
 
     def draw_base(self):
-        for battle_field_muligun_background_shape in self.battle_field_muligun_background_shape_list:
-            battle_field_muligun_background_shape.set_width_ratio(self.width_ratio)
-            battle_field_muligun_background_shape.set_height_ratio(self.height_ratio)
-            battle_field_muligun_background_shape.draw()
+        for battle_field_background_shape in self.battle_field_background_shape_list:
+            battle_field_background_shape.set_width_ratio(self.width_ratio)
+            battle_field_background_shape.set_height_ratio(self.height_ratio)
+            battle_field_background_shape.draw()
 
         # TODO: 메인 로직에선 제거해야함 (현재는 개발 편의상 배치)
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-        self.battle_field_unit_place_panel.set_width_ratio(self.width_ratio)
-        self.battle_field_unit_place_panel.set_height_ratio(self.height_ratio)
-        self.battle_field_unit_place_panel.draw()
+        self.your_field_panel.set_width_ratio(self.width_ratio)
+        self.your_field_panel.set_height_ratio(self.height_ratio)
+        self.your_field_panel.draw()
 
-        self.battle_field_opponent_unit_place_panel.set_width_ratio(self.width_ratio)
-        self.battle_field_opponent_unit_place_panel.set_height_ratio(self.height_ratio)
-        self.battle_field_opponent_unit_place_panel.draw()
+        self.opponent_field_panel.set_width_ratio(self.width_ratio)
+        self.opponent_field_panel.set_height_ratio(self.height_ratio)
+        self.opponent_field_panel.draw()
 
         # 현재 Tomb 와 Lost Zone은 전부 비율 기반이다.
         # 그러므로 사각형의 width_ratio를 계산할 필요는 없다 (마우스 포인터가 내부에 있나 계산하는 부분 제외)
@@ -412,41 +375,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.opponent_lost_zone_panel.set_height_ratio(self.height_ratio)
         self.opponent_lost_zone_panel.set_draw_border(False)
         self.opponent_lost_zone_panel.draw()
-
-
-        self.muligun_reset_button.set_width_ratio(self.width_ratio)
-        self.muligun_reset_button.set_height_ratio(self.height_ratio)
-        self.muligun_reset_button.draw()
-        
-        #todo : [이재승]
-
-        self.your_hp.set_width_ratio(self.width_ratio)
-        self.your_hp.set_height_ratio(self.height_ratio)
-        self.your_hp.update_current_your_hp_panel()
-        self.your_hp_panel.draw()
-
-        self.opponent_hp.set_width_ratio(self.width_ratio)
-        self.opponent_hp.set_height_ratio(self.height_ratio)
-        self.opponent_hp.update_current_opponent_hp_panel()
-        self.opponent_hp_panel.draw()
-
-        self.your_field_energy.set_width_ratio(self.width_ratio)
-        self.your_field_energy.set_height_ratio(self.height_ratio)
-        self.your_field_energy.update_curent_field_energy_panel()
-        self.your_field_energy_panel.draw()
-
-        self.next_field_energy_race.set_width_ratio(self.width_ratio)
-        self.next_field_energy_race.set_height_ratio(self.width_ratio)
-        self.next_field_energy_race_panel.draw()
-
-        self.prev_field_energy_race.set_width_ratio(self.width_ratio)
-        self.prev_field_energy_race.set_height_ratio(self.height_ratio)
-        self.prev_field_energy_race_panel.draw()
-
-        self.current_field_energy_race.set_width_ratio(self.width_ratio)
-        self.current_field_energy_race.set_height_ratio(self.height_ratio)
-        self.current_field_energy_race.update_current_field_energy_race_panel()
-        self.current_field_energy_race_panel.draw()
 
         glDisable(GL_BLEND)
 
@@ -560,6 +488,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             self.lightning_border.set_padding(20)
             self.lightning_border.update_shape(required_energy_selection_border)
+            self.lightning_border.draw_lightning_border()
+
+        for targeting_enemy_select_support_lightning_border in self.targeting_enemy_select_support_lightning_border_list:
+            targeting_enemy_select_support_lightning_border.set_width_ratio(self.width_ratio)
+            targeting_enemy_select_support_lightning_border.set_height_ratio(self.height_ratio)
+
+            self.lightning_border.set_padding(20)
+            self.lightning_border.update_shape(targeting_enemy_select_support_lightning_border)
             self.lightning_border.draw_lightning_border()
 
         if self.tomb_panel_selected:
@@ -682,10 +618,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             glDisable(GL_BLEND)
 
-        self.muligun_reset_button.set_width_ratio(self.width_ratio)
-        self.muligun_reset_button.set_height_ratio(self.height_ratio)
-        self.muligun_reset_button.draw()
-
         self.tkSwapBuffers()
 
     def on_canvas_drag(self, event):
@@ -760,7 +692,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         point = Point(x, y)
 
         return point.within(poly)
-refeactor: [이재승] 각종 test코드 메인 코드 병합 및 통합 테스트에 추가
+
     def on_canvas_release(self, event):
         x, y = event.x, event.y
         y = self.winfo_reqheight() - y
@@ -779,7 +711,7 @@ refeactor: [이재승] 각종 test코드 메인 코드 병합 및 통합 테스�
 
                 # TODO: 추후 변경이 필요함
                 # if opponent_field_area_vertices.is_point_inside((x, y)):
-                if self.is_point_inside_opponent_field_area((x, y), self.battle_field_opponent_unit_place_panel):
+                if self.is_point_inside_opponent_field_area((x, y), self.opponent_field_panel):
                     print("파멸의 계약 사용")
                     self.__required_energy = 0
 
@@ -874,25 +806,49 @@ refeactor: [이재승] 각종 test코드 메인 코드 병합 및 통합 테스�
                             self.selected_object = None
                             return
 
+                        # TODO: Ugly -> Need to Refactor: Item Action Summary
                         elif card_type == CardType.ITEM.value:
                             print("아군에게 아이템 사용")
 
-                            # 우선 '사기 전환'이라 가정
-                            card_id = current_field_unit.get_card_number()
-                            fixed_field_unit_hp = self.card_info_repository.getCardHpForCardNumber(card_id)
-                            acquire_energy = round(fixed_field_unit_hp / 5)
-                            print(f"acquire_energy: {acquire_energy}")
+                            if placed_card_id == 35:
+                                print(f"사기 전환(35) -> placed_card_id: {placed_card_id}")
+                                card_id = current_field_unit.get_card_number()
+                                fixed_field_unit_hp = self.card_info_repository.getCardHpForCardNumber(card_id)
+                                acquire_energy = round(fixed_field_unit_hp / 5)
+                                print(f"acquire_energy: {acquire_energy}")
 
-                            self.your_field_energy_repository.increase_your_field_energy(acquire_energy)
-                            self.your_hand_repository.remove_card_by_index(placed_index)
-                            self.your_field_unit_repository.remove_card_by_index(unit_index)
+                                self.your_field_energy_repository.increase_your_field_energy(acquire_energy)
+                                self.your_hand_repository.remove_card_by_index(placed_index)
+                                self.your_field_unit_repository.remove_card_by_index(unit_index)
 
-                            self.your_hand_repository.replace_hand_card_position()
+                                self.your_hand_repository.replace_hand_card_position()
 
-                            self.your_tomb_repository.create_tomb_card(card_id)
-                            self.your_tomb_repository.create_tomb_card(placed_card_id)
+                                self.your_tomb_repository.create_tomb_card(card_id)
+                                self.your_tomb_repository.create_tomb_card(placed_card_id)
 
-                            print(f"사기 전환 이후 필드 에너지 수량: {self.your_field_energy_repository.get_your_field_energy()}")
+                                print(f"사기 전환 이후 필드 에너지 수량: {self.your_field_energy_repository.get_your_field_energy()}")
+
+                            if placed_card_id == 33:
+                                print(f"시체 폭발(33) -> placed_card_id: {placed_card_id}")
+                                card_id = current_field_unit.get_card_number()
+
+                                opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+                                for opponent_field_unit_object in opponent_field_unit_object_list:
+                                    fixed_opponent_card_base = opponent_field_unit_object.get_fixed_card_base()
+                                    self.targeting_enemy_select_support_lightning_border_list.append(fixed_opponent_card_base)
+
+                                self.fixed_unit_card_inside_action = FixedUnitCardInsideAction.TARGETING_TWO_ENEMY_AS_POSSIBLE
+                                # self.targeting_enemy_select_support_lightning_border_list = []
+                                self.targeting_ememy_select_using_hand_card_id = placed_card_id
+                                self.targeting_ememy_select_using_hand_card_index = placed_index
+                                self.targeting_enemy_select_using_your_field_card_index = unit_index
+                                self.targeting_enemy_select_count = 2
+
+                                # self.your_hand_repository.replace_hand_card_position()
+                                #
+                                # self.your_tomb_repository.create_tomb_card(card_id)
+                                # self.your_tomb_repository.create_tomb_card(placed_card_id)
+
 
                             self.selected_object = None
                             return
@@ -934,30 +890,6 @@ refeactor: [이재승] 각종 test코드 메인 코드 병합 및 통합 테스�
                             # self.your_tomb_repository.create_tomb_card(card_id)
                             self.your_tomb_repository.create_tomb_card(placed_card_id)
                             # TODO: attached_energy 값 UI에 표현 (이미지 작업 미완료)
-                            if int(self.card_info_repository.getCardGradeForCardNumber(placed_card_id)) == CardGrade.HERO.value:
-                                print(f"placed_card_id : {placed_card_id}사용")
-                                your_fixed_field_unit_vertices = fixed_card_base.get_vertices()
-
-                                card_freezing_image_circle = (your_fixed_field_unit.creat_fixed_card_freezing_image_circle(
-                                    image_data=self.pre_drawed_image_instance.get_pre_draw_freezing_energy(),
-                                    vertices=(your_fixed_field_unit_vertices[0][0] - 15,
-                                              your_fixed_field_unit_vertices[0][1] + 40),
-                                    local_translation=fixed_card_base.get_local_translation()
-                                )
-                                )
-
-                                card_dark_flame_image_circle = (your_fixed_field_unit.creat_fixed_card_dark_flame_image_circle(
-                                    image_data=self.pre_drawed_image_instance.get_pre_draw_dark_flame_energy(),
-                                    vertices=(your_fixed_field_unit_vertices[0][0] - 15,
-                                              your_fixed_field_unit_vertices[0][1] + 70),
-                                    local_translation=fixed_card_base.get_local_translation()
-                                )
-                                )
-
-                                fixed_card_base.set_attached_shapes(card_freezing_image_circle)
-                                fixed_card_base.set_attached_shapes(card_dark_flame_image_circle)
-                                print(
-                                    f"fixed_card_base.get_attached_shapes() : {fixed_card_base.get_attached_shapes()}")
 
                             # TODO: 특수 에너지 붙인 것을 어떻게 표현 할 것인가 ? (아직 미정)
                             for fixed_card_attached_shape in fixed_card_attached_shape_list:
@@ -989,7 +921,7 @@ refeactor: [이재승] 각종 test코드 메인 코드 병합 및 통합 테스�
             self.field_area_inside_handler.set_width_ratio(self.width_ratio)
             self.field_area_inside_handler.set_height_ratio(self.height_ratio)
 
-            drop_action_result = self.field_area_inside_handler.handle_card_drop(x, y, self.selected_object, self.battle_field_unit_place_panel)
+            drop_action_result = self.field_area_inside_handler.handle_card_drop(x, y, self.selected_object, self.your_field_panel)
             if drop_action_result is None or drop_action_result is FieldAreaAction.Dummy:
                 print("self.field_area_inside_handler.get_field_area_action() = None")
                 self.return_to_initial_location()
@@ -1041,7 +973,7 @@ refeactor: [이재승] 각종 test코드 메인 코드 병합 및 통합 테스�
 
     def is_drop_location_valid_battle_field_panel(self, x, y):
         print(f"is_drop_location_valid_battle_field_panel -> x: {x}, y: {y}")
-        valid_area_vertices = self.battle_field_unit_place_panel.get_vertices()
+        valid_area_vertices = self.your_field_panel.get_vertices()
         return self.point_inside_polygon(x, y, valid_area_vertices)
 
     def is_point_to_left_of_intersection(self, x, y, p1x, p1y, p2x, p2y):
@@ -1226,6 +1158,14 @@ refeactor: [이재승] 각종 test코드 메인 코드 병합 및 통합 테스�
                         # self.boost_selection = False
                         break
 
+                    # if self.field_area_inside_handler.get_field_area_action() is FieldAreaAction.TARGETING_TWO_ENEMY_AS_POSSIBLE:
+                    #     print("적 유닛 2체까지 선택 가능")
+                    #
+                    #     break
+
+                    if self.fixed_unit_card_inside_action is FixedUnitCardInsideAction.TARGETING_TWO_ENEMY_AS_POSSIBLE:
+                        print("적 유닛 2체까지 선택 가능")
+
                     your_field_unit.selected = not your_field_unit.selected
                     self.selected_object = your_field_unit
                     self.drag_start = (x, y)
@@ -1249,7 +1189,6 @@ refeactor: [이재승] 각종 test코드 메인 코드 병합 및 통합 테스�
                 self.opponent_tomb_panel_selected = False
                 self.your_lost_zone_panel_selected = False
                 self.opponent_lost_zone_panel_selected = False
-                self.muligun_reset_button_clicked = False
                 return
 
             self.opponent_tomb_panel_selected = self.left_click_detector.which_one_select_is_in_opponent_tomb_area(
@@ -1266,7 +1205,6 @@ refeactor: [이재승] 각종 test코드 메인 코드 병합 및 통합 테스�
                 self.tomb_panel_selected = False
                 self.your_lost_zone_panel_selected = False
                 self.opponent_lost_zone_panel_selected = False
-                self.muligun_reset_button_clicked = False
                 return
 
             self.your_lost_zone_panel_selected = self.left_click_detector.which_one_select_is_in_your_lost_zone_area(
@@ -1283,7 +1221,6 @@ refeactor: [이재승] 각종 test코드 메인 코드 병합 및 통합 테스�
                 self.tomb_panel_selected = False
                 self.opponent_tomb_panel_selected = False
                 self.opponent_lost_zone_panel_selected = False
-                self.muligun_reset_button_clicked = False
                 return
 
             self.opponent_lost_zone_panel_selected = self.left_click_detector.which_one_select_is_in_opponent_lost_zone_area(
@@ -1300,88 +1237,12 @@ refeactor: [이재승] 각종 test코드 메인 코드 병합 및 통합 테스�
                 self.tomb_panel_selected = False
                 self.opponent_tomb_panel_selected = False
                 self.your_lost_zone_panel_selected = False
-                self.muligun_reset_button_clicked = False
                 return
-
-            self.muligun_reset_button_clicked = self.is_point_inside_muligun_reset_button(
-                (x, y),
-                self.muligun_reset_button,
-                self.winfo_reqheight())
-
-            if self.muligun_reset_button_clicked:
-                print(f"muligun_reset_button_clicked()")
-
-                self.tomb_panel_selected = False
-                self.opponent_tomb_panel_selected = False
-                self.your_lost_zone_panel_selected = False
-                self.opponent_lost_zone_panel_selected = False
-
-                current_hand_card_list = self.your_hand_repository.get_current_hand_state()
-                current_hand_card_list_str = list(map(str, current_hand_card_list))
-
-                muligunResponseData = self.your_hand_repository.request_fake_muligun(
-                    MuligunRequest(self.session_repository.get_first_fake_session_info(),
-                                   current_hand_card_list_str))
-
-                self.your_hand_repository.remove_card_by_multiple_index([0, 1, 2, 3, 4])
-
-                print(f"muligun responseData: {muligunResponseData}")
-                redrawn_hand_card_list = muligunResponseData['redrawn_hand_card_list']
-                # redrawn_hand_card_list_str = list(map(str, redrawn_hand_card_list))
-                self.your_hand_repository.save_current_hand_state(redrawn_hand_card_list)
-                self.your_hand_repository.create_hand_card_list()
-
-                deck_card_list = muligunResponseData['updated_deck_card_list']
-
-                self.your_deck_repository.save_deck_state(deck_card_list)
-
-                return
-            
-            #todo : [이재승]
-            self.your_field_energy_panel_selected = False
-
-            self.your_field_energy_panel_selected = self.left_click_detector.which_one_select_is_in_your_field_energy_area(
-                (x, y),
-                self.your_field_energy,
-                self.winfo_reqheight()
-            )
-
-            if self.your_field_energy_panel_selected:
-
-                if self.your_field_energy_repository.decrease_your_field_energy():
-                    self.your_hand_repository.create_additional_hand_card_list(
-                        [self.your_field_energy_repository.get_current_field_energy_card_id()])
-                    print(f"current energy card : {self.your_field_energy_repository.get_current_field_energy_card_id()}, {self.your_field_energy_repository.get_current_field_energy_race()}")
-                    print(
-                        f"on_canvas_left_click() -> current_field_energy: {self.your_field_energy_repository.get_your_field_energy()}")
-
-            self.next_field_energy_race_panel_selected = self.left_click_detector.which_one_select_is_in_next_field_energy_race_area(
-                (x, y),
-                self.next_field_energy_race,
-                self.winfo_reqheight()
-            )
-
-            if self.next_field_energy_race_panel_selected:
-                self.your_field_energy_repository.to_next_field_energy_race()
-                print(
-                    f"on_canvas_left_click() -> to_next_field_energy_race: {self.your_field_energy_repository.get_current_field_energy_race()}")
-
-            self.prev_field_energy_race_panel_selected = self.left_click_detector.which_one_select_is_in_prev_field_energy_race_area(
-                (x, y),
-                self.prev_field_energy_race,
-                self.winfo_reqheight()
-            )
-
-            if self.prev_field_energy_race_panel_selected:
-                self.your_field_energy_repository.to_prev_field_energy_race()
-                print(
-                    f"on_canvas_left_click() -> to_prev_field_energy_race: {self.your_field_energy_repository.get_current_field_energy_race()}")
 
             self.tomb_panel_selected = False
             self.opponent_tomb_panel_selected = False
             self.your_lost_zone_panel_selected = False
             self.opponent_lost_zone_panel_selected = False
-            self.muligun_reset_button_clicked = False
 
             # self.selected_tomb = self.left_click_detector.which_tomb_did_you_select(
             #     (x, y),
@@ -1399,25 +1260,6 @@ refeactor: [이재승] 각종 test코드 메인 코드 병합 및 통합 테스�
 
         except Exception as e:
             print(f"Exception in on_canvas_click: {e}")
-
-    def is_point_inside_muligun_reset_button(self, click_point, muligun_reset_button, canvas_height):
-        x, y = click_point
-        y = canvas_height - y
-
-        translated_vertices = [
-            (x * self.width_ratio, y * self.height_ratio )
-            for x, y in muligun_reset_button.get_vertices()
-        ]
-        print(f"x: {x}, y: {y}")
-        print(f"translated_vertices: {translated_vertices}")
-
-        if not (translated_vertices[0][0] <= x <= translated_vertices[2][0] and
-                translated_vertices[1][1] <= y <= translated_vertices[2][1]):
-            print("muligun_reset_button result -> False")
-            return False
-
-        print("muligun_reset_button result -> True")
-        return True
 
     def on_canvas_right_click(self, event):
         x, y = event.x, event.y
@@ -1445,53 +1287,28 @@ refeactor: [이재승] 각종 test코드 메인 코드 병합 및 통합 테스�
         return new_rectangle
 
 
+class TestResizableUseUseCorpseExplosion(unittest.TestCase):
 
-    def attach_energy(self, attach_energy_data):
+    def test_resizable_use_corpse_explosion(self):
+        DomainInitializer.initEachDomain()
 
-        # TODO: Change it to ENUM Value (Not just integer)
-        # card_race = self.card_info_repository.getCardRaceForCardNumber(93)
-        card_race = attach_energy_data['energy_race']
-        print(f"card_race: {card_race}")
+        root = tkinter.Tk()
+        root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}-0-0")
+        root.deiconify()
 
-        attach_energy_count = attach_energy_data['race_energy_count']
-        opponent_unit_index = attach_energy_data['target_unit_index']
+        pre_drawed_battle_field_frame = PreDrawedBattleFieldFrameRefactor(root)
+        pre_drawed_battle_field_frame.pack(fill=tkinter.BOTH, expand=1)
+        root.update_idletasks()
 
-        before_attach_energy_count = self.opponent_field_unit_repository.get_opponent_field_unit_race_energy(
-            0, EnergyType.Undead)
+        def animate():
+            pre_drawed_battle_field_frame.redraw()
+            root.after(17, animate)
 
-        self.opponent_field_unit_repository.attach_race_energy(
-            opponent_unit_index,
-            EnergyType.Undead,
-            attach_energy_count)
-        opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(opponent_unit_index)
+        root.after(0, animate)
 
-        # after_attach_energy_count = self.opponent_field_unit_repository.get_opponent_field_unit_race_energy(
-        #     0, EnergyType.Undead)
-        total_attached_energy_count = attach_energy_data[
-            'total_energy_count']  # self.opponent_field_unit_repository.get_total_energy_at_index(0)
-        total_attached_energy_count = self.opponent_field_unit_repository.get_total_energy_at_index(opponent_unit_index)
-        print(
-            f"opponent_field_unit_attached_undead_energy_count: {total_attached_energy_count}")
-
-        opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
-        opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
-
-        for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
-            if isinstance(opponent_fixed_card_attached_shape, CircleNumberImage):
-                if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
-                    opponent_fixed_card_attached_shape.set_image_data(
-                        self.pre_drawed_image_instance.get_pre_draw_number_image(
-                            total_attached_energy_count))
-                    print(f"changed energy: {opponent_fixed_card_attached_shape.get_circle_kinds()}")
+        root.mainloop()
 
 
-        every_energy = self.opponent_field_unit_repository.get_energy_info_at_index(opponent_unit_index)
-        print(f"every_energy: {every_energy}")
+if __name__ == '__main__':
+    unittest.main()
 
-        if card_race == CardRace.UNDEAD.value:
-            for energy_count in range(0, attach_energy_count):
-                card_race_circle = opponent_field_unit.creat_fixed_card_energy_race_circle(
-                    color=(0, 0, 0, 1),
-                    vertices=(0, ((total_attached_energy_count - energy_count) * 10) + 20),
-                    local_translation=opponent_fixed_card_base.get_local_translation())
-                opponent_fixed_card_base.set_attached_shapes(card_race_circle)

@@ -1,3 +1,4 @@
+from image_shape.non_background_image import NonBackgroundImage
 from image_shape.rectangle_image import RectangleImage
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
@@ -32,8 +33,8 @@ class MuligunResetButton:
         self.local_translation = _translation
 
     def create_muligun_reset_button(self, image_data, vertices):
-        self.muligun_reset_button = RectangleImage(image_data=image_data,
-                                                   vertices=vertices)
+        self.muligun_reset_button = NonBackgroundImage(image_data=image_data,
+                                                       vertices=vertices)
 
     def init_muligun_reset_button(self):
         left_x_point = self.total_width * 0.633
