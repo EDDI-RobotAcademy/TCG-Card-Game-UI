@@ -80,7 +80,8 @@ class FieldAreaInsideHandler:
             return None
 
         placed_card_id = selected_object.get_card_number()
-        # print(f"my card number is {placed_card_id}")
+
+        card_grade = self.__card_info_repository.getCardGradeForCardNumber(placed_card_id)
         card_type = self.__card_info_repository.getCardTypeForCardNumber(placed_card_id)
         # print(f"my card type is {card_type}")
 
@@ -94,12 +95,17 @@ class FieldAreaInsideHandler:
             return FieldAreaAction.Dummy
 
     def handle_unit_card(self, placed_card_id, placed_card_index):
+        session = self.__session_info_repository.get_session_info()
+        deploy_your_unit_request = self.__your_field_unit_repository.request_to_deploy_your_unit(
+            DeployUnitCardRequest(session, placed_card_id))
+
+        print(f"deploy_your_unit_request: {deploy_your_unit_request}")
+        deploy_is_success = deploy_your_unit_request['is_success']
+        if deploy_is_success is False:
+            return FieldAreaAction.Dummy
+
         # TODO: Memory Leak에 대한 추가 작업이 필요할 수 있음
         self.__your_hand_repository.remove_card_by_index(placed_card_index)
-
-        session = self.__session_info_repository.get_session_info()
-        self.__your_field_unit_repository.request_to_deploy_your_unit(
-            DeployUnitCardRequest(session, placed_card_id))
 
         self.__your_field_unit_repository.create_field_unit_card(placed_card_id)
         self.__your_field_unit_repository.save_current_field_unit_state(placed_card_id)

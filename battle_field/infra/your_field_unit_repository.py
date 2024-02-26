@@ -44,8 +44,8 @@ class YourFieldUnitRepository:
         self.current_field_unit_list.append(new_card)
 
     def request_to_deploy_your_unit(self, deploy_unit_card_request):
-        response = self.__transmitIpcChannel.put(deploy_unit_card_request)
-        print(f"response = {response}")
+        self.__transmitIpcChannel.put(deploy_unit_card_request)
+        return self.__receiveIpcChannel.get()
 
     def create_field_unit_card_list(self):
         current_field_unit = self.get_current_field_unit_state()

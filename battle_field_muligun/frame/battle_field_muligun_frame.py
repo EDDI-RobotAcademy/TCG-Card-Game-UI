@@ -6,7 +6,7 @@ from colorama import Fore, Style
 from pyopengltk import OpenGLFrame
 from screeninfo import get_monitors
 
-from battle_field_muligun.infra.muligun_your_hand_repository import YourHandRepository
+from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
 from battle_field_muligun.service.request.muligun_request import MuligunRequest
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
@@ -59,7 +59,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         self.alpha_background = self.create_opengl_alpha_background()
         self.ok_button = self.create_ok_button()
 
-        self.your_hand_repository = YourHandRepository.getInstance()
+        self.your_hand_repository = MuligunYourHandRepository.getInstance()
         # print(f"your_hand_repo: {self.your_hand_repository.get_current_hand_state()}")
         # self.your_hand_repository.save_current_hand_state([6, 8, 19, 20, 151])
         print("Call Muligun Frame Constructor")
