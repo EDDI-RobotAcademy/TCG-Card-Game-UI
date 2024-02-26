@@ -1,12 +1,12 @@
+from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from image_shape.rectangle_image import RectangleImage
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
-from tests.ljs.uglt_test_field_energy.repository.your_field_energy_repository import YourFieldEnergyRepositoryForTest
 
 
 class PrevFieldEnergyRace:
     __pre_drawed_image = PreDrawedImage.getInstance()
-    __your_field_energy_repository = YourFieldEnergyRepositoryForTest.getInstance()
+    __your_field_energy_repository = YourFieldEnergyRepository.getInstance()
 
     def __init__(self):
         self.prev_field_energy_race_panel = None

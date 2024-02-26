@@ -3,7 +3,6 @@ import multiprocessing
 from account_register_frame.service.account_register_frame_service_impl import AccountRegisterFrameServiceImpl
 from app_window.service.window_service_impl import WindowServiceImpl
 from card_info_from_csv.controller.card_info_from_csv_controller_impl import CardInfoFromCsvControllerImpl
-from card_info_from_csv.entity.card_info_from_csv_entity import CardInfoFromCsv
 from client_socket.service.client_socket_service_impl import ClientSocketServiceImpl
 from account_login_frame.service.login_menu_frame_service_impl import LoginMenuFrameServiceImpl
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
@@ -43,6 +42,7 @@ class DomainInitializer:
     @staticmethod
     def initNotifyReaderDomain(noWaitIpcChannel):
         notifyReaderController = NotifyReaderControllerImpl.getInstance()
+        notifyReaderController.requestToMappingNoticeWithFunction()
         notifyReaderController.requestToInjectNoWaitIpcChannel(noWaitIpcChannel)
 
     @staticmethod

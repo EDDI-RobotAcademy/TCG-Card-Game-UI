@@ -1,15 +1,15 @@
+from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from image_shape.rectangle_image import RectangleImage
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
-from tests.ljs.uglt_test_field_energy.repository.your_field_energy_repository import YourFieldEnergyRepositoryForTest
 
 
-class PrevFieldEnergyRace:
+class NextFieldEnergyRace:
     __pre_drawed_image = PreDrawedImage.getInstance()
-    __your_field_energy_repository = YourFieldEnergyRepositoryForTest.getInstance()
+    __your_field_energy_repository = YourFieldEnergyRepository.getInstance()
 
     def __init__(self):
-        self.prev_field_energy_race_panel = None
+        self.next_field_energy_race_panel = None
 
         self.total_width = None
         self.total_height = None
@@ -36,21 +36,21 @@ class PrevFieldEnergyRace:
     def change_local_translation(self, _translation):
         self.local_translation = _translation
 
-    def get_prev_field_energy_race_panel(self):
-        return self.prev_field_energy_race_panel
+    def get_next_field_energy_race_panel(self):
+        return self.next_field_energy_race_panel
 
-    def create_prev_field_energy_race_panel(self):
+    def create_next_field_energy_race_panel(self):
         # x1 = 0.138
         # x2 = 0.224
         # y1 = 0.767
         # y2 = 0.959
 
-        left_x_point = self.total_width * 0.905
-        right_x_point = self.total_width * 0.925
+        left_x_point = self.total_width * 0.975
+        right_x_point = self.total_width * 0.995
         top_y_point = self.total_height * 0.717
         bottom_y_point = self.total_height * 0.757
 
-        self.prev_field_energy_race_panel = Rectangle(
+        self.next_field_energy_race_panel = Rectangle(
             (0,0,0,0.1),
             [
                 (left_x_point, top_y_point),
@@ -66,18 +66,18 @@ class PrevFieldEnergyRace:
         point_x, point_y = point
         point_y *= -1
 
-        prev_field_energy_race_panel = self.get_prev_field_energy_race_panel()
+        next_field_energy_race_panel = self.get_next_field_energy_race_panel()
 
         translated_vertices = [
-            (x * self.width_ratio + prev_field_energy_race_panel.local_translation[0] * self.width_ratio, y *
-             self.height_ratio + prev_field_energy_race_panel.local_translation[1] * self.height_ratio)
-            for x, y in prev_field_energy_race_panel.get_vertices()
+            (x * self.width_ratio + next_field_energy_race_panel.local_translation[0] * self.width_ratio, y *
+             self.height_ratio + next_field_energy_race_panel.local_translation[1] * self.height_ratio)
+            for x, y in next_field_energy_race_panel.get_vertices()
         ]
 
         if not (translated_vertices[0][0] <= point_x <= translated_vertices[1][0] and
                 translated_vertices[0][1] <= point_y <= translated_vertices[2][1]):
-            print("your prev field energy race panel result -> False")
+            print("your next field energy race panel result -> False")
             return False
 
-        print("your prev field energy race panel result -> True")
+        print("your next field energy race panel result -> True")
         return True

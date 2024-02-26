@@ -24,6 +24,7 @@ class NotifyReaderRepositoryImpl(NotifyReaderRepository):
             return None
 
     def saveNoWaitIpcChannel(self, noWaitIpcChannel):
+        print(f"saved waitIpcChannel: {noWaitIpcChannel}")
         self.__noWaitIpcChannel = noWaitIpcChannel
 
     def getNoWaitIpcChannel(self):

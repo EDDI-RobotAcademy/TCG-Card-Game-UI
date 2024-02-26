@@ -111,3 +111,60 @@ class LeftClickDetector:
             return opponent_lost_zone
 
         return None
+
+
+    # todo : [이재승] 여기부터는 새로 짠 코드들
+
+    def which_one_select_is_in_your_field_energy_area(self, click_point, your_field_energy_zone, canvas_height):
+        x, y = click_point
+        y = canvas_height - y
+        y *= -1
+
+        if your_field_energy_zone.is_point_inside((x, y)):
+            return your_field_energy_zone
+
+        return None
+
+    def which_one_select_is_in_next_field_energy_race_area(self, click_point, next_field_energy_race_zone,
+                                                           canvas_height):
+        x, y = click_point
+        y = canvas_height - y
+        y *= -1
+
+        if next_field_energy_race_zone.is_point_inside((x, y)):
+            return next_field_energy_race_zone
+
+        return None
+
+    def which_one_select_is_in_prev_field_energy_race_area(self, click_point, prev_field_energy_race_zone,
+                                                           canvas_height):
+        x, y = click_point
+        y = canvas_height - y
+        y *= -1
+
+        if prev_field_energy_race_zone.is_point_inside((x, y)):
+            return prev_field_energy_race_zone
+
+        return None
+
+    def which_one_select_is_in_increase_field_energy_count_area(self, click_point, increase_field_energy_count_zone,
+                                                                canvas_height):
+        x, y = click_point
+        y = canvas_height - y
+        y *= -1
+
+        if increase_field_energy_count_zone.is_point_inside((x, y)):
+            return increase_field_energy_count_zone
+
+        return None
+
+    def which_one_select_is_in_decrease_field_energy_count_area(self, click_point, decrease_field_energy_count_zone,
+                                                                canvas_height):
+        x, y = click_point
+        y = canvas_height - y
+        y *= -1
+
+        if decrease_field_energy_count_zone.is_point_inside((x, y)):
+            return decrease_field_energy_count_zone
+
+        return None

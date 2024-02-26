@@ -1,6 +1,5 @@
 import tkinter
 
-from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
 from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
 from battle_lobby_frame.repository.battle_lobby_frame_repository_impl import BattleLobbyFrameRepositoryImpl
@@ -9,9 +8,6 @@ from battle_lobby_frame.service.request.request_deck_card_list import RequestDec
 from session.repository.session_repository_impl import SessionRepositoryImpl
 from utility.timer import Timer
 from utility.image_generator import ImageGenerator
-
-from pyopengltk import OpenGLFrame
-from OpenGL import GL, GLU, GLUT
 
 
 # from discarded.battle_room_list_frame.repository import BattleRoomListFrameRepositoryImpl

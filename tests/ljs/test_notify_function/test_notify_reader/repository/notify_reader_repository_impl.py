@@ -1,4 +1,4 @@
-from tests.ljs.test_notify_function.test_notify_reader.repository.notify_reader_repository import NotifyReaderRepository
+from notify_reader.repository.notify_reader_repository import NotifyReaderRepository
 
 
 class NotifyReaderRepositoryImpl(NotifyReaderRepository):

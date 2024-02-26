@@ -1,8 +1,8 @@
 import json
 
-from tests.ljs.test_notify_function.test_notify_reader.entity.notice_type import NoticeType
-from tests.ljs.test_notify_function.test_notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
-from tests.ljs.test_notify_function.test_notify_reader.service.notify_reader_service import NotifyReaderService
+from notify_reader.entity.notice_type import NoticeType
+from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
+from notify_reader.service.notify_reader_service import NotifyReaderService
 
 
 class NotifyReaderServiceImpl(NotifyReaderService):

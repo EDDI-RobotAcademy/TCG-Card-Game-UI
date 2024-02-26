@@ -1,4 +1,5 @@
 from battle_field.infra.battle_field_repository import BattleFieldRepository
+from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field_function.repository.battle_field_function_repository_impl import BattleFieldFunctionRepositoryImpl
 from battle_field_function.service.battle_field_function_service import BattleFieldFunctionService
@@ -13,6 +14,7 @@ from session.service.session_service_impl import SessionServiceImpl
 
 class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
     __instance = None
+    preDrawedBattleFieldFrameRefactor = None
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -36,7 +38,8 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
         self.__battleFieldFunctionRepository.saveReceiveIpcChannel(receiveIpcChannel)
 
 
-
+    def saveFrame(self, frame):
+        self.preDrawedBattleFieldFrame = frame
 
     def surrender(self, switchFrameWithMenuName = None):
         print(f"battleFieldFunctionServiceImpl: Surrender")
@@ -110,31 +113,35 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
 
     def attachFieldUnitEnergy(self, notify_dict_data):
         for data in notify_dict_data.values():
-            print(f"data: {data}")
             for target_character in data.keys():
-                print(f"target_character: {target_character}")
                 for target_unit_index in data[target_character].keys():
-                    print(f"target_unit_index: {target_unit_index}")
                     for energy_race in data[target_character][target_unit_index]["attached_energy_map"].keys():
                         for race in CardRace:
                             if race.value == int(energy_race):
                                 energy_race_data = race.name
 
-
-                        print(f"energy_race: {energy_race}")
-                        print(f"energy_race_data: {energy_race_data}")
                         race_energy_count = data[target_character][target_unit_index]["attached_energy_map"][energy_race]
                         total_energy_count = data[target_character][target_unit_index]["total_energy_count"]
-                        print(f"race_energy_count: {race_energy_count}")
-                        print(f"total_energy_count: {total_energy_count}")
-                        return {'energy_race' : int(energy_race), 'race_energy_count': int(race_energy_count),
+
+                        result_data = {'energy_race' : int(energy_race), 'race_energy_count': int(race_energy_count),
                                 'total_energy_count': int(total_energy_count), 'target_unit_index': int(target_unit_index)}
+
+                        self.preDrawedBattleFieldFrame.attach_energy(result_data)
                         #todo :
                         # target_character => You || Opponent
                         # target_unit_index => 필드에 존재하는 유닛의 index값
                         # energy_race => 에너지의 종족값
                         # race_energy_count => 해당 종족 에너지의 총 갯수
                         # total_energy_count => 모든 종족 에너지의 총 합
+
+    def spawnOpponentUnit(self, notify_dict_data):
+        print(f"Spawn Opponent: {notify_dict_data}")
+        for data in notify_dict_data.values():
+            print(f"data: {data}")
+            unit_card_id = data["Opponent"]
+            print(f"unit_card_id: {unit_card_id}")
+            OpponentFieldUnitRepository.getInstance().create_field_unit_card(int(unit_card_id))
+
 
     def searchOpponentCount(self, notify_dict_data):
         for data in notify_dict_data.values():

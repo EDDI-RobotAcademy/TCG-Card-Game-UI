@@ -1,12 +1,13 @@
+from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from image_shape.rectangle_image import RectangleImage
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
-from tests.ljs.uglt_test_field_energy.repository.your_field_energy_repository import YourFieldEnergyRepositoryForTest
+
 
 
 class YourFieldEnergy:
     __pre_drawed_image = PreDrawedImage.getInstance()
-    __your_field_energy_repository = YourFieldEnergyRepositoryForTest.getInstance()
+    __your_field_energy_repository = YourFieldEnergyRepository.getInstance()
 
     def __init__(self):
         self.your_field_energy_panel = None
@@ -51,7 +52,7 @@ class YourFieldEnergy:
         bottom_y_point = self.total_height * 0.959
 
         self.your_field_energy_panel = RectangleImage(
-            self.__pre_drawed_image.get_pre_draw_rectangle_number_image(self.__your_field_energy_repository.get_current_your_field_energy_state().get_current_your_field_energy()),
+            self.__pre_drawed_image.get_pre_draw_rectangle_number_image(self.__your_field_energy_repository.get_your_field_energy()),
             [
                 (left_x_point, top_y_point),
                 (right_x_point, top_y_point),
@@ -136,4 +137,4 @@ class YourFieldEnergy:
     def update_curent_field_energy_panel(self):
         self.your_field_energy_panel.set_image_data(
             self.__pre_drawed_image.get_pre_draw_rectangle_number_image(
-                self.__your_field_energy_repository.get_current_your_field_energy_state().get_current_your_field_energy()))
+                self.__your_field_energy_repository.get_your_field_energy()))

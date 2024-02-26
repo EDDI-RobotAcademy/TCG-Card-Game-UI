@@ -1,5 +1,4 @@
 import time
-import tkinter
 
 from battle_field_function.repository.battle_field_function_repository_impl import BattleFieldFunctionRepositoryImpl
 from matching_window.repository.matching_window_repository_impl import MatchingWindowRepositoryImpl
@@ -10,8 +9,6 @@ from matching_window.service.request.check_prepare_battle_request import CheckPr
 from matching_window.service.request.room_number_request import RoomNumberRequest
 from matching_window.service.request.start_matching_request import StartMatchingRequest
 from session.repository.session_repository_impl import SessionRepositoryImpl
-from utility.image_generator import ImageGenerator
-
 
 imageWidth = 256
 imageHeight = 256

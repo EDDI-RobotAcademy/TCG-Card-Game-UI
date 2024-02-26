@@ -55,10 +55,11 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_SEARCH_CARD_LIST.name, search_card_list_function)
 
 
-
+    def saveSpawnUnitFunction(self, spawn_unit_function):
+        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_UNIT_SPAWN.name, spawn_unit_function)
 
     def readNoticeAndCallFunction(self):
-        while True:
+        #while True:
             try:
                 raw_notice_data = self.__notify_reader_repository.getNotice()
 
@@ -74,5 +75,6 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                             called_function(notice_dict[notice_type.name])
 
             except Exception as e:
+                self.readNoticeAndCallFunction()
                 print(e)
-                continue
+              #  continue
