@@ -6,7 +6,7 @@ from tests.ljs.uglt_test_field_energy.repository.your_field_energy_repository im
 
 class PrevFieldEnergyRace:
     __pre_drawed_image = PreDrawedImage.getInstance()
-    __your_field_energy_repository = YourFieldEnergyRepositoryForTest()
+    __your_field_energy_repository = YourFieldEnergyRepositoryForTest.getInstance()
 
     def __init__(self):
         self.prev_field_energy_race_panel = None
@@ -46,8 +46,8 @@ class PrevFieldEnergyRace:
         # y2 = 0.959
 
         left_x_point = self.total_width * 0.905
-        right_x_point = self.total_width * 0.915
-        top_y_point = self.total_height * 0.737
+        right_x_point = self.total_width * 0.925
+        top_y_point = self.total_height * 0.717
         bottom_y_point = self.total_height * 0.757
 
         self.prev_field_energy_race_panel = Rectangle(

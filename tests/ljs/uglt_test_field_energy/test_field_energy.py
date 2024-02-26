@@ -49,6 +49,7 @@ from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from task_worker.service.task_worker_service_impl import TaskWorkerServiceImpl
 from tests.ljs.test_notify_function.test_notify_reader.repository.notify_reader_repository_impl import \
     NotifyReaderRepositoryImpl
+from tests.ljs.uglt_test_field_energy.entity.current_field_energy_race import CurrentFieldEnergyRace
 from tests.ljs.uglt_test_field_energy.entity.next_field_energy_race import NextFieldEnergyRace
 from tests.ljs.uglt_test_field_energy.entity.prev_field_energy_race import PrevFieldEnergyRace
 from tests.ljs.uglt_test_field_energy.entity.your_field_energy import YourFieldEnergy
@@ -329,6 +330,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.next_field_energy_race_panel_selected = False
         self.prev_field_energy_race_panel_selected = False
 
+        self.current_field_energy_race_panel = None
+        self.current_field_energy_race = CurrentFieldEnergyRace()
+
+
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -439,6 +444,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.prev_field_energy_race.create_prev_field_energy_race_panel()
         self.prev_field_energy_race_panel = self.prev_field_energy_race.get_prev_field_energy_race_panel()
 
+        self.current_field_energy_race.set_total_window_size(self.width, self.height)
+        self.current_field_energy_race.create_current_field_energy_race_panel()
+        self.current_field_energy_race_panel = self.current_field_energy_race.get_current_field_energy_race_panel()
 
         # self.your_tomb_repository.create_tomb_card(93)
         # self.your_tomb_repository.create_tomb_card(31)
@@ -571,7 +579,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.prev_field_energy_race.set_width_ratio(self.width_ratio)
         self.prev_field_energy_race.set_height_ratio(self.height_ratio)
         self.prev_field_energy_race_panel.draw()
-        # self.your_field_energy_panel.draw()
+
+        self.current_field_energy_race.set_width_ratio(self.width_ratio)
+        self.current_field_energy_race.set_height_ratio(self.height_ratio)
+        self.current_field_energy_race.update_current_field_energy_race_panel()
+        self.current_field_energy_race_panel.draw()
 
         glDisable(GL_BLEND)
 

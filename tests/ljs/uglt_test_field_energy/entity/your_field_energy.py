@@ -6,7 +6,7 @@ from tests.ljs.uglt_test_field_energy.repository.your_field_energy_repository im
 
 class YourFieldEnergy:
     __pre_drawed_image = PreDrawedImage.getInstance()
-    __your_field_energy_repository = YourFieldEnergyRepositoryForTest()
+    __your_field_energy_repository = YourFieldEnergyRepositoryForTest.getInstance()
 
     def __init__(self):
         self.your_field_energy_panel = None

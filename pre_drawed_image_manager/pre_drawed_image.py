@@ -22,6 +22,7 @@ class PreDrawedImage:
     __pre_drawed_numbers = {}
     __pre_drawed_character_hp = {}
     __pre_drawed_rectangle_number = {}
+    __pre_drawed_energy_race = {}
     __pre_drawed_dark_flame = None
     __pre_drawed_freezing = None
 
@@ -48,6 +49,8 @@ class PreDrawedImage:
     __pre_drawed_lose_text = None
 
     __pre_drawed_confirm_button = None
+
+
 
     __pre_drawed_prev_button = None
     __pre_drawed_reset_button = None
@@ -190,6 +193,18 @@ class PreDrawedImage:
             print(f"race_number: {race_number}, card_number: {card_number}")
             self.__pre_drawed_card_race[card_number] = card_race_image_data_list[race_number]
 
+    def pre_draw_energy_race(self):
+        image_dir = os.path.join(self.__project_root, "local_storage", "card_race_image")
+        file_list = os.listdir(image_dir)
+        png_files = [file for file in file_list if file.lower().endswith('.png')]
+
+        for png_file in png_files:
+            race_number = int(png_file[:-4])
+            print(f"race_number: {race_number}")
+            card_race_image_data = os.path.join(self.__project_root, "local_storage", "card_race_image", f"{png_file}")
+            self.__pre_drawed_energy_race[race_number] = ImageDataLoader.load_rectangle_image_data(card_race_image_data)
+
+
     def pre_draw_card_type(self):
         image_dir = os.path.join(self.__project_root, "local_storage", "card_type_image")
         file_list = os.listdir(image_dir)
@@ -323,6 +338,8 @@ class PreDrawedImage:
         self.pre_draw_reset_button()
         self.pre_draw_card_back_frame()
 
+        self.pre_draw_energy_race()
+
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
 
@@ -430,3 +447,5 @@ class PreDrawedImage:
     def get_pre_draw_card_back_frame(self):
         return self.__pre_drawed_card_back_frame
 
+    def get_pre_draw_energy_race_with_race_number(self, race_number):
+        return self.__pre_drawed_energy_race[race_number]
