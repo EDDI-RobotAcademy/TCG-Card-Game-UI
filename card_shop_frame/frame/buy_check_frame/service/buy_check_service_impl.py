@@ -19,7 +19,7 @@ class BuyCheckServiceImpl(BuyCheckService):
             cls.__instance.__cardShopMenuFrameService = CardShopMenuFrameServiceImpl.getInstance()
             cls.__instance.__cardShopMenuFrameRepository = CardShopMenuFrameRepositoryImpl.getInstance()
             cls.__instance.__sessionRepository = SessionRepositoryImpl.getInstance()
-            cls.__instance.__buyRandomCardFrameService = BuyRandomCardFrameServiceImpl.getInstance()
+            #cls.__instance.__buyRandomCardFrameService = BuyRandomCardFrameServiceImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -68,10 +68,9 @@ class BuyCheckServiceImpl(BuyCheckService):
                     BuyRandomCardRequest(sessionInfo=self.__sessionRepository.get_session_info(),
                                          race_name=self.findRace(), is_confirmed_upper_legend=False))
 
-            #is_success = responseData[0]['is_success']
-            is_success = True
-            #cardlist = responseData[0]['card_id_list']
-            cardlist = [76, 51, 76, 6, 77, 62, 53, 49, 72, 52]
+            is_success = responseData.get('is_success')
+            print(f"is_success: {is_success}")
+            cardlist = responseData.get('card_id_list')
             print(f"cardlist: {cardlist}")
             if is_success == True:
                 self.__buyCheckRepository.setRandomCardList(cardlist)

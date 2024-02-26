@@ -6,14 +6,12 @@ class BuyCheckRepositoryImpl(BuyCheckRepository):
     __instance = None
     __transmitIpcChannel = None
     __receiveIpcChannel = None
+    __randomCardList = None
 
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
         return cls.__instance
-
-    def __init__(self):
-        self.__randomCardList = None
 
     @classmethod
     def getInstance(cls):
@@ -49,6 +47,7 @@ class BuyCheckRepositoryImpl(BuyCheckRepository):
     def setRandomCardList(self, randomCardList):
         print("BuyCheckRepositoryImpl: setRandomCardList()")
         self.__randomCardList = randomCardList
+        print(f"{self.__randomCardList}")
 
     def getRandomCardList(self):
         print("BuyCheckRepositoryImpl: getRandomCardList()")
