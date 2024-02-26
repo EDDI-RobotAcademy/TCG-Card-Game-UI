@@ -5,6 +5,7 @@ from OpenGL.GLU import *
 from colorama import Fore, Style
 from pyopengltk import OpenGLFrame
 from screeninfo import get_monitors
+from shapely import Polygon, Point
 
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
@@ -12,6 +13,7 @@ from battle_field_muligun.service.request.muligun_request import MuligunRequest
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_pickable_shape.pickable_rectangle import PickableRectangle
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
+from opengl_shape.image_rectangle_element import ImageRectangleElement
 from opengl_shape.rectangle import Rectangle
 from session.repository.session_repository_impl import SessionRepositoryImpl
 
@@ -306,7 +308,10 @@ class BattleFieldMuligunFrame(OpenGLFrame):
             #             print(list(self.checking_draw_effect.keys()))
 
             # 확인 버튼 기능
-            if self.ok_button.is_point_inside((x, y)):
+            # if self.ok_button.is_point_inside((x, y)):
+            #     self.on_canvas_ok_button_click(event)
+
+            if self.is_point_inside_rectangle((x, y), self.ok_button):
                 self.on_canvas_ok_button_click(event)
 
         except Exception as e:
@@ -407,20 +412,50 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         return new_rectangle
 
     # 확인 버튼
+    # def create_ok_button(self):
+    #     rectangle_size = 100
+    #     rectangle_color = (0.8314, 0.7686, 0.6588, 1.0)
+    #
+    #     start_point = (850, 900)  # 확인 버튼 위치는 고정.
+    #     end_point = (start_point[0] + rectangle_size * 2.0, start_point[1] + rectangle_size * 0.55)
+    #
+    #     new_rectangle = PickableRectangle(rectangle_color, [
+    #         (start_point[0], start_point[1]),
+    #         (end_point[0], start_point[1]),
+    #         (end_point[0], end_point[1]),
+    #         (start_point[0], end_point[1])
+    #     ])
+    #     return new_rectangle
+
     def create_ok_button(self):
         rectangle_size = 100
-        rectangle_color = (0.8314, 0.7686, 0.6588, 1.0)
+        # rectangle_color = (0.8314, 0.7686, 0.6588, 1.0)
 
-        start_point = (850, 900)  # 확인 버튼 위치는 고정.
+        start_point = (850, 800)  # 확인 버튼 위치는 고정.
         end_point = (start_point[0] + rectangle_size * 2.0, start_point[1] + rectangle_size * 0.55)
 
-        new_rectangle = PickableRectangle(rectangle_color, [
+        new_rectangle = ImageRectangleElement("local_storage/button_image/ok_button.png",[
             (start_point[0], start_point[1]),
             (end_point[0], start_point[1]),
             (end_point[0], end_point[1]),
-            (start_point[0], end_point[1])
+            (start_point[0], end_point[1]),
         ])
         return new_rectangle
+
+    def is_point_inside_rectangle(self, point, rectangle):
+        x, y = point
+        y *= -1
+
+        rectangle_vertices = rectangle.get_vertices()
+
+        ratio_applied_valid_your_field = [(x * self.width_ratio, y * self.height_ratio) for x, y in rectangle_vertices]
+        print(f"ratio_applied_valid_your_field: {ratio_applied_valid_your_field}")
+        print(f"x: {x * self.width_ratio}, y: {y * self.height_ratio}")
+
+        poly = Polygon(ratio_applied_valid_your_field)
+        point = Point(x, y)
+
+        return point.within(poly)
 
 
     # 처음 뽑은 5장 카드 리스트에서 뽑은 카드 삭제
