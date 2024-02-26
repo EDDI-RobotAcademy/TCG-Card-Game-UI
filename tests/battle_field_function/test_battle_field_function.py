@@ -1,6 +1,5 @@
 import unittest
 
-from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
 from battle_field_function.repository.battle_field_function_repository_impl import BattleFieldFunctionRepositoryImpl
 from battle_field_function.service.request.surrender_request import SurrenderRequest
 

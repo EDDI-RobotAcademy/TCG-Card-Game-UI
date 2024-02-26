@@ -16,7 +16,6 @@ from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
     OpponentFixedUnitCardInsideHandler
 from battle_field.entity.opponent_tomb import OpponentTomb
-from battle_field.entity.tomb_type import TombType
 from battle_field.entity.your_tomb import YourTomb
 from battle_field.handler.support_card_handler import SupportCardHandler
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
@@ -35,20 +34,18 @@ from common.card_type import CardType
 from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
-from image_shape.rectangle_image import RectangleImage
 from initializer.init_domain import DomainInitializer
-from tests.ljs.test_notify_function.test_battle_field_function.service.battle_field_function_service_impl import \
+from battle_field_function.service.battle_field_function_service_impl import \
     BattleFieldFunctionServiceImpl
-from tests.ljs.test_notify_function.test_notify_reader.controller.notify_reader_controller_impl import \
-    NotifyReaderControllerImpl
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.circle import Circle
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
-from task_worker.service.task_worker_service_impl import TaskWorkerServiceImpl
-from tests.ljs.test_notify_function.test_notify_reader.repository.notify_reader_repository_impl import \
+from notify_reader.repository.notify_reader_repository_impl import \
     NotifyReaderRepositoryImpl
+from tests.ljs.test_notify_function.test_notify_reader.controller.notify_reader_controller_impl import \
+    NotifyReaderControllerImpl
 from tests.ljs.uglt_test_field_energy.entity.current_field_energy_race import CurrentFieldEnergyRace
 from tests.ljs.uglt_test_field_energy.entity.next_field_energy_race import NextFieldEnergyRace
 from tests.ljs.uglt_test_field_energy.entity.prev_field_energy_race import PrevFieldEnergyRace
@@ -493,6 +490,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         if key.lower() == 'o':
             self.opponent_hp_repository.take_damage()
+
+        if key.lower() == 'p':
+            self.your_field_unit_repository.create_field_unit_card(17)
 
 
         if key.lower() == 'a':
@@ -1046,7 +1046,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             self.tomb_panel_selected = False
             self.opponent_tomb_panel_selected = False
-            self.your_field_energy_panel_selected = False
+
             self.next_field_energy_race_panel_selected = False
             self.prev_field_energy_race_panel_selected = False
 
@@ -1209,6 +1209,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                 self.tomb_panel_selected = False
                 return
+
+            self.your_field_energy_panel_selected = False
 
             self.your_field_energy_panel_selected = self.left_click_detector.which_one_select_is_in_your_field_energy_area(
                 (x, y),

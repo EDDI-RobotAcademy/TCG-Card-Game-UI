@@ -36,19 +36,17 @@ from common.card_type import CardType
 from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
-from image_shape.rectangle_image import RectangleImage
 from initializer.init_domain import DomainInitializer
-from tests.ljs.test_notify_function.test_battle_field_function.service.battle_field_function_service_impl import \
+from battle_field_function.service.battle_field_function_service_impl import \
     BattleFieldFunctionServiceImpl
-from tests.ljs.test_notify_function.test_notify_reader.controller.notify_reader_controller_impl import \
+from notify_reader.controller import \
     NotifyReaderControllerImpl
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.circle import Circle
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
-from task_worker.service.task_worker_service_impl import TaskWorkerServiceImpl
-from tests.ljs.test_notify_function.test_notify_reader.repository.notify_reader_repository_impl import \
+from notify_reader.repository.notify_reader_repository_impl import \
     NotifyReaderRepositoryImpl
 from tests.ljs.ugly_test_character_hp.entity.opponent_hp import OpponentHp
 from tests.ljs.ugly_test_character_hp.entity.your_hp import YourHp

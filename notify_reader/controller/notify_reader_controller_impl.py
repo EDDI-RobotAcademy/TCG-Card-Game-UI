@@ -44,7 +44,8 @@ class NotifyReaderControllerImpl(NotifyReaderController):
         search_card_list_function = self.__battleFieldFunctionService.searchYourCardList
         self.__notifyReaderService.saveSearchCardListFunction(search_card_list_function)
 
-
+        spawn_unit_function = self.__battleFieldFunctionService.spawnOpponentUnit
+        self.__notifyReaderService.saveSpawnUnitFunction(spawn_unit_function)
 
 
     def requestToReadNotifyCommand(self):

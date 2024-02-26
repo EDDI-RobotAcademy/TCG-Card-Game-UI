@@ -5,9 +5,9 @@ from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
+from battle_field_function.service.battle_field_function_service_impl import BattleFieldFunctionServiceImpl
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
-from battle_field_function.service.battle_field_function_service_impl import BattleFieldFunctionServiceImpl
 from battle_field_muligun.service.battle_field_muligun_service_impl import BattleFieldMuligunFrameServiceImpl
 from battle_lobby_frame.service.battle_lobby_frame_service_impl import BattleLobbyFrameServiceImpl
 from card_shop_frame.service.card_shop_service_impl import CardShopMenuFrameServiceImpl
@@ -21,7 +21,7 @@ from opengl_battle_field.frame.battle_field_frame import BattleFieldFrame
 from opengl_my_card_main_frame.service.my_card_main_frame_service_impl import MyCardMainFrameServiceImpl
 from opengl_buy_random_card_frame.service.buy_random_card_frame_service_impl import BuyRandomCardFrameServiceImpl
 from opengl_my_deck_register_frame.service.my_deck_register_frame_service_impl import MyDeckRegisterFrameServiceImpl
-
+from notify_reader.controller.notify_reader_controller_impl import NotifyReaderControllerImpl
 
 from session.service.session_service_impl import SessionServiceImpl
 
@@ -122,6 +122,8 @@ class UiFrameControllerImpl(UiFrameController):
         fakeBattleFieldFrame = self.__fakeBattleFieldFrameServiece.createFakeBattleFieldFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerFakeBattleFieldUiFrame(fakeBattleFieldFrame)
 
+        self.__battleFieldFunctionService.saveFrame(fakeBattleFieldFrame)
+
     def first_main_window(self):
         self.switchFrameWithMenuName("main-menu")
 
@@ -132,6 +134,12 @@ class UiFrameControllerImpl(UiFrameController):
     def requestToStartPrintGameUi(self):
         print("UiFrameControllerImpl: requestToStartPrintGameUi()")
         rootWindow = self.__windowService.getRootWindow()
+
+        def get_notify():
+
+            NotifyReaderControllerImpl.getInstance().requestToReadNotifyCommand()
+            rootWindow.after(17, get_notify)
+        rootWindow.after(0,get_notify)
 
         rootWindow.mainloop()
 

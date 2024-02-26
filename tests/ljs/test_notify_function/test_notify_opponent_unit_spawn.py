@@ -37,17 +37,16 @@ from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
 from initializer.init_domain import DomainInitializer
-from tests.ljs.test_notify_function.test_battle_field_function.service.battle_field_function_service_impl import \
+from battle_field_function.service.battle_field_function_service_impl import \
     BattleFieldFunctionServiceImpl
-from tests.ljs.test_notify_function.test_notify_reader.controller.notify_reader_controller_impl import \
+from notify_reader.controller import \
     NotifyReaderControllerImpl
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.circle import Circle
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
-from task_worker.service.task_worker_service_impl import TaskWorkerServiceImpl
-from tests.ljs.test_notify_function.test_notify_reader.repository.notify_reader_repository_impl import \
+from notify_reader.repository.notify_reader_repository_impl import \
     NotifyReaderRepositoryImpl
 
 
@@ -131,6 +130,29 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.required_energy_select_lightning_border_list = []
 
         self.your_field_energy_repository = YourFieldEnergyRepository.getInstance()
+
+        self.your_hp_panel = None
+        self.your_hp = YourHp()
+        self.your_hp_repository = YourHpRepository.getInstance()
+
+        self.opponent_hp_panel = None
+        self.opponent_hp = OpponentHp()
+        self.opponent_hp_repository = OpponentHpRepository.getInstance()
+
+        self.your_field_energy_panel = None
+        self.your_field_energy = YourFieldEnergy()
+        self.your_field_energy_repository_for_test = YourFieldEnergyRepositoryForTest()
+        self.your_field_energy_panel_selected = False
+
+        self.next_field_energy_race_panel = None
+        self.next_field_energy_race = NextFieldEnergyRace()
+        self.prev_field_energy_race_panel = None
+        self.prev_field_energy_race = PrevFieldEnergyRace()
+        self.next_field_energy_race_panel_selected = False
+        self.prev_field_energy_race_panel_selected = False
+
+        self.current_field_energy_race_panel = None
+        self.current_field_energy_race = CurrentFieldEnergyRace()
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
