@@ -34,6 +34,7 @@ from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
 from battle_field_muligun.service.request.muligun_request import MuligunRequest
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
+from common.card_grade import CardGrade
 from common.card_race import CardRace
 from common.card_type import CardType
 from fake_battle_field.entity.muligun_reset_button import MuligunResetButton
@@ -799,6 +800,30 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             # self.your_tomb_repository.create_tomb_card(card_id)
                             self.your_tomb_repository.create_tomb_card(placed_card_id)
                             # TODO: attached_energy 값 UI에 표현 (이미지 작업 미완료)
+                            if int(self.card_info_repository.getCardGradeForCardNumber(placed_card_id)) == CardGrade.HERO.value:
+                                print(f"placed_card_id : {placed_card_id}사용")
+                                your_fixed_field_unit_vertices = fixed_card_base.get_vertices()
+
+                                card_freezing_image_circle = (your_fixed_field_unit.creat_fixed_card_freezing_image_circle(
+                                    image_data=self.pre_drawed_image_instance.get_pre_draw_freezing_energy(),
+                                    vertices=(your_fixed_field_unit_vertices[0][0] - 15,
+                                              your_fixed_field_unit_vertices[0][1] + 40),
+                                    local_translation=fixed_card_base.get_local_translation()
+                                )
+                                )
+
+                                card_dark_flame_image_circle = (your_fixed_field_unit.creat_fixed_card_dark_flame_image_circle(
+                                    image_data=self.pre_drawed_image_instance.get_pre_draw_dark_flame_energy(),
+                                    vertices=(your_fixed_field_unit_vertices[0][0] - 15,
+                                              your_fixed_field_unit_vertices[0][1] + 70),
+                                    local_translation=fixed_card_base.get_local_translation()
+                                )
+                                )
+
+                                fixed_card_base.set_attached_shapes(card_freezing_image_circle)
+                                fixed_card_base.set_attached_shapes(card_dark_flame_image_circle)
+                                print(
+                                    f"fixed_card_base.get_attached_shapes() : {fixed_card_base.get_attached_shapes()}")
 
                             # TODO: 특수 에너지 붙인 것을 어떻게 표현 할 것인가 ? (아직 미정)
                             for fixed_card_attached_shape in fixed_card_attached_shape_list:

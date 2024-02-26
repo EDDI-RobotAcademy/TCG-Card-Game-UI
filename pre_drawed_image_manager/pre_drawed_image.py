@@ -265,11 +265,11 @@ class PreDrawedImage:
 
     def pre_draw_dark_flame_energy(self):
         dark_flame_energy_image_path = os.path.join(self.__project_root, "local_storage", "card_special_energy_image", "dark_flame.png")
-        self.__pre_drawed_dark_flame = ImageDataLoader.load_rectangle_image_data(dark_flame_energy_image_path)
+        self.__pre_drawed_dark_flame = ImageDataLoader.load_circle_image_data(dark_flame_energy_image_path)
 
     def pre_draw_freezing_energy(self):
         freezing_energy_image_path = os.path.join(self.__project_root, "local_storage", "card_special_energy_image", "freezing.png")
-        self.__pre_drawed_freezing = ImageDataLoader.load_rectangle_image_data(freezing_energy_image_path)
+        self.__pre_drawed_freezing = ImageDataLoader.load_circle_image_data(freezing_energy_image_path)
 
     def pre_draw_reset_button(self):
         reset_button_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "reset_button.png")
