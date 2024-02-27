@@ -3,6 +3,7 @@ import os
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from image_shape.circle_image import CircleImage
 from image_shape.rectangle_image import RectangleImage
+from image_shape.rectangle_kinds import RectangleKinds
 from opengl_pickable_shape.pickable_rectangle import PickableRectangle
 from common.utility import get_project_root
 from opengl_shape.circle import Circle
@@ -95,6 +96,8 @@ class FixedFieldCard:
         card_frame = RectangleImage(image_data=image_data,
                                     local_translation=local_translation,
                                     vertices=vertices)
+
+        card_frame.set_rectangle_kinds(RectangleKinds.FRAME)
         card_frame.set_initial_vertices(vertices)
         return card_frame
 
@@ -102,6 +105,8 @@ class FixedFieldCard:
         card_illustration = RectangleImage(image_data=image_data,
                                            local_translation=local_translation,
                                            vertices=vertices)
+
+        card_illustration.set_rectangle_kinds(RectangleKinds.ILLUSTRATION)
         return card_illustration
 
     def create_equipped_mark(self, image_data, vertices, local_translation):

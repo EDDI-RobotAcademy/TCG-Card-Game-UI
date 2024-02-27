@@ -2,6 +2,7 @@ import os
 
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from image_shape.rectangle_image import RectangleImage
+from image_shape.rectangle_kinds import RectangleKinds
 from opengl_pickable_shape.pickable_rectangle import PickableRectangle
 from common.utility import get_project_root
 from opengl_shape.image_rectangle_element import ImageRectangleElement
@@ -85,6 +86,8 @@ class PickableCard:
         card_illustration = RectangleImage(image_data=image_data,
                                            local_translation=local_translation,
                                            vertices=vertices)
+
+        card_illustration.set_rectangle_kinds(RectangleKinds.ILLUSTRATION)
         card_illustration.set_initial_vertices(vertices)
         return card_illustration
 
@@ -92,6 +95,8 @@ class PickableCard:
         card_frame = RectangleImage(image_data=image_data,
                                     local_translation=local_translation,
                                     vertices=vertices)
+
+        card_frame.set_rectangle_kinds(RectangleKinds.FRAME)
         card_frame.set_initial_vertices(vertices)
         return card_frame
 
