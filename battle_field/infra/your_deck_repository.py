@@ -117,6 +117,7 @@ class YourDeckRepository:
             self.current_deck_card_object_list.append(new_card)
 
     def get_current_deck_card_object_list(self):
+        print(f"your_deck_repository: get_current_deck_card_object_list() -> {self.current_deck_card_object_list}")
         return self.current_deck_card_object_list
 
     def draw_deck(self):

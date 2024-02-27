@@ -562,6 +562,16 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     attached_shape.set_height_ratio(self.height_ratio)
                     attached_shape.draw()
 
+                for selected_search_unit in self.selected_search_unit_lightning_border:
+                    if selected_search_unit == fixed_card_base:
+                        selected_search_unit.set_width_ratio(self.width_ratio)
+                        selected_search_unit.set_height_ratio(self.height_ratio)
+
+                        self.lightning_border.set_padding(20)
+                        self.lightning_border.update_shape(selected_search_unit)
+                        self.lightning_border.draw_lightning_border()
+
+
             self.your_deck_prev_button.draw()
             self.your_deck_ok_button.draw()
             self.your_deck_next_button.draw()
@@ -1260,11 +1270,20 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 if self.your_deck.is_point_inside_ok_button((x, y)):
                     print("OK 버튼 클릭")
 
+                # TODO: 개수 제한 필요
+                for current_page_deck_card_object in self.your_deck_repository.get_current_page_deck_list():
+                    deck_fixed_card_base = current_page_deck_card_object.get_fixed_card_base()
 
-                self.selected_search_unit_id_list.append()
-                self.selected_search_unit_index_list.append()
-                self.selected_search_unit_page_number_list.append()
-                self.selected_search_unit_lightning_border.append()
+                    print(f"레오닉의 부름 -> x: {x}, y: {y}")
+
+                    if deck_fixed_card_base.is_point_inside((x, y)):
+                        print("덱에서 검색하여 유닛 선택!")
+                        self.selected_search_unit_id_list.append(current_page_deck_card_object.get_card_number())
+                        self.selected_search_unit_index_list.append(current_page_deck_card_object.get_index())
+                        self.selected_search_unit_page_number_list.append(
+                            self.your_deck_repository.get_current_deck_page())
+
+                        self.selected_search_unit_lightning_border.append(deck_fixed_card_base)
 
                 return
 
