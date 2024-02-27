@@ -120,6 +120,9 @@ class YourDeckRepository:
         self.current_deck_state.add_to_deck(deck_list)
         print(f"Saved current deck state: {deck_list}")
 
+    def get_current_deck_state_object(self):
+        return self.current_deck_state
+
     def get_current_deck_state(self):
         return self.current_deck_state.get_current_deck()
 
