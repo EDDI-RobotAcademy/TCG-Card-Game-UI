@@ -40,9 +40,8 @@ class YourDeckRepository:
         self.total_width = width
         self.total_height = height
 
-    def save_deck_state(self, deck_list):
-        self.current_deck_state.add_to_deck(deck_list)
-        print(f"Saved current deck state: {deck_list}")
+    def build_deck_page(self):
+        deck_list = self.get_current_deck_state()
 
         num_cards_per_page = 12
         num_pages = ceil(len(deck_list) / num_cards_per_page)
@@ -59,6 +58,10 @@ class YourDeckRepository:
             current_page.create_deck_card_list()
 
             self.deck_page_list.append(current_page)
+
+    def save_deck_state(self, deck_list):
+        self.current_deck_state.add_to_deck(deck_list)
+        print(f"Saved current deck state: {deck_list}")
 
     def get_current_deck_state(self):
         return self.current_deck_state.get_current_deck()
