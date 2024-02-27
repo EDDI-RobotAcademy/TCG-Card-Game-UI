@@ -31,6 +31,11 @@ class DeckPage:
         if isinstance(deck_list, list):
             self.deck_page_card_list.extend(deck_list)
 
+    def update_deck_to_page(self, deck_list):
+        if isinstance(deck_list, list):
+            self.deck_page_card_list = []
+            self.deck_page_card_list.extend(deck_list)
+
     def get_deck_page_card_list(self):
         return self.deck_page_card_list
 
@@ -62,3 +67,16 @@ class DeckPage:
             new_card.init_card(card_number)
             new_card.set_index(index)
             self.deck_page_card_object_list.append(new_card)
+
+    def remove_card_by_multiple_index(self, card_index_list):
+        for index in sorted(card_index_list, reverse=True):
+            if 0 <= index < len(self.deck_page_card_object_list):
+                del self.deck_page_card_object_list[index]
+                del self.deck_page_card_object_list[index]
+            else:
+                print(f"Invalid index: {index}. No card removed for this index.")
+
+        print(
+            f"Removed cards at indices {card_index_list} -> current_opponent_field_list: "
+            f"{self.current_field_unit_card_object_list}, "
+            f"current_opponent_field_state: {self.get_current_field_unit_state()}")

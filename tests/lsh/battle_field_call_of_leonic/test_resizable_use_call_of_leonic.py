@@ -1,3 +1,5 @@
+import random
+
 from screeninfo import get_monitors
 from shapely import Polygon, Point
 
@@ -221,7 +223,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_tomb_panel = self.opponent_tomb.get_opponent_tomb_panel()
 
         self.your_hand_repository.set_x_base(567.5)
-        self.your_hand_repository.save_current_hand_state([25, 33, 2, 151, 30])
+        self.your_hand_repository.save_current_hand_state([25, 33, 2, 30, 30])
         # self.your_hand_repository.save_current_hand_state([151])
         self.your_hand_repository.create_hand_card_list()
 
@@ -1270,6 +1272,50 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                 if self.your_deck.is_point_inside_ok_button((x, y)):
                     print("OK 버튼 클릭")
+
+                    # will_remove_index_from_deck = []
+                    # processing_length = len(self.selected_search_unit_index_list)
+                    # for index in range(processing_length):
+                    #     will_remove_index_from_deck.append(
+                    #         self.selected_search_unit_index_list[index] + 12 * self.selected_search_unit_page_number_list[index])
+                    #
+                    # print(f"will_remove_index_from_deck: {will_remove_index_from_deck}")
+                    # self.your_deck_repository
+
+                    # 실제로 지울 때 몇 개 지우는지만 알면 된다.
+                    # 어차피 셔플 받아서 이미지만 갈아 끼워넣을 것이기 때문
+                    processing_length = len(self.selected_search_unit_index_list)
+                    self.your_deck_repository.remove_card_object_list_with_count(processing_length)
+
+                    self.your_hand_repository.create_additional_hand_card_list(self.selected_search_unit_id_list)
+                    # self.selected_search_unit_page_number_list
+                    self.selected_search_unit_lightning_border = []
+
+                    self.field_area_inside_handler.clear_field_area_action()
+
+                    # 셔플 받았다 가정
+                    current_deck_list = self.your_deck_repository.get_current_deck_state()
+
+                    will_remove_index_from_deck = []
+                    processing_length = len(self.selected_search_unit_index_list)
+                    for index in range(processing_length):
+                        will_remove_index_from_deck.append(
+                            self.selected_search_unit_index_list[index] + 12 * self.selected_search_unit_page_number_list[index])
+
+                    print(f"will_remove_index_from_deck: {will_remove_index_from_deck}")
+
+                    remaining_shuffled_deck_list = [card for i, card in enumerate(current_deck_list) if
+                                                    i not in will_remove_index_from_deck]
+
+                    # 셔플
+                    random.shuffle(remaining_shuffled_deck_list)
+                    print(f"Shuffled deck (excluding removed indices): {remaining_shuffled_deck_list}")
+
+                    self.your_deck_repository.update_deck(remaining_shuffled_deck_list)
+
+                    self.selected_search_unit_index_list = []
+                    self.selected_search_unit_id_list = []
+                    self.selected_search_unit_page_number_list = []
 
                 # TODO: 개수 제한 필요
                 for current_page_deck_card_object in self.your_deck_repository.get_current_page_deck_list():
