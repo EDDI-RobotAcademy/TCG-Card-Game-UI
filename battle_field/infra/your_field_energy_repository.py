@@ -88,3 +88,6 @@ class YourFieldEnergyRepository:
 
     def get_to_use_field_energy_count(self):
         return self.__to_use_field_energy_count
+
+    def reset_to_use_field_energy_count(self):
+        self.__to_use_field_energy_count = 1

@@ -8,8 +8,7 @@ class YourFieldEnergyState:
 
 
     def decrease_field_energy(self, count):
-
-        if self.your_field_energy_count >= 1:
+        if self.your_field_energy_count - count >= 0:
             self.your_field_energy_count -= count
             return True
         else:
