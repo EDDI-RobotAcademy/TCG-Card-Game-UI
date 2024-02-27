@@ -6,6 +6,7 @@ class BuyCheckRepositoryImpl(BuyCheckRepository):
     __instance = None
     __transmitIpcChannel = None
     __receiveIpcChannel = None
+    __randomCardList = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -42,3 +43,12 @@ class BuyCheckRepositoryImpl(BuyCheckRepository):
     def saveReceiveIpcChannel(self, receiveIpcChannel):
         print("BuyCheckRepositoryImpl: saveReceiveIpcChannel()")
         self.__receiveIpcChannel = receiveIpcChannel
+
+    def setRandomCardList(self, randomCardList):
+        print("BuyCheckRepositoryImpl: setRandomCardList()")
+        self.__randomCardList = randomCardList
+        print(f"{self.__randomCardList}")
+
+    def getRandomCardList(self):
+        print("BuyCheckRepositoryImpl: getRandomCardList()")
+        return self.__randomCardList

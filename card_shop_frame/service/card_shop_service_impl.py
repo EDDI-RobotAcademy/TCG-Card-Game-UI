@@ -5,7 +5,7 @@ from card_shop_frame.repository.card_shop_repository_impl import CardShopMenuFra
 from card_shop_frame.service.card_shop_service import CardShopMenuFrameService
 from card_shop_frame.frame.buy_check_frame.service.buy_check_service_impl import BuyCheckServiceImpl
 from card_shop_frame.frame.buy_check_frame.repository.buy_check_repository_impl import BuyCheckRepositoryImpl
-from my_game_money_frame.service.my_game_money_frame_service_impl import MyGameMoneyFrameServiceImpl
+from card_shop_frame.frame.my_game_money_frame.service.my_game_money_frame_service_impl import MyGameMoneyFrameServiceImpl
 from lobby_frame.repository.lobby_menu_frame_repository_impl import LobbyMenuFrameRepositoryImpl
 from session.service.session_service_impl import SessionServiceImpl
 
@@ -45,9 +45,7 @@ class CardShopMenuFrameServiceImpl(CardShopMenuFrameService):
         self.go_back_to_lobby_button["state"] = "normal"
         self.my_card_button["state"] = "normal"
 
-    def findMyMoney(self):
-        myMoney = self.__cardShopMenuFrameRepository.getMyMoney()
-        print(f"testRace: {myMoney}")
+
 
     def createCardShopUiFrame(self, rootWindow, switchFrameWithMenuName):
         cardShopMenuFrame = self.__cardShopMenuFrameRepository.createCardShopMenuFrame(rootWindow)
@@ -59,15 +57,14 @@ class CardShopMenuFrameServiceImpl(CardShopMenuFrameService):
 
 
 
-        label_text = "전체"
+        label_text = "상점"
         label = tkinter.Label(cardShopMenuFrame, text=label_text, font=("Helvetica", 64), fg="black",
                               anchor="center", justify="center")
 
         label.place(relx=0.5, rely=0.1, anchor="center", bordermode="outside")  # 가운데 정렬
 
 
-        my_money_frame = self.__myGameMoneyFrameService.createMyGameMoneyUiFrame(cardShopMenuFrame,
-                                                                                 self.__cardShopMenuFrameRepository.getMyMoney())
+        my_money_frame = self.__myGameMoneyFrameService.createMyGameMoneyUiFrame(cardShopMenuFrame)
         my_money_frame.place(relx=0.91, rely=0.06, relwidth=0.09, relheight=0.02, anchor="center")
 
         self.get_new_all_cards_button = tkinter.Button(cardShopMenuFrame, text="전체 카드 뽑기", bg="#2E2BE2", fg="white",

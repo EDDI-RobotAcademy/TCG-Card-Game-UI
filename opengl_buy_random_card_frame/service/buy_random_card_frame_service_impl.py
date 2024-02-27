@@ -5,7 +5,7 @@ from card_shop_frame.frame.buy_check_frame.service.request.buy_random_card_reque
 from opengl_button.button_binding.buy_random_card_button_bind import BuyRandomCardFrameButtonBind
 
 from session.repository.session_repository_impl import SessionRepositoryImpl
-from card_shop_frame.repository.card_shop_repository_impl import CardShopMenuFrameRepositoryImpl
+from card_shop_frame.frame.buy_check_frame.repository.buy_check_repository_impl import BuyCheckRepositoryImpl
 
 
 class BuyRandomCardFrameServiceImpl(BuyRandomCardFrameService):
@@ -19,7 +19,7 @@ class BuyRandomCardFrameServiceImpl(BuyRandomCardFrameService):
             cls.__instance.__buyRandomCardFrame = BuyRandomCardFrame
             cls.__instance.__buyRandomCardScene = BuyRandomCardScene()
             cls.__instance.__sessionRepository = SessionRepositoryImpl.getInstance()
-            cls.__instance.__cardShopMenuFrameRepository = CardShopMenuFrameRepositoryImpl.getInstance()
+            cls.__instance.__buyCheckRepository = BuyCheckRepositoryImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -28,13 +28,9 @@ class BuyRandomCardFrameServiceImpl(BuyRandomCardFrameService):
             cls.__instance = cls()
         return cls.__instance
 
+
     def createBuyRandomCardUiFrame(self, rootWindow, switchFrameWithMenuName):
-        # responseData = self.buyRandomCardRequest()
-        # print(responseData)
-        # self.__buyRandomCardScene.add_card_list(responseData)
-
         buyRandomCardrame = self.__buyRandomCardFrame(rootWindow)
-
         buttonBinding = BuyRandomCardFrameButtonBind(master=rootWindow, frame=buyRandomCardrame)
         buttonBinding.button_bind()
 
