@@ -147,7 +147,7 @@ class LeftClickDetector:
 
         return None
 
-    def which_one_select_is_in_increase_field_energy_count_area(self, click_point, increase_field_energy_count_zone,
+    def which_one_select_is_in_increase_to_use_field_energy_count_area(self, click_point, increase_field_energy_count_zone,
                                                                 canvas_height):
         x, y = click_point
         y = canvas_height - y
@@ -158,7 +158,7 @@ class LeftClickDetector:
 
         return None
 
-    def which_one_select_is_in_decrease_field_energy_count_area(self, click_point, decrease_field_energy_count_zone,
+    def which_one_select_is_in_decrease_to_use_field_energy_count_area(self, click_point, decrease_field_energy_count_zone,
                                                                 canvas_height):
         x, y = click_point
         y = canvas_height - y

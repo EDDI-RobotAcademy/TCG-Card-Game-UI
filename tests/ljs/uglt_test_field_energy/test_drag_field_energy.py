@@ -47,6 +47,9 @@ from notify_reader.repository.notify_reader_repository_impl import \
 from tests.ljs.test_notify_function.test_notify_reader.controller.notify_reader_controller_impl import \
     NotifyReaderControllerImpl
 from tests.ljs.uglt_test_field_energy.entity.current_field_energy_race import CurrentFieldEnergyRace
+from tests.ljs.uglt_test_field_energy.entity.current_to_use_field_energy_count import CurrentToUseFieldEnergyCount
+from tests.ljs.uglt_test_field_energy.entity.decrease_to_use_field_energy_count import DecreaseToUseFieldEnergyCount
+from tests.ljs.uglt_test_field_energy.entity.increase_to_use_field_energy_count import IncreaseToUseFieldEnergyCount
 from tests.ljs.uglt_test_field_energy.entity.next_field_energy_race import NextFieldEnergyRace
 from tests.ljs.uglt_test_field_energy.entity.prev_field_energy_race import PrevFieldEnergyRace
 from tests.ljs.uglt_test_field_energy.entity.your_field_energy import YourFieldEnergy
@@ -225,6 +228,30 @@ class LeftClickDetector:
 
         return None
 
+    def which_one_select_is_in_increase_to_use_field_energy_count_area(self, click_point,
+                                                                       increase_to_use_field_energy_count_zone,
+                                                                       canvas_height):
+        x, y = click_point
+        y = canvas_height - y
+        y *= -1
+
+        if increase_to_use_field_energy_count_zone.is_point_inside((x, y)):
+            return increase_to_use_field_energy_count_zone
+
+        return None
+
+    def which_one_select_is_in_decrease_to_use_field_energy_count_area(self, click_point,
+                                                                       decrease_to_use_field_energy_count_zone,
+                                                                       canvas_height):
+        x, y = click_point
+        y = canvas_height - y
+        y *= -1
+
+        if decrease_to_use_field_energy_count_zone.is_point_inside((x, y)):
+            return decrease_to_use_field_energy_count_zone
+
+        return None
+
 
 class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
     def __init__(self, master=None, **kwargs):
@@ -330,7 +357,16 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.current_field_energy_race_panel = None
         self.current_field_energy_race = CurrentFieldEnergyRace()
 
+        self.current_to_use_field_energy_count_panel = None
+        self.current_to_use_field_energy_count = CurrentToUseFieldEnergyCount()
 
+        self.increase_to_use_field_energy_count_panel = None
+        self.increase_to_use_field_energy_count = IncreaseToUseFieldEnergyCount()
+        self.increase_to_use_field_energy_count_panel_selected = False
+
+        self.decrease_to_use_field_energy_count_panel = None
+        self.decrease_to_use_field_energy_count = DecreaseToUseFieldEnergyCount()
+        self.decrease_to_use_field_energy_count_panel_selected = False
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -444,6 +480,26 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.current_field_energy_race.set_total_window_size(self.width, self.height)
         self.current_field_energy_race.create_current_field_energy_race_panel()
         self.current_field_energy_race_panel = self.current_field_energy_race.get_current_field_energy_race_panel()
+
+
+
+        self.current_to_use_field_energy_count.set_total_window_size(self.width, self.height)
+        self.current_to_use_field_energy_count.create_current_to_use_field_energy_count_panel()
+        self.current_to_use_field_energy_count_panel = (
+            self.current_to_use_field_energy_count.get_current_to_use_field_energy_count_panel())
+
+        self.increase_to_use_field_energy_count.set_total_window_size(self.width, self.height)
+        self.increase_to_use_field_energy_count.create_increase_to_use_field_energy_count_panel()
+        self.increase_to_use_field_energy_count_panel = (
+            self.increase_to_use_field_energy_count.get_increase_to_use_field_energy_count_panel()
+        )
+
+        self.decrease_to_use_field_energy_count.set_total_window_size(self.width, self.height)
+        self.decrease_to_use_field_energy_count.create_decrease_to_use_field_energy_count_panel()
+        self.decrease_to_use_field_energy_count_panel = (
+            self.decrease_to_use_field_energy_count.get_decrease_to_use_field_energy_count_panel()
+        )
+
 
         # self.your_tomb_repository.create_tomb_card(93)
         # self.your_tomb_repository.create_tomb_card(31)
@@ -584,6 +640,19 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.current_field_energy_race.set_height_ratio(self.height_ratio)
         self.current_field_energy_race.update_current_field_energy_race_panel()
         self.current_field_energy_race_panel.draw()
+
+        self.current_to_use_field_energy_count.set_width_ratio(self.width_ratio)
+        self.current_to_use_field_energy_count.set_height_ratio(self.height_ratio)
+        self.current_to_use_field_energy_count.update_current_to_use_field_energy_count_panel()
+        self.current_to_use_field_energy_count_panel.draw()
+
+        self.increase_to_use_field_energy_count.set_width_ratio(self.width_ratio)
+        self.increase_to_use_field_energy_count.set_height_ratio(self.height_ratio)
+        self.increase_to_use_field_energy_count_panel.draw()
+
+        self.decrease_to_use_field_energy_count.set_width_ratio(self.width_ratio)
+        self.decrease_to_use_field_energy_count.set_height_ratio(self.height_ratio)
+        self.decrease_to_use_field_energy_count_panel.draw()
 
         glDisable(GL_BLEND)
 
@@ -865,7 +934,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             acquire_energy = round(fixed_field_unit_hp / 5)
                             print(f"acquire_energy: {acquire_energy}")
 
-                            self.your_field_energy_repository.increase_your_field_energy(acquire_energy)
+                            self.your_field_energy_repository_for_test.increase_your_field_energy(acquire_energy)
                             self.your_hand_repository.remove_card_by_index(placed_index)
                             self.your_field_unit_repository.remove_card_by_index(unit_index)
 
@@ -874,7 +943,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             self.your_tomb_repository.create_tomb_card(card_id)
                             self.your_tomb_repository.create_tomb_card(placed_card_id)
 
-                            print(f"사기 전환 이후 필드 에너지 수량: {self.your_field_energy_repository.get_your_field_energy()}")
+                            print(f"사기 전환 이후 필드 에너지 수량: {self.your_field_energy_repository_for_test.get_your_field_energy()}")
 
                             self.selected_object = None
                             return
@@ -1245,6 +1314,32 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 self.your_field_energy_repository_for_test.to_prev_field_energy_race()
                 print(
                     f"on_canvas_left_click() -> to_prev_field_energy_race: {self.your_field_energy_repository_for_test.get_current_field_energy_race()}")
+
+            self.increase_to_use_field_energy_count_panel_selected = (
+                self.left_click_detector.which_one_select_is_in_increase_to_use_field_energy_count_area(
+                    (x, y),
+                    self.increase_to_use_field_energy_count,
+                    self.winfo_reqheight()
+                )
+            )
+
+            if self.increase_to_use_field_energy_count_panel_selected:
+                print(f"on_canvas_left_click() -> increase_to_use_field_energy_count(): "
+                      f"{self.your_field_energy_repository_for_test.get_to_use_field_energy_count()}")
+                self.your_field_energy_repository_for_test.increase_to_use_field_energy_count()
+
+            self.decrease_to_use_field_energy_count_panel_selected = (
+                self.left_click_detector.which_one_select_is_in_decrease_to_use_field_energy_count_area(
+                    (x, y),
+                    self.decrease_to_use_field_energy_count,
+                    self.winfo_reqheight()
+                )
+            )
+
+            if self.decrease_to_use_field_energy_count_panel_selected:
+                print(f"on_canvas_left_click() -> decrease_to_use_field_energy_count(): "
+                      f"{self.your_field_energy_repository_for_test.get_to_use_field_energy_count()}")
+                self.your_field_energy_repository_for_test.decrease_to_use_field_energy_count()
 
             self.tomb_panel_selected = False
             self.opponent_tomb_panel_selected = False
