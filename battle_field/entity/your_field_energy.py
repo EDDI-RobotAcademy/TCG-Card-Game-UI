@@ -1,4 +1,5 @@
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
+from image_shape.non_background_image import NonBackgroundImage
 from image_shape.rectangle_image import RectangleImage
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
@@ -46,21 +47,22 @@ class YourFieldEnergy:
         # y1 = 0.767
         # y2 = 0.959
 
-        left_x_point = self.total_width * 0.905
-        right_x_point = self.total_width * 0.995
-        top_y_point = self.total_height * 0.767
-        bottom_y_point = self.total_height * 0.959
+        left_x_point = self.total_width * 0.89
+        right_x_point = self.total_width * 0.973
+        top_y_point = self.total_height * 0.807
+        bottom_y_point = self.total_height * 0.968
 
-        self.your_field_energy_panel = RectangleImage(
-            self.__pre_drawed_image.get_pre_draw_rectangle_number_image(self.__your_field_energy_repository.get_your_field_energy()),
-            [
+        self.your_field_energy_panel = NonBackgroundImage(
+            image_data=self.__pre_drawed_image.get_pre_draw_field_energy(self.__your_field_energy_repository.get_your_field_energy()),
+            vertices=[
                 (left_x_point, top_y_point),
                 (right_x_point, top_y_point),
                 (right_x_point, bottom_y_point),
                 (left_x_point, bottom_y_point)
             ],
-            (0, 0),
-            (0, 0))
+            global_translation=(0, 0),
+            local_translation=(0, 0)
+        )
 
         # self.your_field_energy_panel.draw()
 
@@ -136,5 +138,5 @@ class YourFieldEnergy:
 
     def update_curent_field_energy_panel(self):
         self.your_field_energy_panel.set_image_data(
-            self.__pre_drawed_image.get_pre_draw_rectangle_number_image(
+            self.__pre_drawed_image.get_pre_draw_field_energy(
                 self.__your_field_energy_repository.get_your_field_energy()))
