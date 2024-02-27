@@ -26,6 +26,7 @@ class PreDrawedImage:
     __pre_drawed_dark_flame = None
     __pre_drawed_freezing = None
 
+
     __pre_drawed_opponent_tomb = None
     __pre_drawed_opponent_lost_zone = None
     __pre_drawed_opponent_trap = None
@@ -42,6 +43,7 @@ class PreDrawedImage:
     __pre_drawed_your_hand_panel = None
     __pre_drawed_your_unit_field = None
 
+    __pre_drawed_field_energy = {}
     __pre_drawed_battle_field_environment = None
     __pre_drawed_turn_end_button = None
 
@@ -60,6 +62,7 @@ class PreDrawedImage:
     __pre_drawed_next_gold_button = None
     __pre_drawed_prev_gold_button = None
     __pre_drawed_ok_button = None
+
 
 
     def __new__(cls):
@@ -314,6 +317,15 @@ class PreDrawedImage:
                                                    "ok_button.png")
         self.__pre_drawed_ok_button = ImageDataLoader.load_rectangle_image_data(prev_gold_button_image_path)
 
+    def pre_draw_battle_field_energy(self):
+        image_dir = os.path.join(self.__project_root, "local_storage", "field_energy_image")
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            field_energy_image_data = os.path.join(self.__project_root, "local_storage", "field_energy_image", f"{number}.png")
+            print(f"image data = {field_energy_image_data}")
+            self.__pre_drawed_field_energy[number] = ImageDataLoader.load_rectangle_image_data(field_energy_image_data)
+
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
         self.pre_draw_opponent_lost_zone()
@@ -357,6 +369,7 @@ class PreDrawedImage:
         self.pre_draw_card_back_frame()
 
         self.pre_draw_energy_race()
+        self.pre_draw_battle_field_energy()
 
         self.pre_draw_next_gold_button()
         self.pre_draw_prev_gold_button()
@@ -481,3 +494,7 @@ class PreDrawedImage:
 
     def get_pre_draw_ok_button(self):
         return self.__pre_drawed_ok_button
+
+    def get_pre_draw_field_energy(self, number=0):
+        return self.__pre_drawed_field_energy[number]
+

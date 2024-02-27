@@ -15,7 +15,7 @@ class YourFieldEnergyState:
         else:
             self.your_field_energy_count = 0
             return False
-        
+
 
     def get_your_field_energy_count(self):
         return self.your_field_energy_count

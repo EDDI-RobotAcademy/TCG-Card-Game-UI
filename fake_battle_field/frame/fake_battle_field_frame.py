@@ -14,6 +14,9 @@ from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
     OpponentFixedUnitCardInsideHandler
 from battle_field.entity.current_field_energy_race import CurrentFieldEnergyRace
+from battle_field.entity.current_to_use_field_energy_count import CurrentToUseFieldEnergyCount
+from battle_field.entity.decrease_to_use_field_energy_count import DecreaseToUseFieldEnergyCount
+from battle_field.entity.increase_to_use_field_energy_count import IncreaseToUseFieldEnergyCount
 from battle_field.entity.next_field_energy_race import NextFieldEnergyRace
 from battle_field.entity.opponent_hp import OpponentHp
 from battle_field.entity.opponent_lost_zone import OpponentLostZone
@@ -185,6 +188,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.current_field_energy_race_panel = None
         self.current_field_energy_race = CurrentFieldEnergyRace()
 
+        self.current_to_use_field_energy_count_panel = None
+        self.current_to_use_field_energy_count = CurrentToUseFieldEnergyCount()
+
+        self.increase_to_use_field_energy_count_panel = None
+        self.increase_to_use_field_energy_count = IncreaseToUseFieldEnergyCount()
+        self.increase_to_use_field_energy_count_panel_selected = False
+
+        self.decrease_to_use_field_energy_count_panel = None
+        self.decrease_to_use_field_energy_count = DecreaseToUseFieldEnergyCount()
+        self.decrease_to_use_field_energy_count_panel_selected = False
+
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
         self.bind("<ButtonRelease-1>", self.on_canvas_release)
@@ -291,6 +305,23 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.current_field_energy_race.set_total_window_size(self.width, self.height)
         self.current_field_energy_race.create_current_field_energy_race_panel()
         self.current_field_energy_race_panel = self.current_field_energy_race.get_current_field_energy_race_panel()
+
+        self.current_to_use_field_energy_count.set_total_window_size(self.width, self.height)
+        self.current_to_use_field_energy_count.create_current_to_use_field_energy_count_panel()
+        self.current_to_use_field_energy_count_panel = (
+            self.current_to_use_field_energy_count.get_current_to_use_field_energy_count_panel())
+
+        self.increase_to_use_field_energy_count.set_total_window_size(self.width, self.height)
+        self.increase_to_use_field_energy_count.create_increase_to_use_field_energy_count_panel()
+        self.increase_to_use_field_energy_count_panel = (
+            self.increase_to_use_field_energy_count.get_increase_to_use_field_energy_count_panel()
+        )
+
+        self.decrease_to_use_field_energy_count.set_total_window_size(self.width, self.height)
+        self.decrease_to_use_field_energy_count.create_decrease_to_use_field_energy_count_panel()
+        self.decrease_to_use_field_energy_count_panel = (
+            self.decrease_to_use_field_energy_count.get_decrease_to_use_field_energy_count_panel()
+        )
 
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
@@ -447,6 +478,19 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.current_field_energy_race.set_height_ratio(self.height_ratio)
         self.current_field_energy_race.update_current_field_energy_race_panel()
         self.current_field_energy_race_panel.draw()
+
+        self.current_to_use_field_energy_count.set_width_ratio(self.width_ratio)
+        self.current_to_use_field_energy_count.set_height_ratio(self.height_ratio)
+        self.current_to_use_field_energy_count.update_current_to_use_field_energy_count_panel()
+        self.current_to_use_field_energy_count_panel.draw()
+
+        self.increase_to_use_field_energy_count.set_width_ratio(self.width_ratio)
+        self.increase_to_use_field_energy_count.set_height_ratio(self.height_ratio)
+        self.increase_to_use_field_energy_count_panel.draw()
+
+        self.decrease_to_use_field_energy_count.set_width_ratio(self.width_ratio)
+        self.decrease_to_use_field_energy_count.set_height_ratio(self.height_ratio)
+        self.decrease_to_use_field_energy_count_panel.draw()
 
         glDisable(GL_BLEND)
 
@@ -1376,6 +1420,32 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.your_field_energy_repository.to_prev_field_energy_race()
                 print(
                     f"on_canvas_left_click() -> to_prev_field_energy_race: {self.your_field_energy_repository.get_current_field_energy_race()}")
+
+            self.increase_to_use_field_energy_count_panel_selected = (
+                self.left_click_detector.which_one_select_is_in_increase_to_use_field_energy_count_area(
+                    (x, y),
+                    self.increase_to_use_field_energy_count,
+                    self.winfo_reqheight()
+                )
+            )
+
+            if self.increase_to_use_field_energy_count_panel_selected:
+                print(f"on_canvas_left_click() -> increase_to_use_field_energy_count(): "
+                      f"{self.your_field_energy_repository.get_to_use_field_energy_count()}")
+                self.your_field_energy_repository.increase_to_use_field_energy_count()
+
+            self.decrease_to_use_field_energy_count_panel_selected = (
+                self.left_click_detector.which_one_select_is_in_decrease_to_use_field_energy_count_area(
+                    (x, y),
+                    self.decrease_to_use_field_energy_count,
+                    self.winfo_reqheight()
+                )
+            )
+
+            if self.decrease_to_use_field_energy_count_panel_selected:
+                print(f"on_canvas_left_click() -> decrease_to_use_field_energy_count(): "
+                      f"{self.your_field_energy_repository.get_to_use_field_energy_count()}")
+                self.your_field_energy_repository.decrease_to_use_field_energy_count()
 
             self.tomb_panel_selected = False
             self.opponent_tomb_panel_selected = False
