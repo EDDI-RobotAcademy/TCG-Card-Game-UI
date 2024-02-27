@@ -17,6 +17,24 @@ class NonBackgroundImage(Shape):
     def get_visible(self):
         return self.is_visible
 
+    def set_image_data(self, image_data):
+        self.image_data = image_data
+        self.texture_initialized = False
+        self.delete_texture()
+
+    def delete_texture(self):
+        if self.texture_id is not None:
+            glDeleteTextures([self.texture_id])
+            self.texture_id = None
+
+    def update_texture_with_image_data(self, image_data):
+        if self.texture_id is not None:
+            glDeleteTextures([self.texture_id])
+            self.texture_id = None
+
+        self.image_data = image_data
+        self.draw()
+
     def draw(self):
         if self.get_visible():
             glEnable(GL_BLEND)
