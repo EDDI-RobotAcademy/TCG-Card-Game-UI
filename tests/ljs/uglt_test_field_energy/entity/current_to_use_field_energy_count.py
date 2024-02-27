@@ -1,15 +1,16 @@
+from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from image_shape.rectangle_image import RectangleImage
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from tests.ljs.uglt_test_field_energy.repository.your_field_energy_repository import YourFieldEnergyRepositoryForTest
 
 
-class CurrentFieldEnergyRace:
+class CurrentToUseFieldEnergyCount:
     __pre_drawed_image = PreDrawedImage.getInstance()
-    __your_field_energy_repository = YourFieldEnergyRepositoryForTest.getInstance()
+    __your_field_energy_repository = YourFieldEnergyRepository.getInstance()
 
     def __init__(self):
-        self.current_field_energy_race_panel = None
+        self.current_to_use_field_energy_count_panel = None
 
         self.total_width = None
         self.total_height = None
@@ -36,19 +37,19 @@ class CurrentFieldEnergyRace:
     def change_local_translation(self, _translation):
         self.local_translation = _translation
 
-    def get_current_field_energy_race_panel(self):
-        return self.current_field_energy_race_panel
+    def get_current_to_use_field_energy_count_panel(self):
+        return self.current_to_use_field_energy_count_panel
 
-    def create_current_field_energy_race_panel(self):
-        print("create_current_field_energy_race_panel")
+    def create_current_to_use_field_energy_count_panel(self):
+
         left_x_point = self.total_width * 0.93
         right_x_point = self.total_width * 0.97
-        top_y_point = self.total_height * 0.717
-        bottom_y_point = self.total_height * 0.757
+        top_y_point = self.total_height * 0.657
+        bottom_y_point = self.total_height * 0.697
 
-        self.current_field_energy_race_panel = RectangleImage(
-            image_data=self.__pre_drawed_image.get_pre_draw_energy_race_with_race_number(
-                self.__your_field_energy_repository.get_current_field_energy_race().value),
+        self.current_to_use_field_energy_count_panel = RectangleImage(
+            image_data=self.__pre_drawed_image.get_pre_draw_rectangle_number_image(
+                self.__your_field_energy_repository.get_to_use_field_energy_count()),
             vertices=[
                 (left_x_point, top_y_point),
                 (right_x_point, top_y_point),
@@ -56,8 +57,8 @@ class CurrentFieldEnergyRace:
                 (left_x_point, bottom_y_point)
             ])
 
-    def update_current_field_energy_race_panel(self):
-        self.current_field_energy_race_panel.set_image_data(
-            self.__pre_drawed_image.get_pre_draw_energy_race_with_race_number(
-                self.__your_field_energy_repository.get_current_field_energy_race().value)
+    def update_current_to_use_field_energy_count_panel(self):
+        self.current_to_use_field_energy_count_panel.set_image_data(
+            self.__pre_drawed_image.get_pre_draw_rectangle_number_image(
+                self.__your_field_energy_repository.get_to_use_field_energy_count())
         )
