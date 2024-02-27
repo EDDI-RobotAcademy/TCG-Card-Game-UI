@@ -20,6 +20,7 @@ class FieldAreaInsideHandler:
     __field_area_action = None
     __lightning_border_list = []
     __action_set_card_id = 0
+    # __action_set_card_index = 0
 
     __your_hand_repository = YourHandRepository.getInstance()
     __your_field_unit_repository = YourFieldUnitRepository.getInstance()
@@ -39,6 +40,7 @@ class FieldAreaInsideHandler:
 
             cls.__field_area_inside_handler_table[2] = cls.__instance.handle_support_card_energy_boost
             cls.__field_area_inside_handler_table[20] = cls.__instance.handle_support_card_draw_deck
+            cls.__field_area_inside_handler_table[30] = cls.__instance.handle_support_card_search_unit_from_deck
 
         return cls.__instance
 
@@ -62,7 +64,7 @@ class FieldAreaInsideHandler:
         self.__action_set_card_id = 0
 
     def get_field_area_action(self):
-        print(f"get_field_area_action: {self.__field_area_action}")
+        # print(f"get_field_area_action: {self.__field_area_action}")
         return self.__field_area_action
 
     def clear_field_area_action(self):
@@ -153,6 +155,16 @@ class FieldAreaInsideHandler:
             f"handle_support_card_draw_deck() -> current_tomb_unit_list: {self.__your_tomb_repository.get_current_tomb_state()}")
 
         self.__field_area_action = FieldAreaAction.DRAW_DECK
+        return self.__field_area_action
+
+    def handle_support_card_search_unit_from_deck(self, placed_card_id, placed_card_index):
+        print(f"handle_support_card_search_unit_from_deck -> placed_card_id: {placed_card_id}, placed_card_index: {placed_card_index}")
+
+        # self.__action_set_card_id = placed_card_id
+        self.__your_hand_repository.remove_card_by_index(placed_card_index)
+        self.__your_tomb_repository.create_tomb_card(placed_card_id)
+
+        self.__field_area_action = FieldAreaAction.SEARCH_UNIT_CARD
         return self.__field_area_action
 
     def handle_support_card(self, placed_card_id, placed_card_index):
