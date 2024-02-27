@@ -2,6 +2,7 @@ import colorama
 from screeninfo import get_monitors
 from shapely import Polygon, Point
 
+from battle_field.application.field_energy_application import FieldEnergyApplication
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
 from battle_field.components.field_area_inside.field_area_inside_handler import FieldAreaInsideHandler
 
@@ -214,6 +215,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         # TODO: 이 부분은 임시 방편입니다 (상대방 행동 했다 가정하고 키보드 입력 받기 위함)
         self.focus_set()
         self.bind("<Key>", self.on_key_press)
+
+        self.__field_energy_application = FieldEnergyApplication.getInstance()
 
     def initgl(self):
         glClearColor(1.0, 1.0, 1.0, 0.0)
@@ -819,7 +822,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         point = Point(x, y)
 
         return point.within(poly)
-# refeactor: [이재승] 각종 test코드 메인 코드 병합 및 통합 테스트에 추가
+
     def on_canvas_release(self, event):
         x, y = event.x, event.y
         y = self.winfo_reqheight() - y
@@ -1193,13 +1196,20 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     if fixed_card_base.is_point_inside((x, y)):
                         print("필드 에너지를 붙입니다!")
 
-                        # TODO: 에너지 enum으로 처리해야함
+                        # TODO: 통신해야함
+
                         self.selected_object = current_field_unit
                         energy_race = self.your_field_energy_repository.get_current_field_energy_race()
                         energy_count = self.your_field_energy_repository.get_to_use_field_energy_count()
                         before_energy_count = self.your_field_unit_repository.get_total_energy_at_index(unit_index)
 
-
+                        response = self.__field_energy_application.send_request_to_attach_field_energy_to_unit(
+                            unitIndex=unit_index, energyRace = energy_race, energyCount=energy_count
+                        )
+                        if not response:
+                            self.selected_object = None
+                            self.your_field_energy_panel_selected = False
+                            return
 
                         self.your_field_unit_repository.attach_race_energy(
                             unit_index,
@@ -1473,6 +1483,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             )
 
             if self.your_field_energy_panel_selected:
+                #todo : 에너지 버튼을 눌렀다는 것을 알려 줄 필요가 있을듯??
                 self.your_field_energy.use_energy_card()
                 # if self.your_field_energy_repository.decrease_your_field_energy():
                 #     self.your_hand_repository.create_additional_hand_card_list(
