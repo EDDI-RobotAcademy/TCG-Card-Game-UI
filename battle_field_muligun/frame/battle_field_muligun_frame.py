@@ -5,6 +5,7 @@ from OpenGL.GLU import *
 from colorama import Fore, Style
 from pyopengltk import OpenGLFrame
 from screeninfo import get_monitors
+from shapely import Polygon, Point
 
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
@@ -12,6 +13,7 @@ from battle_field_muligun.service.request.muligun_request import MuligunRequest
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_pickable_shape.pickable_rectangle import PickableRectangle
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
+from opengl_shape.image_rectangle_element import ImageRectangleElement
 from opengl_shape.rectangle import Rectangle
 from session.repository.session_repository_impl import SessionRepositoryImpl
 
@@ -44,6 +46,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         self.prev_selected_object = None
         self.execute_pick_card_effect = True
         self.ok_button_visible = True
+        self.ok_button_clicked = False
 
         self.click_card_effect_rectangles = []
         self.selected_object_list_for_muligun = []
@@ -305,75 +308,82 @@ class BattleFieldMuligunFrame(OpenGLFrame):
             #             print(list(self.checking_draw_effect.keys()))
 
             # 확인 버튼 기능
-            if self.ok_button.is_point_inside((x, y)):
+            # if self.ok_button.is_point_inside((x, y)):
+            #     self.on_canvas_ok_button_click(event)
+
+            if self.is_point_inside_rectangle((x, y), self.ok_button):
                 self.on_canvas_ok_button_click(event)
 
         except Exception as e:
             print(f"Exception in on_canvas_click: {e}")
 
     def on_canvas_ok_button_click(self, event):
-        # self.your_hand_repository.select_card_id_list(self.change_card_object_list)# 서버에 보내줄 카드 아이디 리스트로 저장.
-        # print(f"your_hand select_card: {self.change_card_object_list}")
-        print("on_canvas_ok_button_click()")
-        print(f"{Fore.RED}len(self.current_hand_card_list):{Fore.GREEN} {len(self.your_hand_repository.get_current_hand_card_list())}{Style.RESET_ALL}")
+        if not self.ok_button_clicked:
+            # self.your_hand_repository.select_card_id_list(self.change_card_object_list)# 서버에 보내줄 카드 아이디 리스트로 저장.
+            # print(f"your_hand select_card: {self.change_card_object_list}")
+            print("on_canvas_ok_button_click()")
+            print(f"{Fore.RED}len(self.current_hand_card_list):{Fore.GREEN} {len(self.your_hand_repository.get_current_hand_card_list())}{Style.RESET_ALL}")
 
-        will_be_change_card_index_list = self.extract_card_index_list_in_hand_card_list(
-            self.selected_object_list_for_muligun,
-            self.hand_card_list)
-        print(f"will_be_change_card_index_list: {will_be_change_card_index_list}")
+            will_be_change_card_index_list = self.extract_card_index_list_in_hand_card_list(
+                self.selected_object_list_for_muligun,
+                self.hand_card_list)
+            print(f"will_be_change_card_index_list: {will_be_change_card_index_list}")
 
-        will_be_change_card_id_list = self.extract_card_id_list_in_hand_card_list(
-            self.selected_object_list_for_muligun,
-            self.hand_card_list)
-        print(f"will_be_change_card_id_list: {will_be_change_card_id_list}")
+            will_be_change_card_id_list = self.extract_card_id_list_in_hand_card_list(
+                self.selected_object_list_for_muligun,
+                self.hand_card_list)
+            print(f"will_be_change_card_id_list: {will_be_change_card_id_list}")
 
-        will_be_change_card_id_list_str = list(map(str, will_be_change_card_id_list))
-        print(f"will_be_change_card_id_list_str: {will_be_change_card_id_list_str}")
+            will_be_change_card_id_list_str = list(map(str, will_be_change_card_id_list))
+            print(f"will_be_change_card_id_list_str: {will_be_change_card_id_list_str}")
 
-        # card_id_list = []
-        # change_card_object_list_length = len(self.change_card_object_list)
-        # print(f"change_card_object_list_length: {change_card_object_list_length}")
-        #
-        # for index in range(change_card_object_list_length):
-        #     card_id_list.append(self.change_card_object_list[index])
+            # card_id_list = []
+            # change_card_object_list_length = len(self.change_card_object_list)
+            # print(f"change_card_object_list_length: {change_card_object_list_length}")
+            #
+            # for index in range(change_card_object_list_length):
+            #     card_id_list.append(self.change_card_object_list[index])
 
-        # card_id_list = [str(card.get_card_number()) for card in self.change_card_object_list.values()]
-        # change_card_object_list_length = len(card_id_list)
+            # card_id_list = [str(card.get_card_number()) for card in self.change_card_object_list.values()]
+            # change_card_object_list_length = len(card_id_list)
 
-        # 제거는 인덱스로 해야함
-        self.your_hand_repository.remove_card_by_multiple_index(will_be_change_card_index_list)
+            # 제거는 인덱스로 해야함
+            self.your_hand_repository.remove_card_by_multiple_index(will_be_change_card_index_list)
 
-        print(f"{Fore.RED}len(self.current_hand_card_list):{Fore.GREEN} {len(self.hand_card_list)}{Style.RESET_ALL}")
+            print(f"{Fore.RED}len(self.current_hand_card_list):{Fore.GREEN} {len(self.hand_card_list)}{Style.RESET_ALL}")
 
-        # self.your_hand_repository.delete_select_card(self.change_card_object_list)# 처음 드로우한 5장의 카드 리스트에서 교체할 카드 삭제.
-        self.your_hand_repository.replace_hand_card_position()
+            # self.your_hand_repository.delete_select_card(self.change_card_object_list)# 처음 드로우한 5장의 카드 리스트에서 교체할 카드 삭제.
+            self.your_hand_repository.replace_hand_card_position()
 
-        responseData = self.your_hand_repository.requestMuligun(
-            MuligunRequest(self.sessionRepository.get_session_info(),
-                           will_be_change_card_id_list_str))
+            responseData = self.your_hand_repository.requestMuligun(
+                MuligunRequest(self.sessionRepository.get_session_info(),
+                               will_be_change_card_id_list_str))
 
-        print("muligun responseData:", responseData)
+            print("muligun responseData:", responseData)
 
-        redrawn_hand_card_list = responseData['redrawn_hand_card_list']
-        print(f"{Fore.RED}redrawn_hand_card_list:{Fore.GREEN} {redrawn_hand_card_list}{Style.RESET_ALL}")
+            redrawn_hand_card_list = responseData['redrawn_hand_card_list']
+            print(f"{Fore.RED}redrawn_hand_card_list:{Fore.GREEN} {redrawn_hand_card_list}{Style.RESET_ALL}")
 
-        for redrawn_hand_card_id in redrawn_hand_card_list:
-            print(f"redrawn_hand_card_id: {redrawn_hand_card_id}")
-            self.your_hand_repository.create_muligun_hand_unit_card(redrawn_hand_card_id)
+            for redrawn_hand_card_id in redrawn_hand_card_list:
+                print(f"redrawn_hand_card_id: {redrawn_hand_card_id}")
+                self.your_hand_repository.create_muligun_hand_unit_card(redrawn_hand_card_id)
 
-        self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
-        print(f"{Fore.RED}self.hand_card_list:{Fore.GREEN} {self.hand_card_list}{Style.RESET_ALL}")
+            self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
+            print(f"{Fore.RED}self.hand_card_list:{Fore.GREEN} {self.hand_card_list}{Style.RESET_ALL}")
 
-        # TODO: 새로 받을 카드 임의로 지정. 나중에는 서버에서 받아야 함. 임의로 넣었기 때문에 현재 2개만 교체 가능
-        # self.redraw_card()
+            # TODO: 새로 받을 카드 임의로 지정. 나중에는 서버에서 받아야 함. 임의로 넣었기 때문에 현재 2개만 교체 가능
+            # self.redraw_card()
 
-        # 그려져 있는 카드 선택 효과, 그려져 있는 버튼은 지워야 함.
-        self.click_card_effect_rectangles = []
-        self.checking_draw_effect = {}
-        # self.ok_button_visible = False
-        self.execute_pick_card_effect = False
+            # 그려져 있는 카드 선택 효과, 그려져 있는 버튼은 지워야 함.
+            self.click_card_effect_rectangles = []
+            self.checking_draw_effect = {}
+            # self.ok_button_visible = False
+            self.execute_pick_card_effect = False
+            self.ok_button_clicked = True
 
-        # self.master.after(2000, self.__switchFrameWithMenuName('decision-first'))
+
+        else:
+            self.master.after(self.__switchFrameWithMenuName('decision-first'))
 
 
     # 멀리건 화면에서 교체하려는 카드 클릭시 나타나는 표현
@@ -402,20 +412,50 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         return new_rectangle
 
     # 확인 버튼
+    # def create_ok_button(self):
+    #     rectangle_size = 100
+    #     rectangle_color = (0.8314, 0.7686, 0.6588, 1.0)
+    #
+    #     start_point = (850, 900)  # 확인 버튼 위치는 고정.
+    #     end_point = (start_point[0] + rectangle_size * 2.0, start_point[1] + rectangle_size * 0.55)
+    #
+    #     new_rectangle = PickableRectangle(rectangle_color, [
+    #         (start_point[0], start_point[1]),
+    #         (end_point[0], start_point[1]),
+    #         (end_point[0], end_point[1]),
+    #         (start_point[0], end_point[1])
+    #     ])
+    #     return new_rectangle
+
     def create_ok_button(self):
         rectangle_size = 100
-        rectangle_color = (0.8314, 0.7686, 0.6588, 1.0)
+        # rectangle_color = (0.8314, 0.7686, 0.6588, 1.0)
 
-        start_point = (850, 900)  # 확인 버튼 위치는 고정.
+        start_point = (850, 800)  # 확인 버튼 위치는 고정.
         end_point = (start_point[0] + rectangle_size * 2.0, start_point[1] + rectangle_size * 0.55)
 
-        new_rectangle = PickableRectangle(rectangle_color, [
+        new_rectangle = ImageRectangleElement("local_storage/button_image/ok_button.png",[
             (start_point[0], start_point[1]),
             (end_point[0], start_point[1]),
             (end_point[0], end_point[1]),
-            (start_point[0], end_point[1])
+            (start_point[0], end_point[1]),
         ])
         return new_rectangle
+
+    def is_point_inside_rectangle(self, point, rectangle):
+        x, y = point
+        y *= -1
+
+        rectangle_vertices = rectangle.get_vertices()
+
+        ratio_applied_valid_your_field = [(x * self.width_ratio, y * self.height_ratio) for x, y in rectangle_vertices]
+        print(f"ratio_applied_valid_your_field: {ratio_applied_valid_your_field}")
+        print(f"x: {x * self.width_ratio}, y: {y * self.height_ratio}")
+
+        poly = Polygon(ratio_applied_valid_your_field)
+        point = Point(x, y)
+
+        return point.within(poly)
 
 
     # 처음 뽑은 5장 카드 리스트에서 뽑은 카드 삭제

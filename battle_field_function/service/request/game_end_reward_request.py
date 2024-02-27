@@ -1,5 +1,4 @@
 from battle_field.infra.battle_field_repository import BattleFieldRepository
-from battle_field_function.repository.battle_field_function_repository_impl import BattleFieldFunctionRepositoryImpl
 from common.protocol import CustomProtocol
 
 
