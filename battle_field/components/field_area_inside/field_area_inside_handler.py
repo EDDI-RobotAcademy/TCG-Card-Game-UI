@@ -41,6 +41,7 @@ class FieldAreaInsideHandler:
             cls.__field_area_inside_handler_table[2] = cls.__instance.handle_support_card_energy_boost
             cls.__field_area_inside_handler_table[20] = cls.__instance.handle_support_card_draw_deck
             cls.__field_area_inside_handler_table[30] = cls.__instance.handle_support_card_search_unit_from_deck
+            cls.__field_area_inside_handler_table[36] = cls.__instance.handle_nothing
 
         return cls.__instance
 
@@ -95,6 +96,9 @@ class FieldAreaInsideHandler:
             return self.handle_support_card(placed_card_id, placed_card_index)
         else:
             return FieldAreaAction.Dummy
+
+    def handle_nothing(self, placed_card_id, placed_card_index):
+        return FieldAreaAction.Dummy
 
     def handle_unit_card(self, placed_card_id, placed_card_index):
         session = self.__session_info_repository.get_session_info()
