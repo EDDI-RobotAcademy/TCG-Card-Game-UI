@@ -81,6 +81,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_deck_prev_button = None
         self.your_deck_ok_button = None
 
+        self.selected_search_unit_id_list = []
+        self.selected_search_unit_index_list = []
+        self.selected_search_unit_page_number_list = []
+        self.selected_search_unit_lightning_border = []
+
         self.your_field_unit_repository = YourFieldUnitRepository.getInstance()
 
         self.card_info_repository = CardInfoFromCsvRepositoryImpl.getInstance()
@@ -227,6 +232,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                                    2,  27, 27, 151, 20,
                                                    20, 20, 31, 31, 32,
                                                    36, 36, 26, 26])
+        self.your_deck_repository.build_deck_page()
         # self.your_deck_repository.create_deck_card_list()
         self.your_deck.set_total_window_size(self.width, self.height)
         self.your_deck.create_your_deck_popup_rectangle()
@@ -1250,6 +1256,15 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     print("이전 버튼 클릭")
 
                     self.your_deck_repository.prev_deck_page()
+
+                if self.your_deck.is_point_inside_ok_button((x, y)):
+                    print("OK 버튼 클릭")
+
+
+                self.selected_search_unit_id_list.append()
+                self.selected_search_unit_index_list.append()
+                self.selected_search_unit_page_number_list.append()
+                self.selected_search_unit_lightning_border.append()
 
                 return
 
