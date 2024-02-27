@@ -46,3 +46,23 @@ class CardInfoFromCsvRepository(abc.ABC):
     @abc.abstractmethod
     def getCardHpForCardNumber(self, cardNumber):
         pass
+
+    @abc.abstractmethod
+    def getCardSkillCounterForCardNumber(self, cardNumber):
+        pass
+
+    @abc.abstractmethod
+    def getCardSkillFirstForCardNumber(self, cardNumber):
+        pass
+
+    @abc.abstractmethod
+    def getCardSkillSecondForCardNumber(self, cardNumber):
+        pass
+
+    @abc.abstractmethod
+    def getCardPassiveFirstForCardNumber(self, cardNumber):
+        pass
+
+    @abc.abstractmethod
+    def getCardPassiveSecondForCardNumber(self, cardNumber):
+        pass

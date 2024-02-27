@@ -16,6 +16,11 @@ class CardInfoFromCsvRepositoryImpl(CardInfoFromCsvRepository):
     __cardPassiveDictionary = {}
     __cardSkillDictionary = {}
     __cardHpDictionary = {}
+    __cardSkillCounterDictionary = {}
+    __cardSkillFirstDictionary = {}
+    __cardSkillSecondDictionary = {}
+    __cardPassiveFirstDictionary = {}
+    __cardPassiveSecondDictionary = {}
 
     def __new__(cls):
         if cls.__instance is None:
@@ -51,6 +56,11 @@ class CardInfoFromCsvRepositoryImpl(CardInfoFromCsvRepository):
                 self.__cardPassiveDictionary[cardInfo.getCardNumber()] = cardInfo.getCardPassive()
                 self.__cardSkillDictionary[cardInfo.getCardNumber()] = cardInfo.getCardSkill()
                 self.__cardHpDictionary[cardInfo.getCardNumber()] = cardInfo.getCardHp()
+                self.__cardSkillCounterDictionary[cardInfo.getCardNumber()] = cardInfo.getCardSkillCounter()
+                self.__cardSkillFirstDictionary[cardInfo.getCardNumber()] = cardInfo.getCardSkillFirst()
+                self.__cardSkillSecondDictionary[cardInfo.getCardNumber()] = cardInfo.getCardSkillSecond()
+                self.__cardPassiveFirstDictionary[cardInfo.getCardNumber()] = cardInfo.getCardPassiveFirst()
+                self.__cardPassiveSecondDictionary[cardInfo.getCardNumber()] = cardInfo.getCardPassiveSecond()
 
             except Exception as e:
                 print("Error : {0}".format(e))
@@ -84,3 +94,18 @@ class CardInfoFromCsvRepositoryImpl(CardInfoFromCsvRepository):
 
     def getCardHpForCardNumber(self, cardNumber):
         return self.__cardHpDictionary[cardNumber]
+
+    def getCardSkillCounterForCardNumber(self, cardNumber):
+        return self.__cardSkillCounterDictionary[cardNumber]
+
+    def getCardSkillFirstForCardNumber(self, cardNumber):
+        return self.__cardSkillFirstDictionary[cardNumber]
+
+    def getCardSkillSecondForCardNumber(self, cardNumber):
+        return self.__cardSkillSecondDictionary[cardNumber]
+
+    def getCardPassiveFirstForCardNumber(self, cardNumber):
+        return self.__cardPassiveFirstDictionary[cardNumber]
+
+    def getCardPassiveSecondForCardNumber(self, cardNumber):
+        return self.__cardPassiveSecondDictionary[cardNumber]
