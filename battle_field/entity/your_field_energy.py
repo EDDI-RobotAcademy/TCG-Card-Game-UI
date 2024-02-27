@@ -138,7 +138,7 @@ class YourFieldEnergy:
 
     def update_curent_field_energy_panel(self):
         self.your_field_energy_panel.set_image_data(
-            self.__pre_drawed_image.get_pre_draw_rectangle_number_image(
+            self.__pre_drawed_image.get_pre_draw_field_energy(
                 self.__your_field_energy_repository.get_your_field_energy()))
 
     def use_energy_card(self):
