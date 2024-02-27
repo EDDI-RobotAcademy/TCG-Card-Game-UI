@@ -39,6 +39,7 @@ from battle_field.state.energy_type import EnergyType
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
+from common.card_grade import CardGrade
 from common.card_race import CardRace
 from common.card_type import CardType
 from image_shape.circle_image import CircleImage
@@ -1272,18 +1273,59 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                 # TODO: 개수 제한 필요
                 for current_page_deck_card_object in self.your_deck_repository.get_current_page_deck_list():
+                    card_id = current_page_deck_card_object.get_card_number()
+                    card_grade = self.card_info_repository.getCardGradeForCardNumber(card_id)
+                    # print(f"card_id: {card_id}, card_grade: {card_grade}")
+                    if card_grade > CardGrade.HERO.value:
+                        # print("영웅 등급 이하의 유닛만 검색하여 가져 올 수 있습니다")
+                        continue
+
+                    card_type = self.card_info_repository.getCardTypeForCardNumber(card_id)
+                    # print(f"card_id: {card_id}, card_type: {card_type}")
+                    if card_type != CardType.UNIT.value:
+                        # print("유닛 카드만 가져 올 수 있습니다")
+                        continue
+
+                    # current_page_deck_list = self.your_deck_repository.get_current_page_deck_list()
                     deck_fixed_card_base = current_page_deck_card_object.get_fixed_card_base()
 
-                    print(f"레오닉의 부름 -> x: {x}, y: {y}")
+                    # print(f"레오닉의 부름 -> x: {x}, y: {y}")
+
+                    existing_index = None
 
                     if deck_fixed_card_base.is_point_inside((x, y)):
                         print("덱에서 검색하여 유닛 선택!")
-                        self.selected_search_unit_id_list.append(current_page_deck_card_object.get_card_number())
-                        self.selected_search_unit_index_list.append(current_page_deck_card_object.get_index())
-                        self.selected_search_unit_page_number_list.append(
-                            self.your_deck_repository.get_current_deck_page())
+                        current_page_deck_card_index = current_page_deck_card_object.get_index()
+                        current_page_number = self.your_deck_repository.get_current_deck_page()
+                        try:
+                            existing_index = self.selected_search_unit_index_list.index(current_page_deck_card_index)
+                            print(f"current_page_number: {current_page_number}, existing_index: {existing_index}")
+                            print(f"selected_search_unit_page_number_list[existing_index]: {self.selected_search_unit_page_number_list[existing_index]}")
+                            print(f"selected_search_unit_index_list[existing_index]: {self.selected_search_unit_index_list[existing_index]}")
 
-                        self.selected_search_unit_lightning_border.append(deck_fixed_card_base)
+                            if (current_page_number == self.selected_search_unit_page_number_list[existing_index]) and \
+                                    (current_page_deck_card_index == self.selected_search_unit_index_list[existing_index]):
+
+                                del self.selected_search_unit_index_list[existing_index]
+                                del self.selected_search_unit_id_list[existing_index]
+                                del self.selected_search_unit_page_number_list[existing_index]
+                                del self.selected_search_unit_lightning_border[existing_index]
+                                return
+
+                        except ValueError:
+                            pass
+
+                        if len(self.selected_search_unit_index_list) == 2:
+                            return
+
+                        else:
+                            self.selected_search_unit_index_list.append(current_page_deck_card_index)
+
+                            self.selected_search_unit_id_list.append(current_page_deck_card_object.get_card_number())
+                            self.selected_search_unit_page_number_list.append(
+                                self.your_deck_repository.get_current_deck_page())
+
+                            self.selected_search_unit_lightning_border.append(deck_fixed_card_base)
 
                 return
 

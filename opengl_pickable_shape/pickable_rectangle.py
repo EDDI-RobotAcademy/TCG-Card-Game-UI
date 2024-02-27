@@ -49,8 +49,8 @@ class PickableRectangle(Rectangle):
         x, y = point
         y *= -1
 
-        print(f"is_point_inside -> x: {x}, y: {y}, local_translation: {self.local_translation}")
-        print(f"vertices: {self.vertices}")
+        # print(f"is_point_inside -> x: {x}, y: {y}, local_translation: {self.local_translation}")
+        # print(f"vertices: {self.vertices}")
 
         translated_vertices = [
             (x * self.width_ratio + self.global_translation[0] + self.local_translation[0] * self.width_ratio,
@@ -58,7 +58,7 @@ class PickableRectangle(Rectangle):
             for x, y in self.vertices
         ]
 
-        print(f"translated_vertices: {translated_vertices}")
+        # print(f"translated_vertices: {translated_vertices}")
 
         if not (translated_vertices[0][0] <= x <= translated_vertices[2][0] and
                 translated_vertices[0][1] <= y <= translated_vertices[2][1]):
