@@ -77,6 +77,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_deck_list = None
         self.your_deck = YourDeck()
         self.your_deck_search_panel = None
+        self.your_deck_next_button = None
 
         self.your_field_unit_repository = YourFieldUnitRepository.getInstance()
 
@@ -228,6 +229,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_deck.set_total_window_size(self.width, self.height)
         self.your_deck.create_your_deck_popup_rectangle()
         self.your_deck_search_panel = self.your_deck.get_your_deck_popup_rectangle()
+        self.your_deck.init_next_prev_gold_button()
+        self.your_deck_prev_button = self.your_deck.get_prev_gold_button()
+        self.your_deck_next_button = self.your_deck.get_next_gold_button()
 
         # self.opponent_field_unit_repository.create_field_unit_card(33)
         # self.opponent_field_unit_repository.create_field_unit_card(35)
@@ -548,6 +552,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     attached_shape.set_width_ratio(self.width_ratio)
                     attached_shape.set_height_ratio(self.height_ratio)
                     attached_shape.draw()
+
+            self.your_deck_prev_button.draw()
+            self.your_deck_next_button.draw()
 
             glDisable(GL_BLEND)
 
@@ -1229,6 +1236,12 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             if self.field_area_inside_handler.get_field_area_action() is FieldAreaAction.SEARCH_UNIT_CARD:
                 print("레오닉의 부름: 유닛 2체 검색")
+
+                if self.your_deck.is_point_inside_next_button((x, y)):
+                    print("다음 버튼 클릭")
+
+                if self.your_deck.is_point_inside_prev_button((x, y)):
+                    print("이전 버튼 클릭")
 
             if self.fixed_unit_card_inside_action is FixedUnitCardInsideAction.TARGETING_TWO_ENEMY_AS_POSSIBLE:
                 print("적 유닛 2체까지 선택 가능")

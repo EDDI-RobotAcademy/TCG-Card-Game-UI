@@ -107,9 +107,9 @@ class YourLostZone:
             (x * self.width_ratio + lost_zone_panel.local_translation[0] * self.width_ratio, y * self.height_ratio + lost_zone_panel.local_translation[1] * self.height_ratio)
             for x, y in lost_zone_panel.get_vertices()
         ]
-        print(f"your lostzone panel -> translated_vertices: {translated_vertices}")
-        print(f"your lostzone panel -> x: {point_x}, y: {point_y}")
-        print(f"your lostzone panel -> width_ratio: {self.width_ratio}, height_ratio: {self.height_ratio}")
+        # print(f"your lostzone panel -> translated_vertices: {translated_vertices}")
+        # print(f"your lostzone panel -> x: {point_x}, y: {point_y}")
+        # print(f"your lostzone panel -> width_ratio: {self.width_ratio}, height_ratio: {self.height_ratio}")
 
         if not (translated_vertices[0][0] <= point_x <= translated_vertices[2][0] and
                 translated_vertices[1][1] <= point_y <= translated_vertices[0][1]):
