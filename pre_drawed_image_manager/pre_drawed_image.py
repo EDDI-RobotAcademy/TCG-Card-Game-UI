@@ -61,6 +61,7 @@ class PreDrawedImage:
 
     __pre_drawed_next_gold_button = None
     __pre_drawed_prev_gold_button = None
+    __pre_drawed_ok_button = None
 
 
 
@@ -311,6 +312,11 @@ class PreDrawedImage:
                                                   "prev_gold_button.png")
         self.__pre_drawed_prev_gold_button = ImageDataLoader.load_rectangle_image_data(prev_gold_button_image_path)
 
+    def pre_draw_ok_button(self):
+        prev_gold_button_image_path = os.path.join(self.__project_root, "local_storage", "button_image",
+                                                   "ok_button.png")
+        self.__pre_drawed_ok_button = ImageDataLoader.load_rectangle_image_data(prev_gold_button_image_path)
+
     def pre_draw_battle_field_energy(self):
         image_dir = os.path.join(self.__project_root, "local_storage", "field_energy_image")
         file_list = os.listdir(image_dir)
@@ -367,6 +373,8 @@ class PreDrawedImage:
 
         self.pre_draw_next_gold_button()
         self.pre_draw_prev_gold_button()
+
+        self.pre_draw_ok_button()
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
@@ -484,5 +492,9 @@ class PreDrawedImage:
     def get_pre_draw_prev_gold_button(self):
         return self.__pre_drawed_prev_gold_button
 
+    def get_pre_draw_ok_button(self):
+        return self.__pre_drawed_ok_button
+
     def get_pre_draw_field_energy(self, number=0):
         return self.__pre_drawed_field_energy[number]
+

@@ -23,7 +23,7 @@ class YourDeckRepository:
     y_top_base_ratio = 0.2416
     y_bottom_base_ratio = 0.593
 
-    current_page = 1
+    current_page = 0
 
     def __new__(cls):
         if cls.__instance is None:
@@ -40,9 +40,8 @@ class YourDeckRepository:
         self.total_width = width
         self.total_height = height
 
-    def save_deck_state(self, deck_list):
-        self.current_deck_state.add_to_deck(deck_list)
-        print(f"Saved current deck state: {deck_list}")
+    def build_deck_page(self):
+        deck_list = self.get_current_deck_state()
 
         num_cards_per_page = 12
         num_pages = ceil(len(deck_list) / num_cards_per_page)
@@ -60,13 +59,23 @@ class YourDeckRepository:
 
             self.deck_page_list.append(current_page)
 
+    def save_deck_state(self, deck_list):
+        self.current_deck_state.add_to_deck(deck_list)
+        print(f"Saved current deck state: {deck_list}")
+
     def get_current_deck_state(self):
         return self.current_deck_state.get_current_deck()
 
     def next_deck_page(self):
+        if self.current_page == len(self.deck_page_list) - 1:
+            return
+
         self.current_page += 1
 
     def prev_deck_page(self):
+        if self.current_page == 0:
+            return
+
         self.current_page -= 1
 
     def get_current_deck_page(self):

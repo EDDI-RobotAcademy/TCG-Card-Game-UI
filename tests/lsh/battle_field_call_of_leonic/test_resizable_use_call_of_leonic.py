@@ -78,6 +78,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_deck = YourDeck()
         self.your_deck_search_panel = None
         self.your_deck_next_button = None
+        self.your_deck_prev_button = None
+        self.your_deck_ok_button = None
+
+        self.selected_search_unit_id_list = []
+        self.selected_search_unit_index_list = []
+        self.selected_search_unit_page_number_list = []
+        self.selected_search_unit_lightning_border = []
 
         self.your_field_unit_repository = YourFieldUnitRepository.getInstance()
 
@@ -225,6 +232,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                                    2,  27, 27, 151, 20,
                                                    20, 20, 31, 31, 32,
                                                    36, 36, 26, 26])
+        self.your_deck_repository.build_deck_page()
         # self.your_deck_repository.create_deck_card_list()
         self.your_deck.set_total_window_size(self.width, self.height)
         self.your_deck.create_your_deck_popup_rectangle()
@@ -232,6 +240,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_deck.init_next_prev_gold_button()
         self.your_deck_prev_button = self.your_deck.get_prev_gold_button()
         self.your_deck_next_button = self.your_deck.get_next_gold_button()
+        self.your_deck_ok_button = self.your_deck.get_ok_button()
 
         # self.opponent_field_unit_repository.create_field_unit_card(33)
         # self.opponent_field_unit_repository.create_field_unit_card(35)
@@ -554,6 +563,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     attached_shape.draw()
 
             self.your_deck_prev_button.draw()
+            self.your_deck_ok_button.draw()
             self.your_deck_next_button.draw()
 
             glDisable(GL_BLEND)
@@ -1240,8 +1250,23 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 if self.your_deck.is_point_inside_next_button((x, y)):
                     print("다음 버튼 클릭")
 
+                    self.your_deck_repository.next_deck_page()
+
                 if self.your_deck.is_point_inside_prev_button((x, y)):
                     print("이전 버튼 클릭")
+
+                    self.your_deck_repository.prev_deck_page()
+
+                if self.your_deck.is_point_inside_ok_button((x, y)):
+                    print("OK 버튼 클릭")
+
+
+                self.selected_search_unit_id_list.append()
+                self.selected_search_unit_index_list.append()
+                self.selected_search_unit_page_number_list.append()
+                self.selected_search_unit_lightning_border.append()
+
+                return
 
             if self.fixed_unit_card_inside_action is FixedUnitCardInsideAction.TARGETING_TWO_ENEMY_AS_POSSIBLE:
                 print("적 유닛 2체까지 선택 가능")

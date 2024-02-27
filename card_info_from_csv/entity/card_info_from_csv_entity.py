@@ -10,6 +10,11 @@ class CardInfoFromCsv:
     __cardPassive = None
     __cardSkill = None
     __cardHp = None
+    __cardSKillCounter = None
+    __cardSkillFirst = None
+    __cardSkillSecond = None
+    __cardPassiveFirst = None
+    __cardPassiveSecond = None
 
     def __init__(self, record):
         self.__cardNumber = record[0]
@@ -22,6 +27,11 @@ class CardInfoFromCsv:
         self.__cardPassive = record[8]
         self.__cardSkill = record[9]
         self.__cardHp = record[10]
+        self.__cardSKillCounter = record[11]
+        self.__cardSkillFirst = record[12]
+        self.__cardSkillSecond = record[13]
+        self.__cardPassiveFirst = record[14]
+        self.__cardPassiveSecond = record[15]
 
     def getCardNumber(self):
         return self.__cardNumber
@@ -51,3 +61,17 @@ class CardInfoFromCsv:
 
     def getCardHp(self):
         return self.__cardHp
+    def getCardSkillCounter(self):
+        return self.__cardSKillCounter
+
+    def getCardSkillFirst(self):
+        return self.__cardSkillFirst
+
+    def getCardSkillSecond(self):
+        return self.__cardSkillSecond
+
+    def getCardPassiveFirst(self):
+        return self.__cardPassiveFirst
+
+    def getCardPassiveSecond(self):
+        return self.__cardPassiveSecond

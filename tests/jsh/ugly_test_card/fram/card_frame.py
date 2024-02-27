@@ -22,7 +22,7 @@ class CardFrame(OpenGLFrame):
 
         project_root = get_project_root()
 
-        first_card = PickableCard(local_translation=(100, 100),scale=400)
+        first_card = PickableCard(local_translation=(100, 100),scale=300)
         first_card.init_card_scale(5)
 
         self.card_list.append(first_card)
