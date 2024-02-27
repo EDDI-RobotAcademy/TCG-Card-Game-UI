@@ -23,6 +23,7 @@ from battle_field.entity.opponent_lost_zone import OpponentLostZone
 from battle_field.entity.opponent_tomb import OpponentTomb
 from battle_field.entity.prev_field_energy_race import PrevFieldEnergyRace
 from battle_field.entity.tomb_type import TombType
+from battle_field.entity.your_deck import YourDeck
 from battle_field.entity.your_field_energy import YourFieldEnergy
 from battle_field.entity.your_hp import YourHp
 from battle_field.entity.your_lost_zone import YourLostZone
@@ -148,7 +149,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.selected_object_index_for_check_required_energy = []
         self.required_energy_select_lightning_border_list = []
 
-
+        self.your_deck_list = None
+        self.your_deck = YourDeck()
+        self.your_deck_search_panel = None
+        self.your_deck_next_button = None
+        self.your_deck_prev_button = None
+        self.your_deck_ok_button = None
 
         self.your_lost_zone_repository = YourLostZoneRepository.getInstance()
         self.your_lost_zone_panel = None
@@ -259,6 +265,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_hand_repository.create_hand_card_list()
 
         # self.your_deck_repository.save_deck_state([93, 35, 93, 5])
+        self.your_deck_repository.set_total_window_size(self.width, self.height)
+        self.your_deck.set_total_window_size(self.width, self.height)
+        self.your_deck_repository.build_deck_page()
+        self.your_deck.create_your_deck_popup_rectangle()
+        self.your_deck_search_panel = self.your_deck.get_your_deck_popup_rectangle()
+        self.your_deck.init_next_prev_gold_button()
+        self.your_deck_prev_button = self.your_deck.get_prev_gold_button()
+        self.your_deck_next_button = self.your_deck.get_next_gold_button()
+        self.your_deck_ok_button = self.your_deck.get_ok_button()
 
         self.opponent_field_unit_repository.create_field_unit_card(27)
 
