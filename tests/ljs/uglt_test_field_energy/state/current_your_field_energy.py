@@ -17,3 +17,4 @@ class CurrentYourFieldEnergyState:
     def increase_current_your_field_energy(self, increase_count):
         self.field_energy_count += increase_count
 
+

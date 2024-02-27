@@ -1,5 +1,5 @@
-from buy_random_card_frame.entity.buy_random_card_frame import BuyRandomCardFrame
-from buy_random_card_frame.repository.buy_random_card_frame_repository import BuyRandomCardFrameRepository
+from buy_random_card_frame_legacy.entity.buy_random_card_frame import BuyRandomCardFrame
+from buy_random_card_frame_legacy.repository.buy_random_card_frame_repository import BuyRandomCardFrameRepository
 
 
 class BuyRandomCardFrameRepositoryImpl(BuyRandomCardFrameRepository):

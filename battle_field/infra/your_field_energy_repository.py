@@ -11,7 +11,7 @@ class YourFieldEnergyRepository:
     __min_race_value = 1
     __max_race_value = 3
 
-    __to_use_field_energy_count = 0
+    __to_use_field_energy_count = 1
 
     def __new__(cls):
         if cls.__instance is None:
@@ -25,7 +25,7 @@ class YourFieldEnergyRepository:
         return cls.__instance
 
     def reset_field_energy(self):
-        self.__to_use_field_energy_count = 0
+        self.__to_use_field_energy_count = 1
         self.__current_field_energy_race = CardRace.UNDEAD
 
     def increase_your_field_energy(self, count = 1):
@@ -81,9 +81,10 @@ class YourFieldEnergyRepository:
             self.__to_use_field_energy_count = self.your_field_energy_state.get_your_field_energy_count()
 
     def decrease_to_use_field_energy_count(self):
-        self.__to_use_field_energy_count -= 1
-        if self.__to_use_field_energy_count < 1:
+        if self.__to_use_field_energy_count <= 1:
             self.__to_use_field_energy_count = 1
+        else:
+            self.__to_use_field_energy_count -= 1
 
     def get_to_use_field_energy_count(self):
         return self.__to_use_field_energy_count
