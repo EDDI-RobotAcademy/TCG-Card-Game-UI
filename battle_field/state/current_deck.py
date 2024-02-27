@@ -2,6 +2,10 @@ class CurrentDeckState:
     def __init__(self):
         self.current_deck_list = []
 
+    def update_to_deck(self, shuffled_deck_list):
+        self.current_deck_list = []
+        self.add_to_deck(shuffled_deck_list)
+
     def add_to_deck(self, card_list):
         for card in card_list:
             self.current_deck_list.append(card)
