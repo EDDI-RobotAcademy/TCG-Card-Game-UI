@@ -1,10 +1,9 @@
-from tkinter import Tk, Label
+from tkinter import Label
 import tkinter
 from PIL import Image, ImageTk
 import unittest
 
-from my_game_money_frame.service.my_game_money_frame_service_impl import MyGameMoneyFrameServiceImpl
-from my_game_money_frame.entity.my_game_money_frame import MyGameMoneyFrame
+from card_shop_frame.frame.my_game_money_frame.entity.my_game_money_frame import MyGameMoneyFrame
 
 
 class TestMyDeckRegisterFrame(unittest.TestCase):

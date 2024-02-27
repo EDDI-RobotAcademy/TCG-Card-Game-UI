@@ -13,3 +13,4 @@ class CardShopMenuFrameService(abc.ABC):
     @abc.abstractmethod
     def injectReceiveIpcChannel(self, receiveIpcChannel):
         pass
+

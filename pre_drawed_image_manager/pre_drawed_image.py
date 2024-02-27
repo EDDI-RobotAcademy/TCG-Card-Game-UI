@@ -59,6 +59,9 @@ class PreDrawedImage:
     __pre_drawed_battle_field_muligun_background = None
     __pre_drawed_card_back_frame = None
 
+    __pre_drawed_next_gold_button = None
+    __pre_drawed_prev_gold_button = None
+
 
 
     def __new__(cls):
@@ -298,6 +301,16 @@ class PreDrawedImage:
                                                   "card_back_frame.png")
         self.__pre_drawed_card_back_frame = ImageDataLoader.load_rectangle_image_data(card_back_frame_image_path)
 
+    def pre_draw_next_gold_button(self):
+        next_gold_button_image_path = os.path.join(self.__project_root, "local_storage", "button_image",
+                                                  "next_gold_button.png")
+        self.__pre_drawed_next_gold_button = ImageDataLoader.load_rectangle_image_data(next_gold_button_image_path)
+
+    def pre_draw_prev_gold_button(self):
+        prev_gold_button_image_path = os.path.join(self.__project_root, "local_storage", "button_image",
+                                                  "prev_gold_button.png")
+        self.__pre_drawed_prev_gold_button = ImageDataLoader.load_rectangle_image_data(prev_gold_button_image_path)
+
     def pre_draw_battle_field_energy(self):
         image_dir = os.path.join(self.__project_root, "local_storage", "field_energy_image")
         file_list = os.listdir(image_dir)
@@ -306,7 +319,6 @@ class PreDrawedImage:
             field_energy_image_data = os.path.join(self.__project_root, "local_storage", "field_energy_image", f"{number}.png")
             print(f"image data = {field_energy_image_data}")
             self.__pre_drawed_field_energy[number] = ImageDataLoader.load_rectangle_image_data(field_energy_image_data)
-
 
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
@@ -352,6 +364,9 @@ class PreDrawedImage:
 
         self.pre_draw_energy_race()
         self.pre_draw_battle_field_energy()
+
+        self.pre_draw_next_gold_button()
+        self.pre_draw_prev_gold_button()
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
@@ -462,6 +477,12 @@ class PreDrawedImage:
 
     def get_pre_draw_energy_race_with_race_number(self, race_number):
         return self.__pre_drawed_energy_race[race_number]
+
+    def get_pre_draw_next_gold_button(self):
+        return self.__pre_drawed_next_gold_button
+
+    def get_pre_draw_prev_gold_button(self):
+        return self.__pre_drawed_prev_gold_button
 
     def get_pre_draw_field_energy(self, number=0):
         return self.__pre_drawed_field_energy[number]
