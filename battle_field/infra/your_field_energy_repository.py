@@ -91,3 +91,14 @@ class YourFieldEnergyRepository:
 
     def reset_to_use_field_energy_count(self):
         self.__to_use_field_energy_count = 1
+
+    def saveReceiveIpcChannel(self, receiveIpcChannel):
+        self.__receiveIpcChannel = receiveIpcChannel
+
+    def saveTransmitIpcChannel(self, transmitIpcChannel):
+        self.__transmitIpcChannel = transmitIpcChannel
+
+
+    def request_to_attach_energy_to_unit(self, requestToAttachEnergyUnit):
+        self.__transmitIpcChannel.put(requestToAttachEnergyUnit)
+        return self.__receiveIpcChannel.get()

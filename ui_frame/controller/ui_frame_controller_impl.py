@@ -3,6 +3,7 @@ from app_window.service.window_service_impl import WindowServiceImpl
 from account_login_frame.service.login_menu_frame_service_impl import LoginMenuFrameServiceImpl
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
+from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field_function.service.battle_field_function_service_impl import BattleFieldFunctionServiceImpl
@@ -63,6 +64,7 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__muligunYourHandRepository = MuligunYourHandRepository.getInstance()
             cls.__instance.__yourTombRepository = YourTombRepository.getInstance()
             cls.__instance.__yourHandRepository = YourHandRepository.getInstance()
+            cls.__instance.__yourFieldEnergyRepository = YourFieldEnergyRepository.getInstance()
             cls.__instance.__battleFieldMuligunFrameServiece = BattleFieldMuligunFrameServiceImpl.getInstance()
 
             cls.__instance.__decisionFirstStrikeFrameService = DecisionFirstStrikeFrameService.getInstance()
@@ -169,6 +171,7 @@ class UiFrameControllerImpl(UiFrameController):
         self.__muligunYourHandRepository.saveTransmitIpcChannel(transmitIpcChannel)
         self.__yourTombRepository.saveTransmitIpcChannel(transmitIpcChannel)
         self.__yourHandRepository.saveTransmitIpcChannel(transmitIpcChannel)
+        self.__yourFieldEnergyRepository.saveTransmitIpcChannel(transmitIpcChannel)
 
         self.__fakeBattleFieldFrameServiece.injectTransmitIpcChannel(transmitIpcChannel)
 
@@ -199,6 +202,7 @@ class UiFrameControllerImpl(UiFrameController):
         self.__muligunYourHandRepository.saveReceiveIpcChannel(receiveIpcChannel)
         self.__yourTombRepository.saveReceiveIpcChannel(receiveIpcChannel)
         self.__yourHandRepository.saveReceiveIpcChannel(receiveIpcChannel)
+        self.__yourFieldEnergyRepository.saveReceiveIpcChannel(receiveIpcChannel)
 
         self.__fakeBattleFieldFrameServiece.injectReceiveIpcChannel(receiveIpcChannel)
 

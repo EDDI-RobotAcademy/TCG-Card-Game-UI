@@ -27,7 +27,7 @@ class CustomProtocol(Enum):
 
     MULLIGAN_CARD = 1012
 
-
+    ATTACH_FIELD_ENERGY = 1003
     DEPLOY_UNIT_CARD = 1004
     USE_ITEM_CARD = 1005
     USE_TRAP_CARD = 1006

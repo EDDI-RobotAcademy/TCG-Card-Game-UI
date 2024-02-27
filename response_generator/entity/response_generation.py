@@ -23,6 +23,7 @@ class ResponseGeneration(Enum):
     FREE_GACHA = 73
     EVENT_DISTRIBUTE_CARDS = 90
 
+    ATTACH_FIELD_ENERGY_TO_UNIT = 1003
     DEPLOY_UNIT_USAGE = 1004
     DRAW_CARD = 1013
 
