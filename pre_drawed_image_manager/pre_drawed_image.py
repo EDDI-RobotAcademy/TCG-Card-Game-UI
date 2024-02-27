@@ -209,7 +209,7 @@ class PreDrawedImage:
             race_number = int(png_file[:-4])
             print(f"race_number: {race_number}")
             card_race_image_data = os.path.join(self.__project_root, "local_storage", "card_race_image", f"{png_file}")
-            self.__pre_drawed_energy_race[race_number] = ImageDataLoader.load_rectangle_image_data(card_race_image_data)
+            self.__pre_drawed_energy_race[race_number] = ImageDataLoader.load_circle_image_data(card_race_image_data)
 
 
     def pre_draw_card_type(self):
