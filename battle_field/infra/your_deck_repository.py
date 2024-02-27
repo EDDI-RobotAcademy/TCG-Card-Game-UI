@@ -23,7 +23,7 @@ class YourDeckRepository:
     y_top_base_ratio = 0.2416
     y_bottom_base_ratio = 0.593
 
-    current_page = 1
+    current_page = 0
 
     def __new__(cls):
         if cls.__instance is None:
@@ -64,9 +64,15 @@ class YourDeckRepository:
         return self.current_deck_state.get_current_deck()
 
     def next_deck_page(self):
+        if self.current_page == len(self.deck_page_list) - 1:
+            return
+
         self.current_page += 1
 
     def prev_deck_page(self):
+        if self.current_page == 0:
+            return
+
         self.current_page -= 1
 
     def get_current_deck_page(self):
