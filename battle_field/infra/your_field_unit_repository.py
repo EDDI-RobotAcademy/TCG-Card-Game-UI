@@ -77,6 +77,7 @@ class YourFieldUnitRepository:
         self.attached_energy_info.remove_energy_at_index(unit_index, energy_count)
 
     def attach_race_energy(self, opponent_field_unit_index, energy_race, energy_count):
+        print(f"attach_race_energy: {opponent_field_unit_index} {energy_race} {energy_count}")
         self.attached_energy_info.add_race_energy_at_index(opponent_field_unit_index, energy_race, energy_count)
 
     def detach_race_energy(self, opponent_field_unit_index, energy_race, energy_count):

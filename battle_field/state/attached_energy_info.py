@@ -21,8 +21,10 @@ class AttachedEnergyInfoState:
     def add_race_energy_at_index(self, index, energy_type, energy_quantity):
         if index not in self.attached_energy_info:
             self.attached_energy_info[index] = []
-
+        print(f"Attach race energy at index: {self.attached_energy_info}")
+        print(f"Attach race energy at index: {self.attached_energy_info[index]}")
         self.attached_energy_info[index].append((energy_type, energy_quantity))
+        print(f"Attach race energy at index: {self.attached_energy_info}")
 
     def remove_race_energy_at_index(self, index, energy_type, energy_quantity):
         if index in self.attached_energy_info:
@@ -30,6 +32,9 @@ class AttachedEnergyInfoState:
                                                 t != energy_type]
 
     def get_total_energy_at_index(self, index):
+        print(f"get_total_energy_at_index: {index}")
+        print(f"get_total_energy_at_index: {self.attached_energy_info.get(index, [])}")
+        print(f"get_total_energy_at_index: {self.attached_energy_info_dictionary.get(index, 0)}")
         return sum(q for t, q in self.attached_energy_info.get(index, [])) + self.attached_energy_info_dictionary.get(
             index, 0)
 
