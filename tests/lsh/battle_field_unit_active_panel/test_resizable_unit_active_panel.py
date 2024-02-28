@@ -232,7 +232,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_tomb_panel = self.opponent_tomb.get_opponent_tomb_panel()
 
         self.your_hand_repository.set_x_base(567.5)
-        self.your_hand_repository.save_current_hand_state([25, 93, 8, 2, 33, 35])
+        self.your_hand_repository.save_current_hand_state([30, 93, 8, 2, 33, 35])
         # self.your_hand_repository.save_current_hand_state([151])
         self.your_hand_repository.create_hand_card_list()
 
@@ -457,6 +457,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 attached_shape.draw()
 
         for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
+            if field_unit is None:
+                continue
+
             attached_tool_card = field_unit.get_tool_card()
             if attached_tool_card is not None:
                 attached_tool_card.set_width_ratio(self.width_ratio)
@@ -952,13 +955,20 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 else:
                     self.return_to_initial_location()
 
+            # current_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
+            # current_field_unit_list_length = len(current_field_unit_list)
+
             current_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
-            current_field_unit_list_length = len(current_field_unit_list)
+            filtered_field_unit_list = [unit for unit in current_field_unit_list if unit is not None]
+            current_field_unit_list_length = len(filtered_field_unit_list)
 
             # TODO: 이 부분이 YourFixedFieldUnitCardInsideHandler
             # 현재 Your Field Unit에게 에너지 부착 및 도구 부착
             if current_field_unit_list_length > 0:
                 for unit_index, current_field_unit in enumerate(current_field_unit_list):
+                    if current_field_unit is None:
+                        continue
+
                     fixed_card_base = current_field_unit.get_fixed_card_base()
                     if fixed_card_base.is_point_inside((x, y)):
                         print("fixed field unit detect something comes inside!")
@@ -1483,10 +1493,16 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
             for your_field_unit in your_field_unit_list:
+                if your_field_unit is None:
+                    continue
+
                 if isinstance(your_field_unit, FixedFieldCard):
                     your_field_unit.selected = False
 
-            for your_field_unit in your_field_unit_list:
+            for your_field_unit in self.your_field_unit_repository.get_current_field_unit_list():
+                if your_field_unit is None:
+                    continue
+
                 # if self.selected_object.get_card_number() == 9:
                 #     self.return_to_initial_location()
 
@@ -1503,7 +1519,15 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                         current_process_card_id = self.field_area_inside_handler.get_action_set_card_id()
                         proper_handler = self.support_card_handler.getSupportCardHandler(current_process_card_id)
-                        proper_handler(your_field_unit.get_index())
+                        # proper_handler(your_field_unit.get_index())
+
+                        your_field_unit_index = your_field_unit.get_index()
+                        print(f"your_field_unit index: {your_field_unit_index}")
+
+                        # real_field_unit_index = self.your_field_unit_repository.find_field_unit_by_index(your_field_unit.get_index())
+                        # print(f"real_field_unit_index: {real_field_unit_index}")
+
+                        proper_handler(your_field_unit_index)
 
                         self.your_tomb_repository.create_tomb_card(current_process_card_id)
 
