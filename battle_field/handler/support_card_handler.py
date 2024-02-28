@@ -54,6 +54,7 @@ class SupportCardHandler:
 
         print(f"attached energy info: {self.__yourFieldUnitRepository.get_attached_energy_info().get_energy_at_index(target_unit_index)}")
         print(f"deck state: {self.__yourDeckRepository.get_current_deck_state_object().get_current_deck()}")
+        print(f"get_total_energy_at_index: {self.__yourFieldUnitRepository.get_attached_energy_info().get_total_energy_at_index(target_unit_index)}")
 
         if found_energy_count > 0:
             fixed_target_unit = self.__yourFieldUnitRepository.find_field_unit_by_index(target_unit_index)
