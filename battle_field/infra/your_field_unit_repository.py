@@ -121,7 +121,10 @@ class YourFieldUnitRepository:
             print(f"Invalid index: {card_placed_index}. 지울 것이 없다.")
 
     def replace_field_card_position(self):
-        current_y = 580
+        # current_y = 580
+        # x_increment = 170
+
+        current_y = 490
         x_increment = 170
 
         for index, current_field_unit in enumerate(self.current_field_unit_list):
@@ -134,21 +137,27 @@ class YourFieldUnitRepository:
             # tool_intiial_vertices = tool_card.get_initial_vertices()
             # tool_card.update_vertices(tool_intiial_vertices)
 
-            pickable_card_base = current_field_unit.get_pickable_card_base()
-            pickable_card_base.local_translate(local_translation)
+            fixed_card_base = current_field_unit.get_fixed_card_base()
+            fixed_card_base.local_translate(local_translation)
 
-            for attached_shape in pickable_card_base.get_attached_shapes():
-                # if isinstance(attached_shape, CircleImage):
-                #     # TODO: 동그라미는 별도 처리해야함
-                #     attached_circle_shape_initial_center = attached_shape.get_initial_center()
-                #     attached_shape.update_circle_vertices(attached_circle_shape_initial_center)
-                #     continue
-
+            for attached_shape in fixed_card_base.get_attached_shapes():
                 attached_shape.local_translate(local_translation)
-                # attached_shape_intiial_vertices = attached_shape.get_initial_vertices()
-                # attached_shape.update_vertices(attached_shape_intiial_vertices)
 
-            # current_hand_card.change_local_translation((next_x, current_y))
+            # pickable_card_base = current_field_unit.get_pickable_card_base()
+            # pickable_card_base.local_translate(local_translation)
+            #
+            # for attached_shape in pickable_card_base.get_attached_shapes():
+            #     # if isinstance(attached_shape, CircleImage):
+            #     #     # TODO: 동그라미는 별도 처리해야함
+            #     #     attached_circle_shape_initial_center = attached_shape.get_initial_center()
+            #     #     attached_shape.update_circle_vertices(attached_circle_shape_initial_center)
+            #     #     continue
+            #
+            #     attached_shape.local_translate(local_translation)
+            #     # attached_shape_intiial_vertices = attached_shape.get_initial_vertices()
+            #     # attached_shape.update_vertices(attached_shape_intiial_vertices)
+            #
+            # # current_hand_card.change_local_translation((next_x, current_y))
     def saveReceiveIpcChannel(self, receiveIpcChannel):
         self.__receiveIpcChannel = receiveIpcChannel
 
