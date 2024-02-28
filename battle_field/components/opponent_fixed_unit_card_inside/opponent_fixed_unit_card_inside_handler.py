@@ -69,6 +69,9 @@ class OpponentFixedUnitCardInsideHandler:
     def clear_required_energy_race(self):
         self.__required_energy_race = CardRace.DUMMY
 
+    def set_opponent_field_area_action(self, opponent_field_area_action):
+        self.__opponent_field_area_action = opponent_field_area_action
+
     def get_opponent_field_area_action(self):
         return self.__opponent_field_area_action
 
