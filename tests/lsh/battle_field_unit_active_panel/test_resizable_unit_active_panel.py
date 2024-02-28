@@ -69,6 +69,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_field_panel = None
 
         self.active_panel_rectangle = None
+        self.active_panel_attack_button = None
+        self.active_panel_first_skill_button = None
+        self.active_panel_second_skill_button = None
+        self.active_panel_third_skill_button = None
         self.selected_object = None
         self.prev_selected_object = None
         self.drag_start = None
@@ -507,7 +511,17 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         if self.active_panel_rectangle:
             # self.active_panel_rectangle.set_width_ratio(self.width_ratio)
             # self.active_panel_rectangle.set_height_ratio(self.height_ratio)
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
             self.active_panel_rectangle.draw()
+
+            glDisable(GL_BLEND)
+
+            self.active_panel_attack_button.draw()
+            self.active_panel_first_skill_button = None
+            self.active_panel_second_skill_button = None
+            self.active_panel_third_skill_button = None
 
         for your_lightning_border in self.field_area_inside_handler.get_lightning_border_list():
             self.lightning_border.set_padding(20)
@@ -1143,6 +1157,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             y = self.winfo_reqheight() - y
             print(f"x: {x}, y: {y}")
 
+            if self.your_active_panel.get_your_active_panel() is not None:
+                if self.your_active_panel.is_point_inside_attack_button((x, y)):
+                    print("일반 공격 클릭")
+                    return
+
             if self.tomb_panel_selected:
                 if self.your_tomb.is_point_inside_popup_rectangle((x, y)):
                     return
@@ -1603,6 +1622,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                 new_rectangle = self.your_active_panel.get_your_active_panel()
                 self.active_panel_rectangle = new_rectangle
+
+                self.active_panel_attack_button = self.your_active_panel.get_your_active_panel_attack_button()
+                self.active_panel_first_skill_button = None
+                self.active_panel_second_skill_button = None
+                self.active_panel_third_skill_button = None
 
     def create_opengl_rectangle(self, start_point):
         card_id = self.selected_object.get_card_number()

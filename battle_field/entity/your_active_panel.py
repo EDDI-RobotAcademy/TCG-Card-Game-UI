@@ -1,9 +1,12 @@
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
+from image_shape.rectangle_image import RectangleImage
 from opengl_shape.rectangle import Rectangle
+from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
 class YourActivePanel:
     card_info_repository = CardInfoFromCsvRepositoryImpl.getInstance()
+    pre_drawed_image_instance = PreDrawedImage.getInstance()
 
     def __init__(self):
         self.your_active_panel = None
@@ -39,12 +42,25 @@ class YourActivePanel:
     def clear_your_active_panel(self):
         self.your_active_panel = None
 
+    def get_your_active_panel_attack_button(self):
+        return self.your_active_panel_attack_button
+
+    def clear_your_active_panel_attack_button(self):
+        self.your_active_panel_attack_button = None
+
+    def create_general_attack_button(self, image_data, vertices):
+        general_attack_button = RectangleImage(image_data=image_data,
+                                               vertices=vertices)
+
+        general_attack_button.set_initial_vertices(vertices)
+        return general_attack_button
+
     def create_your_active_panel(self, start_point, selected_object):
         card_id = selected_object.get_card_number()
         skill_count = self.card_info_repository.getCardSkillCounterForCardNumber(card_id)
 
-        width_size = 100 * self.width_ratio
-        height_size = (62 * self.height_ratio) * (skill_count + 1)
+        width_size = 120 * self.width_ratio
+        height_size = (74.2 * self.height_ratio) * (skill_count + 1)
 
         rectangle_color = (1.0, 1.0, 1.0, 0.6)
 
@@ -61,21 +77,37 @@ class YourActivePanel:
             (0, 0),
             (0, 0))
 
-    def is_point_inside(self, point):
+        button_width_size = 100 * self.width_ratio
+        button_height_size = 62 * self.height_ratio
+
+        button_end_point = (start_point[0] + button_width_size, start_point[1] + button_height_size)
+
+        self.your_active_panel_attack_button = self.create_general_attack_button(
+            image_data=self.pre_drawed_image_instance.get_pre_draw_ok_button(),
+            vertices=[
+                (start_point[0]      + 10, start_point[1] + 10),
+                (button_end_point[0] + 10, start_point[1] + 10),
+                (button_end_point[0] + 10, button_end_point[1]),
+                (start_point[0]      + 10, button_end_point[1])])
+
+    def is_point_inside_attack_button(self, point):
         point_x, point_y = point
         point_y *= -1
 
-        lost_zone_panel = self.get_your_lost_zone_panel()
+        print(f"point_x: {point_x}, point_y: {point_y}")
+
+        attack_button = self.get_your_active_panel_attack_button()
+        print(f"attack_button vertices: {attack_button.get_vertices()}")
 
         translated_vertices = [
-            (x * self.width_ratio + lost_zone_panel.local_translation[0] * self.width_ratio, y * self.height_ratio + lost_zone_panel.local_translation[1] * self.height_ratio)
-            for x, y in lost_zone_panel.get_vertices()
+            (x * self.width_ratio + attack_button.local_translation[0] * self.width_ratio, y * self.height_ratio + attack_button.local_translation[1] * self.height_ratio)
+            for x, y in attack_button.get_vertices()
         ]
 
         if not (translated_vertices[0][0] <= point_x <= translated_vertices[2][0] and
-                translated_vertices[1][1] <= point_y <= translated_vertices[0][1]):
-            print("your lostzone panel result -> False")
+                translated_vertices[1][1] <= point_y <= translated_vertices[2][1]):
+            print("your attack_button result -> False")
             return False
 
-        print("your tomb panel result -> True")
+        print("your attack_button -> True")
         return True
