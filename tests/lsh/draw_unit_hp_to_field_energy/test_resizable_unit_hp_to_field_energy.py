@@ -481,6 +481,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         elif card_type == CardType.ITEM.value:
                             print("아군에게 아이템 사용")
 
+                            if self.selected_object.get_card_number() == 8:
+                                print("죽음의 낫은 아군에게 사용하지 않습니다")
+                                return self.return_to_initial_location()
+
                             # 우선 '사기 전환'이라 가정
                             card_id = current_field_unit.get_card_number()
                             fixed_field_unit_hp = self.card_info_repository.getCardHpForCardNumber(card_id)
