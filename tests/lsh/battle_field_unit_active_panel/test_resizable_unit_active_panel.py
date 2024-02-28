@@ -438,6 +438,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.draw_base()
 
         for opponent_field_unit in self.opponent_field_unit_repository.get_current_field_unit_card_object_list():
+            if opponent_field_unit is None:
+                continue
+
             attached_tool_card = opponent_field_unit.get_tool_card()
             if attached_tool_card is not None:
                 attached_tool_card.set_width_ratio(self.width_ratio)
@@ -839,6 +842,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                     -1):
                                 opponent_field_unit = \
                                 self.opponent_field_unit_repository.get_current_field_unit_card_object_list()[index]
+
+                                if opponent_field_unit is None:
+                                    continue
+
                                 remove_from_field = False
 
                                 fixed_card_base = opponent_field_unit.get_fixed_card_base()
@@ -941,7 +948,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             current_opponent_field_unit_list_length = len(current_opponent_field_unit_list)
             print(f"current_opponent_field_unit_list_length: {current_opponent_field_unit_list_length}")
 
-            if current_opponent_field_unit_list_length > 0:
+            valid_opponent_field_unit_list = [unit for unit in current_opponent_field_unit_list if unit is not None]
+            valid_opponent_field_unit_list_length = len(valid_opponent_field_unit_list)
+            print(f"valid_opponent_field_unit_list_length: {valid_opponent_field_unit_list_length}")
+
+            if valid_opponent_field_unit_list_length > 0:
                 # if self.selected_object.get_card_number() != 8:
                 #     self.return_to_initial_location()
 
@@ -1015,6 +1026,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                                 opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
                                 for opponent_field_unit_object in opponent_field_unit_object_list:
+                                    if opponent_field_unit_object is None:
+                                        continue
+
                                     fixed_opponent_card_base = opponent_field_unit_object.get_fixed_card_base()
                                     self.targeting_enemy_select_support_lightning_border_list.append(fixed_opponent_card_base)
 
@@ -1205,6 +1219,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                     opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
                     for opponent_field_unit_object in opponent_field_unit_object_list:
+                        if opponent_field_unit_object is None:
+                            continue
+
                         fixed_opponent_card_base = opponent_field_unit_object.get_fixed_card_base()
                         self.targeting_enemy_select_support_lightning_border_list.append(fixed_opponent_card_base)
 
@@ -1380,11 +1397,17 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                 opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
                 for opponent_field_unit_object in opponent_field_unit_object_list:
+                    if opponent_field_unit_object:
+                        continue
+
                     if isinstance(opponent_field_unit_object, FixedFieldCard):
                         opponent_field_unit_object.selected = False
 
                 print("지정한 상대 유닛 찾기")
                 for opponent_field_unit_object in opponent_field_unit_object_list:
+                    if opponent_field_unit_object is None:
+                        continue
+
                     opponent_fixed_card_base = opponent_field_unit_object.get_fixed_card_base()
 
                     if opponent_fixed_card_base.is_point_inside((x, y)):
@@ -1451,6 +1474,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                         self.your_tomb_repository.create_tomb_card(
                                             your_field_card_id)
 
+                                        self.your_field_unit_repository.replace_field_card_position()
+
                                     print("your 유닛 hp 갱신")
 
                                     opponent_hp_number = opponent_fixed_card_attached_shape.get_number()
@@ -1481,6 +1506,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             self.opponent_tomb_repository.create_opponent_tomb_card(
                                 opponent_field_card_id)
 
+                            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
                         self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
                         self.targeting_enemy_select_using_your_field_card_index = None
                         self.targeting_enemy_select_using_your_field_card_id = None
@@ -1488,6 +1515,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         self.opponent_you_selected_lightning_border_list = []
 
                         self.selected_object = None
+                        self.active_panel_rectangle = None
 
                         return
 
@@ -1677,10 +1705,16 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                 opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
                 for opponent_field_unit_object in opponent_field_unit_object_list:
+                    if opponent_field_unit_object is None:
+                        continue
+
                     if isinstance(opponent_field_unit_object, FixedFieldCard):
                         opponent_field_unit_object.selected = False
 
                 for opponent_field_unit_object in opponent_field_unit_object_list:
+                    if opponent_field_unit_object is None:
+                        continue
+
                     opponent_fixed_card_base = opponent_field_unit_object.get_fixed_card_base()
 
                     # TODO: 1체라도 선택하면 확인 버튼이 나와야 합니다.
