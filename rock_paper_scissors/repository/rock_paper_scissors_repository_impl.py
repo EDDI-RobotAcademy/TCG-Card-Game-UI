@@ -22,9 +22,9 @@ class RockPaperScissorsRepositoryImpl(RockPaperScissorsRepository):
 
     def createRockPaperScissorsFrame(self, rootWindow):
         print("RockPaperScissorsRepositoryImpl: createMainMenuFrame()")
-        cardShopMenuFrame = CardShopMenuFrame(rootWindow)
+        rockPaperScissorsFrame = RockPaperScissorsFrame(rootWindow)
 
-        return cardShopMenuFrame
+        return rockPaperScissorsFrame
 
     def saveTransmitIpcChannel(self, transmitIpcChannel):
         print("RockPaperScissorsRepositoryImpl: saveTransmitIpcChannel()")
@@ -41,3 +41,7 @@ class RockPaperScissorsRepositoryImpl(RockPaperScissorsRepository):
 
     def getRPS(self):
         return self.__rps
+
+    def requestRockPaperscissors(self, RockPaperScissorsRequest):
+        self.__transmitIpcChannel.put(RockPaperScissorsRequest)
+        return self.__receiveIpcChannel.get()

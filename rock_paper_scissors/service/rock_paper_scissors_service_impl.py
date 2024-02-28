@@ -26,6 +26,8 @@ class RockPaperScissorsServiceImpl(RockPaperScissorsService):
 
         def final_decision_button_click(target_rps):
             self.__rockPaperScissorsRepositoryImpl.setRace(target_rps)
+            responseData = self.__rockPaperScissorsRepository.requestRockPaperScissors(
+                RockPaperScissorsRequest(session_info))
 
 
 
