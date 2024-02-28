@@ -232,7 +232,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_tomb_panel = self.opponent_tomb.get_opponent_tomb_panel()
 
         self.your_hand_repository.set_x_base(567.5)
-        self.your_hand_repository.save_current_hand_state([25, 9, 2, 36, 30])
+        self.your_hand_repository.save_current_hand_state([25, 93, 93, 9, 2, 36, 30, 8, 20, 33, 35])
         # self.your_hand_repository.save_current_hand_state([151])
         self.your_hand_repository.create_hand_card_list()
 
@@ -905,6 +905,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 if card_type in [CardType.SUPPORT.value]:
                     if your_card_id != 36:
                         self.return_to_initial_location()
+                        return
+
+                    # if your_card_id == 2:
+                    #     self.return_to_initial_location()
+                    #     return
 
                     if self.is_point_inside_opponent_field_area((x, y), self.opponent_field_panel):
 
@@ -987,6 +992,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                 self.your_field_unit_repository.remove_card_by_index(unit_index)
 
                                 self.your_hand_repository.replace_hand_card_position()
+                                self.your_field_unit_repository.replace_field_card_position()
 
                                 self.your_tomb_repository.create_tomb_card(card_id)
                                 self.your_tomb_repository.create_tomb_card(placed_card_id)
