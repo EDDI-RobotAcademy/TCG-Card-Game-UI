@@ -17,6 +17,7 @@ class YourDeck:
 
         self.next_gold_button = None
         self.prev_gold_button = None
+        self.ok_button = None
 
     def set_total_window_size(self, width, height):
         self.total_width = width
@@ -50,16 +51,16 @@ class YourDeck:
         self.prev_gold_button = NonBackgroundImage(image_data=prev_gold_button_image_data,
                                                    vertices=vertices)
 
+    def create_ok_button(self, vertices):
+        ok_button_image_data = self.__pre_drawed_image_instance.get_pre_draw_ok_button()
+        self.ok_button = NonBackgroundImage(image_data=ok_button_image_data,
+                                            vertices=vertices)
+
     def init_next_prev_gold_button(self):
         prev_left_x_point = self.total_width * 0.222
         prev_right_x_point = self.total_width * 0.278
         prev_top_y_point = self.total_height * 0.463
         prev_bottom_y_point = self.total_height * 0.533
-
-        next_left_x_point = self.total_width * 0.722
-        next_right_x_point = self.total_width * 0.778
-        next_top_y_point = self.total_height * 0.463
-        next_bottom_y_point = self.total_height * 0.533
 
         self.create_prev_gold_button(
             vertices=[
@@ -69,6 +70,11 @@ class YourDeck:
                 (prev_left_x_point, prev_bottom_y_point)
             ])
 
+        next_left_x_point = self.total_width * 0.722
+        next_right_x_point = self.total_width * 0.778
+        next_top_y_point = self.total_height * 0.463
+        next_bottom_y_point = self.total_height * 0.533
+
         self.create_next_gold_button(
             vertices=[
                 (next_left_x_point, next_top_y_point),
@@ -77,11 +83,46 @@ class YourDeck:
                 (next_left_x_point, next_bottom_y_point)
             ])
 
+        ok_left_x_point = self.total_width * 0.453
+        ok_right_x_point = self.total_width * 0.547
+        ok_top_y_point = self.total_height * 0.463
+        ok_bottom_y_point = self.total_height * 0.537
+
+        self.create_ok_button(
+            vertices=[
+                (ok_left_x_point, ok_top_y_point),
+                (ok_right_x_point, ok_top_y_point),
+                (ok_right_x_point, ok_bottom_y_point),
+                (ok_left_x_point, ok_bottom_y_point)
+            ])
+
     def get_prev_gold_button(self):
         return self.prev_gold_button
 
     def get_next_gold_button(self):
         return self.next_gold_button
+
+    def get_ok_button(self):
+        return self.ok_button
+
+    def is_point_inside_ok_button(self, point):
+        point_x, point_y = point
+        point_y *= -1
+
+        ok_button = self.get_ok_button()
+
+        translated_vertices = [
+            (x * self.width_ratio + ok_button.local_translation[0] * self.width_ratio,
+             y * self.height_ratio + ok_button.local_translation[1] * self.height_ratio)
+            for x, y in ok_button.get_vertices()
+        ]
+
+        if not (translated_vertices[0][0] <= point_x <= translated_vertices[2][0] and
+                translated_vertices[0][1] <= point_y <= translated_vertices[2][1]):
+            return False
+
+        print("ok button clicked!")
+        return True
 
     def is_point_inside_prev_button(self, point):
         point_x, point_y = point

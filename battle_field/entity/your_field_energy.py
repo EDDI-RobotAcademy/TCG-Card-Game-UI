@@ -140,3 +140,12 @@ class YourFieldEnergy:
         self.your_field_energy_panel.set_image_data(
             self.__pre_drawed_image.get_pre_draw_field_energy(
                 self.__your_field_energy_repository.get_your_field_energy()))
+
+    def use_energy_card(self):
+        print("use_energy_card")
+        #energy_count = self.__your_field_energy_repository.get_to_use_field_energy_count()
+        energy_race = self.__your_field_energy_repository.get_current_field_energy_race()
+
+        #.__your_field_energy_repository.decrease_your_field_energy(energy_count)
+
+

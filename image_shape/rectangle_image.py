@@ -235,12 +235,19 @@ from opengl_shape.rectangle import Rectangle
 
 
 class RectangleImage(Shape):
+    __rectangle_kinds = None
     def __init__(self, image_data, vertices, global_translation=(0, 0), local_translation=(0, 0)):
         super().__init__(vertices, global_translation, local_translation)
         self.image_data = image_data
         self.is_visible = True
         self.texture_id = None
         self.texture_initialized = False
+
+    def set_rectangle_kinds(self, rectangle_kinds):
+        self.__rectangle_kinds = rectangle_kinds
+
+    def get_rectangle_kinds(self):
+        return self.__rectangle_kinds
 
     def set_visible(self, visible):
         self.is_visible = visible

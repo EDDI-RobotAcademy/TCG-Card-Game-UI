@@ -28,6 +28,7 @@ from battle_field.entity.tomb_type import TombType
 from battle_field.entity.your_lost_zone import YourLostZone
 from battle_field.entity.your_tomb import YourTomb
 from battle_field.handler.support_card_handler import SupportCardHandler
+from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from battle_field.infra.opponent_lost_zone_repository import OpponentLostZoneRepository
 from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
@@ -139,6 +140,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_you_selected_object_list = []
 
         self.your_field_energy_repository = YourFieldEnergyRepository.getInstance()
+        self.opponent_field_energy_repository = OpponentFieldEnergyRepository.getInstance()
+        self.opponent_field_energy_repository.increase_opponent_field_energy(3)
 
         self.your_lost_zone_repository = YourLostZoneRepository.getInstance()
         self.your_lost_zone_panel = None
@@ -223,7 +226,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_tomb_panel = self.opponent_tomb.get_opponent_tomb_panel()
 
         self.your_hand_repository.set_x_base(567.5)
-        self.your_hand_repository.save_current_hand_state([25, 33, 2, 30, 30])
+        self.your_hand_repository.save_current_hand_state([25, 9, 2, 36, 30])
         # self.your_hand_repository.save_current_hand_state([151])
         self.your_hand_repository.create_hand_card_list()
 
@@ -789,64 +792,104 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             print(f"opponent field area -> card_type: {card_type}")
 
             if card_type in [CardType.ITEM.value]:
-                # opponent_field_area_vertices = self.battle_field_opponent_unit_place_panel.get_vertices()
-                # print(f"opponent_field_area_vertices: {opponent_field_area_vertices}")
+                if your_card_id == 25:
 
-                # TODO: 추후 변경이 필요함
-                # if opponent_field_area_vertices.is_point_inside((x, y)):
+                    # TODO: 추후 변경이 필요함
+                    # if opponent_field_area_vertices.is_point_inside((x, y)):
+                    if self.is_point_inside_opponent_field_area((x, y), self.opponent_field_panel):
+                        print("파멸의 계약 사용")
+                        self.__required_energy = 0
+
+                        damage = 15
+
+                        # TODO: 즉발이므로 대기 액션이 필요없음 (서버와의 통신을 위해 대기가 발생 할 수 있긴함) 그 때 가서 추가
+                        for index in range(
+                                len(self.opponent_field_unit_repository.get_current_field_unit_card_object_list()) - 1, -1,
+                                -1):
+                            opponent_field_unit = \
+                            self.opponent_field_unit_repository.get_current_field_unit_card_object_list()[index]
+                            remove_from_field = False
+
+                            fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                            attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                            # TODO: 가만 보면 이 부분이 은근히 많이 사용되고 있음 (중복 많이 발생함)
+                            for attached_shape in attached_shape_list:
+                                if isinstance(attached_shape, CircleNumberImage):
+                                    if attached_shape.get_circle_kinds() is CircleKinds.HP:
+
+                                        hp_number = attached_shape.get_number()
+                                        hp_number -= damage
+
+                                        # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
+                                        # (지금 당장 불사가 존재하지 않음)
+                                        if hp_number <= 0:
+                                            remove_from_field = True
+                                            break
+
+                                        print(f"contract_of_doom -> hp_number: {hp_number}")
+                                        attached_shape.set_number(hp_number)
+
+                                        attached_shape.set_image_data(
+                                            # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+                                            self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
+
+                            if remove_from_field:
+                                card_id = opponent_field_unit.get_card_number()
+
+                                self.opponent_field_unit_repository.remove_current_field_unit_card(index)
+                                self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+
+                        your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
+                        self.your_hand_repository.remove_card_by_index(your_card_index)
+                        self.your_tomb_repository.create_tomb_card(your_card_id)
+
+                        self.your_hand_repository.replace_hand_card_position()
+                        self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                        # 실제 날리는 데이터의 경우 서버로부터 응답 받은 정보를 로스트 존으로 배치
+                        self.opponent_lost_zone_repository.create_opponent_lost_zone_card(32)
+
+                        self.selected_object = None
+                        return
+
+                if your_card_id == 9:
+                    is_pickable_card_inside_unit = self.opponent_fixed_unit_card_inside_handler.handle_pickable_card_inside_unit(
+                        self.selected_object, x, y)
+
+                    if is_pickable_card_inside_unit:
+                        print("에너지 번 사용")
+
+                    #     fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                    #     self.targeting_enemy_select_support_lightning_border_list.append(fixed_card_base)
+                    #
+                    # self.fixed_unit_card_inside_action = FixedUnitCardInsideAction.ENERGY_BURN
+                    # self.targeting_ememy_select_using_hand_card_id = your_card_id
+                    #
+                    # your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
+                    # self.targeting_ememy_select_using_hand_card_index = your_card_index
+                    # self.targeting_enemy_select_count = 1
+
+                    self.selected_object = None
+                    return
+
+
+            if card_type in [CardType.SUPPORT.value]:
                 if self.is_point_inside_opponent_field_area((x, y), self.opponent_field_panel):
-                    print("파멸의 계약 사용")
-                    self.__required_energy = 0
+                    print("죽음의 대지 사용")
 
-                    damage = 15
+                    opponent_field_energy = self.opponent_field_energy_repository.get_opponent_field_energy()
+                    print(f"before land of death -> opponent_field_energy: {opponent_field_energy}")
 
-                    # TODO: 즉발이므로 대기 액션이 필요없음 (서버와의 통신을 위해 대기가 발생 할 수 있긴함) 그 때 가서 추가
-                    for index in range(
-                            len(self.opponent_field_unit_repository.get_current_field_unit_card_object_list()) - 1, -1,
-                            -1):
-                        opponent_field_unit = \
-                        self.opponent_field_unit_repository.get_current_field_unit_card_object_list()[index]
-                        remove_from_field = False
+                    self.opponent_field_energy_repository.decrease_opponent_field_energy(2)
 
-                        fixed_card_base = opponent_field_unit.get_fixed_card_base()
-                        attached_shape_list = fixed_card_base.get_attached_shapes()
+                    print(f"after land of death -> opponent_field_energy: {self.opponent_field_energy_repository.get_opponent_field_energy()}")
 
-                        # TODO: 가만 보면 이 부분이 은근히 많이 사용되고 있음 (중복 많이 발생함)
-                        for attached_shape in attached_shape_list:
-                            if isinstance(attached_shape, CircleNumberImage):
-                                if attached_shape.get_circle_kinds() is CircleKinds.HP:
-
-                                    hp_number = attached_shape.get_number()
-                                    hp_number -= damage
-
-                                    # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
-                                    # (지금 당장 불사가 존재하지 않음)
-                                    if hp_number <= 0:
-                                        remove_from_field = True
-                                        break
-
-                                    print(f"contract_of_doom -> hp_number: {hp_number}")
-                                    attached_shape.set_number(hp_number)
-
-                                    attached_shape.set_image_data(
-                                        # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
-                                        self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
-
-                        if remove_from_field:
-                            card_id = opponent_field_unit.get_card_number()
-
-                            self.opponent_field_unit_repository.remove_current_field_unit_card(index)
-                            self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                    self.your_tomb_repository.create_tomb_card(your_card_id)
 
                     your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
                     self.your_hand_repository.remove_card_by_index(your_card_index)
-                    self.your_tomb_repository.create_tomb_card(your_card_id)
-
                     self.your_hand_repository.replace_hand_card_position()
-                    self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-
-                    # 실제 날리는 데이터의 경우 서버로부터 응답 받은 정보를 로스트 존으로 배치
-                    self.opponent_lost_zone_repository.create_opponent_lost_zone_card(32)
 
                     self.selected_object = None
                     return
@@ -1471,23 +1514,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             self.selected_object = None
                             return
 
-                        # 두 체가 선택되면 묻지 않고 발동합니다.
-                        # if
-                        #
-                        # self.targeting_ememy_select_using_hand_card_id = placed_card_id
-                        # self.targeting_ememy_select_using_hand_card_index = placed_index
-                        # self.targeting_enemy_select_using_your_field_card_index = unit_index
-                        # self.targeting_enemy_select_count = 2
-
-                        # self.targeting_enemy_select_support_lightning_border_list = []
-                        #         self.targeting_ememy_select_using_hand_card_id = -1
-                        #         self.targeting_ememy_select_using_hand_card_index = -1
-                        #         self.targeting_enemy_select_using_your_field_card_index = -1
-                        #         self.targeting_enemy_select_count = 0
-                        #
-                        #         self.opponent_you_selected_lightning_border_list = []
-                        #         self.opponent_you_selected_index_list = []
-
             self.tomb_panel_selected = self.left_click_detector.which_one_select_is_in_your_tomb_area(
                 (x, y),
                 self.your_tomb,
@@ -1556,20 +1582,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             self.your_lost_zone_panel_selected = False
             self.opponent_lost_zone_panel_selected = False
 
-            # self.selected_tomb = self.left_click_detector.which_tomb_did_you_select(
-            #     (x, y),
-            #     self.your_tomb,
-            #     self.opponent_tomb,
-            #     self.winfo_reqheight())
-            #
-            # if self.selected_tomb is TombType.Your:
-            #     self.your_tomb.create_tomb_panel_popup_rectangle()
-            #     self.tomb_panel_popup_rectangle = self.your_tomb.get_tomb_panel_popup_rectangle()
-            #
-            # elif self.selected_tomb is TombType.Opponent:
-            #     self.opponent_tomb.create_opponent_tomb_panel_popup_rectangle()
-            #     self.opponent_tomb_popup_rectangle_panel = self.opponent_tomb.get_opponent_tomb_panel_popup_rectangle()
-
         except Exception as e:
             print(f"Exception in on_canvas_click: {e}")
 
@@ -1599,9 +1611,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         return new_rectangle
 
 
-class TestResizableCallOfLeonic(unittest.TestCase):
+class TestResizableEnergyBurn(unittest.TestCase):
 
-    def test_resizable_call_of_leonic(self):
+    def test_resizable_energy_burn(self):
         DomainInitializer.initEachDomain()
 
         root = tkinter.Tk()

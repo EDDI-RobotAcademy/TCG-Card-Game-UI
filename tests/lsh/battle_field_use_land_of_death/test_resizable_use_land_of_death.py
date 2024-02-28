@@ -28,6 +28,7 @@ from battle_field.entity.tomb_type import TombType
 from battle_field.entity.your_lost_zone import YourLostZone
 from battle_field.entity.your_tomb import YourTomb
 from battle_field.handler.support_card_handler import SupportCardHandler
+from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from battle_field.infra.opponent_lost_zone_repository import OpponentLostZoneRepository
 from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
@@ -139,6 +140,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_you_selected_object_list = []
 
         self.your_field_energy_repository = YourFieldEnergyRepository.getInstance()
+        self.opponent_field_energy_repository = OpponentFieldEnergyRepository.getInstance()
+        self.opponent_field_energy_repository.increase_opponent_field_energy(3)
 
         self.your_lost_zone_repository = YourLostZoneRepository.getInstance()
         self.your_lost_zone_panel = None
@@ -223,7 +226,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_tomb_panel = self.opponent_tomb.get_opponent_tomb_panel()
 
         self.your_hand_repository.set_x_base(567.5)
-        self.your_hand_repository.save_current_hand_state([25, 33, 2, 30, 30])
+        self.your_hand_repository.save_current_hand_state([25, 33, 2, 36, 30])
         # self.your_hand_repository.save_current_hand_state([151])
         self.your_hand_repository.create_hand_card_list()
 
@@ -851,6 +854,26 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     self.selected_object = None
                     return
 
+            if card_type in [CardType.SUPPORT.value]:
+                if self.is_point_inside_opponent_field_area((x, y), self.opponent_field_panel):
+                    print("죽음의 대지 사용")
+
+                    opponent_field_energy = self.opponent_field_energy_repository.get_opponent_field_energy()
+                    print(f"before land of death -> opponent_field_energy: {opponent_field_energy}")
+
+                    self.opponent_field_energy_repository.decrease_opponent_field_energy(2)
+
+                    print(f"after land of death -> opponent_field_energy: {self.opponent_field_energy_repository.get_opponent_field_energy()}")
+
+                    self.your_tomb_repository.create_tomb_card(your_card_id)
+
+                    your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
+                    self.your_hand_repository.remove_card_by_index(your_card_index)
+                    self.your_hand_repository.replace_hand_card_position()
+
+                    self.selected_object = None
+                    return
+
             # Opponent Field Area 끝
 
             current_opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
@@ -1471,23 +1494,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             self.selected_object = None
                             return
 
-                        # 두 체가 선택되면 묻지 않고 발동합니다.
-                        # if
-                        #
-                        # self.targeting_ememy_select_using_hand_card_id = placed_card_id
-                        # self.targeting_ememy_select_using_hand_card_index = placed_index
-                        # self.targeting_enemy_select_using_your_field_card_index = unit_index
-                        # self.targeting_enemy_select_count = 2
-
-                        # self.targeting_enemy_select_support_lightning_border_list = []
-                        #         self.targeting_ememy_select_using_hand_card_id = -1
-                        #         self.targeting_ememy_select_using_hand_card_index = -1
-                        #         self.targeting_enemy_select_using_your_field_card_index = -1
-                        #         self.targeting_enemy_select_count = 0
-                        #
-                        #         self.opponent_you_selected_lightning_border_list = []
-                        #         self.opponent_you_selected_index_list = []
-
             self.tomb_panel_selected = self.left_click_detector.which_one_select_is_in_your_tomb_area(
                 (x, y),
                 self.your_tomb,
@@ -1556,20 +1562,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             self.your_lost_zone_panel_selected = False
             self.opponent_lost_zone_panel_selected = False
 
-            # self.selected_tomb = self.left_click_detector.which_tomb_did_you_select(
-            #     (x, y),
-            #     self.your_tomb,
-            #     self.opponent_tomb,
-            #     self.winfo_reqheight())
-            #
-            # if self.selected_tomb is TombType.Your:
-            #     self.your_tomb.create_tomb_panel_popup_rectangle()
-            #     self.tomb_panel_popup_rectangle = self.your_tomb.get_tomb_panel_popup_rectangle()
-            #
-            # elif self.selected_tomb is TombType.Opponent:
-            #     self.opponent_tomb.create_opponent_tomb_panel_popup_rectangle()
-            #     self.opponent_tomb_popup_rectangle_panel = self.opponent_tomb.get_opponent_tomb_panel_popup_rectangle()
-
         except Exception as e:
             print(f"Exception in on_canvas_click: {e}")
 
@@ -1599,9 +1591,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         return new_rectangle
 
 
-class TestResizableCallOfLeonic(unittest.TestCase):
+class TestResizableLandOfDeath(unittest.TestCase):
 
-    def test_resizable_call_of_leonic(self):
+    def test_resizable_land_of_death(self):
         DomainInitializer.initEachDomain()
 
         root = tkinter.Tk()

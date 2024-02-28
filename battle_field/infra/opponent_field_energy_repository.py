@@ -2,10 +2,11 @@ from battle_field.state.your_field_energy_state import YourFieldEnergyState
 from common.card_race import CardRace
 
 
-class YourFieldEnergyRepository:
+class OpponentFieldEnergyRepository:
     __instance = None
 
-    your_field_energy_state = YourFieldEnergyState()
+    # TODO: 네이밍 이슈 (YourField가 아니라 FieldEnergyState로 변경하는 것이 더 좋음
+    opponent_field_energy_state = YourFieldEnergyState()
     __current_field_energy_race = CardRace.DUMMY
 
     __min_race_value = 1
@@ -28,15 +29,15 @@ class YourFieldEnergyRepository:
         self.__to_use_field_energy_count = 1
         self.__current_field_energy_race = CardRace.UNDEAD
 
-    def increase_your_field_energy(self, count = 1):
-        return self.your_field_energy_state.increase_field_energy(count)
+    def increase_opponent_field_energy(self, count = 1):
+        return self.opponent_field_energy_state.increase_field_energy(count)
 
 
-    def decrease_your_field_energy(self, count = 1):
-        return self.your_field_energy_state.decrease_field_energy(count)
+    def decrease_opponent_field_energy(self, count = 1):
+        return self.opponent_field_energy_state.decrease_field_energy(count)
 
-    def get_your_field_energy(self):
-        return self.your_field_energy_state.get_your_field_energy_count()
+    def get_opponent_field_energy(self):
+        return self.opponent_field_energy_state.get_your_field_energy_count()
 
     def get_current_field_energy_race(self):
         return self.__current_field_energy_race
@@ -77,8 +78,8 @@ class YourFieldEnergyRepository:
 
     def increase_to_use_field_energy_count(self):
         self.__to_use_field_energy_count += 1
-        if self.__to_use_field_energy_count > self.your_field_energy_state.get_your_field_energy_count():
-            self.__to_use_field_energy_count = self.your_field_energy_state.get_your_field_energy_count()
+        if self.__to_use_field_energy_count > self.opponent_field_energy_state.get_your_field_energy_count():
+            self.__to_use_field_energy_count = self.opponent_field_energy_state.get_your_field_energy_count()
 
     def decrease_to_use_field_energy_count(self):
         if self.__to_use_field_energy_count <= 1:

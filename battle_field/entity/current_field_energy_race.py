@@ -1,4 +1,7 @@
+import math
+
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
+from image_shape.circle_image import CircleImage
 from image_shape.rectangle_image import RectangleImage
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
@@ -42,20 +45,22 @@ class CurrentFieldEnergyRace:
 
     def create_current_field_energy_race_panel(self):
 
-        left_x_point = self.total_width * 0.93
-        right_x_point = self.total_width * 0.97
-        top_y_point = self.total_height * 0.717
-        bottom_y_point = self.total_height * 0.757
+        # left_x_point = self.total_width * 0.93
+        # right_x_point = self.total_width * 0.97
+        # top_y_point = self.total_height * 0.717
+        # bottom_y_point = self.total_height * 0.757
 
-        self.current_field_energy_race_panel = RectangleImage(
+        center_x_point = self.total_width * 0.938
+        center_y_point = self.total_height * 0.753
+        radius = 35# math.tan(center_y_point / center_x_point)
+
+        self.current_field_energy_race_panel = CircleImage(
             image_data=self.__pre_drawed_image.get_pre_draw_energy_race_with_race_number(
                 self.__your_field_energy_repository.get_current_field_energy_race().value),
-            vertices=[
-                (left_x_point, top_y_point),
-                (right_x_point, top_y_point),
-                (right_x_point, bottom_y_point),
-                (left_x_point, bottom_y_point)
-            ])
+            center=(center_x_point, center_y_point),
+            radius=radius
+        )
+
 
     def update_current_field_energy_race_panel(self):
         self.current_field_energy_race_panel.set_image_data(

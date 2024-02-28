@@ -2,6 +2,7 @@ import colorama
 from screeninfo import get_monitors
 from shapely import Polygon, Point
 
+from battle_field.application.field_energy_application import FieldEnergyApplication
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
 from battle_field.components.field_area_inside.field_area_inside_handler import FieldAreaInsideHandler
 
@@ -23,6 +24,7 @@ from battle_field.entity.opponent_lost_zone import OpponentLostZone
 from battle_field.entity.opponent_tomb import OpponentTomb
 from battle_field.entity.prev_field_energy_race import PrevFieldEnergyRace
 from battle_field.entity.tomb_type import TombType
+from battle_field.entity.your_deck import YourDeck
 from battle_field.entity.your_field_energy import YourFieldEnergy
 from battle_field.entity.your_hp import YourHp
 from battle_field.entity.your_lost_zone import YourLostZone
@@ -148,7 +150,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.selected_object_index_for_check_required_energy = []
         self.required_energy_select_lightning_border_list = []
 
-
+        self.your_deck_list = None
+        self.your_deck = YourDeck()
+        self.your_deck_search_panel = None
+        self.your_deck_next_button = None
+        self.your_deck_prev_button = None
+        self.your_deck_ok_button = None
 
         self.your_lost_zone_repository = YourLostZoneRepository.getInstance()
         self.your_lost_zone_panel = None
@@ -209,6 +216,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.focus_set()
         self.bind("<Key>", self.on_key_press)
 
+        self.__field_energy_application = FieldEnergyApplication.getInstance()
+
     def initgl(self):
         glClearColor(1.0, 1.0, 1.0, 0.0)
         glOrtho(0, self.width, self.height, 0, -1, 1)
@@ -259,6 +268,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_hand_repository.create_hand_card_list()
 
         # self.your_deck_repository.save_deck_state([93, 35, 93, 5])
+        self.your_deck_repository.set_total_window_size(self.width, self.height)
+        self.your_deck.set_total_window_size(self.width, self.height)
+        self.your_deck_repository.build_deck_page()
+        self.your_deck.create_your_deck_popup_rectangle()
+        self.your_deck_search_panel = self.your_deck.get_your_deck_popup_rectangle()
+        self.your_deck.init_next_prev_gold_button()
+        self.your_deck_prev_button = self.your_deck.get_prev_gold_button()
+        self.your_deck_next_button = self.your_deck.get_next_gold_button()
+        self.your_deck_ok_button = self.your_deck.get_ok_button()
 
         self.opponent_field_unit_repository.create_field_unit_card(27)
 
@@ -804,10 +822,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
         point = Point(x, y)
 
         return point.within(poly)
-# refeactor: [이재승] 각종 test코드 메인 코드 병합 및 통합 테스트에 추가
+
     def on_canvas_release(self, event):
         x, y = event.x, event.y
         y = self.winfo_reqheight() - y
+
+
 
         if isinstance(self.selected_object, PickableCard):
             # Opponent Field Area 시작
@@ -904,6 +924,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     fixed_card_base = current_field_unit.get_fixed_card_base()
                     if fixed_card_base.is_point_inside((x, y)):
                         print("fixed field unit detect something comes inside!")
+
+
+
 
                         placed_card_id = self.selected_object.get_card_number()
                         card_type = self.card_info_repository.getCardTypeForCardNumber(placed_card_id)
@@ -1023,6 +1046,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             self.selected_object = None
 
                             return
+
                         else:
                             self.return_to_initial_location()
                             return
@@ -1164,6 +1188,71 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.prev_selected_object = self.selected_object
 
                     break
+
+            if self.your_field_energy_panel_selected:
+                current_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
+                for unit_index, current_field_unit in enumerate(current_field_unit_list):
+                    fixed_card_base = current_field_unit.get_fixed_card_base()
+                    if fixed_card_base.is_point_inside((x, y)):
+                        print("필드 에너지를 붙입니다!")
+
+                        # TODO: 통신해야함
+
+                        self.selected_object = current_field_unit
+                        energy_race = self.your_field_energy_repository.get_current_field_energy_race()
+                        energy_count = self.your_field_energy_repository.get_to_use_field_energy_count()
+                        before_energy_count = self.your_field_unit_repository.get_total_energy_at_index(unit_index)
+
+                        response = self.__field_energy_application.send_request_to_attach_field_energy_to_unit(
+                            unitIndex=unit_index, energyRace = energy_race, energyCount=energy_count
+                        )
+                        if not response:
+                            self.selected_object = None
+                            self.your_field_energy_panel_selected = False
+                            return
+
+                        self.your_field_unit_repository.attach_race_energy(
+                            unit_index,
+                            energy_race,
+                            energy_count)
+
+                        your_fixed_field_unit = self.your_field_unit_repository.find_field_unit_by_index(unit_index)
+                        print(f"unit index = {unit_index} , {your_fixed_field_unit}")
+                        fixed_card_base = your_fixed_field_unit.get_fixed_card_base()
+                        fixed_card_attached_shape_list = fixed_card_base.get_attached_shapes()
+                        placed_card_id = self.selected_object.get_card_number()
+                        print(f"placed_card_id : {placed_card_id}")
+                        print(f"card grade : {self.card_info_repository.getCardGradeForCardNumber(placed_card_id)}")
+                        total_attached_energy_count = self.your_field_unit_repository.get_total_energy_at_index(
+                            unit_index)
+                        print(f"total_attached_energy_count: {total_attached_energy_count}")
+
+                        for fixed_card_attached_shape in fixed_card_attached_shape_list:
+                            if isinstance(fixed_card_attached_shape, CircleNumberImage):
+                                if fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+                                    fixed_card_attached_shape.set_image_data(
+                                        self.pre_drawed_image_instance.get_pre_draw_number_image(
+                                            total_attached_energy_count))
+                                    print(f"changed energy: {fixed_card_attached_shape.get_circle_kinds()}")
+
+                        card_race = self.card_info_repository.getCardRaceForCardNumber(placed_card_id)
+                        if card_race == CardRace.UNDEAD.value:
+                            for count in range(before_energy_count+1, total_attached_energy_count+1):
+                                card_race_circle = your_fixed_field_unit.creat_fixed_card_energy_race_circle(
+                                    color=(0, 0, 0, 1),
+                                    vertices=(0, (count * 10) + 20),
+                                    local_translation=fixed_card_base.get_local_translation())
+                                fixed_card_base.set_attached_shapes(card_race_circle)
+
+                        self.selected_object = None
+                        self.your_field_energy_panel_selected = False
+                        self.your_field_energy_repository.decrease_your_field_energy(
+                            self.your_field_energy_repository.get_to_use_field_energy_count()
+                        )
+                        self.your_field_energy_repository.reset_to_use_field_energy_count()
+                        return
+                    else:
+                        self.your_field_energy_panel_selected = False
 
             if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() is OpponentFieldAreaAction.REQUIRE_ENERGY_TO_USAGE:
                 print("카드를 사용하기 위해 에너지가 필요합니다!")
@@ -1382,6 +1471,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 return
             
             #todo : [이재승]
+
+
+
             self.your_field_energy_panel_selected = False
 
             self.your_field_energy_panel_selected = self.left_click_detector.which_one_select_is_in_your_field_energy_area(
@@ -1391,13 +1483,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
             )
 
             if self.your_field_energy_panel_selected:
-
-                if self.your_field_energy_repository.decrease_your_field_energy():
-                    self.your_hand_repository.create_additional_hand_card_list(
-                        [self.your_field_energy_repository.get_current_field_energy_card_id()])
-                    print(f"current energy card : {self.your_field_energy_repository.get_current_field_energy_card_id()}, {self.your_field_energy_repository.get_current_field_energy_race()}")
-                    print(
-                        f"on_canvas_left_click() -> current_field_energy: {self.your_field_energy_repository.get_your_field_energy()}")
+                #todo : 에너지 버튼을 눌렀다는 것을 알려 줄 필요가 있을듯??
+                self.your_field_energy.use_energy_card()
+                # if self.your_field_energy_repository.decrease_your_field_energy():
+                #     self.your_hand_repository.create_additional_hand_card_list(
+                #         [self.your_field_energy_repository.get_current_field_energy_card_id()])
+                #     print(f"current energy card : {self.your_field_energy_repository.get_current_field_energy_card_id()}, {self.your_field_energy_repository.get_current_field_energy_race()}")
+                #     print(
+                #         f"on_canvas_left_click() -> current_field_energy: {self.your_field_energy_repository.get_your_field_energy()}")
 
             self.next_field_energy_race_panel_selected = self.left_click_detector.which_one_select_is_in_next_field_energy_race_area(
                 (x, y),

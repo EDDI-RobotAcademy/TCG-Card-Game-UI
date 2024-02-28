@@ -45,7 +45,7 @@ class SupportCardHandler:
     def energy_boost_from_deck_as_possible(self, target_unit_index):
         print("에너지 부스팅")
 
-        print(f"deck state: {self.__yourDeckRepository.get_current_deck_state().get_current_deck()}")
+        print(f"deck state: {self.__yourDeckRepository.get_current_deck_state_object().get_current_deck()}")
         found_list = self.__yourDeckRepository.find_card_from_deck(93, 2)
         print(f"found_list: {found_list}")
 
@@ -53,7 +53,7 @@ class SupportCardHandler:
         self.__yourFieldUnitRepository.attach_energy(target_unit_index, found_energy_count)
 
         print(f"attached energy info: {self.__yourFieldUnitRepository.get_attached_energy_info().get_energy_at_index(target_unit_index)}")
-        print(f"deck state: {self.__yourDeckRepository.get_current_deck_state().get_current_deck()}")
+        print(f"deck state: {self.__yourDeckRepository.get_current_deck_state_object().get_current_deck()}")
 
         if found_energy_count > 0:
             fixed_target_unit = self.__yourFieldUnitRepository.find_field_unit_by_index(target_unit_index)
