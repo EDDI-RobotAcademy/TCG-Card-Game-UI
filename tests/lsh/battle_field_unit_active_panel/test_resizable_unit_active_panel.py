@@ -1310,84 +1310,84 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                     break
 
-            if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() is OpponentFieldAreaAction.REQUIRE_ENERGY_TO_USAGE:
-                print("카드를 사용하기 위해 에너지가 필요합니다!")
-
-                selected_card_id = self.selected_object.get_card_number()
-
-                if self.card_info_repository.getCardTypeForCardNumber(selected_card_id) is not CardType.ENERGY.value:
-                    return
-
-                required_energy_race = self.opponent_fixed_unit_card_inside_handler.get_required_energy_race()
-                if self.card_info_repository.getCardRaceForCardNumber(
-                        selected_card_id) is not required_energy_race.value:
-                    return
-
-                self.selected_object_for_check_required_energy.append(self.selected_object)
-                self.selected_object_index_for_check_required_energy.append(
-                    self.your_hand_repository.find_index_by_selected_object(
-                        self.selected_object))
-
-                card_base = self.selected_object.get_pickable_card_base()
-                self.required_energy_select_lightning_border_list.append(card_base)
-
-                self.opponent_fixed_unit_card_inside_handler.decrease_required_energy()
-                required_energy_count = self.opponent_fixed_unit_card_inside_handler.get_required_energy()
-
-                if required_energy_count == 0:
-                    print(f"required_energy_count: {required_energy_count}")
-                    usage_card_index = self.opponent_fixed_unit_card_inside_handler.get_action_set_card_index()
-
-                    selected_energy_index_list = []
-                    selected_energy_index_list.append(self.selected_object_index_for_check_required_energy[0])
-                    selected_energy_index_list.append(self.selected_object_index_for_check_required_energy[1])
-
-                    selected_energy_id_list = []
-                    selected_energy_id_list.append(self.selected_object_for_check_required_energy[0].get_card_number())
-                    selected_energy_id_list.append(self.selected_object_for_check_required_energy[1].get_card_number())
-                    # print(f"self.selected_object_for_check_required_energy[0]: {self.selected_object_for_check_required_energy[0]}")
-                    # print(f"self.selected_object_for_check_required_energy[1]: {self.selected_object_for_check_required_energy[1]}")
-
-                    self.your_hand_repository.remove_card_by_multiple_index(
-                        [
-                            usage_card_index,
-                            selected_energy_index_list[0],
-                            selected_energy_index_list[1]
-                        ])
-
-                    opponent_unit_card_index = self.opponent_fixed_unit_card_inside_handler.get_opponent_unit_index()
-
-                    self.opponent_field_unit_repository.remove_current_field_unit_card(
-                        opponent_unit_card_index)
-
-                    # print("isn't it operate ? (Death Sice)")
-                    self.your_tomb_repository.create_tomb_card(selected_energy_id_list[0])
-                    self.your_tomb_repository.create_tomb_card(selected_energy_id_list[1])
-                    self.your_tomb_repository.create_tomb_card(
-                        self.opponent_fixed_unit_card_inside_handler.get_your_hand_card_id())
-                    # TODO: 상대편은 상대 무덤으로 이동해야함
-                    self.opponent_tomb_repository.create_opponent_tomb_card(
-                        self.opponent_fixed_unit_card_inside_handler.get_opponent_unit_id())
-
-                    self.your_hand_repository.replace_hand_card_position()
-
-                    self.selected_object_for_check_required_energy = []
-                    self.selected_object_index_for_check_required_energy = []
-                    self.required_energy_select_lightning_border_list = []
-
-                    self.opponent_fixed_unit_card_inside_handler.clear_opponent_unit_index()
-                    self.opponent_fixed_unit_card_inside_handler.clear_action_set_card_index()
-                    self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
-                    self.opponent_fixed_unit_card_inside_handler.clear_required_energy_race()
-                    self.opponent_fixed_unit_card_inside_handler.clear_required_energy()
-                    self.opponent_fixed_unit_card_inside_handler.clear_lightning_border_list()
-                    self.opponent_fixed_unit_card_inside_handler.clear_opponent_unit_id()
-                    self.opponent_fixed_unit_card_inside_handler.clear_your_hand_card_id()
-
-                    self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-
-                    self.selected_object = None
-                    return
+            # if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() is OpponentFieldAreaAction.REQUIRE_ENERGY_TO_USAGE:
+            #     print("카드를 사용하기 위해 에너지가 필요합니다!")
+            #
+            #     selected_card_id = self.selected_object.get_card_number()
+            #
+            #     if self.card_info_repository.getCardTypeForCardNumber(selected_card_id) is not CardType.ENERGY.value:
+            #         return
+            #
+            #     required_energy_race = self.opponent_fixed_unit_card_inside_handler.get_required_energy_race()
+            #     if self.card_info_repository.getCardRaceForCardNumber(
+            #             selected_card_id) is not required_energy_race.value:
+            #         return
+            #
+            #     self.selected_object_for_check_required_energy.append(self.selected_object)
+            #     self.selected_object_index_for_check_required_energy.append(
+            #         self.your_hand_repository.find_index_by_selected_object(
+            #             self.selected_object))
+            #
+            #     card_base = self.selected_object.get_pickable_card_base()
+            #     self.required_energy_select_lightning_border_list.append(card_base)
+            #
+            #     self.opponent_fixed_unit_card_inside_handler.decrease_required_energy()
+            #     required_energy_count = self.opponent_fixed_unit_card_inside_handler.get_required_energy()
+            #
+            #     if required_energy_count == 0:
+            #         print(f"required_energy_count: {required_energy_count}")
+            #         usage_card_index = self.opponent_fixed_unit_card_inside_handler.get_action_set_card_index()
+            #
+            #         selected_energy_index_list = []
+            #         selected_energy_index_list.append(self.selected_object_index_for_check_required_energy[0])
+            #         selected_energy_index_list.append(self.selected_object_index_for_check_required_energy[1])
+            #
+            #         selected_energy_id_list = []
+            #         selected_energy_id_list.append(self.selected_object_for_check_required_energy[0].get_card_number())
+            #         selected_energy_id_list.append(self.selected_object_for_check_required_energy[1].get_card_number())
+            #         # print(f"self.selected_object_for_check_required_energy[0]: {self.selected_object_for_check_required_energy[0]}")
+            #         # print(f"self.selected_object_for_check_required_energy[1]: {self.selected_object_for_check_required_energy[1]}")
+            #
+            #         self.your_hand_repository.remove_card_by_multiple_index(
+            #             [
+            #                 usage_card_index,
+            #                 selected_energy_index_list[0],
+            #                 selected_energy_index_list[1]
+            #             ])
+            #
+            #         opponent_unit_card_index = self.opponent_fixed_unit_card_inside_handler.get_opponent_unit_index()
+            #
+            #         self.opponent_field_unit_repository.remove_current_field_unit_card(
+            #             opponent_unit_card_index)
+            #
+            #         # print("isn't it operate ? (Death Sice)")
+            #         self.your_tomb_repository.create_tomb_card(selected_energy_id_list[0])
+            #         self.your_tomb_repository.create_tomb_card(selected_energy_id_list[1])
+            #         self.your_tomb_repository.create_tomb_card(
+            #             self.opponent_fixed_unit_card_inside_handler.get_your_hand_card_id())
+            #         # TODO: 상대편은 상대 무덤으로 이동해야함
+            #         self.opponent_tomb_repository.create_opponent_tomb_card(
+            #             self.opponent_fixed_unit_card_inside_handler.get_opponent_unit_id())
+            #
+            #         self.your_hand_repository.replace_hand_card_position()
+            #
+            #         self.selected_object_for_check_required_energy = []
+            #         self.selected_object_index_for_check_required_energy = []
+            #         self.required_energy_select_lightning_border_list = []
+            #
+            #         self.opponent_fixed_unit_card_inside_handler.clear_opponent_unit_index()
+            #         self.opponent_fixed_unit_card_inside_handler.clear_action_set_card_index()
+            #         self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+            #         self.opponent_fixed_unit_card_inside_handler.clear_required_energy_race()
+            #         self.opponent_fixed_unit_card_inside_handler.clear_required_energy()
+            #         self.opponent_fixed_unit_card_inside_handler.clear_lightning_border_list()
+            #         self.opponent_fixed_unit_card_inside_handler.clear_opponent_unit_id()
+            #         self.opponent_fixed_unit_card_inside_handler.clear_your_hand_card_id()
+            #
+            #         self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+            #
+            #         self.selected_object = None
+            #         return
 
             if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() is OpponentFieldAreaAction.TARGETING_ENEMY:
                 print("일반 공격 진행")
