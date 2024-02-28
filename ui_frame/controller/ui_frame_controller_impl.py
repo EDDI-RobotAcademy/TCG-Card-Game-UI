@@ -23,6 +23,7 @@ from opengl_my_card_main_frame.service.my_card_main_frame_service_impl import My
 from opengl_buy_random_card_frame.service.buy_random_card_frame_service_impl import BuyRandomCardFrameServiceImpl
 from opengl_my_deck_register_frame.service.my_deck_register_frame_service_impl import MyDeckRegisterFrameServiceImpl
 from notify_reader.controller.notify_reader_controller_impl import NotifyReaderControllerImpl
+from rock_paper_scissors.service.rock_paper_scissors_service_impl import RockPaperScissorsServiceImpl
 
 from session.service.session_service_impl import SessionServiceImpl
 
@@ -66,6 +67,7 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__yourHandRepository = YourHandRepository.getInstance()
             cls.__instance.__yourFieldEnergyRepository = YourFieldEnergyRepository.getInstance()
             cls.__instance.__battleFieldMuligunFrameServiece = BattleFieldMuligunFrameServiceImpl.getInstance()
+            cls.__instance.__rockPaperScissorsService = RockPaperScissorsServiceImpl.getInstance()
 
             cls.__instance.__decisionFirstStrikeFrameService = DecisionFirstStrikeFrameService.getInstance()
 
@@ -120,6 +122,9 @@ class UiFrameControllerImpl(UiFrameController):
         decisionFirstStrikeFrame = self.__decisionFirstStrikeFrameService.create_decision_first_strike_frame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerDecisionFirstStrikeFrame(decisionFirstStrikeFrame)
 
+        rockPaperScissorsFrame = self.__rockPaperScissorsService.createRockPaperScissorsUiFrame(rootWindow, self.switchFrameWithMenuName)
+        self.__uiFrameService.registerRockPaperScissorsUiFrame(rockPaperScissorsFrame)
+
         # TODO: 매칭 없이 통합 테스트를 진행하기 위한 별도의 가짜 방 (지속적으로 업데이트 해야함)
         fakeBattleFieldFrame = self.__fakeBattleFieldFrameServiece.createFakeBattleFieldFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerFakeBattleFieldUiFrame(fakeBattleFieldFrame)
@@ -163,6 +168,7 @@ class UiFrameControllerImpl(UiFrameController):
 
         self.__buyCheckService.injectTransmitIpcChannel(transmitIpcChannel)
         self.__battleFieldMuligunFrameServiece.injectReceiveIpcChannel(transmitIpcChannel)
+        self.__rockPaperScissorsService.injectReceiveIpcChannel(transmitIpcChannel)
 
         # TODO: Ugly -> Need to Refactor
         self.__battleFieldRepository.saveTransmitIpcChannel(transmitIpcChannel)
@@ -194,6 +200,7 @@ class UiFrameControllerImpl(UiFrameController):
 
         self.__buyCheckService.injectReceiveIpcChannel(receiveIpcChannel)
         self.__battleFieldMuligunFrameServiece.injectReceiveIpcChannel(receiveIpcChannel)
+        self.__rockPaperScissorsService.injectReceiveIpcChannel(receiveIpcChannel)
 
         # TODO: Ugly -> Need to Refactor
         self.__battleFieldRepository.saveReceiveIpcChannel(receiveIpcChannel)
