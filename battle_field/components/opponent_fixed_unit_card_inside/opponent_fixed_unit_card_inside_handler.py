@@ -122,8 +122,10 @@ class OpponentFixedUnitCardInsideHandler:
             if opponent_field_unit.get_fixed_card_base().is_point_inside((x, y)):
                 self.handle_inside_field_unit(selected_object, opponent_unit_index)
                 self.__opponent_unit_id = opponent_field_unit.get_card_number()
+                print("handle_pickable_card_inside_unit -> True")
                 return True
 
+        print("handle_pickable_card_inside_unit -> False")
         return False
 
     def handle_inside_field_unit(self, selected_object, opponent_unit_index):
