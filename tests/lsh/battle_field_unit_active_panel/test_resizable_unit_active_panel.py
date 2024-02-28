@@ -519,8 +519,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             glDisable(GL_BLEND)
 
             self.active_panel_attack_button.draw()
-            self.active_panel_first_skill_button = None
-            self.active_panel_second_skill_button = None
+
+            if self.active_panel_first_skill_button is not None:
+                self.active_panel_first_skill_button.draw()
+
+            if self.active_panel_second_skill_button is not None:
+                self.active_panel_second_skill_button.draw()
+
             self.active_panel_third_skill_button = None
 
         for your_lightning_border in self.field_area_inside_handler.get_lightning_border_list():
@@ -1157,10 +1162,25 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             y = self.winfo_reqheight() - y
             print(f"x: {x}, y: {y}")
 
-            if self.your_active_panel.get_your_active_panel() is not None:
+            if self.your_active_panel.get_your_active_panel_attack_button() is not None:
                 if self.your_active_panel.is_point_inside_attack_button((x, y)):
                     print("일반 공격 클릭")
                     return
+
+            if self.your_active_panel.get_your_active_panel_first_skill_button() is not None:
+                if self.your_active_panel.is_point_inside_first_skill_button((x, y)):
+                    print("첫 번째 스킬 클릭")
+                    return
+
+            if self.your_active_panel.get_your_active_panel_second_skill_button() is not None:
+                if self.your_active_panel.is_point_inside_second_skill_button((x, y)):
+                    print("두 번째 스킬 클릭")
+                    return
+
+            # if self.your_active_panel.get_your_active_panel_third_skill_button() is not None:
+            #     if self.your_active_panel.is_point_inside_third_skill_button((x, y)):
+            #         print("세 번째 스킬 클릭")
+            #         return
 
             if self.tomb_panel_selected:
                 if self.your_tomb.is_point_inside_popup_rectangle((x, y)):
@@ -1200,7 +1220,12 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     self.drag_start = (x, y)
 
                     if self.selected_object != self.prev_selected_object:
+                        self.your_active_panel.clear_your_active_panel_second_skill_button()
+                        self.your_active_panel.clear_your_active_panel_first_skill_button()
+                        self.your_active_panel.clear_your_active_panel_attack_button()
+                        self.your_active_panel.clear_your_active_panel()
                         self.active_panel_rectangle = None
+
                         self.prev_selected_object = self.selected_object
 
                     break
@@ -1321,6 +1346,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                     if self.selected_object != self.prev_selected_object:
                         self.active_panel_rectangle = None
+                        self.your_active_panel.clear_your_active_panel_second_skill_button()
+                        self.your_active_panel.clear_your_active_panel_first_skill_button()
+                        self.your_active_panel.clear_your_active_panel_attack_button()
+                        self.your_active_panel.clear_your_active_panel()
+
                         self.prev_selected_object = self.selected_object
 
                     break
@@ -1624,8 +1654,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 self.active_panel_rectangle = new_rectangle
 
                 self.active_panel_attack_button = self.your_active_panel.get_your_active_panel_attack_button()
-                self.active_panel_first_skill_button = None
-                self.active_panel_second_skill_button = None
+                self.active_panel_first_skill_button = self.your_active_panel.get_your_active_panel_first_skill_button()
+                self.active_panel_second_skill_button = self.your_active_panel.get_your_active_panel_second_skill_button()
                 self.active_panel_third_skill_button = None
 
     def create_opengl_rectangle(self, start_point):
