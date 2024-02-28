@@ -232,7 +232,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_tomb_panel = self.opponent_tomb.get_opponent_tomb_panel()
 
         self.your_hand_repository.set_x_base(567.5)
-        self.your_hand_repository.save_current_hand_state([25, 93, 93, 9, 2, 36, 30, 8, 20, 33, 35])
+        self.your_hand_repository.save_current_hand_state([25, 93, 8, 20, 33, 35])
         # self.your_hand_repository.save_current_hand_state([151])
         self.your_hand_repository.create_hand_card_list()
 
@@ -1012,8 +1012,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                 # self.targeting_enemy_select_support_lightning_border_list = []
                                 self.targeting_ememy_select_using_hand_card_id = placed_card_id
                                 self.targeting_ememy_select_using_hand_card_index = placed_index
+                                print(f"explosion targeting_ememy_select_using_hand_card_index: {self.targeting_ememy_select_using_hand_card_index}")
                                 self.targeting_enemy_select_using_your_field_card_index = unit_index
+                                print(f"explosion targeting_enemy_select_using_your_field_card_index: {self.targeting_enemy_select_using_your_field_card_index}")
                                 self.targeting_enemy_for_sacrifice_unit_id = card_id
+                                print(f"explosion targeting_enemy_for_sacrifice_unit_id: {self.targeting_enemy_for_sacrifice_unit_id}")
                                 self.targeting_enemy_select_count = 2
 
                                 # self.your_hand_repository.replace_hand_card_position()
@@ -1044,7 +1047,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                 race,
                                 1)
 
+                            every_list = self.your_field_unit_repository.get_current_field_unit_list()
+                            print(f"every_list: {every_list}")
+
                             your_fixed_field_unit = self.your_field_unit_repository.find_field_unit_by_index(unit_index)
+                            print(f"energy_attach -> your_fixed_field_unit: {your_fixed_field_unit}")
                             fixed_card_base = your_fixed_field_unit.get_fixed_card_base()
                             fixed_card_attached_shape_list = fixed_card_base.get_attached_shapes()
                             placed_card_id = self.selected_object.get_card_number()
@@ -1705,7 +1712,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                             # for remove_from_field in remove_from_field_list:
 
-                            print(f"corpse explosion index: {self.targeting_ememy_select_using_hand_card_index}")
+                            print(f"corpse explosion your hand index: {self.targeting_ememy_select_using_hand_card_index}")
                             self.your_hand_repository.remove_card_by_index(
                                 self.targeting_ememy_select_using_hand_card_index)
                             self.your_tomb_repository.create_tomb_card(
@@ -1717,11 +1724,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                 self.opponent_tomb_repository.create_opponent_tomb_card(
                                     remove_from_field_id)
 
+                            print(f"corpse explosion your field index: {self.targeting_enemy_select_using_your_field_card_index}")
                             self.your_field_unit_repository.remove_card_by_index(self.targeting_enemy_select_using_your_field_card_index)
                             self.your_tomb_repository.create_tomb_card(self.targeting_enemy_for_sacrifice_unit_id)
 
                             self.your_hand_repository.replace_hand_card_position()
                             self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                            self.your_field_unit_repository.replace_field_card_position()
 
                             self.fixed_unit_card_inside_action = FixedUnitCardInsideAction.Dummy
 
