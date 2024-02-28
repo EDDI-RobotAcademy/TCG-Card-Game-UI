@@ -44,6 +44,7 @@ class OpponentFixedUnitCardInsideHandler:
             cls.__instance.__opponent_fixed_unit_card_inside_handler_table[8] = cls.__instance.death_sice_need_two_undead_energy
             # cls.__instance.__opponent_fixed_unit_card_inside_handler_table[20] = cls.__instance.contract_of_doom
             cls.__instance.__opponent_fixed_unit_card_inside_handler_table[9] = cls.__instance.energy_burn
+            # cls.__instance.__opponent_fixed_unit_card_inside_handler_table[35] = cls.__instance.do_nothing
 
         return cls.__instance
 
@@ -113,6 +114,9 @@ class OpponentFixedUnitCardInsideHandler:
         card_type = self.__card_info_repository.getCardTypeForCardNumber(selected_object.get_card_number())
         print(f"card_type: {card_type}")
 
+        if selected_object.get_card_number() == 35:
+            return False
+
         if card_type not in [CardType.ITEM.value]:
             return
 
@@ -122,8 +126,10 @@ class OpponentFixedUnitCardInsideHandler:
             if opponent_field_unit.get_fixed_card_base().is_point_inside((x, y)):
                 self.handle_inside_field_unit(selected_object, opponent_unit_index)
                 self.__opponent_unit_id = opponent_field_unit.get_card_number()
+                print("handle_pickable_card_inside_unit -> True")
                 return True
 
+        print("handle_pickable_card_inside_unit -> False")
         return False
 
     def handle_inside_field_unit(self, selected_object, opponent_unit_index):
