@@ -93,10 +93,11 @@ class YourFieldUnitRepository:
         return self.attached_energy_info.get_race_energy_at_index(index, energy_race)
 
     def find_field_unit_by_index(self, index):
-        for unit in self.current_field_unit_list:
-            if unit.get_index() == index:
-                return unit
-        return None
+        return self.get_current_field_unit_list()[index]
+        # for unit in self.current_field_unit_list:
+        #     if unit.get_index() == index:
+        #         return unit
+        # return None
 
     def get_attached_energy_info(self):
         return self.attached_energy_info
@@ -112,13 +113,8 @@ class YourFieldUnitRepository:
         # print(f"after clear -> current_hand_list: {self.current_field_unit_state}, current_hand_state: {self.get_current_field_unit_state()}")
 
     def remove_card_by_index(self, card_placed_index):
-        if 0 <= card_placed_index < len(self.current_field_unit_list):
-            del self.current_field_unit_list[card_placed_index]
-            self.current_field_unit_state.remove_field_unit_by_index(card_placed_index)
-
-            # print(f"Removed card index {card_placed_index} -> current_hand_list: {self.current_field_unit_list}, current_hand_state: {self.get_current_field_unit_state()}")
-        else:
-            print(f"Invalid index: {card_placed_index}. 지울 것이 없다.")
+        del self.current_field_unit_list[card_placed_index]
+        print(f"Removed card index {card_placed_index} -> current_hand_list: {self.current_field_unit_list}, current_hand_state: {self.get_current_field_unit_state()}")
 
     def replace_field_card_position(self):
         # current_y = 580
