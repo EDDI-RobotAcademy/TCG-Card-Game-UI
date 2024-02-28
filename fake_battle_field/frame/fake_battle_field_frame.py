@@ -50,6 +50,7 @@ from card_info_from_csv.repository.card_info_from_csv_repository_impl import Car
 from common.card_grade import CardGrade
 from common.card_race import CardRace
 from common.card_type import CardType
+from fake_battle_field.entity.animation_test_image import AnimationTestImage
 from fake_battle_field.entity.muligun_reset_button import MuligunResetButton
 from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
@@ -206,6 +207,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.decrease_to_use_field_energy_count = DecreaseToUseFieldEnergyCount()
         self.decrease_to_use_field_energy_count_panel_selected = False
 
+        self.animation_test_image_panel = None
+        self.animation_test_image = AnimationTestImage()
+
+
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
         self.bind("<ButtonRelease-1>", self.on_canvas_release)
@@ -341,6 +346,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.decrease_to_use_field_energy_count.get_decrease_to_use_field_energy_count_panel()
         )
 
+        self.animation_test_image.set_total_window_size(self.width, self.height)
+        self.animation_test_image.change_local_translation(
+            self.opponent_field_unit_repository.find_opponent_field_unit_by_index(0).get_local_translation()
+        )
+        self.animation_test_image.draw_animation_panel()
+        self.animation_test_image_panel = self.animation_test_image.get_animation_panel()
+
+
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
 
@@ -366,9 +379,26 @@ class FakeBattleFieldFrame(OpenGLFrame):
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
 
+
+
     def on_key_press(self, event):
         key = event.keysym
         print(f"Key pressed: {key}")
+
+        if key.lower() == '1':
+
+            print("created animation panel")
+
+        if key.lower() == 'l':
+
+            def animate():
+                self.animation_test_image.update_animation_panel()
+                if not self.animation_test_image.is_finished:
+                    self.master.after(17, animate)
+
+            self.animation_test_image.reset_animation_count()
+            self.master.after(0, animate)
+
 
         if key.lower() == 'h':
             self.your_field_energy_repository.to_next_field_energy_race()
@@ -509,6 +539,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.decrease_to_use_field_energy_count.set_width_ratio(self.width_ratio)
         self.decrease_to_use_field_energy_count.set_height_ratio(self.height_ratio)
         self.decrease_to_use_field_energy_count_panel.draw()
+
+        self.animation_test_image.set_width_ratio(self.width_ratio)
+        self.animation_test_image.set_height_ratio(self.height_ratio)
+        self.animation_test_image_panel.draw()
 
         glDisable(GL_BLEND)
 

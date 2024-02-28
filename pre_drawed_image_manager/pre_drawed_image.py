@@ -26,6 +26,8 @@ class PreDrawedImage:
     __pre_drawed_dark_flame = None
     __pre_drawed_freezing = None
 
+    __pre_drawed_gif = None
+
 
     __pre_drawed_opponent_tomb = None
     __pre_drawed_opponent_lost_zone = None
@@ -63,7 +65,7 @@ class PreDrawedImage:
     __pre_drawed_prev_gold_button = None
     __pre_drawed_ok_button = None
 
-
+    __pre_drawed_animation = {}
 
     def __new__(cls):
         if cls.__instance is None:
@@ -326,6 +328,15 @@ class PreDrawedImage:
             print(f"image data = {field_energy_image_data}")
             self.__pre_drawed_field_energy[number] = ImageDataLoader.load_rectangle_image_data(field_energy_image_data)
 
+    def pre_draw_animation(self):
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation")
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", f"{number}.png")
+            print(f"animation image data = {animation_image_data}")
+            self.__pre_drawed_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
+
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
         self.pre_draw_opponent_lost_zone()
@@ -375,6 +386,8 @@ class PreDrawedImage:
         self.pre_draw_prev_gold_button()
 
         self.pre_draw_ok_button()
+
+        self.pre_draw_animation()
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
@@ -497,4 +510,8 @@ class PreDrawedImage:
 
     def get_pre_draw_field_energy(self, number=0):
         return self.__pre_drawed_field_energy[number]
+
+
+    def get_pre_draw_animation(self, number = 0):
+        return self.__pre_drawed_animation[number]
 
