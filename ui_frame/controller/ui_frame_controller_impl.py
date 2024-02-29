@@ -168,7 +168,7 @@ class UiFrameControllerImpl(UiFrameController):
 
         self.__buyCheckService.injectTransmitIpcChannel(transmitIpcChannel)
         self.__battleFieldMuligunFrameServiece.injectReceiveIpcChannel(transmitIpcChannel)
-        self.__rockPaperScissorsService.injectReceiveIpcChannel(transmitIpcChannel)
+        self.__rockPaperScissorsService.injectTransmitIpcChannel(transmitIpcChannel)
 
         # TODO: Ugly -> Need to Refactor
         self.__battleFieldRepository.saveTransmitIpcChannel(transmitIpcChannel)
