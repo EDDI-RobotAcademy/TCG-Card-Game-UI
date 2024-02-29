@@ -33,6 +33,7 @@ from battle_field.infra.opponent_field_energy_repository import OpponentFieldEne
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from battle_field.infra.opponent_lost_zone_repository import OpponentLostZoneRepository
 from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
+from battle_field.infra.round_repository import RoundRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
@@ -160,6 +161,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_lost_zone = OpponentLostZone()
         self.opponent_lost_zone_popup_panel = None
         self.opponent_lost_zone_panel_selected = False
+
+        self.round_repository = RoundRepository.getInstance()
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -322,6 +325,62 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         if key.lower() == 'n':
             self.opponent_field_unit_repository.create_field_unit_card(19)
             self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+        if key.lower() == 'b':
+            self.your_field_unit_repository.create_field_unit_card(19)
+            self.your_field_unit_repository.replace_field_card_position()
+
+            passive_skill_type = self.card_info_repository.getCardPassiveFirstForCardNumber(19)
+            if passive_skill_type == 1:
+                print("단일기")
+            elif passive_skill_type == 2:
+                print("광역기")
+
+                damage = self.card_info_repository.getCardPassiveFirstDamageForCardNumber(19)
+                print(f"wide area damage: {damage}")
+
+                for index in range(
+                        len(self.opponent_field_unit_repository.get_current_field_unit_card_object_list()) - 1,
+                        -1,
+                        -1):
+                    opponent_field_unit = \
+                        self.opponent_field_unit_repository.get_current_field_unit_card_object_list()[index]
+
+                    if opponent_field_unit is None:
+                        continue
+
+                    remove_from_field = False
+
+                    fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                    attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                    for attached_shape in attached_shape_list:
+                        if isinstance(attached_shape, CircleNumberImage):
+                            if attached_shape.get_circle_kinds() is CircleKinds.HP:
+
+                                hp_number = attached_shape.get_number()
+                                hp_number -= damage
+
+                                if hp_number <= 0:
+                                    remove_from_field = True
+                                    break
+
+                                print(f"contract_of_doom -> hp_number: {hp_number}")
+                                attached_shape.set_number(hp_number)
+
+                                attached_shape.set_image_data(
+                                    self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
+
+                    if remove_from_field:
+                        card_id = opponent_field_unit.get_card_number()
+
+                        self.opponent_field_unit_repository.remove_current_field_unit_card(index)
+                        self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+
+                self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+        if key.lower() == 't':
+            self.round_repository.increase_current_round_number()
 
         if key.lower() == 'e':
             print("attach undead energy")
@@ -1341,9 +1400,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                 self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
 
                         self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-
-                        # 실제 날리는 데이터의 경우 서버로부터 응답 받은 정보를 로스트 존으로 배치
-                        self.opponent_lost_zone_repository.create_opponent_lost_zone_card(32)
 
                         self.selected_object = None
                         return

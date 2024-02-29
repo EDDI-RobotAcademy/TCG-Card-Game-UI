@@ -118,6 +118,12 @@ class FieldAreaInsideHandler:
 
         self.__your_hand_repository.replace_hand_card_position()
 
+        passive_skill_type = self.__card_info_repository.getCardPassiveFirstForCardNumber(placed_card_id)
+        if passive_skill_type == 2:
+            print("광역기")
+        elif passive_skill_type == 1:
+            print("단일기")
+
         self.__field_area_action = FieldAreaAction.PLACE_UNIT
         return self.__field_area_action
 
