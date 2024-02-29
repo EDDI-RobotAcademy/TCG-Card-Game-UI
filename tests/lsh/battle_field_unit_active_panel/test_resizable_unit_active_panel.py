@@ -313,12 +313,15 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         if key.lower() == 'a':
             self.opponent_field_unit_repository.create_field_unit_card(26)
+            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
         if key.lower() == 'q':
             self.opponent_field_unit_repository.create_field_unit_card(31)
+            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
         if key.lower() == 'n':
             self.opponent_field_unit_repository.create_field_unit_card(19)
+            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
         if key.lower() == 'e':
             print("attach undead energy")
@@ -1281,8 +1284,69 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     print("두 번째 스킬 클릭")
 
                     your_field_unit_id = self.selected_object.get_card_number()
+                    print(f"your_field_unit_id: {your_field_unit_id}")
                     skill_type = self.card_info_repository.getCardSkillSecondForCardNumber(your_field_unit_id)
                     print(f"skill_type: {skill_type}")
+
+                    # 단일기
+                    if skill_type == 1:
+                        pass
+
+                    # 광역기
+                    elif skill_type == 2:
+                        damage = self.card_info_repository.getCardSkillSecondDamageForCardNumber(your_field_unit_id)
+                        print(f"wide area damage: {damage}")
+
+                        # TODO: 즉발이므로 대기 액션이 필요없음 (서버와의 통신을 위해 대기가 발생 할 수 있긴함) 그 때 가서 추가
+                        for index in range(
+                                len(self.opponent_field_unit_repository.get_current_field_unit_card_object_list()) - 1,
+                                -1,
+                                -1):
+                            opponent_field_unit = \
+                                self.opponent_field_unit_repository.get_current_field_unit_card_object_list()[index]
+
+                            if opponent_field_unit is None:
+                                continue
+
+                            remove_from_field = False
+
+                            fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                            attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                            # TODO: 가만 보면 이 부분이 은근히 많이 사용되고 있음 (중복 많이 발생함)
+                            for attached_shape in attached_shape_list:
+                                if isinstance(attached_shape, CircleNumberImage):
+                                    if attached_shape.get_circle_kinds() is CircleKinds.HP:
+
+                                        hp_number = attached_shape.get_number()
+                                        hp_number -= damage
+
+                                        # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
+                                        # (지금 당장 불사가 존재하지 않음)
+                                        if hp_number <= 0:
+                                            remove_from_field = True
+                                            break
+
+                                        print(f"contract_of_doom -> hp_number: {hp_number}")
+                                        attached_shape.set_number(hp_number)
+
+                                        attached_shape.set_image_data(
+                                            # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+                                            self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
+
+                            if remove_from_field:
+                                card_id = opponent_field_unit.get_card_number()
+
+                                self.opponent_field_unit_repository.remove_current_field_unit_card(index)
+                                self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+
+                        self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                        # 실제 날리는 데이터의 경우 서버로부터 응답 받은 정보를 로스트 존으로 배치
+                        self.opponent_lost_zone_repository.create_opponent_lost_zone_card(32)
+
+                        self.selected_object = None
+                        return
 
                     return
 
@@ -1605,7 +1669,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                     print(f"your_field_card_index: {your_field_card_index}")
                                     # your_skill_damage = self.card_info_repository.getCardAttackForCardNumber(your_field_card_id)
                                     # your_skill_damage = self.card_info_repository.getCardAttackForCardNumber(your_field_card_id)
-                                    your_skill_damage = 20
+                                    # your_skill_damage = 20
+                                    your_skill_damage = self.card_info_repository.getCardSkillFirstDamageForCardNumber(your_field_card_id)
                                     print(f"your_skill_damage: {your_skill_damage}")
 
                                     opponent_field_card_id = opponent_field_unit_object.get_card_number()
