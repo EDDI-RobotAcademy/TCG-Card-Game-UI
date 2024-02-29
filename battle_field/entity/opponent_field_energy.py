@@ -53,7 +53,7 @@ class OpponentFieldEnergy:
         top_y_point = self.total_height * 0.032
         bottom_y_point = self.total_height * 0.193
 
-        self.opponent_field_energy_panel = RectangleImage(
+        self.opponent_field_energy_panel = NonBackgroundImage(
             image_data=self.__pre_drawed_image.get_pre_draw_field_energy(self.__opponent_field_energy_repository.get_opponent_field_energy()),
             vertices=[
                 (left_x_point, top_y_point),

@@ -330,10 +330,12 @@ class PreDrawedImage:
 
     def pre_draw_animation(self):
         image_dir = os.path.join(self.__project_root, "local_storage", "animation")
+        # image_dir = os.path.join(self.__project_root, "local_storage", "animation_for_test")
         file_list = os.listdir(image_dir)
 
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", f"{number}.png")
+            # animation_image_data = os.path.join(self.__project_root, "local_storage", "animation_for_test", f"{number}.png")
             print(f"animation image data = {animation_image_data}")
             self.__pre_drawed_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 

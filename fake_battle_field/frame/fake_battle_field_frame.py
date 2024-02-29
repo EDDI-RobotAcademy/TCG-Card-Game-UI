@@ -212,6 +212,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.animation_test_image_panel = None
         self.animation_test_image = AnimationTestImage()
 
+        self.animation_test_image_list = []
+        self.animation_test_image_panel_list = []
+
         self.opponent_field_energy = OpponentFieldEnergy()
         self.opponent_field_energy_panel = None
         self.opponent_field_energy_repository = OpponentFieldEnergyRepository.getInstance()
@@ -436,6 +439,71 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.animation_test_image.reset_animation_count()
             self.master.after(0, animate)
 
+        if key.lower() == 'kp_1':
+            self.animation_test_image_panel = None
+            animation_test_image = AnimationTestImage()
+
+            animation_test_image.set_total_window_size(self.width, self.height)
+            animation_test_image.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(0).get_local_translation()
+            )
+            animation_test_image.draw_animation_panel()
+            animation_test_image_panel = animation_test_image.get_animation_panel()
+
+            self.animation_test_image_list.append(animation_test_image)
+            self.animation_test_image_panel_list.append(animation_test_image_panel)
+            print("첨부 완료~: ", self.animation_test_image_panel_list, self.animation_test_image_list)
+            print("체크: ", type(self.animation_test_image_panel_list[0]), type(self.animation_test_image_list[0]))
+
+        if key.lower() == 'kp_2':
+            self.animation_test_image_panel = None
+            animation_test_image = AnimationTestImage()
+
+            animation_test_image.set_total_window_size(self.width, self.height)
+            animation_test_image.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(1).get_local_translation()
+            )
+            animation_test_image.draw_animation_panel()
+            animation_test_image_panel = animation_test_image.get_animation_panel()
+
+            self.animation_test_image_list.append(animation_test_image)
+            self.animation_test_image_panel_list.append(animation_test_image_panel)
+
+        if key.lower() == 'kp_enter':
+            def animate():
+                finish_list = []
+                is_all_finished = False
+                for _animation_test_image in self.animation_test_image_list:
+                    _animation_test_image.update_animation_panel()
+                    finish_list.append(_animation_test_image.is_finished)
+
+                for finish in finish_list:
+                    if finish == False:
+                        is_all_finished = False
+                        break
+                    else:
+                        is_all_finished = True
+
+                if not is_all_finished:
+                    self.master.after(17, animate)
+                else:
+                    self.animation_test_image_list = []
+                    self.animation_test_image_panel_list = []
+                    print("finish animation")
+
+                # if not self.animation_test_image_list[0].is_finished:
+                #     self.master.after(17, animate)
+                # else:
+                #     self.animation_test_image_panel_list = []
+                #     self.animation_test_image_list = []
+                #     print("finish animation")
+
+            for animation_test_image in self.animation_test_image_list:
+                print(f"animation count: {animation_test_image}")
+                animation_test_image.reset_animation_count()
+
+            self.master.after(0, animate)
+
 
         if key.lower() == 'h':
             self.your_field_energy_repository.to_next_field_energy_race()
@@ -557,6 +625,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_field_energy.update_current_field_energy_panel()
         self.your_field_energy_panel.draw()
 
+        self.opponent_field_energy.set_width_ratio(self.width_ratio)
+        self.opponent_field_energy.set_height_ratio(self.height_ratio)
+        self.opponent_field_energy.update_current_opponent_field_energy_panel()
+        self.opponent_field_energy_panel.draw()
+
         self.next_field_energy_race.set_width_ratio(self.width_ratio)
         self.next_field_energy_race.set_height_ratio(self.width_ratio)
         self.next_field_energy_race_panel.draw()
@@ -583,10 +656,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.decrease_to_use_field_energy_count.set_height_ratio(self.height_ratio)
         self.decrease_to_use_field_energy_count_panel.draw()
 
-        self.opponent_field_energy.set_width_ratio(self.width_ratio)
-        self.opponent_field_energy.set_height_ratio(self.height_ratio)
-        self.opponent_field_energy.update_current_opponent_field_energy_panel()
-        self.opponent_field_energy_panel.draw()
+
 
         glDisable(GL_BLEND)
 
@@ -831,6 +901,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.animation_test_image.set_width_ratio(self.width_ratio)
             self.animation_test_image.set_height_ratio(self.height_ratio)
             self.animation_test_image_panel.draw()
+
+        if self.animation_test_image_list is not [] and self.animation_test_image_panel_list is not []:
+            for animation_test_image, animation_test_image_panel in zip(self.animation_test_image_list, self.animation_test_image_panel_list):
+                if animation_test_image.is_finished:
+                    continue
+                animation_test_image.set_width_ratio(self.width_ratio)
+                animation_test_image.set_height_ratio(self.height_ratio)
+                animation_test_image_panel.draw()
+
+
+
 
         self.tkSwapBuffers()
 
