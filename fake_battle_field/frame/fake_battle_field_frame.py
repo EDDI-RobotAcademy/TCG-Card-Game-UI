@@ -19,6 +19,7 @@ from battle_field.entity.current_to_use_field_energy_count import CurrentToUseFi
 from battle_field.entity.decrease_to_use_field_energy_count import DecreaseToUseFieldEnergyCount
 from battle_field.entity.increase_to_use_field_energy_count import IncreaseToUseFieldEnergyCount
 from battle_field.entity.next_field_energy_race import NextFieldEnergyRace
+from battle_field.entity.opponent_field_energy import OpponentFieldEnergy
 from battle_field.entity.opponent_hp import OpponentHp
 from battle_field.entity.opponent_lost_zone import OpponentLostZone
 from battle_field.entity.opponent_tomb import OpponentTomb
@@ -30,6 +31,7 @@ from battle_field.entity.your_hp import YourHp
 from battle_field.entity.your_lost_zone import YourLostZone
 from battle_field.entity.your_tomb import YourTomb
 from battle_field.handler.support_card_handler import SupportCardHandler
+from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from battle_field.infra.opponent_hp_repository import OpponentHpRepository
 from battle_field.infra.opponent_lost_zone_repository import OpponentLostZoneRepository
@@ -210,6 +212,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.animation_test_image_panel = None
         self.animation_test_image = AnimationTestImage()
 
+        self.opponent_field_energy = OpponentFieldEnergy()
+        self.opponent_field_energy_panel = None
+        self.opponent_field_energy_repository = OpponentFieldEnergyRepository.getInstance()
+
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -346,7 +352,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.decrease_to_use_field_energy_count.get_decrease_to_use_field_energy_count_panel()
         )
 
-
+        self.opponent_field_energy.set_total_window_size(self.width, self.height)
+        self.opponent_field_energy.create_opponent_field_energy_panel()
+        self.opponent_field_energy_panel = self.opponent_field_energy.get_opponent_field_energy_panel()
 
 
     def reshape(self, width, height):
@@ -434,6 +442,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         if key.lower() == 'u':
             self.your_field_energy_repository.increase_your_field_energy()
+
+        if key.lower() == 'i':
+            self.opponent_field_energy_repository.increase_opponent_field_energy()
+
+        if key.lower() == 'y':
+            self.opponent_field_energy_repository.decrease_opponent_field_energy()
 
         if key.lower() == 'd':
             self.your_hp_repository.take_damage()
@@ -540,7 +554,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.your_field_energy.set_width_ratio(self.width_ratio)
         self.your_field_energy.set_height_ratio(self.height_ratio)
-        self.your_field_energy.update_curent_field_energy_panel()
+        self.your_field_energy.update_current_field_energy_panel()
         self.your_field_energy_panel.draw()
 
         self.next_field_energy_race.set_width_ratio(self.width_ratio)
@@ -569,7 +583,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.decrease_to_use_field_energy_count.set_height_ratio(self.height_ratio)
         self.decrease_to_use_field_energy_count_panel.draw()
 
-
+        self.opponent_field_energy.set_width_ratio(self.width_ratio)
+        self.opponent_field_energy.set_height_ratio(self.height_ratio)
+        self.opponent_field_energy.update_current_opponent_field_energy_panel()
+        self.opponent_field_energy_panel.draw()
 
         glDisable(GL_BLEND)
 
