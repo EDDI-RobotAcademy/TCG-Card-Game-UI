@@ -656,8 +656,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.decrease_to_use_field_energy_count.set_height_ratio(self.height_ratio)
         self.decrease_to_use_field_energy_count_panel.draw()
 
-
-
         glDisable(GL_BLEND)
 
     def redraw(self):
