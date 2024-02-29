@@ -30,10 +30,10 @@ class OpponentFieldUnitRepository:
         # print(f"Saved current field_unit state: {field_unit_id}")
 
     def create_field_unit_card(self, field_unit_id):
-        valid_opponent_field_unit_list = [unit for unit in self.current_field_unit_card_object_list if unit is not None]
-        index = len(valid_opponent_field_unit_list)
+        # valid_opponent_field_unit_list = [unit for unit in self.current_field_unit_card_object_list if unit is not None]
+        # index = len(valid_opponent_field_unit_list)
 
-        # index = len(self.current_field_unit_card_object_list)
+        index = len(self.current_field_unit_card_object_list)
         self.place_field_unit(field_unit_id)
 
         new_card = FixedFieldCard(local_translation=self.get_next_card_position(index))
