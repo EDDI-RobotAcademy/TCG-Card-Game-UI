@@ -72,24 +72,24 @@ class BuyRandomCardFrame(OpenGLFrame):
         self.response_card_number = BuyCheckRepositoryImpl.getInstance().getRandomCardList()
         print(f"response_card_number: {self.response_card_number}")
 
-        x = 50
-        y = 50
+        x = 200
+        y = 200
 
         for i, number in enumerate(self.response_card_number):
             try:
                 print(f"index: {i}, card number: {number}")
-                card = PickableCard(local_translation=(x, y), scale=300)
+                card = PickableCard(local_translation=(x, y), scale=800)
                 card.init_card(number)
                 self.buy_random_card_scene.add_card_list(card)
                 #print(f"카드 리스트: {self.buy_random_card_scene.get_card_list()}")
 
-                x += 290
+                x += 300
 
                 if (i + 1) % 5 == 0:
+                    x = 200
                     y = 500
-                    x = 50
                     if (i + 1) % 10 == 0:
-                        x = 50
+                        x = 200
                         y = 50
 
                 if (i + 1) % 10 == 0:
