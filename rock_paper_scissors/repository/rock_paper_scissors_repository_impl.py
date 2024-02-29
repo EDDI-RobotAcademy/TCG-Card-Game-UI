@@ -1,4 +1,4 @@
-from rock_paper_scissors.entity.rock_paper_scissors import RockPaperScissors
+from rock_paper_scissors.entity.rock_paper_scissors import RockPaperScissorsFrame
 from rock_paper_scissors.repository.rock_paper_scissors_repository import RockPaperScissorsRepository
 
 

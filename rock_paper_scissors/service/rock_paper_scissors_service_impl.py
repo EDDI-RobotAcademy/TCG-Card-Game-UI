@@ -3,6 +3,7 @@ import tkinter
 
 from rock_paper_scissors.repository.rock_paper_scissors_repository_impl import RockPaperScissorsRepositoryImpl
 from rock_paper_scissors.service.rock_paper_scissors_service import RockPaperScissorsService
+from rock_paper_scissors.service.request.rock_paper_scissors_request import RockPaperScissorsRequest
 from session.service.session_service_impl import SessionServiceImpl
 
 
@@ -12,6 +13,7 @@ class RockPaperScissorsServiceImpl(RockPaperScissorsService):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
             cls.__instance.__rockPaperScissorsRepositoryImpl = RockPaperScissorsRepositoryImpl.getInstance()
+            cls.__instance.__sessionServiceImpl = SessionServiceImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -26,8 +28,9 @@ class RockPaperScissorsServiceImpl(RockPaperScissorsService):
 
         def final_decision_button_click(target_rps):
             self.__rockPaperScissorsRepositoryImpl.setRace(target_rps)
-            responseData = self.__rockPaperScissorsRepository.requestRockPaperScissors(
-                RockPaperScissorsRequest(session_info))
+            responseData = self.__rockPaperScissorsRepositoryImpl.requestRockPaperScissors(
+                RockPaperScissorsRequest(self.__sessionServiceImpl.session_info, ))
+            print(f"responseData: {responseData}")
 
 
 
