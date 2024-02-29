@@ -136,7 +136,7 @@ class YourFieldEnergy:
         print("your field energy panel result -> True")
         return True
 
-    def update_curent_field_energy_panel(self):
+    def update_current_field_energy_panel(self):
         self.your_field_energy_panel.set_image_data(
             self.__pre_drawed_image.get_pre_draw_field_energy(
                 self.__your_field_energy_repository.get_your_field_energy()))

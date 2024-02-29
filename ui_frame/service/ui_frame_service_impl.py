@@ -65,6 +65,10 @@ class UiFrameServiceImpl(UiFrameService):
         print(f"{Fore.GREEN}UiFrameServiceImpl: registerBuyRandomCardUiFrame(){Style.RESET_ALL}")
         self.__uiFrameRepository.registerUiFrame("buy-random-card", buyRandomCardFrame)
 
+    def registerRockPaperScissorsUiFrame(self, rockPaperScissorsFrame):
+        print(f"{Fore.GREEN}UiFrameServiceImpl: registerRockPaperScissorsUiFrame(){Style.RESET_ALL}")
+        self.__uiFrameRepository.registerUiFrame("rock-paper-scissors", rockPaperScissorsFrame)
+
     # def registerMyDeckRegisterUiFrame(self, myDeckRegisterFrame):
     #     print(f"{Fore.GREEN}UiFrameServiceImpl: registerMyDeckRegisterUiFrame(){Style.RESET_ALL}")
     #     self.__uiFrameRepository.registerUiFrame("my-deck-register", myDeckRegisterFrame)

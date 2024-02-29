@@ -33,6 +33,7 @@ from battle_field.infra.opponent_field_energy_repository import OpponentFieldEne
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from battle_field.infra.opponent_lost_zone_repository import OpponentLostZoneRepository
 from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
+from battle_field.infra.round_repository import RoundRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
@@ -160,6 +161,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_lost_zone = OpponentLostZone()
         self.opponent_lost_zone_popup_panel = None
         self.opponent_lost_zone_panel_selected = False
+
+        self.round_repository = RoundRepository.getInstance()
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -313,12 +316,71 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         if key.lower() == 'a':
             self.opponent_field_unit_repository.create_field_unit_card(26)
+            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
         if key.lower() == 'q':
             self.opponent_field_unit_repository.create_field_unit_card(31)
+            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
         if key.lower() == 'n':
             self.opponent_field_unit_repository.create_field_unit_card(19)
+            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+        if key.lower() == 'b':
+            self.your_field_unit_repository.create_field_unit_card(19)
+            self.your_field_unit_repository.replace_field_card_position()
+
+            passive_skill_type = self.card_info_repository.getCardPassiveFirstForCardNumber(19)
+            if passive_skill_type == 1:
+                print("단일기")
+            elif passive_skill_type == 2:
+                print("광역기")
+
+                damage = self.card_info_repository.getCardPassiveFirstDamageForCardNumber(19)
+                print(f"wide area damage: {damage}")
+
+                for index in range(
+                        len(self.opponent_field_unit_repository.get_current_field_unit_card_object_list()) - 1,
+                        -1,
+                        -1):
+                    opponent_field_unit = \
+                        self.opponent_field_unit_repository.get_current_field_unit_card_object_list()[index]
+
+                    if opponent_field_unit is None:
+                        continue
+
+                    remove_from_field = False
+
+                    fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                    attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                    for attached_shape in attached_shape_list:
+                        if isinstance(attached_shape, CircleNumberImage):
+                            if attached_shape.get_circle_kinds() is CircleKinds.HP:
+
+                                hp_number = attached_shape.get_number()
+                                hp_number -= damage
+
+                                if hp_number <= 0:
+                                    remove_from_field = True
+                                    break
+
+                                print(f"contract_of_doom -> hp_number: {hp_number}")
+                                attached_shape.set_number(hp_number)
+
+                                attached_shape.set_image_data(
+                                    self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
+
+                    if remove_from_field:
+                        card_id = opponent_field_unit.get_card_number()
+
+                        self.opponent_field_unit_repository.remove_current_field_unit_card(index)
+                        self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+
+                self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+        if key.lower() == 't':
+            self.round_repository.increase_current_round_number()
 
         if key.lower() == 'e':
             print("attach undead energy")
@@ -534,6 +596,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 self.active_panel_second_skill_button.draw()
 
             self.active_panel_third_skill_button = None
+
+            if self.active_panel_details_button is not None:
+                self.active_panel_details_button.draw()
 
         for your_lightning_border in self.field_area_inside_handler.get_lightning_border_list():
             self.lightning_border.set_padding(20)
@@ -1228,7 +1293,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         fixed_opponent_card_base = opponent_field_unit_object.get_fixed_card_base()
                         self.targeting_enemy_select_support_lightning_border_list.append(fixed_opponent_card_base)
 
-                    self.opponent_fixed_unit_card_inside_handler.set_opponent_field_area_action(OpponentFieldAreaAction.TARGETING_ENEMY)
+                    self.opponent_fixed_unit_card_inside_handler.set_opponent_field_area_action(OpponentFieldAreaAction.GENERAL_ATTACK_TO_TARGETING_ENEMY)
 
                     your_field_unit_id = self.selected_object.get_card_number()
                     your_field_unit_index = self.selected_object.get_index()
@@ -1248,6 +1313,29 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     skill_type = self.card_info_repository.getCardSkillFirstForCardNumber(your_field_unit_id)
                     print(f"skill_type: {skill_type}")
 
+                    # 단일기
+                    if skill_type == 1:
+                        opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+                        for opponent_field_unit_object in opponent_field_unit_object_list:
+                            if opponent_field_unit_object is None:
+                                continue
+
+                            fixed_opponent_card_base = opponent_field_unit_object.get_fixed_card_base()
+                            self.targeting_enemy_select_support_lightning_border_list.append(fixed_opponent_card_base)
+
+                        self.opponent_fixed_unit_card_inside_handler.set_opponent_field_area_action(
+                            OpponentFieldAreaAction.SKILL_TARGETING_ENEMY)
+
+                        your_field_unit_id = self.selected_object.get_card_number()
+                        your_field_unit_index = self.selected_object.get_index()
+
+                        self.targeting_enemy_select_using_your_field_card_index = your_field_unit_index
+                        self.targeting_enemy_select_using_your_field_card_id = your_field_unit_id
+
+                    # 광역기
+                    elif skill_type == 2:
+                        pass
+
                     return
 
             if self.your_active_panel.get_your_active_panel_second_skill_button() is not None:
@@ -1255,8 +1343,66 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     print("두 번째 스킬 클릭")
 
                     your_field_unit_id = self.selected_object.get_card_number()
+                    print(f"your_field_unit_id: {your_field_unit_id}")
                     skill_type = self.card_info_repository.getCardSkillSecondForCardNumber(your_field_unit_id)
                     print(f"skill_type: {skill_type}")
+
+                    # 단일기
+                    if skill_type == 1:
+                        pass
+
+                    # 광역기
+                    elif skill_type == 2:
+                        damage = self.card_info_repository.getCardSkillSecondDamageForCardNumber(your_field_unit_id)
+                        print(f"wide area damage: {damage}")
+
+                        # TODO: 즉발이므로 대기 액션이 필요없음 (서버와의 통신을 위해 대기가 발생 할 수 있긴함) 그 때 가서 추가
+                        for index in range(
+                                len(self.opponent_field_unit_repository.get_current_field_unit_card_object_list()) - 1,
+                                -1,
+                                -1):
+                            opponent_field_unit = \
+                                self.opponent_field_unit_repository.get_current_field_unit_card_object_list()[index]
+
+                            if opponent_field_unit is None:
+                                continue
+
+                            remove_from_field = False
+
+                            fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                            attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                            # TODO: 가만 보면 이 부분이 은근히 많이 사용되고 있음 (중복 많이 발생함)
+                            for attached_shape in attached_shape_list:
+                                if isinstance(attached_shape, CircleNumberImage):
+                                    if attached_shape.get_circle_kinds() is CircleKinds.HP:
+
+                                        hp_number = attached_shape.get_number()
+                                        hp_number -= damage
+
+                                        # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
+                                        # (지금 당장 불사가 존재하지 않음)
+                                        if hp_number <= 0:
+                                            remove_from_field = True
+                                            break
+
+                                        print(f"contract_of_doom -> hp_number: {hp_number}")
+                                        attached_shape.set_number(hp_number)
+
+                                        attached_shape.set_image_data(
+                                            # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+                                            self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
+
+                            if remove_from_field:
+                                card_id = opponent_field_unit.get_card_number()
+
+                                self.opponent_field_unit_repository.remove_current_field_unit_card(index)
+                                self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+
+                        self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                        self.selected_object = None
+                        return
 
                     return
 
@@ -1264,6 +1410,16 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             #     if self.your_active_panel.is_point_inside_third_skill_button((x, y)):
             #         print("세 번째 스킬 클릭")
             #         return
+
+            if self.your_active_panel.get_your_active_panel_details_button() is not None:
+                if self.your_active_panel.is_point_inside_details_button((x, y)):
+                    print("상세 보기 클릭")
+
+                    # your_field_unit_id = self.selected_object.get_card_number()
+                    # skill_type = self.card_info_repository.getCardSkillSecondForCardNumber(your_field_unit_id)
+                    # print(f"skill_type: {skill_type}")
+
+                    return
 
             if self.tomb_panel_selected:
                 if self.your_tomb.is_point_inside_popup_rectangle((x, y)):
@@ -1303,6 +1459,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     self.drag_start = (x, y)
 
                     if self.selected_object != self.prev_selected_object:
+                        self.your_active_panel.clear_your_active_panel_details_button()
                         self.your_active_panel.clear_your_active_panel_second_skill_button()
                         self.your_active_panel.clear_your_active_panel_first_skill_button()
                         self.your_active_panel.clear_your_active_panel_attack_button()
@@ -1392,7 +1549,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             #         self.selected_object = None
             #         return
 
-            if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() is OpponentFieldAreaAction.TARGETING_ENEMY:
+            if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() is OpponentFieldAreaAction.GENERAL_ATTACK_TO_TARGETING_ENEMY:
                 print("일반 공격 진행")
 
                 # self.targeting_ememy_select_using_hand_card_id = placed_card_id
@@ -1419,6 +1576,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
 
                         are_opponent_field_unit_death = False
+                        opponent_field_card_index = None
+                        opponent_field_card_id = None
+
                         for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
                             if isinstance(opponent_fixed_card_attached_shape, CircleNumberImage):
                                 if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
@@ -1448,7 +1608,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                     opponent_damage = self.card_info_repository.getCardAttackForCardNumber(
                                         opponent_field_card_id)
 
-                                    print("your unit hp 계산 준비")
+                                    print(f"opponent_damage: {opponent_damage}")
 
                                     are_your_field_unit_death = False
                                     for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
@@ -1500,8 +1660,98 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                         # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
                                         self.pre_drawed_image_instance.get_pre_draw_number_image(opponent_hp_number))
 
-                        opponent_field_card_id = opponent_field_unit_object.get_card_number()
-                        opponent_field_card_index = opponent_field_unit_object.get_index()
+                        # opponent_field_card_index = None
+                        # opponent_field_card_id = None
+
+                        print(f"opponent_field_card_index: {opponent_field_card_index}")
+
+                        if are_opponent_field_unit_death is True:
+                            self.opponent_field_unit_repository.remove_card_by_multiple_index(
+                                [opponent_field_card_index])
+                            self.opponent_tomb_repository.create_opponent_tomb_card(
+                                opponent_field_card_id)
+
+                            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                        self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+                        self.targeting_enemy_select_using_your_field_card_index = None
+                        self.targeting_enemy_select_using_your_field_card_id = None
+                        self.targeting_enemy_select_support_lightning_border_list = []
+                        self.opponent_you_selected_lightning_border_list = []
+
+                        self.selected_object = None
+                        self.active_panel_rectangle = None
+
+                        return
+
+            if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() is OpponentFieldAreaAction.SKILL_TARGETING_ENEMY:
+                print("단일기 사용")
+
+                # self.targeting_ememy_select_using_hand_card_id = placed_card_id
+                # self.targeting_ememy_select_using_hand_card_index = placed_index
+
+                opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+                for opponent_field_unit_object in opponent_field_unit_object_list:
+                    if opponent_field_unit_object:
+                        continue
+
+                    if isinstance(opponent_field_unit_object, FixedFieldCard):
+                        opponent_field_unit_object.selected = False
+
+                print("지정한 상대 유닛 찾기")
+                for opponent_field_unit_object in opponent_field_unit_object_list:
+                    if opponent_field_unit_object is None:
+                        continue
+
+                    opponent_fixed_card_base = opponent_field_unit_object.get_fixed_card_base()
+
+                    if opponent_fixed_card_base.is_point_inside((x, y)):
+                        self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
+
+                        opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+
+                        are_opponent_field_unit_death = False
+                        opponent_field_card_index = None
+                        opponent_field_card_id = None
+
+                        for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                            if isinstance(opponent_fixed_card_attached_shape, CircleNumberImage):
+                                if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                    print("지정한 상대방 유닛 HP Circle 찾기")
+
+                                    your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
+                                    print(f"your_field_card_id: {your_field_card_id}")
+                                    your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
+                                    print(f"your_field_card_index: {your_field_card_index}")
+                                    # your_skill_damage = self.card_info_repository.getCardAttackForCardNumber(your_field_card_id)
+                                    # your_skill_damage = self.card_info_repository.getCardAttackForCardNumber(your_field_card_id)
+                                    # your_skill_damage = 20
+                                    your_skill_damage = self.card_info_repository.getCardSkillFirstDamageForCardNumber(your_field_card_id)
+                                    print(f"your_skill_damage: {your_skill_damage}")
+
+                                    opponent_field_card_id = opponent_field_unit_object.get_card_number()
+                                    opponent_field_card_index = opponent_field_unit_object.get_index()
+
+                                    opponent_hp_number = opponent_fixed_card_attached_shape.get_number()
+                                    opponent_hp_number -= your_skill_damage
+
+                                    print(f"opponent_hp_number: {opponent_hp_number}")
+
+                                    # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
+                                    # (지금 당장 불사가 존재하지 않음)
+                                    if opponent_hp_number <= 0:
+                                        are_opponent_field_unit_death = True
+
+                                        break
+
+                                    print(f"공격 후 opponent unit 체력 -> hp_number: {opponent_hp_number}")
+                                    opponent_fixed_card_attached_shape.set_number(opponent_hp_number)
+
+                                    opponent_fixed_card_attached_shape.set_image_data(
+                                        # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+                                        self.pre_drawed_image_instance.get_pre_draw_number_image(opponent_hp_number))
+
+                        print(f"opponent_field_card_index: {opponent_field_card_index}")
 
                         if are_opponent_field_unit_death is True:
                             self.opponent_field_unit_repository.remove_card_by_multiple_index(
@@ -1576,6 +1826,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                     if self.selected_object != self.prev_selected_object:
                         self.active_panel_rectangle = None
+                        self.your_active_panel.clear_your_active_panel_details_button()
                         self.your_active_panel.clear_your_active_panel_second_skill_button()
                         self.your_active_panel.clear_your_active_panel_first_skill_button()
                         self.your_active_panel.clear_your_active_panel_attack_button()
@@ -1895,6 +2146,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 self.active_panel_first_skill_button = self.your_active_panel.get_your_active_panel_first_skill_button()
                 self.active_panel_second_skill_button = self.your_active_panel.get_your_active_panel_second_skill_button()
                 self.active_panel_third_skill_button = None
+                self.active_panel_details_button = self.your_active_panel.get_your_active_panel_details_button()
 
     def create_opengl_rectangle(self, start_point):
         card_id = self.selected_object.get_card_number()

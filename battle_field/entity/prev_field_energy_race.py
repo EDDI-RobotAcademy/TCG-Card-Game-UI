@@ -45,10 +45,10 @@ class PrevFieldEnergyRace:
         # y1 = 0.767
         # y2 = 0.959
 
-        left_x_point = self.total_width * 0.905
-        right_x_point = self.total_width * 0.925
-        top_y_point = self.total_height * 0.717
-        bottom_y_point = self.total_height * 0.757
+        left_x_point = self.total_width * 0.88
+        right_x_point = self.total_width * 0.905
+        top_y_point = self.total_height * 0.7275
+        bottom_y_point = self.total_height * 0.7775
 
         self.prev_field_energy_race_panel = Rectangle(
             (0,0,0,0.1),
