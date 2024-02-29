@@ -1331,6 +1331,40 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     print("첫 번째 스킬 클릭")
 
                     your_field_unit_id = self.selected_object.get_card_number()
+                    your_field_unit_index = self.selected_object.get_index()
+                    your_field_unit_attached_energy = self.your_field_unit_repository.get_attached_energy_info()
+
+                    your_field_unit_total_energy = your_field_unit_attached_energy.get_total_energy_at_index(your_field_unit_index)
+                    print(f"your_field_unit_total_energy: {your_field_unit_total_energy}")
+
+                    your_field_unit_attached_energy_info = your_field_unit_attached_energy.get_energy_info_at_index(your_field_unit_index)
+                    print(f"your_field_unit_attached_energy_info: {your_field_unit_attached_energy_info}")
+
+                    your_field_unit_attached_undead_energy = your_field_unit_attached_energy.get_race_energy_at_index(your_field_unit_index, EnergyType.Undead)
+                    # print(f"your_field_unit_attached_undead_energy: {your_field_unit_attached_undead_energy}")
+
+                    your_field_unit_attached_human_energy = your_field_unit_attached_energy.get_race_energy_at_index(your_field_unit_index, EnergyType.Human)
+                    # print(f"your_field_unit_attached_human_energy: {your_field_unit_attached_human_energy}")
+
+                    your_field_unit_attached_trent_energy = your_field_unit_attached_energy.get_race_energy_at_index(your_field_unit_index, EnergyType.Trent)
+                    # print(f"your_field_unit_attached_trent_energy: {your_field_unit_attached_trent_energy}")
+
+                    your_field_unit_required_undead_energy = self.card_info_repository.getCardSkillFirstUndeadEnergyRequiredForCardNumber(your_field_unit_id)
+                    your_field_unit_required_human_energy = self.card_info_repository.getCardSkillFirstHumanEnergyRequiredForCardNumber(your_field_unit_id)
+                    your_field_unit_required_trent_energy = self.card_info_repository.getCardSkillFirstTrentEnergyRequiredForCardNumber(your_field_unit_id)
+                    # print(f"your_field_unit_required_undead_energy: {your_field_unit_required_undead_energy}")
+                    # print(f"your_field_unit_required_human_energy: {your_field_unit_required_human_energy}")
+                    # print(f"your_field_unit_required_trent_energy: {your_field_unit_required_trent_energy}")
+
+                    if your_field_unit_required_undead_energy > your_field_unit_attached_undead_energy:
+                        return
+
+                    if your_field_unit_required_human_energy > your_field_unit_attached_human_energy:
+                        return
+
+                    if your_field_unit_required_trent_energy > your_field_unit_attached_trent_energy:
+                        return
+
                     skill_type = self.card_info_repository.getCardSkillFirstForCardNumber(your_field_unit_id)
                     print(f"skill_type: {skill_type}")
 
@@ -1365,6 +1399,41 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                     your_field_unit_id = self.selected_object.get_card_number()
                     print(f"your_field_unit_id: {your_field_unit_id}")
+
+                    your_field_unit_index = self.selected_object.get_index()
+                    your_field_unit_attached_energy = self.your_field_unit_repository.get_attached_energy_info()
+
+                    your_field_unit_total_energy = your_field_unit_attached_energy.get_total_energy_at_index(
+                        your_field_unit_index)
+                    print(f"your_field_unit_total_energy: {your_field_unit_total_energy}")
+
+                    your_field_unit_attached_energy_info = your_field_unit_attached_energy.get_energy_info_at_index(
+                        your_field_unit_index)
+                    print(f"your_field_unit_attached_energy_info: {your_field_unit_attached_energy_info}")
+
+                    your_field_unit_attached_undead_energy = your_field_unit_attached_energy.get_race_energy_at_index(
+                        your_field_unit_index, EnergyType.Undead)
+                    your_field_unit_attached_human_energy = your_field_unit_attached_energy.get_race_energy_at_index(
+                        your_field_unit_index, EnergyType.Human)
+                    your_field_unit_attached_trent_energy = your_field_unit_attached_energy.get_race_energy_at_index(
+                        your_field_unit_index, EnergyType.Trent)
+
+                    your_field_unit_required_undead_energy = self.card_info_repository.getCardSkillFirstUndeadEnergyRequiredForCardNumber(
+                        your_field_unit_id)
+                    your_field_unit_required_human_energy = self.card_info_repository.getCardSkillFirstHumanEnergyRequiredForCardNumber(
+                        your_field_unit_id)
+                    your_field_unit_required_trent_energy = self.card_info_repository.getCardSkillFirstTrentEnergyRequiredForCardNumber(
+                        your_field_unit_id)
+
+                    if your_field_unit_required_undead_energy > your_field_unit_attached_undead_energy:
+                        return
+
+                    if your_field_unit_required_human_energy > your_field_unit_attached_human_energy:
+                        return
+
+                    if your_field_unit_required_trent_energy > your_field_unit_attached_trent_energy:
+                        return
+
                     skill_type = self.card_info_repository.getCardSkillSecondForCardNumber(your_field_unit_id)
                     print(f"skill_type: {skill_type}")
 
