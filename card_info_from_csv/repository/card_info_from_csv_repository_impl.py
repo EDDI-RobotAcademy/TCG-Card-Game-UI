@@ -21,6 +21,10 @@ class CardInfoFromCsvRepositoryImpl(CardInfoFromCsvRepository):
     __cardSkillSecondDictionary = {}
     __cardPassiveFirstDictionary = {}
     __cardPassiveSecondDictionary = {}
+    __cardSkillFirstDamageDictionary = {}
+    __cardSkillSecondDamageDictionary = {}
+    __cardPassiveFirstDamageDictionary = {}
+    __cardPassiveSecondDamageDictionary = {}
 
     def __new__(cls):
         if cls.__instance is None:
@@ -61,6 +65,10 @@ class CardInfoFromCsvRepositoryImpl(CardInfoFromCsvRepository):
                 self.__cardSkillSecondDictionary[cardInfo.getCardNumber()] = cardInfo.getCardSkillSecond()
                 self.__cardPassiveFirstDictionary[cardInfo.getCardNumber()] = cardInfo.getCardPassiveFirst()
                 self.__cardPassiveSecondDictionary[cardInfo.getCardNumber()] = cardInfo.getCardPassiveSecond()
+                self.__cardSkillFirstDamageDictionary[cardInfo.getCardNumber()] = cardInfo.getCardSkillFirstDamage()
+                self.__cardSkillSecondDamageDictionary[cardInfo.getCardNumber()] = cardInfo.getCardSkillSecondDamage()
+                self.__cardPassiveFirstDamageDictionary[cardInfo.getCardNumber()] = cardInfo.getCardPassiveFirstDamage()
+                self.__cardPassiveSecondDamageDictionary[cardInfo.getCardNumber()] = cardInfo.getCardPassiveSecondDamage()
 
             except Exception as e:
                 print("Error : {0}".format(e))
@@ -109,3 +117,15 @@ class CardInfoFromCsvRepositoryImpl(CardInfoFromCsvRepository):
 
     def getCardPassiveSecondForCardNumber(self, cardNumber):
         return self.__cardPassiveSecondDictionary[cardNumber]
+
+    def getCardSkillFirstDamageForCardNumber(self, cardNumber):
+        return self.__cardSkillFirstDamageDictionary[cardNumber]
+
+    def getCardSkillSecondDamageForCardNumber(self, cardNumber):
+        return self.__cardSkillSecondDamageDictionary[cardNumber]
+
+    def getCardPassiveFirstDamageForCardNumber(self, cardNumber):
+        return self.__cardPassiveFirstDamageDictionary[cardNumber]
+
+    def getCardPassiveSecondDamageForCardNumber(self, cardNumber):
+        return self.__cardPassiveSecondDamageDictionary[cardNumber]
