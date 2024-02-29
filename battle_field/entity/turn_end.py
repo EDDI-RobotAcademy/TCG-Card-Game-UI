@@ -1,14 +1,12 @@
-from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
-class DecreaseToUseFieldEnergyCount:
+class TurnEnd:
     __pre_drawed_image = PreDrawedImage.getInstance()
-    __your_field_energy_repository = YourFieldEnergyRepository.getInstance()
 
     def __init__(self):
-        self.decrease_to_use_field_energy_count_panel = None
+        self.turn_end_button = None
 
         self.total_width = None
         self.total_height = None
@@ -35,22 +33,22 @@ class DecreaseToUseFieldEnergyCount:
     def change_local_translation(self, _translation):
         self.local_translation = _translation
 
-    def get_decrease_to_use_field_energy_count_panel(self):
-        return self.decrease_to_use_field_energy_count_panel
+    def get_turn_end_button(self):
+        return self.turn_end_button
 
-    def create_decrease_to_use_field_energy_count_panel(self):
+    def create_turn_end_button(self):
         # x1 = 0.138
         # x2 = 0.224
         # y1 = 0.767
         # y2 = 0.959
 
-        left_x_point = self.total_width * 0.88
-        right_x_point = self.total_width * 0.905
-        top_y_point = self.total_height * 0.63
-        bottom_y_point = self.total_height * 0.68
-
-        self.decrease_to_use_field_energy_count_panel = Rectangle(
-            (0, 0, 0, 0.0),
+        left_x_point = self.total_width * 0.895
+        right_x_point = self.total_width * 0.985
+        top_y_point = self.total_height * 0.43
+        bottom_y_point = self.total_height * 0.57
+        
+        self.turn_end_button = Rectangle(
+            (0, 0, 0, 0.1),
             [
                 (left_x_point, top_y_point),
                 (right_x_point, top_y_point),
@@ -64,12 +62,13 @@ class DecreaseToUseFieldEnergyCount:
         point_x, point_y = point
         point_y *= -1
 
-        decrease_to_use_field_energy_count_panel = self.get_decrease_to_use_field_energy_count_panel()
+        turn_end_button = self.get_turn_end_button()
 
         translated_vertices = [
-            (x * self.width_ratio + decrease_to_use_field_energy_count_panel.local_translation[0] * self.width_ratio, y *
-             self.height_ratio + decrease_to_use_field_energy_count_panel.local_translation[1] * self.height_ratio)
-            for x, y in decrease_to_use_field_energy_count_panel.get_vertices()
+            (
+            x * self.width_ratio + turn_end_button.local_translation[0] * self.width_ratio, y *
+            self.height_ratio + turn_end_button.local_translation[1] * self.height_ratio)
+            for x, y in turn_end_button.get_vertices()
         ]
 
         if not (translated_vertices[0][0] <= point_x <= translated_vertices[1][0] and

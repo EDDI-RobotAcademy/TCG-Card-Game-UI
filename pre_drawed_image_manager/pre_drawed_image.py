@@ -67,6 +67,8 @@ class PreDrawedImage:
 
     __pre_drawed_animation = {}
 
+    __pre_drawed_number_of_energy = {}
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -339,6 +341,17 @@ class PreDrawedImage:
             print(f"animation image data = {animation_image_data}")
             self.__pre_drawed_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
+    def pre_draw_number_of_energy(self):
+        image_dir = os.path.join(self.__project_root, "local_storage", "number_of_energy")
+        # image_dir = os.path.join(self.__project_root, "local_storage", "animation_for_test")
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "number_of_energy", f"{number}.png")
+            # animation_image_data = os.path.join(self.__project_root, "local_storage", "animation_for_test", f"{number}.png")
+            print(f"animation image data = {animation_image_data}")
+            self.__pre_drawed_number_of_energy[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
+
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
         self.pre_draw_opponent_lost_zone()
@@ -390,6 +403,8 @@ class PreDrawedImage:
         self.pre_draw_ok_button()
 
         self.pre_draw_animation()
+
+        self.pre_draw_number_of_energy()
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
@@ -517,3 +532,5 @@ class PreDrawedImage:
     def get_pre_draw_animation(self, number = 0):
         return self.__pre_drawed_animation[number]
 
+    def get_pre_draw_number_of_energy(self, number = 0):
+        return self.__pre_drawed_number_of_energy[number]

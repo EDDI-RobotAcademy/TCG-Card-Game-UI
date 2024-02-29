@@ -168,3 +168,13 @@ class LeftClickDetector:
             return decrease_field_energy_count_zone
 
         return None
+
+    def which_one_select_is_in_turn_end_area(self, click_point, turn_end_button, canvas_height):
+        x, y = click_point
+        y = canvas_height - y
+        y *= -1
+
+        if turn_end_button.is_point_inside((x, y)):
+            return turn_end_button
+
+        return None
