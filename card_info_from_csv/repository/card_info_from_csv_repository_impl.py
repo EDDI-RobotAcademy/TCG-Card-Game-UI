@@ -25,6 +25,13 @@ class CardInfoFromCsvRepositoryImpl(CardInfoFromCsvRepository):
     __cardSkillSecondDamageDictionary = {}
     __cardPassiveFirstDamageDictionary = {}
     __cardPassiveSecondDamageDictionary = {}
+    __cardSkillFirstUndeadEnergyRequiredDictionary = {}
+    __cardSkillFirstHumanEnergyRequiredDictionary = {}
+    __cardSkillFirstTrentEnergyRequiredDictionary = {}
+    __cardSkillSecondUndeadEnergyRequiredDictionary = {}
+    __cardSkillSecondHumanEnergyRequiredDictionary = {}
+    __cardSkillSecondTrentEnergyRequiredDictionary = {}
+
 
     def __new__(cls):
         if cls.__instance is None:
@@ -69,6 +76,12 @@ class CardInfoFromCsvRepositoryImpl(CardInfoFromCsvRepository):
                 self.__cardSkillSecondDamageDictionary[cardInfo.getCardNumber()] = cardInfo.getCardSkillSecondDamage()
                 self.__cardPassiveFirstDamageDictionary[cardInfo.getCardNumber()] = cardInfo.getCardPassiveFirstDamage()
                 self.__cardPassiveSecondDamageDictionary[cardInfo.getCardNumber()] = cardInfo.getCardPassiveSecondDamage()
+                self.__cardSkillFirstUndeadEnergyRequiredDictionary[cardInfo.getCardNumber()] = cardInfo.getCardSkillFirstUndeadEnergyRequired()
+                self.__cardSkillFirstHumanEnergyRequiredDictionary[cardInfo.getCardNumber()] = cardInfo.getCardSkillFirstHumanEnergyRequired()
+                self.__cardSkillFirstTrentEnergyRequiredDictionary[cardInfo.getCardNumber()] = cardInfo.getCardSkillFirstTrentEnergyRequired()
+                self.__cardSkillSecondUndeadEnergyRequiredDictionary[cardInfo.getCardNumber()] = cardInfo.getCardSkillSecondUndeadEnergyRequired()
+                self.__cardSkillSecondHumanEnergyRequiredDictionary[cardInfo.getCardNumber()] = cardInfo.getCardSkillSecondHumanEnergyRequired()
+                self.__cardSkillSecondTrentEnergyRequiredDictionary[cardInfo.getCardNumber()] = cardInfo.getCardSkillSecondTrentEnergyRequired()
 
             except Exception as e:
                 print("Error : {0}".format(e))
@@ -129,3 +142,23 @@ class CardInfoFromCsvRepositoryImpl(CardInfoFromCsvRepository):
 
     def getCardPassiveSecondDamageForCardNumber(self, cardNumber):
         return self.__cardPassiveSecondDamageDictionary[cardNumber]
+
+    def getCardSkillFirstUndeadEnergyRequiredForCardNumber(self, cardNumber):
+        return self.__cardSkillFirstUndeadEnergyRequiredDictionary[cardNumber]
+
+    def getCardSkillFirstHumanEnergyRequiredForCardNumber(self, cardNumber):
+        return self.__cardSkillFirstHumanEnergyRequiredDictionary[cardNumber]
+
+    def getCardSkillFirstTrentEnergyRequiredForCardNumber(self, cardNumber):
+        return self.__cardSkillFirstTrentEnergyRequiredDictionary[cardNumber]
+
+    def getCardSkillSecondUndeadEnergyRequiredForCardNumber(self, cardNumber):
+        return self.__cardSkillSecondUndeadEnergyRequiredDictionary[cardNumber]
+
+    def getCardSkillSecondHumanEnergyRequiredForCardNumber(self, cardNumber):
+        return self.__cardSkillSecondHumanEnergyRequiredDictionary[cardNumber]
+
+    def getCardSkillSecondTrentEnergyRequiredForCardNumber(self, cardNumber):
+        return self.__cardSkillSecondTrentEnergyRequiredDictionary[cardNumber]
+
+
