@@ -1,8 +1,10 @@
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area_action import OpponentFieldAreaAction
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
+from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
+from common.card_grade import CardGrade
 from common.card_race import CardRace
 from common.card_type import CardType
 from image_shape.circle_kinds import CircleKinds
@@ -25,6 +27,7 @@ class OpponentFixedUnitCardInsideHandler:
     __your_hand_repository = YourHandRepository.getInstance()
     __your_tomb_repository = YourTombRepository.getInstance()
     __opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
+    __opponent_tomb_repository = OpponentTombRepository.getInstance()
     __card_info_repository = CardInfoFromCsvRepositoryImpl.getInstance()
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
 
@@ -41,7 +44,8 @@ class OpponentFixedUnitCardInsideHandler:
             # cls.__instance.opponent_field_unit_repository = opponent_field_unit_repository
             # cls.__instance.card_info = card_info
 
-            cls.__instance.__opponent_fixed_unit_card_inside_handler_table[8] = cls.__instance.death_sice_need_two_undead_energy
+            # cls.__instance.__opponent_fixed_unit_card_inside_handler_table[8] = cls.__instance.death_sice_need_two_undead_energy
+            cls.__instance.__opponent_fixed_unit_card_inside_handler_table[8] = cls.__instance.death_sice
             # cls.__instance.__opponent_fixed_unit_card_inside_handler_table[20] = cls.__instance.contract_of_doom
             cls.__instance.__opponent_fixed_unit_card_inside_handler_table[9] = cls.__instance.energy_burn
             # cls.__instance.__opponent_fixed_unit_card_inside_handler_table[35] = cls.__instance.do_nothing
@@ -123,6 +127,9 @@ class OpponentFixedUnitCardInsideHandler:
         opponent_field_unit_list = self.__opponent_field_unit_repository.get_current_field_unit_card_object_list()
 
         for opponent_unit_index, opponent_field_unit in enumerate(opponent_field_unit_list):
+            if opponent_field_unit is None:
+                continue
+
             if opponent_field_unit.get_fixed_card_base().is_point_inside((x, y)):
                 self.handle_inside_field_unit(selected_object, opponent_unit_index)
                 self.__opponent_unit_id = opponent_field_unit.get_card_number()
@@ -214,27 +221,64 @@ class OpponentFixedUnitCardInsideHandler:
         self.__your_tomb_repository.create_tomb_card(placed_card_id)
         self.__your_hand_repository.replace_hand_card_position()
 
+    def death_sice(self, placed_card_index, unit_index, placed_card_id):
+        DEATH_SICE_FIXED_DAMAGE = 30
 
-    def death_sice_need_two_undead_energy(self, placed_card_index, unit_index, placed_card_id):
-        print("death_sice operates")
+        self.__your_hand_repository.remove_card_by_index(placed_card_index)
+        self.__your_tomb_repository.create_tomb_card(placed_card_id)
 
-        # TODO: 실제로 여기서 조정하면 됨 (필요한 에너지 값)
-        self.__required_energy = 2
-        self.__required_energy_race = CardRace.UNDEAD
+        opponent_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(unit_index)
+        opponent_unit_card_id = opponent_unit.get_card_number()
 
-        # 뭔가 작업을 위해 대기가 필요한 상황 (에너지가 필요하다던지)
-        self.__opponent_field_area_action = OpponentFieldAreaAction.REQUIRE_ENERGY_TO_USAGE
-        self.__opponent_unit_index = unit_index
-        self.__action_set_card_index = placed_card_index
-        self.__your_hand_card_id = placed_card_id
+        is_opponent_unit_death = True
+        opponent_unit_hp = 0
 
-        your_current_hand_card_list = self.__your_hand_repository.get_current_hand_card_list()
+        if self.__card_info_repository.getCardGradeForCardNumber(opponent_unit_card_id) > CardGrade.LEGEND.value:
+            opponent_unit_hp = self.__card_info_repository.getCardHpForCardNumber(opponent_unit_card_id)
+            opponent_unit_hp -= DEATH_SICE_FIXED_DAMAGE
 
-        for your_current_hand_card in your_current_hand_card_list:
-            your_hand_card_id = your_current_hand_card.get_card_number()
-            if your_hand_card_id == 93 or your_hand_card_id == 151:
-                card_base = your_current_hand_card.get_pickable_card_base()
-                self.__lightning_border_list.append(card_base)
+            if opponent_unit_hp > 0:
+                is_opponent_unit_death = False
+        else:
+            self.__opponent_tomb_repository.create_opponent_tomb_card(opponent_unit_card_id)
+
+        self.__your_hand_repository.replace_hand_card_position()
+
+        if is_opponent_unit_death:
+            self.__opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
+            self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+        else:
+            opponent_fixed_card_base = opponent_unit.get_fixed_card_base()
+            opponent_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+
+            for opponent_attached_shape in opponent_attached_shape_list:
+                if isinstance(opponent_attached_shape, CircleNumberImage):
+                    if opponent_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                        opponent_attached_shape.set_image_data(
+                            self.__pre_drawed_image_instance.get_pre_draw_number_image(
+                                opponent_unit_hp))
+
+    # def death_sice_need_two_undead_energy(self, placed_card_index, unit_index, placed_card_id):
+    #     print("death_sice operates")
+
+        # # TODO: 실제로 여기서 조정하면 됨 (필요한 에너지 값)
+        # self.__required_energy = 2
+        # self.__required_energy_race = CardRace.UNDEAD
+        #
+        # # 뭔가 작업을 위해 대기가 필요한 상황 (에너지가 필요하다던지)
+        # self.__opponent_field_area_action = OpponentFieldAreaAction.REQUIRE_ENERGY_TO_USAGE
+        # self.__opponent_unit_index = unit_index
+        # self.__action_set_card_index = placed_card_index
+        # self.__your_hand_card_id = placed_card_id
+        #
+        # your_current_hand_card_list = self.__your_hand_repository.get_current_hand_card_list()
+        #
+        # for your_current_hand_card in your_current_hand_card_list:
+        #     your_hand_card_id = your_current_hand_card.get_card_number()
+        #     if your_hand_card_id == 93 or your_hand_card_id == 151:
+        #         card_base = your_current_hand_card.get_pickable_card_base()
+        #         self.__lightning_border_list.append(card_base)
 
     # def contract_of_doom(self, placed_card_index, placed_card_id):
     #     print(f"contract_of_doom() -> placed_card_index: {placed_card_index}, placed_card_id: {placed_card_id}")

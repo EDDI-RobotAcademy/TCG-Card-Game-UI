@@ -124,6 +124,9 @@ class FieldAreaInsideHandler:
     def handle_support_card_energy_boost(self, placed_card_id, placed_card_index):
         print(f"handle_support_card_energy_boost -> placed_card_id: {placed_card_id}")
         for fixed_field_unit_card in self.__your_field_unit_repository.get_current_field_unit_list():
+            if fixed_field_unit_card is None:
+                continue
+
             card_base = fixed_field_unit_card.get_fixed_card_base()
             self.__lightning_border_list.append(card_base)
 

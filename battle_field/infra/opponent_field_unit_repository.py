@@ -30,7 +30,10 @@ class OpponentFieldUnitRepository:
         # print(f"Saved current field_unit state: {field_unit_id}")
 
     def create_field_unit_card(self, field_unit_id):
-        index = len(self.current_field_unit_card_object_list)
+        valid_opponent_field_unit_list = [unit for unit in self.current_field_unit_card_object_list if unit is not None]
+        index = len(valid_opponent_field_unit_list)
+
+        # index = len(self.current_field_unit_card_object_list)
         self.place_field_unit(field_unit_id)
 
         new_card = FixedFieldCard(local_translation=self.get_next_card_position(index))
@@ -54,14 +57,20 @@ class OpponentFieldUnitRepository:
 
     def remove_current_field_unit_card(self, unit_index):
         # TODO: 이 부분 Memory Leak 발생 우려 (카드 구성 객체 정리 방안 구성 필요)
-        del self.current_field_unit_card_object_list[unit_index]
-        self.current_field_unit_state.delete_current_field_unit_list(unit_index)
+        # del self.current_field_unit_card_object_list[unit_index]
+        # self.current_field_unit_state.delete_current_field_unit_list(unit_index)
+
+        removed_card = self.current_field_unit_card_object_list.pop(unit_index)
+        self.current_field_unit_card_object_list.insert(unit_index, None)
 
     def remove_card_by_multiple_index(self, card_index_list):
         for index in sorted(card_index_list, reverse=True):
             if 0 <= index < len(self.current_field_unit_card_object_list):
-                del self.current_field_unit_card_object_list[index]
-                self.current_field_unit_state.remove_field_unit_by_index(index)
+                # del self.current_field_unit_card_object_list[index]
+                # self.current_field_unit_state.remove_field_unit_by_index(index)
+
+                removed_card = self.current_field_unit_card_object_list.pop(index)
+                self.current_field_unit_card_object_list.insert(index, None)
             else:
                 print(f"Invalid index: {index}. No card removed for this index.")
 
@@ -75,7 +84,9 @@ class OpponentFieldUnitRepository:
         current_y = 270
         x_increment = 170
 
-        for index, current_field_unit_card in enumerate(self.current_field_unit_card_object_list):
+        valid_opponent_field_unit_list = [unit for unit in self.current_field_unit_card_object_list if unit is not None]
+
+        for index, current_field_unit_card in enumerate(valid_opponent_field_unit_list):
             next_x = self.x_base + x_increment * index
             print(f"next_x: {next_x}")
             local_translation = (next_x, current_y)

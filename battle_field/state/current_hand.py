@@ -11,6 +11,7 @@ class CurrentHandState:
     def remove_hand_by_index(self, index):
         if 0 <= index < len(self.current_hand_list):
             removed_card = self.current_hand_list.pop(index)
+            # self.current_hand_list.insert(index, -1)
             print(f"Removed card index {index}: {removed_card}")
         else:
             print(f"Invalid index: {index}. 지울 것이 없다")

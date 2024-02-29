@@ -76,9 +76,9 @@ class YourFieldUnitRepository:
     def detach_energy(self, unit_index, energy_count):
         self.attached_energy_info.remove_energy_at_index(unit_index, energy_count)
 
-    def attach_race_energy(self, opponent_field_unit_index, energy_race, energy_count):
-        print(f"attach_race_energy: {opponent_field_unit_index} {energy_race} {energy_count}")
-        self.attached_energy_info.add_race_energy_at_index(opponent_field_unit_index, energy_race, energy_count)
+    def attach_race_energy(self, field_unit_index, energy_race, energy_count):
+        print(f"attach_race_energy() -> field_unit_index: {field_unit_index}, race: {energy_race} count: {energy_count}")
+        self.attached_energy_info.add_race_energy_at_index(field_unit_index, energy_race, energy_count)
 
     def detach_race_energy(self, opponent_field_unit_index, energy_race, energy_count):
         self.attached_energy_info.remove_race_energy_at_index(opponent_field_unit_index, energy_race, energy_count)
@@ -113,7 +113,8 @@ class YourFieldUnitRepository:
         # print(f"after clear -> current_hand_list: {self.current_field_unit_state}, current_hand_state: {self.get_current_field_unit_state()}")
 
     def remove_card_by_index(self, card_placed_index):
-        del self.current_field_unit_list[card_placed_index]
+        removed_card = self.current_field_unit_list.pop(card_placed_index)
+        self.current_field_unit_list.insert(card_placed_index, None)
         print(f"Removed card index {card_placed_index} -> current_hand_list: {self.current_field_unit_list}, current_hand_state: {self.get_current_field_unit_state()}")
 
     def replace_field_card_position(self):
@@ -123,7 +124,10 @@ class YourFieldUnitRepository:
         current_y = 490
         x_increment = 170
 
-        for index, current_field_unit in enumerate(self.current_field_unit_list):
+        # 전투로 파괴된 유닛들 제외
+        valid_field_unit_list = [unit for unit in self.current_field_unit_list if unit is not None]
+
+        for index, current_field_unit in enumerate(valid_field_unit_list):
             next_x = self.x_base + x_increment * index
             local_translation = (next_x, current_y)
             print(f"replace_field_unit_position -> local_translation: {local_translation}")
