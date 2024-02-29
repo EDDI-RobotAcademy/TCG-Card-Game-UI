@@ -76,9 +76,9 @@ class YourFieldUnitRepository:
     def detach_energy(self, unit_index, energy_count):
         self.attached_energy_info.remove_energy_at_index(unit_index, energy_count)
 
-    def attach_race_energy(self, opponent_field_unit_index, energy_race, energy_count):
-        print(f"attach_race_energy: {opponent_field_unit_index} {energy_race} {energy_count}")
-        self.attached_energy_info.add_race_energy_at_index(opponent_field_unit_index, energy_race, energy_count)
+    def attach_race_energy(self, field_unit_index, energy_race, energy_count):
+        print(f"attach_race_energy() -> field_unit_index: {field_unit_index}, race: {energy_race} count: {energy_count}")
+        self.attached_energy_info.add_race_energy_at_index(field_unit_index, energy_race, energy_count)
 
     def detach_race_energy(self, opponent_field_unit_index, energy_race, energy_count):
         self.attached_energy_info.remove_race_energy_at_index(opponent_field_unit_index, energy_race, energy_count)
@@ -93,10 +93,11 @@ class YourFieldUnitRepository:
         return self.attached_energy_info.get_race_energy_at_index(index, energy_race)
 
     def find_field_unit_by_index(self, index):
-        for unit in self.current_field_unit_list:
-            if unit.get_index() == index:
-                return unit
-        return None
+        return self.get_current_field_unit_list()[index]
+        # for unit in self.current_field_unit_list:
+        #     if unit.get_index() == index:
+        #         return unit
+        # return None
 
     def get_attached_energy_info(self):
         return self.attached_energy_info
@@ -112,19 +113,21 @@ class YourFieldUnitRepository:
         # print(f"after clear -> current_hand_list: {self.current_field_unit_state}, current_hand_state: {self.get_current_field_unit_state()}")
 
     def remove_card_by_index(self, card_placed_index):
-        if 0 <= card_placed_index < len(self.current_field_unit_list):
-            del self.current_field_unit_list[card_placed_index]
-            self.current_field_unit_state.remove_field_unit_by_index(card_placed_index)
-
-            # print(f"Removed card index {card_placed_index} -> current_hand_list: {self.current_field_unit_list}, current_hand_state: {self.get_current_field_unit_state()}")
-        else:
-            print(f"Invalid index: {card_placed_index}. 지울 것이 없다.")
+        removed_card = self.current_field_unit_list.pop(card_placed_index)
+        self.current_field_unit_list.insert(card_placed_index, None)
+        print(f"Removed card index {card_placed_index} -> current_hand_list: {self.current_field_unit_list}, current_hand_state: {self.get_current_field_unit_state()}")
 
     def replace_field_card_position(self):
-        current_y = 580
+        # current_y = 580
+        # x_increment = 170
+
+        current_y = 490
         x_increment = 170
 
-        for index, current_field_unit in enumerate(self.current_field_unit_list):
+        # 전투로 파괴된 유닛들 제외
+        valid_field_unit_list = [unit for unit in self.current_field_unit_list if unit is not None]
+
+        for index, current_field_unit in enumerate(valid_field_unit_list):
             next_x = self.x_base + x_increment * index
             local_translation = (next_x, current_y)
             print(f"replace_field_unit_position -> local_translation: {local_translation}")
@@ -134,21 +137,27 @@ class YourFieldUnitRepository:
             # tool_intiial_vertices = tool_card.get_initial_vertices()
             # tool_card.update_vertices(tool_intiial_vertices)
 
-            pickable_card_base = current_field_unit.get_pickable_card_base()
-            pickable_card_base.local_translate(local_translation)
+            fixed_card_base = current_field_unit.get_fixed_card_base()
+            fixed_card_base.local_translate(local_translation)
 
-            for attached_shape in pickable_card_base.get_attached_shapes():
-                # if isinstance(attached_shape, CircleImage):
-                #     # TODO: 동그라미는 별도 처리해야함
-                #     attached_circle_shape_initial_center = attached_shape.get_initial_center()
-                #     attached_shape.update_circle_vertices(attached_circle_shape_initial_center)
-                #     continue
-
+            for attached_shape in fixed_card_base.get_attached_shapes():
                 attached_shape.local_translate(local_translation)
-                # attached_shape_intiial_vertices = attached_shape.get_initial_vertices()
-                # attached_shape.update_vertices(attached_shape_intiial_vertices)
 
-            # current_hand_card.change_local_translation((next_x, current_y))
+            # pickable_card_base = current_field_unit.get_pickable_card_base()
+            # pickable_card_base.local_translate(local_translation)
+            #
+            # for attached_shape in pickable_card_base.get_attached_shapes():
+            #     # if isinstance(attached_shape, CircleImage):
+            #     #     # TODO: 동그라미는 별도 처리해야함
+            #     #     attached_circle_shape_initial_center = attached_shape.get_initial_center()
+            #     #     attached_shape.update_circle_vertices(attached_circle_shape_initial_center)
+            #     #     continue
+            #
+            #     attached_shape.local_translate(local_translation)
+            #     # attached_shape_intiial_vertices = attached_shape.get_initial_vertices()
+            #     # attached_shape.update_vertices(attached_shape_intiial_vertices)
+            #
+            # # current_hand_card.change_local_translation((next_x, current_y))
     def saveReceiveIpcChannel(self, receiveIpcChannel):
         self.__receiveIpcChannel = receiveIpcChannel
 

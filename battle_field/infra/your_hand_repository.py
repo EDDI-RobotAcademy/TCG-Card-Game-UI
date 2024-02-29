@@ -76,6 +76,8 @@ class YourHandRepository:
             del self.current_hand_card_list[card_placed_index]
             self.current_hand_state.remove_hand_by_index(card_placed_index)
 
+            # self.current_hand_card_list.insert(card_placed_index, None)
+
             print(
                 f"Removed card index {card_placed_index} -> current_hand_list: {self.current_hand_card_list}, current_hand_state: {self.get_current_hand_state()}")
         else:
