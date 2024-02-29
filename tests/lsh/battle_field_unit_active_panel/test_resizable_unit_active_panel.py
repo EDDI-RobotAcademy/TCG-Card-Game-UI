@@ -535,6 +535,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             self.active_panel_third_skill_button = None
 
+            if self.active_panel_details_button is not None:
+                self.active_panel_details_button.draw()
+
         for your_lightning_border in self.field_area_inside_handler.get_lightning_border_list():
             self.lightning_border.set_padding(20)
             self.lightning_border.update_shape(your_lightning_border)
@@ -1265,6 +1268,16 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             #         print("세 번째 스킬 클릭")
             #         return
 
+            if self.your_active_panel.get_your_active_panel_details_button() is not None:
+                if self.your_active_panel.is_point_inside_details_button((x, y)):
+                    print("상세 보기 클릭")
+
+                    # your_field_unit_id = self.selected_object.get_card_number()
+                    # skill_type = self.card_info_repository.getCardSkillSecondForCardNumber(your_field_unit_id)
+                    # print(f"skill_type: {skill_type}")
+
+                    return
+
             if self.tomb_panel_selected:
                 if self.your_tomb.is_point_inside_popup_rectangle((x, y)):
                     return
@@ -1303,6 +1316,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     self.drag_start = (x, y)
 
                     if self.selected_object != self.prev_selected_object:
+                        self.your_active_panel.clear_your_active_panel_details_button()
                         self.your_active_panel.clear_your_active_panel_second_skill_button()
                         self.your_active_panel.clear_your_active_panel_first_skill_button()
                         self.your_active_panel.clear_your_active_panel_attack_button()
@@ -1581,6 +1595,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                     if self.selected_object != self.prev_selected_object:
                         self.active_panel_rectangle = None
+                        self.your_active_panel.clear_your_active_panel_details_button()
                         self.your_active_panel.clear_your_active_panel_second_skill_button()
                         self.your_active_panel.clear_your_active_panel_first_skill_button()
                         self.your_active_panel.clear_your_active_panel_attack_button()
@@ -1900,6 +1915,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 self.active_panel_first_skill_button = self.your_active_panel.get_your_active_panel_first_skill_button()
                 self.active_panel_second_skill_button = self.your_active_panel.get_your_active_panel_second_skill_button()
                 self.active_panel_third_skill_button = None
+                self.active_panel_details_button = self.your_active_panel.get_your_active_panel_details_button()
 
     def create_opengl_rectangle(self, start_point):
         card_id = self.selected_object.get_card_number()
