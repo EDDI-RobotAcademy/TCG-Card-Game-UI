@@ -45,10 +45,10 @@ class NextFieldEnergyRace:
         # y1 = 0.767
         # y2 = 0.959
 
-        left_x_point = self.total_width * 0.975
+        left_x_point = self.total_width * 0.97
         right_x_point = self.total_width * 0.995
-        top_y_point = self.total_height * 0.717
-        bottom_y_point = self.total_height * 0.757
+        top_y_point = self.total_height * 0.7275
+        bottom_y_point = self.total_height * 0.7775
 
         self.next_field_energy_race_panel = Rectangle(
             (0,0,0,0.1),
