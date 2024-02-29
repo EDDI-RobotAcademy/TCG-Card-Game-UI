@@ -36,8 +36,8 @@ class CardInfoFromCsv:
         self.__cardSkillSecond = record[13]
         self.__cardPassiveFirst = record[14]
         self.__cardPassiveSecond = record[15]
-        self.__cardSillFirstDamage = record[16]
-        self.__cardSillSecondDamage = record[17]
+        self.__cardSkillFirstDamage = record[16]
+        self.__cardSkillSecondDamage = record[17]
         self.__cardPassiveFirstDamage = record[18]
         self.__cardPassiveSecondDamage = record[19]
 
