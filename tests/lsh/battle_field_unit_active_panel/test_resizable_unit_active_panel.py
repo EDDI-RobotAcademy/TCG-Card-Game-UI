@@ -1419,6 +1419,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
 
                         are_opponent_field_unit_death = False
+                        opponent_field_card_index = None
+                        opponent_field_card_id = None
+
                         for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
                             if isinstance(opponent_fixed_card_attached_shape, CircleNumberImage):
                                 if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
@@ -1448,7 +1451,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                     opponent_damage = self.card_info_repository.getCardAttackForCardNumber(
                                         opponent_field_card_id)
 
-                                    print("your unit hp 계산 준비")
+                                    print(f"opponent_damage: {opponent_damage}")
 
                                     are_your_field_unit_death = False
                                     for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
@@ -1500,8 +1503,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                         # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
                                         self.pre_drawed_image_instance.get_pre_draw_number_image(opponent_hp_number))
 
-                        opponent_field_card_id = opponent_field_unit_object.get_card_number()
-                        opponent_field_card_index = opponent_field_unit_object.get_index()
+                        # opponent_field_card_index = None
+                        # opponent_field_card_id = None
+
+                        print(f"opponent_field_card_index: {opponent_field_card_index}")
 
                         if are_opponent_field_unit_death is True:
                             self.opponent_field_unit_repository.remove_card_by_multiple_index(
