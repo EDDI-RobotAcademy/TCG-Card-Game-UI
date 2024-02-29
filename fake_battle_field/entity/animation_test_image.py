@@ -55,7 +55,7 @@ class AnimationTestImage:
         bottom_y_point = self.total_height * 0.35
 
 
-        basic_fixed_card_base_vertices = [(0, 0), (200, 0), (200, 200), (0, 200)]
+        basic_fixed_card_base_vertices = [(0, 0), (105, 0), (105, 170), (0, 170)]
 
         self.animation_panel = NonBackgroundImage(
             image_data=self.__pre_drawed_image.get_pre_draw_animation(),
@@ -65,8 +65,9 @@ class AnimationTestImage:
             #     (right_x_point, bottom_y_point),
             #     (left_x_point, bottom_y_point)
             # ],
-            vertices=basic_fixed_card_base_vertices,
-        #    local_translation=self.local_translation
+             vertices=basic_fixed_card_base_vertices,
+           local_translation=self.local_translation
+
         )
 
 
@@ -82,7 +83,7 @@ class AnimationTestImage:
                 return
 
             self.__current_animation_count += 1
-            image_count = self.__current_animation_count % 17
+            image_count = self.__current_animation_count % 16
             self.animation_panel.set_image_data(
                 self.__pre_drawed_image.get_pre_draw_animation(image_count))
         except:

@@ -346,12 +346,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.decrease_to_use_field_energy_count.get_decrease_to_use_field_energy_count_panel()
         )
 
-        self.animation_test_image.set_total_window_size(self.width, self.height)
-        self.animation_test_image.change_local_translation(
-            self.opponent_field_unit_repository.find_opponent_field_unit_by_index(0).get_local_translation()
-        )
-        self.animation_test_image.draw_animation_panel()
-        self.animation_test_image_panel = self.animation_test_image.get_animation_panel()
+
 
 
     def reshape(self, width, height):
@@ -386,7 +381,39 @@ class FakeBattleFieldFrame(OpenGLFrame):
         print(f"Key pressed: {key}")
 
         if key.lower() == '1':
+            if self.animation_test_image_panel:
+                self.animation_test_image_panel = None
 
+            self.animation_test_image.set_total_window_size(self.width, self.height)
+            self.animation_test_image.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(0).get_local_translation()
+            )
+            self.animation_test_image.draw_animation_panel()
+            self.animation_test_image_panel = self.animation_test_image.get_animation_panel()
+            print("created animation panel")
+
+        if key.lower() == '2':
+            if self.animation_test_image_panel:
+                self.animation_test_image_panel = None
+
+            self.animation_test_image.set_total_window_size(self.width, self.height)
+            self.animation_test_image.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(1).get_local_translation()
+            )
+            self.animation_test_image.draw_animation_panel()
+            self.animation_test_image_panel = self.animation_test_image.get_animation_panel()
+            print("created animation panel")
+
+        if key.lower() == '3':
+            if self.animation_test_image_panel:
+                self.animation_test_image_panel = None
+
+            self.animation_test_image.set_total_window_size(self.width, self.height)
+            self.animation_test_image.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(2).get_local_translation()
+            )
+            self.animation_test_image.draw_animation_panel()
+            self.animation_test_image_panel = self.animation_test_image.get_animation_panel()
             print("created animation panel")
 
         if key.lower() == 'l':
@@ -395,6 +422,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.animation_test_image.update_animation_panel()
                 if not self.animation_test_image.is_finished:
                     self.master.after(17, animate)
+                else:
+                    self.animation_test_image_panel = None
 
             self.animation_test_image.reset_animation_count()
             self.master.after(0, animate)
@@ -540,9 +569,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.decrease_to_use_field_energy_count.set_height_ratio(self.height_ratio)
         self.decrease_to_use_field_energy_count_panel.draw()
 
-        self.animation_test_image.set_width_ratio(self.width_ratio)
-        self.animation_test_image.set_height_ratio(self.height_ratio)
-        self.animation_test_image_panel.draw()
+
 
         glDisable(GL_BLEND)
 
@@ -781,6 +808,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.muligun_reset_button.set_width_ratio(self.width_ratio)
         self.muligun_reset_button.set_height_ratio(self.height_ratio)
         self.muligun_reset_button.draw()
+
+        if self.animation_test_image_panel is not None:
+
+            self.animation_test_image.set_width_ratio(self.width_ratio)
+            self.animation_test_image.set_height_ratio(self.height_ratio)
+            self.animation_test_image_panel.draw()
 
         self.tkSwapBuffers()
 
