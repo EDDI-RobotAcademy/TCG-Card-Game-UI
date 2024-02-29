@@ -1284,6 +1284,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     print("두 번째 스킬 클릭")
 
                     your_field_unit_id = self.selected_object.get_card_number()
+                    print(f"your_field_unit_id: {your_field_unit_id}")
                     skill_type = self.card_info_repository.getCardSkillSecondForCardNumber(your_field_unit_id)
                     print(f"skill_type: {skill_type}")
 
@@ -1293,7 +1294,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                     # 광역기
                     elif skill_type == 2:
-                        damage = 15
+                        damage = self.card_info_repository.getCardSkillSecondDamageForCardNumber(your_field_unit_id)
+                        print(f"wide area damage: {damage}")
 
                         # TODO: 즉발이므로 대기 액션이 필요없음 (서버와의 통신을 위해 대기가 발생 할 수 있긴함) 그 때 가서 추가
                         for index in range(
@@ -1667,7 +1669,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                     print(f"your_field_card_index: {your_field_card_index}")
                                     # your_skill_damage = self.card_info_repository.getCardAttackForCardNumber(your_field_card_id)
                                     # your_skill_damage = self.card_info_repository.getCardAttackForCardNumber(your_field_card_id)
-                                    your_skill_damage = 20
+                                    # your_skill_damage = 20
+                                    your_skill_damage = self.card_info_repository.getCardSkillFirstDamageForCardNumber(your_field_card_id)
                                     print(f"your_skill_damage: {your_skill_damage}")
 
                                     opponent_field_card_id = opponent_field_unit_object.get_card_number()
