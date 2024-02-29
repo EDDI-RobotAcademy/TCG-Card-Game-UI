@@ -55,7 +55,7 @@ class AnimationTestImage:
         bottom_y_point = self.total_height * 0.35
 
 
-        basic_fixed_card_base_vertices = [(0, 0), (105, 0), (105, 170), (0, 170)]
+        basic_fixed_card_base_vertices = [(-20, -25), (125, -25), (125, 195), (-20, 195)]
 
         self.animation_panel = NonBackgroundImage(
             image_data=self.__pre_drawed_image.get_pre_draw_animation(),
@@ -78,7 +78,7 @@ class AnimationTestImage:
         #     )
     def update_animation_panel(self):
         try:
-            if self.__current_animation_count > 60:
+            if self.__current_animation_count > 64:
                 self.is_finished = True
                 return
 
