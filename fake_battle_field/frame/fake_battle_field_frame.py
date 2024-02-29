@@ -557,6 +557,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_field_energy.update_current_field_energy_panel()
         self.your_field_energy_panel.draw()
 
+        self.opponent_field_energy.set_width_ratio(self.width_ratio)
+        self.opponent_field_energy.set_height_ratio(self.height_ratio)
+        self.opponent_field_energy.update_current_opponent_field_energy_panel()
+        self.opponent_field_energy_panel.draw()
+
         self.next_field_energy_race.set_width_ratio(self.width_ratio)
         self.next_field_energy_race.set_height_ratio(self.width_ratio)
         self.next_field_energy_race_panel.draw()
@@ -583,10 +588,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.decrease_to_use_field_energy_count.set_height_ratio(self.height_ratio)
         self.decrease_to_use_field_energy_count_panel.draw()
 
-        self.opponent_field_energy.set_width_ratio(self.width_ratio)
-        self.opponent_field_energy.set_height_ratio(self.height_ratio)
-        self.opponent_field_energy.update_current_opponent_field_energy_panel()
-        self.opponent_field_energy_panel.draw()
 
         glDisable(GL_BLEND)
 
