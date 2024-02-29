@@ -401,11 +401,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-        self.opponent_field_energy.set_width_ratio(self.width_ratio)
-        self.opponent_field_energy.set_height_ratio(self.height_ratio)
-        self.opponent_field_energy.update_current_opponent_field_energy_panel()
-        self.opponent_field_energy_panel.draw()
-
         self.your_field_panel.set_width_ratio(self.width_ratio)
         self.your_field_panel.set_height_ratio(self.height_ratio)
         self.your_field_panel.draw()
@@ -447,6 +442,12 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
 
         glDisable(GL_BLEND)
+
+        self.opponent_field_energy.set_width_ratio(self.width_ratio)
+        self.opponent_field_energy.set_height_ratio(self.height_ratio)
+        self.opponent_field_energy.update_current_opponent_field_energy_panel()
+        self.opponent_field_energy_panel.draw()
+
 
     def redraw(self):
         if self.is_reshape_not_complete:
@@ -755,6 +756,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     attached_shape.draw()
 
             glDisable(GL_BLEND)
+
+        self.opponent_field_energy.set_width_ratio(self.width_ratio)
+        self.opponent_field_energy.set_height_ratio(self.height_ratio)
+        self.opponent_field_energy.update_current_opponent_field_energy_panel()
+        self.opponent_field_energy_panel.draw()
 
         self.tkSwapBuffers()
 
