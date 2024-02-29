@@ -40,7 +40,6 @@ class LobbyMenuFrameRepositoryImpl(LobbyMenuFrameRepository):
         return self.__receiveIpcChannel.get()
 
     def requestCheckGameMoney(self, CheckGameMoneyRequest):
-        print(f"LobbyMenuFrameRepositoryImpl: requestCheckGameMoney() -> {CheckGameMoneyRequest}")
         self.__transmitIpcChannel.put(CheckGameMoneyRequest)
         return self.__receiveIpcChannel.get()
 

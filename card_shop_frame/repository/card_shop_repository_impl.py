@@ -22,7 +22,7 @@ class CardShopMenuFrameRepositoryImpl(CardShopMenuFrameRepository):
         return cls.__instance
 
     def createCardShopMenuFrame(self, rootWindow):
-        print("MainMenuFrameRepositoryImpl: createMainMenuFrame()")
+        print("CardShopFrameRepositoryImpl: createCardShopMenuFrame()")
         cardShopMenuFrame = CardShopMenuFrame(rootWindow)
 
         return cardShopMenuFrame
