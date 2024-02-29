@@ -1,3 +1,5 @@
+import random
+
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 from battle_field.state.energy_type import EnergyType
@@ -69,9 +71,16 @@ class SupportCardHandler:
         #     EnergyType.Undead,
         #     1)
 
+        after_boost_deck_list = self.__yourDeckRepository.get_current_deck_state_object().get_current_deck()
+
         print(f"energy_boost_from_deck_as_possible() -> attached energy info: {self.__yourFieldUnitRepository.get_attached_energy_info().get_energy_at_index(target_unit_index)}")
-        print(f"deck state: {self.__yourDeckRepository.get_current_deck_state_object().get_current_deck()}")
+        print(f"energy_boost_from_deck_as_possible() -> deck state: {after_boost_deck_list}")
         # print(f"get_total_energy_at_index: {self.__yourFieldUnitRepository.get_attached_energy_info().get_total_energy_at_index(target_unit_index)}")
+
+        random.shuffle(after_boost_deck_list)
+        print(f"after shuffle: energy_boost_from_deck_as_possible() -> deck state: {after_boost_deck_list}")
+
+        self.__yourDeckRepository.update_deck(after_boost_deck_list)
 
         attached_energy_info = self.__yourFieldUnitRepository.get_attached_energy_info()
         print(f"get_attached_energy_info: {attached_energy_info}")
