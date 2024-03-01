@@ -88,6 +88,7 @@ class YourHandRepository:
             self.current_hand_card_list.append(new_card)
 
     def remove_card_by_index_with_page(self, card_placed_index):
+        print(f"card_placed_index: {card_placed_index}")
         current_page = self.current_page
         self.your_hand_page_list[current_page].remove_card_by_index(card_placed_index)
         self.current_hand_state.remove_hand_by_index(card_placed_index)
