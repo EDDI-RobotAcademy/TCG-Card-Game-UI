@@ -87,7 +87,14 @@ class YourHandRepository:
             # new_card.set_initial_position(initial_position)
             self.current_hand_card_list.append(new_card)
 
+    def remove_card_by_index_with_page(self, card_placed_index):
+        current_page = self.current_page
+        self.your_hand_page_list[current_page].remove_card_by_index(card_placed_index)
+        self.current_hand_state.remove_hand_by_index(card_placed_index)
+
     def remove_card_by_index(self, card_placed_index):
+        print(f"remove_card_by_index -> self.current_hand_card_list: {self.current_hand_card_list}, card_placed_index: {card_placed_index}")
+
         if 0 <= card_placed_index < len(self.current_hand_card_list):
             del self.current_hand_card_list[card_placed_index]
             self.current_hand_state.remove_hand_by_index(card_placed_index)
@@ -144,8 +151,9 @@ class YourHandRepository:
         # TODO: 배치 간격 고려
         current_y = 830
 
+        start = self.total_width * 0.2976
         end = self.total_width * 0.6997
-        gap_width = (end - self.x_base - 525.0) / 4.0
+        gap_width = (end - start - 525.0) / 4.0
 
         x_increment = 105 + gap_width
 
@@ -157,7 +165,7 @@ class YourHandRepository:
         # 215 / 4 = 53.75
         place_index = index % 5
 
-        self.x_base = self.total_width * 0.2976
+        self.x_base = start
         next_x = self.x_base + x_increment * place_index
         return (next_x, current_y)
 
@@ -219,6 +227,22 @@ class YourHandRepository:
                 print(f"Error creating card: {e}")
                 pass
 
+    # def find_index_by_selected_object_with_page(self, selected_object):
+    #     current_page = self.current_page
+    #     selected_object_index = self.your_hand_page_list[current_page].find_index_by_selected_object(selected_object)
+    #     print(f"selected_object_index: {selected_object_index}")
+    #
+    #     real_index = selected_object_index + (5 * current_page)
+    #     print(f"real_index: {real_index}")
+    #
+    #     return real_index
+
+    def find_index_by_selected_object_with_page(self, selected_object):
+        current_page = self.current_page
+        selected_object_index = self.your_hand_page_list[current_page].find_index_by_selected_object(selected_object)
+        print(f"selected_object_index: {selected_object_index}")
+
+        return selected_object_index
 
     def find_index_by_selected_object(self, selected_object):
         for index, card in enumerate(self.current_hand_card_list):
@@ -242,7 +266,25 @@ class YourHandRepository:
         return self.current_page
 
     def get_current_page_your_hand_list(self):
+        # print(f"get_current_your_hand_page(): {self.get_current_your_hand_page()}")
+        # print(f"self.your_hand_page_list[current_page]: {self.your_hand_page_list[self.get_current_your_hand_page()]}")
+        # print(f"specific_page -> get_your_hand_page_card_object_list(): {self.your_hand_page_list[self.get_current_your_hand_page()].get_your_hand_page_card_object_list()}")
+
         return self.your_hand_page_list[self.get_current_your_hand_page()].get_your_hand_page_card_object_list()
+
+    def update_your_hand(self):
+        # self.current_hand_state.clear_current_hand()
+        # print(f"update_your_hand(): {current_hand_list}")
+        self.your_hand_page_list = []
+        # self.current_hand_state.add_to_hand(current_hand_list)
+        self.build_your_hand_page()
+
+        # your_hand_list = self.get_current_hand_state()
+        # print(f"update_your_hand() -> your_hand_list: {your_hand_list}")
+        #
+        # num_cards_per_page = 5
+        # num_pages = ceil(len(your_hand_list) / num_cards_per_page)
+        # print(f"num_pages: {num_pages}")
 
     def build_your_hand_page(self):
         your_hand_list = self.get_current_hand_state()
@@ -259,8 +301,11 @@ class YourHandRepository:
             current_page = YourHandPage()
             current_page.set_total_window_size(self.total_width, self.total_height)
             current_page.add_hand_to_page(current_your_hand_page)
+            print(f"current_your_hand_page: {current_your_hand_page}")
+
             current_page.set_hand_page_number(page_index + 1)
-            self.create_hand_card_list()
+            # self.create_hand_card_list()
+            current_page.create_your_hand_card_list()
 
             self.your_hand_page_list.append(current_page)
 
