@@ -2251,7 +2251,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             # for remove_from_field in remove_from_field_list:
 
                             print(f"corpse explosion your hand index: {self.targeting_ememy_select_using_hand_card_index}")
-                            self.your_hand_repository.remove_card_by_index(
+                            # self.your_hand_repository.remove_card_by_index(
+                            #     self.targeting_ememy_select_using_hand_card_index)
+                            self.your_hand_repository.remove_card_by_index_with_page(
                                 self.targeting_ememy_select_using_hand_card_index)
                             self.your_tomb_repository.create_tomb_card(
                                 self.targeting_ememy_select_using_hand_card_id)
@@ -2266,7 +2268,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             self.your_field_unit_repository.remove_card_by_index(self.targeting_enemy_select_using_your_field_card_index)
                             self.your_tomb_repository.create_tomb_card(self.targeting_enemy_for_sacrifice_unit_id)
 
-                            self.your_hand_repository.replace_hand_card_position()
+                            # self.your_hand_repository.replace_hand_card_position()
+                            self.your_hand_repository.update_your_hand()
                             self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
                             self.your_field_unit_repository.replace_field_card_position()
 
