@@ -1135,10 +1135,12 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                 print(f"acquire_energy: {acquire_energy}")
 
                                 self.your_field_energy_repository.increase_your_field_energy(acquire_energy)
-                                self.your_hand_repository.remove_card_by_index(placed_index)
+                                # self.your_hand_repository.remove_card_by_index(placed_index)
+                                self.your_hand_repository.remove_card_by_index_with_page(placed_index)
                                 self.your_field_unit_repository.remove_card_by_index(unit_index)
 
-                                self.your_hand_repository.replace_hand_card_position()
+                                # self.your_hand_repository.replace_hand_card_position()
+                                self.your_hand_repository.update_your_hand()
                                 self.your_field_unit_repository.replace_field_card_position()
 
                                 self.your_tomb_repository.create_tomb_card(card_id)
