@@ -1107,7 +1107,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                         placed_card_id = self.selected_object.get_card_number()
                         card_type = self.card_info_repository.getCardTypeForCardNumber(placed_card_id)
-                        placed_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
+                        # placed_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
+                        # placed_index = self.your_hand_repository.find_index_by_selected_object_with_page(self.selected_object)
+                        placed_index = self.your_hand_repository.find_index_by_selected_object_with_page(self.selected_object)
 
                         if card_type == CardType.TOOL.value:
                             # TODO: 배포덱에서는 도구를 사용하지 않음
@@ -1180,7 +1182,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         elif card_type == CardType.ENERGY.value:
                             print("에너지를 붙입니다!")
                             # self.selected_object = None
-                            self.your_hand_repository.remove_card_by_index(placed_index)
+                            self.your_hand_repository.remove_card_by_index_with_page(placed_index)
                             # self.your_field_unit_repository.get_attached_energy_info().add_energy_at_index(unit_index, 1)
 
                             # TODO: 에너지 enum으로 처리해야함
@@ -1211,7 +1213,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             print(f"total_attached_energy_count: {total_attached_energy_count}")
                             # undead_attach_energy_count = self.your_field_unit_repository.get_your_field_unit_race_energy(
                             #     unit_index, race)
-                            self.your_hand_repository.replace_hand_card_position()
 
                             # card_id = current_field_unit.get_card_number()
                             # self.your_tomb_repository.create_tomb_card(card_id)
@@ -1236,6 +1237,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                 fixed_card_base.set_attached_shapes(card_race_circle)
 
                             self.selected_object = None
+
+                            current_hand_list = self.your_hand_repository.get_current_hand_state()
+                            print(f"get_current_hand_state: {current_hand_list}")
+                            # self.your_hand_repository.replace_hand_card_position()
+                            # self.your_hand_repository.save_current_hand_state(current_hand_list)
+                            # self.your_hand_repository.update_your_hand(current_hand_list)
+                            self.your_hand_repository.update_your_hand()
 
                             return
                         else:
@@ -1568,6 +1576,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             self.opponent_lost_zone_panel_selected = False
 
             # TODO: Your Hand List in Page
+            print(f"Your Hand List in Page")
             # for hand_card in self.hand_card_list:
             for hand_card in self.your_hand_repository.get_current_page_your_hand_list():
                 if isinstance(hand_card, PickableCard):
@@ -1576,7 +1585,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             self.selected_object = None
 
             # TODO: Your Hand List in Page
-            for hand_card in reversed(self.hand_card_list):
+            for hand_card in reversed(self.your_hand_repository.get_current_page_your_hand_list()):
                 print(f"hand_card: {hand_card}")
             # for hand_card in reversed(self.your_hand_repository.get_current_page_your_hand_list()):
                 pickable_card_base = hand_card.get_pickable_card_base()
@@ -2398,9 +2407,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         return new_rectangle
 
 
-class TestResizableUnitActivePanel(unittest.TestCase):
+class TestResizableUnitActivePanelWithHandPage(unittest.TestCase):
 
-    def test_resizable_unit_active_panel(self):
+    def test_resizable_unit_active_panel_with_hand_page(self):
         DomainInitializer.initEachDomain()
 
         root = tkinter.Tk()
