@@ -23,6 +23,7 @@ from battle_field.entity.opponent_field_energy import OpponentFieldEnergy
 from battle_field.entity.opponent_hp import OpponentHp
 from battle_field.entity.opponent_lost_zone import OpponentLostZone
 from battle_field.entity.opponent_tomb import OpponentTomb
+from battle_field.entity.option import Option
 from battle_field.entity.prev_field_energy_race import PrevFieldEnergyRace
 from battle_field.entity.tomb_type import TombType
 from battle_field.entity.turn_end import TurnEnd
@@ -226,6 +227,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.turn_end_button = None
         self.turn_end_button_selected = False
 
+        self.option = Option()
+        self.option_button = None
+        self.option_button_selected = False
+
 
 
         self.bind("<Configure>", self.on_resize)
@@ -370,6 +375,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.turn_end.set_total_window_size(self.width, self.height)
         self.turn_end.create_turn_end_button()
         self.turn_end_button = self.turn_end.get_turn_end_button()
+
+        self.option.set_total_window_size(self.width, self.height)
+        self.option.create_option_button()
+        self.option_button = self.option.get_option_button()
 
 
     def reshape(self, width, height):
@@ -606,6 +615,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.turn_end.set_height_ratio(self.height_ratio)
         self.turn_end_button.set_draw_border(False)
         self.turn_end_button.draw()
+
+        self.option.set_width_ratio(self.width_ratio)
+        self.option.set_height_ratio(self.height_ratio)
+        self.option_button.set_draw_border(False)
+        self.option_button.draw()
 
         self.next_field_energy_race.set_width_ratio(self.width_ratio)
         self.next_field_energy_race.set_height_ratio(self.width_ratio)

@@ -98,13 +98,13 @@ class SurrenderConfirm:
         point_x, point_y = point
         point_y *= -1
 
-        surrender_confirm_panel = self.get_surrender_confirm_panel()
+        surrender_confirm_panel_cancel_button = self.surrender_confirm_panel_cancel_button
 
         translated_vertices = [
             (
-                x * self.width_ratio + surrender_confirm_panel.local_translation[0] * self.width_ratio, y *
-                self.height_ratio + surrender_confirm_panel.local_translation[1] * self.height_ratio)
-            for x, y in surrender_confirm_panel.get_vertices()
+                x * self.width_ratio + surrender_confirm_panel_cancel_button.local_translation[0] * self.width_ratio, y *
+                self.height_ratio + surrender_confirm_panel_cancel_button.local_translation[1] * self.height_ratio)
+            for x, y in surrender_confirm_panel_cancel_button.get_vertices()
         ]
 
         if not (translated_vertices[0][0] <= point_x <= translated_vertices[1][0] and
@@ -119,13 +119,13 @@ class SurrenderConfirm:
         point_x, point_y = point
         point_y *= -1
 
-        surrender_confirm_panel = self.get_surrender_confirm_panel()
+        surrender_confirm_panel_ok_button = self.surrender_confirm_panel_ok_button
 
         translated_vertices = [
             (
-                x * self.width_ratio + surrender_confirm_panel.local_translation[0] * self.width_ratio, y *
-                self.height_ratio + surrender_confirm_panel.local_translation[1] * self.height_ratio)
-            for x, y in surrender_confirm_panel.get_vertices()
+                x * self.width_ratio + surrender_confirm_panel_ok_button.local_translation[0] * self.width_ratio, y *
+                self.height_ratio + surrender_confirm_panel_ok_button.local_translation[1] * self.height_ratio)
+            for x, y in surrender_confirm_panel_ok_button.get_vertices()
         ]
 
         if not (translated_vertices[0][0] <= point_x <= translated_vertices[1][0] and
