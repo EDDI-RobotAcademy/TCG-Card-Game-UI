@@ -1060,9 +1060,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                         self.your_tomb_repository.create_tomb_card(your_card_id)
 
-                        your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
-                        self.your_hand_repository.remove_card_by_index(your_card_index)
-                        self.your_hand_repository.replace_hand_card_position()
+                        # your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
+                        # self.your_hand_repository.remove_card_by_index(your_card_index)
+                        your_card_index = self.your_hand_repository.find_index_by_selected_object_with_page(self.selected_object)
+                        self.your_hand_repository.remove_card_by_index_with_page(your_card_index)
+
+                        # self.your_hand_repository.replace_hand_card_position()
+                        self.your_hand_repository.update_your_hand()
 
                         self.selected_object = None
                         return
