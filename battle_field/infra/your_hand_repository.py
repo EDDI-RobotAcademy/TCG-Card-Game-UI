@@ -143,7 +143,19 @@ class YourHandRepository:
     def get_next_card_position(self, index):
         # TODO: 배치 간격 고려
         current_y = 830
-        x_increment = 170
+
+        end = self.total_width * 0.6997
+        gap_width = (end - self.x_base - 525.0) / 4.0
+
+        x_increment = 105 + gap_width
+
+        # 550 <-> 1290
+        # Card -> 105
+        # Gap -> gap_width => gap_count = Card Count - 1
+        # 740 = 105 * 5 + gap_width * 4
+        # 740 = 525 + 215
+        # 215 / 4 = 53.75
+        self.x_base = self.total_width * 0.2976
         next_x = self.x_base + x_increment * index
         return (next_x, current_y)
 

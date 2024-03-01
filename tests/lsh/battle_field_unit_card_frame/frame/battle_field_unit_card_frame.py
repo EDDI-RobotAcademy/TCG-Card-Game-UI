@@ -30,13 +30,13 @@ class BattleFieldUnitCardFrame(OpenGLFrame):
 
         self.domain_scene.add_image(
             ImageItem(
-                path="../../local_storage/card_images/card1.png",
+                path="../../../local_storage/legacy_card_images/card1.png",
                 position=(25, 25),
                 size=(300, 300),
                 translation=(0, 0)))
 
         equip_image = ImageItem(
-                path="../../local_storage/card_images/equip_white.jpeg",
+                path="../../../local_storage/legacy_card_images/equip_white.jpg",
                 position=(390, 30),
                 size=(40, 40),
                 translation=(0, 0))
