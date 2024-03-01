@@ -155,9 +155,23 @@ class YourHandRepository:
         # 740 = 105 * 5 + gap_width * 4
         # 740 = 525 + 215
         # 215 / 4 = 53.75
+        place_index = index % 5
+
         self.x_base = self.total_width * 0.2976
-        next_x = self.x_base + x_increment * index
+        next_x = self.x_base + x_increment * place_index
         return (next_x, current_y)
+
+        # card_width_ratio = 105 / self.total_width
+        # place_index = index % 6
+        #
+        # if index > 5:
+        #     current_y = self.total_height * self.y_bottom_base_ratio
+        # else:
+        #     current_y = self.total_height * self.y_top_base_ratio
+        #
+        # base_x = self.total_width * self.x_left_base_ratio
+        # x_increment = (self.x_right_base_ratio - self.x_left_base_ratio + card_width_ratio) / 6.0
+        # next_x = base_x + self.total_width * (x_increment * place_index)
 
     # 멀리건 화면에서 카드 배치
     def get_start_hand_card_position(self, index):
@@ -235,6 +249,7 @@ class YourHandRepository:
 
         num_cards_per_page = 5
         num_pages = ceil(len(your_hand_list) / num_cards_per_page)
+        print(f"num_pages: {num_pages}")
 
         for page_index in range(num_pages):
             start_index = page_index * num_cards_per_page
