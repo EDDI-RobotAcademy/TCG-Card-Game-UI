@@ -240,7 +240,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         # self.your_hand_repository.set_x_base(550)
         self.your_hand_repository.set_total_window_size(self.width, self.height)
-        self.your_hand_repository.save_current_hand_state([30, 30, 93, 8, 2, 33, 35])
+        self.your_hand_repository.save_current_hand_state([30, 30, 93, 8, 2, 33, 35, 9, 20, 25, 36, 151])
         # self.your_hand_repository.save_current_hand_state([151])
         # self.your_hand_repository.create_hand_card_list()
         self.your_hand_repository.build_your_hand_page()
@@ -2032,6 +2032,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         proper_handler(your_field_unit_index)
 
                         self.your_tomb_repository.create_tomb_card(current_process_card_id)
+                        self.your_hand_repository.update_your_hand()
 
                         # self.boost_selection = False
                         break
