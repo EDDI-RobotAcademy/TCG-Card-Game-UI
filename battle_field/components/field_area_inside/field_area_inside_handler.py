@@ -138,7 +138,8 @@ class FieldAreaInsideHandler:
             self.__lightning_border_list.append(card_base)
 
         self.__action_set_card_id = placed_card_id
-        self.__your_hand_repository.remove_card_by_index(placed_card_index)
+        # self.__your_hand_repository.remove_card_by_index(placed_card_index)
+        self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)
 
         self.__field_area_action = FieldAreaAction.ENERGY_BOOST
         return self.__field_area_action
