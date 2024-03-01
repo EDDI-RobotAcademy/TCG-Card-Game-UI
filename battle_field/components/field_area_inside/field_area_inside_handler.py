@@ -88,7 +88,8 @@ class FieldAreaInsideHandler:
         card_type = self.__card_info_repository.getCardTypeForCardNumber(placed_card_id)
         # print(f"my card type is {card_type}")
 
-        placed_card_index = self.__your_hand_repository.find_index_by_selected_object(selected_object)
+        # placed_card_index = self.__your_hand_repository.find_index_by_selected_object(selected_object)
+        placed_card_index = self.__your_hand_repository.find_index_by_selected_object_with_page(selected_object)
 
         if card_type == CardType.UNIT.value:
             return self.handle_unit_card(placed_card_id, placed_card_index)
@@ -174,7 +175,8 @@ class FieldAreaInsideHandler:
         print(f"handle_support_card_search_unit_from_deck -> placed_card_id: {placed_card_id}, placed_card_index: {placed_card_index}")
 
         # self.__action_set_card_id = placed_card_id
-        self.__your_hand_repository.remove_card_by_index(placed_card_index)
+        # self.__your_hand_repository.remove_card_by_index(placed_card_index)
+        self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)
         self.__your_tomb_repository.create_tomb_card(placed_card_id)
 
         self.__field_area_action = FieldAreaAction.SEARCH_UNIT_CARD

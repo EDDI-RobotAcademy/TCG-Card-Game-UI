@@ -240,7 +240,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         # self.your_hand_repository.set_x_base(550)
         self.your_hand_repository.set_total_window_size(self.width, self.height)
-        self.your_hand_repository.save_current_hand_state([30, 93, 8, 2, 33, 35])
+        self.your_hand_repository.save_current_hand_state([30, 30, 93, 8, 2, 33, 35])
         # self.your_hand_repository.save_current_hand_state([151])
         # self.your_hand_repository.create_hand_card_list()
         self.your_hand_repository.build_your_hand_page()
@@ -2087,7 +2087,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     processing_length = len(self.selected_search_unit_index_list)
                     self.your_deck_repository.remove_card_object_list_with_count(processing_length)
 
-                    self.your_hand_repository.create_additional_hand_card_list(self.selected_search_unit_id_list)
+                    # self.your_hand_repository.create_additional_hand_card_list(self.selected_search_unit_id_list)
+                    self.your_hand_repository.save_current_hand_state(self.selected_search_unit_id_list)
+                    self.your_hand_repository.update_your_hand()
                     # self.selected_search_unit_page_number_list
                     self.selected_search_unit_lightning_border = []
 
