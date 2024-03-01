@@ -150,20 +150,24 @@ class FieldAreaInsideHandler:
         # TODO: Summary와 연동하도록 재구성 필요
         drawn_card_list = self.__your_deck_repository.draw_deck_with_count(3)
 
-        try:
-            draw_card_response = self.__your_hand_repository.requestDrawCardByUseSupportCard(
-                DrawCardByUseSupportCardRequest(_sessionInfo=self.__session_info_repository.get_session_info(),
-                                                _cardId=placed_card_id)
-            )
-
-            if draw_card_response is not None:
-                drawn_card_list = draw_card_response
-
-        except Exception as e:
-            print(f"draw_card Error! {e}")
+        # TODO: 테스트인 경우와 실제 통신하는 경우를 스마트하게 분리 할 필요가 있음 (아래는 통신)
+        # try:
+        #     draw_card_response = self.__your_hand_repository.requestDrawCardByUseSupportCard(
+        #         DrawCardByUseSupportCardRequest(_sessionInfo=self.__session_info_repository.get_session_info(),
+        #                                         _cardId=placed_card_id)
+        #     )
+        #
+        #     if draw_card_response is not None:
+        #         drawn_card_list = draw_card_response
+        #
+        # except Exception as e:
+        #     print(f"draw_card Error! {e}")
 
         self.__your_hand_repository.create_additional_hand_card_list(drawn_card_list)
-        self.__your_hand_repository.remove_card_by_index(placed_card_index)
+        # self.__your_hand_repository.remove_card_by_index(placed_card_index)
+        self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)
+        self.__your_hand_repository.save_current_hand_state(drawn_card_list)
+        self.__your_hand_repository.update_your_hand()
 
         self.__your_tomb_repository.create_tomb_card(20)
         print(
