@@ -143,7 +143,8 @@ class OpponentFixedUnitCardInsideHandler:
         placed_card_id = selected_object.get_card_number()
         card_type = self.__card_info_repository.getCardTypeForCardNumber(placed_card_id)
 
-        placed_card_index = self.__your_hand_repository.find_index_by_selected_object(selected_object)
+        # placed_card_index = self.__your_hand_repository.find_index_by_selected_object(selected_object)
+        placed_card_index = self.__your_hand_repository.find_index_by_selected_object_with_page(selected_object)
 
         if card_type == CardType.ITEM.value:
             self.handle_item_card(placed_card_id, opponent_unit_index, placed_card_index)
@@ -224,7 +225,8 @@ class OpponentFixedUnitCardInsideHandler:
     def death_sice(self, placed_card_index, unit_index, placed_card_id):
         DEATH_SICE_FIXED_DAMAGE = 30
 
-        self.__your_hand_repository.remove_card_by_index(placed_card_index)
+        # self.__your_hand_repository.remove_card_by_index(placed_card_index)
+        self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)
         self.__your_tomb_repository.create_tomb_card(placed_card_id)
 
         opponent_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(unit_index)
@@ -258,6 +260,8 @@ class OpponentFixedUnitCardInsideHandler:
                         opponent_attached_shape.set_image_data(
                             self.__pre_drawed_image_instance.get_pre_draw_number_image(
                                 opponent_unit_hp))
+
+        self.__your_hand_repository.update_your_hand()
 
     # def death_sice_need_two_undead_energy(self, placed_card_index, unit_index, placed_card_id):
     #     print("death_sice operates")
