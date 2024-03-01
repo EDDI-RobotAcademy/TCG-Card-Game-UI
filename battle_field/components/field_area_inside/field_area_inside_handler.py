@@ -171,7 +171,7 @@ class FieldAreaInsideHandler:
         # except Exception as e:
         #     print(f"draw_card Error! {e}")
 
-        self.__your_hand_repository.create_additional_hand_card_list(drawn_card_list)
+        # self.__your_hand_repository.create_additional_hand_card_list(drawn_card_list)
         # self.__your_hand_repository.remove_card_by_index(placed_card_index)
         self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)
         self.__your_hand_repository.save_current_hand_state(drawn_card_list)
