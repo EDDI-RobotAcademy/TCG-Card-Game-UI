@@ -41,7 +41,7 @@ from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
-from battle_field.infra.your_hand_repository import YourHandRepository
+from battle_field.infra.legacy.your_hand_repository import LegacyYourHandRepository
 from battle_field.infra.your_hp_repository import YourHpRepository
 from battle_field.infra.your_lost_zone_repository import YourLostZoneRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
@@ -111,7 +111,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.session_repository = SessionRepositoryImpl.getInstance()
 
-        self.your_hand_repository = YourHandRepository.getInstance()
+        self.your_hand_repository = LegacyYourHandRepository.getInstance()
         self.hand_card_list = None
 
         self.your_deck_repository = YourDeckRepository.getInstance()
