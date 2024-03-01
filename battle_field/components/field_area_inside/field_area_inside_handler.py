@@ -147,8 +147,16 @@ class FieldAreaInsideHandler:
     def handle_support_card_draw_deck(self, placed_card_id, placed_card_index):
         print(f"handle_support_card_draw_deck -> placed_card_id: {placed_card_id}")
 
+        before_draw_deck_list = self.__your_deck_repository.get_current_deck_state()
+        print(f"before draw 3: {before_draw_deck_list}")
+
         # TODO: Summary와 연동하도록 재구성 필요
         drawn_card_list = self.__your_deck_repository.draw_deck_with_count(3)
+
+        after_draw_deck_list = self.__your_deck_repository.get_current_deck_state()
+        print(f"after draw 3: {after_draw_deck_list}")
+
+        self.__your_deck_repository.update_deck(after_draw_deck_list)
 
         # TODO: 테스트인 경우와 실제 통신하는 경우를 스마트하게 분리 할 필요가 있음 (아래는 통신)
         # try:
