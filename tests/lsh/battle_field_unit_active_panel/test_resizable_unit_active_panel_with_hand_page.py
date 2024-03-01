@@ -999,11 +999,15 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                     self.opponent_field_unit_repository.remove_current_field_unit_card(index)
                                     self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
 
-                            your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
-                            self.your_hand_repository.remove_card_by_index(your_card_index)
+                            # your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
+                            # self.your_hand_repository.remove_card_by_index(your_card_index)
+                            your_card_index = self.your_hand_repository.find_index_by_selected_object_with_page(self.selected_object)
+                            self.your_hand_repository.remove_card_by_index_with_page(your_card_index)
+
                             self.your_tomb_repository.create_tomb_card(your_card_id)
 
-                            self.your_hand_repository.replace_hand_card_position()
+                            # self.your_hand_repository.replace_hand_card_position()
+                            self.your_hand_repository.update_your_hand()
                             self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
                             # 실제 날리는 데이터의 경우 서버로부터 응답 받은 정보를 로스트 존으로 배치
