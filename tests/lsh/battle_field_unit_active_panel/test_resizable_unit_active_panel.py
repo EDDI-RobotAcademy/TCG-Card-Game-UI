@@ -26,6 +26,7 @@ from battle_field.entity.your_field_panel import YourFieldPanel
 from battle_field.entity.opponent_lost_zone import OpponentLostZone
 from battle_field.entity.opponent_tomb import OpponentTomb
 from battle_field.entity.tomb_type import TombType
+from battle_field.entity.your_hand import YourHand
 from battle_field.entity.your_lost_zone import YourLostZone
 from battle_field.entity.your_tomb import YourTomb
 from battle_field.handler.support_card_handler import SupportCardHandler
@@ -82,6 +83,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.your_hand_repository = YourHandRepository.getInstance()
         self.hand_card_list = None
+        self.your_hand = YourHand()
+        self.your_hand_next_button = None
+        self.your_hand_prev_button = None
 
         self.your_deck_repository = YourDeckRepository.getInstance()
         self.your_deck_list = None
@@ -234,10 +238,16 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_tomb.create_opponent_tomb_panel()
         self.opponent_tomb_panel = self.opponent_tomb.get_opponent_tomb_panel()
 
-        self.your_hand_repository.set_x_base(567.5)
+        # self.your_hand_repository.set_x_base(550)
+        self.your_hand_repository.set_total_window_size(self.width, self.height)
         self.your_hand_repository.save_current_hand_state([30, 93, 8, 2, 33, 35])
         # self.your_hand_repository.save_current_hand_state([151])
-        self.your_hand_repository.create_hand_card_list()
+        # self.your_hand_repository.create_hand_card_list()
+        self.your_hand_repository.build_your_hand_page()
+        self.your_hand.set_total_window_size(self.width, self.height)
+        self.your_hand.init_next_prev_gold_button_hand()
+        self.your_hand_prev_button = self.your_hand.get_prev_gold_button_hand()
+        self.your_hand_next_button = self.your_hand.get_next_gold_button_hand()
 
         self.your_deck_repository.set_total_window_size(self.width, self.height)
         self.your_deck_repository.save_deck_state([93, 35, 35, 93,  25,
@@ -582,6 +592,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 attached_shape.set_width_ratio(self.width_ratio)
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
+
+        self.your_hand_prev_button.draw()
+        self.your_hand_next_button.draw()
 
         if self.selected_object:
             card_base = None

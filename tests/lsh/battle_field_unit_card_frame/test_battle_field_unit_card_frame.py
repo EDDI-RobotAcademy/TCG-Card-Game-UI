@@ -1,12 +1,15 @@
 import tkinter
 import unittest
 
+from initializer.init_domain import DomainInitializer
 from tests.lsh.battle_field_unit_card_frame.frame.battle_field_unit_card_frame import BattleFieldUnitCardFrame
 
 
 class TestBattleFieldUnitCardFrame(unittest.TestCase):
 
     def test_battle_field_unit_card_frame(self):
+        DomainInitializer.initEachDomain()
+
         root = tkinter.Tk()
         root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}+0+0")
         root.deiconify()
