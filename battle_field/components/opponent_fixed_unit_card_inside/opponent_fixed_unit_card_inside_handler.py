@@ -218,9 +218,11 @@ class OpponentFixedUnitCardInsideHandler:
         # opponent_fixed_card_attached_shape_list = [shape for shape in opponent_fixed_card_attached_shape_list if shape not in extract_energy_circle]
         # print(f"opponent_fixed_card_attached_shape_list: {opponent_fixed_card_attached_shape_list}")
 
-        self.__your_hand_repository.remove_card_by_index(placed_card_index)
+        # self.__your_hand_repository.remove_card_by_index(placed_card_index)
+        self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)
         self.__your_tomb_repository.create_tomb_card(placed_card_id)
-        self.__your_hand_repository.replace_hand_card_position()
+        # self.__your_hand_repository.replace_hand_card_position()
+        self.__your_hand_repository.update_your_hand()
 
     def death_sice(self, placed_card_index, unit_index, placed_card_id):
         DEATH_SICE_FIXED_DAMAGE = 30
