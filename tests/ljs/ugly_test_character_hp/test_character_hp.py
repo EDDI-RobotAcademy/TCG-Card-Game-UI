@@ -39,8 +39,7 @@ from image_shape.circle_number_image import CircleNumberImage
 from initializer.init_domain import DomainInitializer
 from battle_field_function.service.battle_field_function_service_impl import \
     BattleFieldFunctionServiceImpl
-from notify_reader.controller import \
-    NotifyReaderControllerImpl
+from notify_reader.controller.notify_reader_controller_impl import NotifyReaderControllerImpl
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.circle import Circle

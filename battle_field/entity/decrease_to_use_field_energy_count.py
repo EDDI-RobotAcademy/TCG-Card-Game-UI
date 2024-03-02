@@ -44,10 +44,10 @@ class DecreaseToUseFieldEnergyCount:
         # y1 = 0.767
         # y2 = 0.959
 
-        left_x_point = self.total_width * 0.905
-        right_x_point = self.total_width * 0.925
-        top_y_point = self.total_height * 0.657
-        bottom_y_point = self.total_height * 0.697
+        left_x_point = self.total_width * 0.88
+        right_x_point = self.total_width * 0.905
+        top_y_point = self.total_height * 0.63
+        bottom_y_point = self.total_height * 0.68
 
         self.decrease_to_use_field_energy_count_panel = Rectangle(
             (0, 0, 0, 0.1),

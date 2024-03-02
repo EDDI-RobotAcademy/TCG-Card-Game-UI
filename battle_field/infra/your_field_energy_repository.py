@@ -1,11 +1,11 @@
-from battle_field.state.your_field_energy_state import YourFieldEnergyState
+from battle_field.state.field_energy_state import FieldEnergyState
 from common.card_race import CardRace
 
 
 class YourFieldEnergyRepository:
     __instance = None
 
-    your_field_energy_state = YourFieldEnergyState()
+    field_energy_state = FieldEnergyState()
     __current_field_energy_race = CardRace.DUMMY
 
     __min_race_value = 1
@@ -29,14 +29,14 @@ class YourFieldEnergyRepository:
         self.__current_field_energy_race = CardRace.UNDEAD
 
     def increase_your_field_energy(self, count = 1):
-        return self.your_field_energy_state.increase_field_energy(count)
+        return self.field_energy_state.increase_your_field_energy(count)
 
 
     def decrease_your_field_energy(self, count = 1):
-        return self.your_field_energy_state.decrease_field_energy(count)
+        return self.field_energy_state.decrease_your_field_energy(count)
 
     def get_your_field_energy(self):
-        return self.your_field_energy_state.get_your_field_energy_count()
+        return self.field_energy_state.get_your_field_energy_count()
 
     def get_current_field_energy_race(self):
         return self.__current_field_energy_race
@@ -77,8 +77,8 @@ class YourFieldEnergyRepository:
 
     def increase_to_use_field_energy_count(self):
         self.__to_use_field_energy_count += 1
-        if self.__to_use_field_energy_count > self.your_field_energy_state.get_your_field_energy_count():
-            self.__to_use_field_energy_count = self.your_field_energy_state.get_your_field_energy_count()
+        if self.__to_use_field_energy_count > self.field_energy_state.get_your_field_energy_count():
+            self.__to_use_field_energy_count = self.field_energy_state.get_your_field_energy_count()
 
     def decrease_to_use_field_energy_count(self):
         if self.__to_use_field_energy_count <= 1:

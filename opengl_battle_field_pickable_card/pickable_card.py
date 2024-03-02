@@ -180,8 +180,10 @@ class PickableCard:
 
     def init_card_scale(self, card_number):
         self.set_card_number(card_number)
-        rectangle_height = self.scale * 1.618
-        rectangle_width = self.scale
+
+        rectangle_width = 300
+        rectangle_height = rectangle_width * 1.618
+
 
         print(f"rectangle_width: {rectangle_width}")
         print(f"rectangle_height: {rectangle_height}")

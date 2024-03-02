@@ -14,7 +14,7 @@ from shapely.geometry import Point, Polygon
 from session.repository.session_repository_impl import SessionRepositoryImpl
 
 
-class FieldAreaInsideHandler:
+class LegacyFieldAreaInsideHandler:
     __instance = None
 
     __field_area_action = None
@@ -88,8 +88,7 @@ class FieldAreaInsideHandler:
         card_type = self.__card_info_repository.getCardTypeForCardNumber(placed_card_id)
         # print(f"my card type is {card_type}")
 
-        # placed_card_index = self.__your_hand_repository.find_index_by_selected_object(selected_object)
-        placed_card_index = self.__your_hand_repository.find_index_by_selected_object_with_page(selected_object)
+        placed_card_index = self.__your_hand_repository.find_index_by_selected_object(selected_object)
 
         if card_type == CardType.UNIT.value:
             return self.handle_unit_card(placed_card_id, placed_card_index)
@@ -102,25 +101,22 @@ class FieldAreaInsideHandler:
         return FieldAreaAction.Dummy
 
     def handle_unit_card(self, placed_card_id, placed_card_index):
-        # TODO: 실제 통합 테스트에서는 네트워크 연동이 필요함
-        # session = self.__session_info_repository.get_session_info()
-        # deploy_your_unit_request = self.__your_field_unit_repository.request_to_deploy_your_unit(
-        #     DeployUnitCardRequest(session, placed_card_id))
-        #
-        # print(f"deploy_your_unit_request: {deploy_your_unit_request}")
-        # deploy_is_success = deploy_your_unit_request['is_success']
-        # if deploy_is_success is False:
-        #     return FieldAreaAction.Dummy
+        session = self.__session_info_repository.get_session_info()
+        deploy_your_unit_request = self.__your_field_unit_repository.request_to_deploy_your_unit(
+            DeployUnitCardRequest(session, placed_card_id))
+
+        print(f"deploy_your_unit_request: {deploy_your_unit_request}")
+        deploy_is_success = deploy_your_unit_request['is_success']
+        if deploy_is_success is False:
+            return FieldAreaAction.Dummy
 
         # TODO: Memory Leak에 대한 추가 작업이 필요할 수 있음
-        # self.__your_hand_repository.remove_card_by_index(placed_card_index)
-        self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)
+        self.__your_hand_repository.remove_card_by_index(placed_card_index)
 
         self.__your_field_unit_repository.create_field_unit_card(placed_card_id)
         self.__your_field_unit_repository.save_current_field_unit_state(placed_card_id)
 
-        # self.__your_hand_repository.replace_hand_card_position()
-        self.__your_hand_repository.update_your_hand()
+        self.__your_hand_repository.replace_hand_card_position()
 
         passive_skill_type = self.__card_info_repository.getCardPassiveFirstForCardNumber(placed_card_id)
         if passive_skill_type == 2:
@@ -141,8 +137,7 @@ class FieldAreaInsideHandler:
             self.__lightning_border_list.append(card_base)
 
         self.__action_set_card_id = placed_card_id
-        # self.__your_hand_repository.remove_card_by_index(placed_card_index)
-        self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)
+        self.__your_hand_repository.remove_card_by_index(placed_card_index)
 
         self.__field_area_action = FieldAreaAction.ENERGY_BOOST
         return self.__field_area_action
@@ -150,35 +145,23 @@ class FieldAreaInsideHandler:
     def handle_support_card_draw_deck(self, placed_card_id, placed_card_index):
         print(f"handle_support_card_draw_deck -> placed_card_id: {placed_card_id}")
 
-        before_draw_deck_list = self.__your_deck_repository.get_current_deck_state()
-        print(f"before draw 3: {before_draw_deck_list}")
-
         # TODO: Summary와 연동하도록 재구성 필요
         drawn_card_list = self.__your_deck_repository.draw_deck_with_count(3)
 
-        after_draw_deck_list = self.__your_deck_repository.get_current_deck_state()
-        print(f"after draw 3: {after_draw_deck_list}")
+        try:
+            draw_card_response = self.__your_hand_repository.requestDrawCardByUseSupportCard(
+                DrawCardByUseSupportCardRequest(_sessionInfo=self.__session_info_repository.get_session_info(),
+                                                _cardId=placed_card_id)
+            )
 
-        self.__your_deck_repository.update_deck(after_draw_deck_list)
+            if draw_card_response is not None:
+                drawn_card_list = draw_card_response
 
-        # TODO: 테스트인 경우와 실제 통신하는 경우를 스마트하게 분리 할 필요가 있음 (아래는 통신)
-        # try:
-        #     draw_card_response = self.__your_hand_repository.requestDrawCardByUseSupportCard(
-        #         DrawCardByUseSupportCardRequest(_sessionInfo=self.__session_info_repository.get_session_info(),
-        #                                         _cardId=placed_card_id)
-        #     )
-        #
-        #     if draw_card_response is not None:
-        #         drawn_card_list = draw_card_response
-        #
-        # except Exception as e:
-        #     print(f"draw_card Error! {e}")
+        except Exception as e:
+            print(f"draw_card Error! {e}")
 
-        # self.__your_hand_repository.create_additional_hand_card_list(drawn_card_list)
-        # self.__your_hand_repository.remove_card_by_index(placed_card_index)
-        self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)
-        self.__your_hand_repository.save_current_hand_state(drawn_card_list)
-        self.__your_hand_repository.update_your_hand()
+        self.__your_hand_repository.create_additional_hand_card_list(drawn_card_list)
+        self.__your_hand_repository.remove_card_by_index(placed_card_index)
 
         self.__your_tomb_repository.create_tomb_card(20)
         print(

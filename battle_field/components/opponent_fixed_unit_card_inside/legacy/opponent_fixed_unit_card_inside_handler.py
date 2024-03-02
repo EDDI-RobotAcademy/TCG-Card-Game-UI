@@ -13,7 +13,7 @@ from opengl_shape.circle import Circle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
-class OpponentFixedUnitCardInsideHandler:
+class LegacyOpponentFixedUnitCardInsideHandler:
     __instance = None
 
     __required_energy = -1
@@ -143,8 +143,7 @@ class OpponentFixedUnitCardInsideHandler:
         placed_card_id = selected_object.get_card_number()
         card_type = self.__card_info_repository.getCardTypeForCardNumber(placed_card_id)
 
-        # placed_card_index = self.__your_hand_repository.find_index_by_selected_object(selected_object)
-        placed_card_index = self.__your_hand_repository.find_index_by_selected_object_with_page(selected_object)
+        placed_card_index = self.__your_hand_repository.find_index_by_selected_object(selected_object)
 
         if card_type == CardType.ITEM.value:
             self.handle_item_card(placed_card_id, opponent_unit_index, placed_card_index)
@@ -218,17 +217,14 @@ class OpponentFixedUnitCardInsideHandler:
         # opponent_fixed_card_attached_shape_list = [shape for shape in opponent_fixed_card_attached_shape_list if shape not in extract_energy_circle]
         # print(f"opponent_fixed_card_attached_shape_list: {opponent_fixed_card_attached_shape_list}")
 
-        # self.__your_hand_repository.remove_card_by_index(placed_card_index)
-        self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)
+        self.__your_hand_repository.remove_card_by_index(placed_card_index)
         self.__your_tomb_repository.create_tomb_card(placed_card_id)
-        # self.__your_hand_repository.replace_hand_card_position()
-        self.__your_hand_repository.update_your_hand()
+        self.__your_hand_repository.replace_hand_card_position()
 
     def death_sice(self, placed_card_index, unit_index, placed_card_id):
         DEATH_SICE_FIXED_DAMAGE = 30
 
-        # self.__your_hand_repository.remove_card_by_index(placed_card_index)
-        self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)
+        self.__your_hand_repository.remove_card_by_index(placed_card_index)
         self.__your_tomb_repository.create_tomb_card(placed_card_id)
 
         opponent_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(unit_index)
@@ -237,53 +233,31 @@ class OpponentFixedUnitCardInsideHandler:
         is_opponent_unit_death = True
         opponent_unit_hp = 0
 
-        opponent_fixed_card_base = None
-        opponent_attached_shape_list = None
-
         if self.__card_info_repository.getCardGradeForCardNumber(opponent_unit_card_id) > CardGrade.LEGEND.value:
-            # opponent_unit_hp = self.__card_info_repository.getCardHpForCardNumber(opponent_unit_card_id)
+            opponent_unit_hp = self.__card_info_repository.getCardHpForCardNumber(opponent_unit_card_id)
+            opponent_unit_hp -= DEATH_SICE_FIXED_DAMAGE
+
+            if opponent_unit_hp > 0:
+                is_opponent_unit_death = False
+        else:
+            self.__opponent_tomb_repository.create_opponent_tomb_card(opponent_unit_card_id)
+
+        self.__your_hand_repository.replace_hand_card_position()
+
+        if is_opponent_unit_death:
+            self.__opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
+            self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+        else:
             opponent_fixed_card_base = opponent_unit.get_fixed_card_base()
             opponent_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
 
             for opponent_attached_shape in opponent_attached_shape_list:
                 if isinstance(opponent_attached_shape, CircleNumberImage):
                     if opponent_attached_shape.get_circle_kinds() is CircleKinds.HP:
-                        opponent_unit_hp = opponent_attached_shape.get_number()
-                        opponent_unit_hp -= DEATH_SICE_FIXED_DAMAGE
-                        opponent_attached_shape.set_number(opponent_unit_hp)
-
-                        if opponent_unit_hp <= 0:
-                            break
-
                         opponent_attached_shape.set_image_data(
                             self.__pre_drawed_image_instance.get_pre_draw_number_image(
                                 opponent_unit_hp))
-
-            print(f"opponent_unit_hp: {opponent_unit_hp}")
-            if opponent_unit_hp > 0:
-                is_opponent_unit_death = False
-        else:
-            self.__opponent_tomb_repository.create_opponent_tomb_card(opponent_unit_card_id)
-
-        # self.__your_hand_repository.replace_hand_card_position()
-
-        if is_opponent_unit_death:
-            print(f"is it death ? {opponent_unit_hp}")
-            self.__opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
-            self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-
-        # else:
-        #     opponent_fixed_card_base = opponent_unit.get_fixed_card_base()
-        #     opponent_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
-        #
-        #     for opponent_attached_shape in opponent_attached_shape_list:
-        #         if isinstance(opponent_attached_shape, CircleNumberImage):
-        #             if opponent_attached_shape.get_circle_kinds() is CircleKinds.HP:
-        #                 opponent_attached_shape.set_image_data(
-        #                     self.__pre_drawed_image_instance.get_pre_draw_number_image(
-        #                         opponent_unit_hp))
-
-        self.__your_hand_repository.update_your_hand()
 
     # def death_sice_need_two_undead_energy(self, placed_card_index, unit_index, placed_card_id):
     #     print("death_sice operates")

@@ -5,6 +5,7 @@ import tkinter
 from decouple import config
 
 from battle_field.infra.battle_field_repository import BattleFieldRepository
+from battle_field.infra.legacy.your_hand_repository import LegacyYourHandRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository as MuligunHandRepository, \
     MuligunYourHandRepository
@@ -50,7 +51,8 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             cls.__instance.__fakeBattleFieldFrameRepository = FakeBattleFieldFrameRepositoryImpl.getInstance()
 
             # 이건 진짜 Hand를 Fake 용으로 사용하는 것
-            cls.__instance.__fakeYourHandRepository = YourHandRepository.getInstance()
+            # cls.__instance.__fakeYourHandRepository = YourHandRepository.getInstance()
+            cls.__instance.__fakeYourHandRepository = LegacyYourHandRepository.getInstance()
             cls.__instance.__fakeYourDeckRepository = YourDeckRepository.getInstance()
         return cls.__instance
 

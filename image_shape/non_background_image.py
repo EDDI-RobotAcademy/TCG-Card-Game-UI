@@ -57,22 +57,24 @@ class NonBackgroundImage(Shape):
             glEnable(GL_TEXTURE_2D)
             glBindTexture(GL_TEXTURE_2D, self.texture_id)
 
+            # print(f"NonBackgroundImage width_ratio: {self.width_ratio}, height_ratio: {self.height_ratio}")
+
             glBegin(GL_QUADS)
             glTexCoord2f(0, 0)
-            glVertex2f(self.vertices[0][0] + self.local_translation[0] + self.global_translation[0],
-                       self.vertices[0][1] + self.local_translation[1] + self.global_translation[1])
+            glVertex2f(self.vertices[0][0] * self.width_ratio + self.local_translation[0] * self.width_ratio + self.global_translation[0],
+                       self.vertices[0][1] * self.height_ratio + self.local_translation[1] * self.height_ratio + self.global_translation[1])
 
             glTexCoord2f(1, 0)
-            glVertex2f(self.vertices[1][0] + self.local_translation[0] + self.global_translation[0],
-                       self.vertices[1][1] + self.local_translation[1] + self.global_translation[1])
+            glVertex2f(self.vertices[1][0] * self.width_ratio + self.local_translation[0] * self.width_ratio + self.global_translation[0],
+                       self.vertices[1][1] * self.height_ratio + self.local_translation[1] * self.height_ratio + self.global_translation[1])
 
             glTexCoord2f(1, 1)
-            glVertex2f(self.vertices[2][0] + self.local_translation[0] + self.global_translation[0],
-                       self.vertices[2][1] + self.local_translation[1] + self.global_translation[1])
+            glVertex2f(self.vertices[2][0] * self.width_ratio + self.local_translation[0] * self.width_ratio + self.global_translation[0],
+                       self.vertices[2][1] * self.height_ratio + self.local_translation[1] * self.height_ratio + self.global_translation[1])
 
             glTexCoord2f(0, 1)
-            glVertex2f(self.vertices[3][0] + self.local_translation[0] + self.global_translation[0],
-                       self.vertices[3][1] + self.local_translation[1] + self.global_translation[1])
+            glVertex2f(self.vertices[3][0] * self.width_ratio + self.local_translation[0] * self.width_ratio + self.global_translation[0],
+                       self.vertices[3][1] * self.height_ratio + self.local_translation[1] * self.height_ratio + self.global_translation[1])
             glEnd()
 
             glDisable(GL_TEXTURE_2D)

@@ -1,4 +1,5 @@
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
+from image_shape.non_background_image import NonBackgroundImage
 from image_shape.rectangle_image import RectangleImage
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
@@ -41,13 +42,22 @@ class CurrentToUseFieldEnergyCount:
 
     def create_current_to_use_field_energy_count_panel(self):
 
-        left_x_point = self.total_width * 0.93
-        right_x_point = self.total_width * 0.97
-        top_y_point = self.total_height * 0.657
-        bottom_y_point = self.total_height * 0.697
+        left_x_point = self.total_width * 0.922
+        right_x_point = self.total_width * 0.957
+        top_y_point = self.total_height * 0.6275
+        bottom_y_point = self.total_height * 0.6825
 
-        self.current_to_use_field_energy_count_panel = RectangleImage(
-            image_data=self.__pre_drawed_image.get_pre_draw_rectangle_number_image(
+        # self.current_to_use_field_energy_count_panel = Rectangle(
+        #     (0,0,0,0.1),
+        #     vertices=[
+        #         (left_x_point, top_y_point),
+        #         (right_x_point, top_y_point),
+        #         (right_x_point, bottom_y_point),
+        #         (left_x_point, bottom_y_point)
+        #     ])
+
+        self.current_to_use_field_energy_count_panel = NonBackgroundImage(
+            image_data=self.__pre_drawed_image.get_pre_draw_number_of_energy(
                 self.__your_field_energy_repository.get_to_use_field_energy_count()),
             vertices=[
                 (left_x_point, top_y_point),
@@ -56,8 +66,18 @@ class CurrentToUseFieldEnergyCount:
                 (left_x_point, bottom_y_point)
             ])
 
+        # self.current_to_use_field_energy_count_panel = RectangleImage(
+        #     image_data=self.__pre_drawed_image.get_pre_draw_rectangle_number_image(
+        #         self.__your_field_energy_repository.get_to_use_field_energy_count()),
+        #     vertices=[
+        #         (left_x_point, top_y_point),
+        #         (right_x_point, top_y_point),
+        #         (right_x_point, bottom_y_point),
+        #         (left_x_point, bottom_y_point)
+        #     ])
+
     def update_current_to_use_field_energy_count_panel(self):
         self.current_to_use_field_energy_count_panel.set_image_data(
-            self.__pre_drawed_image.get_pre_draw_rectangle_number_image(
+            self.__pre_drawed_image.get_pre_draw_number_of_energy(
                 self.__your_field_energy_repository.get_to_use_field_energy_count())
         )

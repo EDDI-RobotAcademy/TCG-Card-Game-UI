@@ -15,6 +15,16 @@ class CardInfoFromCsv:
     __cardSkillSecond = None
     __cardPassiveFirst = None
     __cardPassiveSecond = None
+    __cardSkillFirstDamage = None
+    __cardSkillSecondDamage = None
+    __cardPassiveFirstDamage = None
+    __cardPassiveSecondDamage = None
+    __cardSkillFirstUndeadEnergyRequired = None
+    __cardSkillFirstHumanEnergyRequired = None
+    __cardSkillFirstTrentEnergyRequired = None
+    __cardSkillSecondUndeadEnergyRequired = None
+    __cardSkillSecondHumanEnergyRequired = None
+    __cardSkillSecondTrentEnergyRequired = None
 
     def __init__(self, record):
         self.__cardNumber = record[0]
@@ -32,6 +42,16 @@ class CardInfoFromCsv:
         self.__cardSkillSecond = record[13]
         self.__cardPassiveFirst = record[14]
         self.__cardPassiveSecond = record[15]
+        self.__cardSkillFirstDamage = record[16]
+        self.__cardSkillSecondDamage = record[17]
+        self.__cardPassiveFirstDamage = record[18]
+        self.__cardPassiveSecondDamage = record[19]
+        self.__cardSkillFirstUndeadEnergyRequired = record[20]
+        self.__cardSkillFirstHumanEnergyRequired = record[21]
+        self.__cardSkillFirstTrentEnergyRequired = record[22]
+        self.__cardSkillSecondUndeadEnergyRequired = record[23]
+        self.__cardSkillSecondHumanEnergyRequired = record[24]
+        self.__cardSkillSecondTrentEnergyRequired = record[25]
 
     def getCardNumber(self):
         return self.__cardNumber
@@ -75,3 +95,33 @@ class CardInfoFromCsv:
 
     def getCardPassiveSecond(self):
         return self.__cardPassiveSecond
+
+    def getCardSkillFirstDamage(self):
+        return self.__cardSkillFirstDamage
+
+    def getCardSkillSecondDamage(self):
+        return self.__cardSkillSecondDamage
+
+    def getCardPassiveFirstDamage(self):
+        return self.__cardPassiveFirstDamage
+
+    def getCardPassiveSecondDamage(self):
+        return self.__cardPassiveSecondDamage
+
+    def getCardSkillFirstUndeadEnergyRequired(self):
+        return self.__cardSkillFirstUndeadEnergyRequired
+
+    def getCardSkillFirstHumanEnergyRequired(self):
+        return self.__cardSkillFirstHumanEnergyRequired
+
+    def getCardSkillFirstTrentEnergyRequired(self):
+        return self.__cardSkillFirstTrentEnergyRequired
+
+    def getCardSkillSecondUndeadEnergyRequired(self):
+        return self.__cardSkillSecondUndeadEnergyRequired
+
+    def getCardSkillSecondHumanEnergyRequired(self):
+        return self.__cardSkillSecondHumanEnergyRequired
+
+    def getCardSkillSecondTrentEnergyRequired(self):
+        return self.__cardSkillSecondTrentEnergyRequired

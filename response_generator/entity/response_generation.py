@@ -29,6 +29,8 @@ class ResponseGeneration(Enum):
     DEPLOY_UNIT_USAGE = 1004
     DRAW_CARD = 1013
 
+    GAME_NEXT_TURN = 3333
+
     GAME_SURRENDER = 4443
 
     PROGRAM_EXIT = 4444

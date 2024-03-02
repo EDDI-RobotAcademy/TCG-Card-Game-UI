@@ -4,7 +4,7 @@ from shapely import Polygon, Point
 
 from battle_field.application.field_energy_application import FieldEnergyApplication
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
-from battle_field.components.field_area_inside.field_area_inside_handler import FieldAreaInsideHandler
+from battle_field.components.field_area_inside.legacy.field_area_inside_handler import LegacyFieldAreaInsideHandler
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -12,24 +12,27 @@ from pyopengltk import OpenGLFrame
 
 from battle_field.components.mouse_left_click.left_click_detector import LeftClickDetector
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area_action import OpponentFieldAreaAction
-from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
-    OpponentFixedUnitCardInsideHandler
+from battle_field.components.opponent_fixed_unit_card_inside.legacy.opponent_fixed_unit_card_inside_handler import \
+    LegacyOpponentFixedUnitCardInsideHandler
 from battle_field.entity.current_field_energy_race import CurrentFieldEnergyRace
 from battle_field.entity.current_to_use_field_energy_count import CurrentToUseFieldEnergyCount
 from battle_field.entity.decrease_to_use_field_energy_count import DecreaseToUseFieldEnergyCount
 from battle_field.entity.increase_to_use_field_energy_count import IncreaseToUseFieldEnergyCount
 from battle_field.entity.next_field_energy_race import NextFieldEnergyRace
+from battle_field.entity.opponent_field_energy import OpponentFieldEnergy
 from battle_field.entity.opponent_hp import OpponentHp
 from battle_field.entity.opponent_lost_zone import OpponentLostZone
 from battle_field.entity.opponent_tomb import OpponentTomb
 from battle_field.entity.prev_field_energy_race import PrevFieldEnergyRace
 from battle_field.entity.tomb_type import TombType
+from battle_field.entity.turn_end import TurnEnd
 from battle_field.entity.your_deck import YourDeck
 from battle_field.entity.your_field_energy import YourFieldEnergy
 from battle_field.entity.your_hp import YourHp
 from battle_field.entity.your_lost_zone import YourLostZone
 from battle_field.entity.your_tomb import YourTomb
 from battle_field.handler.support_card_handler import SupportCardHandler
+from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from battle_field.infra.opponent_hp_repository import OpponentHpRepository
 from battle_field.infra.opponent_lost_zone_repository import OpponentLostZoneRepository
@@ -37,12 +40,13 @@ from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
-from battle_field.infra.your_hand_repository import YourHandRepository
+from battle_field.infra.legacy.your_hand_repository import LegacyYourHandRepository
 from battle_field.infra.your_hp_repository import YourHpRepository
 from battle_field.infra.your_lost_zone_repository import YourLostZoneRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field.state.energy_type import EnergyType
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
+from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
 
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
 from battle_field_muligun.service.request.muligun_request import MuligunRequest
@@ -50,6 +54,7 @@ from card_info_from_csv.repository.card_info_from_csv_repository_impl import Car
 from common.card_grade import CardGrade
 from common.card_race import CardRace
 from common.card_type import CardType
+from fake_battle_field.entity.animation_test_image import AnimationTestImage
 from fake_battle_field.entity.muligun_reset_button import MuligunResetButton
 from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
@@ -65,6 +70,7 @@ from session.repository.session_repository_impl import SessionRepositoryImpl
 
 
 class FakeBattleFieldFrame(OpenGLFrame):
+    battle_field_function_controller = BattleFieldFunctionControllerImpl.getInstance()
     def __init__(self, master=None, switchFrameWithMenuName=None, **kwargs):
         super().__init__(master, **kwargs)
 
@@ -104,7 +110,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.session_repository = SessionRepositoryImpl.getInstance()
 
-        self.your_hand_repository = YourHandRepository.getInstance()
+        self.your_hand_repository = LegacyYourHandRepository.getInstance()
         self.hand_card_list = None
 
         self.your_deck_repository = YourDeckRepository.getInstance()
@@ -138,10 +144,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
         # self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance()
-        self.field_area_inside_handler = FieldAreaInsideHandler.getInstance()
+        self.field_area_inside_handler = LegacyFieldAreaInsideHandler.getInstance()
         # TODO: Your 카드에 집어넣는 경우도 이것으로 감지하는 것이 더 좋을 것임
         self.your_fixed_unit_card_inside_handler = None
-        self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance()
+        self.opponent_fixed_unit_card_inside_handler = LegacyOpponentFixedUnitCardInsideHandler.getInstance()
         # self.your_tomb_repository = YourTombRepository.getInstance()
 
         self.left_click_detector = LeftClickDetector.getInstance()
@@ -205,6 +211,22 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.decrease_to_use_field_energy_count_panel = None
         self.decrease_to_use_field_energy_count = DecreaseToUseFieldEnergyCount()
         self.decrease_to_use_field_energy_count_panel_selected = False
+
+        self.animation_test_image_panel = None
+        self.animation_test_image = AnimationTestImage()
+
+        self.animation_test_image_list = []
+        self.animation_test_image_panel_list = []
+
+        self.opponent_field_energy = OpponentFieldEnergy()
+        self.opponent_field_energy_panel = None
+        self.opponent_field_energy_repository = OpponentFieldEnergyRepository.getInstance()
+
+        self.turn_end = TurnEnd()
+        self.turn_end_button = None
+        self.turn_end_button_selected = False
+
+
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -341,6 +363,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.decrease_to_use_field_energy_count.get_decrease_to_use_field_energy_count_panel()
         )
 
+        self.opponent_field_energy.set_total_window_size(self.width, self.height)
+        self.opponent_field_energy.create_opponent_field_energy_panel()
+        self.opponent_field_energy_panel = self.opponent_field_energy.get_opponent_field_energy_panel()
+
+        self.turn_end.set_total_window_size(self.width, self.height)
+        self.turn_end.create_turn_end_button()
+        self.turn_end_button = self.turn_end.get_turn_end_button()
+
+
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
 
@@ -366,15 +397,137 @@ class FakeBattleFieldFrame(OpenGLFrame):
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
 
+
+
     def on_key_press(self, event):
         key = event.keysym
         print(f"Key pressed: {key}")
+
+        if key.lower() == '1':
+            if self.animation_test_image_panel:
+                self.animation_test_image_panel = None
+
+            self.animation_test_image.set_total_window_size(self.width, self.height)
+            self.animation_test_image.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(0).get_local_translation()
+            )
+            self.animation_test_image.draw_animation_panel()
+            self.animation_test_image_panel = self.animation_test_image.get_animation_panel()
+            print("created animation panel")
+
+        if key.lower() == '2':
+            if self.animation_test_image_panel:
+                self.animation_test_image_panel = None
+
+            self.animation_test_image.set_total_window_size(self.width, self.height)
+            self.animation_test_image.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(1).get_local_translation()
+            )
+            self.animation_test_image.draw_animation_panel()
+            self.animation_test_image_panel = self.animation_test_image.get_animation_panel()
+            print("created animation panel")
+
+        if key.lower() == '3':
+            if self.animation_test_image_panel:
+                self.animation_test_image_panel = None
+
+            self.animation_test_image.set_total_window_size(self.width, self.height)
+            self.animation_test_image.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(2).get_local_translation()
+            )
+            self.animation_test_image.draw_animation_panel()
+            self.animation_test_image_panel = self.animation_test_image.get_animation_panel()
+            print("created animation panel")
+
+        if key.lower() == 'l':
+
+            def animate():
+                self.animation_test_image.update_animation_panel()
+                if not self.animation_test_image.is_finished:
+                    self.master.after(17, animate)
+                else:
+                    self.animation_test_image_panel = None
+
+            self.animation_test_image.reset_animation_count()
+            self.master.after(0, animate)
+
+        if key.lower() == 'kp_1':
+            self.animation_test_image_panel = None
+            animation_test_image = AnimationTestImage()
+
+            animation_test_image.set_total_window_size(self.width, self.height)
+            animation_test_image.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(0).get_local_translation()
+            )
+            animation_test_image.draw_animation_panel()
+            animation_test_image_panel = animation_test_image.get_animation_panel()
+
+            self.animation_test_image_list.append(animation_test_image)
+            self.animation_test_image_panel_list.append(animation_test_image_panel)
+            print("첨부 완료~: ", self.animation_test_image_panel_list, self.animation_test_image_list)
+            print("체크: ", type(self.animation_test_image_panel_list[0]), type(self.animation_test_image_list[0]))
+
+        if key.lower() == 'kp_2':
+            self.animation_test_image_panel = None
+            animation_test_image = AnimationTestImage()
+
+            animation_test_image.set_total_window_size(self.width, self.height)
+            animation_test_image.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(1).get_local_translation()
+            )
+            animation_test_image.draw_animation_panel()
+            animation_test_image_panel = animation_test_image.get_animation_panel()
+
+            self.animation_test_image_list.append(animation_test_image)
+            self.animation_test_image_panel_list.append(animation_test_image_panel)
+
+        if key.lower() == 'kp_enter':
+            def animate():
+                finish_list = []
+                is_all_finished = False
+                for _animation_test_image in self.animation_test_image_list:
+                    _animation_test_image.update_animation_panel()
+                    finish_list.append(_animation_test_image.is_finished)
+
+                for finish in finish_list:
+                    if finish == False:
+                        is_all_finished = False
+                        break
+                    else:
+                        is_all_finished = True
+
+                if not is_all_finished:
+                    self.master.after(17, animate)
+                else:
+                    self.animation_test_image_list = []
+                    self.animation_test_image_panel_list = []
+                    print("finish animation")
+
+                # if not self.animation_test_image_list[0].is_finished:
+                #     self.master.after(17, animate)
+                # else:
+                #     self.animation_test_image_panel_list = []
+                #     self.animation_test_image_list = []
+                #     print("finish animation")
+
+            for animation_test_image in self.animation_test_image_list:
+                print(f"animation count: {animation_test_image}")
+                animation_test_image.reset_animation_count()
+
+            self.master.after(0, animate)
+
 
         if key.lower() == 'h':
             self.your_field_energy_repository.to_next_field_energy_race()
 
         if key.lower() == 'u':
             self.your_field_energy_repository.increase_your_field_energy()
+
+        if key.lower() == 'i':
+            self.opponent_field_energy_repository.increase_opponent_field_energy()
+
+        if key.lower() == 'y':
+            self.opponent_field_energy_repository.decrease_opponent_field_energy()
 
         if key.lower() == 'd':
             self.your_hp_repository.take_damage()
@@ -448,6 +601,41 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.opponent_tomb_panel.set_draw_border(False)
         self.opponent_tomb_panel.draw()
 
+
+        self.turn_end.set_width_ratio(self.width_ratio)
+        self.turn_end.set_height_ratio(self.height_ratio)
+        self.turn_end_button.set_draw_border(False)
+        self.turn_end_button.draw()
+
+        self.next_field_energy_race.set_width_ratio(self.width_ratio)
+        self.next_field_energy_race.set_height_ratio(self.width_ratio)
+        self.next_field_energy_race_panel.set_draw_border(False)
+        self.next_field_energy_race_panel.draw()
+
+        self.prev_field_energy_race.set_width_ratio(self.width_ratio)
+        self.prev_field_energy_race.set_height_ratio(self.height_ratio)
+        self.prev_field_energy_race_panel.set_draw_border(False)
+        self.prev_field_energy_race_panel.draw()
+
+        self.current_field_energy_race.set_width_ratio(self.width_ratio)
+        self.current_field_energy_race.set_height_ratio(self.height_ratio)
+        self.current_field_energy_race.update_current_field_energy_race_panel()
+        self.current_field_energy_race_panel.draw()
+
+        self.increase_to_use_field_energy_count.set_width_ratio(self.width_ratio)
+        self.increase_to_use_field_energy_count.set_height_ratio(self.height_ratio)
+        self.increase_to_use_field_energy_count_panel.set_draw_border(False)
+        self.increase_to_use_field_energy_count_panel.draw()
+
+        self.decrease_to_use_field_energy_count.set_width_ratio(self.width_ratio)
+        self.decrease_to_use_field_energy_count.set_height_ratio(self.height_ratio)
+        self.decrease_to_use_field_energy_count_panel.set_draw_border(False)
+        self.decrease_to_use_field_energy_count_panel.draw()
+
+
+
+
+
         self.your_lost_zone.set_width_ratio(self.width_ratio)
         self.your_lost_zone.set_height_ratio(self.height_ratio)
         self.your_lost_zone_panel.set_width_ratio(self.width_ratio)
@@ -481,34 +669,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.your_field_energy.set_width_ratio(self.width_ratio)
         self.your_field_energy.set_height_ratio(self.height_ratio)
-        self.your_field_energy.update_curent_field_energy_panel()
+        self.your_field_energy.update_current_field_energy_panel()
         self.your_field_energy_panel.draw()
 
-        self.next_field_energy_race.set_width_ratio(self.width_ratio)
-        self.next_field_energy_race.set_height_ratio(self.width_ratio)
-        self.next_field_energy_race_panel.draw()
+        self.opponent_field_energy.set_width_ratio(self.width_ratio)
+        self.opponent_field_energy.set_height_ratio(self.height_ratio)
+        self.opponent_field_energy.update_current_opponent_field_energy_panel()
+        self.opponent_field_energy_panel.draw()
 
-        self.prev_field_energy_race.set_width_ratio(self.width_ratio)
-        self.prev_field_energy_race.set_height_ratio(self.height_ratio)
-        self.prev_field_energy_race_panel.draw()
-
-        self.current_field_energy_race.set_width_ratio(self.width_ratio)
-        self.current_field_energy_race.set_height_ratio(self.height_ratio)
-        self.current_field_energy_race.update_current_field_energy_race_panel()
-        self.current_field_energy_race_panel.draw()
-
-        self.current_to_use_field_energy_count.set_width_ratio(self.width_ratio)
-        self.current_to_use_field_energy_count.set_height_ratio(self.height_ratio)
-        self.current_to_use_field_energy_count.update_current_to_use_field_energy_count_panel()
-        self.current_to_use_field_energy_count_panel.draw()
-
-        self.increase_to_use_field_energy_count.set_width_ratio(self.width_ratio)
-        self.increase_to_use_field_energy_count.set_height_ratio(self.height_ratio)
-        self.increase_to_use_field_energy_count_panel.draw()
-
-        self.decrease_to_use_field_energy_count.set_width_ratio(self.width_ratio)
-        self.decrease_to_use_field_energy_count.set_height_ratio(self.height_ratio)
-        self.decrease_to_use_field_energy_count_panel.draw()
 
         glDisable(GL_BLEND)
 
@@ -747,6 +915,30 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.muligun_reset_button.set_width_ratio(self.width_ratio)
         self.muligun_reset_button.set_height_ratio(self.height_ratio)
         self.muligun_reset_button.draw()
+
+        self.current_to_use_field_energy_count.set_width_ratio(self.width_ratio)
+        self.current_to_use_field_energy_count.set_height_ratio(self.height_ratio)
+        self.current_to_use_field_energy_count.update_current_to_use_field_energy_count_panel()
+        self.current_to_use_field_energy_count_panel.draw()
+
+
+
+        if self.animation_test_image_panel is not None:
+
+            self.animation_test_image.set_width_ratio(self.width_ratio)
+            self.animation_test_image.set_height_ratio(self.height_ratio)
+            self.animation_test_image_panel.draw()
+
+        if self.animation_test_image_list is not [] and self.animation_test_image_panel_list is not []:
+            for animation_test_image, animation_test_image_panel in zip(self.animation_test_image_list, self.animation_test_image_panel_list):
+                if animation_test_image.is_finished:
+                    continue
+                animation_test_image.set_width_ratio(self.width_ratio)
+                animation_test_image.set_height_ratio(self.height_ratio)
+                animation_test_image_panel.draw()
+
+
+
 
         self.tkSwapBuffers()
 
@@ -1166,6 +1358,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.opponent_tomb_panel_selected = False
             self.your_lost_zone_panel_selected = False
             self.opponent_lost_zone_panel_selected = False
+            self.turn_end_button_selected = False
 
             for hand_card in self.hand_card_list:
                 if isinstance(hand_card, PickableCard):
@@ -1471,6 +1664,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 return
             
             #todo : [이재승]
+
+            self.turn_end_button_selected = self.left_click_detector.which_one_select_is_in_turn_end_area(
+                (x, y),
+                self.turn_end,
+                self.winfo_reqheight()
+            )
+
+            if self.turn_end_button_selected:
+                self.battle_field_function_controller.callTurnEnd()
 
 
 

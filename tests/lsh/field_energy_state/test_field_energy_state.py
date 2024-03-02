@@ -1,6 +1,6 @@
 import unittest
 
-from battle_field.state.your_field_energy_state import YourFieldEnergyState
+from battle_field.state.field_energy_state import YourFieldEnergyState
 
 
 class TestYourFieldEnergyState(unittest.TestCase):

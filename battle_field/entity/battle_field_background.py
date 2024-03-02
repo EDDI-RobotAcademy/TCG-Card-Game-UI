@@ -31,12 +31,14 @@ class BattleFieldBackground:
     def init_shapes(self, width, height):
         print(f"background init_shapes() -> width: {width}, height: {height}")
 
-        self.__pre_drawed_image_instance.pre_draw_battle_field_muligun_background(width, height)
+        self.__pre_drawed_image_instance.pre_draw_battle_field_background(width, height)
+        # self.__pre_drawed_image_instance.pre_draw_battle_field_muligun_background(width, height)
         # print(f"background: {self.__pre_drawed_image_instance.get_pre_draw_battle_field_muligun_background()}")
 
         self.create_battle_field_background(
             # TODO -> Battle Field Background로 변경 (이미지 준비되면)
-            image_data=self.__pre_drawed_image_instance.get_pre_draw_battle_field_muligun_background(),
+            # image_data=self.__pre_drawed_image_instance.get_pre_draw_battle_field_muligun_background(),
+            image_data=self.__pre_drawed_image_instance.get_pre_draw_battle_field_background(),
             vertices=[
                 (0, 0),
                 (width, 0),

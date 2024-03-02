@@ -1,15 +1,12 @@
-from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
-from image_shape.rectangle_image import RectangleImage
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
-class NextFieldEnergyRace:
+class TurnEnd:
     __pre_drawed_image = PreDrawedImage.getInstance()
-    __your_field_energy_repository = YourFieldEnergyRepository.getInstance()
 
     def __init__(self):
-        self.next_field_energy_race_panel = None
+        self.turn_end_button = None
 
         self.total_width = None
         self.total_height = None
@@ -36,22 +33,22 @@ class NextFieldEnergyRace:
     def change_local_translation(self, _translation):
         self.local_translation = _translation
 
-    def get_next_field_energy_race_panel(self):
-        return self.next_field_energy_race_panel
+    def get_turn_end_button(self):
+        return self.turn_end_button
 
-    def create_next_field_energy_race_panel(self):
+    def create_turn_end_button(self):
         # x1 = 0.138
         # x2 = 0.224
         # y1 = 0.767
         # y2 = 0.959
 
-        left_x_point = self.total_width * 0.97
-        right_x_point = self.total_width * 0.995
-        top_y_point = self.total_height * 0.7275
-        bottom_y_point = self.total_height * 0.7775
-
-        self.next_field_energy_race_panel = Rectangle(
-            (0,0,0,0.1),
+        left_x_point = self.total_width * 0.892
+        right_x_point = self.total_width * 0.99
+        top_y_point = self.total_height * 0.42
+        bottom_y_point = self.total_height * 0.58
+        
+        self.turn_end_button = Rectangle(
+            (0, 0, 0, 0.1),
             [
                 (left_x_point, top_y_point),
                 (right_x_point, top_y_point),
@@ -62,16 +59,16 @@ class NextFieldEnergyRace:
             (0, 0))
 
     def is_point_inside(self, point):
-
         point_x, point_y = point
         point_y *= -1
 
-        next_field_energy_race_panel = self.get_next_field_energy_race_panel()
+        turn_end_button = self.get_turn_end_button()
 
         translated_vertices = [
-            (x * self.width_ratio + next_field_energy_race_panel.local_translation[0] * self.width_ratio, y *
-             self.height_ratio + next_field_energy_race_panel.local_translation[1] * self.height_ratio)
-            for x, y in next_field_energy_race_panel.get_vertices()
+            (
+            x * self.width_ratio + turn_end_button.local_translation[0] * self.width_ratio, y *
+            self.height_ratio + turn_end_button.local_translation[1] * self.height_ratio)
+            for x, y in turn_end_button.get_vertices()
         ]
 
         if not (translated_vertices[0][0] <= point_x <= translated_vertices[1][0] and

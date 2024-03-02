@@ -44,10 +44,10 @@ class IncreaseToUseFieldEnergyCount:
         # y1 = 0.767
         # y2 = 0.959
 
-        left_x_point = self.total_width * 0.975
+        left_x_point = self.total_width * 0.97
         right_x_point = self.total_width * 0.995
-        top_y_point = self.total_height * 0.657
-        bottom_y_point = self.total_height * 0.697
+        top_y_point = self.total_height * 0.63
+        bottom_y_point = self.total_height * 0.68
 
         self.increase_to_use_field_energy_count_panel = Rectangle(
             (0, 0, 0, 0.1),
