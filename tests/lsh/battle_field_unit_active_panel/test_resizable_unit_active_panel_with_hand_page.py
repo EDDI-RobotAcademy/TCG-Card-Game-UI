@@ -19,9 +19,17 @@ from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
     OpponentFixedUnitCardInsideHandler
 from battle_field.entity.battle_field_scene import BattleFieldScene
+from battle_field.entity.current_field_energy_race import CurrentFieldEnergyRace
+from battle_field.entity.current_to_use_field_energy_count import CurrentToUseFieldEnergyCount
+from battle_field.entity.decrease_to_use_field_energy_count import DecreaseToUseFieldEnergyCount
+from battle_field.entity.increase_to_use_field_energy_count import IncreaseToUseFieldEnergyCount
+from battle_field.entity.next_field_energy_race import NextFieldEnergyRace
+from battle_field.entity.opponent_field_energy import OpponentFieldEnergy
 from battle_field.entity.opponent_field_panel import OpponentFieldPanel
+from battle_field.entity.prev_field_energy_race import PrevFieldEnergyRace
 from battle_field.entity.your_active_panel import YourActivePanel
 from battle_field.entity.your_deck import YourDeck
+from battle_field.entity.your_field_energy import YourFieldEnergy
 from battle_field.entity.your_field_panel import YourFieldPanel
 from battle_field.entity.opponent_lost_zone import OpponentLostZone
 from battle_field.entity.opponent_tomb import OpponentTomb
@@ -150,7 +158,35 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_you_selected_lightning_border_list = []
         self.opponent_you_selected_object_list = []
 
+        self.your_field_energy_panel = None
+        self.your_field_energy = YourFieldEnergy()
         self.your_field_energy_repository = YourFieldEnergyRepository.getInstance()
+        self.your_field_energy_panel_selected = False
+
+        self.next_field_energy_race_panel = None
+        self.next_field_energy_race = NextFieldEnergyRace()
+        self.next_field_energy_race_panel_selected = False
+
+        self.prev_field_energy_race_panel = None
+        self.prev_field_energy_race = PrevFieldEnergyRace()
+        self.prev_field_energy_race_panel_selected = False
+
+        self.current_field_energy_race_panel = None
+        self.current_field_energy_race = CurrentFieldEnergyRace()
+
+        self.current_to_use_field_energy_count_panel = None
+        self.current_to_use_field_energy_count = CurrentToUseFieldEnergyCount()
+
+        self.increase_to_use_field_energy_count_panel = None
+        self.increase_to_use_field_energy_count = IncreaseToUseFieldEnergyCount()
+        self.increase_to_use_field_energy_count_panel_selected = False
+
+        self.decrease_to_use_field_energy_count_panel = None
+        self.decrease_to_use_field_energy_count = DecreaseToUseFieldEnergyCount()
+        self.decrease_to_use_field_energy_count_panel_selected = False
+
+        self.opponent_field_energy = OpponentFieldEnergy()
+        self.opponent_field_energy_panel = None
         self.opponent_field_energy_repository = OpponentFieldEnergyRepository.getInstance()
         self.opponent_field_energy_repository.increase_opponent_field_energy(3)
 
@@ -294,6 +330,44 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.your_active_panel = YourActivePanel()
         self.your_active_panel.set_total_window_size(self.width, self.height)
+
+        self.your_field_energy.set_total_window_size(self.width, self.height)
+        self.your_field_energy_repository.reset_field_energy()
+        self.your_field_energy.create_your_field_energy_panel()
+        self.your_field_energy_panel = self.your_field_energy.get_your_field_energy_panel()
+
+        self.next_field_energy_race.set_total_window_size(self.width, self.height)
+        self.next_field_energy_race.create_next_field_energy_race_panel()
+        self.next_field_energy_race_panel = self.next_field_energy_race.get_next_field_energy_race_panel()
+
+        self.prev_field_energy_race.set_total_window_size(self.width, self.height)
+        self.prev_field_energy_race.create_prev_field_energy_race_panel()
+        self.prev_field_energy_race_panel = self.prev_field_energy_race.get_prev_field_energy_race_panel()
+
+        self.current_field_energy_race.set_total_window_size(self.width, self.height)
+        self.current_field_energy_race.create_current_field_energy_race_panel()
+        self.current_field_energy_race_panel = self.current_field_energy_race.get_current_field_energy_race_panel()
+
+        self.current_to_use_field_energy_count.set_total_window_size(self.width, self.height)
+        self.current_to_use_field_energy_count.create_current_to_use_field_energy_count_panel()
+        self.current_to_use_field_energy_count_panel = (
+            self.current_to_use_field_energy_count.get_current_to_use_field_energy_count_panel())
+
+        self.increase_to_use_field_energy_count.set_total_window_size(self.width, self.height)
+        self.increase_to_use_field_energy_count.create_increase_to_use_field_energy_count_panel()
+        self.increase_to_use_field_energy_count_panel = (
+            self.increase_to_use_field_energy_count.get_increase_to_use_field_energy_count_panel()
+        )
+
+        self.decrease_to_use_field_energy_count.set_total_window_size(self.width, self.height)
+        self.decrease_to_use_field_energy_count.create_decrease_to_use_field_energy_count_panel()
+        self.decrease_to_use_field_energy_count_panel = (
+            self.decrease_to_use_field_energy_count.get_decrease_to_use_field_energy_count_panel()
+        )
+
+        self.opponent_field_energy.set_total_window_size(self.width, self.height)
+        self.opponent_field_energy.create_opponent_field_energy_panel()
+        self.opponent_field_energy_panel = self.opponent_field_energy.get_opponent_field_energy_panel()
 
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
@@ -527,12 +601,34 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         glDisable(GL_BLEND)
 
+    def post_draw(self):
+        # glEnable(GL_BLEND)
+        # glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA)
+
+        self.your_field_energy.set_width_ratio(self.width_ratio)
+        self.your_field_energy.set_height_ratio(self.height_ratio)
+        self.your_field_energy.update_current_field_energy_panel()
+        self.your_field_energy_panel.set_width_ratio(self.width_ratio)
+        self.your_field_energy_panel.set_height_ratio(self.height_ratio)
+        self.your_field_energy_panel.draw()
+
+        self.opponent_field_energy.set_width_ratio(self.width_ratio)
+        self.opponent_field_energy.set_height_ratio(self.height_ratio)
+        self.opponent_field_energy.update_current_opponent_field_energy_panel()
+        self.opponent_field_energy_panel.set_width_ratio(self.width_ratio)
+        self.opponent_field_energy_panel.set_height_ratio(self.height_ratio)
+        self.opponent_field_energy_panel.draw()
+
+        # glDisable(GL_BLEND)
+
     def redraw(self):
         if self.is_reshape_not_complete:
             return
 
         self.tkMakeCurrent()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
+        glDisable(GL_DEPTH_TEST)
 
         self.draw_base()
 
@@ -623,6 +719,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.your_hand_prev_button.draw()
         self.your_hand_next_button.draw()
+
+        self.post_draw()
 
         if self.selected_object:
             card_base = None
@@ -772,7 +870,27 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     attached_shape.set_height_ratio(self.height_ratio)
                     attached_shape.draw()
 
+            # left_x_point = self.width * 0.89
+            # right_x_point = self.width * 0.973
+            # top_y_point = self.height * 0.807
+            # bottom_y_point = self.height * 0.968
+            #
+            # temp_rect = Rectangle(
+            #     color=(1.0, 1.0, 1.0, 1.0),
+            #     vertices=[
+            #         (left_x_point, top_y_point),
+            #         (right_x_point, top_y_point),
+            #         (right_x_point, bottom_y_point),
+            #         (left_x_point, bottom_y_point)
+            #     ],
+            #     global_translation=(0, 0),
+            #     local_translation=(0, 0)
+            # )
+            #
+            # temp_rect.draw()
+
             glDisable(GL_BLEND)
+
 
         if self.opponent_tomb_panel_selected:
         # elif self.selected_tomb is TombType.Opponent:
@@ -862,6 +980,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     attached_shape.draw()
 
             glDisable(GL_BLEND)
+
+        # self.post_draw()
+
+        glEnable(GL_DEPTH_TEST)
 
         self.tkSwapBuffers()
 
