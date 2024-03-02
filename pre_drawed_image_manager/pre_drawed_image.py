@@ -59,6 +59,8 @@ class PreDrawedImage:
     __pre_drawed_prev_button = None
     __pre_drawed_reset_button = None
     __pre_drawed_battle_field_muligun_background = None
+    __pre_drawed_battle_field_background = None
+
     __pre_drawed_card_back_frame = None
 
     __pre_drawed_next_gold_button = None
@@ -352,6 +354,12 @@ class PreDrawedImage:
             print(f"animation image data = {animation_image_data}")
             self.__pre_drawed_number_of_energy[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
+    def pre_draw_battle_field_background(self, width, height):
+        print(f"pre_draw_battle_field_background -> width = {width}, height = {height}")
+
+        battle_field_background = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "battle_field_background.png")
+        self.__pre_drawed_battle_field_background = ImageDataLoader.load_background_image_data(battle_field_background, width, height)
+
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
         self.pre_draw_opponent_lost_zone()
@@ -487,6 +495,9 @@ class PreDrawedImage:
 
     def get_pre_draw_battle_field_muligun_background(self):
         return self.__pre_drawed_battle_field_muligun_background
+
+    def get_pre_draw_battle_field_background(self):
+        return self.__pre_drawed_battle_field_background
 
     def get_pre_draw_win_text(self):
         return self.__pre_drawed_win_text
