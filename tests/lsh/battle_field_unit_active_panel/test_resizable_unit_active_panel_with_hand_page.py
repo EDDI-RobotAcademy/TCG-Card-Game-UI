@@ -27,6 +27,7 @@ from battle_field.entity.next_field_energy_race import NextFieldEnergyRace
 from battle_field.entity.opponent_field_energy import OpponentFieldEnergy
 from battle_field.entity.opponent_field_panel import OpponentFieldPanel
 from battle_field.entity.prev_field_energy_race import PrevFieldEnergyRace
+from battle_field.entity.turn_end import TurnEnd
 from battle_field.entity.your_active_panel import YourActivePanel
 from battle_field.entity.your_deck import YourDeck
 from battle_field.entity.your_field_energy import YourFieldEnergy
@@ -204,6 +205,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.round_repository = RoundRepository.getInstance()
 
+        self.turn_end = TurnEnd()
+        self.turn_end_button = None
+        self.turn_end_button_selected = False
+
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
         self.bind("<ButtonRelease-1>", self.on_canvas_release)
@@ -368,6 +373,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_field_energy.set_total_window_size(self.width, self.height)
         self.opponent_field_energy.create_opponent_field_energy_panel()
         self.opponent_field_energy_panel = self.opponent_field_energy.get_opponent_field_energy_panel()
+
+        self.turn_end.set_total_window_size(self.width, self.height)
+        self.turn_end.create_turn_end_button()
+        self.turn_end_button = self.turn_end.get_turn_end_button()
 
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
@@ -599,6 +608,41 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_lost_zone_panel.set_draw_border(False)
         self.opponent_lost_zone_panel.draw()
 
+        self.increase_to_use_field_energy_count.set_width_ratio(self.width_ratio)
+        self.increase_to_use_field_energy_count.set_height_ratio(self.height_ratio)
+        self.increase_to_use_field_energy_count_panel.set_draw_border(False)
+        self.increase_to_use_field_energy_count_panel.set_width_ratio(self.width_ratio)
+        self.increase_to_use_field_energy_count_panel.set_height_ratio(self.height_ratio)
+        self.increase_to_use_field_energy_count_panel.draw()
+
+        self.decrease_to_use_field_energy_count.set_width_ratio(self.width_ratio)
+        self.decrease_to_use_field_energy_count.set_height_ratio(self.height_ratio)
+        self.decrease_to_use_field_energy_count_panel.set_draw_border(False)
+        self.decrease_to_use_field_energy_count_panel.set_width_ratio(self.width_ratio)
+        self.decrease_to_use_field_energy_count_panel.set_height_ratio(self.height_ratio)
+        self.decrease_to_use_field_energy_count_panel.draw()
+
+        self.next_field_energy_race.set_width_ratio(self.width_ratio)
+        self.next_field_energy_race.set_height_ratio(self.width_ratio)
+        self.next_field_energy_race_panel.set_draw_border(False)
+        self.next_field_energy_race_panel.set_width_ratio(self.width_ratio)
+        self.next_field_energy_race_panel.set_height_ratio(self.height_ratio)
+        self.next_field_energy_race_panel.draw()
+
+        self.prev_field_energy_race.set_width_ratio(self.width_ratio)
+        self.prev_field_energy_race.set_height_ratio(self.height_ratio)
+        self.prev_field_energy_race_panel.set_draw_border(False)
+        self.prev_field_energy_race_panel.set_width_ratio(self.width_ratio)
+        self.prev_field_energy_race_panel.set_height_ratio(self.height_ratio)
+        self.prev_field_energy_race_panel.draw()
+
+        self.turn_end.set_width_ratio(self.width_ratio)
+        self.turn_end.set_height_ratio(self.height_ratio)
+        self.turn_end_button.set_draw_border(False)
+        self.turn_end_button.set_width_ratio(self.width_ratio)
+        self.turn_end_button.set_height_ratio(self.height_ratio)
+        self.turn_end_button.draw()
+
         glDisable(GL_BLEND)
 
     def post_draw(self):
@@ -618,6 +662,20 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_field_energy_panel.set_width_ratio(self.width_ratio)
         self.opponent_field_energy_panel.set_height_ratio(self.height_ratio)
         self.opponent_field_energy_panel.draw()
+
+        self.current_field_energy_race.set_width_ratio(self.width_ratio)
+        self.current_field_energy_race.set_height_ratio(self.height_ratio)
+        self.current_field_energy_race.update_current_field_energy_race_panel()
+        self.current_field_energy_race_panel.set_width_ratio(self.width_ratio)
+        self.current_field_energy_race_panel.set_height_ratio(self.height_ratio)
+        self.current_field_energy_race_panel.draw()
+
+        self.current_to_use_field_energy_count.set_width_ratio(self.width_ratio)
+        self.current_to_use_field_energy_count.set_height_ratio(self.height_ratio)
+        self.current_to_use_field_energy_count.update_current_to_use_field_energy_count_panel()
+        self.current_to_use_field_energy_count_panel.set_width_ratio(self.width_ratio)
+        self.current_to_use_field_energy_count_panel.set_height_ratio(self.height_ratio)
+        self.current_to_use_field_energy_count_panel.draw()
 
         # glDisable(GL_BLEND)
 

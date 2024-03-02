@@ -42,8 +42,8 @@ class CurrentToUseFieldEnergyCount:
 
     def create_current_to_use_field_energy_count_panel(self):
 
-        left_x_point = self.total_width * 0.92
-        right_x_point = self.total_width * 0.955
+        left_x_point = self.total_width * 0.922
+        right_x_point = self.total_width * 0.957
         top_y_point = self.total_height * 0.6275
         bottom_y_point = self.total_height * 0.6825
 
