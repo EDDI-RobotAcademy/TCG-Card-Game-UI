@@ -52,6 +52,7 @@ from battle_field.infra.your_lost_zone_repository import YourLostZoneRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field.state.energy_type import EnergyType
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
+from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_grade import CardGrade
@@ -69,6 +70,7 @@ from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
 class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
+
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
 
@@ -2556,6 +2558,15 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 self.your_lost_zone_panel_selected = False
                 return
 
+            self.turn_end_button_selected = self.left_click_detector.which_one_select_is_in_turn_end_area(
+                (x, y),
+                self.turn_end,
+                self.winfo_reqheight()
+            )
+
+            if self.turn_end_button_selected:
+                self.call_turn_end()
+
             self.tomb_panel_selected = False
             self.opponent_tomb_panel_selected = False
             self.your_lost_zone_panel_selected = False
@@ -2563,6 +2574,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         except Exception as e:
             print(f"Exception in on_canvas_click: {e}")
+
+    def call_turn_end(self):
+        self.round_repository.increase_current_round_number()
+        round = self.round_repository.get_current_round_number()
+        print(f"current round: {round}")
 
     def on_canvas_right_click(self, event):
         x, y = event.x, event.y
