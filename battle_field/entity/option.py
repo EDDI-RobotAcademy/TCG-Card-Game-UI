@@ -7,7 +7,7 @@ class Option:
 
     def __init__(self):
         self.option_button = None
-        self.option_button_popup = None
+        self.option_button_popup_list = []
 
         self.total_width = None
         self.total_height = None
@@ -43,8 +43,8 @@ class Option:
         # y1 = 0.767
         # y2 = 0.959
 
-        left_x_point = self.total_width * 0.015
-        right_x_point = self.total_width * 0.055
+        left_x_point = self.total_width * 0.0
+        right_x_point = self.total_width * 0.045
         top_y_point = self.total_height * 0.43
         bottom_y_point = self.total_height * 0.57
 
@@ -80,17 +80,24 @@ class Option:
         print("your next field energy race panel result -> True")
         return True
 
-    def get_option_button_popup(self):
-        return self.option_button_popup
+    def get_option_button_popup_list(self):
+        return self.option_button_popup_list
+
+
+    def create_option_button_popup_list(self):
+        self.create_option_button_popup_surrender_button()
+        self.create_option_button_popup_cancel_button()
+        self.create_option_button_popup()
+
 
     def create_option_button_popup(self):
-        width_left = self.total_width * 0.065
-        width_right = self.total_width * 0.165
-        height_top = self.total_height * 0.43
-        height_bottom = self.total_height * 0.57
+        width_left = self.total_width * 0.045
+        width_right = self.total_width * 0.13
+        height_top = self.total_height * 0.425
+        height_bottom = self.total_height * 0.575
 
-        self.option_button_popup = Rectangle(
-            (0.0, 0.0, 0.0, 0.8),
+        option_button_popup = Rectangle(
+            (0.0, 0.0, 0.0, 0.5),
             [
                 (width_left, height_top),
                 (width_left, height_bottom),
@@ -100,7 +107,54 @@ class Option:
             (0, 0),
             (0, 0))
 
-        self.option_button_popup.set_draw_border(False)
+        option_button_popup.set_draw_border(False)
+
+        self.option_button_popup_list.append(option_button_popup)
+
+    def create_option_button_popup_surrender_button(self):
+
+        width_left = self.total_width * 0.047
+        width_right = self.total_width * 0.127
+        height_top = self.total_height * 0.432
+        height_bottom = self.total_height * 0.492
+
+        surrender_button = Rectangle(
+            (1.0, 0.0, 0.0, 0.5),
+            [
+                (width_left, height_top),
+                (width_left, height_bottom),
+                (width_right, height_bottom),
+                (width_right, height_top)
+            ],
+            (0, 0),
+            (0, 0))
+
+        surrender_button.set_draw_border(False)
+
+        self.option_button_popup_list.append(surrender_button)
+
+    def create_option_button_popup_cancel_button(self):
+
+        width_left = self.total_width * 0.047
+        width_right = self.total_width * 0.127
+        height_top = self.total_height * 0.508
+        height_bottom = self.total_height * 0.568
+
+        cancel_button = Rectangle(
+            (0.0, 1.0, 0.0, 0.5),
+            [
+                (width_left, height_top),
+                (width_left, height_bottom),
+                (width_right, height_bottom),
+                (width_right, height_top)
+            ],
+            (0, 0),
+            (0, 0))
+
+        cancel_button.set_draw_border(False)
+
+        self.option_button_popup_list.append(cancel_button)
+
 
     def is_point_inside_popup(self, point):
         point_x, point_y = point

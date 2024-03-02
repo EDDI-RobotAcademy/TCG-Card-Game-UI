@@ -25,6 +25,7 @@ from battle_field.entity.opponent_lost_zone import OpponentLostZone
 from battle_field.entity.opponent_tomb import OpponentTomb
 from battle_field.entity.option import Option
 from battle_field.entity.prev_field_energy_race import PrevFieldEnergyRace
+from battle_field.entity.surrender_confirm import SurrenderConfirm
 from battle_field.entity.tomb_type import TombType
 from battle_field.entity.turn_end import TurnEnd
 from battle_field.entity.your_deck import YourDeck
@@ -230,6 +231,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.option = Option()
         self.option_button = None
         self.option_button_selected = False
+        self.option_popup_panel_list = []
+        self.option_popup_ok_button_selected = False
+
+        self.surrender_confirm = SurrenderConfirm()
+        self.surrender_confirm_panel_list = []
+        self.surrender_confirm_ok_button_selected = False
+
+
 
 
 
@@ -379,6 +388,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.option.set_total_window_size(self.width, self.height)
         self.option.create_option_button()
         self.option_button = self.option.get_option_button()
+        self.option.create_option_button_popup_list()
+        self.option_popup_panel_list = self.option.get_option_button_popup_list()
+
+        self.surrender_confirm.set_total_window_size(self.width, self.height)
+        self.surrender_confirm.create_surrender_confirm_panel_list()
+        self.surrender_confirm_panel_list = self.surrender_confirm.get_surrender_confirm_panel_list()
+
 
 
     def reshape(self, width, height):
@@ -620,6 +636,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.option.set_height_ratio(self.height_ratio)
         self.option_button.set_draw_border(False)
         self.option_button.draw()
+        for option_popup_panel in self.option_popup_panel_list:
+            option_popup_panel.draw()
+
+        self.surrender_confirm.set_width_ratio(self.width_ratio)
+        self.surrender_confirm.set_height_ratio(self.height_ratio)
+        for surrender_confirm_panel in self.surrender_confirm_panel_list:
+            surrender_confirm_panel.draw()
 
         self.next_field_energy_race.set_width_ratio(self.width_ratio)
         self.next_field_energy_race.set_height_ratio(self.width_ratio)
@@ -703,62 +726,62 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.draw_base()
 
-        for opponent_field_unit in self.opponent_field_unit_repository.get_current_field_unit_card_object_list():
-            attached_tool_card = opponent_field_unit.get_tool_card()
-            if attached_tool_card is not None:
-                attached_tool_card.set_width_ratio(self.width_ratio)
-                attached_tool_card.set_height_ratio(self.height_ratio)
-                attached_tool_card.draw()
+        # for opponent_field_unit in self.opponent_field_unit_repository.get_current_field_unit_card_object_list():
+        #     attached_tool_card = opponent_field_unit.get_tool_card()
+        #     if attached_tool_card is not None:
+        #         attached_tool_card.set_width_ratio(self.width_ratio)
+        #         attached_tool_card.set_height_ratio(self.height_ratio)
+        #         attached_tool_card.draw()
+        #
+        #     fixed_card_base = opponent_field_unit.get_fixed_card_base()
+        #     fixed_card_base.set_width_ratio(self.width_ratio)
+        #     fixed_card_base.set_height_ratio(self.height_ratio)
+        #     fixed_card_base.draw()
+        #
+        #     attached_shape_list = fixed_card_base.get_attached_shapes()
+        #
+        #     for attached_shape in attached_shape_list:
+        #         attached_shape.set_width_ratio(self.width_ratio)
+        #         attached_shape.set_height_ratio(self.height_ratio)
+        #         attached_shape.draw()
 
-            fixed_card_base = opponent_field_unit.get_fixed_card_base()
-            fixed_card_base.set_width_ratio(self.width_ratio)
-            fixed_card_base.set_height_ratio(self.height_ratio)
-            fixed_card_base.draw()
+        # for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
+        #     attached_tool_card = field_unit.get_tool_card()
+        #     if attached_tool_card is not None:
+        #         attached_tool_card.set_width_ratio(self.width_ratio)
+        #         attached_tool_card.set_height_ratio(self.height_ratio)
+        #         attached_tool_card.draw()
+        #
+        #     fixed_card_base = field_unit.get_fixed_card_base()
+        #     fixed_card_base.set_width_ratio(self.width_ratio)
+        #     fixed_card_base.set_height_ratio(self.height_ratio)
+        #     fixed_card_base.draw()
+        #
+        #     attached_shape_list = fixed_card_base.get_attached_shapes()
+        #
+        #     for attached_shape in attached_shape_list:
+        #         attached_shape.set_width_ratio(self.width_ratio)
+        #         attached_shape.set_height_ratio(self.height_ratio)
+        #         attached_shape.draw()
 
-            attached_shape_list = fixed_card_base.get_attached_shapes()
-
-            for attached_shape in attached_shape_list:
-                attached_shape.set_width_ratio(self.width_ratio)
-                attached_shape.set_height_ratio(self.height_ratio)
-                attached_shape.draw()
-
-        for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
-            attached_tool_card = field_unit.get_tool_card()
-            if attached_tool_card is not None:
-                attached_tool_card.set_width_ratio(self.width_ratio)
-                attached_tool_card.set_height_ratio(self.height_ratio)
-                attached_tool_card.draw()
-
-            fixed_card_base = field_unit.get_fixed_card_base()
-            fixed_card_base.set_width_ratio(self.width_ratio)
-            fixed_card_base.set_height_ratio(self.height_ratio)
-            fixed_card_base.draw()
-
-            attached_shape_list = fixed_card_base.get_attached_shapes()
-
-            for attached_shape in attached_shape_list:
-                attached_shape.set_width_ratio(self.width_ratio)
-                attached_shape.set_height_ratio(self.height_ratio)
-                attached_shape.draw()
-
-        for hand_card in self.hand_card_list:
-            attached_tool_card = hand_card.get_tool_card()
-            if attached_tool_card is not None:
-                attached_tool_card.set_width_ratio(self.width_ratio)
-                attached_tool_card.set_height_ratio(self.height_ratio)
-                attached_tool_card.draw()
-
-            pickable_card_base = hand_card.get_pickable_card_base()
-            pickable_card_base.set_width_ratio(self.width_ratio)
-            pickable_card_base.set_height_ratio(self.height_ratio)
-            pickable_card_base.draw()
-
-            attached_shape_list = pickable_card_base.get_attached_shapes()
-
-            for attached_shape in attached_shape_list:
-                attached_shape.set_width_ratio(self.width_ratio)
-                attached_shape.set_height_ratio(self.height_ratio)
-                attached_shape.draw()
+        # for hand_card in self.hand_card_list:
+        #     attached_tool_card = hand_card.get_tool_card()
+        #     if attached_tool_card is not None:
+        #         attached_tool_card.set_width_ratio(self.width_ratio)
+        #         attached_tool_card.set_height_ratio(self.height_ratio)
+        #         attached_tool_card.draw()
+        #
+        #     pickable_card_base = hand_card.get_pickable_card_base()
+        #     pickable_card_base.set_width_ratio(self.width_ratio)
+        #     pickable_card_base.set_height_ratio(self.height_ratio)
+        #     pickable_card_base.draw()
+        #
+        #     attached_shape_list = pickable_card_base.get_attached_shapes()
+        #
+        #     for attached_shape in attached_shape_list:
+        #         attached_shape.set_width_ratio(self.width_ratio)
+        #         attached_shape.set_height_ratio(self.height_ratio)
+        #         attached_shape.draw()
 
         if self.selected_object:
             card_base = None

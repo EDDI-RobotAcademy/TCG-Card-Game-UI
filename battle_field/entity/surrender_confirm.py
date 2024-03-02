@@ -6,9 +6,7 @@ class SurrenderConfirm:
     __pre_drawed_image = PreDrawedImage.getInstance()
 
     def __init__(self):
-        self.surrender_confirm_panel = None
-        self.surrender_confirm_panel_ok_button = None
-        self.surrender_confirm_panel_cancel_button = None
+        self.surrender_confirm_panel_list = []
 
         self.total_width = None
         self.total_height = None
@@ -35,8 +33,13 @@ class SurrenderConfirm:
     def change_local_translation(self, _translation):
         self.local_translation = _translation
 
-    def get_surrender_confirm_panel(self):
-        return self.surrender_confirm_panel
+    def get_surrender_confirm_panel_list(self):
+        return self.surrender_confirm_panel_list
+
+    def create_surrender_confirm_panel_list(self):
+        self.create_surrender_confirm_panel_ok_button()
+        self.create_surrender_confirm_panel_cancel_button()
+        self.create_surrender_confirm_panel()
 
     def create_surrender_confirm_panel(self):
         # x1 = 0.138
@@ -49,8 +52,8 @@ class SurrenderConfirm:
         top_y_point = self.total_height * 0.4
         bottom_y_point = self.total_height * 0.6
 
-        self.surrender_confirm_panel = Rectangle(
-            (0, 0, 0, 0.1),
+        surrender_confirm_panel = Rectangle(
+            (0, 0, 0, 0.5),
             [
                 (left_x_point, top_y_point),
                 (right_x_point, top_y_point),
@@ -59,15 +62,17 @@ class SurrenderConfirm:
             ],
             (0, 0),
             (0, 0))
+        surrender_confirm_panel.set_draw_border(False)
+        self.surrender_confirm_panel_list.append(surrender_confirm_panel)
 
     def create_surrender_confirm_panel_ok_button(self):
-        left_x_point = self.total_width * 0.55
-        right_x_point = self.total_width * 0.58
-        top_y_point = self.total_height * 0.55
-        bottom_y_point = self.total_height * 0.58
+        left_x_point = self.total_width * 0.515
+        right_x_point = self.total_width * 0.575
+        top_y_point = self.total_height * 0.545
+        bottom_y_point = self.total_height * 0.595
 
-        self.surrender_confirm_panel = Rectangle(
-            (0, 0, 0, 0.1),
+        ok_button = Rectangle(
+            (1, 0, 0, 0.8),
             [
                 (left_x_point, top_y_point),
                 (right_x_point, top_y_point),
@@ -76,15 +81,17 @@ class SurrenderConfirm:
             ],
             (0, 0),
             (0, 0))
+        ok_button.set_draw_border(False)
+        self.surrender_confirm_panel_list.append(ok_button)
 
     def create_surrender_confirm_panel_cancel_button(self):
-        left_x_point = self.total_width * 0.42
-        right_x_point = self.total_width * 0.45
-        top_y_point = self.total_height * 0.55
-        bottom_y_point = self.total_height * 0.58
+        left_x_point = self.total_width * 0.425
+        right_x_point = self.total_width * 0.485
+        top_y_point = self.total_height * 0.545
+        bottom_y_point = self.total_height * 0.595
 
-        self.surrender_confirm_panel = Rectangle(
-            (0, 0, 0, 0.1),
+        cancel_button = Rectangle(
+            (0, 1, 0, 0.8),
             [
                 (left_x_point, top_y_point),
                 (right_x_point, top_y_point),
@@ -93,12 +100,14 @@ class SurrenderConfirm:
             ],
             (0, 0),
             (0, 0))
+        cancel_button.set_draw_border(False)
+        self.surrender_confirm_panel_list.append(cancel_button)
 
     def is_point_inside_cancel(self, point):
         point_x, point_y = point
         point_y *= -1
 
-        surrender_confirm_panel_cancel_button = self.surrender_confirm_panel_cancel_button
+        surrender_confirm_panel_cancel_button = self.surrender_confirm_panel_list[1]
 
         translated_vertices = [
             (
@@ -119,7 +128,7 @@ class SurrenderConfirm:
         point_x, point_y = point
         point_y *= -1
 
-        surrender_confirm_panel_ok_button = self.surrender_confirm_panel_ok_button
+        surrender_confirm_panel_ok_button = self.surrender_confirm_panel_list[0]
 
         translated_vertices = [
             (
