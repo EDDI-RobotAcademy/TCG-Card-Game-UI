@@ -232,11 +232,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.option_button = None
         self.option_button_selected = False
         self.option_popup_panel_list = []
-        self.option_popup_ok_button_selected = False
+        self.option_popup_surrender_button_selected = False
+        self.option_popup_close_button_selected = False
 
         self.surrender_confirm = SurrenderConfirm()
         self.surrender_confirm_panel_list = []
         self.surrender_confirm_ok_button_selected = False
+        self.surrender_confirm_close_button_selected = False
 
 
 
@@ -636,13 +638,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.option.set_height_ratio(self.height_ratio)
         self.option_button.set_draw_border(False)
         self.option_button.draw()
-        for option_popup_panel in self.option_popup_panel_list:
-            option_popup_panel.draw()
+        if self.option_button_selected:
+            for option_popup_panel in self.option_popup_panel_list:
+                option_popup_panel.draw()
 
         self.surrender_confirm.set_width_ratio(self.width_ratio)
         self.surrender_confirm.set_height_ratio(self.height_ratio)
-        for surrender_confirm_panel in self.surrender_confirm_panel_list:
-            surrender_confirm_panel.draw()
+        if self.option_popup_surrender_button_selected:
+            for surrender_confirm_panel in self.surrender_confirm_panel_list:
+                surrender_confirm_panel.draw()
 
         self.next_field_energy_race.set_width_ratio(self.width_ratio)
         self.next_field_energy_race.set_height_ratio(self.width_ratio)
@@ -1396,6 +1400,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.your_lost_zone_panel_selected = False
             self.opponent_lost_zone_panel_selected = False
             self.turn_end_button_selected = False
+            self.option_popup_close_button_selected = False
+            self.surrender_confirm_close_button_selected = False
 
             for hand_card in self.hand_card_list:
                 if isinstance(hand_card, PickableCard):
@@ -1778,6 +1784,60 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 print(f"on_canvas_left_click() -> decrease_to_use_field_energy_count(): "
                       f"{self.your_field_energy_repository.get_to_use_field_energy_count()}")
                 self.your_field_energy_repository.decrease_to_use_field_energy_count()
+
+
+            self.option_button_selected = self.left_click_detector.which_one_select_is_in_option_area(
+                (x, y),
+                self.option,
+                self.winfo_reqheight()
+            )
+
+            if self.option_button_selected:
+
+
+
+                self.option_popup_surrender_button_selected = (
+                    self.left_click_detector.which_one_select_is_in_option_surrender_area(
+                        (x,y),
+                        self.option,
+                        self.winfo_reqheight()
+                ))
+
+                if self.option_popup_surrender_button_selected:
+                    print(f"on click invoke!! : option_popup_surrender_selected")
+
+                    self.surrender_confirm_ok_button_selected = (
+                        self.left_click_detector.which_one_select_is_in_ok_surrender_confirm_area(
+                            (x, y),
+                            self.surrender_confirm,
+                            self.winfo_reqheight()
+                        ))
+
+                    if self.surrender_confirm_ok_button_selected:
+                        self.battle_field_function_controller.callSurrender()
+
+                    self.surrender_confirm_close_button_selected = (
+                        self.left_click_detector.which_one_select_is_in_close_surrender_confirm_area(
+                            (x, y),
+                            self.surrender_confirm,
+                            self.winfo_reqheight()
+                        ))
+
+                    if self.surrender_confirm_close_button_selected:
+                        self.option_popup_surrender_button_selected = False
+
+                self.option_popup_close_button_selected = self.left_click_detector.which_one_select_is_in_option_close_area(
+                    (x,y),
+                    self.option,
+                    self.winfo_reqheight()
+                )
+
+                if self.option_popup_close_button_selected:
+                    print(f"on click invoke!! : option_popup_close_selected")
+                    self.option_button_selected = False
+
+
+
 
             self.tomb_panel_selected = False
             self.opponent_tomb_panel_selected = False

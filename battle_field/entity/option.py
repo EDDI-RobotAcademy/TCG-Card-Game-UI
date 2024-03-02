@@ -156,16 +156,35 @@ class Option:
         self.option_button_popup_list.append(cancel_button)
 
 
-    def is_point_inside_popup(self, point):
+    def is_point_inside_option_close(self, point):
         point_x, point_y = point
         point_y *= -1
 
-        tomb_popup_panel = self.get_option_button_popup()
+        option_close = self.get_option_button_popup_list()[1]
 
         translated_vertices = [
-            (x * self.width_ratio + tomb_popup_panel.local_translation[0] * self.width_ratio,
-             y * self.height_ratio + tomb_popup_panel.local_translation[1] * self.height_ratio)
-            for x, y in tomb_popup_panel.get_vertices()
+            (x * self.width_ratio + option_close.local_translation[0] * self.width_ratio,
+             y * self.height_ratio + option_close.local_translation[1] * self.height_ratio)
+            for x, y in option_close.get_vertices()
+        ]
+
+        if not (translated_vertices[0][0] <= point_x <= translated_vertices[2][0] and
+                translated_vertices[0][1] <= point_y <= translated_vertices[1][1]):
+            return False
+
+        print("opponent tomb popup panel result -> True")
+        return True
+
+    def is_point_inside_option_surrender(self, point):
+        point_x, point_y = point
+        point_y *= -1
+
+        option_surrender = self.get_option_button_popup_list()[0]
+
+        translated_vertices = [
+            (x * self.width_ratio + option_surrender.local_translation[0] * self.width_ratio,
+             y * self.height_ratio + option_surrender.local_translation[1] * self.height_ratio)
+            for x, y in option_surrender.get_vertices()
         ]
 
         if not (translated_vertices[0][0] <= point_x <= translated_vertices[2][0] and

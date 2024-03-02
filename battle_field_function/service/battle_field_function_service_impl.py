@@ -74,7 +74,8 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             gameEndRewardResponse = self.__battleFieldFunctionRepository.requestGameEnd(
                 GameEndRewardRequest(
                     # _sessionInfo=self.__sessionService.getSessionInfo())
-                    _sessionInfo=self.__sessionRepository.get_session_info())
+                    # _sessionInfo=self.__sessionRepository.get_session_info())
+                    _sessionInfo=self.__sessionRepository.get_first_fake_session_info())
             )
             print(f"게임 끝! 응답: {gameEndRewardResponse}")
             if gameEndRewardResponse:

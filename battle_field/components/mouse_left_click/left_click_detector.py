@@ -179,13 +179,43 @@ class LeftClickDetector:
 
         return None
 
-    def which_one_select_is_in_close_option_area(self, click_point, option, canvas_height):
+    def which_one_select_is_in_option_area(self, click_point, option, canvas_height):
         x, y = click_point
         y = canvas_height - y
         y *= -1
 
-        if option.is_point_inside_close((x, y)):
+        if option.is_point_inside((x, y)):
             return option
+
+        return None
+
+    def which_one_select_is_in_option_surrender_area(self, click_point, option, canvas_height):
+        x, y = click_point
+        y = canvas_height - y
+        y *= -1
+
+        if option.is_point_inside_option_surrender((x, y)):
+            return option
+
+        return None
+
+    def which_one_select_is_in_option_close_area(self, click_point, option, canvas_height):
+        x, y = click_point
+        y = canvas_height - y
+        y *= -1
+
+        if option.is_point_inside_option_close((x, y)):
+            return option
+
+        return None
+
+    def which_one_select_is_in_ok_surrender_confirm_area(self, click_point, surrender_confirm, canvas_height):
+        x, y = click_point
+        y = canvas_height - y
+        y *= -1
+
+        if surrender_confirm.is_point_inside_ok((x, y)):
+            return surrender_confirm
 
         return None
 
@@ -195,7 +225,7 @@ class LeftClickDetector:
         y = canvas_height - y
         y *= -1
 
-        if surrender_confirm.is_point_inside_close((x, y)):
+        if surrender_confirm.is_point_inside_cancel((x, y)):
             return surrender_confirm
 
         return None
