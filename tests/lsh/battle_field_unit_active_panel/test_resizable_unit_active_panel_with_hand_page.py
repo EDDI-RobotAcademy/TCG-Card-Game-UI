@@ -394,6 +394,12 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 print("단일기")
 
                 opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+                valid_opponent_field_units_object_list = [unit for unit in opponent_field_unit_object_list if unit is not None]
+                print(f"실제 유효한 상대 필드 유닛 숫자: {len(valid_opponent_field_units_object_list)}")
+
+                if len(valid_opponent_field_units_object_list) == 0:
+                    return
+
                 for opponent_field_unit_object in opponent_field_unit_object_list:
                     if opponent_field_unit_object is None:
                         continue
