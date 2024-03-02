@@ -50,7 +50,7 @@ class DecreaseToUseFieldEnergyCount:
         bottom_y_point = self.total_height * 0.68
 
         self.decrease_to_use_field_energy_count_panel = Rectangle(
-            (0, 0, 0, 0.0),
+            (0, 0, 0, 0.1),
             [
                 (left_x_point, top_y_point),
                 (right_x_point, top_y_point),

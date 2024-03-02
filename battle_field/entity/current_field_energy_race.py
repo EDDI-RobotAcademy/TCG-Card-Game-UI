@@ -50,7 +50,7 @@ class CurrentFieldEnergyRace:
         # top_y_point = self.total_height * 0.717
         # bottom_y_point = self.total_height * 0.757
 
-        center_x_point = self.total_width * 0.938
+        center_x_point = self.total_width * 0.940
         center_y_point = self.total_height * 0.753
         radius = 35# math.tan(center_y_point / center_x_point)
 
