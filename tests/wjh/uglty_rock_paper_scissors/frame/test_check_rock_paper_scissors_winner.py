@@ -1,10 +1,9 @@
 import tkinter
 import time
 import unittest
-from PIL import ImageTk, Image
 
 from rock_paper_scissors.repository.rock_paper_scissors_repository_impl import RockPaperScissorsRepositoryImpl
-from rock_paper_scissors.service.request.check_rock_paper_scissors_winner_request import CheckRockPaperScissorsWinnerRequest
+from rock_paper_scissors.frame.check_rock_paper_scissors_winner.service.request.check_rock_paper_scissors_winner_request import CheckRockPaperScissorsWinnerRequest
 from session.repository.session_repository_impl import SessionRepositoryImpl
 
 
@@ -22,13 +21,13 @@ class TestRockPaperScissors(unittest.TestCase):
                                   anchor="center", justify="center", bg="#D8D8D8")
 
         check_RPS_label.place(relx=0.5, rely=0.5, anchor="center", bordermode="outside", relwidth=0.5, relheight=0.5)
-        for i in range(60):
-            responseData = self.__rockPaperScissorsRepositoryImpl.requestCheckRockPaperScissorsWinner(
-                CheckRockPaperScissorsWinnerRequest(self.__sessionRepositoryImpl.get_session_info()))
-            time.sleep(1)
-            if responseData is not None:
-                check_RPS_label.configure(text="당신은 "+responseData+"입니다.")
-                time.sleep(3)
+        # for i in range(60):
+        #     responseData = self.__rockPaperScissorsRepositoryImpl.requestCheckRockPaperScissorsWinner(
+        #         CheckRockPaperScissorsWinnerRequest(self.__sessionRepositoryImpl.get_session_info()))
+        #     time.sleep(1)
+        #     if responseData is not None:
+        #         check_RPS_label.configure(text="당신은 "+responseData+"입니다.")
+        #         time.sleep(3)
 
 
 

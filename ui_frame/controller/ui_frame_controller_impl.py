@@ -24,6 +24,7 @@ from opengl_buy_random_card_frame.service.buy_random_card_frame_service_impl imp
 from opengl_my_deck_register_frame.service.my_deck_register_frame_service_impl import MyDeckRegisterFrameServiceImpl
 from notify_reader.controller.notify_reader_controller_impl import NotifyReaderControllerImpl
 from rock_paper_scissors.service.rock_paper_scissors_service_impl import RockPaperScissorsServiceImpl
+from rock_paper_scissors.frame.check_rock_paper_scissors_winner.service.check_rock_paper_scissors_winner_service_impl import CheckRockPaperScissorsWinnerServiceImpl
 
 from session.service.session_service_impl import SessionServiceImpl
 
@@ -68,6 +69,7 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__yourFieldEnergyRepository = YourFieldEnergyRepository.getInstance()
             cls.__instance.__battleFieldMuligunFrameServiece = BattleFieldMuligunFrameServiceImpl.getInstance()
             cls.__instance.__rockPaperScissorsService = RockPaperScissorsServiceImpl.getInstance()
+            cls.__instance.__checkRockPaperScissorsWinnerServiceImpl = CheckRockPaperScissorsWinnerServiceImpl.getInstance()
 
             cls.__instance.__decisionFirstStrikeFrameService = DecisionFirstStrikeFrameService.getInstance()
 
@@ -169,6 +171,7 @@ class UiFrameControllerImpl(UiFrameController):
         self.__buyCheckService.injectTransmitIpcChannel(transmitIpcChannel)
         self.__battleFieldMuligunFrameServiece.injectReceiveIpcChannel(transmitIpcChannel)
         self.__rockPaperScissorsService.injectTransmitIpcChannel(transmitIpcChannel)
+        self.__checkRockPaperScissorsWinnerServiceImpl.injectTransmitIpcChannel(transmitIpcChannel)
 
         # TODO: Ugly -> Need to Refactor
         self.__battleFieldRepository.saveTransmitIpcChannel(transmitIpcChannel)
@@ -201,6 +204,7 @@ class UiFrameControllerImpl(UiFrameController):
         self.__buyCheckService.injectReceiveIpcChannel(receiveIpcChannel)
         self.__battleFieldMuligunFrameServiece.injectReceiveIpcChannel(receiveIpcChannel)
         self.__rockPaperScissorsService.injectReceiveIpcChannel(receiveIpcChannel)
+        self.__checkRockPaperScissorsWinnerServiceImpl.injectReceiveIpcChannel(receiveIpcChannel)
 
         # TODO: Ugly -> Need to Refactor
         self.__battleFieldRepository.saveReceiveIpcChannel(receiveIpcChannel)
