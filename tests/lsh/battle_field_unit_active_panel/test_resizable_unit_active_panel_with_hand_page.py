@@ -27,6 +27,7 @@ from battle_field.entity.next_field_energy_race import NextFieldEnergyRace
 from battle_field.entity.opponent_field_energy import OpponentFieldEnergy
 from battle_field.entity.opponent_field_panel import OpponentFieldPanel
 from battle_field.entity.opponent_hp import OpponentHp
+from battle_field.entity.opponent_main_character import OpponentMainCharacter
 from battle_field.entity.prev_field_energy_race import PrevFieldEnergyRace
 from battle_field.entity.turn_end import TurnEnd
 from battle_field.entity.your_active_panel import YourActivePanel
@@ -217,6 +218,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_lost_zone_popup_panel = None
         self.opponent_lost_zone_panel_selected = False
 
+        self.opponent_main_character_panel = None
+        self.opponent_main_character = OpponentMainCharacter()
+
         self.round_repository = RoundRepository.getInstance()
 
         self.turn_end = TurnEnd()
@@ -359,6 +363,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_hp_repository.set_first_hp_state()
         self.opponent_hp.draw_current_opponent_hp_panel()
         self.opponent_hp_panel = self.opponent_hp.get_opponent_hp_panel()
+
+        self.opponent_main_character.set_total_window_size(self.width, self.height)
+        self.opponent_main_character.create_opponent_main_character_panel()
+        self.opponent_main_character_panel = self.opponent_main_character.get_opponent_main_character_panel()
 
         self.your_field_energy.set_total_window_size(self.width, self.height)
         self.your_field_energy_repository.reset_field_energy()
@@ -631,6 +639,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_lost_zone_panel.set_height_ratio(self.height_ratio)
         self.opponent_lost_zone_panel.set_draw_border(False)
         self.opponent_lost_zone_panel.draw()
+
+        self.opponent_main_character.set_width_ratio(self.width_ratio)
+        self.opponent_main_character.set_height_ratio(self.height_ratio)
+        self.opponent_main_character_panel.set_width_ratio(self.width_ratio)
+        self.opponent_main_character_panel.set_height_ratio(self.height_ratio)
+        self.opponent_main_character_panel.set_draw_border(False)
+        self.opponent_main_character_panel.draw()
 
         self.increase_to_use_field_energy_count.set_width_ratio(self.width_ratio)
         self.increase_to_use_field_energy_count.set_height_ratio(self.height_ratio)
