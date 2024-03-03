@@ -19,9 +19,18 @@ from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
     OpponentFixedUnitCardInsideHandler
 from battle_field.entity.battle_field_scene import BattleFieldScene
+from battle_field.entity.current_field_energy_race import CurrentFieldEnergyRace
+from battle_field.entity.current_to_use_field_energy_count import CurrentToUseFieldEnergyCount
+from battle_field.entity.decrease_to_use_field_energy_count import DecreaseToUseFieldEnergyCount
+from battle_field.entity.increase_to_use_field_energy_count import IncreaseToUseFieldEnergyCount
+from battle_field.entity.next_field_energy_race import NextFieldEnergyRace
+from battle_field.entity.opponent_field_energy import OpponentFieldEnergy
 from battle_field.entity.opponent_field_panel import OpponentFieldPanel
+from battle_field.entity.prev_field_energy_race import PrevFieldEnergyRace
+from battle_field.entity.turn_end import TurnEnd
 from battle_field.entity.your_active_panel import YourActivePanel
 from battle_field.entity.your_deck import YourDeck
+from battle_field.entity.your_field_energy import YourFieldEnergy
 from battle_field.entity.your_field_panel import YourFieldPanel
 from battle_field.entity.opponent_lost_zone import OpponentLostZone
 from battle_field.entity.opponent_tomb import OpponentTomb
@@ -43,6 +52,7 @@ from battle_field.infra.your_lost_zone_repository import YourLostZoneRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field.state.energy_type import EnergyType
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
+from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_grade import CardGrade
@@ -60,6 +70,7 @@ from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
 class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
+
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
 
@@ -150,7 +161,35 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_you_selected_lightning_border_list = []
         self.opponent_you_selected_object_list = []
 
+        self.your_field_energy_panel = None
+        self.your_field_energy = YourFieldEnergy()
         self.your_field_energy_repository = YourFieldEnergyRepository.getInstance()
+        self.your_field_energy_panel_selected = False
+
+        self.next_field_energy_race_panel = None
+        self.next_field_energy_race = NextFieldEnergyRace()
+        self.next_field_energy_race_panel_selected = False
+
+        self.prev_field_energy_race_panel = None
+        self.prev_field_energy_race = PrevFieldEnergyRace()
+        self.prev_field_energy_race_panel_selected = False
+
+        self.current_field_energy_race_panel = None
+        self.current_field_energy_race = CurrentFieldEnergyRace()
+
+        self.current_to_use_field_energy_count_panel = None
+        self.current_to_use_field_energy_count = CurrentToUseFieldEnergyCount()
+
+        self.increase_to_use_field_energy_count_panel = None
+        self.increase_to_use_field_energy_count = IncreaseToUseFieldEnergyCount()
+        self.increase_to_use_field_energy_count_panel_selected = False
+
+        self.decrease_to_use_field_energy_count_panel = None
+        self.decrease_to_use_field_energy_count = DecreaseToUseFieldEnergyCount()
+        self.decrease_to_use_field_energy_count_panel_selected = False
+
+        self.opponent_field_energy = OpponentFieldEnergy()
+        self.opponent_field_energy_panel = None
         self.opponent_field_energy_repository = OpponentFieldEnergyRepository.getInstance()
         self.opponent_field_energy_repository.increase_opponent_field_energy(3)
 
@@ -167,6 +206,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_lost_zone_panel_selected = False
 
         self.round_repository = RoundRepository.getInstance()
+
+        self.turn_end = TurnEnd()
+        self.turn_end_button = None
+        self.turn_end_button_selected = False
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -240,7 +283,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         # self.your_hand_repository.set_x_base(550)
         self.your_hand_repository.set_total_window_size(self.width, self.height)
-        self.your_hand_repository.save_current_hand_state([30, 93, 8, 2, 33, 35])
+        self.your_hand_repository.save_current_hand_state([30, 30, 8, 93, 8, 2, 33, 35, 9, 20, 25, 36, 151])
         # self.your_hand_repository.save_current_hand_state([151])
         # self.your_hand_repository.create_hand_card_list()
         self.your_hand_repository.build_your_hand_page()
@@ -294,6 +337,48 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.your_active_panel = YourActivePanel()
         self.your_active_panel.set_total_window_size(self.width, self.height)
+
+        self.your_field_energy.set_total_window_size(self.width, self.height)
+        self.your_field_energy_repository.reset_field_energy()
+        self.your_field_energy.create_your_field_energy_panel()
+        self.your_field_energy_panel = self.your_field_energy.get_your_field_energy_panel()
+
+        self.next_field_energy_race.set_total_window_size(self.width, self.height)
+        self.next_field_energy_race.create_next_field_energy_race_panel()
+        self.next_field_energy_race_panel = self.next_field_energy_race.get_next_field_energy_race_panel()
+
+        self.prev_field_energy_race.set_total_window_size(self.width, self.height)
+        self.prev_field_energy_race.create_prev_field_energy_race_panel()
+        self.prev_field_energy_race_panel = self.prev_field_energy_race.get_prev_field_energy_race_panel()
+
+        self.current_field_energy_race.set_total_window_size(self.width, self.height)
+        self.current_field_energy_race.create_current_field_energy_race_panel()
+        self.current_field_energy_race_panel = self.current_field_energy_race.get_current_field_energy_race_panel()
+
+        self.current_to_use_field_energy_count.set_total_window_size(self.width, self.height)
+        self.current_to_use_field_energy_count.create_current_to_use_field_energy_count_panel()
+        self.current_to_use_field_energy_count_panel = (
+            self.current_to_use_field_energy_count.get_current_to_use_field_energy_count_panel())
+
+        self.increase_to_use_field_energy_count.set_total_window_size(self.width, self.height)
+        self.increase_to_use_field_energy_count.create_increase_to_use_field_energy_count_panel()
+        self.increase_to_use_field_energy_count_panel = (
+            self.increase_to_use_field_energy_count.get_increase_to_use_field_energy_count_panel()
+        )
+
+        self.decrease_to_use_field_energy_count.set_total_window_size(self.width, self.height)
+        self.decrease_to_use_field_energy_count.create_decrease_to_use_field_energy_count_panel()
+        self.decrease_to_use_field_energy_count_panel = (
+            self.decrease_to_use_field_energy_count.get_decrease_to_use_field_energy_count_panel()
+        )
+
+        self.opponent_field_energy.set_total_window_size(self.width, self.height)
+        self.opponent_field_energy.create_opponent_field_energy_panel()
+        self.opponent_field_energy_panel = self.opponent_field_energy.get_opponent_field_energy_panel()
+
+        self.turn_end.set_total_window_size(self.width, self.height)
+        self.turn_end.create_turn_end_button()
+        self.turn_end_button = self.turn_end.get_turn_end_button()
 
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
@@ -394,6 +479,12 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 print("단일기")
 
                 opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+                valid_opponent_field_units_object_list = [unit for unit in opponent_field_unit_object_list if unit is not None]
+                print(f"실제 유효한 상대 필드 유닛 숫자: {len(valid_opponent_field_units_object_list)}")
+
+                if len(valid_opponent_field_units_object_list) == 0:
+                    return
+
                 for opponent_field_unit_object in opponent_field_unit_object_list:
                     if opponent_field_unit_object is None:
                         continue
@@ -519,7 +610,76 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_lost_zone_panel.set_draw_border(False)
         self.opponent_lost_zone_panel.draw()
 
+        self.increase_to_use_field_energy_count.set_width_ratio(self.width_ratio)
+        self.increase_to_use_field_energy_count.set_height_ratio(self.height_ratio)
+        self.increase_to_use_field_energy_count_panel.set_draw_border(False)
+        self.increase_to_use_field_energy_count_panel.set_width_ratio(self.width_ratio)
+        self.increase_to_use_field_energy_count_panel.set_height_ratio(self.height_ratio)
+        self.increase_to_use_field_energy_count_panel.draw()
+
+        self.decrease_to_use_field_energy_count.set_width_ratio(self.width_ratio)
+        self.decrease_to_use_field_energy_count.set_height_ratio(self.height_ratio)
+        self.decrease_to_use_field_energy_count_panel.set_draw_border(False)
+        self.decrease_to_use_field_energy_count_panel.set_width_ratio(self.width_ratio)
+        self.decrease_to_use_field_energy_count_panel.set_height_ratio(self.height_ratio)
+        self.decrease_to_use_field_energy_count_panel.draw()
+
+        self.next_field_energy_race.set_width_ratio(self.width_ratio)
+        self.next_field_energy_race.set_height_ratio(self.width_ratio)
+        self.next_field_energy_race_panel.set_draw_border(False)
+        self.next_field_energy_race_panel.set_width_ratio(self.width_ratio)
+        self.next_field_energy_race_panel.set_height_ratio(self.height_ratio)
+        self.next_field_energy_race_panel.draw()
+
+        self.prev_field_energy_race.set_width_ratio(self.width_ratio)
+        self.prev_field_energy_race.set_height_ratio(self.height_ratio)
+        self.prev_field_energy_race_panel.set_draw_border(False)
+        self.prev_field_energy_race_panel.set_width_ratio(self.width_ratio)
+        self.prev_field_energy_race_panel.set_height_ratio(self.height_ratio)
+        self.prev_field_energy_race_panel.draw()
+
+        self.turn_end.set_width_ratio(self.width_ratio)
+        self.turn_end.set_height_ratio(self.height_ratio)
+        self.turn_end_button.set_draw_border(False)
+        self.turn_end_button.set_width_ratio(self.width_ratio)
+        self.turn_end_button.set_height_ratio(self.height_ratio)
+        self.turn_end_button.draw()
+
         glDisable(GL_BLEND)
+
+    def post_draw(self):
+        # glEnable(GL_BLEND)
+        # glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA)
+
+        self.your_field_energy.set_width_ratio(self.width_ratio)
+        self.your_field_energy.set_height_ratio(self.height_ratio)
+        self.your_field_energy.update_current_field_energy_panel()
+        self.your_field_energy_panel.set_width_ratio(self.width_ratio)
+        self.your_field_energy_panel.set_height_ratio(self.height_ratio)
+        self.your_field_energy_panel.draw()
+
+        self.opponent_field_energy.set_width_ratio(self.width_ratio)
+        self.opponent_field_energy.set_height_ratio(self.height_ratio)
+        self.opponent_field_energy.update_current_opponent_field_energy_panel()
+        self.opponent_field_energy_panel.set_width_ratio(self.width_ratio)
+        self.opponent_field_energy_panel.set_height_ratio(self.height_ratio)
+        self.opponent_field_energy_panel.draw()
+
+        self.current_field_energy_race.set_width_ratio(self.width_ratio)
+        self.current_field_energy_race.set_height_ratio(self.height_ratio)
+        self.current_field_energy_race.update_current_field_energy_race_panel()
+        self.current_field_energy_race_panel.set_width_ratio(self.width_ratio)
+        self.current_field_energy_race_panel.set_height_ratio(self.height_ratio)
+        self.current_field_energy_race_panel.draw()
+
+        self.current_to_use_field_energy_count.set_width_ratio(self.width_ratio)
+        self.current_to_use_field_energy_count.set_height_ratio(self.height_ratio)
+        self.current_to_use_field_energy_count.update_current_to_use_field_energy_count_panel()
+        self.current_to_use_field_energy_count_panel.set_width_ratio(self.width_ratio)
+        self.current_to_use_field_energy_count_panel.set_height_ratio(self.height_ratio)
+        self.current_to_use_field_energy_count_panel.draw()
+
+        # glDisable(GL_BLEND)
 
     def redraw(self):
         if self.is_reshape_not_complete:
@@ -527,6 +687,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.tkMakeCurrent()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
+        glDisable(GL_DEPTH_TEST)
 
         self.draw_base()
 
@@ -617,6 +779,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.your_hand_prev_button.draw()
         self.your_hand_next_button.draw()
+
+        self.post_draw()
 
         if self.selected_object:
             card_base = None
@@ -766,7 +930,27 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     attached_shape.set_height_ratio(self.height_ratio)
                     attached_shape.draw()
 
+            # left_x_point = self.width * 0.89
+            # right_x_point = self.width * 0.973
+            # top_y_point = self.height * 0.807
+            # bottom_y_point = self.height * 0.968
+            #
+            # temp_rect = Rectangle(
+            #     color=(1.0, 1.0, 1.0, 1.0),
+            #     vertices=[
+            #         (left_x_point, top_y_point),
+            #         (right_x_point, top_y_point),
+            #         (right_x_point, bottom_y_point),
+            #         (left_x_point, bottom_y_point)
+            #     ],
+            #     global_translation=(0, 0),
+            #     local_translation=(0, 0)
+            # )
+            #
+            # temp_rect.draw()
+
             glDisable(GL_BLEND)
+
 
         if self.opponent_tomb_panel_selected:
         # elif self.selected_tomb is TombType.Opponent:
@@ -856,6 +1040,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     attached_shape.draw()
 
             glDisable(GL_BLEND)
+
+        # self.post_draw()
+
+        glEnable(GL_DEPTH_TEST)
 
         self.tkSwapBuffers()
 
@@ -999,11 +1187,15 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                     self.opponent_field_unit_repository.remove_current_field_unit_card(index)
                                     self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
 
-                            your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
-                            self.your_hand_repository.remove_card_by_index(your_card_index)
+                            # your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
+                            # self.your_hand_repository.remove_card_by_index(your_card_index)
+                            your_card_index = self.your_hand_repository.find_index_by_selected_object_with_page(self.selected_object)
+                            self.your_hand_repository.remove_card_by_index_with_page(your_card_index)
+
                             self.your_tomb_repository.create_tomb_card(your_card_id)
 
-                            self.your_hand_repository.replace_hand_card_position()
+                            # self.your_hand_repository.replace_hand_card_position()
+                            self.your_hand_repository.update_your_hand()
                             self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
                             # 실제 날리는 데이터의 경우 서버로부터 응답 받은 정보를 로스트 존으로 배치
@@ -1056,9 +1248,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                         self.your_tomb_repository.create_tomb_card(your_card_id)
 
-                        your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
-                        self.your_hand_repository.remove_card_by_index(your_card_index)
-                        self.your_hand_repository.replace_hand_card_position()
+                        # your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
+                        # self.your_hand_repository.remove_card_by_index(your_card_index)
+                        your_card_index = self.your_hand_repository.find_index_by_selected_object_with_page(self.selected_object)
+                        self.your_hand_repository.remove_card_by_index_with_page(your_card_index)
+
+                        # self.your_hand_repository.replace_hand_card_position()
+                        self.your_hand_repository.update_your_hand()
 
                         self.selected_object = None
                         return
@@ -1135,10 +1331,12 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                 print(f"acquire_energy: {acquire_energy}")
 
                                 self.your_field_energy_repository.increase_your_field_energy(acquire_energy)
-                                self.your_hand_repository.remove_card_by_index(placed_index)
+                                # self.your_hand_repository.remove_card_by_index(placed_index)
+                                self.your_hand_repository.remove_card_by_index_with_page(placed_index)
                                 self.your_field_unit_repository.remove_card_by_index(unit_index)
 
-                                self.your_hand_repository.replace_hand_card_position()
+                                # self.your_hand_repository.replace_hand_card_position()
+                                self.your_hand_repository.update_your_hand()
                                 self.your_field_unit_repository.replace_field_card_position()
 
                                 self.your_tomb_repository.create_tomb_card(card_id)
@@ -1610,6 +1808,72 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                     break
 
+            if self.your_field_energy_panel_selected:
+                print("field_energy_panel_selected")
+                current_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
+                for unit_index, current_field_unit in enumerate(current_field_unit_list):
+                    fixed_card_base = current_field_unit.get_fixed_card_base()
+                    if fixed_card_base.is_point_inside((x, y)):
+                        print("필드 에너지를 붙입니다!")
+
+                        # TODO: 통신해야함
+
+                        self.selected_object = current_field_unit
+                        energy_race = self.your_field_energy_repository.get_current_field_energy_race()
+                        energy_count = self.your_field_energy_repository.get_to_use_field_energy_count()
+                        before_energy_count = self.your_field_unit_repository.get_total_energy_at_index(unit_index)
+
+                        # response = self.__field_energy_application.send_request_to_attach_field_energy_to_unit(
+                        #     unitIndex=unit_index, energyRace = energy_race, energyCount=energy_count
+                        # )
+                        # if not response:
+                        #     self.selected_object = None
+                        #     self.your_field_energy_panel_selected = False
+                        #     return
+
+                        self.your_field_unit_repository.attach_race_energy(
+                            unit_index,
+                            energy_race,
+                            energy_count)
+
+                        your_fixed_field_unit = self.your_field_unit_repository.find_field_unit_by_index(unit_index)
+                        print(f"unit index = {unit_index} , {your_fixed_field_unit}")
+                        fixed_card_base = your_fixed_field_unit.get_fixed_card_base()
+                        fixed_card_attached_shape_list = fixed_card_base.get_attached_shapes()
+                        placed_card_id = self.selected_object.get_card_number()
+                        print(f"placed_card_id : {placed_card_id}")
+                        print(f"card grade : {self.card_info_repository.getCardGradeForCardNumber(placed_card_id)}")
+                        total_attached_energy_count = self.your_field_unit_repository.get_total_energy_at_index(
+                            unit_index)
+                        print(f"total_attached_energy_count: {total_attached_energy_count}")
+
+                        for fixed_card_attached_shape in fixed_card_attached_shape_list:
+                            if isinstance(fixed_card_attached_shape, CircleNumberImage):
+                                if fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+                                    fixed_card_attached_shape.set_image_data(
+                                        self.pre_drawed_image_instance.get_pre_draw_number_image(
+                                            total_attached_energy_count))
+                                    print(f"changed energy: {fixed_card_attached_shape.get_circle_kinds()}")
+
+                        card_race = self.card_info_repository.getCardRaceForCardNumber(placed_card_id)
+                        if card_race == CardRace.UNDEAD.value:
+                            for count in range(before_energy_count+1, total_attached_energy_count+1):
+                                card_race_circle = your_fixed_field_unit.creat_fixed_card_energy_race_circle(
+                                    color=(0, 0, 0, 1),
+                                    vertices=(0, (count * 10) + 20),
+                                    local_translation=fixed_card_base.get_local_translation())
+                                fixed_card_base.set_attached_shapes(card_race_circle)
+
+                        self.selected_object = None
+                        self.your_field_energy_panel_selected = False
+                        self.your_field_energy_repository.decrease_your_field_energy(
+                            self.your_field_energy_repository.get_to_use_field_energy_count()
+                        )
+                        self.your_field_energy_repository.reset_to_use_field_energy_count()
+                        return
+                    else:
+                        self.your_field_energy_panel_selected = False
+
             # if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() is OpponentFieldAreaAction.REQUIRE_ENERGY_TO_USAGE:
             #     print("카드를 사용하기 위해 에너지가 필요합니다!")
             #
@@ -2032,6 +2296,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         proper_handler(your_field_unit_index)
 
                         self.your_tomb_repository.create_tomb_card(current_process_card_id)
+                        self.your_hand_repository.update_your_hand()
 
                         # self.boost_selection = False
                         break
@@ -2087,7 +2352,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     processing_length = len(self.selected_search_unit_index_list)
                     self.your_deck_repository.remove_card_object_list_with_count(processing_length)
 
-                    self.your_hand_repository.create_additional_hand_card_list(self.selected_search_unit_id_list)
+                    # self.your_hand_repository.create_additional_hand_card_list(self.selected_search_unit_id_list)
+                    self.your_hand_repository.save_current_hand_state(self.selected_search_unit_id_list)
+                    self.your_hand_repository.update_your_hand()
                     # self.selected_search_unit_page_number_list
                     self.selected_search_unit_lightning_border = []
 
@@ -2246,7 +2513,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             # for remove_from_field in remove_from_field_list:
 
                             print(f"corpse explosion your hand index: {self.targeting_ememy_select_using_hand_card_index}")
-                            self.your_hand_repository.remove_card_by_index(
+                            # self.your_hand_repository.remove_card_by_index(
+                            #     self.targeting_ememy_select_using_hand_card_index)
+                            self.your_hand_repository.remove_card_by_index_with_page(
                                 self.targeting_ememy_select_using_hand_card_index)
                             self.your_tomb_repository.create_tomb_card(
                                 self.targeting_ememy_select_using_hand_card_id)
@@ -2261,7 +2530,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             self.your_field_unit_repository.remove_card_by_index(self.targeting_enemy_select_using_your_field_card_index)
                             self.your_tomb_repository.create_tomb_card(self.targeting_enemy_for_sacrifice_unit_id)
 
-                            self.your_hand_repository.replace_hand_card_position()
+                            # self.your_hand_repository.replace_hand_card_position()
+                            self.your_hand_repository.update_your_hand()
                             self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
                             self.your_field_unit_repository.replace_field_card_position()
 
@@ -2354,6 +2624,71 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 self.your_lost_zone_panel_selected = False
                 return
 
+            self.turn_end_button_selected = self.left_click_detector.which_one_select_is_in_turn_end_area(
+                (x, y),
+                self.turn_end,
+                self.winfo_reqheight()
+            )
+
+            if self.turn_end_button_selected:
+                self.call_turn_end()
+
+            self.your_field_energy_panel_selected = False
+
+            self.your_field_energy_panel_selected = self.left_click_detector.which_one_select_is_in_your_field_energy_area(
+                (x, y),
+                self.your_field_energy,
+                self.winfo_reqheight()
+            )
+
+            self.next_field_energy_race_panel_selected = self.left_click_detector.which_one_select_is_in_next_field_energy_race_area(
+                (x, y),
+                self.next_field_energy_race,
+                self.winfo_reqheight()
+            )
+
+            if self.next_field_energy_race_panel_selected:
+                self.your_field_energy_repository.to_next_field_energy_race()
+                print(
+                    f"on_canvas_left_click() -> to_next_field_energy_race: {self.your_field_energy_repository.get_current_field_energy_race()}")
+
+            self.prev_field_energy_race_panel_selected = self.left_click_detector.which_one_select_is_in_prev_field_energy_race_area(
+                (x, y),
+                self.prev_field_energy_race,
+                self.winfo_reqheight()
+            )
+
+            if self.prev_field_energy_race_panel_selected:
+                self.your_field_energy_repository.to_prev_field_energy_race()
+                print(
+                    f"on_canvas_left_click() -> to_prev_field_energy_race: {self.your_field_energy_repository.get_current_field_energy_race()}")
+
+            self.increase_to_use_field_energy_count_panel_selected = (
+                self.left_click_detector.which_one_select_is_in_increase_to_use_field_energy_count_area(
+                    (x, y),
+                    self.increase_to_use_field_energy_count,
+                    self.winfo_reqheight()
+                )
+            )
+
+            if self.increase_to_use_field_energy_count_panel_selected:
+                print(f"on_canvas_left_click() -> increase_to_use_field_energy_count(): "
+                      f"{self.your_field_energy_repository.get_to_use_field_energy_count()}")
+                self.your_field_energy_repository.increase_to_use_field_energy_count()
+
+            self.decrease_to_use_field_energy_count_panel_selected = (
+                self.left_click_detector.which_one_select_is_in_decrease_to_use_field_energy_count_area(
+                    (x, y),
+                    self.decrease_to_use_field_energy_count,
+                    self.winfo_reqheight()
+                )
+            )
+
+            if self.decrease_to_use_field_energy_count_panel_selected:
+                print(f"on_canvas_left_click() -> decrease_to_use_field_energy_count(): "
+                      f"{self.your_field_energy_repository.get_to_use_field_energy_count()}")
+                self.your_field_energy_repository.decrease_to_use_field_energy_count()
+
             self.tomb_panel_selected = False
             self.opponent_tomb_panel_selected = False
             self.your_lost_zone_panel_selected = False
@@ -2361,6 +2696,19 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         except Exception as e:
             print(f"Exception in on_canvas_click: {e}")
+
+    def call_turn_end(self):
+        self.round_repository.increase_current_round_number()
+        round = self.round_repository.get_current_round_number()
+        print(f"current round: {round}")
+
+        before_turn_end_field_energy_count = self.your_field_energy_repository.get_your_field_energy()
+        print(f"before_turn_end_field_energy_count: {before_turn_end_field_energy_count}")
+
+        self.your_field_energy_repository.increase_your_field_energy(1)
+
+        after_turn_end_field_energy_count = self.your_field_energy_repository.get_your_field_energy()
+        print(f"after_turn_end_field_energy_count: {after_turn_end_field_energy_count}")
 
     def on_canvas_right_click(self, event):
         x, y = event.x, event.y

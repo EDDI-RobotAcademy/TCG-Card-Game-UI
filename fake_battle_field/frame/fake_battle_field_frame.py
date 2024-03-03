@@ -4,7 +4,7 @@ from shapely import Polygon, Point
 
 from battle_field.application.field_energy_application import FieldEnergyApplication
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
-from battle_field.components.field_area_inside.field_area_inside_handler import FieldAreaInsideHandler
+from battle_field.components.field_area_inside.legacy.field_area_inside_handler import LegacyFieldAreaInsideHandler
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -12,8 +12,8 @@ from pyopengltk import OpenGLFrame
 
 from battle_field.components.mouse_left_click.left_click_detector import LeftClickDetector
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area_action import OpponentFieldAreaAction
-from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
-    OpponentFixedUnitCardInsideHandler
+from battle_field.components.opponent_fixed_unit_card_inside.legacy.opponent_fixed_unit_card_inside_handler import \
+    LegacyOpponentFixedUnitCardInsideHandler
 from battle_field.entity.current_field_energy_race import CurrentFieldEnergyRace
 from battle_field.entity.current_to_use_field_energy_count import CurrentToUseFieldEnergyCount
 from battle_field.entity.decrease_to_use_field_energy_count import DecreaseToUseFieldEnergyCount
@@ -146,10 +146,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
         # self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance()
-        self.field_area_inside_handler = FieldAreaInsideHandler.getInstance()
+        self.field_area_inside_handler = LegacyFieldAreaInsideHandler.getInstance()
         # TODO: Your 카드에 집어넣는 경우도 이것으로 감지하는 것이 더 좋을 것임
         self.your_fixed_unit_card_inside_handler = None
-        self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance()
+        self.opponent_fixed_unit_card_inside_handler = LegacyOpponentFixedUnitCardInsideHandler.getInstance()
         # self.your_tomb_repository = YourTombRepository.getInstance()
 
         self.left_click_detector = LeftClickDetector.getInstance()

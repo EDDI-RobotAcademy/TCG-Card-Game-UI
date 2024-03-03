@@ -42,10 +42,10 @@ class TurnEnd:
         # y1 = 0.767
         # y2 = 0.959
 
-        left_x_point = self.total_width * 0.895
-        right_x_point = self.total_width * 0.985
-        top_y_point = self.total_height * 0.43
-        bottom_y_point = self.total_height * 0.57
+        left_x_point = self.total_width * 0.892
+        right_x_point = self.total_width * 0.99
+        top_y_point = self.total_height * 0.42
+        bottom_y_point = self.total_height * 0.58
         
         self.turn_end_button = Rectangle(
             (0, 0, 0, 0.1),
