@@ -46,7 +46,7 @@ class BattleFieldFunctionRepositoryImpl(BattleFieldFunctionRepository):
         return self.__receiveIpcChannel.get()
 
     def requestGameEnd(self, GameEndRequest):
-        #print(f"게임 종료 요청함 : {GameEndRequest}")
+        print(f"게임 종료 요청함 : {GameEndRequest}")
         self.__transmitIpcChannel.put(GameEndRequest)
         return self.__receiveIpcChannel.get()
 

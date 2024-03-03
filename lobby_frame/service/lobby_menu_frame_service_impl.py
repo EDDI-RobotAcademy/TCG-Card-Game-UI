@@ -253,7 +253,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             )
             if deckNameResponse is not None and deckNameResponse != "":
                 print(f"switchToBattleLobby : 호출됨 {deckNameResponse}")
-                BattleFieldRepository.getInstance().start_game()
+               # BattleFieldRepository.getInstance().start_game()
                 self.__battleLobbyFrameController.startCheckTime()
                 self.__battleLobbyFrameController.createDeckButtons(deckNameResponse, self.__switchFrameWithMenuName)
                 self.__switchFrameWithMenuName("battle-lobby")

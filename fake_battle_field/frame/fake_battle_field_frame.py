@@ -14,6 +14,7 @@ from battle_field.components.mouse_left_click.left_click_detector import LeftCli
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area_action import OpponentFieldAreaAction
 from battle_field.components.opponent_fixed_unit_card_inside.legacy.opponent_fixed_unit_card_inside_handler import \
     LegacyOpponentFixedUnitCardInsideHandler
+from battle_field.entity.battle_result import BattleResult
 from battle_field.entity.current_field_energy_race import CurrentFieldEnergyRace
 from battle_field.entity.current_to_use_field_energy_count import CurrentToUseFieldEnergyCount
 from battle_field.entity.decrease_to_use_field_energy_count import DecreaseToUseFieldEnergyCount
@@ -23,7 +24,9 @@ from battle_field.entity.opponent_field_energy import OpponentFieldEnergy
 from battle_field.entity.opponent_hp import OpponentHp
 from battle_field.entity.opponent_lost_zone import OpponentLostZone
 from battle_field.entity.opponent_tomb import OpponentTomb
+from battle_field.entity.option import Option
 from battle_field.entity.prev_field_energy_race import PrevFieldEnergyRace
+from battle_field.entity.surrender_confirm import SurrenderConfirm
 from battle_field.entity.tomb_type import TombType
 from battle_field.entity.turn_end import TurnEnd
 from battle_field.entity.your_deck import YourDeck
@@ -32,6 +35,7 @@ from battle_field.entity.your_hp import YourHp
 from battle_field.entity.your_lost_zone import YourLostZone
 from battle_field.entity.your_tomb import YourTomb
 from battle_field.handler.support_card_handler import SupportCardHandler
+from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from battle_field.infra.opponent_hp_repository import OpponentHpRepository
@@ -178,6 +182,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         # todo : [이재승]
 
+        self.battle_field_repository = BattleFieldRepository.getInstance()
+
         self.your_hp_panel = None
         self.your_hp = YourHp()
         self.your_hp_repository = YourHpRepository.getInstance()
@@ -225,6 +231,24 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.turn_end = TurnEnd()
         self.turn_end_button = None
         self.turn_end_button_selected = False
+
+        self.option = Option()
+        self.option_button = None
+        self.option_button_selected = False
+        self.option_popup_panel_list = []
+        self.option_popup_surrender_button_selected = False
+        self.option_popup_close_button_selected = False
+
+        self.surrender_confirm = SurrenderConfirm()
+        self.surrender_confirm_panel_list = []
+        self.surrender_confirm_ok_button_selected = False
+        self.surrender_confirm_close_button_selected = False
+
+        self.battle_result = BattleResult()
+        self.battle_result_panel_list = []
+
+
+
 
 
 
@@ -370,6 +394,25 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.turn_end.set_total_window_size(self.width, self.height)
         self.turn_end.create_turn_end_button()
         self.turn_end_button = self.turn_end.get_turn_end_button()
+
+        self.option.set_total_window_size(self.width, self.height)
+        self.option.create_option_button()
+        self.option_button = self.option.get_option_button()
+        self.option.create_option_button_popup_list()
+        self.option_popup_panel_list = self.option.get_option_button_popup_list()
+
+        self.surrender_confirm.set_total_window_size(self.width, self.height)
+        self.surrender_confirm.create_surrender_confirm_panel_list()
+        self.surrender_confirm_panel_list = self.surrender_confirm.get_surrender_confirm_panel_list()
+
+        if self.battle_field_repository.get_is_game_end():
+            print("게임 끝났어 ")
+            self.battle_result.set_total_window_size(self.width, self.height)
+            self.battle_result.create_battle_result_panel_list()
+            self.battle_result_panel_list = self.battle_result.get_battle_result_panel_list()
+
+
+
 
 
     def reshape(self, width, height):
@@ -568,6 +611,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.reshape(event.width, event.height)
 
     def draw_base(self):
+
         for battle_field_muligun_background_shape in self.battle_field_muligun_background_shape_list:
             battle_field_muligun_background_shape.set_width_ratio(self.width_ratio)
             battle_field_muligun_background_shape.set_height_ratio(self.height_ratio)
@@ -606,6 +650,20 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.turn_end.set_height_ratio(self.height_ratio)
         self.turn_end_button.set_draw_border(False)
         self.turn_end_button.draw()
+
+        self.option.set_width_ratio(self.width_ratio)
+        self.option.set_height_ratio(self.height_ratio)
+        self.option_button.set_draw_border(False)
+        self.option_button.draw()
+        if self.option_button_selected:
+            for option_popup_panel in self.option_popup_panel_list:
+                option_popup_panel.draw()
+
+        self.surrender_confirm.set_width_ratio(self.width_ratio)
+        self.surrender_confirm.set_height_ratio(self.height_ratio)
+        if self.option_popup_surrender_button_selected:
+            for surrender_confirm_panel in self.surrender_confirm_panel_list:
+                surrender_confirm_panel.draw()
 
         self.next_field_energy_race.set_width_ratio(self.width_ratio)
         self.next_field_energy_race.set_height_ratio(self.width_ratio)
@@ -678,6 +736,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.opponent_field_energy_panel.draw()
 
 
+
+
+
+
         glDisable(GL_BLEND)
 
     def redraw(self):
@@ -688,6 +750,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         self.draw_base()
+
+        self.current_to_use_field_energy_count.set_width_ratio(self.width_ratio)
+        self.current_to_use_field_energy_count.set_height_ratio(self.height_ratio)
+        self.current_to_use_field_energy_count.update_current_to_use_field_energy_count_panel()
+        self.current_to_use_field_energy_count_panel.draw()
 
         for opponent_field_unit in self.opponent_field_unit_repository.get_current_field_unit_card_object_list():
             attached_tool_card = opponent_field_unit.get_tool_card()
@@ -727,6 +794,19 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
+        if len(self.battle_result_panel_list) is not 0:
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+            self.battle_result.set_width_ratio(self.width_ratio)
+            self.battle_result.set_height_ratio(self.height_ratio)
+            self.battle_result_panel_list[1].draw()
+
+            # for battle_result_panel in self.battle_result_panel_list:
+            #     battle_result_panel.draw()
+
+            glDisable(GL_BLEND)
+
         for hand_card in self.hand_card_list:
             attached_tool_card = hand_card.get_tool_card()
             if attached_tool_card is not None:
@@ -745,6 +825,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape.set_width_ratio(self.width_ratio)
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
+
+
 
         if self.selected_object:
             card_base = None
@@ -912,14 +994,22 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             glDisable(GL_BLEND)
 
+
+
+
+
         self.muligun_reset_button.set_width_ratio(self.width_ratio)
         self.muligun_reset_button.set_height_ratio(self.height_ratio)
         self.muligun_reset_button.draw()
 
-        self.current_to_use_field_energy_count.set_width_ratio(self.width_ratio)
-        self.current_to_use_field_energy_count.set_height_ratio(self.height_ratio)
-        self.current_to_use_field_energy_count.update_current_to_use_field_energy_count_panel()
-        self.current_to_use_field_energy_count_panel.draw()
+
+
+
+
+        if len(self.battle_result_panel_list) is not 0:
+            self.battle_result.set_width_ratio(self.width_ratio)
+            self.battle_result.set_height_ratio(self.height_ratio)
+            self.battle_result_panel_list[0].draw()
 
 
 
@@ -1338,6 +1428,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
             y = self.winfo_reqheight() - y
             print(f"x: {x}, y: {y}")
 
+            if len(self.battle_result_panel_list) is not 0:
+                #print(self.battle_result_panel_list)
+
+                self.battle_field_function_controller.callGameEndReward()
+                self.battle_result_panel_list = []
+                return
+
+
             if self.tomb_panel_selected:
                 if self.your_tomb.is_point_inside_popup_rectangle((x, y)):
                     return
@@ -1359,6 +1457,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.your_lost_zone_panel_selected = False
             self.opponent_lost_zone_panel_selected = False
             self.turn_end_button_selected = False
+            self.option_popup_close_button_selected = False
+            self.surrender_confirm_close_button_selected = False
 
             for hand_card in self.hand_card_list:
                 if isinstance(hand_card, PickableCard):
@@ -1742,6 +1842,53 @@ class FakeBattleFieldFrame(OpenGLFrame):
                       f"{self.your_field_energy_repository.get_to_use_field_energy_count()}")
                 self.your_field_energy_repository.decrease_to_use_field_energy_count()
 
+            print(self.option_button_selected)
+            print(self.surrender_confirm_ok_button_selected)
+
+            if self.option_button_selected or self.option_popup_surrender_button_selected:
+
+                if self.option_popup_surrender_button_selected:
+                    print(f"on click invoke!! : option_popup_surrender_selected")
+
+                    self.surrender_confirm_ok_button_selected = (
+                        self.left_click_detector.which_one_select_is_in_ok_surrender_confirm_area(
+                            (x, y),
+                            self.surrender_confirm,
+                            self.winfo_reqheight()
+                        ))
+
+                    if self.surrender_confirm_ok_button_selected:
+                        print(f"행복해용~~~")
+                        self.battle_field_function_controller.callSurrender()
+
+                    self.surrender_confirm_close_button_selected = (
+                        self.left_click_detector.which_one_select_is_in_close_surrender_confirm_area(
+                            (x, y),
+                            self.surrender_confirm,
+                            self.winfo_reqheight()
+                        ))
+
+                    if self.surrender_confirm_close_button_selected:
+                        print("취소해용~~~")
+                        self.option_popup_surrender_button_selected = False
+
+                self.option_popup_surrender_button_selected = (
+                    self.left_click_detector.which_one_select_is_in_option_surrender_area(
+                        (x, y),
+                        self.option,
+                        self.winfo_reqheight()
+                    ))
+
+
+            self.option_button_selected = self.left_click_detector.which_one_select_is_in_option_area(
+                (x, y),
+                self.option,
+                self.winfo_reqheight()
+            )
+
+
+
+
             self.tomb_panel_selected = False
             self.opponent_tomb_panel_selected = False
             self.your_lost_zone_panel_selected = False
@@ -1860,3 +2007,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     vertices=(0, ((total_attached_energy_count - energy_count) * 10) + 20),
                     local_translation=opponent_fixed_card_base.get_local_translation())
                 opponent_fixed_card_base.set_attached_shapes(card_race_circle)
+
+    def battle_finish(self):
+        self.battle_result.set_total_window_size(self.width, self.height)
+        self.battle_result.create_battle_result_panel_list()
+        self.battle_result_panel_list = self.battle_result.get_battle_result_panel_list()

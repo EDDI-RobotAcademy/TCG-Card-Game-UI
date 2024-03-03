@@ -12,9 +12,12 @@ from session.repository.session_repository_impl import SessionRepositoryImpl
 from session.service.session_service_impl import SessionServiceImpl
 
 
+
 class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
     __instance = None
-    preDrawedBattleFieldFrameRefactor = None
+    preDrawedBattleFieldFrame = None
+    uiFrameController = None
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -22,6 +25,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             cls.__instance.__sessionRepository = SessionRepositoryImpl.getInstance()
             cls.__instance.__sessionService = SessionServiceImpl.getInstance()
             cls.__instance.__yourHandRepository = YourHandRepository.getInstance()
+            cls.__instance.__battle_field_repository = BattleFieldRepository.getInstance()
             #cls.__instance.__opponentHandRepository = OpponentHandRepository.getInstance()
         return cls.__instance
 
@@ -38,8 +42,9 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
         self.__battleFieldFunctionRepository.saveReceiveIpcChannel(receiveIpcChannel)
 
 
-    def saveFrame(self, frame):
+    def saveFrame(self, ui_frame_controller,frame):
         self.preDrawedBattleFieldFrame = frame
+        self.uiFrameController = ui_frame_controller
 
     def surrender(self, switchFrameWithMenuName = None):
         print(f"battleFieldFunctionServiceImpl: Surrender")
@@ -53,8 +58,9 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             switchFrameWithMenuName("lobby-menu")
         else:
             print(f"항복 요청함!!! 응답: {surrender_response}")
-            self.gameEndReward()
-
+            #self.gameEndReward()
+            self.__battle_field_repository.lose()
+            self.preDrawedBattleFieldFrame.battle_finish()
 
 
     def turnEnd(self):
@@ -74,11 +80,14 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             gameEndRewardResponse = self.__battleFieldFunctionRepository.requestGameEnd(
                 GameEndRewardRequest(
                     # _sessionInfo=self.__sessionService.getSessionInfo())
-                    _sessionInfo=self.__sessionRepository.get_session_info())
+                    # _sessionInfo=self.__sessionRepository.get_session_info())
+                    _sessionInfo=self.__sessionRepository.get_first_fake_session_info())
             )
             print(f"게임 끝! 응답: {gameEndRewardResponse}")
             if gameEndRewardResponse:
-                BattleFieldRepository.getInstance().game_end()
+                # self.__battle_field_repository.game_end()
+                self.__battle_field_repository.reset_game_state()
+                self.uiFrameController.switchFrameWithMenuName("lobby-menu")
         except Exception as e:
             print(f"turnEnd Error: {e}")
 
