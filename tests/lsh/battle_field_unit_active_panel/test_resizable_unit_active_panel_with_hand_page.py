@@ -2020,8 +2020,31 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             #         self.selected_object = None
             #         return
 
+            # TODO: 메인 캐릭터 공격할 때도 이쪽 루틴을 타고 있어 Refactoring이 필요함
             if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() is OpponentFieldAreaAction.GENERAL_ATTACK_TO_TARGETING_ENEMY:
                 print("일반 공격 진행")
+
+                if self.opponent_main_character.is_point_inside((x, y)):
+                    print("메인 캐릭터 공격")
+
+                    your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
+                    print(f"your_field_card_id: {your_field_card_id}")
+
+                    your_damage = self.card_info_repository.getCardAttackForCardNumber(your_field_card_id)
+                    print(f"your_damage: {your_damage}")
+
+                    self.opponent_hp_repository.take_damage(your_damage)
+
+                    self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+                    self.targeting_enemy_select_using_your_field_card_index = None
+                    self.targeting_enemy_select_using_your_field_card_id = None
+                    self.targeting_enemy_select_support_lightning_border_list = []
+                    self.opponent_you_selected_lightning_border_list = []
+
+                    self.selected_object = None
+                    self.active_panel_rectangle = None
+
+                    return
 
                 # self.targeting_ememy_select_using_hand_card_id = placed_card_id
                 # self.targeting_ememy_select_using_hand_card_index = placed_index
