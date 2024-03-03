@@ -41,8 +41,46 @@ class AttachedEnergyInfoState:
     def get_energy_info_at_index(self, index):
         return self.attached_energy_info.get(index, [])
 
+    # def get_race_energy_at_index(self, index, energy_type):
+    #     return sum(q for t, q in self.attached_energy_info.get(index, []) if t == energy_type)
+
+    # def get_race_energy_at_index(self, index, energy_type):
+    #     print(f"Debug: get_race_energy_at_index -> index: {index}")
+    #     print(f"Debug: get_race_energy_at_index -> self.attached_energy_info: {self.attached_energy_info}")
+    #
+    #     energy_info = self.attached_energy_info.get(index, [])
+    #     print(f"Debug: get_race_energy_at_index -> energy_info: {energy_info}")
+    #
+    #     sum_quantity = sum(q for t, q in energy_info)
+    #     print(f"Debug: get_race_energy_at_index -> sum_quantity: {sum_quantity}")
+    #
+    #     return sum_quantity
+
+    # def get_race_energy_at_index(self, index, energy_type):
+    #     print(f"Debug: get_race_energy_at_index -> index: {index}")
+    #     print(f"Debug: get_race_energy_at_index -> self.attached_energy_info: {self.attached_energy_info}")
+    #
+    #     energy_info = self.attached_energy_info.get(index, [])
+    #     print(f"Debug: get_race_energy_at_index -> energy_info: {energy_info}")
+    #
+    #     sum_quantity = sum(q for t, q in energy_info if t == energy_type)
+    #     print(f"Debug: get_race_energy_at_index -> sum_quantity: {sum_quantity}")
+    #
+    #     return sum_quantity
+
     def get_race_energy_at_index(self, index, energy_type):
-        return sum(q for t, q in self.attached_energy_info.get(index, []) if t == energy_type)
+        print(f"Debug: get_race_energy_at_index -> index: {index}")
+        print(f"Debug: get_race_energy_at_index -> self.attached_energy_info: {self.attached_energy_info}")
+
+        energy_info = self.attached_energy_info.get(index, [])
+        print(f"Debug: get_race_energy_at_index -> energy_info: {energy_info}")
+
+        # 수정된 부분
+        race_energy_count = sum(
+            q for t, q in energy_info if getattr(t, 'value', t) == getattr(energy_type, 'value', energy_type))
+        print(f"Debug: get_race_energy_at_index -> race_energy_count: {race_energy_count}")
+
+        return race_energy_count
 
     # def get_total_energy_at_index(self, index):
     #     return sum(self.attached_energy_info[index].values()) + self.attached_energy_info_dictionary.get(index, 0)
