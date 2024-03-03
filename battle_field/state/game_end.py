@@ -1,4 +1,5 @@
 class GameEndState:
+
     def __init__(self):
         self.is_game_end = False
         self.is_win = False
@@ -16,3 +17,7 @@ class GameEndState:
 
     def get_is_win_state(self):
         return self.is_win
+
+    def reset_state(self):
+        self.is_game_end = False
+        self.is_win = False

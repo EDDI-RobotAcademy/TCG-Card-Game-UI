@@ -46,3 +46,6 @@ class BattleFieldRepository:
 
     def get_is_win(self):
         return self.__game_end_state.get_is_win_state()
+
+    def reset_game_state(self):
+        self.__game_end_state.reset_state()

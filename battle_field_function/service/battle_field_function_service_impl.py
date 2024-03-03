@@ -86,6 +86,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             print(f"게임 끝! 응답: {gameEndRewardResponse}")
             if gameEndRewardResponse:
                 # self.__battle_field_repository.game_end()
+                self.__battle_field_repository.reset_game_state()
                 self.uiFrameController.switchFrameWithMenuName("lobby-menu")
         except Exception as e:
             print(f"turnEnd Error: {e}")

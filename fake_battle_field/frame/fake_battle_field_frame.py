@@ -245,7 +245,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.surrender_confirm_close_button_selected = False
 
         self.battle_result = BattleResult()
-        self.battle_result_panel = None
+        self.battle_result_panel_list = []
 
 
 
@@ -407,8 +407,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         if self.battle_field_repository.get_is_game_end():
             self.battle_result.set_total_window_size(self.width, self.height)
-            self.battle_result.create_battle_result_panel()
-            self.battle_result_panel = self.battle_result.get_battle_result_panel()
+            self.battle_result.create_battle_result_panel_list()
+            self.battle_result_panel_list = self.battle_result.get_battle_result_panel_list()
 
 
 
@@ -971,6 +971,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             glDisable(GL_BLEND)
 
+
+
         self.muligun_reset_button.set_width_ratio(self.width_ratio)
         self.muligun_reset_button.set_height_ratio(self.height_ratio)
         self.muligun_reset_button.draw()
@@ -996,13 +998,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 animation_test_image.set_height_ratio(self.height_ratio)
                 animation_test_image_panel.draw()
 
-        if self.battle_result_panel is not None:
+        if len(self.battle_result_panel_list) is not 0:
             glEnable(GL_BLEND)
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
             self.battle_result.set_width_ratio(self.width_ratio)
             self.battle_result.set_height_ratio(self.height_ratio)
-            self.battle_result_panel.draw()
+            # self.battle_result_panel_list[0].draw()
+
+            for battle_result_panel in self.battle_result_panel_list:
+                battle_result_panel.draw()
 
             glDisable(GL_BLEND)
 
@@ -1407,8 +1412,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
             y = self.winfo_reqheight() - y
             print(f"x: {x}, y: {y}")
 
-            if self.battle_result_panel:
+            if len(self.battle_result_panel_list) is not 0:
+                #print(self.battle_result_panel_list)
+
                 self.battle_field_function_controller.callGameEndReward()
+                self.battle_result_panel_list = []
                 return
 
 
@@ -1986,5 +1994,5 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
     def battle_finish(self):
         self.battle_result.set_total_window_size(self.width, self.height)
-        self.battle_result.create_battle_result_panel()
-        self.battle_result_panel = self.battle_result.get_battle_result_panel()
+        self.battle_result.create_battle_result_panel_list()
+        self.battle_result_panel_list = self.battle_result.get_battle_result_panel_list()
