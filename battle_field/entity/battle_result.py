@@ -77,7 +77,7 @@ class BattleResult:
         top_y_point = self.total_height * 0.35
         bottom_y_point = self.total_height * 0.65
 
-        battle_result_text = RectangleImage(
+        battle_result_text = NonBackgroundImage(
             image_data,
             [
                 (left_x_point, top_y_point),
