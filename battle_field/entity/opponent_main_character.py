@@ -63,8 +63,12 @@ class OpponentMainCharacter:
             for x, y in opponent_main_character_panel.get_vertices()
         ]
 
+        print(f"point_x: {point_x}, point_y: {point_y}")
+        print(f"translated_vertices: {translated_vertices}")
+
         if not (translated_vertices[0][0] <= point_x <= translated_vertices[2][0] and
-                translated_vertices[1][1] <= point_y <= translated_vertices[0][1]):
+                translated_vertices[0][1] <= point_y <= translated_vertices[2][1]):
+            print("opponent_main_character_panel result -> False")
             return False
 
         print("opponent_main_character_panel result -> True")
