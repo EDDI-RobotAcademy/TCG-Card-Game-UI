@@ -1809,6 +1809,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     break
 
             if self.your_field_energy_panel_selected:
+                print("field_energy_panel_selected")
                 current_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
                 for unit_index, current_field_unit in enumerate(current_field_unit_list):
                     fixed_card_base = current_field_unit.get_fixed_card_base()
@@ -1822,13 +1823,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         energy_count = self.your_field_energy_repository.get_to_use_field_energy_count()
                         before_energy_count = self.your_field_unit_repository.get_total_energy_at_index(unit_index)
 
-                        response = self.__field_energy_application.send_request_to_attach_field_energy_to_unit(
-                            unitIndex=unit_index, energyRace = energy_race, energyCount=energy_count
-                        )
-                        if not response:
-                            self.selected_object = None
-                            self.your_field_energy_panel_selected = False
-                            return
+                        # response = self.__field_energy_application.send_request_to_attach_field_energy_to_unit(
+                        #     unitIndex=unit_index, energyRace = energy_race, energyCount=energy_count
+                        # )
+                        # if not response:
+                        #     self.selected_object = None
+                        #     self.your_field_energy_panel_selected = False
+                        #     return
 
                         self.your_field_unit_repository.attach_race_energy(
                             unit_index,
@@ -2631,6 +2632,14 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             if self.turn_end_button_selected:
                 self.call_turn_end()
+
+            self.your_field_energy_panel_selected = False
+
+            self.your_field_energy_panel_selected = self.left_click_detector.which_one_select_is_in_your_field_energy_area(
+                (x, y),
+                self.your_field_energy,
+                self.winfo_reqheight()
+            )
 
             self.next_field_energy_race_panel_selected = self.left_click_detector.which_one_select_is_in_next_field_energy_race_area(
                 (x, y),
