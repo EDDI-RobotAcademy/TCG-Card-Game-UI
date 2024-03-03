@@ -123,6 +123,7 @@ class LeftClickDetector:
         if your_field_energy_zone.is_point_inside((x, y)):
             return your_field_energy_zone
 
+        print("your field energy clicked")
         return None
 
     def which_one_select_is_in_next_field_energy_race_area(self, click_point, next_field_energy_race_zone,
