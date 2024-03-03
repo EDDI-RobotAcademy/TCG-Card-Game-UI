@@ -75,7 +75,6 @@ class AttachedEnergyInfoState:
         energy_info = self.attached_energy_info.get(index, [])
         print(f"Debug: get_race_energy_at_index -> energy_info: {energy_info}")
 
-        # 수정된 부분
         race_energy_count = sum(
             q for t, q in energy_info if getattr(t, 'value', t) == getattr(energy_type, 'value', energy_type))
         print(f"Debug: get_race_energy_at_index -> race_energy_count: {race_energy_count}")
