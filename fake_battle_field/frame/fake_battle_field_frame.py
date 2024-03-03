@@ -14,6 +14,7 @@ from battle_field.components.mouse_left_click.left_click_detector import LeftCli
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area_action import OpponentFieldAreaAction
 from battle_field.components.opponent_fixed_unit_card_inside.legacy.opponent_fixed_unit_card_inside_handler import \
     LegacyOpponentFixedUnitCardInsideHandler
+from battle_field.entity.battle_result import BattleResult
 from battle_field.entity.current_field_energy_race import CurrentFieldEnergyRace
 from battle_field.entity.current_to_use_field_energy_count import CurrentToUseFieldEnergyCount
 from battle_field.entity.decrease_to_use_field_energy_count import DecreaseToUseFieldEnergyCount
@@ -34,6 +35,7 @@ from battle_field.entity.your_hp import YourHp
 from battle_field.entity.your_lost_zone import YourLostZone
 from battle_field.entity.your_tomb import YourTomb
 from battle_field.handler.support_card_handler import SupportCardHandler
+from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from battle_field.infra.opponent_hp_repository import OpponentHpRepository
@@ -180,6 +182,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         # todo : [이재승]
 
+        self.battle_field_repository = BattleFieldRepository.getInstance()
+
         self.your_hp_panel = None
         self.your_hp = YourHp()
         self.your_hp_repository = YourHpRepository.getInstance()
@@ -239,6 +243,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.surrender_confirm_panel_list = []
         self.surrender_confirm_ok_button_selected = False
         self.surrender_confirm_close_button_selected = False
+
+        self.battle_result = BattleResult()
+        self.battle_result_panel = None
+
 
 
 
@@ -396,6 +404,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.surrender_confirm.set_total_window_size(self.width, self.height)
         self.surrender_confirm.create_surrender_confirm_panel_list()
         self.surrender_confirm_panel_list = self.surrender_confirm.get_surrender_confirm_panel_list()
+
+        if self.battle_field_repository.get_is_game_end():
+            self.battle_result.set_total_window_size(self.width, self.height)
+            self.battle_result.create_battle_result_panel()
+            self.battle_result_panel = self.battle_result.get_battle_result_panel()
+
+
 
 
 
@@ -595,6 +610,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.reshape(event.width, event.height)
 
     def draw_base(self):
+
         for battle_field_muligun_background_shape in self.battle_field_muligun_background_shape_list:
             battle_field_muligun_background_shape.set_width_ratio(self.width_ratio)
             battle_field_muligun_background_shape.set_height_ratio(self.height_ratio)
@@ -717,6 +733,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.opponent_field_energy.set_height_ratio(self.height_ratio)
         self.opponent_field_energy.update_current_opponent_field_energy_panel()
         self.opponent_field_energy_panel.draw()
+
+
 
 
         glDisable(GL_BLEND)
@@ -977,6 +995,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 animation_test_image.set_width_ratio(self.width_ratio)
                 animation_test_image.set_height_ratio(self.height_ratio)
                 animation_test_image_panel.draw()
+
+        if self.battle_result_panel is not None:
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+            self.battle_result.set_width_ratio(self.width_ratio)
+            self.battle_result.set_height_ratio(self.height_ratio)
+            self.battle_result_panel.draw()
+
+            glDisable(GL_BLEND)
 
 
 
@@ -1378,6 +1406,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
             x, y = event.x, event.y
             y = self.winfo_reqheight() - y
             print(f"x: {x}, y: {y}")
+
+            if self.battle_result_panel:
+                self.battle_field_function_controller.callGameEndReward()
+                return
+
 
             if self.tomb_panel_selected:
                 if self.your_tomb.is_point_inside_popup_rectangle((x, y)):
@@ -1950,3 +1983,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     vertices=(0, ((total_attached_energy_count - energy_count) * 10) + 20),
                     local_translation=opponent_fixed_card_base.get_local_translation())
                 opponent_fixed_card_base.set_attached_shapes(card_race_circle)
+
+    def battle_finish(self):
+        self.battle_result.set_total_window_size(self.width, self.height)
+        self.battle_result.create_battle_result_panel()
+        self.battle_result_panel = self.battle_result.get_battle_result_panel()

@@ -1,0 +1,67 @@
+from battle_field.infra.battle_field_repository import BattleFieldRepository
+from image_shape.rectangle_image import RectangleImage
+from opengl_shape.rectangle import Rectangle
+from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
+
+
+class BattleResult:
+    __pre_drawed_image = PreDrawedImage.getInstance()
+    __battle_field_repository = BattleFieldRepository.getInstance()
+
+    def __init__(self):
+        self.battle_result_panel = None
+
+        self.total_width = None
+        self.total_height = None
+
+        self.width_ratio = 1
+        self.height_ratio = 1
+
+    def set_total_window_size(self, width, height):
+        self.total_width = width
+        self.total_height = height
+
+    def get_width_ratio(self):
+        return self.width_ratio
+
+    def set_width_ratio(self, width_ratio):
+        self.width_ratio = width_ratio
+
+    def get_height_ratio(self):
+        return self.height_ratio
+
+    def set_height_ratio(self, height_ratio):
+        self.height_ratio = height_ratio
+
+    def change_local_translation(self, _translation):
+        self.local_translation = _translation
+
+    def get_battle_result_panel(self):
+        return self.battle_result_panel
+
+    def create_battle_result_panel(self):
+        # x1 = 0.138
+        # x2 = 0.224
+        # y1 = 0.767
+        # y2 = 0.959
+
+        left_x_point = self.total_width * 0
+        right_x_point = self.total_width * 1
+        top_y_point = self.total_height * 0.3
+        bottom_y_point = self.total_height * 0.7
+
+        print(f"게임 끝~~ {self.__battle_field_repository.get_is_game_end()}")
+        print(f"이겼냐 {self.__battle_field_repository.get_is_win()}")
+
+        self.battle_result_panel = Rectangle(
+            (0, 0, 0, 0.5),
+            [
+                (left_x_point, top_y_point),
+                (right_x_point, top_y_point),
+                (right_x_point, bottom_y_point),
+                (left_x_point, bottom_y_point)
+            ],
+            (0, 0),
+            (0, 0))
+        self.battle_result_panel.set_draw_border(False)
+

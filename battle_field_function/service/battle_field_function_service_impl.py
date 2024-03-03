@@ -17,6 +17,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
     __instance = None
     preDrawedBattleFieldFrame = None
     uiFrameController = None
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -24,6 +25,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             cls.__instance.__sessionRepository = SessionRepositoryImpl.getInstance()
             cls.__instance.__sessionService = SessionServiceImpl.getInstance()
             cls.__instance.__yourHandRepository = YourHandRepository.getInstance()
+            cls.__instance.__battle_field_repository = BattleFieldRepository.getInstance()
             #cls.__instance.__opponentHandRepository = OpponentHandRepository.getInstance()
         return cls.__instance
 
@@ -56,8 +58,9 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             switchFrameWithMenuName("lobby-menu")
         else:
             print(f"항복 요청함!!! 응답: {surrender_response}")
-            self.gameEndReward()
-
+            #self.gameEndReward()
+            self.__battle_field_repository.lose()
+            self.preDrawedBattleFieldFrame.battle_finish()
 
 
     def turnEnd(self):
@@ -82,7 +85,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             )
             print(f"게임 끝! 응답: {gameEndRewardResponse}")
             if gameEndRewardResponse:
-                BattleFieldRepository.getInstance().game_end()
+                # self.__battle_field_repository.game_end()
                 self.uiFrameController.switchFrameWithMenuName("lobby-menu")
         except Exception as e:
             print(f"turnEnd Error: {e}")
