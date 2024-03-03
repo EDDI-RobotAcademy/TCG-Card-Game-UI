@@ -1606,6 +1606,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         fixed_opponent_card_base = opponent_field_unit_object.get_fixed_card_base()
                         self.targeting_enemy_select_support_lightning_border_list.append(fixed_opponent_card_base)
 
+                    self.targeting_enemy_select_support_lightning_border_list.append(self.opponent_main_character_panel)
+
                     self.opponent_fixed_unit_card_inside_handler.set_opponent_field_area_action(OpponentFieldAreaAction.GENERAL_ATTACK_TO_TARGETING_ENEMY)
 
                     your_field_unit_id = self.selected_object.get_card_number()

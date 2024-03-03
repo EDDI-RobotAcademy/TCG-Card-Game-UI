@@ -44,10 +44,10 @@ class OpponentMainCharacter:
         self.opponent_main_character_panel = Rectangle(
             (0.0, 0.0, 0.0, 0.1),
             [
-                (left_x_point, bottom_y_point),
                 (left_x_point, top_y_point),
                 (right_x_point, top_y_point),
-                (right_x_point, bottom_y_point)
+                (right_x_point, bottom_y_point),
+                (left_x_point, bottom_y_point),
             ],
             (0, 0),
             (0, 0))
