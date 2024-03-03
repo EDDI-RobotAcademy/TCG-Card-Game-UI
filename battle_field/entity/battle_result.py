@@ -39,8 +39,9 @@ class BattleResult:
 
     def create_battle_result_panel_list(self):
         self.battle_result_panel_list = []
-        self.create_battle_result_panel()
         self.create_battle_result_text()
+        self.create_battle_result_panel()
+
 
 
     def create_battle_result_panel(self):

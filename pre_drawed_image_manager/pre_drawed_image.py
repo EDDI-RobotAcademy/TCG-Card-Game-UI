@@ -170,6 +170,7 @@ class PreDrawedImage:
 
     def pre_draw_lose_text(self):
         lose_text_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
+                                            # "win.png")
                                             "lose.png")
         self.__pre_drawed_lose_text = ImageDataLoader.load_rectangle_image_data(lose_text_image_path)
 

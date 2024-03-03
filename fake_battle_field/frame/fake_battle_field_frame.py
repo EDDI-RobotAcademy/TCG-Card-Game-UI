@@ -738,6 +738,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
 
 
+
+
         glDisable(GL_BLEND)
 
     def redraw(self):
@@ -748,6 +750,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
         self.draw_base()
+
+        self.current_to_use_field_energy_count.set_width_ratio(self.width_ratio)
+        self.current_to_use_field_energy_count.set_height_ratio(self.height_ratio)
+        self.current_to_use_field_energy_count.update_current_to_use_field_energy_count_panel()
+        self.current_to_use_field_energy_count_panel.draw()
 
         for opponent_field_unit in self.opponent_field_unit_repository.get_current_field_unit_card_object_list():
             attached_tool_card = opponent_field_unit.get_tool_card()
@@ -787,6 +794,19 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
+        if len(self.battle_result_panel_list) is not 0:
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+            self.battle_result.set_width_ratio(self.width_ratio)
+            self.battle_result.set_height_ratio(self.height_ratio)
+            self.battle_result_panel_list[1].draw()
+
+            # for battle_result_panel in self.battle_result_panel_list:
+            #     battle_result_panel.draw()
+
+            glDisable(GL_BLEND)
+
         for hand_card in self.hand_card_list:
             attached_tool_card = hand_card.get_tool_card()
             if attached_tool_card is not None:
@@ -805,6 +825,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape.set_width_ratio(self.width_ratio)
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
+
+
 
         if self.selected_object:
             card_base = None
@@ -974,14 +996,20 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
 
 
+
+
         self.muligun_reset_button.set_width_ratio(self.width_ratio)
         self.muligun_reset_button.set_height_ratio(self.height_ratio)
         self.muligun_reset_button.draw()
 
-        self.current_to_use_field_energy_count.set_width_ratio(self.width_ratio)
-        self.current_to_use_field_energy_count.set_height_ratio(self.height_ratio)
-        self.current_to_use_field_energy_count.update_current_to_use_field_energy_count_panel()
-        self.current_to_use_field_energy_count_panel.draw()
+
+
+
+
+        if len(self.battle_result_panel_list) is not 0:
+            self.battle_result.set_width_ratio(self.width_ratio)
+            self.battle_result.set_height_ratio(self.height_ratio)
+            self.battle_result_panel_list[0].draw()
 
 
 
@@ -998,19 +1026,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 animation_test_image.set_width_ratio(self.width_ratio)
                 animation_test_image.set_height_ratio(self.height_ratio)
                 animation_test_image_panel.draw()
-
-        if len(self.battle_result_panel_list) is not 0:
-            glEnable(GL_BLEND)
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-
-            self.battle_result.set_width_ratio(self.width_ratio)
-            self.battle_result.set_height_ratio(self.height_ratio)
-            # self.battle_result_panel_list[0].draw()
-
-            for battle_result_panel in self.battle_result_panel_list:
-                battle_result_panel.draw()
-
-            glDisable(GL_BLEND)
 
 
 
