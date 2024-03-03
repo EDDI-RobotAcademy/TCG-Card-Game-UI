@@ -2567,6 +2567,54 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             if self.turn_end_button_selected:
                 self.call_turn_end()
 
+            self.next_field_energy_race_panel_selected = self.left_click_detector.which_one_select_is_in_next_field_energy_race_area(
+                (x, y),
+                self.next_field_energy_race,
+                self.winfo_reqheight()
+            )
+
+            if self.next_field_energy_race_panel_selected:
+                self.your_field_energy_repository.to_next_field_energy_race()
+                print(
+                    f"on_canvas_left_click() -> to_next_field_energy_race: {self.your_field_energy_repository.get_current_field_energy_race()}")
+
+            self.prev_field_energy_race_panel_selected = self.left_click_detector.which_one_select_is_in_prev_field_energy_race_area(
+                (x, y),
+                self.prev_field_energy_race,
+                self.winfo_reqheight()
+            )
+
+            if self.prev_field_energy_race_panel_selected:
+                self.your_field_energy_repository.to_prev_field_energy_race()
+                print(
+                    f"on_canvas_left_click() -> to_prev_field_energy_race: {self.your_field_energy_repository.get_current_field_energy_race()}")
+
+            self.increase_to_use_field_energy_count_panel_selected = (
+                self.left_click_detector.which_one_select_is_in_increase_to_use_field_energy_count_area(
+                    (x, y),
+                    self.increase_to_use_field_energy_count,
+                    self.winfo_reqheight()
+                )
+            )
+
+            if self.increase_to_use_field_energy_count_panel_selected:
+                print(f"on_canvas_left_click() -> increase_to_use_field_energy_count(): "
+                      f"{self.your_field_energy_repository.get_to_use_field_energy_count()}")
+                self.your_field_energy_repository.increase_to_use_field_energy_count()
+
+            self.decrease_to_use_field_energy_count_panel_selected = (
+                self.left_click_detector.which_one_select_is_in_decrease_to_use_field_energy_count_area(
+                    (x, y),
+                    self.decrease_to_use_field_energy_count,
+                    self.winfo_reqheight()
+                )
+            )
+
+            if self.decrease_to_use_field_energy_count_panel_selected:
+                print(f"on_canvas_left_click() -> decrease_to_use_field_energy_count(): "
+                      f"{self.your_field_energy_repository.get_to_use_field_energy_count()}")
+                self.your_field_energy_repository.decrease_to_use_field_energy_count()
+
             self.tomb_panel_selected = False
             self.opponent_tomb_panel_selected = False
             self.your_lost_zone_panel_selected = False
@@ -2579,6 +2627,14 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.round_repository.increase_current_round_number()
         round = self.round_repository.get_current_round_number()
         print(f"current round: {round}")
+
+        before_turn_end_field_energy_count = self.your_field_energy_repository.get_to_use_field_energy_count()
+        print(f"before_turn_end_field_energy_count: {before_turn_end_field_energy_count}")
+
+        self.your_field_energy_repository.increase_your_field_energy(1)
+
+        after_turn_end_field_energy_count = self.your_field_energy_repository.get_to_use_field_energy_count()
+        print(f"after_turn_end_field_energy_count: {after_turn_end_field_energy_count}")
 
     def on_canvas_right_click(self, event):
         x, y = event.x, event.y
