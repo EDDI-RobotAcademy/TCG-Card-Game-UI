@@ -44,6 +44,7 @@ class CustomProtocol(Enum):
     UNIT_SECOND_SKILL = 1023
 
     TURN_END = 3333
+    BATTLE_FINISH = 4442
     SURRENDER = 4443
     PROGRAM_EXIT = 4444
 

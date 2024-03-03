@@ -4,7 +4,7 @@ from common.protocol import CustomProtocol
 
 class GameEndRewardRequest:
     def __init__(self, _sessionInfo):
-        self.__protocolNumber = CustomProtocol.TURN_END.value
+        self.__protocolNumber = CustomProtocol.BATTLE_FINISH.value
       #  self.__roomNumber = BattleFieldFunctionRepositoryImpl.getInstance().getRoomNumber()
         self.__isWinner = BattleFieldRepository.getInstance().is_win
         self.__sessionInfo = _sessionInfo

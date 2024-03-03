@@ -12,9 +12,11 @@ from session.repository.session_repository_impl import SessionRepositoryImpl
 from session.service.session_service_impl import SessionServiceImpl
 
 
+
 class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
     __instance = None
-    preDrawedBattleFieldFrameRefactor = None
+    preDrawedBattleFieldFrame = None
+    uiFrameController = None
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -38,8 +40,9 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
         self.__battleFieldFunctionRepository.saveReceiveIpcChannel(receiveIpcChannel)
 
 
-    def saveFrame(self, frame):
+    def saveFrame(self, ui_frame_controller,frame):
         self.preDrawedBattleFieldFrame = frame
+        self.uiFrameController = ui_frame_controller
 
     def surrender(self, switchFrameWithMenuName = None):
         print(f"battleFieldFunctionServiceImpl: Surrender")
@@ -80,6 +83,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             print(f"게임 끝! 응답: {gameEndRewardResponse}")
             if gameEndRewardResponse:
                 BattleFieldRepository.getInstance().game_end()
+                self.uiFrameController.switchFrameWithMenuName("lobby-menu")
         except Exception as e:
             print(f"turnEnd Error: {e}")
 

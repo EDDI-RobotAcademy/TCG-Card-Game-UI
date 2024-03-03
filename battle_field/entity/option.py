@@ -1,3 +1,4 @@
+from image_shape.rectangle_image import RectangleImage
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
@@ -86,15 +87,15 @@ class Option:
 
     def create_option_button_popup_list(self):
         self.create_option_button_popup_surrender_button()
-        self.create_option_button_popup_cancel_button()
+        #self.create_option_button_popup_cancel_button()
         self.create_option_button_popup()
 
 
     def create_option_button_popup(self):
         width_left = self.total_width * 0.045
         width_right = self.total_width * 0.13
-        height_top = self.total_height * 0.425
-        height_bottom = self.total_height * 0.575
+        height_top = self.total_height * 0.455
+        height_bottom = self.total_height * 0.535
 
         option_button_popup = Rectangle(
             (0.0, 0.0, 0.0, 0.5),
@@ -113,23 +114,23 @@ class Option:
 
     def create_option_button_popup_surrender_button(self):
 
-        width_left = self.total_width * 0.047
-        width_right = self.total_width * 0.127
-        height_top = self.total_height * 0.432
-        height_bottom = self.total_height * 0.492
+        width_left = self.total_width * 0.049
+        width_right = self.total_width * 0.125
+        height_top = self.total_height * 0.465
+        height_bottom = self.total_height * 0.525
 
-        surrender_button = Rectangle(
-            (1.0, 0.0, 0.0, 0.5),
+        surrender_button = RectangleImage(
+            self.__pre_drawed_image.get_pre_draw_surrender_button(),
             [
                 (width_left, height_top),
-                (width_left, height_bottom),
+                (width_right, height_top),
                 (width_right, height_bottom),
-                (width_right, height_top)
+                (width_left, height_bottom)
             ],
             (0, 0),
             (0, 0))
 
-        surrender_button.set_draw_border(False)
+        #surrender_button.set_draw_border(False)
 
         self.option_button_popup_list.append(surrender_button)
 
@@ -168,8 +169,8 @@ class Option:
             for x, y in option_close.get_vertices()
         ]
 
-        if not (translated_vertices[0][0] <= point_x <= translated_vertices[2][0] and
-                translated_vertices[0][1] <= point_y <= translated_vertices[1][1]):
+        if not (translated_vertices[0][0] <= point_x <= translated_vertices[1][0] and
+                translated_vertices[0][1] <= point_y <= translated_vertices[2][1]):
             return False
 
         print("opponent tomb popup panel result -> True")
@@ -187,8 +188,8 @@ class Option:
             for x, y in option_surrender.get_vertices()
         ]
 
-        if not (translated_vertices[0][0] <= point_x <= translated_vertices[2][0] and
-                translated_vertices[0][1] <= point_y <= translated_vertices[1][1]):
+        if not (translated_vertices[0][0] <= point_x <= translated_vertices[1][0] and
+                translated_vertices[0][1] <= point_y <= translated_vertices[2][1]):
             return False
 
         print("opponent tomb popup panel result -> True")

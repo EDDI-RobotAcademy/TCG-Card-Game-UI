@@ -1788,7 +1788,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             print(self.option_button_selected)
             print(self.surrender_confirm_ok_button_selected)
 
-            if self.option_button_selected:
+            if self.option_button_selected or self.option_popup_surrender_button_selected:
 
                 if self.option_popup_surrender_button_selected:
                     print(f"on click invoke!! : option_popup_surrender_selected")
@@ -1822,23 +1822,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.winfo_reqheight()
                     ))
 
-                self.option_popup_close_button_selected = self.left_click_detector.which_one_select_is_in_option_close_area(
-                    (x,y),
-                    self.option,
-                    self.winfo_reqheight()
-                )
 
-                if self.option_popup_close_button_selected:
-                    print(f"on click invoke!! : option_popup_close_selected")
-                    self.option_button_selected = False
-
-
-            if not self.option_popup_surrender_button_selected:
-                self.option_button_selected = self.left_click_detector.which_one_select_is_in_option_area(
-                    (x, y),
-                    self.option,
-                    self.winfo_reqheight()
-                )
+            self.option_button_selected = self.left_click_detector.which_one_select_is_in_option_area(
+                (x, y),
+                self.option,
+                self.winfo_reqheight()
+            )
 
 
 

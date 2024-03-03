@@ -11,7 +11,7 @@ class PreDrawedImage:
 
     __project_root = get_project_root()
 
-    __pre_drawed_card_frame ={}
+    __pre_drawed_card_frame = {}
 
     __pre_drawed_card_illustration = {}
 
@@ -27,7 +27,6 @@ class PreDrawedImage:
     __pre_drawed_freezing = None
 
     __pre_drawed_gif = None
-
 
     __pre_drawed_opponent_tomb = None
     __pre_drawed_opponent_lost_zone = None
@@ -54,8 +53,6 @@ class PreDrawedImage:
 
     __pre_drawed_confirm_button = None
 
-
-
     __pre_drawed_prev_button = None
     __pre_drawed_reset_button = None
     __pre_drawed_battle_field_muligun_background = None
@@ -71,6 +68,9 @@ class PreDrawedImage:
 
     __pre_drawed_number_of_energy = {}
 
+    __pre_drawed_surrender_button = None
+    __pre_drawed_surrender_confirm_panel = None
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -84,7 +84,8 @@ class PreDrawedImage:
 
     def pre_draw_card_frame(self):
         for card_number in self.__card_info_from_csv_repository.getCardNumber():
-            card_frame_image_data = os.path.join(self.__project_root, "local_storage", "card_frame", f"{card_number}.png")
+            card_frame_image_data = os.path.join(self.__project_root, "local_storage", "card_frame",
+                                                 f"{card_number}.png")
             self.__pre_drawed_card_frame[card_number] = ImageDataLoader.load_rectangle_image_data(card_frame_image_data)
 
     def pre_draw_opponent_tomb(self):
@@ -92,7 +93,8 @@ class PreDrawedImage:
         self.__pre_drawed_opponent_tomb = ImageDataLoader.load_rectangle_image_data(tomb_image_path)
 
     def pre_draw_opponent_lost_zone(self):
-        lost_zone_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "lost_zone.png")
+        lost_zone_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
+                                            "lost_zone.png")
         self.__pre_drawed_opponent_lost_zone = ImageDataLoader.load_rectangle_image_data(lost_zone_image_path)
 
     def pre_draw_opponent_trap(self):
@@ -100,27 +102,35 @@ class PreDrawedImage:
         self.__pre_drawed_opponent_trap = ImageDataLoader.load_rectangle_image_data(trap_image_path)
 
     def pre_draw_opponent_card_deck(self):
-        opponent_card_deck_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "opponent_card_deck.png")
+        opponent_card_deck_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
+                                                     "opponent_card_deck.png")
         self.__pre_drawed_opponent_card_deck = ImageDataLoader.load_rectangle_image_data(opponent_card_deck_image_path)
 
     def pre_draw_opponent_main_character(self):
-        opponent_main_character_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "main_character.png")
-        self.__pre_drawed_opponent_main_character = ImageDataLoader.load_oval_image_data(opponent_main_character_image_path)
+        opponent_main_character_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
+                                                          "main_character.png")
+        self.__pre_drawed_opponent_main_character = ImageDataLoader.load_oval_image_data(
+            opponent_main_character_image_path)
 
     def pre_draw_opponent_hand_panel(self):
-        opponent_hand_panel_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "background.png")
-        self.__pre_drawed_opponent_hand_panel = ImageDataLoader.load_rectangle_image_data(opponent_hand_panel_image_path)
+        opponent_hand_panel_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
+                                                      "background.png")
+        self.__pre_drawed_opponent_hand_panel = ImageDataLoader.load_rectangle_image_data(
+            opponent_hand_panel_image_path)
 
     def pre_draw_opponent_unit_field(self):
-        opponent_unit_field_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "background.png")
-        self.__pre_drawed_opponent_unit_field = ImageDataLoader.load_rectangle_image_data(opponent_unit_field_image_path)
+        opponent_unit_field_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
+                                                      "background.png")
+        self.__pre_drawed_opponent_unit_field = ImageDataLoader.load_rectangle_image_data(
+            opponent_unit_field_image_path)
 
     def pre_draw_your_tomb(self):
         tomb_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "tomb.jpeg")
         self.__pre_drawed_your_tomb = ImageDataLoader.load_rectangle_image_data(tomb_image_path)
 
     def pre_draw_your_lost_zone(self):
-        lost_zone_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "lost_zone.png")
+        lost_zone_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
+                                            "lost_zone.png")
         self.__pre_drawed_your_lost_zone = ImageDataLoader.load_rectangle_image_data(lost_zone_image_path)
 
     def pre_draw_your_trap(self):
@@ -128,41 +138,52 @@ class PreDrawedImage:
         self.__pre_drawed_your_trap = ImageDataLoader.load_rectangle_image_data(trap_image_path)
 
     def pre_draw_your_card_deck(self):
-        your_card_deck_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "your_card_deck.png")
+        your_card_deck_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
+                                                 "your_card_deck.png")
         self.__pre_drawed_your_card_deck = ImageDataLoader.load_rectangle_image_data(your_card_deck_image_path)
 
     def pre_draw_your_main_character(self):
-        your_main_character_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "main_character.png")
+        your_main_character_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
+                                                      "main_character.png")
         self.__pre_drawed_your_main_character = ImageDataLoader.load_oval_image_data(your_main_character_image_path)
 
     def pre_draw_your_hand_panel(self):
-        your_hand_panel_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "background.png")
+        your_hand_panel_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
+                                                  "background.png")
         self.__pre_drawed_your_hand_panel = ImageDataLoader.load_rectangle_image_data(your_hand_panel_image_path)
 
     def pre_draw_your_unit_field(self):
-        your_unit_field_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "background.png")
+        your_unit_field_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
+                                                  "background.png")
         self.__pre_drawed_your_unit_field = ImageDataLoader.load_rectangle_image_data(your_unit_field_image_path)
 
     def pre_draw_battle_field_environment(self):
-        battle_field_environment_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "environment.jpeg")
-        self.__pre_drawed_battle_field_environment = ImageDataLoader.load_rectangle_image_data(battle_field_environment_image_path)
+        battle_field_environment_image_path = os.path.join(self.__project_root, "local_storage", "image",
+                                                           "battle_field", "environment.jpeg")
+        self.__pre_drawed_battle_field_environment = ImageDataLoader.load_rectangle_image_data(
+            battle_field_environment_image_path)
 
     def pre_draw_win_text(self):
-        win_text_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "win_text.png")
+        win_text_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
+                                           "win_text.png")
         self.__pre_drawed_win_text = ImageDataLoader.load_rectangle_image_data(win_text_image_path)
 
     def pre_draw_lose_text(self):
-        lose_text_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "lose_text.png")
+        lose_text_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
+                                            "lose_text.png")
         self.__pre_drawed_lose_text = ImageDataLoader.load_rectangle_image_data(lose_text_image_path)
 
     def pre_draw_turn_end_button(self):
-        turn_end_button_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "turn_end_button.png")
+        turn_end_button_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
+                                                  "turn_end_button.png")
         self.__pre_drawed_turn_end_button = ImageDataLoader.load_rectangle_image_data(turn_end_button_image_path)
 
     def pre_draw_card_illustration(self):
         for card_number in self.__card_info_from_csv_repository.getCardNumber():
-            card_illustration_image_data = os.path.join(self.__project_root, "local_storage", "card_images", f"{card_number}.png")
-            self.__pre_drawed_card_illustration[card_number] = ImageDataLoader.load_rectangle_image_data(card_illustration_image_data)
+            card_illustration_image_data = os.path.join(self.__project_root, "local_storage", "card_images",
+                                                        f"{card_number}.png")
+            self.__pre_drawed_card_illustration[card_number] = ImageDataLoader.load_rectangle_image_data(
+                card_illustration_image_data)
 
     def pre_draw_character_hp(self):
         image_dir = os.path.join(self.__project_root, "local_storage", "card_number_image")
@@ -172,7 +193,6 @@ class PreDrawedImage:
             number_image_data = os.path.join(self.__project_root, "local_storage", "card_number_image", f"{number}.png")
             print(f"image data = {number_image_data}")
             self.__pre_drawed_character_hp[number] = ImageDataLoader.load_rectangle_image_data(number_image_data)
-
 
     def pre_draw_rectangle_number_image(self):
         image_dir = os.path.join(self.__project_root, "local_storage", "card_number_image")
@@ -184,7 +204,8 @@ class PreDrawedImage:
             self.__pre_drawed_rectangle_number[number] = ImageDataLoader.load_rectangle_image_data(number_image_data)
 
     def pre_draw_confirm_button(self):
-        confirm_button_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "confirm_button.png")
+        confirm_button_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
+                                                 "confirm_button.png")
         self.__pre_drawed_turn_end_button = ImageDataLoader.load_rectangle_image_data(confirm_button_image_path)
 
     def pre_draw_card_race(self):
@@ -199,7 +220,6 @@ class PreDrawedImage:
             print(f"race_number: {race_number}")
             card_race_image_data = os.path.join(self.__project_root, "local_storage", "card_race_image", f"{png_file}")
             card_race_image_data_list[race_number] = ImageDataLoader.load_circle_image_data(card_race_image_data)
-
 
         for card_number in self.__card_info_from_csv_repository.getCardNumber():
             race_number = self.__card_info_from_csv_repository.getCardRaceForCardNumber(card_number)
@@ -216,7 +236,6 @@ class PreDrawedImage:
             print(f"race_number: {race_number}")
             card_race_image_data = os.path.join(self.__project_root, "local_storage", "card_race_image", f"{png_file}")
             self.__pre_drawed_energy_race[race_number] = ImageDataLoader.load_circle_image_data(card_race_image_data)
-
 
     def pre_draw_card_type(self):
         image_dir = os.path.join(self.__project_root, "local_storage", "card_type_image")
@@ -246,7 +265,8 @@ class PreDrawedImage:
         for png_file in png_files:
             attack_number = int(png_file[:-4])
             print(f"number images: {attack_number}")
-            card_attack_image_data = os.path.join(self.__project_root, "local_storage", "card_number_image", f"{png_file}")
+            card_attack_image_data = os.path.join(self.__project_root, "local_storage", "card_number_image",
+                                                  f"{png_file}")
             card_attack_image_data_list[attack_number] = ImageDataLoader.load_circle_image_data(card_attack_image_data)
 
         for card_number in self.__card_info_from_csv_repository.getCardNumber():
@@ -288,19 +308,24 @@ class PreDrawedImage:
     def pre_draw_battle_field_muligun_background(self, width, height):
         print(f"pre_draw_battle_field_muligun_background -> width = {width}, height = {height}")
 
-        muligun_battle_field_background = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "muligun_battle_field_background.png")
-        self.__pre_drawed_battle_field_muligun_background = ImageDataLoader.load_background_image_data(muligun_battle_field_background, width, height)
+        muligun_battle_field_background = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
+                                                       "muligun_battle_field_background.png")
+        self.__pre_drawed_battle_field_muligun_background = ImageDataLoader.load_background_image_data(
+            muligun_battle_field_background, width, height)
 
     def pre_draw_dark_flame_energy(self):
-        dark_flame_energy_image_path = os.path.join(self.__project_root, "local_storage", "card_special_energy_image", "dark_flame.png")
+        dark_flame_energy_image_path = os.path.join(self.__project_root, "local_storage", "card_special_energy_image",
+                                                    "dark_flame.png")
         self.__pre_drawed_dark_flame = ImageDataLoader.load_circle_image_data(dark_flame_energy_image_path)
 
     def pre_draw_freezing_energy(self):
-        freezing_energy_image_path = os.path.join(self.__project_root, "local_storage", "card_special_energy_image", "freezing.png")
+        freezing_energy_image_path = os.path.join(self.__project_root, "local_storage", "card_special_energy_image",
+                                                  "freezing.png")
         self.__pre_drawed_freezing = ImageDataLoader.load_circle_image_data(freezing_energy_image_path)
 
     def pre_draw_reset_button(self):
-        reset_button_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "reset_button.png")
+        reset_button_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
+                                               "reset_button.png")
         self.__pre_drawed_reset_button = ImageDataLoader.load_rectangle_image_data(reset_button_image_path)
 
     def pre_draw_card_back_frame(self):
@@ -310,12 +335,12 @@ class PreDrawedImage:
 
     def pre_draw_next_gold_button(self):
         next_gold_button_image_path = os.path.join(self.__project_root, "local_storage", "button_image",
-                                                  "next_gold_button.png")
+                                                   "next_gold_button.png")
         self.__pre_drawed_next_gold_button = ImageDataLoader.load_rectangle_image_data(next_gold_button_image_path)
 
     def pre_draw_prev_gold_button(self):
         prev_gold_button_image_path = os.path.join(self.__project_root, "local_storage", "button_image",
-                                                  "prev_gold_button.png")
+                                                   "prev_gold_button.png")
         self.__pre_drawed_prev_gold_button = ImageDataLoader.load_rectangle_image_data(prev_gold_button_image_path)
 
     def pre_draw_ok_button(self):
@@ -328,7 +353,8 @@ class PreDrawedImage:
         file_list = os.listdir(image_dir)
 
         for number in range(0, len(file_list)):
-            field_energy_image_data = os.path.join(self.__project_root, "local_storage", "field_energy_image", f"{number}.png")
+            field_energy_image_data = os.path.join(self.__project_root, "local_storage", "field_energy_image",
+                                                   f"{number}.png")
             print(f"image data = {field_energy_image_data}")
             self.__pre_drawed_field_energy[number] = ImageDataLoader.load_rectangle_image_data(field_energy_image_data)
 
@@ -349,7 +375,8 @@ class PreDrawedImage:
         file_list = os.listdir(image_dir)
 
         for number in range(0, len(file_list)):
-            animation_image_data = os.path.join(self.__project_root, "local_storage", "number_of_energy", f"{number}.png")
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "number_of_energy",
+                                                f"{number}.png")
             # animation_image_data = os.path.join(self.__project_root, "local_storage", "animation_for_test", f"{number}.png")
             print(f"animation image data = {animation_image_data}")
             self.__pre_drawed_number_of_energy[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
@@ -357,8 +384,22 @@ class PreDrawedImage:
     def pre_draw_battle_field_background(self, width, height):
         print(f"pre_draw_battle_field_background -> width = {width}, height = {height}")
 
-        battle_field_background = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "battle_field_background.png")
-        self.__pre_drawed_battle_field_background = ImageDataLoader.load_background_image_data(battle_field_background, width, height)
+        battle_field_background = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
+                                               "battle_field_background.png")
+        self.__pre_drawed_battle_field_background = ImageDataLoader.load_background_image_data(battle_field_background,
+                                                                                               width, height)
+
+    def pre_draw_surrender_button(self):
+        surrender_button_image_path = os.path.join(self.__project_root, "local_storage", "option",
+                                                   "surrender_button.png")
+        self.__pre_drawed_surrender_button = ImageDataLoader.load_rectangle_image_data(
+            surrender_button_image_path)
+
+    def pre_draw_surrender_confirm_panel(self):
+        surrender_confirm_panel_image_path = os.path.join(self.__project_root, "local_storage", "option",
+                                                          "surrender_screen.png")
+        self.__pre_drawed_surrender_confirm_panel = ImageDataLoader.load_rectangle_image_data(
+            surrender_confirm_panel_image_path)
 
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
@@ -413,6 +454,9 @@ class PreDrawedImage:
         self.pre_draw_animation()
 
         self.pre_draw_number_of_energy()
+
+        self.pre_draw_surrender_button()
+        self.pre_draw_surrender_confirm_panel()
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
@@ -505,7 +549,6 @@ class PreDrawedImage:
     def get_pre_draw_lose_text(self):
         return self.__pre_drawed_lose_text
 
-
     def get_pre_drawed_confirm_button(self):
         return self.__pre_drawed_confirm_button
 
@@ -520,7 +563,7 @@ class PreDrawedImage:
 
     def get_pre_draw_reset_button(self):
         return self.__pre_drawed_reset_button
-      
+
     def get_pre_draw_card_back_frame(self):
         return self.__pre_drawed_card_back_frame
 
@@ -539,9 +582,14 @@ class PreDrawedImage:
     def get_pre_draw_field_energy(self, number=0):
         return self.__pre_drawed_field_energy[number]
 
-
-    def get_pre_draw_animation(self, number = 0):
+    def get_pre_draw_animation(self, number=0):
         return self.__pre_drawed_animation[number]
 
-    def get_pre_draw_number_of_energy(self, number = 0):
+    def get_pre_draw_number_of_energy(self, number=0):
         return self.__pre_drawed_number_of_energy[number]
+
+    def get_pre_draw_surrender_button(self):
+        return self.__pre_drawed_surrender_button
+
+    def get_pre_draw_surrender_confirm_panel(self):
+        return self.__pre_drawed_surrender_confirm_panel
