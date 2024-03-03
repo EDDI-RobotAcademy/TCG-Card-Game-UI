@@ -38,6 +38,7 @@ class BattleResult:
         return self.battle_result_panel_list
 
     def create_battle_result_panel_list(self):
+        self.battle_result_panel_list = []
         self.create_battle_result_panel()
         self.create_battle_result_text()
 

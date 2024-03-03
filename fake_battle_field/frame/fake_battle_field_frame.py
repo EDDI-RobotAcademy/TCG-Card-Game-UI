@@ -406,6 +406,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.surrender_confirm_panel_list = self.surrender_confirm.get_surrender_confirm_panel_list()
 
         if self.battle_field_repository.get_is_game_end():
+            print("게임 끝났어 ")
             self.battle_result.set_total_window_size(self.width, self.height)
             self.battle_result.create_battle_result_panel_list()
             self.battle_result_panel_list = self.battle_result.get_battle_result_panel_list()
