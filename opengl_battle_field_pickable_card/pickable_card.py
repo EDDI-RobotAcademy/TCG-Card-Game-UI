@@ -1,10 +1,10 @@
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from image_shape.rectangle_image import RectangleImage
 from image_shape.rectangle_kinds import RectangleKinds
+from opengl_battle_field_card_controller.card_controller_impl import CardControllerImpl
 from opengl_pickable_shape.pickable_rectangle import PickableRectangle
 from opengl_shape.image_rectangle_element import ImageRectangleElement
 from opengl_shape.rectangle import Rectangle
-from opengl_battle_field_card_controller.legacy.card_controller_impl import LegacyCardControllerImpl
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
@@ -22,7 +22,7 @@ class PickableCard:
         self.index = 0
 
         self.card_info = CardInfoFromCsvRepositoryImpl.getInstance()
-        self.card_controller = LegacyCardControllerImpl.getInstance()
+        self.card_controller = CardControllerImpl.getInstance()
 
     def get_card_number(self):
         return self.card_number
