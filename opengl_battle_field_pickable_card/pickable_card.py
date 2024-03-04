@@ -12,7 +12,7 @@ from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from tests.lsh.ugly_draw_battle_field.test_draw_battle_field import ImageRectangleElementRefactor
 
 
-class PickableCard:
+class LegacyPickableCard:
     __imagePath = None
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
 

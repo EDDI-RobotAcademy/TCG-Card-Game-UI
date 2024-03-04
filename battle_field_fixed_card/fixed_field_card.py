@@ -13,7 +13,7 @@ from opengl_battle_field_card_controller.card_controller_impl import CardControl
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
-class FixedFieldCard:
+class LegacyFixedFieldCard:
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
 
     def __init__(self, local_translation=(0, 0), scale=1):

@@ -1,5 +1,5 @@
 from battle_field.state.current_tomb import CurrentTombState
-from battle_field_fixed_card.fixed_field_card import FixedFieldCard
+from battle_field_fixed_card.fixed_field_card import LegacyFixedFieldCard
 
 
 class RoundRepository:

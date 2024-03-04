@@ -7,7 +7,7 @@ from pyopengltk import OpenGLFrame
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
-from opengl_battle_field_pickable_card.pickable_card import PickableCard
+from opengl_battle_field_pickable_card.pickable_card import LegacyPickableCard
 from opengl_my_card_main_frame_legacy_not_yet_deleted.entity.my_deck_register_scene import MyDeckRegisterScene
 from tkinter_shape.alpha_rectangle import AlphaRectangle
 from tkinter_shape.image_rectangle_element import ImageRectangel
@@ -90,7 +90,7 @@ class MyCardMainFrame(OpenGLFrame):
         y = 20
         for number in all_card_number[:9]:
             try:
-                card = PickableCard(local_translation=(x, y))
+                card = LegacyPickableCard(local_translation=(x, y))
                 card.init_card(int(number))
                 self.my_card_main_scene.add_card_list(card)
                 print(f"카드 리스트에 잘 담겼니?{self.my_card_main_scene.get_card_list()}")

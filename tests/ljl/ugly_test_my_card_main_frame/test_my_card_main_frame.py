@@ -7,7 +7,7 @@ import tkinter as tk
 
 from pyopengltk import OpenGLFrame
 
-from opengl_battle_field_pickable_card.pickable_card import PickableCard
+from opengl_battle_field_pickable_card.pickable_card import LegacyPickableCard
 from PIL import Image, ImageTk
 
 from tkinter_shape.shape import Shape
@@ -39,7 +39,7 @@ class CardFrame(OpenGLFrame):
         y = 20
         for number in data_card_number:
             try:
-                card = PickableCard(local_translation=(x, y))
+                card = LegacyPickableCard(local_translation=(x, y))
                 card.init_card(int(number))
                 self.card_list.append(card)
                 print(f"카드 리스트: {self.card_list}")
