@@ -33,12 +33,11 @@ class UnitCard:
         # 가로 대비 세로 => 1.343
         # 양측으로 벌리니까 => 1.1715
         vertices = [
-            (center[0] - radius, center[1] + radius * 1.1715),
-            (center[0] + radius, center[1] + radius * 1.1715),
-            (center[0] + radius, center[1] - radius * 1.1715),
-            (center[0] - radius, center[1] - radius * 1.1715),
+            (center[0] - radius, center[1] + radius * 1.343),
+            (center[0] + radius, center[1] + radius * 1.343),
+            (center[0] + radius, center[1] - radius * 1.343),
+            (center[0] - radius, center[1] - radius * 1.343),
         ]
-        image_data = self.__pre_drawed_image_instance.get_pre_draw_unit_energy(energy_number)
         unit_energy_image = NonBackgroundNumberImage(image_data=image_data,
                                                      vertices=vertices,
                                                      number=energy_number)
@@ -47,12 +46,18 @@ class UnitCard:
         unit_energy_image.set_visible(False)
         self.add_shape(unit_energy_image)
 
-    def create_unit_race_illustration_circle(self, image_data, center, radius):
-        # print(f"create_unit_race_illustration_circle -> center: {center}")
-        unit_race_circle = CircleImage(image_data=image_data,
-                                       center=center,
-                                       radius=radius)
-        self.add_shape(unit_race_circle)
+    def create_non_background_unit_race(self, image_data, center, radius):
+        vertices = [
+            (center[0] - radius, center[1] - radius),
+            (center[0] + radius, center[1] - radius),
+            (center[0] + radius, center[1] + radius),
+            (center[0] - radius, center[1] + radius),
+        ]
+
+        unit_race_image = NonBackgroundImage(image_data=image_data,
+                                             vertices=vertices)
+        unit_race_image.set_initial_vertices(vertices)
+        self.add_shape(unit_race_image)
 
     def create_unit_attack_circle(self, image_data, attack_number, center, radius):
         unit_attack_circle = CircleNumberImage(image_data=image_data,
@@ -79,8 +84,10 @@ class UnitCard:
             radius=circle_radius
         )
 
-        self.create_unit_race_illustration_circle(
-            image_data=self.__pre_drawed_image_instance.get_pre_draw_card_race_with_card_number(card_number),
+        race_number = self.__card_info_from_csv_repository.getCardRaceForCardNumber(card_number)
+
+        self.create_non_background_unit_race(
+            image_data=self.__pre_drawed_image_instance.get_pre_draw_unit_race(race_number),
             center=(rectangle_width, 0),
             radius=circle_radius)
 

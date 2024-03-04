@@ -464,13 +464,23 @@ class PreDrawedImage:
             self.__pre_drawed_unit_attack[number] = ImageDataLoader.load_rectangle_origin_image_data(unit_attack_image_path)
 
     def pre_draw_unit_race(self):
+        # unit_race_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_race")
+        # unit_race_image_file_list = os.listdir(unit_race_image_path)
+        #
+        # for number in range(0, len(unit_race_image_file_list)):
+        #     unit_race_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_race", f"{number}.png")
+        #     print(f"unit_race_image_path = {unit_race_image_path}")
+        #     self.__pre_drawed_unit_race[number] = ImageDataLoader.load_rectangle_origin_image_data(unit_race_image_path)
+
         unit_race_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_race")
         unit_race_image_file_list = os.listdir(unit_race_image_path)
+        png_files = [file for file in unit_race_image_file_list if file.lower().endswith('.png')]
 
-        for number in range(0, len(unit_race_image_file_list)):
-            unit_race_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_race", f"{number}.png")
-            print(f"unit_race_image_path = {unit_race_image_path}")
-            self.__pre_drawed_unit_race[number] = ImageDataLoader.load_rectangle_origin_image_data(unit_race_image_path)
+        for png_file in png_files:
+            race_number = int(png_file[:-4])
+            print(f"pre_draw_unit_race() -> race_number: {race_number}")
+            unit_race_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_race", f"{png_file}")
+            self.__pre_drawed_unit_race[race_number] = ImageDataLoader.load_rectangle_origin_image_data(unit_race_image_path)
 
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
@@ -696,5 +706,6 @@ class PreDrawedImage:
     def get_pre_draw_unit_attack(self, number):
         return self.__pre_drawed_unit_attack[number]
 
-    def get_pre_draw_unit_race(self, number):
-        return self.__pre_drawed_unit_race[number]
+    def get_pre_draw_unit_race(self, race_number):
+        # return self.__pre_drawed_unit_race[number]
+        return self.__pre_drawed_unit_race[race_number]

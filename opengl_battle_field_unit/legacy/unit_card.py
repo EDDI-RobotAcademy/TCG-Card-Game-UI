@@ -5,6 +5,7 @@ from common.utility import get_project_root
 from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
+from image_shape.non_background_image import NonBackgroundImage
 from image_shape.non_background_number_image import NonBackgroundNumberImage
 from opengl_pickable_shape.pickable_rectangle import PickableRectangle
 from opengl_shape.circle import Circle
@@ -104,6 +105,18 @@ class LegacyUnitCard:
                                        radius=radius)
         self.add_shape(unit_race_circle)
 
+        # vertices = [
+        #     (center[0] - radius, center[1] - radius),
+        #     (center[0] + radius, center[1] - radius),
+        #     (center[0] + radius, center[1] + radius),
+        #     (center[0] - radius, center[1] + radius),
+        # ]
+        #
+        # unit_race_image = NonBackgroundImage(image_data=image_data,
+        #                                      vertices=vertices)
+        # unit_race_image.set_initial_vertices(vertices)
+        # self.add_shape(unit_race_image)
+
     def create_unit_attack_circle(self, image_data, attack_number, center, radius):
         unit_attack_circle = CircleNumberImage(image_data=image_data,
                                                center=center,
@@ -129,8 +142,12 @@ class LegacyUnitCard:
             radius=circle_radius
         )
 
+        # race_number = self.__card_info_from_csv_repository.getCardRaceForCardNumber(card_number)
+        # image_data = self.__pre_drawed_image_instance.get_pre_draw_unit_race(race_number)
+
         self.create_unit_race_illustration_circle(
             image_data=self.__pre_drawed_image_instance.get_pre_draw_card_race_with_card_number(card_number),
+            # image_data=image_data,
             center=(rectangle_width, 0),
             radius=circle_radius)
 
