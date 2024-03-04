@@ -75,8 +75,8 @@ class MyCardMainFrame(OpenGLFrame):
         # 나의 덱 화면
         my_deck_rectangle = Rectangle(color=(0.5137, 0.3608, 0.2314, 1.0),
                                       local_translation=(0, 0),
-                                      vertices=[(0.75 * self.width, 0), (self.width, 0), (self.width, self.height),
-                                                (0.75 * self.width, self.height)])
+                                      vertices=[(0.80 * self.width, 0), (self.width, 0), (self.width, self.height),
+                                                (0.80 * self.width, self.height)])
 
         self.my_card_main_scene.add_my_card_background(my_deck_rectangle)
         #print(f"덱 화면 잘 들어갔니?:{self.my_card_main_scene.get_my_card_background()}")
@@ -130,14 +130,14 @@ class MyCardMainFrame(OpenGLFrame):
         # print(f"카드 번호 리스트: {all_card_number}")
         # print(f"카드 번호 길이: {len(all_card_number)}")
 
-        x = 50
+        x = 100
         y = 50
 
         for i, number in enumerate(all_card_number):
             try:
                 #print(f"index: {i}, card number: {number}")
-                card = PickableCard(local_translation=(x, y), scale=350)
-                card.init_card(number)
+                card = PickableCard(local_translation=(x, y))
+                card.init_card_in_my_card_frame(number)
                 self.my_card_main_scene.add_card_list(card)
                 #print(f"카드 리스트: {self.my_card_main_scene.get_card_list()}")
 
@@ -145,9 +145,9 @@ class MyCardMainFrame(OpenGLFrame):
 
                 if (i + 1) % 4 == 0:  # 4개씩
                     y = 500
-                    x = 50
+                    x = 100
                     if (i + 1) % 8 == 0:
-                        x = 50
+                        x = 100
                         y = 50
 
                 if (i + 1) % 8 == 0:
