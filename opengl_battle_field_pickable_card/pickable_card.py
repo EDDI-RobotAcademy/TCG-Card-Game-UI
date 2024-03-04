@@ -8,7 +8,7 @@ from opengl_battle_field_card_controller.legacy.card_controller_impl import Lega
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
-class LegacyPickableCard:
+class PickableCard:
     __imagePath = None
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
 
@@ -73,8 +73,8 @@ class LegacyPickableCard:
         pickable_card_base = PickableRectangle(color=color,
                                                local_translation=local_translation,
                                                vertices=vertices)
-        # print(f"create_card_base_pickable_rectangle -> pickable_card_base: {pickable_card_base.vertices}")
-        pickable_card_base.set_draw_gradient(True)
+
+        # pickable_card_base.set_draw_gradient(True)
         pickable_card_base.set_initial_vertices(vertices)
         return pickable_card_base
 
@@ -87,7 +87,7 @@ class LegacyPickableCard:
         card_illustration.set_initial_vertices(vertices)
         return card_illustration
 
-    def creat_frame(self, image_data, vertices, local_translation):
+    def create_card_frame(self, image_data, vertices, local_translation):
         card_frame = RectangleImage(image_data=image_data,
                                     local_translation=local_translation,
                                     vertices=vertices)
@@ -109,25 +109,12 @@ class LegacyPickableCard:
         rectangle_height = 170
         rectangle_width = 105
 
-        print(f"rectangle_width: {rectangle_width}")
-        print(f"rectangle_height: {rectangle_height}")
-
-        # self.set_initial_position()
-
-        # cardInfo = CardInfoFromCsvRepositoryImpl.getInstance()
-        # csvInfo = cardInfo.readCardData(os.path.join(project_root, 'local_storage', 'card', 'data.csv'))
-        # cardInfo.build_dictionaries(csvInfo)
-
-        # CardControllerImpl()
-        # card_controller = CardControllerImpl.getInstance()
-
         self.tool_card = self.create_attached_tool_card_rectangle(
             color=(0.6, 0.4, 0.6, 1.0),
             local_translation=self.local_translation,
             vertices=[(15, 15), (120, 15), (120, 185), (15, 185)])
 
         basic_pickable_card_base_vertices = [(0, 0), (105, 0), (105, 170), (0, 170)]
-        # self.set_initial_vertices(basic_pickable_card_base_vertices)
 
         self.pickable_card_base = (
             self.create_card_base_pickable_rectangle(
@@ -138,7 +125,7 @@ class LegacyPickableCard:
         )
 
         self.pickable_card_base.set_attached_shapes(
-            self.creat_frame(
+            self.create_card_frame(
                 image_data=self.__pre_drawed_image_instance.get_pre_draw_card_frame_for_card_number(card_number),
                 local_translation=self.local_translation,
                 vertices=basic_pickable_card_base_vertices
@@ -152,14 +139,6 @@ class LegacyPickableCard:
                 vertices=[(10, 25), (95, 25), (95, 100), (10, 100)]
             )
         )
-
-        # self.pickable_card_base.set_attached_shapes(
-        #     self.create_equipped_mark(
-        #         image_path=os.path.join(project_root, "local_storage", "card_images", "equip_white.jpg"),
-        #         local_translation=self.local_translation,
-        #         vertices=[(rectangle_width + 40, 30), (rectangle_width + 80, 30), (rectangle_width + 80, 70), (rectangle_width + 40, 70)]
-        #     )
-        # )
 
         card_controller_shapes = self.card_controller.getCardTypeTable(self.card_info.getCardTypeForCardNumber(card_number))
         card_shapes = card_controller_shapes(self.local_translation, card_number, rectangle_height, rectangle_width)
@@ -202,7 +181,7 @@ class LegacyPickableCard:
         )
 
         self.pickable_card_base.set_attached_shapes(
-            self.creat_frame(
+            self.create_card_frame(
                 image_data=self.__pre_drawed_image_instance.get_pre_draw_card_frame_for_card_number(card_number),
                 local_translation=self.local_translation,
                 vertices=basic_pickable_card_base_vertices
@@ -253,7 +232,7 @@ class LegacyPickableCard:
         )
 
         self.pickable_card_base.set_attached_shapes(
-            self.creat_frame(
+            self.create_card_frame(
                 image_data=self.__pre_drawed_image_instance.get_pre_draw_card_frame_for_card_number(card_number),
                 local_translation=self.local_translation,
                 vertices=basic_pickable_card_base_vertices
