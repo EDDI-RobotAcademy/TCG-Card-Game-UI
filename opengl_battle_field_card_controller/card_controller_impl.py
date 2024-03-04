@@ -7,7 +7,7 @@ from opengl_battle_field_support.support_card import SupportCard
 from opengl_battle_field_token.token_card import TokenCard
 from opengl_battle_field_tool.tool_card import ToolCard
 from opengl_battle_field_trap.trap_card import TrapCard
-from opengl_battle_field_unit.legacy.unit_card import LegacyUnitCard
+from opengl_battle_field_unit.unit_card import UnitCard
 
 circle_radius = 20
 
@@ -62,7 +62,7 @@ class CardControllerImpl(CardController):
 
     def unitCardInitShapes(self, local_translation, card_number, rectangle_height, rectangle_width):
         print("unitCardInitShapes 생성")
-        unitCard = LegacyUnitCard(local_translation)
+        unitCard = UnitCard(local_translation)
         print("카드 생성")
         unitCard.init_shapes(circle_radius, card_number, rectangle_height, rectangle_width)
         print("모양 생성")
