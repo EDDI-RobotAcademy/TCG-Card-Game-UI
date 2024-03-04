@@ -794,7 +794,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
-        if len(self.battle_result_panel_list) is not 0:
+        if len(self.battle_result_panel_list) != 0:
             glEnable(GL_BLEND)
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
@@ -806,6 +806,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             #     battle_result_panel.draw()
 
             glDisable(GL_BLEND)
+
 
         for hand_card in self.hand_card_list:
             attached_tool_card = hand_card.get_tool_card()
@@ -828,204 +829,202 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
 
 
-        if self.selected_object:
-            card_base = None
+        if len(self.battle_result_panel_list) == 0:
+            if self.selected_object:
+                card_base = None
 
-            if isinstance(self.selected_object, FixedFieldCard):
-                card_base = self.selected_object.get_fixed_card_base()
-            elif isinstance(self.selected_object, PickableCard):
-                card_base = self.selected_object.get_pickable_card_base()
+                if isinstance(self.selected_object, FixedFieldCard):
+                    card_base = self.selected_object.get_fixed_card_base()
+                elif isinstance(self.selected_object, PickableCard):
+                    card_base = self.selected_object.get_pickable_card_base()
 
-            self.lightning_border.set_width_ratio(self.width_ratio)
-            self.lightning_border.set_height_ratio(self.height_ratio)
+                self.lightning_border.set_width_ratio(self.width_ratio)
+                self.lightning_border.set_height_ratio(self.height_ratio)
 
-            self.lightning_border.set_padding(50)
-            self.lightning_border.update_shape(card_base)
-            self.lightning_border.draw_lightning_border()
+                self.lightning_border.set_padding(50)
+                self.lightning_border.update_shape(card_base)
+                self.lightning_border.draw_lightning_border()
 
-        if self.active_panel_rectangle:
-            # self.active_panel_rectangle.set_width_ratio(self.width_ratio)
-            # self.active_panel_rectangle.set_height_ratio(self.height_ratio)
-            self.active_panel_rectangle.draw()
+            if self.active_panel_rectangle:
+                # self.active_panel_rectangle.set_width_ratio(self.width_ratio)
+                # self.active_panel_rectangle.set_height_ratio(self.height_ratio)
+                self.active_panel_rectangle.draw()
 
-        for your_lightning_border in self.field_area_inside_handler.get_lightning_border_list():
-            self.lightning_border.set_padding(20)
-            self.lightning_border.update_shape(your_lightning_border)
-            self.lightning_border.draw_lightning_border()
+            for your_lightning_border in self.field_area_inside_handler.get_lightning_border_list():
+                self.lightning_border.set_padding(20)
+                self.lightning_border.update_shape(your_lightning_border)
+                self.lightning_border.draw_lightning_border()
 
-        for your_field_unit_lightning_border in self.your_field_unit_lightning_border_list:
-            your_field_unit_lightning_border.set_width_ratio(self.width_ratio)
-            your_field_unit_lightning_border.set_height_ratio(self.height_ratio)
+            for your_field_unit_lightning_border in self.your_field_unit_lightning_border_list:
+                your_field_unit_lightning_border.set_width_ratio(self.width_ratio)
+                your_field_unit_lightning_border.set_height_ratio(self.height_ratio)
 
-            self.lightning_border.set_padding(20)
-            self.lightning_border.update_shape(your_field_unit_lightning_border)
-            self.lightning_border.draw_lightning_border()
+                self.lightning_border.set_padding(20)
+                self.lightning_border.update_shape(your_field_unit_lightning_border)
+                self.lightning_border.draw_lightning_border()
 
-        for your_hand_lightning_border in self.opponent_fixed_unit_card_inside_handler.get_lightning_border_list():
-            self.lightning_border.set_padding(20)
-            self.lightning_border.update_shape(your_hand_lightning_border)
-            self.lightning_border.draw_lightning_border()
+            for your_hand_lightning_border in self.opponent_fixed_unit_card_inside_handler.get_lightning_border_list():
+                self.lightning_border.set_padding(20)
+                self.lightning_border.update_shape(your_hand_lightning_border)
+                self.lightning_border.draw_lightning_border()
 
-        for required_energy_selection_border in self.required_energy_select_lightning_border_list:
-            required_energy_selection_border.set_width_ratio(self.width_ratio)
-            required_energy_selection_border.set_height_ratio(self.height_ratio)
+            for required_energy_selection_border in self.required_energy_select_lightning_border_list:
+                required_energy_selection_border.set_width_ratio(self.width_ratio)
+                required_energy_selection_border.set_height_ratio(self.height_ratio)
 
-            self.lightning_border.set_padding(20)
-            self.lightning_border.update_shape(required_energy_selection_border)
-            self.lightning_border.draw_lightning_border()
+                self.lightning_border.set_padding(20)
+                self.lightning_border.update_shape(required_energy_selection_border)
+                self.lightning_border.draw_lightning_border()
 
-        if self.tomb_panel_selected:
-        # if self.selected_tomb is TombType.Your:
-            glEnable(GL_BLEND)
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+            if self.tomb_panel_selected:
+            # if self.selected_tomb is TombType.Your:
+                glEnable(GL_BLEND)
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-            self.tomb_panel_popup_rectangle.set_width_ratio(self.width_ratio)
-            self.tomb_panel_popup_rectangle.set_height_ratio(self.height_ratio)
-            self.tomb_panel_popup_rectangle.draw()
+                self.tomb_panel_popup_rectangle.set_width_ratio(self.width_ratio)
+                self.tomb_panel_popup_rectangle.set_height_ratio(self.height_ratio)
+                self.tomb_panel_popup_rectangle.draw()
 
-            for tomb_unit in self.your_tomb_repository.get_current_tomb_unit_list():
-                # print(f"tomb_unit: {tomb_unit}")
-                attached_tool_card = tomb_unit.get_tool_card()
-                if attached_tool_card is not None:
-                    attached_tool_card.set_width_ratio(self.width_ratio)
-                    attached_tool_card.set_height_ratio(self.height_ratio)
-                    attached_tool_card.draw()
+                for tomb_unit in self.your_tomb_repository.get_current_tomb_unit_list():
+                    # print(f"tomb_unit: {tomb_unit}")
+                    attached_tool_card = tomb_unit.get_tool_card()
+                    if attached_tool_card is not None:
+                        attached_tool_card.set_width_ratio(self.width_ratio)
+                        attached_tool_card.set_height_ratio(self.height_ratio)
+                        attached_tool_card.draw()
 
-                fixed_card_base = tomb_unit.get_fixed_card_base()
-                fixed_card_base.set_width_ratio(self.width_ratio)
-                fixed_card_base.set_height_ratio(self.height_ratio)
-                fixed_card_base.draw()
+                    fixed_card_base = tomb_unit.get_fixed_card_base()
+                    fixed_card_base.set_width_ratio(self.width_ratio)
+                    fixed_card_base.set_height_ratio(self.height_ratio)
+                    fixed_card_base.draw()
 
-                attached_shape_list = fixed_card_base.get_attached_shapes()
+                    attached_shape_list = fixed_card_base.get_attached_shapes()
 
-                for attached_shape in attached_shape_list:
-                    attached_shape.set_width_ratio(self.width_ratio)
-                    attached_shape.set_height_ratio(self.height_ratio)
-                    attached_shape.draw()
+                    for attached_shape in attached_shape_list:
+                        attached_shape.set_width_ratio(self.width_ratio)
+                        attached_shape.set_height_ratio(self.height_ratio)
+                        attached_shape.draw()
 
-            glDisable(GL_BLEND)
+                glDisable(GL_BLEND)
 
-        if self.opponent_tomb_panel_selected:
-        # elif self.selected_tomb is TombType.Opponent:
-            glEnable(GL_BLEND)
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+            if self.opponent_tomb_panel_selected:
+            # elif self.selected_tomb is TombType.Opponent:
+                glEnable(GL_BLEND)
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-            self.opponent_tomb_popup_rectangle_panel.set_width_ratio(self.width_ratio)
-            self.opponent_tomb_popup_rectangle_panel.set_height_ratio(self.height_ratio)
-            self.opponent_tomb_popup_rectangle_panel.draw()
+                self.opponent_tomb_popup_rectangle_panel.set_width_ratio(self.width_ratio)
+                self.opponent_tomb_popup_rectangle_panel.set_height_ratio(self.height_ratio)
+                self.opponent_tomb_popup_rectangle_panel.draw()
 
-            for opponent_tomb_unit in self.opponent_tomb_repository.get_opponent_tomb_unit_list():
-                # print(f"tomb_unit: {opponent_tomb_unit}")
-                attached_tool_card = opponent_tomb_unit.get_tool_card()
-                if attached_tool_card is not None:
-                    attached_tool_card.set_width_ratio(self.width_ratio)
-                    attached_tool_card.set_height_ratio(self.height_ratio)
-                    attached_tool_card.draw()
+                for opponent_tomb_unit in self.opponent_tomb_repository.get_opponent_tomb_unit_list():
+                    # print(f"tomb_unit: {opponent_tomb_unit}")
+                    attached_tool_card = opponent_tomb_unit.get_tool_card()
+                    if attached_tool_card is not None:
+                        attached_tool_card.set_width_ratio(self.width_ratio)
+                        attached_tool_card.set_height_ratio(self.height_ratio)
+                        attached_tool_card.draw()
 
-                fixed_card_base = opponent_tomb_unit.get_fixed_card_base()
-                fixed_card_base.set_width_ratio(self.width_ratio)
-                fixed_card_base.set_height_ratio(self.height_ratio)
-                fixed_card_base.draw()
+                    fixed_card_base = opponent_tomb_unit.get_fixed_card_base()
+                    fixed_card_base.set_width_ratio(self.width_ratio)
+                    fixed_card_base.set_height_ratio(self.height_ratio)
+                    fixed_card_base.draw()
 
-                attached_shape_list = fixed_card_base.get_attached_shapes()
+                    attached_shape_list = fixed_card_base.get_attached_shapes()
 
-                for attached_shape in attached_shape_list:
-                    attached_shape.set_width_ratio(self.width_ratio)
-                    attached_shape.set_height_ratio(self.height_ratio)
-                    attached_shape.draw()
+                    for attached_shape in attached_shape_list:
+                        attached_shape.set_width_ratio(self.width_ratio)
+                        attached_shape.set_height_ratio(self.height_ratio)
+                        attached_shape.draw()
 
-            glDisable(GL_BLEND)
+                glDisable(GL_BLEND)
 
-        if self.your_lost_zone_panel_selected:
-            glEnable(GL_BLEND)
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+            if self.your_lost_zone_panel_selected:
+                glEnable(GL_BLEND)
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-            self.your_lost_zone_popup_panel.set_width_ratio(self.width_ratio)
-            self.your_lost_zone_popup_panel.set_height_ratio(self.height_ratio)
-            self.your_lost_zone_popup_panel.draw()
+                self.your_lost_zone_popup_panel.set_width_ratio(self.width_ratio)
+                self.your_lost_zone_popup_panel.set_height_ratio(self.height_ratio)
+                self.your_lost_zone_popup_panel.draw()
 
-            for your_lost_zone_unit in self.your_lost_zone_repository.get_your_lost_zone_card_list():
-                attached_tool_card = your_lost_zone_unit.get_tool_card()
-                if attached_tool_card is not None:
-                    attached_tool_card.set_width_ratio(self.width_ratio)
-                    attached_tool_card.set_height_ratio(self.height_ratio)
-                    attached_tool_card.draw()
+                for your_lost_zone_unit in self.your_lost_zone_repository.get_your_lost_zone_card_list():
+                    attached_tool_card = your_lost_zone_unit.get_tool_card()
+                    if attached_tool_card is not None:
+                        attached_tool_card.set_width_ratio(self.width_ratio)
+                        attached_tool_card.set_height_ratio(self.height_ratio)
+                        attached_tool_card.draw()
 
-                fixed_card_base = your_lost_zone_unit.get_fixed_card_base()
-                fixed_card_base.set_width_ratio(self.width_ratio)
-                fixed_card_base.set_height_ratio(self.height_ratio)
-                fixed_card_base.draw()
+                    fixed_card_base = your_lost_zone_unit.get_fixed_card_base()
+                    fixed_card_base.set_width_ratio(self.width_ratio)
+                    fixed_card_base.set_height_ratio(self.height_ratio)
+                    fixed_card_base.draw()
 
-                attached_shape_list = fixed_card_base.get_attached_shapes()
+                    attached_shape_list = fixed_card_base.get_attached_shapes()
 
-                for attached_shape in attached_shape_list:
-                    attached_shape.set_width_ratio(self.width_ratio)
-                    attached_shape.set_height_ratio(self.height_ratio)
-                    attached_shape.draw()
+                    for attached_shape in attached_shape_list:
+                        attached_shape.set_width_ratio(self.width_ratio)
+                        attached_shape.set_height_ratio(self.height_ratio)
+                        attached_shape.draw()
 
-            glDisable(GL_BLEND)
+                glDisable(GL_BLEND)
 
-        if self.opponent_lost_zone_panel_selected:
-            glEnable(GL_BLEND)
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+            if self.opponent_lost_zone_panel_selected:
+                glEnable(GL_BLEND)
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-            self.opponent_lost_zone_popup_panel.set_width_ratio(self.width_ratio)
-            self.opponent_lost_zone_popup_panel.set_height_ratio(self.height_ratio)
-            self.opponent_lost_zone_popup_panel.draw()
+                self.opponent_lost_zone_popup_panel.set_width_ratio(self.width_ratio)
+                self.opponent_lost_zone_popup_panel.set_height_ratio(self.height_ratio)
+                self.opponent_lost_zone_popup_panel.draw()
 
-            for opponent_lost_zone_unit in self.opponent_lost_zone_repository.get_opponent_lost_zone_card_list():
-                attached_tool_card = opponent_lost_zone_unit.get_tool_card()
-                if attached_tool_card is not None:
-                    attached_tool_card.set_width_ratio(self.width_ratio)
-                    attached_tool_card.set_height_ratio(self.height_ratio)
-                    attached_tool_card.draw()
+                for opponent_lost_zone_unit in self.opponent_lost_zone_repository.get_opponent_lost_zone_card_list():
+                    attached_tool_card = opponent_lost_zone_unit.get_tool_card()
+                    if attached_tool_card is not None:
+                        attached_tool_card.set_width_ratio(self.width_ratio)
+                        attached_tool_card.set_height_ratio(self.height_ratio)
+                        attached_tool_card.draw()
 
-                fixed_card_base = opponent_lost_zone_unit.get_fixed_card_base()
-                fixed_card_base.set_width_ratio(self.width_ratio)
-                fixed_card_base.set_height_ratio(self.height_ratio)
-                fixed_card_base.draw()
+                    fixed_card_base = opponent_lost_zone_unit.get_fixed_card_base()
+                    fixed_card_base.set_width_ratio(self.width_ratio)
+                    fixed_card_base.set_height_ratio(self.height_ratio)
+                    fixed_card_base.draw()
 
-                attached_shape_list = fixed_card_base.get_attached_shapes()
+                    attached_shape_list = fixed_card_base.get_attached_shapes()
 
-                for attached_shape in attached_shape_list:
-                    attached_shape.set_width_ratio(self.width_ratio)
-                    attached_shape.set_height_ratio(self.height_ratio)
-                    attached_shape.draw()
+                    for attached_shape in attached_shape_list:
+                        attached_shape.set_width_ratio(self.width_ratio)
+                        attached_shape.set_height_ratio(self.height_ratio)
+                        attached_shape.draw()
 
-            glDisable(GL_BLEND)
-
-
-
-
-
-        self.muligun_reset_button.set_width_ratio(self.width_ratio)
-        self.muligun_reset_button.set_height_ratio(self.height_ratio)
-        self.muligun_reset_button.draw()
+                glDisable(GL_BLEND)
 
 
 
 
 
-        if len(self.battle_result_panel_list) is not 0:
+            self.muligun_reset_button.set_width_ratio(self.width_ratio)
+            self.muligun_reset_button.set_height_ratio(self.height_ratio)
+            self.muligun_reset_button.draw()
+
+            if self.animation_test_image_panel is not None:
+                self.animation_test_image.set_width_ratio(self.width_ratio)
+                self.animation_test_image.set_height_ratio(self.height_ratio)
+                self.animation_test_image_panel.draw()
+
+            if self.animation_test_image_list is not [] and self.animation_test_image_panel_list is not []:
+                for animation_test_image, animation_test_image_panel in zip(self.animation_test_image_list,
+                                                                            self.animation_test_image_panel_list):
+                    if animation_test_image.is_finished:
+                        continue
+                    animation_test_image.set_width_ratio(self.width_ratio)
+                    animation_test_image.set_height_ratio(self.height_ratio)
+                    animation_test_image_panel.draw()
+
+        if len(self.battle_result_panel_list) != 0:
             self.battle_result.set_width_ratio(self.width_ratio)
             self.battle_result.set_height_ratio(self.height_ratio)
             self.battle_result_panel_list[0].draw()
 
 
 
-        if self.animation_test_image_panel is not None:
-
-            self.animation_test_image.set_width_ratio(self.width_ratio)
-            self.animation_test_image.set_height_ratio(self.height_ratio)
-            self.animation_test_image_panel.draw()
-
-        if self.animation_test_image_list is not [] and self.animation_test_image_panel_list is not []:
-            for animation_test_image, animation_test_image_panel in zip(self.animation_test_image_list, self.animation_test_image_panel_list):
-                if animation_test_image.is_finished:
-                    continue
-                animation_test_image.set_width_ratio(self.width_ratio)
-                animation_test_image.set_height_ratio(self.height_ratio)
-                animation_test_image_panel.draw()
 
 
 
@@ -1428,7 +1427,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             y = self.winfo_reqheight() - y
             print(f"x: {x}, y: {y}")
 
-            if len(self.battle_result_panel_list) is not 0:
+            if len(self.battle_result_panel_list) != 0:
                 #print(self.battle_result_panel_list)
 
                 self.battle_field_function_controller.callGameEndReward()

@@ -251,5 +251,6 @@ class LegacyYourHandRepository:
 
     # TODO: 현재는 테스트용인데 구조가 좋지 않으므로 변경이 필요함
     def request_fake_muligun(self, muligun_request):
+        print(f"muligun_request: {muligun_request}")
         self.__transmitIpcChannel.put(muligun_request)
         return self.__receiveIpcChannel.get()
