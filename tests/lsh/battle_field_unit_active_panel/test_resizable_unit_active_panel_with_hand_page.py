@@ -2927,6 +2927,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             current_your_field_unit_index = current_your_field_unit.get_index()
             self.your_field_unit_action_repository.set_current_field_unit_action_ready(current_your_field_unit_index)
+            self.your_field_unit_action_repository.set_current_field_unit_action_count(current_your_field_unit_index, 1)
 
     def on_canvas_right_click(self, event):
         x, y = event.x, event.y
