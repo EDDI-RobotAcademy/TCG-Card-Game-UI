@@ -7,7 +7,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
-from battle_field.infra.your_hand_repository import YourHandRepository
+from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
 from image_shape.circle_image import CircleImage
 from image_shape.circle_number_image import CircleNumberImage
@@ -48,7 +48,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.lightning_border = LightningBorder()
 
-        self.your_hand_repository = YourHandRepository.getInstance()
+        self.your_hand_repository = CircleImageLegacyYourHandRepository.getInstance()
         self.hand_card_list = None
 
         self.bind("<Configure>", self.on_resize)

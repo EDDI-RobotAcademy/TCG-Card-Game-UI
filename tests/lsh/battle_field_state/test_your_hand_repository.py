@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from battle_field.infra.your_hand_repository import YourHandRepository
+from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
 from initializer.init_domain import DomainInitializer
 from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 
@@ -10,7 +10,7 @@ class TestYourHandRepository(unittest.TestCase):
 
     def setUp(self):
         DomainInitializer.initEachDomain()
-        self.repository = YourHandRepository.getInstance()
+        self.repository = CircleImageLegacyYourHandRepository.getInstance()
 
     @patch('battle_field.state.current_hand.CurrentHandState.add_to_hand')
     def test_save_current_hand_state(self, mock_add_to_hand):
@@ -53,7 +53,7 @@ class TestYourHandRepository(unittest.TestCase):
     def test_create_hand_card_list(self):
         DomainInitializer.initEachDomain()
 
-        repository = YourHandRepository()
+        repository = CircleImageLegacyYourHandRepository()
         # repository.current_hand_state.current_hand_list = [6, 8]
 
         repository.save_current_hand_state([6, 8])

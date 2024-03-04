@@ -1,7 +1,7 @@
 from math import ceil
 
 from battle_field.state.current_hand import CurrentHandState
-from battle_field.state.your_hand_page import YourHandPage
+from battle_field.state.legacy.your_hand_page import LegacyYourHandPage
 from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
@@ -228,7 +228,7 @@ class LegacyYourHandRepository:
             end_index = (page_index + 1) * num_cards_per_page
             current_your_hand_page = your_hand_list[start_index:end_index]
 
-            current_page = YourHandPage()
+            current_page = LegacyYourHandPage()
             current_page.set_total_window_size(self.total_width, self.total_height)
             current_page.add_hand_to_page(current_your_hand_page)
             current_page.set_hand_page_number(page_index + 1)

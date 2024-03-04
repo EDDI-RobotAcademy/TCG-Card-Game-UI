@@ -14,7 +14,7 @@ from pyopengltk import OpenGLFrame
 from battle_field.handler.support_card_handler import SupportCardHandler
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
-from battle_field.infra.your_hand_repository import YourHandRepository
+from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field_fixed_card.legacy.fixed_field_card import LegacyFixedFieldCard
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
@@ -64,7 +64,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.battle_field_environment_shapes = self.battle_field_scene.get_battle_field_environment()
 
-        self.your_hand_repository = YourHandRepository.getInstance()
+        self.your_hand_repository = CircleImageLegacyYourHandRepository.getInstance()
         self.your_hand_repository.save_current_hand_state([8, 19, 151, 2, 9, 20, 30, 6])
         self.your_hand_repository.create_hand_card_list()
 

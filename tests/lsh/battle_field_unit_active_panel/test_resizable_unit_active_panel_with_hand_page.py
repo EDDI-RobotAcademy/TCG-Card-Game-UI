@@ -44,6 +44,7 @@ from battle_field.entity.your_hp import YourHp
 from battle_field.entity.your_lost_zone import YourLostZone
 from battle_field.entity.your_tomb import YourTomb
 from battle_field.handler.support_card_handler import SupportCardHandler
+
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from battle_field.infra.opponent_hand_repository import OpponentHandRepository
@@ -56,6 +57,7 @@ from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepos
 from battle_field.infra.your_field_unit_action_repository import YourFieldUnitActionRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
+
 from battle_field.infra.your_hp_repository import YourHpRepository
 from battle_field.infra.your_lost_zone_repository import YourLostZoneRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
@@ -73,7 +75,8 @@ from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
 from initializer.init_domain import DomainInitializer
 from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
-from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
+from opengl_battle_field_pickable_card.pickable_card import PickableCard
+
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.circle import Circle
 from opengl_shape.rectangle import Rectangle
@@ -1101,7 +1104,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             if isinstance(self.selected_object, LegacyFixedFieldCard):
                 card_base = self.selected_object.get_fixed_card_base()
-            elif isinstance(self.selected_object, LegacyPickableCard):
+            elif isinstance(self.selected_object, PickableCard):
                 card_base = self.selected_object.get_pickable_card_base()
 
             self.lightning_border.set_width_ratio(self.width_ratio)
@@ -1367,7 +1370,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         # print(f"on_canvas_drag -> x: {x}, y: {y}")
 
         if self.selected_object and self.drag_start:
-            if not isinstance(self.selected_object, LegacyPickableCard):
+            if not isinstance(self.selected_object, PickableCard):
                 return
 
             pickable_card = self.selected_object.get_pickable_card_base()
@@ -1438,7 +1441,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         x, y = event.x, event.y
         y = self.winfo_reqheight() - y
 
-        if isinstance(self.selected_object, LegacyPickableCard):
+        if isinstance(self.selected_object, PickableCard):
             # Opponent Field Area 시작
             # is_pickable_card_inside_opponent_field =
 
@@ -2203,7 +2206,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             current_page_your_hand_list = self.your_hand_repository.get_current_page_your_hand_list()
             if current_page_your_hand_list is not None:
                 for get_current_page_hand_card in current_page_your_hand_list:
-                    if isinstance(get_current_page_hand_card, LegacyPickableCard):
+                    if isinstance(get_current_page_hand_card, PickableCard):
                         get_current_page_hand_card.selected = False
 
             self.selected_object = None
