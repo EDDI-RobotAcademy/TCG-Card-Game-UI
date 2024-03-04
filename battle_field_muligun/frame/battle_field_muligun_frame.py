@@ -383,7 +383,8 @@ class BattleFieldMuligunFrame(OpenGLFrame):
 
 
         else:
-            self.master.after(self.__switchFrameWithMenuName('decision-first'))
+            #self.master.after(self.__switchFrameWithMenuName('decision-first'))
+            self.master.after(self.__switchFrameWithMenuName('rock-paper-scissors'))
 
 
     # 멀리건 화면에서 교체하려는 카드 클릭시 나타나는 표현

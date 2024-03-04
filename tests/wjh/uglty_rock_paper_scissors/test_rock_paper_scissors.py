@@ -3,17 +3,21 @@ import unittest
 from PIL import ImageTk, Image
 
 from rock_paper_scissors.repository.rock_paper_scissors_repository_impl import RockPaperScissorsRepositoryImpl
-from rock_paper_scissors_button.paper_button import PaperButton
+from rock_paper_scissors.service.request.rock_paper_scissors_request import RockPaperScissorsRequest
+from session.repository.session_repository_impl import SessionRepositoryImpl
 
 
 class TestRockPaperScissors(unittest.TestCase):
 
     def createRockPaperScissorsUiFrame(self, rootWindow):
         self.__rockPaperScissorsRepositoryImpl = RockPaperScissorsRepositoryImpl.getInstance()
+        self.__sessionRepositoryImpl = SessionRepositoryImpl.getInstance()
 
         def final_decision_button_click(target_rps):
-            print(target_rps)
-            #self.__rockPaperScissorsRepositoryImpl.setRPS(target_rps)
+            print(f"target_rps: {target_rps}")
+            responseData = self.__rockPaperScissorsRepositoryImpl.requestRockPaperScissors(
+                RockPaperScissorsRequest(self.__sessionRepositoryImpl.get_session_info(), target_rps))
+            print(f"responseData: {responseData}")
 
         def on_paper_image_click(event):
             self.__rockPaperScissorsRepositoryImpl.setRPS("보")
@@ -25,7 +29,7 @@ class TestRockPaperScissors(unittest.TestCase):
         self.__paper_image = ImageTk.PhotoImage(resized_image)
 
         paper_label = tkinter.Label(rootWindow, image=self.__paper_image)
-        paper_label.place(x=400, y=200)
+        paper_label.place(relx=0.22, rely=0.2)
         paper_label.bind("<Button-1>", on_paper_image_click)
 
         def on_scissors_image_click(event):
@@ -38,7 +42,7 @@ class TestRockPaperScissors(unittest.TestCase):
         self.__scissors_image = ImageTk.PhotoImage(resized_image)
 
         scissors_label = tkinter.Label(rootWindow, image=self.__scissors_image)
-        scissors_label.place(x=700, y=200)
+        scissors_label.place(relx=0.42, rely=0.2)
         scissors_label.bind("<Button-1>", on_scissors_image_click)
 
         def on_rock_image_click(event):
@@ -51,7 +55,7 @@ class TestRockPaperScissors(unittest.TestCase):
         self.__rock_image = ImageTk.PhotoImage(resized_image)
 
         rock_label = tkinter.Label(rootWindow, image=self.__rock_image)
-        rock_label.place(x=1000, y=200)
+        rock_label.place(relx=0.62, rely=0.2)
         rock_label.bind("<Button-1>", on_rock_image_click)
 
 
@@ -59,7 +63,7 @@ class TestRockPaperScissors(unittest.TestCase):
         RPS_label = tkinter.Label(rootWindow, text=label_text, font=("Helvetica", 32), fg="black",
                               anchor="center", justify="center")
 
-        RPS_label.place(relx=0.5, rely=0.8, anchor="center", bordermode="outside")  # 가운데 정렬
+        RPS_label.place(relx=0.5, rely=0.8, anchor="center", bordermode="outside")
 
 
 
@@ -71,13 +75,11 @@ class TestRockPaperScissors(unittest.TestCase):
 
     def test_rock_paper_scissors(self):
         root = tkinter.Tk()
-        root.geometry("1920x800")
-        root.configure(background="#E1F5A9")
+        root.geometry("1920x1080")
+        root.configure(background="#151515")
         self.createRockPaperScissorsUiFrame(root)
         root.mainloop()
 
 
 if __name__ == '__main__':
-    root = tkinter.Tk()
-    root.geometry("1920x800")
     unittest.main()
