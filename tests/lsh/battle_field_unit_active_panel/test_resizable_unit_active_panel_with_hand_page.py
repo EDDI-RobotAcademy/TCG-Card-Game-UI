@@ -340,7 +340,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         # self.your_hand_repository.set_x_base(550)
         self.your_hand_repository.set_total_window_size(self.width, self.height)
         # self.your_hand_repository.save_current_hand_state([30, 30, 8, 93, 8, 2, 33, 35, 9, 20, 25, 36, 151])
-        self.your_hand_repository.save_current_hand_state([30, 8, 93, 27, 32, 30, 8, 93, 8, 2, 33, 35, 9, 20, 25, 36, 151])
+        self.your_hand_repository.save_current_hand_state([30, 8, 93, 27, 27, 27, 32, 30, 8, 93, 8, 2, 33, 35, 9, 20, 25, 36, 151])
         # self.your_hand_repository.save_current_hand_state([151])
         # self.your_hand_repository.create_hand_card_list()
         self.your_hand_repository.build_your_hand_page()
@@ -968,6 +968,19 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.muligun_reset_button.set_width_ratio(self.width_ratio)
         self.muligun_reset_button.set_height_ratio(self.height_ratio)
         self.muligun_reset_button.draw()
+
+        if self.animation_test_image_panel is not None:
+            self.animation_test_image.set_width_ratio(self.width_ratio)
+            self.animation_test_image.set_height_ratio(self.height_ratio)
+            self.animation_test_image_panel.draw()
+
+        if self.animation_test_image_list is not [] and self.animation_test_image_panel_list is not []:
+            for animation_test_image, animation_test_image_panel in zip(self.animation_test_image_list, self.animation_test_image_panel_list):
+                if animation_test_image.is_finished:
+                    continue
+                animation_test_image.set_width_ratio(self.width_ratio)
+                animation_test_image.set_height_ratio(self.height_ratio)
+                animation_test_image_panel.draw()
 
         # glDisable(GL_BLEND)
 
@@ -1981,6 +1994,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             if self.your_active_panel.get_your_active_panel_second_skill_button() is not None:
                 if self.your_active_panel.is_point_inside_second_skill_button((x, y)):
                     your_field_unit_index = self.selected_object.get_index()
+                    print(f"광역기 -> your_field_unit_index: {your_field_unit_index}")
+                    print(f"every_field_unit_action_count: {self.your_field_unit_action_repository.get_every_field_unit_action_count()}")
                     your_selected_unit_action_count = self.your_field_unit_action_repository.get_current_field_unit_action_count(
                         your_field_unit_index)
 
@@ -2001,8 +2016,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                     print("두 번째 스킬 클릭")
 
-                    your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
-                    self.your_field_unit_action_repository.use_field_unit_action_count_by_index(your_field_card_index)
+                    # your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
+                    # print(f"스킬 사용 확정 -> your_field_card_index: {your_field_card_index}")
+                    self.your_field_unit_action_repository.use_field_unit_action_count_by_index(your_field_unit_index)
 
                     your_field_unit_id = self.selected_object.get_card_number()
                     print(f"your_field_unit_id: {your_field_unit_id}")
@@ -3298,6 +3314,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 continue
 
             current_your_field_unit_index = current_your_field_unit.get_index()
+            print(f"call_turn_end() -> current_your_field_unit_index: {current_your_field_unit_index}")
             self.your_field_unit_action_repository.set_current_field_unit_action_ready(current_your_field_unit_index)
             self.your_field_unit_action_repository.set_current_field_unit_action_count(current_your_field_unit_index, 1)
 

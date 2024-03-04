@@ -33,6 +33,7 @@ class YourFieldUnitActionRepository:
         self.current_field_unit_action_count.set_your_field_unit_list_action_count(index, count)
 
     def get_current_field_unit_action_count(self, index):
+        print(f"get_current_field_unit_action_count() -> index: {index}")
         return self.current_field_unit_action_count.get_your_field_unit_list_action_count(index)
 
     def get_current_field_unit_action_status(self, index):
@@ -40,6 +41,9 @@ class YourFieldUnitActionRepository:
 
     def use_field_unit_action_count_by_index(self, index):
         self.current_field_unit_action_count.use_field_unit_action_count_by_index(index)
+
+    def get_every_field_unit_action_count(self):
+        return self.current_field_unit_action_count.get_your_field_unit_action_count()
 
 
 
