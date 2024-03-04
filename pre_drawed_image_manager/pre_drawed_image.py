@@ -734,8 +734,8 @@ class PreDrawedImage:
     def get_pre_draw_unit_energy(self, number):
         return self.__pre_drawed_unit_energy[number]
 
-    def get_pre_draw_unit_hp(self, number):
-        return self.__pre_drawed_unit_hp[number]
+    def get_pre_draw_unit_hp(self, card_number):
+        return self.__pre_drawed_unit_hp[card_number]
 
     def get_pre_draw_unit_attack(self, card_number):
         return self.__pre_drawed_unit_attack[card_number]
