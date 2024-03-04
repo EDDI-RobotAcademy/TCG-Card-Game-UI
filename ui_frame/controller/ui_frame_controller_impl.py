@@ -131,7 +131,7 @@ class UiFrameControllerImpl(UiFrameController):
         fakeBattleFieldFrame = self.__fakeBattleFieldFrameServiece.createFakeBattleFieldFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerFakeBattleFieldUiFrame(fakeBattleFieldFrame)
 
-        self.__battleFieldFunctionService.saveFrame(fakeBattleFieldFrame)
+        self.__battleFieldFunctionService.saveFrame(self, fakeBattleFieldFrame)
 
     def first_main_window(self):
         self.switchFrameWithMenuName("main-menu")

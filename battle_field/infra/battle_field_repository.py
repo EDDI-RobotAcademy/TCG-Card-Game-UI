@@ -1,16 +1,13 @@
 from battle_field.state.current_deck import CurrentDeckState
 from battle_field.state.current_hand import CurrentHandState
+from battle_field.state.game_end import GameEndState
 
 
 class BattleFieldRepository:
     __instance = None
 
-    __is_in_game = False
-
     battle_field_button_list = []
-    is_game_over = False
-    is_win = False
-
+    __game_end_state = GameEndState()
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -38,22 +35,17 @@ class BattleFieldRepository:
         self.__noWaitIpcChannel = noWaitIpcChannel
 
 
-    def __start_get_no_wait_data(self):
-        pass
-        #todo : 루프를 돌면서 notify를 대기해야함
-        # 여차하면 task나 thread를 분리해야할수도??
-        #
-        # while self.__is_in_game:
-        #     try:
-        #         self.__noWaitIpcChannel.get_nowait()
-        #     except Exception as e:
-        #         print("큐 대기중")
+    def lose(self):
+        self.__game_end_state.game_lose()
 
+    def win(self):
+        self.__game_end_state.game_win()
 
+    def get_is_game_end(self):
+        return self.__game_end_state.get_is_game_end_state()
 
-    def start_game(self):
-        self.__is_in_game = True
-        self.__start_get_no_wait_data()
+    def get_is_win(self):
+        return self.__game_end_state.get_is_win_state()
 
-    def game_end(self):
-        self.__is_in_game = False
+    def reset_game_state(self):
+        self.__game_end_state.reset_state()

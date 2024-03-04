@@ -31,6 +31,8 @@ class ResponseGeneration(Enum):
 
     GAME_NEXT_TURN = 3333
 
+    BATTLE_FINISH = 4442
+
     GAME_SURRENDER = 4443
 
     PROGRAM_EXIT = 4444
