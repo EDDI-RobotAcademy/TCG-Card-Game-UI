@@ -230,4 +230,55 @@ class PickableCard:
         for shape in card_shapes:
             self.pickable_card_base.set_attached_shapes(shape)
 
+    def init_card_in_my_card_frame(self, card_number):
+        self.set_card_number(card_number)
+
+        rectangle_width = 240
+        rectangle_height = rectangle_width * 1.618
+
+        print(f"rectangle_width: {rectangle_width}")
+        print(f"rectangle_height: {rectangle_height}")
+
+        self.tool_card = self.create_attached_tool_card_rectangle(
+            color=(0.6, 0.4, 0.6, 1.0),
+            local_translation=self.local_translation,
+            vertices=[(15, 15), (rectangle_width + 15, 15), (rectangle_width + 15, rectangle_height + 15),
+                      (15, rectangle_height + 15)])
+
+        basic_pickable_card_base_vertices = [(0, 0), (rectangle_width, 0), (rectangle_width, rectangle_height),
+                                             (0, rectangle_height)]
+
+        self.pickable_card_base = (
+            self.create_card_base_pickable_rectangle(
+                color=(0.0, 0.78, 0.34, 1.0),
+                local_translation=self.local_translation,
+                vertices=basic_pickable_card_base_vertices
+            )
+        )
+
+        self.pickable_card_base.set_attached_shapes(
+            self.creat_frame(
+                image_data=self.__pre_drawed_image_instance.get_pre_draw_card_frame_for_card_number(card_number),
+                local_translation=self.local_translation,
+                vertices=basic_pickable_card_base_vertices
+            )
+        )
+
+        self.pickable_card_base.set_attached_shapes(
+            self.create_illustration(
+                image_data=self.__pre_drawed_image_instance.get_pre_draw_card_illustration_for_card_number(
+                    card_number),
+                local_translation=self.local_translation,
+                vertices=[(25, 67), (rectangle_width - 25, 67), (rectangle_width - 25, rectangle_height - 195),
+                          (25, rectangle_height - 195)]
+            )
+        )
+
+        card_controller_shapes = self.card_controller.getCardTypeTable(
+            self.card_info.getCardTypeForCardNumber(card_number)
+        )
+        card_shapes = card_controller_shapes(self.local_translation, card_number, rectangle_height, rectangle_width)
+        for shape in card_shapes:
+            self.pickable_card_base.set_attached_shapes(shape)
+
 
