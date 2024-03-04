@@ -44,6 +44,7 @@ from battle_field.entity.your_tomb import YourTomb
 from battle_field.handler.support_card_handler import SupportCardHandler
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
+from battle_field.infra.opponent_hand_repository import OpponentHandRepository
 from battle_field.infra.opponent_hp_repository import OpponentHpRepository
 from battle_field.infra.opponent_lost_zone_repository import OpponentLostZoneRepository
 from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
@@ -110,6 +111,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_deck_next_button = None
         self.your_deck_prev_button = None
         self.your_deck_ok_button = None
+
+        self.opponent_hand_repository = OpponentHandRepository.getInstance()
+        self.opponent_hand_card_list = None
 
         self.selected_search_unit_id_list = []
         self.selected_search_unit_index_list = []
@@ -296,6 +300,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_tomb.set_total_window_size(self.width, self.height)
         self.opponent_tomb.create_opponent_tomb_panel()
         self.opponent_tomb_panel = self.opponent_tomb.get_opponent_tomb_panel()
+
+        self.opponent_hand_repository.set_total_window_size(self.width, self.height)
+        self.opponent_hand_repository.save_current_opponent_hand_state([30, 8, 2, 33, 35])
+        self.opponent_hand_repository.create_opponent_hand_card_list()
+        self.opponent_hand_card_list = self.opponent_hand_repository.get_current_opponent_hand_card_list()
 
         # self.your_hand_repository.set_x_base(550)
         self.your_hand_repository.set_total_window_size(self.width, self.height)
@@ -805,6 +814,17 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         #         attached_shape.set_width_ratio(self.width_ratio)
         #         attached_shape.set_height_ratio(self.height_ratio)
         #         attached_shape.draw()
+
+        for opponent_hand_card in self.opponent_hand_card_list:
+            opponent_hand_card_base = opponent_hand_card.get_fixed_card_base()
+            opponent_hand_card_base.draw()
+
+            attached_shape_list = opponent_hand_card_base.get_attached_shapes()
+
+            for attached_shape in attached_shape_list:
+                attached_shape.set_width_ratio(self.width_ratio)
+                attached_shape.set_height_ratio(self.height_ratio)
+                attached_shape.draw()
 
         for get_current_page_hand_card in self.your_hand_repository.get_current_page_your_hand_list():
             pickable_card_base = get_current_page_hand_card.get_pickable_card_base()
