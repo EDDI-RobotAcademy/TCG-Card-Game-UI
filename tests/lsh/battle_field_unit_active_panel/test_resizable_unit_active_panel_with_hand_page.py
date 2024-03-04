@@ -44,6 +44,7 @@ from battle_field.entity.your_tomb import YourTomb
 from battle_field.handler.support_card_handler import SupportCardHandler
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
+from battle_field.infra.opponent_hand_repository import OpponentHandRepository
 from battle_field.infra.opponent_hp_repository import OpponentHpRepository
 from battle_field.infra.opponent_lost_zone_repository import OpponentLostZoneRepository
 from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
@@ -110,6 +111,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_deck_next_button = None
         self.your_deck_prev_button = None
         self.your_deck_ok_button = None
+
+        self.opponent_hand_repository = OpponentHandRepository.getInstance()
+        self.opponent_hand_card_list = None
 
         self.selected_search_unit_id_list = []
         self.selected_search_unit_index_list = []
@@ -296,6 +300,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_tomb.set_total_window_size(self.width, self.height)
         self.opponent_tomb.create_opponent_tomb_panel()
         self.opponent_tomb_panel = self.opponent_tomb.get_opponent_tomb_panel()
+
+        self.opponent_hand_repository.set_total_window_size(self.width, self.height)
+        self.opponent_hand_repository.save_current_opponent_hand_state([30, 8, 2, 33, 35])
+        self.opponent_hand_repository.create_opponent_hand_card_list()
+        self.opponent_hand_card_list = self.opponent_hand_repository.get_current_opponent_hand_card_list()
 
         # self.your_hand_repository.set_x_base(550)
         self.your_hand_repository.set_total_window_size(self.width, self.height)
@@ -508,12 +517,15 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             if second_passive_skill_type == 1:
                 print("단일기")
 
+                # TODO: 여기서 본체 공격 할 수 있어야 함
+                self.targeting_enemy_select_support_lightning_border_list.append(self.opponent_main_character_panel)
+
                 opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
                 valid_opponent_field_units_object_list = [unit for unit in opponent_field_unit_object_list if unit is not None]
                 print(f"실제 유효한 상대 필드 유닛 숫자: {len(valid_opponent_field_units_object_list)}")
 
-                if len(valid_opponent_field_units_object_list) == 0:
-                    return
+                # if len(valid_opponent_field_units_object_list) == 0:
+                #     return
 
                 for opponent_field_unit_object in opponent_field_unit_object_list:
                     if opponent_field_unit_object is None:
@@ -521,6 +533,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                     fixed_opponent_card_base = opponent_field_unit_object.get_fixed_card_base()
                     self.targeting_enemy_select_support_lightning_border_list.append(fixed_opponent_card_base)
+
+                self.targeting_enemy_select_support_lightning_border_list.append(self.opponent_main_character_panel)
 
                 self.opponent_fixed_unit_card_inside_handler.set_opponent_field_area_action(
                     OpponentFieldAreaAction.PASSIVE_SKILL_TARGETING_ENEMY)
@@ -806,6 +820,18 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         #         attached_shape.set_height_ratio(self.height_ratio)
         #         attached_shape.draw()
 
+        for opponent_hand_card in self.opponent_hand_card_list:
+            opponent_hand_card_base = opponent_hand_card.get_fixed_card_base()
+            opponent_hand_card_base.draw()
+
+            attached_shape_list = opponent_hand_card_base.get_attached_shapes()
+
+            for attached_shape in attached_shape_list:
+                attached_shape.set_width_ratio(self.width_ratio)
+                attached_shape.set_height_ratio(self.height_ratio)
+                attached_shape.draw()
+
+        # TODO: 버그 잡아야함
         for get_current_page_hand_card in self.your_hand_repository.get_current_page_your_hand_list():
             pickable_card_base = get_current_page_hand_card.get_pickable_card_base()
             pickable_card_base.set_width_ratio(self.width_ratio)
@@ -1672,6 +1698,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             fixed_opponent_card_base = opponent_field_unit_object.get_fixed_card_base()
                             self.targeting_enemy_select_support_lightning_border_list.append(fixed_opponent_card_base)
 
+                        self.targeting_enemy_select_support_lightning_border_list.append(self.opponent_main_character_panel)
+
                         self.opponent_fixed_unit_card_inside_handler.set_opponent_field_area_action(
                             OpponentFieldAreaAction.SKILL_TARGETING_ENEMY)
 
@@ -2181,6 +2209,28 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() is OpponentFieldAreaAction.PASSIVE_SKILL_TARGETING_ENEMY:
                 print("단일기 사용")
 
+                if self.opponent_main_character.is_point_inside((x, y)):
+                    print("메인 캐릭터 공격")
+
+                    your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
+                    print(f"your_field_card_id: {your_field_card_id}")
+
+                    your_damage = self.card_info_repository.getCardPassiveSecondDamageForCardNumber(your_field_card_id)
+                    print(f"your_damage: {your_damage}")
+
+                    self.opponent_hp_repository.take_damage(your_damage)
+
+                    self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+                    self.targeting_enemy_select_using_your_field_card_index = None
+                    self.targeting_enemy_select_using_your_field_card_id = None
+                    self.targeting_enemy_select_support_lightning_border_list = []
+                    self.opponent_you_selected_lightning_border_list = []
+
+                    self.selected_object = None
+                    self.active_panel_rectangle = None
+
+                    return
+
                 opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
                 for opponent_field_unit_object in opponent_field_unit_object_list:
                     if opponent_field_unit_object:
@@ -2264,6 +2314,28 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                 # self.targeting_ememy_select_using_hand_card_id = placed_card_id
                 # self.targeting_ememy_select_using_hand_card_index = placed_index
+
+                if self.opponent_main_character.is_point_inside((x, y)):
+                    print("메인 캐릭터 공격")
+
+                    your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
+                    print(f"your_field_card_id: {your_field_card_id}")
+
+                    your_damage = self.card_info_repository.getCardSkillFirstDamageForCardNumber(your_field_card_id)
+                    print(f"your_damage: {your_damage}")
+
+                    self.opponent_hp_repository.take_damage(your_damage)
+
+                    self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+                    self.targeting_enemy_select_using_your_field_card_index = None
+                    self.targeting_enemy_select_using_your_field_card_id = None
+                    self.targeting_enemy_select_support_lightning_border_list = []
+                    self.opponent_you_selected_lightning_border_list = []
+
+                    self.selected_object = None
+                    self.active_panel_rectangle = None
+
+                    return
 
                 opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
                 for opponent_field_unit_object in opponent_field_unit_object_list:
