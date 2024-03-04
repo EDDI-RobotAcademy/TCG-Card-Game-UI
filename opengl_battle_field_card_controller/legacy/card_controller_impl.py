@@ -1,5 +1,5 @@
 from common.card_type import CardType
-from opengl_battle_field_card_controller.card_controller import CardController
+from opengl_battle_field_card_controller.legacy.card_controller import LegacyCardController
 from opengl_battle_field_energy.energy_card import EnergyCard
 from opengl_battle_field_environment.environment_card import EnvironmentCard
 from opengl_battle_field_item.item_card import ItemCard
@@ -11,7 +11,7 @@ from opengl_battle_field_unit.legacy.unit_card import LegacyUnitCard
 
 circle_radius = 20
 
-class CardControllerImpl(CardController):
+class LegacyCardControllerImpl(LegacyCardController):
     __instance = None
     __cardTypeTable = {}
 

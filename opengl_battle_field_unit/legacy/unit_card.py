@@ -15,7 +15,7 @@ from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 #from tests.ugly_text_field.test_ugly_text_field_rectangle import TextFieldRectangle
 
 
-class UnitCard:
+class LegacyUnitCard:
     __imagePath = None
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
     __card_info_from_csv_repository = CardInfoFromCsvRepositoryImpl.getInstance()

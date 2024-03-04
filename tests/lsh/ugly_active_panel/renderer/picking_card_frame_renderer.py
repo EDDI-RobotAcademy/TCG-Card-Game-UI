@@ -1,10 +1,3 @@
-from OpenGL import GL
-from OpenGL.GL import *
-from OpenGL.GLU import *
-
-from opengl_battle_field_unit.unit_card import UnitCard
-
-
 class PickingCardFrameRenderer:
     def __init__(self, unit_card_list, window):
         self.unit_card_list = unit_card_list
