@@ -269,8 +269,8 @@ class PickableCard:
                 image_data=self.__pre_drawed_image_instance.get_pre_draw_card_illustration_for_card_number(
                     card_number),
                 local_translation=self.local_translation,
-                vertices=[(25, 67), (rectangle_width - 25, 67), (rectangle_width - 25, rectangle_height - 195),
-                          (25, rectangle_height - 195)]
+                vertices=[(17, 50), (rectangle_width - 17, 50), (rectangle_width - 17, rectangle_height - 155),
+                          (17, rectangle_height - 155)]
             )
         )
 
