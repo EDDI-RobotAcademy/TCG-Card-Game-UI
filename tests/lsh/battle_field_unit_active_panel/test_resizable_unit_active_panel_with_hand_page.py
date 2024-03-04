@@ -51,11 +51,13 @@ from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
 from battle_field.infra.round_repository import RoundRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
+from battle_field.infra.your_field_unit_action_repository import YourFieldUnitActionRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field.infra.your_hp_repository import YourHpRepository
 from battle_field.infra.your_lost_zone_repository import YourLostZoneRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
+from battle_field.state.FieldUnitActionStatus import FieldUnitActionStatus
 from battle_field.state.energy_type import EnergyType
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
@@ -231,6 +233,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.turn_end_button = None
         self.turn_end_button_selected = False
 
+        self.your_field_unit_action_repository = YourFieldUnitActionRepository.getInstance()
+
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
         self.bind("<ButtonRelease-1>", self.on_canvas_release)
@@ -308,7 +312,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         # self.your_hand_repository.set_x_base(550)
         self.your_hand_repository.set_total_window_size(self.width, self.height)
-        self.your_hand_repository.save_current_hand_state([30, 30, 8, 93, 8, 2, 33, 35, 9, 20, 25, 36, 151])
+        # self.your_hand_repository.save_current_hand_state([30, 30, 8, 93, 8, 2, 33, 35, 9, 20, 25, 36, 151])
+        self.your_hand_repository.save_current_hand_state([30, 8, 93, 27, 32])
         # self.your_hand_repository.save_current_hand_state([151])
         # self.your_hand_repository.create_hand_card_list()
         self.your_hand_repository.build_your_hand_page()
@@ -341,9 +346,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         # self.opponent_field_unit_repository.create_field_unit_card(25)
         # self.opponent_field_unit_repository.create_field_unit_card(26)
         self.opponent_field_unit_repository.create_field_unit_card(27)
-        self.your_field_unit_repository.create_field_unit_card(31)
-        self.your_field_unit_repository.create_field_unit_card(19)
-        self.your_field_unit_repository.create_field_unit_card(27)
+        # self.your_field_unit_repository.create_field_unit_card(31)
+        # self.your_field_unit_repository.create_field_unit_card(19)
+        # self.your_field_unit_repository.create_field_unit_card(27)
 
         self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
 
@@ -1624,6 +1629,17 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             if self.your_active_panel.get_your_active_panel_attack_button() is not None:
                 if self.your_active_panel.is_point_inside_attack_button((x, y)):
+                    your_field_unit_index = self.selected_object.get_index()
+                    your_selected_unit_action_status = self.your_field_unit_action_repository.get_current_field_unit_action_status(your_field_unit_index)
+
+                    if your_selected_unit_action_status == FieldUnitActionStatus.WAIT:
+                        print(f"처음 필드에 출격한 유닛은 공격 할 수 없습니다")
+                        return
+
+                    elif your_selected_unit_action_status == FieldUnitActionStatus.Dummy:
+                        print(f"Dummy 상태입니다")
+                        return
+
                     print("일반 공격 클릭")
 
                     opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
@@ -1650,6 +1666,18 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             if self.your_active_panel.get_your_active_panel_first_skill_button() is not None:
                 if self.your_active_panel.is_point_inside_first_skill_button((x, y)):
+                    your_field_unit_index = self.selected_object.get_index()
+                    your_selected_unit_action_status = self.your_field_unit_action_repository.get_current_field_unit_action_status(
+                        your_field_unit_index)
+
+                    if your_selected_unit_action_status == FieldUnitActionStatus.WAIT:
+                        print(f"처음 필드에 출격한 유닛은 공격 할 수 없습니다")
+                        return
+
+                    elif your_selected_unit_action_status == FieldUnitActionStatus.Dummy:
+                        print(f"Dummy 상태입니다")
+                        return
+
                     print("첫 번째 스킬 클릭")
 
                     your_field_unit_id = self.selected_object.get_card_number()
@@ -1719,6 +1747,18 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             if self.your_active_panel.get_your_active_panel_second_skill_button() is not None:
                 if self.your_active_panel.is_point_inside_second_skill_button((x, y)):
+                    your_field_unit_index = self.selected_object.get_index()
+                    your_selected_unit_action_status = self.your_field_unit_action_repository.get_current_field_unit_action_status(
+                        your_field_unit_index)
+
+                    if your_selected_unit_action_status == FieldUnitActionStatus.WAIT:
+                        print(f"처음 필드에 출격한 유닛은 공격 할 수 없습니다")
+                        return
+
+                    elif your_selected_unit_action_status == FieldUnitActionStatus.Dummy:
+                        print(f"Dummy 상태입니다")
+                        return
+                    
                     print("두 번째 스킬 클릭")
 
                     your_field_unit_id = self.selected_object.get_card_number()
@@ -2444,6 +2484,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 print(f"your field unit type (fixed_card_base) = {type(fixed_card_base)}")
 
                 if fixed_card_base.is_point_inside((x, y)):
+                    # if self.your_field_unit_action_repository.get_current_field_unit_action_status(your_field_unit.get_index()) == FieldUnitActionStatus.WAIT:
+                    #     print(f"처음 필드에 출격한 유닛은 공격 할 수 없습니다")
+
                     if self.field_area_inside_handler.get_field_area_action() is FieldAreaAction.ENERGY_BOOST:
                         self.field_area_inside_handler.clear_lightning_border_list()
                         self.field_area_inside_handler.clear_field_area_action()

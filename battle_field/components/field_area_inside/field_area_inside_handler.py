@@ -2,6 +2,7 @@ from battle_field.components.field_area_inside.field_area_action import FieldAre
 from battle_field.infra.request.deploy_unit_card_request import DeployUnitCardRequest
 from battle_field.infra.request.drawCardByUseSupportCardRequest import DrawCardByUseSupportCardRequest
 from battle_field.infra.your_deck_repository import YourDeckRepository
+from battle_field.infra.your_field_unit_action_repository import YourFieldUnitActionRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
@@ -28,6 +29,9 @@ class FieldAreaInsideHandler:
     __card_info_repository = CardInfoFromCsvRepositoryImpl.getInstance()
     __your_tomb_repository = YourTombRepository.getInstance()
     __session_info_repository = SessionRepositoryImpl.getInstance()
+
+    __your_field_unit_action_repository = YourFieldUnitActionRepository.getInstance()
+
     __field_area_inside_handler_table = {}
 
     __width_ratio = 1
@@ -132,6 +136,8 @@ class FieldAreaInsideHandler:
             print("광역기")
         elif passive_skill_type == 1:
             print("단일기")
+
+        self.__your_field_unit_action_repository.create_field_unit_action_count(0)
 
         self.__field_area_action = FieldAreaAction.PLACE_UNIT
         return self.__field_area_action
