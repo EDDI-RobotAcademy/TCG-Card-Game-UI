@@ -1,11 +1,12 @@
 from battle_field.state.current_field_unit_action_count import CurrentFieldUnitActionCountState
+from battle_field.state.current_field_unit_action_status import CurrentFieldUnitActionStatus
 
 
 class CurrentFieldUnitActionRepository:
     __instance = None
 
     current_field_unit_action_count = CurrentFieldUnitActionCountState()
-    # current_field_unit_action_status = CurrentFieldUnitActionStatus()
+    current_field_unit_action_status = CurrentFieldUnitActionStatus()
 
     def __new__(cls):
         if cls.__instance is None:
