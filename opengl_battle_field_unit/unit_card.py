@@ -44,6 +44,7 @@ class UnitCard:
 
         unit_energy_image.set_circle_kinds(CircleKinds.ENERGY)
         unit_energy_image.set_visible(False)
+        unit_energy_image.set_initial_vertices(vertices)
         self.add_shape(unit_energy_image)
 
     def create_non_background_unit_race(self, image_data, center, radius):
@@ -59,13 +60,28 @@ class UnitCard:
         unit_race_image.set_initial_vertices(vertices)
         self.add_shape(unit_race_image)
 
-    def create_unit_attack_circle(self, image_data, attack_number, center, radius):
-        unit_attack_circle = CircleNumberImage(image_data=image_data,
-                                               center=center,
-                                               radius=radius,
-                                               number=attack_number)
-        unit_attack_circle.set_circle_kinds(CircleKinds.ATTACK)
-        self.add_shape(unit_attack_circle)
+    def create_non_background_unit_attack(self, image_data, attack_number, center, radius):
+        start_x = center[0] - 5 - radius * 1.8
+        end_x = center[0] - 5 + radius * 1.8
+        start_y = center[1] - 7 - radius * 1.651 * 1.8
+        end_y = center[1] - 7 + radius * 1.651 * 1.8
+
+        # x: 376, y: 447
+        # x: 371, y: 440
+
+        vertices = [
+            (start_x, start_y),
+            (end_x, start_y),
+            (end_x, end_y),
+            (start_x, end_y),
+        ]
+
+        unit_attack_image = NonBackgroundNumberImage(image_data=image_data,
+                                                     vertices=vertices,
+                                                     number=attack_number)
+        unit_attack_image.set_initial_vertices(vertices)
+        unit_attack_image.set_circle_kinds(CircleKinds.ATTACK)
+        self.add_shape(unit_attack_image)
 
     def create_unit_hp_circle(self, image_data, hp_number, center, radius):
         unit_hp_circle = CircleNumberImage(image_data=image_data,
@@ -91,8 +107,8 @@ class UnitCard:
             center=(rectangle_width, 0),
             radius=circle_radius)
 
-        self.create_unit_attack_circle(
-            image_data=self.__pre_drawed_image_instance.get_pre_draw_card_attack_with_card_number(card_number),
+        self.create_non_background_unit_attack(
+            image_data=self.__pre_drawed_image_instance.get_pre_draw_unit_attack(card_number),
             attack_number=self.__card_info_from_csv_repository.getCardAttackForCardNumber(card_number),
             center=(rectangle_width, rectangle_height),
             radius=circle_radius)
