@@ -69,11 +69,13 @@ from card_info_from_csv.repository.card_info_from_csv_repository_impl import Car
 from common.card_grade import CardGrade
 from common.card_race import CardRace
 from common.card_type import CardType
+from fake_battle_field.entity.animation_test_image import AnimationTestImage
 from fake_battle_field.entity.muligun_reset_button import MuligunResetButton
 from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
 from initializer.init_domain import DomainInitializer
+from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.circle import Circle
@@ -254,6 +256,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.muligun_reset_button = None
         self.muligun_reset_button_clicked = False
         self.battle_field_muligun_background_shape_list = None
+
+        self.animation_test_image_panel = None
+        self.animation_test_image = AnimationTestImage()
+        self.animation_test_image_list = []
+        self.animation_test_image_panel_list = []
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -488,6 +495,119 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         key = event.keysym
         print(f"Key pressed: {key}")
 
+        if key.lower() == '1':
+            if self.animation_test_image_panel:
+                self.animation_test_image_panel = None
+
+            self.animation_test_image.set_total_window_size(self.width, self.height)
+            self.animation_test_image.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(0).get_local_translation()
+            )
+            self.animation_test_image.draw_animation_panel()
+            self.animation_test_image_panel = self.animation_test_image.get_animation_panel()
+            print("created animation panel")
+
+        if key.lower() == '2':
+            if self.animation_test_image_panel:
+                self.animation_test_image_panel = None
+
+            self.animation_test_image.set_total_window_size(self.width, self.height)
+            self.animation_test_image.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(1).get_local_translation()
+            )
+            self.animation_test_image.draw_animation_panel()
+            self.animation_test_image_panel = self.animation_test_image.get_animation_panel()
+            print("created animation panel")
+
+        if key.lower() == '3':
+            if self.animation_test_image_panel:
+                self.animation_test_image_panel = None
+
+            self.animation_test_image.set_total_window_size(self.width, self.height)
+            self.animation_test_image.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(2).get_local_translation()
+            )
+            self.animation_test_image.draw_animation_panel()
+            self.animation_test_image_panel = self.animation_test_image.get_animation_panel()
+            print("created animation panel")
+
+        if key.lower() == 'l':
+
+            def animate():
+                self.animation_test_image.update_animation_panel()
+                if not self.animation_test_image.is_finished:
+                    self.master.after(17, animate)
+                else:
+                    self.animation_test_image_panel = None
+
+            self.animation_test_image.reset_animation_count()
+            self.master.after(0, animate)
+
+        if key.lower() == 'kp_1':
+            self.animation_test_image_panel = None
+            animation_test_image = AnimationTestImage()
+
+            animation_test_image.set_total_window_size(self.width, self.height)
+            animation_test_image.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(0).get_local_translation()
+            )
+            animation_test_image.draw_animation_panel()
+            animation_test_image_panel = animation_test_image.get_animation_panel()
+
+            self.animation_test_image_list.append(animation_test_image)
+            self.animation_test_image_panel_list.append(animation_test_image_panel)
+            print("첨부 완료~: ", self.animation_test_image_panel_list, self.animation_test_image_list)
+            print("체크: ", type(self.animation_test_image_panel_list[0]), type(self.animation_test_image_list[0]))
+
+        if key.lower() == 'kp_2':
+            self.animation_test_image_panel = None
+            animation_test_image = AnimationTestImage()
+
+            animation_test_image.set_total_window_size(self.width, self.height)
+            animation_test_image.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(1).get_local_translation()
+            )
+            animation_test_image.draw_animation_panel()
+            animation_test_image_panel = animation_test_image.get_animation_panel()
+
+            self.animation_test_image_list.append(animation_test_image)
+            self.animation_test_image_panel_list.append(animation_test_image_panel)
+
+        if key.lower() == 'kp_enter':
+            def animate():
+                finish_list = []
+                is_all_finished = False
+                for _animation_test_image in self.animation_test_image_list:
+                    _animation_test_image.update_animation_panel()
+                    finish_list.append(_animation_test_image.is_finished)
+
+                for finish in finish_list:
+                    if finish == False:
+                        is_all_finished = False
+                        break
+                    else:
+                        is_all_finished = True
+
+                if not is_all_finished:
+                    self.master.after(17, animate)
+                else:
+                    self.animation_test_image_list = []
+                    self.animation_test_image_panel_list = []
+                    print("finish animation")
+
+                # if not self.animation_test_image_list[0].is_finished:
+                #     self.master.after(17, animate)
+                # else:
+                #     self.animation_test_image_panel_list = []
+                #     self.animation_test_image_list = []
+                #     print("finish animation")
+
+            for animation_test_image in self.animation_test_image_list:
+                print(f"animation count: {animation_test_image}")
+                animation_test_image.reset_animation_count()
+
+            self.master.after(0, animate)
+
         if key.lower() == 'a':
             self.opponent_field_unit_repository.create_field_unit_card(26)
             self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
@@ -642,6 +762,53 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     vertices=(0, (total_attached_energy_count * 10) + 20),
                     local_translation=opponent_fixed_card_base.get_local_translation())
                 opponent_fixed_card_base.set_attached_shapes(card_race_circle)
+
+        if key.lower() == 'h':
+            self.your_field_energy_repository.to_next_field_energy_race()
+
+        if key.lower() == 'u':
+            self.your_field_energy_repository.increase_your_field_energy()
+
+        if key.lower() == 'i':
+            self.opponent_field_energy_repository.increase_opponent_field_energy()
+
+        if key.lower() == 'y':
+            self.opponent_field_energy_repository.decrease_opponent_field_energy()
+
+        if key.lower() == 'd':
+            self.your_hp_repository.take_damage()
+
+        if key.lower() == 'o':
+            self.opponent_hp_repository.take_damage()
+
+        if key.lower() == 'p':
+            self.your_field_unit_repository.create_field_unit_card(17)
+
+        if key.lower() == 'w':
+            notify_raw_data = '''{
+                       "NOTIFY_UNIT_SPAWN":
+                           {"player_spawn_unit_map":
+                               {"Opponent" : "26"}
+                           }
+                   }'''
+            NotifyReaderRepositoryImpl.getInstance().getNoWaitIpcChannel().put(notify_raw_data)
+            # self.opponent_field_unit_repository.create_field_unit_card(26)
+
+        if key.lower() == 's':
+            print("attach undead energy")
+            notify_raw_data = '''{
+                       "NOTIFY_FIELD_UNIT_ENERGY":
+                           {"player_field_unit_energy_map":
+                                {"Opponent":
+                                     {"0":
+                                          {"attached_energy_map":
+                                               {"2": 2}, "total_energy_count": 2}}}}}'''
+            notify_dict = {"player_field_unit_energy_map":
+                               {"Opponent":
+                                    {"0":
+                                         {"attached_energy_map": {"2": 2}, "total_energy_count": 2}}}}
+
+            NotifyReaderRepositoryImpl.getInstance().getNoWaitIpcChannel().put(notify_raw_data)
 
     def on_resize(self, event):
         self.reshape(event.width, event.height)
@@ -2257,6 +2424,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         continue
 
                     opponent_fixed_card_base = opponent_field_unit_object.get_fixed_card_base()
+                    print("지정한 상대 유닛 베이스 찾기")
 
                     if opponent_fixed_card_base.is_point_inside((x, y)):
                         your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
@@ -2384,8 +2552,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 if self.opponent_main_character.is_point_inside((x, y)):
                     print("메인 캐릭터 공격")
 
-                    your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
-                    self.your_field_unit_action_repository.use_field_unit_action_count_by_index(your_field_card_index)
+                    # your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
+                    # self.your_field_unit_action_repository.use_field_unit_action_count_by_index(your_field_card_index)
 
                     your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
                     print(f"your_field_card_id: {your_field_card_id}")
@@ -2420,11 +2588,14 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         continue
 
                     opponent_fixed_card_base = opponent_field_unit_object.get_fixed_card_base()
+                    print("지정한 상대 유닛 베이스 찾기")
 
                     if opponent_fixed_card_base.is_point_inside((x, y)):
-                        your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
-                        self.your_field_unit_action_repository.use_field_unit_action_count_by_index(
-                            your_field_card_index)
+                        # TODO: 패시브도 버그에 대응하기 위해 패시브 카운트도 계산하고 있어야함
+                        # your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
+                        # self.your_field_unit_action_repository.use_field_unit_action_count_by_index(
+                        #     your_field_card_index)
+                        # print("문제 포인트 찾기")
 
                         self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
 
@@ -2433,6 +2604,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         are_opponent_field_unit_death = False
                         opponent_field_card_index = None
                         opponent_field_card_id = None
+
+                        print("지정한 상대 유닛 모양 찾기")
 
                         for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
                             if isinstance(opponent_fixed_card_attached_shape, CircleNumberImage):
