@@ -29,6 +29,9 @@ class YourFieldUnitActionRepository:
     def set_current_field_unit_action_ready(self, index):
         self.current_field_unit_action_status.set_your_field_unit_action_status_at_index(index, FieldUnitActionStatus.READY)
 
+    def set_current_field_unit_action_count(self, index, count):
+        self.current_field_unit_action_count.set_your_field_unit_list_action_count(index, count)
+
     def get_current_field_unit_action_count(self):
         return self.current_field_unit_action_count.get_your_field_unit_list_action_count()
 
