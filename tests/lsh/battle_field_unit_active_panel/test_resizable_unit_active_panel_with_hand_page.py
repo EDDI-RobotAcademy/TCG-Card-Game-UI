@@ -517,12 +517,15 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             if second_passive_skill_type == 1:
                 print("단일기")
 
+                # TODO: 여기서 본체 공격 할 수 있어야 함
+                self.targeting_enemy_select_support_lightning_border_list.append(self.opponent_main_character_panel)
+
                 opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
                 valid_opponent_field_units_object_list = [unit for unit in opponent_field_unit_object_list if unit is not None]
                 print(f"실제 유효한 상대 필드 유닛 숫자: {len(valid_opponent_field_units_object_list)}")
 
-                if len(valid_opponent_field_units_object_list) == 0:
-                    return
+                # if len(valid_opponent_field_units_object_list) == 0:
+                #     return
 
                 for opponent_field_unit_object in opponent_field_unit_object_list:
                     if opponent_field_unit_object is None:
@@ -828,6 +831,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
+        # TODO: 버그 잡아야함
         for get_current_page_hand_card in self.your_hand_repository.get_current_page_your_hand_list():
             pickable_card_base = get_current_page_hand_card.get_pickable_card_base()
             pickable_card_base.set_width_ratio(self.width_ratio)
