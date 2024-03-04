@@ -43,13 +43,17 @@ class CheckRockPaperScissorsWinnerServiceImpl(CheckRockPaperScissorsWinnerServic
             responseData = self.__checkRockPaperScissorsWinnerRepositoryImpl.requestCheckRockPaperScissorsWinner(
                 CheckRockPaperScissorsWinnerRequest(self.__sessionRepositoryImpl.get_session_info()))
             print(f"responseData: {responseData}")
-            time.sleep(1)
+
 
             if responseData.get("am_i_first_turn") in ("WIN", "LOSE"):
                 self.__checkRockPaperScissorsWinnerRepositoryImpl.setRPSWinner(responseData.get("am_i_first_turn"))
                 self.check_RPS_label.configure(text="당신이 " + self.findWinner() + "입니다.")
                 time.sleep(3)
                 break
+
+            rootWindow.update()
+            time.sleep(1)
+
 
         return checkRockPaperScissorsWinnerFrame
 
