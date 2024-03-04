@@ -5,6 +5,7 @@ from common.utility import get_project_root
 from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
+from image_shape.non_background_number_image import NonBackgroundNumberImage
 from opengl_pickable_shape.pickable_rectangle import PickableRectangle
 from opengl_shape.circle import Circle
 from opengl_shape.image_rectangle_element import ImageRectangleElement
@@ -77,6 +78,24 @@ class LegacyUnitCard:
         unit_energy_circle.set_circle_kinds(CircleKinds.ENERGY)
         unit_energy_circle.set_visible(False)
         self.add_shape(unit_energy_circle)
+
+    # def create_unit_energy_circle(self, image_data, energy_number, center, radius):
+    #     # 가로 대비 세로 => 1.343
+    #     # 양측으로 벌리니까 => 1.1715
+    #     vertices = [
+    #         (center[0] - radius, center[1] + radius * 1.343),
+    #         (center[0] + radius, center[1] + radius * 1.343),
+    #         (center[0] + radius, center[1] - radius * 1.343),
+    #         (center[0] - radius, center[1] - radius * 1.343),
+    #     ]
+    #     image_data = self.__pre_drawed_image_instance.get_pre_draw_unit_energy(energy_number)
+    #     unit_energy_image = NonBackgroundNumberImage(image_data=image_data,
+    #                                                  vertices=vertices,
+    #                                                  number=energy_number)
+    #
+    #     unit_energy_image.set_circle_kinds(CircleKinds.ENERGY)
+    #     unit_energy_image.set_visible(False)
+    #     self.add_shape(unit_energy_image)
 
     def create_unit_race_illustration_circle(self, image_data, center, radius):
         # print(f"create_unit_race_illustration_circle -> center: {center}")
