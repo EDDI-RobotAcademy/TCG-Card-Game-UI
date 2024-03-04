@@ -313,7 +313,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         # self.your_hand_repository.set_x_base(550)
         self.your_hand_repository.set_total_window_size(self.width, self.height)
         # self.your_hand_repository.save_current_hand_state([30, 30, 8, 93, 8, 2, 33, 35, 9, 20, 25, 36, 151])
-        self.your_hand_repository.save_current_hand_state([30, 8, 93, 27, 32])
+        self.your_hand_repository.save_current_hand_state([30, 8, 93, 27, 32, 30, 8, 93, 8, 2, 33, 35, 9, 20, 25, 36, 151])
         # self.your_hand_repository.save_current_hand_state([151])
         # self.your_hand_repository.create_hand_card_list()
         self.your_hand_repository.build_your_hand_page()
@@ -1630,6 +1630,12 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             if self.your_active_panel.get_your_active_panel_attack_button() is not None:
                 if self.your_active_panel.is_point_inside_attack_button((x, y)):
                     your_field_unit_index = self.selected_object.get_index()
+                    your_selected_unit_action_count = self.your_field_unit_action_repository.get_current_field_unit_action_count(your_field_unit_index)
+
+                    if your_selected_unit_action_count <= 0:
+                        print("행동을 마친 유닛은 더 이상 공격 할 수 없습니다")
+                        return
+
                     your_selected_unit_action_status = self.your_field_unit_action_repository.get_current_field_unit_action_status(your_field_unit_index)
 
                     if your_selected_unit_action_status == FieldUnitActionStatus.WAIT:
@@ -1667,6 +1673,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             if self.your_active_panel.get_your_active_panel_first_skill_button() is not None:
                 if self.your_active_panel.is_point_inside_first_skill_button((x, y)):
                     your_field_unit_index = self.selected_object.get_index()
+                    your_selected_unit_action_count = self.your_field_unit_action_repository.get_current_field_unit_action_count(
+                        your_field_unit_index)
+
+                    if your_selected_unit_action_count <= 0:
+                        print("행동을 마친 유닛은 더 이상 공격 할 수 없습니다")
+                        return
+
                     your_selected_unit_action_status = self.your_field_unit_action_repository.get_current_field_unit_action_status(
                         your_field_unit_index)
 
@@ -1748,6 +1761,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             if self.your_active_panel.get_your_active_panel_second_skill_button() is not None:
                 if self.your_active_panel.is_point_inside_second_skill_button((x, y)):
                     your_field_unit_index = self.selected_object.get_index()
+                    your_selected_unit_action_count = self.your_field_unit_action_repository.get_current_field_unit_action_count(
+                        your_field_unit_index)
+
+                    if your_selected_unit_action_count <= 0:
+                        print("행동을 마친 유닛은 더 이상 공격 할 수 없습니다")
+                        return
+
                     your_selected_unit_action_status = self.your_field_unit_action_repository.get_current_field_unit_action_status(
                         your_field_unit_index)
 
@@ -1758,8 +1778,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     elif your_selected_unit_action_status == FieldUnitActionStatus.Dummy:
                         print(f"Dummy 상태입니다")
                         return
-                    
+
                     print("두 번째 스킬 클릭")
+
+                    your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
+                    self.your_field_unit_action_repository.use_field_unit_action_count_by_index(your_field_card_index)
 
                     your_field_unit_id = self.selected_object.get_card_number()
                     print(f"your_field_unit_id: {your_field_unit_id}")
@@ -2100,6 +2123,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 if self.opponent_main_character.is_point_inside((x, y)):
                     print("메인 캐릭터 공격")
 
+                    your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
+                    self.your_field_unit_action_repository.use_field_unit_action_count_by_index(your_field_card_index)
+
                     your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
                     print(f"your_field_card_id: {your_field_card_id}")
 
@@ -2138,6 +2164,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     opponent_fixed_card_base = opponent_field_unit_object.get_fixed_card_base()
 
                     if opponent_fixed_card_base.is_point_inside((x, y)):
+                        your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
+                        self.your_field_unit_action_repository.use_field_unit_action_count_by_index(
+                            your_field_card_index)
+
                         self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
 
                         opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
@@ -2249,6 +2279,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         self.selected_object = None
                         self.active_panel_rectangle = None
 
+
+
                         return
 
             if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() is OpponentFieldAreaAction.PASSIVE_SKILL_TARGETING_ENEMY:
@@ -2256,6 +2288,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                 if self.opponent_main_character.is_point_inside((x, y)):
                     print("메인 캐릭터 공격")
+
+                    your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
+                    self.your_field_unit_action_repository.use_field_unit_action_count_by_index(your_field_card_index)
 
                     your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
                     print(f"your_field_card_id: {your_field_card_id}")
@@ -2292,6 +2327,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     opponent_fixed_card_base = opponent_field_unit_object.get_fixed_card_base()
 
                     if opponent_fixed_card_base.is_point_inside((x, y)):
+                        your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
+                        self.your_field_unit_action_repository.use_field_unit_action_count_by_index(
+                            your_field_card_index)
+
                         self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
 
                         opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
@@ -2363,6 +2402,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 if self.opponent_main_character.is_point_inside((x, y)):
                     print("메인 캐릭터 공격")
 
+                    your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
+                    self.your_field_unit_action_repository.use_field_unit_action_count_by_index(your_field_card_index)
+
                     your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
                     print(f"your_field_card_id: {your_field_card_id}")
 
@@ -2398,6 +2440,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     opponent_fixed_card_base = opponent_field_unit_object.get_fixed_card_base()
 
                     if opponent_fixed_card_base.is_point_inside((x, y)):
+                        your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
+                        self.your_field_unit_action_repository.use_field_unit_action_count_by_index(
+                            your_field_card_index)
+
                         self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
 
                         opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
@@ -2919,6 +2965,15 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         after_turn_end_field_energy_count = self.your_field_energy_repository.get_your_field_energy()
         print(f"after_turn_end_field_energy_count: {after_turn_end_field_energy_count}")
+
+        current_your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
+        for current_your_field_unit in current_your_field_unit_list:
+            if current_your_field_unit is None:
+                continue
+
+            current_your_field_unit_index = current_your_field_unit.get_index()
+            self.your_field_unit_action_repository.set_current_field_unit_action_ready(current_your_field_unit_index)
+            self.your_field_unit_action_repository.set_current_field_unit_action_count(current_your_field_unit_index, 1)
 
     def on_canvas_right_click(self, event):
         x, y = event.x, event.y
