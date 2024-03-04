@@ -522,6 +522,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     fixed_opponent_card_base = opponent_field_unit_object.get_fixed_card_base()
                     self.targeting_enemy_select_support_lightning_border_list.append(fixed_opponent_card_base)
 
+                self.targeting_enemy_select_support_lightning_border_list.append(self.opponent_main_character_panel)
+
                 self.opponent_fixed_unit_card_inside_handler.set_opponent_field_area_action(
                     OpponentFieldAreaAction.PASSIVE_SKILL_TARGETING_ENEMY)
 
@@ -1672,6 +1674,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             fixed_opponent_card_base = opponent_field_unit_object.get_fixed_card_base()
                             self.targeting_enemy_select_support_lightning_border_list.append(fixed_opponent_card_base)
 
+                        self.targeting_enemy_select_support_lightning_border_list.append(self.opponent_main_character_panel)
+
                         self.opponent_fixed_unit_card_inside_handler.set_opponent_field_area_action(
                             OpponentFieldAreaAction.SKILL_TARGETING_ENEMY)
 
@@ -2181,6 +2185,28 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() is OpponentFieldAreaAction.PASSIVE_SKILL_TARGETING_ENEMY:
                 print("단일기 사용")
 
+                if self.opponent_main_character.is_point_inside((x, y)):
+                    print("메인 캐릭터 공격")
+
+                    your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
+                    print(f"your_field_card_id: {your_field_card_id}")
+
+                    your_damage = self.card_info_repository.getCardPassiveSecondDamageForCardNumber(your_field_card_id)
+                    print(f"your_damage: {your_damage}")
+
+                    self.opponent_hp_repository.take_damage(your_damage)
+
+                    self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+                    self.targeting_enemy_select_using_your_field_card_index = None
+                    self.targeting_enemy_select_using_your_field_card_id = None
+                    self.targeting_enemy_select_support_lightning_border_list = []
+                    self.opponent_you_selected_lightning_border_list = []
+
+                    self.selected_object = None
+                    self.active_panel_rectangle = None
+
+                    return
+
                 opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
                 for opponent_field_unit_object in opponent_field_unit_object_list:
                     if opponent_field_unit_object:
@@ -2264,6 +2290,28 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                 # self.targeting_ememy_select_using_hand_card_id = placed_card_id
                 # self.targeting_ememy_select_using_hand_card_index = placed_index
+
+                if self.opponent_main_character.is_point_inside((x, y)):
+                    print("메인 캐릭터 공격")
+
+                    your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
+                    print(f"your_field_card_id: {your_field_card_id}")
+
+                    your_damage = self.card_info_repository.getCardSkillFirstDamageForCardNumber(your_field_card_id)
+                    print(f"your_damage: {your_damage}")
+
+                    self.opponent_hp_repository.take_damage(your_damage)
+
+                    self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+                    self.targeting_enemy_select_using_your_field_card_index = None
+                    self.targeting_enemy_select_using_your_field_card_id = None
+                    self.targeting_enemy_select_support_lightning_border_list = []
+                    self.opponent_you_selected_lightning_border_list = []
+
+                    self.selected_object = None
+                    self.active_panel_rectangle = None
+
+                    return
 
                 opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
                 for opponent_field_unit_object in opponent_field_unit_object_list:
