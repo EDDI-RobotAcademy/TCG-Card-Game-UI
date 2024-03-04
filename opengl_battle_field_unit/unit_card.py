@@ -1,18 +1,10 @@
-import os
-
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
-from common.utility import get_project_root
+
 from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
-from opengl_pickable_shape.pickable_rectangle import PickableRectangle
-from opengl_shape.circle import Circle
-from opengl_shape.image_rectangle_element import ImageRectangleElement
-from opengl_shape.rectangle import Rectangle
+
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
-
-
-#from tests.ugly_text_field.test_ugly_text_field_rectangle import TextFieldRectangle
 
 
 class UnitCard:
@@ -34,40 +26,6 @@ class UnitCard:
         shape.local_translate(self.local_translation)
         self.shapes.append(shape)
 
-
-    # def create_attached_tool_card_rectangle(self, color, vertices, local_translation):
-    #     attached_tool_card = Rectangle(color=color,
-    #                                    local_translation=local_translation,
-    #                                    vertices=vertices)
-    #     attached_tool_card.set_draw_gradient(True)
-    #     attached_tool_card.set_visible(False)
-    #     return attached_tool_card
-    #
-    # def create_card_base_pickable_rectangle(self, color, vertices, local_translation):
-    #     pickable_unit_card_base = PickableRectangle(color=color,
-    #                                                 local_translation=local_translation,
-    #                                                 vertices=vertices)
-    #     pickable_unit_card_base.set_draw_gradient(True)
-    #     return pickable_unit_card_base
-    #
-    # def create_illustration(self, image_path, vertices, local_translation):
-    #     unit_illustration = ImageRectangleElement(image_path=image_path,
-    #                                      local_translation=local_translation,
-    #                                      vertices=vertices)
-    #     return unit_illustration
-    #
-    # # def create_text_field(self, text, vertices, local_translation):
-    # #     unit_text_field = TextFieldRectangle(text=text,
-    # #                                          local_translation=local_translation,
-    # #                                          vertices=vertices)
-    # #     return unit_text_field
-    #
-    # def create_equipped_mark(self, image_path, vertices, local_translation):
-    #     unit_equipped_mark = ImageRectangleElement(image_path=image_path,
-    #                                       local_translation=local_translation,
-    #                                       vertices=vertices)
-    #     unit_equipped_mark.set_visible(False)
-    #     return unit_equipped_mark
 
     def create_unit_energy_circle(self, image_data, energy_number, center, radius):
         unit_energy_circle = CircleNumberImage(image_data=image_data,
@@ -126,35 +84,4 @@ class UnitCard:
             hp_number=self.__card_info_from_csv_repository.getCardHpForCardNumber(card_number),
             center=(0, rectangle_height),
             radius=circle_radius)
-
-        # self.__imagePath = image_path
-        # self.tool_card = self.create_attached_tool_card_rectangle(
-        #     color=(0.6, 0.4, 0.6, 1.0),
-        #     local_translation=self.local_translation,
-        #     vertices=[(20, 20), (370, 20), (370, 520), (20, 520)])
-        #
-        # self.pickable_card_base = (
-        #     self.create_card_base_pickable_rectangle(
-        #         color=(0.0, 0.78, 0.34, 1.0),
-        #         local_translation=self.local_translation,
-        #         vertices=[(0, 0), (350, 0), (350, 500), (0, 500)]))
-        #
-        # self.pickable_card_base.set_attached_shapes(
-        #     self.create_illustration(
-        #         image_path=self.__imagePath,
-        #         local_translation=self.local_translation,
-        #         vertices=[(25, 25), (325, 25), (325, 325), (25, 325)]))
-        #
-        # # self.pickable_card_base.set_attached_shapes(
-        # #     self.create_text_field(
-        # #         text="Unit Card Ability",
-        # #         local_translation=self.local_translation,
-        # #         vertices=[(25, 350), (325, 350), (325, 450), (25, 450)]))
-        #
-        # project_root = get_project_root()
-        # self.pickable_card_base.set_attached_shapes(
-        #     self.create_equipped_mark(
-        #         image_path=os.path.join(project_root, "local_storage", "card_images", "equip_white.jpg"),
-        #         local_translation=self.local_translation,
-        #         vertices=[(390, 30), (430, 30), (430, 70), (390, 70)]))
 

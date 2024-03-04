@@ -40,6 +40,21 @@ class ImageDataLoader:
             return None
 
     @staticmethod
+    def load_rectangle_origin_image_data(path):
+        try:
+            image = Image.open(path)
+            rgba_image = image.convert("RGBA")
+            img_data = np.array(rgba_image)
+
+            image.close()
+
+            return img_data
+
+        except Exception as e:
+            print(f"Error loading image data: {e}")
+            return None
+
+    @staticmethod
     def load_rectangle_image_data(path):
         try:
             image = Image.open(path)
