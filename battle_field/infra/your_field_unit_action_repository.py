@@ -32,11 +32,14 @@ class YourFieldUnitActionRepository:
     def set_current_field_unit_action_count(self, index, count):
         self.current_field_unit_action_count.set_your_field_unit_list_action_count(index, count)
 
-    def get_current_field_unit_action_count(self):
-        return self.current_field_unit_action_count.get_your_field_unit_list_action_count()
+    def get_current_field_unit_action_count(self, index):
+        return self.current_field_unit_action_count.get_your_field_unit_list_action_count(index)
 
     def get_current_field_unit_action_status(self, index):
         return self.current_field_unit_action_status.get_your_field_unit_action_status_at_index(index)
+
+    def use_field_unit_action_count_by_index(self, index):
+        self.current_field_unit_action_count.use_field_unit_action_count_by_index(index)
 
 
 

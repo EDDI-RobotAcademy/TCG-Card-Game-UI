@@ -12,8 +12,8 @@ class CurrentFieldUnitActionCountState:
     def use_field_unit_action_count_by_index(self, index):
         self.your_field_unit_list_action_count[index] -= 1
 
-    def get_your_field_unit_list_action_count(self):
-        return self.your_field_unit_list_action_count
+    def get_your_field_unit_list_action_count(self, index):
+        return self.your_field_unit_list_action_count[index]
 
     def set_your_field_unit_list_action_count(self, index, count):
         self.your_field_unit_list_action_count[index] = count
