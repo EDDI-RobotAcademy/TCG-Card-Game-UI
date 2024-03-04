@@ -517,12 +517,15 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             if second_passive_skill_type == 1:
                 print("단일기")
 
+                # TODO: 여기서 본체 공격 할 수 있어야 함
+                self.targeting_enemy_select_support_lightning_border_list.append(self.opponent_main_character_panel)
+
                 opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
                 valid_opponent_field_units_object_list = [unit for unit in opponent_field_unit_object_list if unit is not None]
                 print(f"실제 유효한 상대 필드 유닛 숫자: {len(valid_opponent_field_units_object_list)}")
 
-                if len(valid_opponent_field_units_object_list) == 0:
-                    return
+                # if len(valid_opponent_field_units_object_list) == 0:
+                #     return
 
                 for opponent_field_unit_object in opponent_field_unit_object_list:
                     if opponent_field_unit_object is None:
@@ -828,27 +831,30 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
-        for get_current_page_hand_card in self.your_hand_repository.get_current_page_your_hand_list():
-            pickable_card_base = get_current_page_hand_card.get_pickable_card_base()
-            pickable_card_base.set_width_ratio(self.width_ratio)
-            pickable_card_base.set_height_ratio(self.height_ratio)
-            pickable_card_base.draw()
+        current_page_your_hand_list = self.your_hand_repository.get_current_page_your_hand_list()
+        if current_page_your_hand_list is not None:
+            for get_current_page_hand_card in current_page_your_hand_list:
 
-            attached_shape_list = pickable_card_base.get_attached_shapes()
+                pickable_card_base = get_current_page_hand_card.get_pickable_card_base()
+                pickable_card_base.set_width_ratio(self.width_ratio)
+                pickable_card_base.set_height_ratio(self.height_ratio)
+                pickable_card_base.draw()
 
-            for attached_shape in attached_shape_list:
-                attached_shape.set_width_ratio(self.width_ratio)
-                attached_shape.set_height_ratio(self.height_ratio)
-                attached_shape.draw()
+                attached_shape_list = pickable_card_base.get_attached_shapes()
 
-            # for selected_search_unit in self.selected_search_unit_lightning_border:
-            #     if selected_search_unit == fixed_card_base:
-            #         selected_search_unit.set_width_ratio(self.width_ratio)
-            #         selected_search_unit.set_height_ratio(self.height_ratio)
-            #
-            #         self.lightning_border.set_padding(20)
-            #         self.lightning_border.update_shape(selected_search_unit)
-            #         self.lightning_border.draw_lightning_border()
+                for attached_shape in attached_shape_list:
+                    attached_shape.set_width_ratio(self.width_ratio)
+                    attached_shape.set_height_ratio(self.height_ratio)
+                    attached_shape.draw()
+
+                # for selected_search_unit in self.selected_search_unit_lightning_border:
+                #     if selected_search_unit == fixed_card_base:
+                #         selected_search_unit.set_width_ratio(self.width_ratio)
+                #         selected_search_unit.set_height_ratio(self.height_ratio)
+                #
+                #         self.lightning_border.set_padding(20)
+                #         self.lightning_border.update_shape(selected_search_unit)
+                #         self.lightning_border.draw_lightning_border()
 
         self.your_hand_prev_button.draw()
         self.your_hand_next_button.draw()
@@ -1856,37 +1862,40 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             # TODO: Your Hand List in Page
             print(f"Your Hand List in Page")
             # for hand_card in self.hand_card_list:
-            for hand_card in self.your_hand_repository.get_current_page_your_hand_list():
-                if isinstance(hand_card, PickableCard):
-                    hand_card.selected = False
+            current_page_your_hand_list = self.your_hand_repository.get_current_page_your_hand_list()
+            if current_page_your_hand_list is not None:
+                for get_current_page_hand_card in current_page_your_hand_list:
+                    if isinstance(get_current_page_hand_card, PickableCard):
+                        get_current_page_hand_card.selected = False
 
             self.selected_object = None
 
             # TODO: Your Hand List in Page
-            for hand_card in reversed(self.your_hand_repository.get_current_page_your_hand_list()):
-                print(f"hand_card: {hand_card}")
-            # for hand_card in reversed(self.your_hand_repository.get_current_page_your_hand_list()):
-                pickable_card_base = hand_card.get_pickable_card_base()
-                pickable_card_base.set_width_ratio(self.width_ratio)
-                pickable_card_base.set_height_ratio(self.height_ratio)
+            if current_page_your_hand_list is not None:
+                for hand_card in reversed(current_page_your_hand_list):
+                    print(f"hand_card: {hand_card}")
+                # for hand_card in reversed(self.your_hand_repository.get_current_page_your_hand_list()):
+                    pickable_card_base = hand_card.get_pickable_card_base()
+                    pickable_card_base.set_width_ratio(self.width_ratio)
+                    pickable_card_base.set_height_ratio(self.height_ratio)
 
-                if pickable_card_base.is_point_inside((x, y)):
-                    print("카드 선택!")
-                    hand_card.selected = not hand_card.selected
-                    self.selected_object = hand_card
-                    self.drag_start = (x, y)
+                    if pickable_card_base.is_point_inside((x, y)):
+                        print("카드 선택!")
+                        hand_card.selected = not hand_card.selected
+                        self.selected_object = hand_card
+                        self.drag_start = (x, y)
 
-                    if self.selected_object != self.prev_selected_object:
-                        self.your_active_panel.clear_your_active_panel_details_button()
-                        self.your_active_panel.clear_your_active_panel_second_skill_button()
-                        self.your_active_panel.clear_your_active_panel_first_skill_button()
-                        self.your_active_panel.clear_your_active_panel_attack_button()
-                        self.your_active_panel.clear_your_active_panel()
-                        self.active_panel_rectangle = None
+                        if self.selected_object != self.prev_selected_object:
+                            self.your_active_panel.clear_your_active_panel_details_button()
+                            self.your_active_panel.clear_your_active_panel_second_skill_button()
+                            self.your_active_panel.clear_your_active_panel_first_skill_button()
+                            self.your_active_panel.clear_your_active_panel_attack_button()
+                            self.your_active_panel.clear_your_active_panel()
+                            self.active_panel_rectangle = None
 
-                        self.prev_selected_object = self.selected_object
+                            self.prev_selected_object = self.selected_object
 
-                    break
+                        break
 
             if self.your_field_energy_panel_selected:
                 current_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
