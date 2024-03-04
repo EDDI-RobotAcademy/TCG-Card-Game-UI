@@ -66,6 +66,9 @@ class PreDrawedImage:
 
     __pre_drawed_general_attack_button = None
     __pre_drawed_detail_button = None
+
+    # TODO: 실제로는 숫자로 처리해야함 (유닛 번호 -> 액티브 스킬 1)
+    # 유닛 번호 -> 액티브 스킬 2 형태가 되어야함
     __pre_drawed_shadow_ball_button = None #스킬1 버튼(쉐도우 볼)
     __pre_drawed_sea_of_spector_button = None #스킬2 버튼(망령의 바다)
 
@@ -75,6 +78,11 @@ class PreDrawedImage:
 
     __pre_drawed_surrender_button = None
     __pre_drawed_surrender_confirm_panel = None
+
+    __pre_drawed_unit_energy = {}
+    __pre_drawed_unit_hp = {}
+    __pre_drawed_unit_attack = {}
+    __pre_drawed_unit_race = {}
 
     def __new__(cls):
         if cls.__instance is None:
@@ -428,6 +436,42 @@ class PreDrawedImage:
         self.__pre_drawed_surrender_confirm_panel = ImageDataLoader.load_rectangle_image_data(
             surrender_confirm_panel_image_path)
 
+    def pre_draw_unit_energy(self):
+        unit_energy_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_energy")
+        unit_energy_image_file_list = os.listdir(unit_energy_image_path)
+
+        for number in range(0, len(unit_energy_image_file_list)):
+            unit_energy_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_energy", f"{number}.png")
+            print(f"unit_energy_image_data = {unit_energy_image_path}")
+            self.__pre_drawed_unit_energy[number] = ImageDataLoader.load_rectangle_origin_image_data(unit_energy_image_path)
+
+    def pre_draw_unit_hp(self):
+        unit_hp_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_hp")
+        unit_hp_image_file_list = os.listdir(unit_hp_image_path)
+
+        for number in range(0, len(unit_hp_image_file_list)):
+            unit_hp_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_hp", f"{number}.png")
+            print(f"unit_hp_image_path = {unit_hp_image_path}")
+            self.__pre_drawed_unit_hp[number] = ImageDataLoader.load_rectangle_origin_image_data(unit_hp_image_path)
+
+    def pre_draw_unit_attack(self):
+        unit_attack_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_attack_power")
+        unit_attack_image_file_list = os.listdir(unit_attack_image_path)
+
+        for number in range(0, len(unit_attack_image_file_list)):
+            unit_attack_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_attack_power", f"{number}.png")
+            print(f"unit_attack_image_path = {unit_attack_image_path}")
+            self.__pre_drawed_unit_attack[number] = ImageDataLoader.load_rectangle_origin_image_data(unit_attack_image_path)
+
+    def pre_draw_unit_race(self):
+        unit_race_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_race")
+        unit_race_image_file_list = os.listdir(unit_race_image_path)
+
+        for number in range(0, len(unit_race_image_file_list)):
+            unit_race_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_race", f"{number}.png")
+            print(f"unit_race_image_path = {unit_race_image_path}")
+            self.__pre_drawed_unit_race[number] = ImageDataLoader.load_rectangle_origin_image_data(unit_race_image_path)
+
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
         self.pre_draw_opponent_lost_zone()
@@ -489,6 +533,11 @@ class PreDrawedImage:
 
         self.pre_draw_surrender_button()
         self.pre_draw_surrender_confirm_panel()
+
+        self.pre_draw_unit_energy()
+        self.pre_draw_unit_hp()
+        self.pre_draw_unit_attack()
+        self.pre_draw_unit_race()
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
@@ -637,3 +686,15 @@ class PreDrawedImage:
 
     def get_pre_draw_surrender_confirm_panel(self):
         return self.__pre_drawed_surrender_confirm_panel
+
+    def get_pre_draw_unit_energy(self, number):
+        return self.__pre_drawed_unit_energy[number]
+
+    def get_pre_draw_unit_hp(self, number):
+        return self.__pre_drawed_unit_hp[number]
+
+    def get_pre_draw_unit_attack(self, number):
+        return self.__pre_drawed_unit_attack[number]
+
+    def get_pre_draw_unit_race(self, number):
+        return self.__pre_drawed_unit_race[number]
