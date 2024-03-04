@@ -7,7 +7,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
-from battle_field.infra.your_hand_repository import YourHandRepository
+from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
 from battle_field_fixed_card.legacy.fixed_field_card import LegacyFixedFieldCard
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
@@ -57,7 +57,7 @@ class PreDrawedBattleFieldFrameTestCircle(OpenGLFrame):
 
         self.battle_field_environment_shapes = self.battle_field_scene.get_battle_field_environment()
 
-        self.your_hand_repository = YourHandRepository.getInstance()
+        self.your_hand_repository = CircleImageLegacyYourHandRepository.getInstance()
         self.your_hand_repository.save_current_hand_state([6, 8, 19, 151])
         self.your_hand_repository.create_hand_card_list()
 

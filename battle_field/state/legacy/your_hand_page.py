@@ -1,7 +1,7 @@
-from opengl_battle_field_pickable_card.pickable_card import PickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 
 
-class YourHandPage:
+class LegacyYourHandPage:
 
     page_number = 0
 
@@ -65,7 +65,7 @@ class YourHandPage:
 
         for index, card_number in enumerate(your_hand_page_card_list):
             print(f"index: {index}, card_number: {card_number}")
-            new_card = PickableCard(local_translation=self.get_next_card_position(index))
+            new_card = LegacyPickableCard(local_translation=self.get_next_card_position(index))
             new_card.init_card(card_number)
             new_card.set_index(index)
             self.your_hand_page_card_object_list.append(new_card)
