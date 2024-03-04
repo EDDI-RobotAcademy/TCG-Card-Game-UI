@@ -2,8 +2,7 @@ from math import ceil
 
 from battle_field.state.current_hand import CurrentHandState
 from battle_field.state.your_hand_page import YourHandPage
-from image_shape.circle_image import CircleImage
-from opengl_battle_field_pickable_card.pickable_card import LegacyPickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 

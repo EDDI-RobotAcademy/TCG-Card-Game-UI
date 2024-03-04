@@ -3,7 +3,7 @@ from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
 from initializer.init_domain import DomainInitializer
-from opengl_battle_field_pickable_card.pickable_card import LegacyPickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 from tests.lsh.picking_card.renderer.picking_card_frame_renderer import PickingCardFrameRenderer
 
 DomainInitializer.initEachDomain()

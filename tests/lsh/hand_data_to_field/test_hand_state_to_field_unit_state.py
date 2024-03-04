@@ -2,7 +2,6 @@ import unittest
 
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
-from battle_field_fixed_card.fixed_field_card import LegacyFixedFieldCard
 from initializer.init_domain import DomainInitializer
 
 

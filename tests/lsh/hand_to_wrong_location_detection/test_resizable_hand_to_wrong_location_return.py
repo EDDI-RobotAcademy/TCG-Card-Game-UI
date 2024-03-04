@@ -15,7 +15,7 @@ from common.card_type import CardType
 from image_shape.circle_image import CircleImage
 from image_shape.circle_number_image import CircleNumberImage
 from initializer.init_domain import DomainInitializer
-from opengl_battle_field_pickable_card.pickable_card import LegacyPickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.circle import Circle
 from opengl_shape.rectangle import Rectangle

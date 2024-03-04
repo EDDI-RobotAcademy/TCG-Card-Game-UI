@@ -1,13 +1,11 @@
 import math
-import os
 import random
 
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
-from common.utility import get_project_root
-from opengl_battle_field_pickable_card.pickable_card import LegacyPickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 
 from initializer.init_domain import DomainInitializer
 

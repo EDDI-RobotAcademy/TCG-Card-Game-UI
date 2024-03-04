@@ -2,12 +2,11 @@ import os
 import tkinter as tk
 
 import pandas
-from OpenGL import GL, GLU
 from pyopengltk import OpenGLFrame
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
-from opengl_battle_field_pickable_card.pickable_card import LegacyPickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 from opengl_my_card_main_frame_legacy_not_yet_deleted.entity.my_deck_register_scene import MyDeckRegisterScene
 from tkinter_shape.alpha_rectangle import AlphaRectangle
 from tkinter_shape.image_rectangle_element import ImageRectangel

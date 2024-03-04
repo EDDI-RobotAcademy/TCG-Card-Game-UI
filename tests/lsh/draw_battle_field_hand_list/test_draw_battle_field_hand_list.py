@@ -9,7 +9,7 @@ from pyopengltk import OpenGLFrame
 
 from battle_field.infra.your_hand_repository import YourHandRepository
 from initializer.init_domain import DomainInitializer
-from opengl_battle_field_pickable_card.pickable_card import LegacyPickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.rectangle import Rectangle
 

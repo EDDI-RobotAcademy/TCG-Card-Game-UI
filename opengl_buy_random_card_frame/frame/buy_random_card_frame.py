@@ -1,6 +1,3 @@
-import os
-import tkinter as tk
-
 from pyopengltk import OpenGLFrame
 from OpenGL.GL import *
 from OpenGL.GLUT import *
@@ -8,7 +5,7 @@ from OpenGL.GLUT import *
 from common.utility import get_project_root
 from opengl_buy_random_card_frame.entity.buy_random_card_scene import BuyRandomCardScene
 
-from opengl_battle_field_pickable_card.pickable_card import LegacyPickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 from opengl_buy_random_card_frame.renderer.buy_random_card_frame_renderer import BuyRandomCardFrameRenderer
 from opengl_shape.image_rectangle_element import ImageRectangleElement
 from opengl_shape.rectangle import Rectangle

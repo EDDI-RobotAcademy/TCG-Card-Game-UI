@@ -2,16 +2,12 @@ import os
 
 import pandas
 from OpenGL.GL import *
-from OpenGL.GLU import *
 import tkinter as tk
 
 from pyopengltk import OpenGLFrame
 
-from opengl_battle_field_pickable_card.pickable_card import LegacyPickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 from PIL import Image, ImageTk
-
-from tkinter_shape.shape import Shape
-from tests.ugly_test_card.renderer.card_frame_renderer import CardFrameRenderer
 
 
 class CardFrame(OpenGLFrame):

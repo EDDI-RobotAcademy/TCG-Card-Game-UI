@@ -61,10 +61,7 @@ from battle_field.infra.your_lost_zone_repository import YourLostZoneRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field.state.FieldUnitActionStatus import FieldUnitActionStatus
 from battle_field.state.energy_type import EnergyType
-from battle_field_fixed_card.fixed_field_card import LegacyFixedFieldCard
-from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
-from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
-from battle_field_muligun.service.request.muligun_request import MuligunRequest
+from battle_field_fixed_card.legacy.fixed_field_card import LegacyFixedFieldCard
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_grade import CardGrade
 from common.card_race import CardRace
@@ -76,7 +73,7 @@ from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
 from initializer.init_domain import DomainInitializer
 from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
-from opengl_battle_field_pickable_card.pickable_card import LegacyPickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.circle import Circle
 from opengl_shape.rectangle import Rectangle

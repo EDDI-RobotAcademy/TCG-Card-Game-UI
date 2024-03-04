@@ -1,6 +1,6 @@
 from image_shape.circle_image import CircleImage
 from image_shape.circle_number_image import CircleNumberImage
-from opengl_battle_field_pickable_card.pickable_card import LegacyPickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 
 
 class LocationInitializer:
