@@ -2,8 +2,6 @@ from math import ceil
 
 from battle_field.state.current_deck import CurrentDeckState
 from battle_field.state.deck_page import DeckPage
-from battle_field_fixed_card.fixed_field_card import LegacyFixedFieldCard
-from image_shape.rectangle_image import RectangleImage
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 

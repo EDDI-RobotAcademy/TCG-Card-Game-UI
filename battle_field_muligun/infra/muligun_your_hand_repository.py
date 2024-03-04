@@ -1,5 +1,5 @@
 from battle_field_muligun.state.current_hand import CurrentHandState
-from opengl_battle_field_pickable_card.pickable_card import LegacyPickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 
 
 class MuligunYourHandRepository:

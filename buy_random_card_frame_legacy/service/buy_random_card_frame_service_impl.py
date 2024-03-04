@@ -6,7 +6,7 @@ from buy_random_card_frame_legacy.service.buy_random_card_frame_service import B
 from buy_random_card_frame_legacy.service.request.buy_random_card_request import BuyRandomCardRequest
 from card_shop_frame.repository.card_shop_repository_impl import CardShopMenuFrameRepositoryImpl
 from session.service.session_service_impl import SessionServiceImpl
-from opengl_battle_field_pickable_card.pickable_card import LegacyPickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 
 
 class BuyRandomCardFrameServiceImpl(BuyRandomCardFrameService):

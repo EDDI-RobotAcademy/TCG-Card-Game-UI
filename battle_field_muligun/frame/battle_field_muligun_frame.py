@@ -1,5 +1,3 @@
-import tkinter
-
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from colorama import Fore, Style
@@ -10,8 +8,7 @@ from shapely import Polygon, Point
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
 from battle_field_muligun.service.request.muligun_request import MuligunRequest
-from opengl_battle_field_pickable_card.pickable_card import LegacyPickableCard
-from opengl_pickable_shape.pickable_rectangle import PickableRectangle
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.image_rectangle_element import ImageRectangleElement
 from opengl_shape.rectangle import Rectangle

@@ -1,5 +1,4 @@
-from battle_field_fixed_card.fixed_field_card import LegacyFixedFieldCard
-from opengl_battle_field_pickable_card.pickable_card import LegacyPickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 
 
 class YourHandPage:

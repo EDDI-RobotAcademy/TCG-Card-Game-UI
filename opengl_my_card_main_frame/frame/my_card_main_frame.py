@@ -1,4 +1,3 @@
-import os
 import tkinter as tk
 
 import pandas
@@ -12,7 +11,7 @@ from lobby_frame.service.lobby_menu_frame_service_impl import LobbyMenuFrameServ
 from opengl_my_card_main_frame.entity.my_card_main_scene import MyCardMainScene
 from opengl_my_card_main_frame.entity.my_deck_register_scene import MyDeckRegisterScene
 
-from opengl_battle_field_pickable_card.pickable_card import LegacyPickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 from opengl_my_card_main_frame.renderer.fifth_page_card_renerer import FifthPageCardRenderer
 from opengl_my_card_main_frame.renderer.fourth_page_card_renderer import FourthPageCardRenderer
 from opengl_my_card_main_frame.renderer.my_card_main_frame_renderer import MyCardMainFrameRenderer

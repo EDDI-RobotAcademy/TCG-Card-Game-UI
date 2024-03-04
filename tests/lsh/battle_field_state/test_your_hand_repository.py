@@ -1,9 +1,9 @@
 import unittest
-from unittest.mock import patch, MagicMock, call
+from unittest.mock import patch
 
 from battle_field.infra.your_hand_repository import YourHandRepository
 from initializer.init_domain import DomainInitializer
-from opengl_battle_field_pickable_card.pickable_card import LegacyPickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 
 
 class TestYourHandRepository(unittest.TestCase):
