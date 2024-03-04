@@ -155,6 +155,28 @@ class LegacyUnitCard:
         unit_hp_circle.set_circle_kinds(CircleKinds.HP)
         self.add_shape(unit_hp_circle)
 
+        # start_x = center[0] - 5 - radius * 1.8
+        # end_x = center[0] - 5 + radius * 1.8
+        # start_y = center[1] - 12 - radius * 1.2913 * 1.8
+        # end_y = center[1] - 12 + radius * 1.2913 * 1.8
+        #
+        # # x: 267, y: 662
+        # # x: 272, y: 674
+        #
+        # vertices = [
+        #     (start_x, start_y),
+        #     (end_x, start_y),
+        #     (end_x, end_y),
+        #     (start_x, end_y),
+        # ]
+        #
+        # unit_hp_image = NonBackgroundNumberImage(image_data=image_data,
+        #                                          vertices=vertices,
+        #                                          number=hp_number)
+        # unit_hp_image.set_initial_vertices(vertices)
+        # unit_hp_image.set_circle_kinds(CircleKinds.HP)
+        # self.add_shape(unit_hp_image)
+
     def init_shapes(self, circle_radius, card_number, rectangle_height, rectangle_width):
 
         self.create_unit_energy_circle(
@@ -169,7 +191,7 @@ class LegacyUnitCard:
 
         self.create_unit_race_illustration_circle(
             image_data=self.__pre_drawed_image_instance.get_pre_draw_card_race_with_card_number(card_number),
-            # image_data=image_data,
+            # image_data = self.__pre_drawed_image_instance.get_pre_draw_unit_race(race_number),
             center=(rectangle_width, 0),
             radius=circle_radius)
 
@@ -182,6 +204,7 @@ class LegacyUnitCard:
 
         self.create_unit_hp_circle(
             image_data=self.__pre_drawed_image_instance.get_pre_draw_card_hp_with_card_number(card_number),
+            # image_data=self.__pre_drawed_image_instance.get_pre_draw_unit_hp(card_number),
             hp_number=self.__card_info_from_csv_repository.getCardHpForCardNumber(card_number),
             center=(0, rectangle_height),
             radius=circle_radius)
