@@ -1,5 +1,5 @@
 from common.card_type import CardType
-from opengl_battle_field_pickable_card.pickable_card import PickableCard
+from opengl_battle_field_pickable_card.pickable_card import LegacyPickableCard
 
 
 class ReleaseHandler:
@@ -10,7 +10,7 @@ class ReleaseHandler:
         self.card_info = card_info
 
     def handle_release(self, x, y):
-        if isinstance(self.selected_object, PickableCard):
+        if isinstance(self.selected_object, LegacyPickableCard):
             current_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
             current_field_unit_list_length = len(current_field_unit_list)
 

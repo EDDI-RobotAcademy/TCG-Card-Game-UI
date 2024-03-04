@@ -10,7 +10,7 @@ from shapely import Polygon, Point
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
 from battle_field_muligun.service.request.muligun_request import MuligunRequest
-from opengl_battle_field_pickable_card.pickable_card import PickableCard
+from opengl_battle_field_pickable_card.pickable_card import LegacyPickableCard
 from opengl_pickable_shape.pickable_rectangle import PickableRectangle
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.image_rectangle_element import ImageRectangleElement
@@ -254,7 +254,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
             y = self.winfo_reqheight() - y
 
             for hand_card in self.hand_card_list:
-                if isinstance(hand_card, PickableCard):
+                if isinstance(hand_card, LegacyPickableCard):
                     hand_card.selected = False
 
             self.selected_object = None

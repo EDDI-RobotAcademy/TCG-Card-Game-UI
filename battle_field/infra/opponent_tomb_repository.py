@@ -1,5 +1,5 @@
 from battle_field.state.current_tomb import CurrentTombState
-from battle_field_fixed_card.fixed_field_card import FixedFieldCard
+from battle_field_fixed_card.fixed_field_card import LegacyFixedFieldCard
 
 
 class OpponentTombRepository:
@@ -34,7 +34,7 @@ class OpponentTombRepository:
         index = len(self.opponent_tomb_unit_list)
         print(f"create_tomb_card() -> index: {index}, card_id: {card_id}")
 
-        new_card = FixedFieldCard(local_translation=self.get_next_card_position(index))
+        new_card = LegacyFixedFieldCard(local_translation=self.get_next_card_position(index))
         new_card.init_card(card_id)
 
         self.opponent_tomb_unit_list.append(new_card)
@@ -47,7 +47,7 @@ class OpponentTombRepository:
 
         for index, card_number in enumerate(current_tomb_card):
             print(f"index: {index}, card_number: {card_number}")
-            new_card = FixedFieldCard(local_translation=self.get_next_card_position(index))
+            new_card = LegacyFixedFieldCard(local_translation=self.get_next_card_position(index))
             new_card.init_card(card_number)
             new_card.set_index(index)
             self.opponent_tomb_unit_list.append(new_card)

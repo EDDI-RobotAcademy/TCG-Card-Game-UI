@@ -9,7 +9,7 @@ from opengl_battle_field.entity.battle_field import BattleField
 from opengl_battle_field.renderer.battle_field_frame_renderer import BattleFieldFrameRenderer
 from opengl_battle_field_panel.battle_field_panel import BattleFieldPanel
 from opengl_battle_field_unit.unit_card import UnitCard
-from opengl_battle_field_pickable_card.pickable_card import PickableCard
+from opengl_battle_field_pickable_card.pickable_card import LegacyPickableCard
 from opengl_card_deck.card_deck import CardDeck
 from opengl_energy_field.energy_field import EnergyField
 from opengl_environment.environment import Environment

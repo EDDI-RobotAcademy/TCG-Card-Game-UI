@@ -3,7 +3,7 @@ from math import ceil
 from battle_field.state.current_hand import CurrentHandState
 from battle_field.state.your_hand_page import YourHandPage
 from image_shape.circle_image import CircleImage
-from opengl_battle_field_pickable_card.pickable_card import PickableCard
+from opengl_battle_field_pickable_card.pickable_card import LegacyPickableCard
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
@@ -70,7 +70,7 @@ class YourHandRepository:
         for index, card_id in enumerate(card_list):
             print(f"index: {index}, card_number: {card_id}")
             initial_position = self.get_next_card_position(current_hand_card_list_length + index)
-            new_card = PickableCard(local_translation=initial_position)
+            new_card = LegacyPickableCard(local_translation=initial_position)
             new_card.init_card(card_id)
             # new_card.set_initial_position(initial_position)
             self.current_hand_card_list.append(new_card)
@@ -82,7 +82,7 @@ class YourHandRepository:
         for index, card_number in enumerate(current_hand):
             print(f"index: {index}, card_number: {card_number}")
             initial_position = self.get_next_card_position(index)
-            new_card = PickableCard(local_translation=initial_position)
+            new_card = LegacyPickableCard(local_translation=initial_position)
             new_card.init_card(card_number)
             # new_card.set_initial_position(initial_position)
             self.current_hand_card_list.append(new_card)
@@ -115,7 +115,7 @@ class YourHandRepository:
         for index, card_number in enumerate(current_hand):
             print(f"index: {index}, card_number: {card_number}")
             initial_position = self.get_start_hand_card_position(index)
-            new_card = PickableCard(local_translation=initial_position, scale=300)
+            new_card = LegacyPickableCard(local_translation=initial_position, scale=300)
             new_card.init_card_scale(card_number)
             self.current_hand_card_list.append(new_card)
 

@@ -9,7 +9,7 @@ from pyopengltk import OpenGLFrame
 
 from battle_field.infra.your_hand_repository import YourHandRepository
 from initializer.init_domain import DomainInitializer
-from opengl_battle_field_pickable_card.pickable_card import PickableCard
+from opengl_battle_field_pickable_card.pickable_card import LegacyPickableCard
 from opengl_pickable_shape.pickable_rectangle import PickableRectangle
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.rectangle import Rectangle
@@ -231,7 +231,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             y = self.winfo_reqheight() - y
 
             for hand_card in self.hand_card_list:
-                if isinstance(hand_card, PickableCard):
+                if isinstance(hand_card, LegacyPickableCard):
                     hand_card.selected = False
 
             self.selected_object = None
