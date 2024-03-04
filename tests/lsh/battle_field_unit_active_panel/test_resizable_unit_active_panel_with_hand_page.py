@@ -28,7 +28,9 @@ from battle_field.entity.opponent_field_energy import OpponentFieldEnergy
 from battle_field.entity.opponent_field_panel import OpponentFieldPanel
 from battle_field.entity.opponent_hp import OpponentHp
 from battle_field.entity.opponent_main_character import OpponentMainCharacter
+from battle_field.entity.option import Option
 from battle_field.entity.prev_field_energy_race import PrevFieldEnergyRace
+from battle_field.entity.surrender_confirm import SurrenderConfirm
 from battle_field.entity.turn_end import TurnEnd
 from battle_field.entity.your_active_panel import YourActivePanel
 from battle_field.entity.your_deck import YourDeck
@@ -235,6 +237,18 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.your_field_unit_action_repository = YourFieldUnitActionRepository.getInstance()
 
+        self.option = Option()
+        self.option_button = None
+        self.option_button_selected = False
+        self.option_popup_panel_list = []
+        self.option_popup_surrender_button_selected = False
+        self.option_popup_close_button_selected = False
+
+        self.surrender_confirm = SurrenderConfirm()
+        self.surrender_confirm_panel_list = []
+        self.surrender_confirm_ok_button_selected = False
+        self.surrender_confirm_close_button_selected = False
+
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
         self.bind("<ButtonRelease-1>", self.on_canvas_release)
@@ -423,6 +437,16 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.turn_end.set_total_window_size(self.width, self.height)
         self.turn_end.create_turn_end_button()
         self.turn_end_button = self.turn_end.get_turn_end_button()
+
+        self.option.set_total_window_size(self.width, self.height)
+        self.option.create_option_button()
+        self.option_button = self.option.get_option_button()
+        self.option.create_option_button_popup_list()
+        self.option_popup_panel_list = self.option.get_option_button_popup_list()
+
+        self.surrender_confirm.set_total_window_size(self.width, self.height)
+        self.surrender_confirm.create_surrender_confirm_panel_list()
+        self.surrender_confirm_panel_list = self.surrender_confirm.get_surrender_confirm_panel_list()
 
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
@@ -714,6 +738,20 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_hp_panel.set_width_ratio(self.width_ratio)
         self.opponent_hp_panel.set_height_ratio(self.height_ratio)
         self.opponent_hp_panel.draw()
+
+        self.option.set_width_ratio(self.width_ratio)
+        self.option.set_height_ratio(self.height_ratio)
+        self.option_button.set_draw_border(False)
+        self.option_button.draw()
+        if self.option_button_selected:
+            for option_popup_panel in self.option_popup_panel_list:
+                option_popup_panel.draw()
+
+        self.surrender_confirm.set_width_ratio(self.width_ratio)
+        self.surrender_confirm.set_height_ratio(self.height_ratio)
+        if self.option_popup_surrender_button_selected:
+            for surrender_confirm_panel in self.surrender_confirm_panel_list:
+                surrender_confirm_panel.draw()
 
         glDisable(GL_BLEND)
 
@@ -1917,6 +1955,47 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 if self.opponent_lost_zone.is_point_inside_popup_rectangle((x, y)):
                     return
 
+            if self.option_button_selected or self.option_popup_surrender_button_selected:
+                if self.option_popup_surrender_button_selected:
+                    print(f"on click invoke!! : option_popup_surrender_selected")
+
+                    self.surrender_confirm_ok_button_selected = (
+                        self.left_click_detector.which_one_select_is_in_ok_surrender_confirm_area(
+                            (x, y),
+                            self.surrender_confirm,
+                            self.winfo_reqheight()
+                        ))
+
+                    if self.surrender_confirm_ok_button_selected:
+                        print(f"행복해용~~~")
+                        # self.battle_field_function_controller.callSurrender()
+                        self.call_surrender()
+
+                    self.surrender_confirm_close_button_selected = (
+                        self.left_click_detector.which_one_select_is_in_close_surrender_confirm_area(
+                            (x, y),
+                            self.surrender_confirm,
+                            self.winfo_reqheight()
+                        ))
+
+                    if self.surrender_confirm_close_button_selected:
+                        print("취소해용~~~")
+                        self.option_popup_surrender_button_selected = False
+
+                self.option_popup_surrender_button_selected = (
+                    self.left_click_detector.which_one_select_is_in_option_surrender_area(
+                        (x, y),
+                        self.option,
+                        self.winfo_reqheight()
+                    ))
+
+
+            self.option_button_selected = self.left_click_detector.which_one_select_is_in_option_area(
+                (x, y),
+                self.option,
+                self.winfo_reqheight()
+            )
+
             self.tomb_panel_selected = False
             self.opponent_tomb_panel_selected = False
             self.your_lost_zone_panel_selected = False
@@ -2974,6 +3053,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             current_your_field_unit_index = current_your_field_unit.get_index()
             self.your_field_unit_action_repository.set_current_field_unit_action_ready(current_your_field_unit_index)
             self.your_field_unit_action_repository.set_current_field_unit_action_count(current_your_field_unit_index, 1)
+
+    def call_surrender(self):
+        print("항복 요청!")
 
     def on_canvas_right_click(self, event):
         x, y = event.x, event.y
