@@ -64,6 +64,11 @@ class PreDrawedImage:
     __pre_drawed_prev_gold_button = None
     __pre_drawed_ok_button = None
 
+    __pre_drawed_general_attack_button = None
+    __pre_drawed_detail_button = None
+    __pre_drawed_shadow_ball_button = None #스킬1 버튼(쉐도우 볼)
+    __pre_drawed_sea_of_spector_button = None #스킬2 버튼(망령의 바다)
+
     __pre_drawed_animation = {}
 
     __pre_drawed_number_of_energy = {}
@@ -349,6 +354,26 @@ class PreDrawedImage:
                                                    "ok_button.png")
         self.__pre_drawed_ok_button = ImageDataLoader.load_rectangle_image_data(prev_gold_button_image_path)
 
+    def pre_draw_general_attack_button(self):
+        general_ataack_button_path = os.path.join(self.__project_root, "local_storage", "active_panel_button",
+                                                  "general_attack_button.png")
+        self.__pre_drawed_general_attack_button = ImageDataLoader.load_rectangle_image_data(general_ataack_button_path)
+
+    def pre_draw_view_detail_button(self):
+        view_detail_button_path = os.path.join(self.__project_root, "local_storage", "active_panel_button",
+                                               "view_details_button.png")
+        self.__pre_drawed_detail_button = ImageDataLoader.load_rectangle_image_data(view_detail_button_path)
+
+    def pre_draw_shadow_ball_button(self):
+        shadow_ball_button_path = os.path.join(self.__project_root, "local_storage", "active_panel_button",
+                                               "shadow_ball_button.png")
+        self.__pre_drawed_shadow_ball_button = ImageDataLoader.load_rectangle_image_data(shadow_ball_button_path)
+
+    def pre_draw_sea_of_spector_button(self):
+        sea_of_spector_button_path = os.path.join(self.__project_root, "local_storage", "active_panel_button",
+                                                  "sea_of_specter_button.png")
+        self.__pre_drawed_sea_of_spector_button = ImageDataLoader.load_rectangle_image_data(sea_of_spector_button_path)
+
     def pre_draw_battle_field_energy(self):
         image_dir = os.path.join(self.__project_root, "local_storage", "field_energy_image")
         file_list = os.listdir(image_dir)
@@ -451,6 +476,11 @@ class PreDrawedImage:
         self.pre_draw_prev_gold_button()
 
         self.pre_draw_ok_button()
+
+        self.pre_draw_general_attack_button()
+        self.pre_draw_view_detail_button()
+        self.pre_draw_shadow_ball_button()
+        self.pre_draw_sea_of_spector_button()
 
         self.pre_draw_animation()
 
@@ -579,6 +609,18 @@ class PreDrawedImage:
 
     def get_pre_draw_ok_button(self):
         return self.__pre_drawed_ok_button
+
+    def get_pre_draw_general_attack_button(self):
+        return self.__pre_drawed_general_attack_button
+
+    def get_pre_draw_view_detail_button(self):
+        return self.__pre_drawed_detail_button
+
+    def get_pre_draw_shadow_ball_button(self):
+        return self.__pre_drawed_shadow_ball_button
+
+    def get_pre_draw_sea_of_spector_button(self):
+        return self.__pre_drawed_sea_of_spector_button
 
     def get_pre_draw_field_energy(self, number=0):
         return self.__pre_drawed_field_energy[number]

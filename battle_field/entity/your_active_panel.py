@@ -1,4 +1,5 @@
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
+from image_shape.non_background_image import NonBackgroundImage
 from image_shape.rectangle_image import RectangleImage
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
@@ -89,6 +90,7 @@ class YourActivePanel:
         general_attack_button.set_initial_vertices(vertices)
         return general_attack_button
 
+
     def create_first_skill_button(self, image_data, vertices):
         first_skill_button = RectangleImage(image_data=image_data,
                                             vertices=vertices)
@@ -146,7 +148,7 @@ class YourActivePanel:
         button_end_point = (start_point[0] + button_width_size, start_point[1] + button_height_size)
 
         self.your_active_panel_attack_button = self.create_general_attack_button(
-            image_data=self.pre_drawed_image_instance.get_pre_draw_ok_button(),
+            image_data=self.pre_drawed_image_instance.get_pre_draw_general_attack_button(),
             vertices=[
                 (start_point[0]      + 10, start_point[1] + height_margin),
                 (button_end_point[0] + 10, start_point[1] + height_margin),
@@ -164,7 +166,7 @@ class YourActivePanel:
                 f"details button -> details_start_point: {details_start_point}, details_end_point: {details_end_point}")
 
             self.your_active_panel_details_button = self.create_details_button(
-                image_data=self.pre_drawed_image_instance.get_pre_draw_ok_button(),
+                image_data=self.pre_drawed_image_instance.get_pre_draw_view_detail_button(),
                 vertices=[
                     (details_start_point[0] + 10, details_start_point[1] + 10),
                     (details_end_point[0] + 10, details_start_point[1] + 10),
@@ -179,7 +181,7 @@ class YourActivePanel:
         print(f"first skill button -> skill_start_point: {first_skill_start_point}, button_end_point: {first_skill_end_point}")
 
         self.your_active_panel_first_skill_button = self.create_first_skill_button(
-            image_data=self.pre_drawed_image_instance.get_pre_draw_ok_button(),
+            image_data=self.pre_drawed_image_instance.get_pre_draw_shadow_ball_button(),
             vertices=[
                 (first_skill_start_point[0] + 10, first_skill_start_point[1] + 10),
                 (first_skill_end_point[0] + 10, first_skill_start_point[1] + 10),
@@ -195,7 +197,7 @@ class YourActivePanel:
                 f"details button -> details_start_point: {details_start_point}, details_end_point: {details_end_point}")
 
             self.your_active_panel_details_button = self.create_details_button(
-                image_data=self.pre_drawed_image_instance.get_pre_draw_ok_button(),
+                image_data=self.pre_drawed_image_instance.get_pre_draw_view_detail_button(),
                 vertices=[
                     (details_start_point[0] + 10, details_start_point[1] + 10),
                     (details_end_point[0] + 10, details_start_point[1] + 10),
@@ -210,7 +212,7 @@ class YourActivePanel:
         print(f"second skill button -> skill_start_point: {second_skill_start_point}, button_end_point: {second_skill_end_point}")
 
         self.your_active_panel_second_skill_button = self.create_second_skill_button(
-            image_data=self.pre_drawed_image_instance.get_pre_draw_ok_button(),
+            image_data=self.pre_drawed_image_instance.get_pre_draw_sea_of_spector_button(),
             vertices=[
                 (second_skill_start_point[0] + 10, second_skill_start_point[1] + 10),
                 (second_skill_end_point[0] + 10, second_skill_start_point[1] + 10),
@@ -226,7 +228,7 @@ class YourActivePanel:
                 f"details button -> details_start_point: {details_second_start_point}, details_end_point: {details_second_end_point}")
 
             self.your_active_panel_details_button = self.create_details_button(
-                image_data=self.pre_drawed_image_instance.get_pre_draw_ok_button(),
+                image_data=self.pre_drawed_image_instance.get_pre_draw_view_detail_button(),
                 vertices=[
                     (details_second_start_point[0] + 10, details_second_start_point[1] + 10),
                     (details_second_end_point[0] + 10, details_second_start_point[1] + 10),
