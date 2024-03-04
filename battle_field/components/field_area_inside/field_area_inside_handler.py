@@ -119,8 +119,13 @@ class FieldAreaInsideHandler:
         self.__your_field_unit_repository.create_field_unit_card(placed_card_id)
         self.__your_field_unit_repository.save_current_field_unit_state(placed_card_id)
 
+        # your_hand_page = self.__your_hand_repository.get_current_your_hand_page()
+        # your_hand_page_card_list = self.__your_hand_repository.your_hand_page_list[your_hand_page].get_your_hand_page_card_list()
+        # print(f"length of your_hand_page_card_list: {len(your_hand_page_card_list)}")
+
         # self.__your_hand_repository.replace_hand_card_position()
         self.__your_hand_repository.update_your_hand()
+        self.__your_field_unit_repository.replace_field_card_position()
 
         passive_skill_type = self.__card_info_repository.getCardPassiveFirstForCardNumber(placed_card_id)
         if passive_skill_type == 2:
