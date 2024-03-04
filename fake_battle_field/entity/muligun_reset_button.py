@@ -37,8 +37,8 @@ class MuligunResetButton:
                                                        vertices=vertices)
 
     def init_muligun_reset_button(self):
-        left_x_point = self.total_width * 0.633
-        right_x_point = self.total_width * 0.698
+        left_x_point = self.total_width * 0.683
+        right_x_point = self.total_width * 0.748
         top_y_point = self.total_height * 0.668
         bottom_y_point = self.total_height * 0.741
 

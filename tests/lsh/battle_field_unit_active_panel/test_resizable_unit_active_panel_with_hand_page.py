@@ -64,10 +64,12 @@ from battle_field.state.energy_type import EnergyType
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
+from battle_field_muligun.service.request.muligun_request import MuligunRequest
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_grade import CardGrade
 from common.card_race import CardRace
 from common.card_type import CardType
+from fake_battle_field.entity.muligun_reset_button import MuligunResetButton
 from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
@@ -248,6 +250,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.surrender_confirm_panel_list = []
         self.surrender_confirm_ok_button_selected = False
         self.surrender_confirm_close_button_selected = False
+
+        self.muligun_reset_button = None
+        self.muligun_reset_button_clicked = False
+        self.battle_field_muligun_background_shape_list = None
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -447,6 +453,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.surrender_confirm.set_total_window_size(self.width, self.height)
         self.surrender_confirm.create_surrender_confirm_panel_list()
         self.surrender_confirm_panel_list = self.surrender_confirm.get_surrender_confirm_panel_list()
+
+        muligun_reset_button_instance = MuligunResetButton()
+        muligun_reset_button_instance.set_total_window_size(self.width, self.height)
+        muligun_reset_button_instance.init_muligun_reset_button()
+        self.muligun_reset_button = muligun_reset_button_instance.get_muligun_reset_button()
 
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
@@ -786,6 +797,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.current_to_use_field_energy_count_panel.set_width_ratio(self.width_ratio)
         self.current_to_use_field_energy_count_panel.set_height_ratio(self.height_ratio)
         self.current_to_use_field_energy_count_panel.draw()
+
+        self.muligun_reset_button.set_width_ratio(self.width_ratio)
+        self.muligun_reset_button.set_height_ratio(self.height_ratio)
+        self.muligun_reset_button.draw()
 
         # glDisable(GL_BLEND)
 
@@ -2000,6 +2015,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             self.opponent_tomb_panel_selected = False
             self.your_lost_zone_panel_selected = False
             self.opponent_lost_zone_panel_selected = False
+            self.muligun_reset_button_clicked = False
 
             # TODO: Your Hand List in Page
             print(f"Your Hand List in Page")
@@ -2909,6 +2925,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 self.opponent_tomb_panel_selected = False
                 self.your_lost_zone_panel_selected = False
                 self.opponent_lost_zone_panel_selected = False
+                self.muligun_reset_button_clicked = False
                 return
 
             self.opponent_tomb_panel_selected = self.left_click_detector.which_one_select_is_in_opponent_tomb_area(
@@ -2925,6 +2942,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 self.tomb_panel_selected = False
                 self.your_lost_zone_panel_selected = False
                 self.opponent_lost_zone_panel_selected = False
+                self.muligun_reset_button_clicked = False
                 return
 
             self.your_lost_zone_panel_selected = self.left_click_detector.which_one_select_is_in_your_lost_zone_area(
@@ -2941,6 +2959,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 self.tomb_panel_selected = False
                 self.opponent_tomb_panel_selected = False
                 self.opponent_lost_zone_panel_selected = False
+                self.muligun_reset_button_clicked = False
                 return
 
             self.opponent_lost_zone_panel_selected = self.left_click_detector.which_one_select_is_in_opponent_lost_zone_area(
@@ -2957,6 +2976,41 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 self.tomb_panel_selected = False
                 self.opponent_tomb_panel_selected = False
                 self.your_lost_zone_panel_selected = False
+                self.muligun_reset_button_clicked = False
+                return
+
+            self.muligun_reset_button_clicked = self.is_point_inside_muligun_reset_button(
+                (x, y),
+                self.muligun_reset_button,
+                self.winfo_reqheight())
+
+            if self.muligun_reset_button_clicked:
+                print(f"muligun_reset_button_clicked()")
+
+                self.tomb_panel_selected = False
+                self.opponent_tomb_panel_selected = False
+                self.your_lost_zone_panel_selected = False
+                self.opponent_lost_zone_panel_selected = False
+
+                current_hand_card_list = self.your_hand_repository.get_current_hand_state()
+                current_hand_card_list_str = list(map(str, current_hand_card_list))
+
+                # muligunResponseData = self.your_hand_repository.request_fake_muligun(
+                #     MuligunRequest(self.session_repository.get_first_fake_session_info(),
+                #                    current_hand_card_list_str))
+                #
+                # self.your_hand_repository.remove_card_by_multiple_index([0, 1, 2, 3, 4])
+                #
+                # print(f"muligun responseData: {muligunResponseData}")
+                # redrawn_hand_card_list = muligunResponseData['redrawn_hand_card_list']
+                # # redrawn_hand_card_list_str = list(map(str, redrawn_hand_card_list))
+                # self.your_hand_repository.save_current_hand_state(redrawn_hand_card_list)
+                # self.your_hand_repository.create_hand_card_list()
+                #
+                # deck_card_list = muligunResponseData['updated_deck_card_list']
+                #
+                # self.your_deck_repository.save_deck_state(deck_card_list)
+
                 return
 
             self.turn_end_button_selected = self.left_click_detector.which_one_select_is_in_turn_end_area(
@@ -3028,9 +3082,29 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             self.opponent_tomb_panel_selected = False
             self.your_lost_zone_panel_selected = False
             self.opponent_lost_zone_panel_selected = False
+            self.muligun_reset_button_clicked = False
 
         except Exception as e:
             print(f"Exception in on_canvas_click: {e}")
+
+    def is_point_inside_muligun_reset_button(self, click_point, muligun_reset_button, canvas_height):
+        x, y = click_point
+        y = canvas_height - y
+
+        translated_vertices = [
+            (x * self.width_ratio, y * self.height_ratio )
+            for x, y in muligun_reset_button.get_vertices()
+        ]
+        print(f"x: {x}, y: {y}")
+        print(f"translated_vertices: {translated_vertices}")
+
+        if not (translated_vertices[0][0] <= x <= translated_vertices[2][0] and
+                translated_vertices[1][1] <= y <= translated_vertices[2][1]):
+            print("muligun_reset_button result -> False")
+            return False
+
+        print("muligun_reset_button result -> True")
+        return True
 
     def call_turn_end(self):
         self.round_repository.increase_current_round_number()
