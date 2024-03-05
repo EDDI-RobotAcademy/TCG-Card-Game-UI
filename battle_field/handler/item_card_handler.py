@@ -1,4 +1,4 @@
-from battle_field.infra.your_deck_repository import YourDeckRepository
+from battle_field.infra.legacy.circle_image_legacy_your_deck_repository import CircleImageLegacyYourDeckRepository
 from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 
@@ -14,7 +14,7 @@ class ItemCardHandler:
     # 사신의 낫(8), 에너지 번(9), 파멸의 계약(25), 시체 폭발(33), 사기 전환(35)
     __itemCardHandlerTable = {}
 
-    __yourDeckRepository = YourDeckRepository.getInstance()
+    __yourDeckRepository = CircleImageLegacyYourDeckRepository.getInstance()
     __yourFieldUnitRepository = CircleImageLegacyYourFieldUnitRepository.getInstance()
 
     def __new__(cls):

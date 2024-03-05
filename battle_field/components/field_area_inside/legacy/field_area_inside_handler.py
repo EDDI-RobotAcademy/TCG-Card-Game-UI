@@ -1,7 +1,7 @@
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
 from battle_field.infra.request.deploy_unit_card_request import DeployUnitCardRequest
 from battle_field.infra.request.drawCardByUseSupportCardRequest import DrawCardByUseSupportCardRequest
-from battle_field.infra.your_deck_repository import YourDeckRepository
+from battle_field.infra.legacy.circle_image_legacy_your_deck_repository import CircleImageLegacyYourDeckRepository
 from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
 from battle_field.infra.legacy.circle_image_legacy_your_tomb_repository import CircleImageLegacyYourTombRepository
@@ -24,7 +24,7 @@ class LegacyFieldAreaInsideHandler:
 
     __your_hand_repository = CircleImageLegacyYourHandRepository.getInstance()
     __your_field_unit_repository = CircleImageLegacyYourFieldUnitRepository.getInstance()
-    __your_deck_repository = YourDeckRepository.getInstance()
+    __your_deck_repository = CircleImageLegacyYourDeckRepository.getInstance()
     __card_info_repository = CardInfoFromCsvRepositoryImpl.getInstance()
     __your_tomb_repository = CircleImageLegacyYourTombRepository.getInstance()
     __session_info_repository = SessionRepositoryImpl.getInstance()

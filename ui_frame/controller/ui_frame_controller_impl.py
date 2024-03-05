@@ -2,7 +2,7 @@ from account_register_frame.service.account_register_frame_service_impl import A
 from app_window.service.window_service_impl import WindowServiceImpl
 from account_login_frame.service.login_menu_frame_service_impl import LoginMenuFrameServiceImpl
 from battle_field.infra.battle_field_repository import BattleFieldRepository
-from battle_field.infra.your_deck_repository import YourDeckRepository
+from battle_field.infra.legacy.circle_image_legacy_your_deck_repository import CircleImageLegacyYourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
@@ -61,7 +61,7 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__sessionService = SessionServiceImpl.getInstance()
             cls.__instance.__matchingWindowService = MatchingWindowServiceImpl.getInstance()
             cls.__instance.__battleFieldRepository = BattleFieldRepository.getInstance()
-            cls.__instance.__yourDeckRepository = YourDeckRepository.getInstance()
+            cls.__instance.__yourDeckRepository = CircleImageLegacyYourDeckRepository.getInstance()
             cls.__instance.__yourFieldUnitRepository = CircleImageLegacyYourFieldUnitRepository.getInstance()
             cls.__instance.__muligunYourHandRepository = MuligunYourHandRepository.getInstance()
             cls.__instance.__yourTombRepository = CircleImageLegacyYourTombRepository.getInstance()

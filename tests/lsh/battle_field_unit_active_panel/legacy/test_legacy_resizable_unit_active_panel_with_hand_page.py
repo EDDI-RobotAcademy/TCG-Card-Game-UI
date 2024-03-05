@@ -51,7 +51,7 @@ from battle_field.infra.opponent_hp_repository import OpponentHpRepository
 from battle_field.infra.legacy.circle_image_legacy_opponent_lost_zone_repository import CircleImageLegacyOpponentLostZoneRepository
 from battle_field.infra.legacy.circle_image_legacy_opponent_tomb_repository import CircleImageLegacyOpponentTombRepository
 from battle_field.infra.round_repository import RoundRepository
-from battle_field.infra.your_deck_repository import YourDeckRepository
+from battle_field.infra.legacy.circle_image_legacy_your_deck_repository import CircleImageLegacyYourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.your_field_unit_action_repository import YourFieldUnitActionRepository
 from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
@@ -109,7 +109,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_hand_next_button = None
         self.your_hand_prev_button = None
 
-        self.your_deck_repository = YourDeckRepository.getInstance()
+        self.your_deck_repository = CircleImageLegacyYourDeckRepository.getInstance()
         self.your_deck_list = None
         self.your_deck = YourDeck()
         self.your_deck_search_panel = None
