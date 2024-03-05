@@ -1,5 +1,5 @@
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
-from battle_field.components.field_area_inside.field_area_inside_handler import FieldAreaInsideHandler
+from battle_field.components.field_area_inside.legacy.circle_image_legacy_field_area_inside_handler import CircleImageLegacyFieldAreaInsideHandler
 from battle_field.components.fixed_unit_card_inside.fixed_unit_card_inside_handler import FixedUnitCardInsideHandler
 from battle_field.components.init_location.location_initializer import LocationInitializer
 from battle_field.components.mouse_drag.drag_handler import DragHandler
@@ -91,7 +91,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.fixed_unit_card_inside_handler = FixedUnitCardInsideHandler.getInstance(
             self.your_hand_repository, self.your_field_unit_repository, self.card_info)
 
-        self.field_area_inside_handler = FieldAreaInsideHandler.getInstance(
+        self.field_area_inside_handler = CircleImageLegacyFieldAreaInsideHandler.getInstance(
             self.your_hand_repository,
             self.your_field_unit_repository,
             self.your_deck_repository,

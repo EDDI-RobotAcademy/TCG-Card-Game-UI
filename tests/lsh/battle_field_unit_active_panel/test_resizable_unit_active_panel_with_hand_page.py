@@ -4,7 +4,6 @@ from screeninfo import get_monitors
 from shapely import Polygon, Point
 
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
-from battle_field.components.field_area_inside.field_area_inside_handler import FieldAreaInsideHandler
 
 import tkinter
 import unittest
@@ -13,6 +12,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
+from battle_field.components.field_area_inside.field_area_inside_handler import FieldAreaInsideHandler
 from battle_field.components.fixed_unit_card_inside.fixed_unit_card_inside_action import FixedUnitCardInsideAction
 from battle_field.components.mouse_left_click.left_click_detector import LeftClickDetector
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area_action import OpponentFieldAreaAction
