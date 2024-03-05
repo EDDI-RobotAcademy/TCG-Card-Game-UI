@@ -86,10 +86,10 @@ class Option:
 
 
     def create_option_button_popup_list(self):
-        self.create_option_button_popup_surrender_button()
+
         #self.create_option_button_popup_cancel_button()
         self.create_option_button_popup()
-
+        self.create_option_button_popup_surrender_button()
 
     def create_option_button_popup(self):
         width_left = self.total_width * 0.045
