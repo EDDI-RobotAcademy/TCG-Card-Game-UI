@@ -40,4 +40,8 @@ class FakeBattleFieldFrameRepositoryImpl(FakeBattleFieldFrameRepository):
         self.__transmitIpcChannel.put(requestDeckNameListForBattle)
         return self.__receiveIpcChannel.get()
 
+    def request_real_battle_start(self, requestRealBattleStart):
+        self.__transmitIpcChannel.put(requestRealBattleStart)
+        return self.__receiveIpcChannel.get()
+
 

@@ -1,4 +1,5 @@
 import sys
+import time
 import tkinter
 
 from decouple import config
@@ -13,12 +14,22 @@ from battle_lobby_frame.service.request.request_deck_card_list import RequestDec
 from battle_lobby_frame.service.request.request_deck_name_list_for_battle import RequestDeckNameListForBattle
 from fake_battle_field.infra.fake_battle_field_frame_repository_impl import FakeBattleFieldFrameRepositoryImpl
 from fake_battle_field.service.request.create_fake_battle_room_request import CreateFakeBattleRoomRequest
+from fake_battle_field.service.request.real_battle_start_request import RealBattleStartRequest
 from lobby_frame.repository.lobby_menu_frame_repository_impl import LobbyMenuFrameRepositoryImpl
 from lobby_frame.service.lobby_menu_frame_service import LobbyMenuFrameService
 from lobby_frame.service.request.card_list_request import CardListRequest
 from lobby_frame.service.request.check_game_money_request import CheckGameMoneyRequest
 from matching_window.controller.matching_window_controller_impl import MatchingWindowControllerImpl
 from lobby_frame.service.request.exit_request import ExitRequest
+from rock_paper_scissors.frame.check_rock_paper_scissors_winner.repository.check_rock_paper_scissors_winner_repository_impl import \
+    CheckRockPaperScissorsWinnerRepositoryImpl
+from rock_paper_scissors.frame.check_rock_paper_scissors_winner.service.check_rock_paper_scissors_winner_service_impl import \
+    CheckRockPaperScissorsWinnerServiceImpl
+from rock_paper_scissors.frame.check_rock_paper_scissors_winner.service.request.check_rock_paper_scissors_winner_request import \
+    CheckRockPaperScissorsWinnerRequest
+from rock_paper_scissors.repository.rock_paper_scissors_repository import RockPaperScissorsRepository
+from rock_paper_scissors.repository.rock_paper_scissors_repository_impl import RockPaperScissorsRepositoryImpl
+from rock_paper_scissors.service.request.rock_paper_scissors_request import RockPaperScissorsRequest
 from session.repository.session_repository_impl import SessionRepositoryImpl
 from card_shop_frame.repository.card_shop_repository_impl import CardShopMenuFrameRepositoryImpl
 
@@ -50,6 +61,10 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             # cls.__instance.__fakeYourHandRepository = YourHandRepository.getInstance()
             cls.__instance.__fakeYourHandRepository = YourHandRepository.getInstance()
             cls.__instance.__fakeYourDeckRepository = YourDeckRepository.getInstance()
+
+            cls.__instance.__rockPaperScissorsRepositoryImpl = RockPaperScissorsRepositoryImpl.getInstance()
+            cls.__instance.__checkRockPaperScissorsWinnerServiceImpl = CheckRockPaperScissorsWinnerServiceImpl.getInstance()
+            cls.__instance.__checkRockPaperScissorsWinnerRepositoryImpl = CheckRockPaperScissorsWinnerRepositoryImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -146,17 +161,70 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                 # 위에 까지가 17번 완료
                 # 19번 (가위 바위 보) -> 세션, "Rock"
 
+                responseData = self.__rockPaperScissorsRepositoryImpl.requestRockPaperScissors(
+                    RockPaperScissorsRequest(self.__sessionRepository.get_first_fake_session_info(), "Rock"))
 
-                muligunResponseData = self.__muligunYourHandRepository.requestMuligun(
+                print(f"First Fake Accounts (가위 바위 보) -> responseData: {responseData}")
+
+                responseData = self.__rockPaperScissorsRepositoryImpl.requestRockPaperScissors(
+                    RockPaperScissorsRequest(self.__sessionRepository.get_second_fake_session_info(), "Scissors"))
+
+                print(f"Second Fake Accounts (가위 바위 보) -> responseData: {responseData}")
+
+                while True:
+                    responseData = self.__checkRockPaperScissorsWinnerRepositoryImpl.requestCheckRockPaperScissorsWinner(
+                        CheckRockPaperScissorsWinnerRequest(self.__sessionRepository.get_first_fake_session_info()))
+                    print(f"First Fake Accounts (가위 바위 보 결과) responseData: {responseData}")
+
+                    result = responseData['am_i_first_turn']
+
+                    if result == "WAIT":
+                        pass
+
+                    elif result == "WIN" or result == "LOSE":
+                        break
+
+                    time.sleep(1)
+
+                while True:
+                    responseData = self.__checkRockPaperScissorsWinnerRepositoryImpl.requestCheckRockPaperScissorsWinner(
+                        CheckRockPaperScissorsWinnerRequest(self.__sessionRepository.get_second_fake_session_info()))
+                    print(f"Second Fake Accounts (가위 바위 보 결과) responseData: {responseData}")
+
+                    result = responseData['am_i_first_turn']
+
+                    if result == "WAIT":
+                        pass
+
+                    elif result == "WIN" or result == "LOSE":
+                        break
+
+                    time.sleep(1)
+
+                # First Fake Accounts (Your)
+                yourMuligunResponseData = self.__muligunYourHandRepository.requestMuligun(
                     MuligunRequest(first_fake_redis_token,
                                    []))
 
-                print(f"muligun responseData: {muligunResponseData}")
+                print(f"muligun responseData: {yourMuligunResponseData}")
                 self.__fakeYourHandRepository.save_current_hand_state(hand_card_list)
 
-                deck_card_list = muligunResponseData['updated_deck_card_list']
+                deck_card_list = yourMuligunResponseData['updated_deck_card_list']
+
+                # Second Fake Accounts (Opponent)
+                opponentMuligunResponseData = self.__muligunYourHandRepository.requestMuligun(
+                    MuligunRequest(first_fake_redis_token,
+                                   []))
+
+                print(f"muligun responseData: {opponentMuligunResponseData}")
 
                 self.__fakeYourDeckRepository.save_deck_state(deck_card_list)
+
+                # First Fake Accounts (Your) Real Battle Start
+                real_battle_start_response = self.__fakeBattleFieldFrameRepository.request_real_battle_start(
+                    RealBattleStartRequest(first_fake_redis_token)
+                )
+                print(f"real_battle_start_response: {real_battle_start_response}")
 
             switchFrameWithMenuName("fake-battle-field")
 
