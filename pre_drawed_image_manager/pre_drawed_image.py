@@ -446,30 +446,30 @@ class PreDrawedImage:
             self.__pre_drawed_unit_energy[number] = ImageDataLoader.load_rectangle_origin_image_data(unit_energy_image_path)
 
     def pre_draw_unit_hp(self):
-        # unit_hp_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_hp")
-        # unit_hp_image_file_list = os.listdir(unit_hp_image_path)
-        #
-        # for number in range(0, len(unit_hp_image_file_list)):
-        #     unit_hp_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_hp", f"{number}.png")
-        #     print(f"unit_hp_image_path = {unit_hp_image_path}")
-        #     self.__pre_drawed_unit_hp[number] = ImageDataLoader.load_rectangle_origin_image_data(unit_hp_image_path)
-
         unit_hp_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_hp")
         unit_hp_image_file_list = os.listdir(unit_hp_image_path)
-        png_files = [file for file in unit_hp_image_file_list if file.lower().endswith('.png')]
 
-        unit_hp_image_data_list = {}
+        for number in range(0, len(unit_hp_image_file_list)):
+            unit_hp_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_hp", f"{number}.png")
+            print(f"unit_hp_image_path = {unit_hp_image_path}")
+            self.__pre_drawed_unit_hp[number] = ImageDataLoader.load_rectangle_origin_image_data(unit_hp_image_path)
 
-        for png_file in png_files:
-            hp_number = int(png_file[:-4])
-            print(f"number images: {hp_number}")
-            unit_hp_image_data = os.path.join(self.__project_root, "local_storage", "unit_card_hp", f"{png_file}")
-            unit_hp_image_data_list[hp_number] = ImageDataLoader.load_rectangle_origin_image_data(unit_hp_image_data)
-
-        for card_number in self.__card_info_from_csv_repository.getCardNumber():
-            hp_number = self.__card_info_from_csv_repository.getCardHpForCardNumber(card_number)
-            print(f"hp_number: {hp_number}, card_number: {card_number}")
-            self.__pre_drawed_unit_hp[card_number] = unit_hp_image_data_list[hp_number]
+        # unit_hp_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_hp")
+        # unit_hp_image_file_list = os.listdir(unit_hp_image_path)
+        # png_files = [file for file in unit_hp_image_file_list if file.lower().endswith('.png')]
+        #
+        # unit_hp_image_data_list = {}
+        #
+        # for png_file in png_files:
+        #     hp_number = int(png_file[:-4])
+        #     print(f"number images: {hp_number}")
+        #     unit_hp_image_data = os.path.join(self.__project_root, "local_storage", "unit_card_hp", f"{png_file}")
+        #     unit_hp_image_data_list[hp_number] = ImageDataLoader.load_rectangle_origin_image_data(unit_hp_image_data)
+        #
+        # for card_number in self.__card_info_from_csv_repository.getCardNumber():
+        #     hp_number = self.__card_info_from_csv_repository.getCardHpForCardNumber(card_number)
+        #     print(f"hp_number: {hp_number}, card_number: {card_number}")
+        #     self.__pre_drawed_unit_hp[card_number] = unit_hp_image_data_list[hp_number]
 
     def pre_draw_unit_attack(self):
         # unit_attack_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_attack_power")
