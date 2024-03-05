@@ -62,6 +62,8 @@ class MyCardMainFrame(OpenGLFrame):
         self.render = MyCardMainFrameRenderer(self.my_card_main_scene, self)
         self.render.render()
 
+        self.tkMakeCurrent()
+
 
     def make_card_main_frame(self):
         project_root = get_project_root()
@@ -91,26 +93,48 @@ class MyCardMainFrame(OpenGLFrame):
         #print(f"덱 화면 잘 들어갔니?:{self.my_card_main_scene.get_my_card_background()}")
 
         # 덱 생성 버튼
-        button_rectangle = Rectangle(color=(1.0, 0.0, 0.0, 1.0),
-                                     local_translation=(0, 0),
-                                     vertices=[(0.85 * self.width, 0.85 * self.height),
-                                               (self.width - 50, 0.85 * self.height),
-                                               (self.width - 50, self.height - 100),
-                                               (0.85 * self.width, self.height - 100)])
-
-        self.my_card_main_scene.add_button_list(button_rectangle)
+        # button_rectangle = Rectangle(color=(1.0, 0.0, 0.0, 1.0),
+        #                              local_translation=(0, 0),
+        #                              vertices=[(0.85 * self.width, 0.85 * self.height),
+        #                                        (self.width - 50, 0.85 * self.height),
+        #                                        (self.width - 50, self.height - 100),
+        #                                        (0.85 * self.width, self.height - 100)])
+        #
+        # self.my_card_main_scene.add_button_list(button_rectangle)
         #print(f"버튼 도형 잘 들어갔니?:{self.my_card_main_scene.get_button_list()}")
+
+        rectangle_size = 130
+        start_point = (1569, 746)
+        end_point = (start_point[0] + rectangle_size * 2.3, start_point[1] + rectangle_size * 0.55)
+        creat_deck_button = ImageRectangleElement("local_storage/my_card_frame/creat_deck_button.png", [
+            (start_point[0], start_point[1]),
+            (end_point[0], start_point[1]),
+            (end_point[0], end_point[1]),
+            (start_point[0], end_point[1]),
+        ])
+        self.my_card_main_scene.add_button_list(creat_deck_button)
 
         # 뒤로가기 버튼
-        go_to_back_button = Rectangle(color=(0.0, 1.0, 0.0, 1.0),
-                                      local_translation=(0, 0),
-                                      vertices=[(0.85 * self.width, 0.85 * self.height + 90),
-                                                (self.width - 50, 0.85 * self.height + 90),
-                                                (self.width - 50, self.height - 10),
-                                                (0.85 * self.width, self.height - 10)])
-
-        self.my_card_main_scene.add_button_list(go_to_back_button)
+        # go_to_back_button = Rectangle(color=(0.0, 1.0, 0.0, 1.0),
+        #                               local_translation=(0, 0),
+        #                               vertices=[(0.85 * self.width, 0.85 * self.height + 90),
+        #                                         (self.width - 50, 0.85 * self.height + 90),
+        #                                         (self.width - 50, self.height - 10),
+        #                                         (0.85 * self.width, self.height - 10)])
+        #
+        # self.my_card_main_scene.add_button_list(go_to_back_button)
         #print(f"버튼 도형 잘 들어갔니?:{self.my_card_main_scene.get_button_list()}")
+
+        rectangle_size = 130
+        start_point = (1569, 846)
+        end_point = (start_point[0] + rectangle_size * 2.3, start_point[1] + rectangle_size * 0.55)
+        go_to_back_button = ImageRectangleElement("local_storage/my_card_frame/go_to_back_button.png", [
+            (start_point[0], start_point[1]),
+            (end_point[0], start_point[1]),
+            (end_point[0], end_point[1]),
+            (start_point[0], end_point[1]),
+        ])
+        self.my_card_main_scene.add_button_list(go_to_back_button)
 
 
         # 다음 페이지 버튼
@@ -124,10 +148,10 @@ class MyCardMainFrame(OpenGLFrame):
         # self.my_card_main_scene.add_button_list(next_page_button_rectangle)
 
         # 다음 페이지 버튼 도형으로 만든 것.
-        next_left_x_point = self.width * 0.760
-        next_right_x_point = self.width * 0.816
-        next_top_y_point = self.height * 0.463
-        next_bottom_y_point = self.height * 0.533
+        next_left_x_point = self.width * 0.730
+        next_right_x_point = self.width * 0.786
+        next_top_y_point = self.height * 0.483
+        next_bottom_y_point = self.height * 0.553
         next_gold_button_image_data = self.__pre_drawed_image_instance.get_pre_draw_next_gold_button()
         next_page_button = NonBackgroundImage(image_data=next_gold_button_image_data,
                                                vertices=[
@@ -150,10 +174,10 @@ class MyCardMainFrame(OpenGLFrame):
         # self.my_card_main_scene.add_button_list(before_page_button_rectangle)
 
         # 이전 페이지 버튼 도형으로 만든 것.
-        prev_left_x_point = self.width * 0.020
-        prev_right_x_point = self.width * 0.076
-        prev_top_y_point = self.height * 0.463
-        prev_bottom_y_point = self.height * 0.533
+        prev_left_x_point = self.width * 0.002
+        prev_right_x_point = self.width * 0.058
+        prev_top_y_point = self.height * 0.483
+        prev_bottom_y_point = self.height * 0.553
         prev_gold_button_image_data = self.__pre_drawed_image_instance.get_pre_draw_prev_gold_button()
         pre_page_button = NonBackgroundImage(image_data=prev_gold_button_image_data,
                                                vertices=[
@@ -171,8 +195,8 @@ class MyCardMainFrame(OpenGLFrame):
         # print(f"카드 번호 리스트: {all_card_number}")
         # print(f"카드 번호 길이: {len(all_card_number)}")
 
-        x = 185
-        y = 60
+        x = 140
+        y = 95
 
         for i, number in enumerate(all_card_number):
             try:
@@ -185,11 +209,11 @@ class MyCardMainFrame(OpenGLFrame):
                 x += 330
 
                 if (i + 1) % 4 == 0:  # 4개씩
-                    y = 520
-                    x = 185
+                    y = 528
+                    x = 140
                     if (i + 1) % 8 == 0:
-                        x = 185
-                        y = 60
+                        x = 140
+                        y = 95
 
                 if (i + 1) % 8 == 0:
                     continue
@@ -198,9 +222,10 @@ class MyCardMainFrame(OpenGLFrame):
                 print(f"Error creating card: {e}")
                 pass
 
-        glDisable(GL_BLEND)
 
     def redraw(self):
+        self.tkMakeCurrent()
+
         if self.show_my_deck_register_screen is True:
             self.make_my_deck_register_frame()
             self.render_after = MyDeckRegisterFrameRenderer(self.my_deck_register_scene, self)
