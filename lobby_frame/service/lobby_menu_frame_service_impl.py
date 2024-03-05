@@ -213,7 +213,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
                 # Second Fake Accounts (Opponent)
                 opponentMuligunResponseData = self.__muligunYourHandRepository.requestMuligun(
-                    MuligunRequest(first_fake_redis_token,
+                    MuligunRequest(second_fake_redis_token,
                                    []))
 
                 print(f"muligun responseData: {opponentMuligunResponseData}")
@@ -224,7 +224,13 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                 real_battle_start_response = self.__fakeBattleFieldFrameRepository.request_real_battle_start(
                     RealBattleStartRequest(first_fake_redis_token)
                 )
-                print(f"real_battle_start_response: {real_battle_start_response}")
+                print(f"your real_battle_start_response: {real_battle_start_response}")
+
+                # Second Fake Accounts (Your) Real Battle Start
+                real_battle_start_response = self.__fakeBattleFieldFrameRepository.request_real_battle_start(
+                    RealBattleStartRequest(second_fake_redis_token)
+                )
+                print(f"opponent real_battle_start_response: {real_battle_start_response}")
 
             switchFrameWithMenuName("fake-battle-field")
 
