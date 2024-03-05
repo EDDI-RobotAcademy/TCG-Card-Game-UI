@@ -78,6 +78,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
     def __init__(self):
         self.card_data_list = []
+        self.number_of_cards_list = []
 
     def createLobbyUiFrame(self, rootWindow, switchFrameWithMenuName):
         self.__switchFrameWithMenuName = switchFrameWithMenuName
@@ -274,9 +275,11 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                         server_data = responseData.get("card_id_list")
 
                         for i, number in enumerate(server_data):
-                            for key in server_data[i].keys():
+                            for key, value in server_data[i].items():
                                 self.card_data_list.append(int(key))
+                                self.number_of_cards_list.append(int(value))
                                 print(f"서버로 부터 카드 정보 잘 받았니?:{self.card_data_list}")
+                                print(f"서버로 부터 카드 갯수 잘 받았니?: {self.number_of_cards_list}")
 
                         switchFrameWithMenuName("my-card-main")
 
@@ -314,6 +317,9 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
     def get_card_data_list(self):
         return self.card_data_list
+
+    def get_number_of_cards_list(self):
+        return self.number_of_cards_list
 
     def injectTransmitIpcChannel(self, transmitIpcChannel):
         self.__lobbyMenuFrameRepository.saveTransmitIpcChannel(transmitIpcChannel)
