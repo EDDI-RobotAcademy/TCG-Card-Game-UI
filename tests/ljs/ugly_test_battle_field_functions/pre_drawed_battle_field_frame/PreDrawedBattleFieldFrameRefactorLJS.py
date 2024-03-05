@@ -7,7 +7,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
-from battle_field.handler.support_card_handler import SupportCardHandler
+from battle_field.handler.legacy.circle_image_legacy_support_card_handler import CircleImageLegacySupportCardHandler
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
@@ -81,7 +81,7 @@ class PreDrawedBattleFieldFrameRefactorLJS(OpenGLFrame):
         self.your_lightning_border_list = []
         self.boost_selection = False
 
-        self.support_card_handler = SupportCardHandler.getInstance()
+        self.support_card_handler = CircleImageLegacySupportCardHandler.getInstance()
         self.current_process_card_id = 0
 
         self.left_click_detector = LeftClickDetector.getInstance()
