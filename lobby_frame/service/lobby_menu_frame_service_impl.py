@@ -3,8 +3,8 @@ import tkinter
 
 from decouple import config
 
-from battle_field.infra.legacy.your_hand_repository import LegacyYourHandRepository
-from battle_field.infra.legacy.circle_image_legacy_your_deck_repository import CircleImageLegacyYourDeckRepository
+from battle_field.infra.your_deck_repository import YourDeckRepository
+from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository as MuligunHandRepository
 from battle_field_muligun.service.request.muligun_request import MuligunRequest
 from battle_lobby_frame.controller.battle_lobby_frame_controller_impl import BattleLobbyFrameControllerImpl
@@ -48,8 +48,8 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
             # 이건 진짜 Hand를 Fake 용으로 사용하는 것
             # cls.__instance.__fakeYourHandRepository = YourHandRepository.getInstance()
-            cls.__instance.__fakeYourHandRepository = LegacyYourHandRepository.getInstance()
-            cls.__instance.__fakeYourDeckRepository = CircleImageLegacyYourDeckRepository.getInstance()
+            cls.__instance.__fakeYourHandRepository = YourHandRepository.getInstance()
+            cls.__instance.__fakeYourDeckRepository = YourDeckRepository.getInstance()
         return cls.__instance
 
     @classmethod
@@ -142,6 +142,10 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
                 hand_card_list = deckCardListResponse['hand_card_list']
                 print(f"hand card list: {hand_card_list}")
+
+                # 위에 까지가 17번 완료
+                # 19번 (가위 바위 보) -> 세션, "Rock"
+
 
                 muligunResponseData = self.__muligunYourHandRepository.requestMuligun(
                     MuligunRequest(first_fake_redis_token,

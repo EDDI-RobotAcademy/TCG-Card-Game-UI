@@ -89,6 +89,7 @@ from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.circle import Circle
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
+from test_detector.detector import DetectorAboutTest
 
 
 class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
@@ -3418,6 +3419,8 @@ class TestResizableUnitActivePanelWithHandPage(unittest.TestCase):
 
     def test_resizable_unit_active_panel_with_hand_page(self):
         DomainInitializer.initEachDomain()
+        detector_about_test = DetectorAboutTest.getInstance()
+        detector_about_test.set_is_it_test(True)
 
         root = tkinter.Tk()
         root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}-0-0")
