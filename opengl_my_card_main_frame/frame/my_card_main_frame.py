@@ -40,6 +40,7 @@ class MyCardMainFrame(OpenGLFrame):
         self.height = screen_height
 
         self.textbox_string = tk.StringVar()
+        self.entry = None
 
 
         # 덱 생성 버튼 누르기 전 까지는 안 나타남.
@@ -60,15 +61,30 @@ class MyCardMainFrame(OpenGLFrame):
 
         self.make_card_main_frame()
         self.render = MyCardMainFrameRenderer(self.my_card_main_scene, self)
-        self.render.render()
 
         self.tkMakeCurrent()
 
+    def redraw(self):
+        self.tkMakeCurrent()
+
+        self.render.render()
+        if self.show_my_deck_register_screen is True:
+            glEnable(GL_BLEND)
+            if glIsEnabled(GL_BLEND):
+                print("Blending is enabled.")
+            else:
+                print("Blending is not enabled.")
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+            self.make_my_deck_register_frame()
+            self.render_after = MyDeckRegisterFrameRenderer(self.my_deck_register_scene, self)
+            self.render_after.render()
+
 
     def make_card_main_frame(self):
-        project_root = get_project_root()
-        glClearColor(1.0, 1.0, 1.0, 0.0)
-        glClear(GL_COLOR_BUFFER_BIT)
+        # project_root = get_project_root()
+        # glClearColor(1.0, 1.0, 1.0, 0.0)
+        # glClear(GL_COLOR_BUFFER_BIT)
 
         # 나의 카드 배경 화면
         # background_rectangle = ImageRectangleElement(image_path=os.path.join(project_root, "local_storage", "my_card_frame", "my_card_background.png"),
@@ -223,20 +239,12 @@ class MyCardMainFrame(OpenGLFrame):
                 pass
 
 
-    def redraw(self):
-        self.tkMakeCurrent()
-
-        if self.show_my_deck_register_screen is True:
-            self.make_my_deck_register_frame()
-            self.render_after = MyDeckRegisterFrameRenderer(self.my_deck_register_scene, self)
-            self.render_after.render()
-
     def make_my_deck_register_frame(self):
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        # glEnable(GL_BLEND)
+        # glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         # 검정 투명 화면
-        alpha_rectangle = Rectangle(color=(0.0, 0.0, 0.0, 0.5),
+        alpha_rectangle = Rectangle(color=(0.0, 0.0, 0.0, 0.7),
                                     local_translation=(0, 0),
                                     vertices=[(0, 0), (self.width, 0), (self.width, self.height), (0, self.height)])
 
