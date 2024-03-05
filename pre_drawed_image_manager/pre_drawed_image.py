@@ -525,7 +525,7 @@ class PreDrawedImage:
         my_card_background = os.path.join(self.__project_root, "local_storage", "my_card_frame", "my_card_background.png")
         self.__pre_drawed_my_card_background = ImageDataLoader.load_background_image_data(my_card_background, width, height)
 
-    def pre_draw_number_of_cards(self, ):
+    def pre_draw_number_of_cards(self):
         image_dir = os.path.join(self.__project_root, "local_storage", "my_card_frame", "number_of_cards_owned")
         file_list = os.listdir(image_dir)
 

@@ -206,19 +206,49 @@ class MyCardMainFrame(OpenGLFrame):
 
         # TODO: 카드 갯수 표기 배치 (이건 한 개만 테스트 한 것)
         # 가로 길이 비율 0.036, 세로 길이 비율 0.056
-        number_left_x_point = self.width * 0.630
-        number_right_x_point = self.width * 0.666
-        number_top_y_point = self.height * 0.455 # 첫 번째줄은 이 높이로 고정하면 될 듯
-        number_bottom_y_point = self.height * 0.511
-        number_of_cards_data = self.__pre_drawed_image_instance.get_pre_draw_number_of_cards(2)
-        number_of_cards_text = NonBackgroundImage(image_data=number_of_cards_data,
-                                                   vertices=[
-                                                       (number_left_x_point, number_top_y_point),
-                                                       (number_right_x_point, number_top_y_point),
-                                                       (number_right_x_point, number_bottom_y_point),
-                                                       (number_left_x_point, number_bottom_y_point)
-                                                   ])
-        self.my_card_main_scene.add_text_list(number_of_cards_text)
+        # number_left_x_point = self.width * 0.130 # 첫 번째 카드는 이 위치로 고정
+        # number_right_x_point = self.width * 0.166
+        # number_top_y_point = self.height * 0.450 # 첫 번째줄은 이 높이로 고정하면 될 듯
+        # number_bottom_y_point = self.height * 0.506
+        # number_of_cards_data = self.__pre_drawed_image_instance.get_pre_draw_number_of_cards(2)
+        # number_of_cards_text = NonBackgroundImage(image_data=number_of_cards_data,
+        #                                            vertices=[
+        #                                                (number_left_x_point, number_top_y_point),
+        #                                                (number_right_x_point, number_top_y_point),
+        #                                                (number_right_x_point, number_bottom_y_point),
+        #                                                (number_left_x_point, number_bottom_y_point)
+        #                                            ])
+        # self.my_card_main_scene.add_text_list(number_of_cards_text)
+        #
+        #
+        # number_left_x_point = self.width * 0.130  # 첫 번째 카드는 이 위치로 고정
+        # number_right_x_point = self.width * 0.166
+        # number_top_y_point = self.height * 0.940  # 두 번째 줄 높이 고정
+        # number_bottom_y_point = self.height * 0.996
+        # number_of_cards_data2 = self.__pre_drawed_image_instance.get_pre_draw_number_of_cards(3)
+        # number_of_cards_text2 = NonBackgroundImage(image_data=number_of_cards_data2,
+        #                                               vertices=[
+        #                                                   (number_left_x_point, number_top_y_point),
+        #                                                   (number_right_x_point, number_top_y_point),
+        #                                                   (number_right_x_point, number_bottom_y_point),
+        #                                                   (number_left_x_point, number_bottom_y_point)
+        #                                               ])
+        # self.my_card_main_scene.add_text_list(number_of_cards_text2)
+        #
+        # number_left_x_point = self.width * 0.130  # 두 번째 카드의 위치는
+        # number_right_x_point = self.width * 0.166
+        # number_top_y_point = self.height * 0.940  # 두 번째 줄 높이 고정
+        # number_bottom_y_point = self.height * 0.996
+        # x_increase = self.width * 0.164 # 간격 고정
+        # number_of_cards_data3 = self.__pre_drawed_image_instance.get_pre_draw_number_of_cards(4)
+        # number_of_cards_text3 = NonBackgroundImage(image_data=number_of_cards_data3,
+        #                                            vertices=[
+        #                                                (number_left_x_point + x_increase, number_top_y_point),
+        #                                                (number_right_x_point + x_increase, number_top_y_point),
+        #                                                (number_right_x_point + x_increase, number_bottom_y_point),
+        #                                                (number_left_x_point + x_increase, number_bottom_y_point)
+        #                                            ])
+        # self.my_card_main_scene.add_text_list(number_of_cards_text3)
 
         # 모든 카드
         print(f"서버로 부터 가져온 카드 리스트: {self.lobby_service.get_card_data_list()}")
@@ -255,6 +285,52 @@ class MyCardMainFrame(OpenGLFrame):
             except Exception as e:
                 print(f"Error creating card: {e}")
                 pass
+
+
+        # 카드 갯수 표기
+        #TODO: 갯수가 1개인 경우 임시 방편으로 X9 이미지를 불러와 사용중
+        number_left_x_point = self.width * 0.130  # 첫 번째 카드는 이 위치로 고정
+        number_right_x_point = self.width * 0.166
+        number_top_y_point = self.height * 0.450  # 첫 번째줄은 이 높이로 고정하면 될 듯
+        number_bottom_y_point = self.height * 0.506
+        for i, number in enumerate(number_of_cards):
+            try:
+                if number == 1:
+                    number_of_cards_data = self.__pre_drawed_image_instance.get_pre_draw_number_of_cards(9)
+                else:
+                    number_of_cards_data = self.__pre_drawed_image_instance.get_pre_draw_number_of_cards(number)
+
+                number_of_cards_text = NonBackgroundImage(image_data=number_of_cards_data,
+                                                           vertices=[
+                                                               (number_left_x_point, number_top_y_point),
+                                                               (number_right_x_point, number_top_y_point),
+                                                               (number_right_x_point, number_bottom_y_point),
+                                                               (number_left_x_point, number_bottom_y_point)
+                                                           ])
+                self.my_card_main_scene.add_text_list(number_of_cards_text)
+
+                number_left_x_point += self.width * 0.164
+                number_right_x_point += self.width * 0.164
+
+                if (i + 1) % 4 == 0:
+                    number_top_y_point = self.height * 0.940  # 두 번째 줄 부턴 위치 바뀜
+                    number_bottom_y_point = self.height * 0.996
+                    number_left_x_point = self.width * 0.130
+                    number_right_x_point = self.width * 0.166
+
+                    if (i + 1) % 8 == 0:
+                        number_left_x_point = self.width * 0.130
+                        number_right_x_point = self.width * 0.166
+                        number_top_y_point = self.height * 0.450
+                        number_bottom_y_point = self.height * 0.506
+
+                if (i + 1) % 8 == 0:
+                    continue
+
+            except Exception as e:
+                print(f"Error number text: {e}")
+                pass
+
 
 
     def make_my_deck_register_frame(self):

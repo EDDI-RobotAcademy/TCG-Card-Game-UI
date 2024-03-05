@@ -15,7 +15,7 @@ class MyCardMainFrameRenderer:
             self._render_shape(image_element)
 
         # 나의 카드 텍스트
-        for text in self.scene.text_list:
+        for text in self.scene.text_list[:8]:
             self._render_shape(text)
 
         # 버튼 도형
