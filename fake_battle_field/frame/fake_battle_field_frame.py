@@ -16,6 +16,7 @@ from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
     OpponentFixedUnitCardInsideHandler
 from battle_field.entity.battle_field_scene import BattleFieldScene
+from battle_field.entity.battle_result import BattleResult
 from battle_field.entity.current_field_energy_race import CurrentFieldEnergyRace
 from battle_field.entity.current_to_use_field_energy_count import CurrentToUseFieldEnergyCount
 from battle_field.entity.decrease_to_use_field_energy_count import DecreaseToUseFieldEnergyCount
@@ -41,6 +42,7 @@ from battle_field.entity.your_hp import YourHp
 from battle_field.entity.your_lost_zone import YourLostZone
 from battle_field.entity.your_tomb import YourTomb
 from battle_field.handler.support_card_handler import SupportCardHandler
+from battle_field.infra.battle_field_repository import BattleFieldRepository
 
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
@@ -276,6 +278,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.animation_test_image_list = []
         self.animation_test_image_panel_list = []
 
+        self.battle_field_repository = BattleFieldRepository.getInstance()
+        self.battle_result = BattleResult()
+        self.battle_result_panel_list = []
+
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
         self.bind("<ButtonRelease-1>", self.on_canvas_release)
@@ -465,6 +471,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
         muligun_reset_button_instance.set_total_window_size(self.width, self.height)
         muligun_reset_button_instance.init_muligun_reset_button()
         self.muligun_reset_button = muligun_reset_button_instance.get_muligun_reset_button()
+
+        if self.battle_field_repository.get_is_game_end():
+            print("게임 끝났어 ")
+            self.battle_result.set_total_window_size(self.width, self.height)
+            self.battle_result.create_battle_result_panel_list()
+            self.battle_result_panel_list = self.battle_result.get_battle_result_panel_list()
+
 
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
@@ -1065,6 +1078,20 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
+        if self.battle_field_repository.get_is_game_end():
+        # if len(self.battle_result_panel_list) != 0:
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+            self.battle_result.set_width_ratio(self.width_ratio)
+            self.battle_result.set_height_ratio(self.height_ratio)
+            self.battle_result_panel_list[1].draw()
+
+            # for battle_result_panel in self.battle_result_panel_list:
+            #     battle_result_panel.draw()
+
+            glDisable(GL_BLEND)
+
         # for hand_card in self.hand_card_list:
         #     attached_tool_card = hand_card.get_tool_card()
         #     if attached_tool_card is not None:
@@ -1383,6 +1410,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
             glDisable(GL_BLEND)
 
         # self.post_draw()
+        if self.battle_field_repository.get_is_game_end():
+        # if len(self.battle_result_panel_list) != 0:
+            self.battle_result.set_width_ratio(self.width_ratio)
+            self.battle_result.set_height_ratio(self.height_ratio)
+            self.battle_result_panel_list[0].draw()
 
         glEnable(GL_DEPTH_TEST)
 
@@ -1901,6 +1933,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
             y = self.winfo_reqheight() - y
             print(f"x: {x}, y: {y}")
 
+            # if len(self.battle_result_panel_list) != 0:
+            if self.battle_field_repository.get_is_game_end():
+                # print(self.battle_result_panel_list)
+
+                self.battle_field_function_controller.callGameEndReward()
+                self.battle_result_panel_list = []
+                return
+
             if self.your_active_panel.get_your_active_panel_attack_button() is not None:
                 if self.your_active_panel.is_point_inside_attack_button((x, y)):
                     your_field_unit_index = self.selected_object.get_index()
@@ -2223,8 +2263,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if self.surrender_confirm_ok_button_selected:
                         print(f"행복해용~~~")
-                        # self.battle_field_function_controller.callSurrender()
-                        self.call_surrender()
+                        self.battle_field_function_controller.callSurrender()
+                        #self.call_surrender()
 
                     self.surrender_confirm_close_button_selected = (
                         self.left_click_detector.which_one_select_is_in_close_surrender_confirm_area(
@@ -2249,6 +2289,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.option,
                 self.winfo_reqheight()
             )
+
+            print(f"option button selected : {self.option_button_selected}")
+            print(f"option_popup_surrender_button_selected : {self.option_popup_surrender_button_selected}")
 
             self.tomb_panel_selected = False
             self.opponent_tomb_panel_selected = False
@@ -3457,6 +3500,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
         new_rectangle.created_by_right_click = True
         return new_rectangle
 
+    def battle_finish(self):
+        self.battle_result.set_total_window_size(self.width, self.height)
+        self.battle_result.create_battle_result_panel_list()
+        self.battle_result_panel_list = self.battle_result.get_battle_result_panel_list()
+
     # def attach_energy(self, attach_energy_data):
     #
     #     # TODO: Change it to ENUM Value (Not just integer)
@@ -3507,7 +3555,4 @@ class FakeBattleFieldFrame(OpenGLFrame):
     #                 local_translation=opponent_fixed_card_base.get_local_translation())
     #             opponent_fixed_card_base.set_attached_shapes(card_race_circle)
     #
-    # def battle_finish(self):
-    #     self.battle_result.set_total_window_size(self.width, self.height)
-    #     self.battle_result.create_battle_result_panel_list()
-    #     self.battle_result_panel_list = self.battle_result.get_battle_result_panel_list()
+
