@@ -22,6 +22,7 @@ from lobby_frame.service.request.card_list_request import CardListRequest
 from lobby_frame.service.request.check_game_money_request import CheckGameMoneyRequest
 from matching_window.controller.matching_window_controller_impl import MatchingWindowControllerImpl
 from lobby_frame.service.request.exit_request import ExitRequest
+from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
 from rock_paper_scissors.frame.check_rock_paper_scissors_winner.repository.check_rock_paper_scissors_winner_repository_impl import \
     CheckRockPaperScissorsWinnerRepositoryImpl
 from rock_paper_scissors.frame.check_rock_paper_scissors_winner.service.check_rock_paper_scissors_winner_service_impl import \
@@ -68,6 +69,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             cls.__instance.__checkRockPaperScissorsWinnerRepositoryImpl = CheckRockPaperScissorsWinnerRepositoryImpl.getInstance()
 
             cls.__instance.__fakeOpponentHandRepository = FakeOpponentHandRepositoryImpl.getInstance()
+            cls.__instance.__notify_reader_repository = NotifyReaderRepositoryImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -246,6 +248,9 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                     RealBattleStartRequest(first_fake_redis_token)
                 )
                 print(f"your real_battle_start_response: {real_battle_start_response}")
+
+                is_your_turn_value = real_battle_start_response.get('is_your_turn', None)
+                self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(is_your_turn_value)
 
                 # Second Fake Accounts (Your) Real Battle Start
                 real_battle_start_response = self.__fakeBattleFieldFrameRepository.request_real_battle_start(

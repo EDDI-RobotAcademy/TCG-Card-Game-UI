@@ -100,6 +100,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
     __fake_opponent_hand_repository = FakeOpponentHandRepositoryImpl.getInstance()
     __session_repository = SessionRepositoryImpl.getInstance()
+    __notify_reader_repository = NotifyReaderRepositoryImpl.getInstance()
 
     def __init__(self, master=None, switchFrameWithMenuName=None, **kwargs):
         super().__init__(master, **kwargs)
@@ -3430,6 +3431,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             TurnEndRequest(
                 self.__session_repository.get_session_info()))
         print(f"turn_end_request_result: {turn_end_request_result}")
+
+        self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(False)
 
         self.round_repository.increase_current_round_number()
         round = self.round_repository.get_current_round_number()
