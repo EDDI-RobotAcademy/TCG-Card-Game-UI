@@ -4,7 +4,7 @@ from screeninfo import get_monitors
 from shapely import Polygon, Point
 
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
-from battle_field.components.field_area_inside.field_area_inside_handler import FieldAreaInsideHandler
+from battle_field.components.field_area_inside.legacy.circle_image_legacy_field_area_inside_handler import CircleImageLegacyFieldAreaInsideHandler
 
 import tkinter
 import unittest
@@ -153,7 +153,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
         # self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance()
-        self.field_area_inside_handler = FieldAreaInsideHandler.getInstance()
+        self.field_area_inside_handler = CircleImageLegacyFieldAreaInsideHandler.getInstance()
         # TODO: Your 카드에 집어넣는 경우도 이것으로 감지하는 것이 더 좋을 것임
         self.your_fixed_unit_card_inside_handler = None
         self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance()
