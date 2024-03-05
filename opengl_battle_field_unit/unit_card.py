@@ -143,9 +143,11 @@ class UnitCard:
             center=(rectangle_width, rectangle_height),
             radius=circle_radius)
 
+        unit_hp_number = self.__card_info_from_csv_repository.getCardHpForCardNumber(card_number)
+
         self.create_non_background_unit_hp(
-            image_data=self.__pre_drawed_image_instance.get_pre_draw_unit_hp(card_number),
-            hp_number=self.__card_info_from_csv_repository.getCardHpForCardNumber(card_number),
+            image_data=self.__pre_drawed_image_instance.get_pre_draw_unit_hp(unit_hp_number),
+            hp_number=unit_hp_number,
             center=(0, rectangle_height),
             radius=circle_radius)
 
