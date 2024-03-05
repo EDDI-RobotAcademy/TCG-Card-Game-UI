@@ -4,11 +4,10 @@ import freetype
 import pandas
 from OpenGL.GL import *
 from OpenGL.GLUT import *
-from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
 from common.utility import get_project_root
-from opengl_battle_field_pickable_card.pickable_card import PickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 from opengl_shape.image_rectangle_element import ImageRectangleElement
 from opengl_shape.rectangle import Rectangle
 
@@ -29,7 +28,7 @@ class RectDrawingApp(OpenGLFrame):
         y = 20
         for number in data_card_number:
             try:
-                card = PickableCard(local_translation=(x, y))
+                card = LegacyPickableCard(local_translation=(x, y))
                 card.init_card(int(number))
                 self.card_list.append(card)
                 x += 390

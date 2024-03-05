@@ -1,4 +1,4 @@
-from battle_field_fixed_card.fixed_field_card import FixedFieldCard
+from battle_field_fixed_card.legacy.fixed_field_card import LegacyFixedFieldCard
 
 
 class DeckPage:
@@ -63,7 +63,7 @@ class DeckPage:
 
         for index, card_number in enumerate(deck_page_card_list):
             print(f"index: {index}, card_number: {card_number}")
-            new_card = FixedFieldCard(local_translation=self.get_next_card_position(index))
+            new_card = LegacyFixedFieldCard(local_translation=self.get_next_card_position(index))
             new_card.init_card(card_number)
             new_card.set_index(index)
             self.deck_page_card_object_list.append(new_card)

@@ -1,4 +1,3 @@
-import os
 import tkinter as tk
 
 import pandas
@@ -7,11 +6,12 @@ from OpenGL.GL import *
 from OpenGL.GLUT import *
 
 from common.utility import get_project_root
+from image_shape.non_background_image import NonBackgroundImage
 from lobby_frame.service.lobby_menu_frame_service_impl import LobbyMenuFrameServiceImpl
 from opengl_my_card_main_frame.entity.my_card_main_scene import MyCardMainScene
 from opengl_my_card_main_frame.entity.my_deck_register_scene import MyDeckRegisterScene
 
-from opengl_battle_field_pickable_card.pickable_card import PickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 from opengl_my_card_main_frame.renderer.fifth_page_card_renerer import FifthPageCardRenderer
 from opengl_my_card_main_frame.renderer.fourth_page_card_renderer import FourthPageCardRenderer
 from opengl_my_card_main_frame.renderer.my_card_main_frame_renderer import MyCardMainFrameRenderer
@@ -20,9 +20,11 @@ from opengl_my_card_main_frame.renderer.second_page_card_renderer import SecondP
 from opengl_my_card_main_frame.renderer.third_page_card_renderer import ThirdPageCardRenderer
 from opengl_shape.image_rectangle_element import ImageRectangleElement
 from opengl_shape.rectangle import Rectangle
+from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
 class MyCardMainFrame(OpenGLFrame):
+    __pre_drawed_image_instance = PreDrawedImage.getInstance()
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
         self.my_card_main_scene = MyCardMainScene()
@@ -52,7 +54,7 @@ class MyCardMainFrame(OpenGLFrame):
 
     def initgl(self):
         print("initgl 입니다.")
-        glClearColor(0, 0, 0, 0)
+        glClearColor(0.0, 0.0, 0.0, 0)
         glOrtho(0, self.width, self.height, 0, -1, 1)
 
         self.make_card_main_frame()
@@ -62,7 +64,7 @@ class MyCardMainFrame(OpenGLFrame):
 
     def make_card_main_frame(self):
         project_root = get_project_root()
-        glClearColor(0.0, 1.0, 0.0,0.0)
+        glClearColor(1.0, 1.0, 1.0, 0.0)
         glClear(GL_COLOR_BUFFER_BIT)
 
         # 나의 카드 배경 화면
@@ -75,8 +77,8 @@ class MyCardMainFrame(OpenGLFrame):
         # 나의 덱 화면
         my_deck_rectangle = Rectangle(color=(0.5137, 0.3608, 0.2314, 1.0),
                                       local_translation=(0, 0),
-                                      vertices=[(0.80 * self.width, 0), (self.width, 0), (self.width, self.height),
-                                                (0.80 * self.width, self.height)])
+                                      vertices=[(0.84 * self.width, 0), (self.width, 0), (self.width, self.height),
+                                                (0.84 * self.width, self.height)])
 
         self.my_card_main_scene.add_my_card_background(my_deck_rectangle)
         #print(f"덱 화면 잘 들어갔니?:{self.my_card_main_scene.get_my_card_background()}")
@@ -103,25 +105,57 @@ class MyCardMainFrame(OpenGLFrame):
         self.my_card_main_scene.add_button_list(go_to_back_button)
         #print(f"버튼 도형 잘 들어갔니?:{self.my_card_main_scene.get_button_list()}")
 
-        # 다음 페이지 버튼
-        next_page_button_rectangle = Rectangle(color=(1.0, 1.0, 0.0, 1.0),
-                                               local_translation=(0, 0),
-                                               vertices=[(0.85 * self.width - self.width * 0.25, 0.85 * self.height + 90),
-                                                         (self.width - 50 - self.width * 0.25, 0.85 * self.height + 90),
-                                                         (self.width - 50 - self.width * 0.25, self.height - 100 + 90),
-                                                         (0.85 * self.width - self.width * 0.25, self.height - 100 + 90)])
 
-        self.my_card_main_scene.add_button_list(next_page_button_rectangle)
+        # 다음 페이지 버튼
+        # next_page_button_rectangle = Rectangle(color=(1.0, 1.0, 0.0, 1.0),
+        #                                        local_translation=(0, 0),
+        #                                        vertices=[(0.85 * self.width - self.width * 0.25, 0.85 * self.height + 90),
+        #                                                  (self.width - 50 - self.width * 0.25, 0.85 * self.height + 90),
+        #                                                  (self.width - 50 - self.width * 0.25, self.height - 100 + 90),
+        #                                                  (0.85 * self.width - self.width * 0.25, self.height - 100 + 90)])
+        #
+        # self.my_card_main_scene.add_button_list(next_page_button_rectangle)
+
+        # 다음 페이지 버튼 도형으로 만든 것.
+        next_left_x_point = self.width * 0.760
+        next_right_x_point = self.width * 0.816
+        next_top_y_point = self.height * 0.463
+        next_bottom_y_point = self.height * 0.533
+        next_gold_button_image_data = self.__pre_drawed_image_instance.get_pre_draw_next_gold_button()
+        next_page_button = NonBackgroundImage(image_data=next_gold_button_image_data,
+                                               vertices=[
+                                                   (next_left_x_point, next_top_y_point),
+                                                   (next_right_x_point, next_top_y_point),
+                                                   (next_right_x_point, next_bottom_y_point),
+                                                   (next_left_x_point, next_bottom_y_point)
+                                               ])
+        self.my_card_main_scene.add_button_list(next_page_button)
+        print(f"버튼들 다 담김?: {self.my_card_main_scene.get_button_list()}")
 
         # 이전 페이지 버튼
-        before_page_button_rectangle = Rectangle(color=(0.0, 0.0, 1.0, 1.0),
-                                                 local_translation=(0, 0),
-                                                 vertices=[(50, 0.85 * self.height + 90),
-                                                           (0.15 * self.width, 0.85 * self.height + 90),
-                                                           (0.15 * self.width, self.height - 100 + 90),
-                                                           (50, self.height - 100 + 90)])
+        # before_page_button_rectangle = Rectangle(color=(0.0, 0.0, 1.0, 1.0),
+        #                                          local_translation=(0, 0),
+        #                                          vertices=[(50, 0.85 * self.height + 90),
+        #                                                    (0.15 * self.width, 0.85 * self.height + 90),
+        #                                                    (0.15 * self.width, self.height - 100 + 90),
+        #                                                    (50, self.height - 100 + 90)])
+        #
+        # self.my_card_main_scene.add_button_list(before_page_button_rectangle)
 
-        self.my_card_main_scene.add_button_list(before_page_button_rectangle)
+        # 이전 페이지 버튼 도형으로 만든 것.
+        prev_left_x_point = self.width * 0.020
+        prev_right_x_point = self.width * 0.076
+        prev_top_y_point = self.height * 0.463
+        prev_bottom_y_point = self.height * 0.533
+        prev_gold_button_image_data = self.__pre_drawed_image_instance.get_pre_draw_prev_gold_button()
+        pre_page_button = NonBackgroundImage(image_data=prev_gold_button_image_data,
+                                               vertices=[
+                                                   (prev_left_x_point, prev_top_y_point),
+                                                   (prev_right_x_point, prev_top_y_point),
+                                                   (prev_right_x_point, prev_bottom_y_point),
+                                                   (prev_left_x_point, prev_bottom_y_point)
+                                               ])
+        self.my_card_main_scene.add_button_list(pre_page_button)
 
         # 모든 카드
         print(f"서버로 부터 가져온 카드 리스트: {self.lobby_service.get_card_data_list()}")
@@ -130,25 +164,25 @@ class MyCardMainFrame(OpenGLFrame):
         # print(f"카드 번호 리스트: {all_card_number}")
         # print(f"카드 번호 길이: {len(all_card_number)}")
 
-        x = 100
-        y = 50
+        x = 185
+        y = 60
 
         for i, number in enumerate(all_card_number):
             try:
                 #print(f"index: {i}, card number: {number}")
-                card = PickableCard(local_translation=(x, y))
+                card = LegacyPickableCard(local_translation=(x, y))
                 card.init_card_in_my_card_frame(number)
                 self.my_card_main_scene.add_card_list(card)
                 #print(f"카드 리스트: {self.my_card_main_scene.get_card_list()}")
 
-                x += 360
+                x += 330
 
                 if (i + 1) % 4 == 0:  # 4개씩
-                    y = 500
-                    x = 100
+                    y = 520
+                    x = 185
                     if (i + 1) % 8 == 0:
-                        x = 100
-                        y = 50
+                        x = 185
+                        y = 60
 
                 if (i + 1) % 8 == 0:
                     continue
@@ -156,6 +190,8 @@ class MyCardMainFrame(OpenGLFrame):
             except Exception as e:
                 print(f"Error creating card: {e}")
                 pass
+
+        glDisable(GL_BLEND)
 
     def redraw(self):
         if self.show_my_deck_register_screen is True:
@@ -168,7 +204,7 @@ class MyCardMainFrame(OpenGLFrame):
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         # 검정 투명 화면
-        alpha_rectangle = Rectangle(color=(0.0, 0.0, 0.0, 0.8),
+        alpha_rectangle = Rectangle(color=(0.0, 0.0, 0.0, 0.5),
                                     local_translation=(0, 0),
                                     vertices=[(0, 0), (self.width, 0), (self.width, self.height), (0, self.height)])
 

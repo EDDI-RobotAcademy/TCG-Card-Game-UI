@@ -1,19 +1,15 @@
-import os
-
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from image_shape.circle_image import CircleImage
 from image_shape.rectangle_image import RectangleImage
 from image_shape.rectangle_kinds import RectangleKinds
 from opengl_pickable_shape.pickable_rectangle import PickableRectangle
-from common.utility import get_project_root
 from opengl_shape.circle import Circle
-from opengl_shape.image_rectangle_element import ImageRectangleElement
 from opengl_shape.rectangle import Rectangle
-from opengl_battle_field_card_controller.card_controller_impl import CardControllerImpl
+from opengl_battle_field_card_controller.legacy.card_controller_impl import LegacyCardControllerImpl
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
-class FixedFieldCard:
+class LegacyFixedFieldCard:
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
 
     def __init__(self, local_translation=(0, 0), scale=1):
@@ -23,7 +19,7 @@ class FixedFieldCard:
         self.scale = scale
         self.card_number = None
         self.card_info = CardInfoFromCsvRepositoryImpl.getInstance()
-        self.card_controller = CardControllerImpl.getInstance()
+        self.card_controller = LegacyCardControllerImpl.getInstance()
         self.index = 0
 
     def get_card_number(self):

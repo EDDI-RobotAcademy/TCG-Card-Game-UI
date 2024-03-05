@@ -1,6 +1,6 @@
 from battle_field.state.attached_energy_info import AttachedEnergyInfoState
 from battle_field.state.current_field_unit import CurrentFieldUnitState
-from battle_field_fixed_card.fixed_field_card import FixedFieldCard
+from battle_field_fixed_card.legacy.fixed_field_card import LegacyFixedFieldCard
 
 
 class YourFieldUnitRepository:
@@ -38,7 +38,9 @@ class YourFieldUnitRepository:
 
     def create_field_unit_card(self, card_id):
         index = len(self.current_field_unit_list)
-        new_card = FixedFieldCard(local_translation=self.get_next_card_position(index))
+        print(f"create_field_unit_card() -> index: {index}")
+        print(f"create_field_unit_card() -> self.current_field_unit_list: {self.current_field_unit_list}")
+        new_card = LegacyFixedFieldCard(local_translation=self.get_next_card_position(index))
         new_card.init_card(card_id)
         new_card.set_index(index)
         self.current_field_unit_list.append(new_card)
@@ -53,7 +55,7 @@ class YourFieldUnitRepository:
 
         for index, card_number in enumerate(current_field_unit):
             print(f"index: {index}, card_number: {card_number}")
-            new_card = FixedFieldCard(local_translation=self.get_next_card_position(index))
+            new_card = LegacyFixedFieldCard(local_translation=self.get_next_card_position(index))
             new_card.init_card(card_number)
             new_card.set_index(index)
             self.current_field_unit_list.append(new_card)

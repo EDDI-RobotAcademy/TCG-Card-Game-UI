@@ -8,7 +8,7 @@ from account_login_frame.service.login_menu_frame_service_impl import LoginMenuF
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
 from music_player.controller.music_player_controller_impl import MusicPlayerControllerImpl
 from notify_reader.controller.notify_reader_controller_impl import NotifyReaderControllerImpl
-from opengl_battle_field_card_controller.card_controller_impl import CardControllerImpl
+from opengl_battle_field_card_controller.legacy.card_controller_impl import LegacyCardControllerImpl
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from receiver.controller.receiver_controller_impl import ReceiverControllerImpl
 from response_generator.repository.response_generator_repository_impl import ResponseGeneratorRepositoryImpl
@@ -92,7 +92,7 @@ class DomainInitializer:
 
     @staticmethod
     def initBattleFieldCardControllerDomain():
-        CardControllerImpl.getInstance()
+        LegacyCardControllerImpl.getInstance()
 
     @staticmethod
     def initEachDomain():

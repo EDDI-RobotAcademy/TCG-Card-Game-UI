@@ -3,7 +3,7 @@ from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
 from common.utility import get_project_root
-from opengl_battle_field_pickable_card.pickable_card import PickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 from tests.ljs.ugly_test_number_card.renderer.card_frame_renderer import CardFrameRenderer
 
 
@@ -22,12 +22,12 @@ class CardFrame(OpenGLFrame):
 
         project_root = get_project_root()
 
-        first_card = PickableCard(local_translation=(100, 100))
+        first_card = LegacyPickableCard(local_translation=(100, 100))
         first_card.init_card(5)
 
         self.card_list.append(first_card)
 
-        second_card = PickableCard(local_translation=(400, 400))
+        second_card = LegacyPickableCard(local_translation=(400, 400))
         second_card.init_card(6)
 
         self.card_list.append(second_card)
@@ -164,7 +164,7 @@ class CardFrame(OpenGLFrame):
             y = self.winfo_reqheight() - y
 
             for card in self.card_list:
-                if isinstance(card, PickableCard):
+                if isinstance(card, LegacyPickableCard):
                     card.selected = False
 
             self.selected_object = None

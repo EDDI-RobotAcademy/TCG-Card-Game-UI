@@ -1,7 +1,3 @@
-from battle_field.state.current_tomb import CurrentTombState
-from battle_field_fixed_card.fixed_field_card import FixedFieldCard
-
-
 class RoundRepository:
     __instance = None
 

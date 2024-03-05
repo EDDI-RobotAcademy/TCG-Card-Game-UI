@@ -1,5 +1,4 @@
 import os
-import tkinter
 
 from pyopengltk import OpenGLFrame
 from OpenGL import GL, GLU
@@ -8,8 +7,7 @@ from common.utility import get_project_root
 from opengl_battle_field.entity.battle_field import BattleField
 from opengl_battle_field.renderer.battle_field_frame_renderer import BattleFieldFrameRenderer
 from opengl_battle_field_panel.battle_field_panel import BattleFieldPanel
-from opengl_battle_field_unit.unit_card import UnitCard
-from opengl_battle_field_pickable_card.pickable_card import PickableCard
+from opengl_battle_field_unit.legacy.unit_card import LegacyUnitCard
 from opengl_card_deck.card_deck import CardDeck
 from opengl_energy_field.energy_field import EnergyField
 from opengl_environment.environment import Environment
@@ -134,7 +132,7 @@ class BattleFieldFrame(OpenGLFrame):
             placeX = 500 * (unitCount) * 3/(unitCount)
             #placeX = 1500.0
             self.resize_units()
-            summon_unit = UnitCard(local_translation=(placeX, 0))
+            summon_unit = LegacyUnitCard(local_translation=(placeX, 0))
             summon_unit.init_shapes(
                 os.path.join(project_root, "local_storage", "card_images", f"card{unitCount + 1}.png"))
             self.battle_field.add_unit_card(summon_unit)
@@ -142,7 +140,7 @@ class BattleFieldFrame(OpenGLFrame):
 
         else:
             placeX = 500 * (unitCount)
-            summon_unit = UnitCard(local_translation=(placeX, 0))
+            summon_unit = LegacyUnitCard(local_translation=(placeX, 0))
             summon_unit.init_shapes(
                 os.path.join(project_root, "local_storage", "card_images", f"card{unitCount + 1}.png"))
             self.battle_field.add_unit_card(summon_unit)
