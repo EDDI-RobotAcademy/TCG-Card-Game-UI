@@ -32,14 +32,33 @@ class NextPageScreen:
             #         self.page_manager.go_to_next_page()
             #         self.handle_page_transition()
 
-            if self.is_point_inside_next_button((x, y)):
+            next_left_x_point = self.my_card_main_frame.width * 0.730
+            next_right_x_point = self.my_card_main_frame.width * 0.786
+            next_top_y_point = self.my_card_main_frame.height * 0.483
+            next_bottom_y_point = self.my_card_main_frame.height * 0.553
+
+            deck_button_rectangle_vertices = [
+                (next_left_x_point, next_top_y_point),
+                (next_right_x_point, next_top_y_point),
+                (next_right_x_point, next_bottom_y_point),
+                (next_left_x_point, next_bottom_y_point)
+            ]
+
+            if self.check_collision(x, y, deck_button_rectangle_vertices):
+                print("첫 번째 페이지 입니다.")
                 if event:
                     self.page_manager.go_to_next_page()
                     self.handle_page_transition()
 
 
+            # if self.is_point_inside_next_button((x, y)):
+            #     print("첫 번째 페이지 입니다.")
+            #     if event:
+            #         self.page_manager.go_to_next_page()
+            #         self.handle_page_transition()
+
         except Exception as e:
-            print(f"create deck register Error : {e}")
+            print(f"next page button Error : {e}")
 
     def handle_page_transition(self):
         current_page = self.page_manager.get_current_page()
@@ -89,7 +108,8 @@ class NextPageScreen:
         point_x, point_y = point
         point_y *= -1
 
-        next_gold_button_hand = self.my_card_main_scene.get_button_list()[2]
+        button_list = self.my_card_main_scene.get_button_list()
+        next_gold_button_hand = button_list[2]
         print(f"next_gold_button 잘 가져와짐?: {next_gold_button_hand}")
         # print(f"point: {point}")
 

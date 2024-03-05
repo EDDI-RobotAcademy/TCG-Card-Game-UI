@@ -1,9 +1,9 @@
 from battle_field.state.attached_energy_info import AttachedEnergyInfoState
 from battle_field.state.current_field_unit import CurrentFieldUnitState
-from battle_field_fixed_card.fixed_field_card import FixedFieldCard
+from battle_field_fixed_card.legacy.circle_image_legacy_fixed_field_card import LegacyFixedFieldCard
 
 
-class OpponentFieldUnitRepository:
+class CircleImageLegacyOpponentFieldUnitRepository:
     __instance = None
 
     attached_energy_info = AttachedEnergyInfoState()
@@ -36,7 +36,7 @@ class OpponentFieldUnitRepository:
         index = len(self.current_field_unit_card_object_list)
         self.place_field_unit(field_unit_id)
 
-        new_card = FixedFieldCard(local_translation=self.get_next_card_position(index))
+        new_card = LegacyFixedFieldCard(local_translation=self.get_next_card_position(index))
         new_card.init_card(field_unit_id)
         new_card.set_index(index)
 

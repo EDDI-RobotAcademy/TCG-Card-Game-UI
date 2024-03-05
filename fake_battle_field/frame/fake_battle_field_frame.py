@@ -33,22 +33,22 @@ from battle_field.entity.your_field_energy import YourFieldEnergy
 from battle_field.entity.your_hp import YourHp
 from battle_field.entity.your_lost_zone import YourLostZone
 from battle_field.entity.your_tomb import YourTomb
-from battle_field.handler.support_card_handler import SupportCardHandler
+from battle_field.handler.legacy.circle_image_legacy_support_card_handler import CircleImageLegacySupportCardHandler
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
-from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
+from battle_field.infra.legacy.circle_image_legacy_opponent_field_unit_repository import CircleImageLegacyOpponentFieldUnitRepository
 from battle_field.infra.opponent_hp_repository import OpponentHpRepository
 from battle_field.infra.opponent_lost_zone_repository import OpponentLostZoneRepository
-from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
+from battle_field.infra.legacy.circle_image_legacy_opponent_tomb_repository import CircleImageLegacyOpponentTombRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
 from battle_field.infra.legacy.your_hand_repository import LegacyYourHandRepository
 from battle_field.infra.your_hp_repository import YourHpRepository
-from battle_field.infra.your_lost_zone_repository import YourLostZoneRepository
-from battle_field.infra.your_tomb_repository import YourTombRepository
+from battle_field.infra.legacy.circle_image_legacy_your_lost_zone_repository import CircleImageLegacyYourLostZoneRepository
+from battle_field.infra.legacy.circle_image_legacy_your_tomb_repository import CircleImageLegacyYourTombRepository
 from battle_field.state.energy_type import EnergyType
-from battle_field_fixed_card.legacy.fixed_field_card import LegacyFixedFieldCard
+from battle_field_fixed_card.legacy.circle_image_legacy_fixed_field_card import LegacyFixedFieldCard
 from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
 
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
@@ -128,16 +128,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_field_unit_lightning_border_list = []
         self.boost_selection = False
 
-        self.support_card_handler = SupportCardHandler.getInstance()
+        self.support_card_handler = CircleImageLegacySupportCardHandler.getInstance()
         self.current_process_card_id = 0
 
-        self.your_tomb_repository = YourTombRepository.getInstance()
+        self.your_tomb_repository = CircleImageLegacyYourTombRepository.getInstance()
         self.your_tomb_panel = None
         self.your_tomb = YourTomb()
         self.tomb_panel_popup_rectangle = None
         self.tomb_panel_selected = False
 
-        self.opponent_tomb_repository = OpponentTombRepository.getInstance()
+        self.opponent_tomb_repository = CircleImageLegacyOpponentTombRepository.getInstance()
         self.opponent_tomb_panel = None
         self.opponent_tomb = OpponentTomb()
         self.opponent_tomb_popup_rectangle_panel = None
@@ -145,7 +145,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.selected_tomb = TombType.Dummy
 
-        self.opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
+        self.opponent_field_unit_repository = CircleImageLegacyOpponentFieldUnitRepository.getInstance()
         # self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance()
         self.field_area_inside_handler = LegacyFieldAreaInsideHandler.getInstance()
         # TODO: Your 카드에 집어넣는 경우도 이것으로 감지하는 것이 더 좋을 것임
@@ -166,7 +166,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_deck_prev_button = None
         self.your_deck_ok_button = None
 
-        self.your_lost_zone_repository = YourLostZoneRepository.getInstance()
+        self.your_lost_zone_repository = CircleImageLegacyYourLostZoneRepository.getInstance()
         self.your_lost_zone_panel = None
         self.your_lost_zone = YourLostZone()
         self.your_lost_zone_popup_panel = None

@@ -9,14 +9,14 @@ from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
 from battle_field.entity.legacy.your_tomb import YourTomb
-from battle_field.handler.support_card_handler import SupportCardHandler
+from battle_field.handler.legacy.circle_image_legacy_support_card_handler import CircleImageLegacySupportCardHandler
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
-from battle_field.infra.your_tomb_repository import YourTombRepository
+from battle_field.infra.legacy.circle_image_legacy_your_tomb_repository import CircleImageLegacyYourTombRepository
 from battle_field.state.current_tomb import CurrentTombState
-from battle_field_fixed_card.legacy.fixed_field_card import LegacyFixedFieldCard
+from battle_field_fixed_card.legacy.circle_image_legacy_fixed_field_card import LegacyFixedFieldCard
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_type import CardType
 from image_shape.circle_image import CircleImage
@@ -77,7 +77,7 @@ class HandToTomb(OpenGLFrame):
 
         self.your_field_unit_repository = CircleImageLegacyYourFieldUnitRepository.getInstance()
 
-        self.your_tomb_repository = YourTombRepository.getInstance()
+        self.your_tomb_repository = CircleImageLegacyYourTombRepository.getInstance()
         self.tomb_card_list = self.your_tomb_repository.get_current_tomb_state()
         # TODO: Naming Issue
         self.card_info = CardInfoFromCsvRepositoryImpl.getInstance()
@@ -85,7 +85,7 @@ class HandToTomb(OpenGLFrame):
         self.your_lightning_border_list = []
         self.boost_selection = False
 
-        self.support_card_handler = SupportCardHandler.getInstance()
+        self.support_card_handler = CircleImageLegacySupportCardHandler.getInstance()
         self.current_process_card_id = 0
 
         self.bind("<Configure>", self.on_resize)

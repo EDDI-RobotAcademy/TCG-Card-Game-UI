@@ -8,7 +8,7 @@ from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
-from battle_field_fixed_card.legacy.fixed_field_card import LegacyFixedFieldCard
+from battle_field_fixed_card.legacy.circle_image_legacy_fixed_field_card import LegacyFixedFieldCard
 from initializer.init_domain import DomainInitializer
 from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder

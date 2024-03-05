@@ -1,7 +1,7 @@
-from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
-from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
+from battle_field.infra.legacy.circle_image_legacy_opponent_field_unit_repository import CircleImageLegacyOpponentFieldUnitRepository
+from battle_field.infra.legacy.circle_image_legacy_opponent_tomb_repository import CircleImageLegacyOpponentTombRepository
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
-from battle_field.infra.your_tomb_repository import YourTombRepository
+from battle_field.infra.legacy.circle_image_legacy_your_tomb_repository import CircleImageLegacyYourTombRepository
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_grade import CardGrade
 from common.card_race import CardRace
@@ -24,9 +24,9 @@ class OpponentFixedUnitCardInsideHandler:
     __your_hand_card_id = -1
 
     __your_hand_repository = CircleImageLegacyYourHandRepository.getInstance()
-    __your_tomb_repository = YourTombRepository.getInstance()
-    __opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
-    __opponent_tomb_repository = OpponentTombRepository.getInstance()
+    __your_tomb_repository = CircleImageLegacyYourTombRepository.getInstance()
+    __opponent_field_unit_repository = CircleImageLegacyOpponentFieldUnitRepository.getInstance()
+    __opponent_tomb_repository = CircleImageLegacyOpponentTombRepository.getInstance()
     __card_info_repository = CardInfoFromCsvRepositoryImpl.getInstance()
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
 

@@ -27,6 +27,23 @@ class CreatePreviousPageScreen:
             #         self.page_manager.go_to_previous_page()
             #         self.handle_page_transition()
 
+            prev_left_x_point = self.my_card_main_frame.width * 0.002
+            prev_right_x_point = self.my_card_main_frame.width * 0.058
+            prev_top_y_point = self.my_card_main_frame.height * 0.483
+            prev_bottom_y_point = self.my_card_main_frame.height * 0.553
+
+            before_page_button_rectangle_vertices = [
+                (prev_left_x_point, prev_top_y_point),
+                (prev_right_x_point, prev_top_y_point),
+                (prev_right_x_point, prev_bottom_y_point),
+                (prev_left_x_point, prev_bottom_y_point)
+            ]
+
+            if self.check_collision(x, y, before_page_button_rectangle_vertices):
+                if event:
+                    self.page_manager.go_to_previous_page()
+                    self.handle_page_transition()
+
             prev_button_clicked = self.is_point_inside_prev_button((x, y))
             if prev_button_clicked:
                 self.page_manager.go_to_previous_page()

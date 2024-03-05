@@ -103,7 +103,8 @@ class CreateDeckRegisterButton:
                     self.my_card_main_frame.show_my_deck_register_screen = False
                     # 화면에 있는 것들 싹 다 지워야 함.
                     self.my_card_main_frame.clear_screen()
-                    self.my_card_main_frame.getTextBox().destroy()
+                    # self.my_card_main_frame.getTextBox().destroy()
+                    self.destroy_entry()
 
                     # 다시 내 카드 화면 그려...
                     self.my_card_main_frame.show_first_page_card_screen = True
@@ -119,3 +120,9 @@ class CreateDeckRegisterButton:
         x_min, y_min = min(v[0] for v in vertices), min(v[1] for v in vertices)
         x_max, y_max = max(v[0] for v in vertices), max(v[1] for v in vertices)
         return x_min <= x <= x_max and y_min <= -y <= y_max
+
+    def destroy_entry(self):
+        entry = self.my_card_main_frame.getTextBox()
+        if entry:
+            entry.destroy()
+            self.entry = None

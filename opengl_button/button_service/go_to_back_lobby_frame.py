@@ -12,10 +12,20 @@ class GoToBackLobbyFrame:
             x, y = event.x, event.y
             y = self.master.winfo_reqheight() - y
 
-            rectangle_vertices = [(0.85 * self.my_card_main_frame.width, 0.85 * self.my_card_main_frame.height + 90),
-                                  (self.my_card_main_frame.width - 50, 0.85 * self.my_card_main_frame.height + 90),
-                                  (self.my_card_main_frame.width - 50, self.my_card_main_frame.height - 10),
-                                  (0.85 * self.my_card_main_frame.width, self.my_card_main_frame.height - 10)]
+            # rectangle_vertices = [(0.85 * self.my_card_main_frame.width, 0.85 * self.my_card_main_frame.height + 90),
+            #                       (self.my_card_main_frame.width - 50, 0.85 * self.my_card_main_frame.height + 90),
+            #                       (self.my_card_main_frame.width - 50, self.my_card_main_frame.height - 10),
+            #                       (0.85 * self.my_card_main_frame.width, self.my_card_main_frame.height - 10)]
+
+            rectangle_size = 130
+            start_point = (1569, 846)
+            end_point = (start_point[0] + rectangle_size * 2.3, start_point[1] + rectangle_size * 0.55)
+            rectangle_vertices = [
+                (start_point[0], start_point[1]),
+                (end_point[0], start_point[1]),
+                (end_point[0], end_point[1]),
+                (start_point[0], end_point[1])
+            ]
 
             if self.check_collision(x, y, rectangle_vertices):
                 self.switchFrame("lobby-menu")

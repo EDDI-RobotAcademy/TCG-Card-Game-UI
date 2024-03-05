@@ -16,15 +16,15 @@ from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit
     OpponentFixedUnitCardInsideHandler
 from battle_field.entity.opponent_tomb import OpponentTomb
 from battle_field.entity.your_tomb import YourTomb
-from battle_field.handler.support_card_handler import SupportCardHandler
-from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
-from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
+from battle_field.handler.legacy.circle_image_legacy_support_card_handler import CircleImageLegacySupportCardHandler
+from battle_field.infra.legacy.circle_image_legacy_opponent_field_unit_repository import CircleImageLegacyOpponentFieldUnitRepository
+from battle_field.infra.legacy.circle_image_legacy_opponent_tomb_repository import CircleImageLegacyOpponentTombRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
-from battle_field.infra.your_tomb_repository import YourTombRepository
-from battle_field_fixed_card.legacy.fixed_field_card import LegacyFixedFieldCard
+from battle_field.infra.legacy.circle_image_legacy_your_tomb_repository import CircleImageLegacyYourTombRepository
+from battle_field_fixed_card.legacy.circle_image_legacy_fixed_field_card import LegacyFixedFieldCard
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_race import CardRace
@@ -88,22 +88,22 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_field_unit_lightning_border_list = []
         self.boost_selection = False
 
-        self.support_card_handler = SupportCardHandler.getInstance()
+        self.support_card_handler = CircleImageLegacySupportCardHandler.getInstance()
         self.current_process_card_id = 0
 
-        self.your_tomb_repository = YourTombRepository.getInstance()
+        self.your_tomb_repository = CircleImageLegacyYourTombRepository.getInstance()
         self.your_tomb_panel = None
         self.your_tomb = YourTomb()
         self.tomb_panel_popup_rectangle = None
         self.tomb_panel_selected = False
 
-        self.opponent_tomb_repository = OpponentTombRepository.getInstance()
+        self.opponent_tomb_repository = CircleImageLegacyOpponentTombRepository.getInstance()
         self.opponent_tomb_panel = None
         self.opponent_tomb = OpponentTomb()
         self.opponent_tomb_popup_rectangle_panel = None
         self.opponent_tomb_panel_selected = False
 
-        self.opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
+        self.opponent_field_unit_repository = CircleImageLegacyOpponentFieldUnitRepository.getInstance()
         # self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance()
         self.field_area_inside_handler = CircleImageLegacyFieldAreaInsideHandler.getInstance()
         # TODO: Your 카드에 집어넣는 경우도 이것으로 감지하는 것이 더 좋을 것임
