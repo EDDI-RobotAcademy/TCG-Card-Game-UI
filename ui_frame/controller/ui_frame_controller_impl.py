@@ -8,7 +8,7 @@ from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository im
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
 from battle_field_function.service.battle_field_function_service_impl import BattleFieldFunctionServiceImpl
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
-from battle_field.infra.your_tomb_repository import YourTombRepository
+from battle_field.infra.legacy.circle_image_legacy_your_tomb_repository import CircleImageLegacyYourTombRepository
 from battle_field_muligun.service.battle_field_muligun_service_impl import BattleFieldMuligunFrameServiceImpl
 from battle_lobby_frame.service.battle_lobby_frame_service_impl import BattleLobbyFrameServiceImpl
 from card_shop_frame.service.card_shop_service_impl import CardShopMenuFrameServiceImpl
@@ -64,7 +64,7 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__yourDeckRepository = YourDeckRepository.getInstance()
             cls.__instance.__yourFieldUnitRepository = CircleImageLegacyYourFieldUnitRepository.getInstance()
             cls.__instance.__muligunYourHandRepository = MuligunYourHandRepository.getInstance()
-            cls.__instance.__yourTombRepository = YourTombRepository.getInstance()
+            cls.__instance.__yourTombRepository = CircleImageLegacyYourTombRepository.getInstance()
             cls.__instance.__yourHandRepository = CircleImageLegacyYourHandRepository.getInstance()
             cls.__instance.__yourFieldEnergyRepository = YourFieldEnergyRepository.getInstance()
             cls.__instance.__battleFieldMuligunFrameServiece = BattleFieldMuligunFrameServiceImpl.getInstance()

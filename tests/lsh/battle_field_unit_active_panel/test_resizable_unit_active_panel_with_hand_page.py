@@ -61,7 +61,7 @@ from battle_field.infra.your_hand_repository import YourHandRepository
 
 from battle_field.infra.your_hp_repository import YourHpRepository
 from battle_field.infra.your_lost_zone_repository import YourLostZoneRepository
-from battle_field.infra.your_tomb_repository import YourTombRepository
+from battle_field.infra.legacy.circle_image_legacy_your_tomb_repository import CircleImageLegacyYourTombRepository
 from battle_field.state.FieldUnitActionStatus import FieldUnitActionStatus
 from battle_field.state.energy_type import EnergyType
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
@@ -142,7 +142,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.support_card_handler = SupportCardHandler.getInstance()
         self.current_process_card_id = 0
 
-        self.your_tomb_repository = YourTombRepository.getInstance()
+        self.your_tomb_repository = CircleImageLegacyYourTombRepository.getInstance()
         self.your_tomb_panel = None
         self.your_tomb = YourTomb()
         self.tomb_panel_popup_rectangle = None

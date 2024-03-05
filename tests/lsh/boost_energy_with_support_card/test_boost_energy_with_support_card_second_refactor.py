@@ -17,7 +17,7 @@ from battle_field.handler.support_card_handler import SupportCardHandler
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
-from battle_field.infra.your_tomb_repository import YourTombRepository
+from battle_field.infra.legacy.circle_image_legacy_your_tomb_repository import CircleImageLegacyYourTombRepository
 from battle_field_fixed_card.legacy.circle_image_legacy_fixed_field_card import LegacyFixedFieldCard
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from initializer.init_domain import DomainInitializer
@@ -76,7 +76,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.your_field_unit_repository = CircleImageLegacyYourFieldUnitRepository.getInstance()
 
-        self.your_tomb_repository = YourTombRepository.getInstance()
+        self.your_tomb_repository = CircleImageLegacyYourTombRepository.getInstance()
         # TODO: Naming Issue
         self.card_info = CardInfoFromCsvRepositoryImpl.getInstance()
 

@@ -21,7 +21,7 @@ from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
-from battle_field.infra.your_tomb_repository import YourTombRepository
+from battle_field.infra.legacy.circle_image_legacy_your_tomb_repository import CircleImageLegacyYourTombRepository
 from battle_field_fixed_card.legacy.circle_image_legacy_fixed_field_card import LegacyFixedFieldCard
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
@@ -89,7 +89,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.support_card_handler = SupportCardHandler.getInstance()
         self.current_process_card_id = 0
 
-        self.your_tomb_repository = YourTombRepository.getInstance()
+        self.your_tomb_repository = CircleImageLegacyYourTombRepository.getInstance()
         self.your_tomb_panel = None
         self.your_tomb = YourTomb()
         self.tomb_panel_popup_rectangle = None
@@ -101,7 +101,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         # TODO: Your 카드에 집어넣는 경우도 이것으로 감지하는 것이 더 좋을 것임
         self.your_fixed_unit_card_inside_handler = None
         self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance()
-        self.your_tomb_repository = YourTombRepository.getInstance()
+        self.your_tomb_repository = CircleImageLegacyYourTombRepository.getInstance()
 
         self.left_click_detector = LeftClickDetector.getInstance()
 

@@ -11,7 +11,7 @@ from battle_field.handler.support_card_handler import SupportCardHandler
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
-from battle_field.infra.your_tomb_repository import YourTombRepository
+from battle_field.infra.legacy.circle_image_legacy_your_tomb_repository import CircleImageLegacyYourTombRepository
 from battle_field_fixed_card.legacy.circle_image_legacy_fixed_field_card import LegacyFixedFieldCard
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
@@ -77,7 +77,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.support_card_handler = SupportCardHandler.getInstance()
         self.current_process_card_id = 0
 
-        self.your_tomb_repository = YourTombRepository.getInstance()
+        self.your_tomb_repository = CircleImageLegacyYourTombRepository.getInstance()
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
