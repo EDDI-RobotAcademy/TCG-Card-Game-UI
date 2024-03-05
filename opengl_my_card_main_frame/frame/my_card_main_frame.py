@@ -62,6 +62,8 @@ class MyCardMainFrame(OpenGLFrame):
         self.render = MyCardMainFrameRenderer(self.my_card_main_scene, self)
         self.render.render()
 
+        self.tkMakeCurrent()
+
 
     def make_card_main_frame(self):
         project_root = get_project_root()
@@ -91,26 +93,48 @@ class MyCardMainFrame(OpenGLFrame):
         #print(f"덱 화면 잘 들어갔니?:{self.my_card_main_scene.get_my_card_background()}")
 
         # 덱 생성 버튼
-        button_rectangle = Rectangle(color=(1.0, 0.0, 0.0, 1.0),
-                                     local_translation=(0, 0),
-                                     vertices=[(0.85 * self.width, 0.85 * self.height),
-                                               (self.width - 50, 0.85 * self.height),
-                                               (self.width - 50, self.height - 100),
-                                               (0.85 * self.width, self.height - 100)])
-
-        self.my_card_main_scene.add_button_list(button_rectangle)
+        # button_rectangle = Rectangle(color=(1.0, 0.0, 0.0, 1.0),
+        #                              local_translation=(0, 0),
+        #                              vertices=[(0.85 * self.width, 0.85 * self.height),
+        #                                        (self.width - 50, 0.85 * self.height),
+        #                                        (self.width - 50, self.height - 100),
+        #                                        (0.85 * self.width, self.height - 100)])
+        #
+        # self.my_card_main_scene.add_button_list(button_rectangle)
         #print(f"버튼 도형 잘 들어갔니?:{self.my_card_main_scene.get_button_list()}")
+
+        rectangle_size = 130
+        start_point = (1569, 746)
+        end_point = (start_point[0] + rectangle_size * 2.3, start_point[1] + rectangle_size * 0.55)
+        creat_deck_button = ImageRectangleElement("local_storage/my_card_frame/creat_deck_button.png", [
+            (start_point[0], start_point[1]),
+            (end_point[0], start_point[1]),
+            (end_point[0], end_point[1]),
+            (start_point[0], end_point[1]),
+        ])
+        self.my_card_main_scene.add_button_list(creat_deck_button)
 
         # 뒤로가기 버튼
-        go_to_back_button = Rectangle(color=(0.0, 1.0, 0.0, 1.0),
-                                      local_translation=(0, 0),
-                                      vertices=[(0.85 * self.width, 0.85 * self.height + 90),
-                                                (self.width - 50, 0.85 * self.height + 90),
-                                                (self.width - 50, self.height - 10),
-                                                (0.85 * self.width, self.height - 10)])
-
-        self.my_card_main_scene.add_button_list(go_to_back_button)
+        # go_to_back_button = Rectangle(color=(0.0, 1.0, 0.0, 1.0),
+        #                               local_translation=(0, 0),
+        #                               vertices=[(0.85 * self.width, 0.85 * self.height + 90),
+        #                                         (self.width - 50, 0.85 * self.height + 90),
+        #                                         (self.width - 50, self.height - 10),
+        #                                         (0.85 * self.width, self.height - 10)])
+        #
+        # self.my_card_main_scene.add_button_list(go_to_back_button)
         #print(f"버튼 도형 잘 들어갔니?:{self.my_card_main_scene.get_button_list()}")
+
+        rectangle_size = 130
+        start_point = (1569, 846)
+        end_point = (start_point[0] + rectangle_size * 2.3, start_point[1] + rectangle_size * 0.55)
+        go_to_back_button = ImageRectangleElement("local_storage/my_card_frame/go_to_back_button.png", [
+            (start_point[0], start_point[1]),
+            (end_point[0], start_point[1]),
+            (end_point[0], end_point[1]),
+            (start_point[0], end_point[1]),
+        ])
+        self.my_card_main_scene.add_button_list(go_to_back_button)
 
 
         # 다음 페이지 버튼
@@ -198,9 +222,10 @@ class MyCardMainFrame(OpenGLFrame):
                 print(f"Error creating card: {e}")
                 pass
 
-        glDisable(GL_BLEND)
 
     def redraw(self):
+        self.tkMakeCurrent()
+
         if self.show_my_deck_register_screen is True:
             self.make_my_deck_register_frame()
             self.render_after = MyDeckRegisterFrameRenderer(self.my_deck_register_scene, self)

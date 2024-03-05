@@ -7,14 +7,24 @@ class CreateDeckRegisterScreen:
             x, y = event.x, event.y
             y = self.my_card_main_frame.winfo_reqheight() - y
 
-            deck_button_rectangle_vertices = [(0.85 * self.my_card_main_frame.width,
-                                               0.85 * self.my_card_main_frame.height),
-                                              (self.my_card_main_frame.width - 50,
-                                               0.85 * self.my_card_main_frame.height),
-                                              (self.my_card_main_frame.width - 50,
-                                               self.my_card_main_frame.height - 100),
-                                              (0.85 * self.my_card_main_frame.width,
-                                               self.my_card_main_frame.height - 100)]
+            # deck_button_rectangle_vertices = [(0.85 * self.my_card_main_frame.width,
+            #                                    0.85 * self.my_card_main_frame.height),
+            #                                   (self.my_card_main_frame.width - 50,
+            #                                    0.85 * self.my_card_main_frame.height),
+            #                                   (self.my_card_main_frame.width - 50,
+            #                                    self.my_card_main_frame.height - 100),
+            #                                   (0.85 * self.my_card_main_frame.width,
+            #                                    self.my_card_main_frame.height - 100)]
+
+            rectangle_size = 130
+            start_point = (1569, 746)
+            end_point = (start_point[0] + rectangle_size * 2.3, start_point[1] + rectangle_size * 0.55)
+            deck_button_rectangle_vertices = [
+                (start_point[0], start_point[1]),
+                (end_point[0], start_point[1]),
+                (end_point[0], end_point[1]),
+                (start_point[0], end_point[1])
+            ]
 
             if self.check_collision(x, y, deck_button_rectangle_vertices):
                 self.my_card_main_frame.show_my_deck_register_screen = True
