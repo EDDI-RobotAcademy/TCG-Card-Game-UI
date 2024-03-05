@@ -76,6 +76,7 @@ from fake_battle_field.entity.muligun_reset_button import MuligunResetButton
 from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
+from image_shape.non_background_number_image import NonBackgroundNumberImage
 from initializer.init_domain import DomainInitializer
 from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
@@ -652,7 +653,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     attached_shape_list = fixed_card_base.get_attached_shapes()
 
                     for attached_shape in attached_shape_list:
-                        if isinstance(attached_shape, CircleNumberImage):
+                        if isinstance(attached_shape, NonBackgroundNumberImage):
                             if attached_shape.get_circle_kinds() is CircleKinds.HP:
 
                                 hp_number = attached_shape.get_number()
@@ -665,8 +666,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                 print(f"contract_of_doom -> hp_number: {hp_number}")
                                 attached_shape.set_number(hp_number)
 
+                                # attached_shape.set_image_data(
+                                #     self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
+
                                 attached_shape.set_image_data(
-                                    self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
+                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(hp_number))
 
                     if remove_from_field:
                         card_id = opponent_field_unit.get_card_number()
@@ -746,11 +750,16 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
 
             for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
-                if isinstance(opponent_fixed_card_attached_shape, CircleNumberImage):
+                if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
                     if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+                        # opponent_fixed_card_attached_shape.set_image_data(
+                        #     self.pre_drawed_image_instance.get_pre_draw_number_image(
+                        #         total_attached_energy_count))
+
                         opponent_fixed_card_attached_shape.set_image_data(
-                            self.pre_drawed_image_instance.get_pre_draw_number_image(
+                            self.pre_drawed_image_instance.get_pre_draw_unit_energy(
                                 total_attached_energy_count))
+
                         print(f"changed energy: {opponent_fixed_card_attached_shape.get_circle_kinds()}")
 
             # after_attach_energy_count
@@ -1482,7 +1491,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                                 # TODO: 가만 보면 이 부분이 은근히 많이 사용되고 있음 (중복 많이 발생함)
                                 for attached_shape in attached_shape_list:
-                                    if isinstance(attached_shape, CircleNumberImage):
+                                    if isinstance(attached_shape, NonBackgroundNumberImage):
                                         if attached_shape.get_circle_kinds() is CircleKinds.HP:
 
                                             hp_number = attached_shape.get_number()
@@ -1497,9 +1506,12 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                             print(f"contract_of_doom -> hp_number: {hp_number}")
                                             attached_shape.set_number(hp_number)
 
+                                            # attached_shape.set_image_data(
+                                            #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+                                            #     self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
+
                                             attached_shape.set_image_data(
-                                                # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
-                                                self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
+                                                self.pre_drawed_image_instance.get_pre_draw_unit_hp(hp_number))
 
                                 if remove_from_field:
                                     card_id = opponent_field_unit.get_card_number()
@@ -1739,11 +1751,16 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                             # TODO: 특수 에너지 붙인 것을 어떻게 표현 할 것인가 ? (아직 미정)
                             for fixed_card_attached_shape in fixed_card_attached_shape_list:
-                                if isinstance(fixed_card_attached_shape, CircleNumberImage):
+                                if isinstance(fixed_card_attached_shape, NonBackgroundNumberImage):
                                     if fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+                                        # fixed_card_attached_shape.set_image_data(
+                                        #     self.pre_drawed_image_instance.get_pre_draw_number_image(
+                                        #         total_attached_energy_count))
+
                                         fixed_card_attached_shape.set_image_data(
-                                            self.pre_drawed_image_instance.get_pre_draw_number_image(
+                                            self.pre_drawed_image_instance.get_pre_draw_unit_energy(
                                                 total_attached_energy_count))
+
                                         print(f"changed energy: {fixed_card_attached_shape.get_circle_kinds()}")
 
                             card_race = self.card_info_repository.getCardRaceForCardNumber(placed_card_id)
@@ -2093,7 +2110,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                             # TODO: 가만 보면 이 부분이 은근히 많이 사용되고 있음 (중복 많이 발생함)
                             for attached_shape in attached_shape_list:
-                                if isinstance(attached_shape, CircleNumberImage):
+                                if isinstance(attached_shape, NonBackgroundNumberImage):
                                     if attached_shape.get_circle_kinds() is CircleKinds.HP:
 
                                         hp_number = attached_shape.get_number()
@@ -2108,9 +2125,12 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                         print(f"contract_of_doom -> hp_number: {hp_number}")
                                         attached_shape.set_number(hp_number)
 
+                                        # attached_shape.set_image_data(
+                                        #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+                                        #     self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
+
                                         attached_shape.set_image_data(
-                                            # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
-                                            self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
+                                            self.pre_drawed_image_instance.get_pre_draw_unit_hp(hp_number))
 
                             if remove_from_field:
                                 card_id = opponent_field_unit.get_card_number()
@@ -2292,11 +2312,16 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         print(f"total_attached_energy_count: {total_attached_energy_count}")
 
                         for fixed_card_attached_shape in fixed_card_attached_shape_list:
-                            if isinstance(fixed_card_attached_shape, CircleNumberImage):
+                            if isinstance(fixed_card_attached_shape, NonBackgroundNumberImage):
                                 if fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+                                    # fixed_card_attached_shape.set_image_data(
+                                    #     self.pre_drawed_image_instance.get_pre_draw_number_image(
+                                    #         total_attached_energy_count))
+
                                     fixed_card_attached_shape.set_image_data(
-                                        self.pre_drawed_image_instance.get_pre_draw_number_image(
+                                        self.pre_drawed_image_instance.get_pre_draw_unit_energy(
                                             total_attached_energy_count))
+
                                     print(f"changed energy: {fixed_card_attached_shape.get_circle_kinds()}")
 
                         card_race = self.card_info_repository.getCardRaceForCardNumber(placed_card_id)
@@ -2459,7 +2484,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         opponent_field_card_id = None
 
                         for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
-                            if isinstance(opponent_fixed_card_attached_shape, CircleNumberImage):
+                            if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
                                 if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
                                     print("지정한 상대방 유닛 HP Circle 찾기")
 
@@ -2491,7 +2516,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                                     are_your_field_unit_death = False
                                     for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
-                                        if isinstance(your_fixed_card_attached_shape, CircleNumberImage):
+                                        if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
                                             if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
                                                 your_hp_number = your_fixed_card_attached_shape.get_number()
                                                 your_hp_number -= opponent_damage
@@ -2505,9 +2530,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                                 print(f"공격 후 your unit 체력 -> hp_number: {your_hp_number}")
                                                 your_fixed_card_attached_shape.set_number(your_hp_number)
 
+                                                # your_fixed_card_attached_shape.set_image_data(
+                                                #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+                                                #     self.pre_drawed_image_instance.get_pre_draw_number_image(
+                                                #         your_hp_number))
+
                                                 your_fixed_card_attached_shape.set_image_data(
-                                                    # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
-                                                    self.pre_drawed_image_instance.get_pre_draw_number_image(
+                                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(
                                                         your_hp_number))
 
                                     if are_your_field_unit_death is True:
@@ -2535,9 +2564,12 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                     print(f"공격 후 opponent unit 체력 -> hp_number: {opponent_hp_number}")
                                     opponent_fixed_card_attached_shape.set_number(opponent_hp_number)
 
+                                    # opponent_fixed_card_attached_shape.set_image_data(
+                                    #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+                                    #     self.pre_drawed_image_instance.get_pre_draw_number_image(opponent_hp_number))
+
                                     opponent_fixed_card_attached_shape.set_image_data(
-                                        # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
-                                        self.pre_drawed_image_instance.get_pre_draw_number_image(opponent_hp_number))
+                                        self.pre_drawed_image_instance.get_pre_draw_unit_hp(opponent_hp_number))
 
                         # opponent_field_card_index = None
                         # opponent_field_card_id = None
@@ -2627,7 +2659,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         print("지정한 상대 유닛 모양 찾기")
 
                         for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
-                            if isinstance(opponent_fixed_card_attached_shape, CircleNumberImage):
+                            if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
                                 if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
                                     print("지정한 상대방 유닛 HP Circle 찾기")
 
@@ -2655,9 +2687,12 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                     print(f"공격 후 opponent unit 체력 -> hp_number: {opponent_hp_number}")
                                     opponent_fixed_card_attached_shape.set_number(opponent_hp_number)
 
+                                    # opponent_fixed_card_attached_shape.set_image_data(
+                                    #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+                                    #     self.pre_drawed_image_instance.get_pre_draw_number_image(opponent_hp_number))
+
                                     opponent_fixed_card_attached_shape.set_image_data(
-                                        # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
-                                        self.pre_drawed_image_instance.get_pre_draw_number_image(opponent_hp_number))
+                                        self.pre_drawed_image_instance.get_pre_draw_unit_hp(opponent_hp_number))
 
                         print(f"opponent_field_card_index: {opponent_field_card_index}")
 
@@ -2740,7 +2775,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         opponent_field_card_id = None
 
                         for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
-                            if isinstance(opponent_fixed_card_attached_shape, CircleNumberImage):
+                            if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
                                 if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
                                     print("지정한 상대방 유닛 HP Circle 찾기")
 
@@ -2772,9 +2807,12 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                     print(f"공격 후 opponent unit 체력 -> hp_number: {opponent_hp_number}")
                                     opponent_fixed_card_attached_shape.set_number(opponent_hp_number)
 
+                                    # opponent_fixed_card_attached_shape.set_image_data(
+                                    #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+                                    #     self.pre_drawed_image_instance.get_pre_draw_number_image(opponent_hp_number))
+
                                     opponent_fixed_card_attached_shape.set_image_data(
-                                        # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
-                                        self.pre_drawed_image_instance.get_pre_draw_number_image(opponent_hp_number))
+                                        self.pre_drawed_image_instance.get_pre_draw_unit_hp(opponent_hp_number))
 
                         print(f"opponent_field_card_index: {opponent_field_card_index}")
 
@@ -3023,7 +3061,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                 # remove_from_field = False
 
                                 for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
-                                    if isinstance(opponent_fixed_card_attached_shape, CircleNumberImage):
+                                    if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
                                         if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
 
                                             hp_number = opponent_fixed_card_attached_shape.get_number()
@@ -3043,9 +3081,12 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                             print(f"corpse explosion -> hp_number: {hp_number}")
                                             opponent_fixed_card_attached_shape.set_number(hp_number)
 
+                                            # opponent_fixed_card_attached_shape.set_image_data(
+                                            #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+                                            #     self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
+
                                             opponent_fixed_card_attached_shape.set_image_data(
-                                                # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
-                                                self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
+                                                self.pre_drawed_image_instance.get_pre_draw_unit_hp(hp_number))
 
                                 # if remove_from_field:
                                 #     card_id = opponent_you_selected_object.get_card_number()
