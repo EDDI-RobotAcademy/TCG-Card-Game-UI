@@ -6,7 +6,6 @@ from battle_field.state.energy_type import EnergyType
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 
 from image_shape.circle_kinds import CircleKinds
-from image_shape.circle_number_image import CircleNumberImage
 from image_shape.non_background_number_image import NonBackgroundNumberImage
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 

@@ -18,7 +18,7 @@ from pyopengltk import OpenGLFrame
 
 from battle_field.handler.legacy.circle_image_legacy_support_card_handler import CircleImageLegacySupportCardHandler
 from battle_field.infra.legacy.circle_image_legacy_opponent_field_unit_repository import CircleImageLegacyOpponentFieldUnitRepository
-from battle_field.infra.your_deck_repository import YourDeckRepository
+from battle_field.infra.legacy.circle_image_legacy_your_deck_repository import CircleImageLegacyYourDeckRepository
 from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
 from battle_field.infra.legacy.circle_image_legacy_your_tomb_repository import CircleImageLegacyYourTombRepository
@@ -75,7 +75,7 @@ class PreDrawedBattleFieldFrameVer(OpenGLFrame):
         self.your_hand_repository.save_current_hand_state([8, 19, 151, 93, 9, 20, 30, 93])
         self.your_hand_repository.create_hand_card_list()
 
-        self.your_deck_repository = YourDeckRepository.getInstance()
+        self.your_deck_repository = CircleImageLegacyYourDeckRepository.getInstance()
         self.your_deck_repository.save_deck_state([93, 93, 93, 5])
 
         # 실제로 상대는 하나씩 낼 것이고 이에 대한 서버의 Notify로 렌더링이 진행 될 것이다.
