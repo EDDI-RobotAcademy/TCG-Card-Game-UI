@@ -17,7 +17,7 @@ from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
 from battle_field.handler.support_card_handler import SupportCardHandler
-from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
+from battle_field.infra.legacy.circle_image_legacy_opponent_field_unit_repository import CircleImageLegacyOpponentFieldUnitRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
@@ -79,7 +79,7 @@ class PreDrawedBattleFieldFrameVer(OpenGLFrame):
         self.your_deck_repository.save_deck_state([93, 93, 93, 5])
 
         # 실제로 상대는 하나씩 낼 것이고 이에 대한 서버의 Notify로 렌더링이 진행 될 것이다.
-        self.opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
+        self.opponent_field_unit_repository = CircleImageLegacyOpponentFieldUnitRepository.getInstance()
         self.opponent_field_unit_repository.create_field_unit_card(33)
         self.opponent_field_unit_repository.create_field_unit_card(35)
         self.opponent_field_unit_repository.create_field_unit_card(36)
