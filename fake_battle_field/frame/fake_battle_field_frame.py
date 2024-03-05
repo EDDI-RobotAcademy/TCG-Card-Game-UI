@@ -68,6 +68,7 @@ from battle_field.state.FieldUnitActionStatus import FieldUnitActionStatus
 from battle_field.state.energy_type import EnergyType
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
+from battle_field_function.service.request.turn_end_request import TurnEndRequest
 
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_grade import CardGrade
@@ -75,6 +76,8 @@ from common.card_race import CardRace
 from common.card_type import CardType
 from fake_battle_field.entity.animation_test_image import AnimationTestImage
 from fake_battle_field.entity.muligun_reset_button import MuligunResetButton
+from fake_battle_field.infra.fake_opponent_hand_repository import FakeOpponentHandRepositoryImpl
+from fake_battle_field.service.request.fake_opponent_deploy_unit_request import FakeOpponentDeployUnitRequest
 from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
@@ -87,10 +90,14 @@ from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.circle import Circle
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
+from session.repository.session_repository_impl import SessionRepositoryImpl
 
 
 class FakeBattleFieldFrame(OpenGLFrame):
     battle_field_function_controller = BattleFieldFunctionControllerImpl.getInstance()
+
+    __fake_opponent_hand_repository = FakeOpponentHandRepositoryImpl.getInstance()
+    __session_repository = SessionRepositoryImpl.getInstance()
 
     def __init__(self, master=None, switchFrameWithMenuName=None, **kwargs):
         super().__init__(master, **kwargs)
@@ -375,22 +382,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_deck_next_button = self.your_deck.get_next_gold_button()
         self.your_deck_ok_button = self.your_deck.get_ok_button()
 
-        # self.opponent_field_unit_repository.create_field_unit_card(33)
-        # self.opponent_field_unit_repository.create_field_unit_card(35)
-        # self.opponent_field_unit_repository.create_field_unit_card(36)
-        # self.opponent_field_unit_repository.create_field_unit_card(25)
-        # self.opponent_field_unit_repository.create_field_unit_card(26)
-        self.opponent_field_unit_repository.create_field_unit_card(27)
-        # self.your_field_unit_repository.create_field_unit_card(31)
-        # self.your_field_unit_repository.create_field_unit_card(19)
-        # self.your_field_unit_repository.create_field_unit_card(27)
-
         self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
-
-        # self.your_tomb_repository.create_tomb_card(93)
-        # self.your_tomb_repository.create_tomb_card(31)
-        # self.your_tomb_repository.create_tomb_card(32)
-        # self.your_tomb_repository.create_tomb_card_list()
 
         self.your_lost_zone.set_total_window_size(self.width, self.height)
         self.your_lost_zone.create_your_lost_zone_panel()
@@ -502,6 +494,22 @@ class FakeBattleFieldFrame(OpenGLFrame):
     def on_key_press(self, event):
         key = event.keysym
         print(f"Key pressed: {key}")
+
+        if key.lower() == 'z':
+            print("만약 Opponent Hand에 출격시킬 유닛이 있다면 내보낸다.")
+
+            opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
+            for opponent_hand in opponent_hand_list:
+                opponent_hand_card_type = self.card_info_repository.getCardTypeForCardNumber(opponent_hand)
+                if opponent_hand_card_type == CardType.UNIT.value:
+                    print("상대방 유닛 출격")
+
+                    result = self.__fake_opponent_hand_repository.request_deploy_fake_opponent_unit(
+                        FakeOpponentDeployUnitRequest(
+                            self.__session_repository.get_second_fake_session_info(),
+                            opponent_hand))
+                    print(f"fake opponent deploy unit result: {result}")
+                    break
 
         if key.lower() == '1':
             if self.animation_test_image_panel:
@@ -3375,6 +3383,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
         return True
 
     def call_turn_end(self):
+        turn_end_request_result = self.round_repository.request_turn_end(
+            TurnEndRequest(
+                self.__session_repository.get_session_info()))
+        print(f"turn_end_request_result: {turn_end_request_result}")
+
         self.round_repository.increase_current_round_number()
         round = self.round_repository.get_current_round_number()
         print(f"current round: {round}")

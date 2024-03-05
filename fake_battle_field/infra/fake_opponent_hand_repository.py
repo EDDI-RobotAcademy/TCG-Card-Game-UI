@@ -1,7 +1,7 @@
 from fake_battle_field.infra.fake_battle_field_frame_repository import FakeBattleFieldFrameRepository
 
 
-class FakeOpponentRepositoryImpl(FakeBattleFieldFrameRepository):
+class FakeOpponentHandRepositoryImpl():
     __instance = None
 
     __fake_opponent_hand_list = []
@@ -21,11 +21,11 @@ class FakeOpponentRepositoryImpl(FakeBattleFieldFrameRepository):
         return cls.__instance
 
     def injectTransmitIpcChannel(self, transmitIpcChannel):
-        print("FakeBattleFieldFrameRepositoryImpl: saveTransmitIpcChannel()")
+        print("FakeOpponentHandRepositoryImpl: saveTransmitIpcChannel()")
         self.__transmitIpcChannel = transmitIpcChannel
 
     def injectReceiveIpcChannel(self, receiveIpcChannel):
-        print("FakeBattleFieldFrameRepositoryImpl: saveReceiveIpcChannel()")
+        print("FakeOpponentHandRepositoryImpl: saveReceiveIpcChannel()")
         self.__receiveIpcChannel = receiveIpcChannel
 
     def save_fake_opponent_hand_list(self, fake_opponent_hand_list):
@@ -34,4 +34,6 @@ class FakeOpponentRepositoryImpl(FakeBattleFieldFrameRepository):
     def get_fake_opponent_hand_list(self):
         return self.__fake_opponent_hand_list
 
-
+    def request_deploy_fake_opponent_unit(self, fake_opponent_deploy_unit_request):
+        self.__transmitIpcChannel.put(fake_opponent_deploy_unit_request)
+        return self.__receiveIpcChannel.get()

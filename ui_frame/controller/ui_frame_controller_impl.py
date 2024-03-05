@@ -5,6 +5,7 @@ from battle_field.infra.battle_field_repository import BattleFieldRepository
 
 from battle_field.infra.legacy.your_hand_repository import LegacyYourHandRepository
 from battle_field.infra.legacy.circle_image_legacy_your_deck_repository import CircleImageLegacyYourDeckRepository
+from battle_field.infra.round_repository import RoundRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
@@ -21,6 +22,7 @@ from battle_lobby_frame.service.battle_lobby_frame_service_impl import BattleLob
 from card_shop_frame.service.card_shop_service_impl import CardShopMenuFrameServiceImpl
 from card_shop_frame.frame.buy_check_frame.service.buy_check_service_impl import BuyCheckServiceImpl
 from decision_first_strike.decision_first_strike_frame_service import DecisionFirstStrikeFrameService
+from fake_battle_field.infra.fake_opponent_hand_repository import FakeOpponentHandRepositoryImpl
 from fake_battle_field.service.fake_battle_field_frame_service_impl import FakeBattleFieldFrameServiceImpl
 from lobby_frame.service.lobby_menu_frame_service_impl import LobbyMenuFrameServiceImpl
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
@@ -53,6 +55,9 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__windowService = WindowServiceImpl.getInstance()
 
             cls.__instance.__fakeBattleFieldFrameServiece = FakeBattleFieldFrameServiceImpl.getInstance()
+            cls.__instance.__fakeOpponentHandRepository = FakeOpponentHandRepositoryImpl.getInstance()
+
+            cls.__instance.__roundRepository = RoundRepository.getInstance()
 
             cls.__instance.__mainMenuFrameService = MainMenuFrameServiceImpl.getInstance()
             cls.__instance.__loginMenuFrameService = LoginMenuFrameServiceImpl.getInstance()
@@ -205,6 +210,10 @@ class UiFrameControllerImpl(UiFrameController):
         self.__yourFieldEnergyRepository.saveTransmitIpcChannel(transmitIpcChannel)
 
         self.__fakeBattleFieldFrameServiece.injectTransmitIpcChannel(transmitIpcChannel)
+        self.__fakeOpponentHandRepository.injectTransmitIpcChannel(transmitIpcChannel)
+
+        self.__roundRepository.injectTransmitIpcChannel(transmitIpcChannel)
+
         self.__legacy_your_hand_repository.saveTransmitIpcChannel(transmitIpcChannel)
 
 
@@ -240,7 +249,11 @@ class UiFrameControllerImpl(UiFrameController):
         self.__yourHandRepository.saveReceiveIpcChannel(receiveIpcChannel)
         self.__yourFieldEnergyRepository.saveReceiveIpcChannel(receiveIpcChannel)
 
+        self.__roundRepository.injectReceiveIpcChannel(receiveIpcChannel)
+
         self.__fakeBattleFieldFrameServiece.injectReceiveIpcChannel(receiveIpcChannel)
+        self.__fakeOpponentHandRepository.injectReceiveIpcChannel(receiveIpcChannel)
+
         self.__legacy_your_hand_repository.saveReceiveIpcChannel(receiveIpcChannel)
 
     def requestToInjectMusicPlayIpcChannel(self, musicPlayIpcChannel):
