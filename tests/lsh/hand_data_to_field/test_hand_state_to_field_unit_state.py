@@ -1,6 +1,6 @@
 import unittest
 
-from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
+from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
 from initializer.init_domain import DomainInitializer
 
@@ -19,7 +19,7 @@ class TestHandStateToFieldUnit(unittest.TestCase):
         for hand_card in self.hand_card_list:
             print(f"hand_card id: {hand_card.get_card_number()}")
 
-        self.field_unit_repository = YourFieldUnitRepository.getInstance()
+        self.field_unit_repository = CircleImageLegacyYourFieldUnitRepository.getInstance()
         self.field_unit_repository.save_current_field_unit_state(self.hand_card_list[0].get_card_number())
 
         print(f"state: {self.field_unit_repository.get_current_field_unit_state()}")
