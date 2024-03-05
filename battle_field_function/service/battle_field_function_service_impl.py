@@ -1,5 +1,5 @@
 from battle_field.infra.battle_field_repository import BattleFieldRepository
-from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
+from battle_field.infra.legacy.circle_image_legacy_opponent_field_unit_repository import CircleImageLegacyOpponentFieldUnitRepository
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
 from battle_field_function.repository.battle_field_function_repository_impl import BattleFieldFunctionRepositoryImpl
 from battle_field_function.service.battle_field_function_service import BattleFieldFunctionService
@@ -149,7 +149,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             print(f"data: {data}")
             unit_card_id = data["Opponent"]
             print(f"unit_card_id: {unit_card_id}")
-            OpponentFieldUnitRepository.getInstance().create_field_unit_card(int(unit_card_id))
+            CircleImageLegacyOpponentFieldUnitRepository.getInstance().create_field_unit_card(int(unit_card_id))
 
 
     def searchOpponentCount(self, notify_dict_data):
