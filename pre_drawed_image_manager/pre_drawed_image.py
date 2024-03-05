@@ -435,7 +435,7 @@ class PreDrawedImage:
     def pre_draw_surrender_confirm_panel(self):
         surrender_confirm_panel_image_path = os.path.join(self.__project_root, "local_storage", "option",
                                                           "surrender_screen.png")
-        self.__pre_drawed_surrender_confirm_panel = ImageDataLoader.load_rectangle_image_data(
+        self.__pre_drawed_surrender_confirm_panel = ImageDataLoader.load_surrender_screen_image_data(
             surrender_confirm_panel_image_path)
 
     def pre_draw_unit_energy(self):

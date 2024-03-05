@@ -73,6 +73,24 @@ class ImageDataLoader:
             return None
 
     @staticmethod
+    def load_surrender_screen_image_data(path):
+        try:
+            image = Image.open(path)
+            resized_image = image.resize((1200, 600))
+
+            rgba_image = resized_image.convert("RGBA")
+            img_data = np.array(rgba_image)
+
+            resized_image.close()
+            image.close()
+
+            return img_data
+
+        except Exception as e:
+            print(f"Error loading image data: {e}")
+            return None
+
+    @staticmethod
     def load_oval_image_data(image_path):
         try:
             image = Image.open(image_path)

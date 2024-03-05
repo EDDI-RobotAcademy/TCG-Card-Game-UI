@@ -2,7 +2,10 @@ from account_register_frame.service.account_register_frame_service_impl import A
 from app_window.service.window_service_impl import WindowServiceImpl
 from account_login_frame.service.login_menu_frame_service_impl import LoginMenuFrameServiceImpl
 from battle_field.infra.battle_field_repository import BattleFieldRepository
+
+from battle_field.infra.legacy.your_hand_repository import LegacyYourHandRepository
 from battle_field.infra.legacy.circle_image_legacy_your_deck_repository import CircleImageLegacyYourDeckRepository
+
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
@@ -64,6 +67,9 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__yourDeckRepository = CircleImageLegacyYourDeckRepository.getInstance()
             cls.__instance.__yourFieldUnitRepository = CircleImageLegacyYourFieldUnitRepository.getInstance()
             cls.__instance.__muligunYourHandRepository = MuligunYourHandRepository.getInstance()
+            cls.__instance.__yourTombRepository = YourTombRepository.getInstance()
+            cls.__instance.__yourHandRepository = YourHandRepository.getInstance()
+            cls.__instance.__legacy_your_hand_repository = LegacyYourHandRepository.getInstance()
             cls.__instance.__yourTombRepository = CircleImageLegacyYourTombRepository.getInstance()
             cls.__instance.__yourHandRepository = CircleImageLegacyYourHandRepository.getInstance()
             cls.__instance.__yourFieldEnergyRepository = YourFieldEnergyRepository.getInstance()
@@ -183,6 +189,7 @@ class UiFrameControllerImpl(UiFrameController):
         self.__yourFieldEnergyRepository.saveTransmitIpcChannel(transmitIpcChannel)
 
         self.__fakeBattleFieldFrameServiece.injectTransmitIpcChannel(transmitIpcChannel)
+        self.__legacy_your_hand_repository.saveTransmitIpcChannel(transmitIpcChannel)
 
 
     def requestToInjectReceiveIpcChannel(self, receiveIpcChannel):
@@ -216,6 +223,7 @@ class UiFrameControllerImpl(UiFrameController):
         self.__yourFieldEnergyRepository.saveReceiveIpcChannel(receiveIpcChannel)
 
         self.__fakeBattleFieldFrameServiece.injectReceiveIpcChannel(receiveIpcChannel)
+        self.__legacy_your_hand_repository.saveReceiveIpcChannel(receiveIpcChannel)
 
     def requestToInjectMusicPlayIpcChannel(self, musicPlayIpcChannel):
         print("UiFrameControllerImpl: requestToInjectMusicPlayIpcChannel()")
