@@ -84,6 +84,10 @@ class PreDrawedImage:
     __pre_drawed_unit_attack = {}
     __pre_drawed_unit_race = {}
 
+    __pre_drawed_paper = None
+    __pre_drawed_scissor = None
+    __pre_drawed_rock = None
+
     __pre_drawed_my_card_background = None
 
     def __new__(cls):
@@ -524,6 +528,18 @@ class PreDrawedImage:
         my_card_background = os.path.join(self.__project_root, "local_storage", "my_card_frame", "my_card_background.png")
         self.__pre_drawed_my_card_background = ImageDataLoader.load_background_image_data(my_card_background, width, height)
 
+    def pre_draw_rock(self):
+        rock = os.path.join(self.__project_root, "local_stoage", "rock_paper_scissors_image", "rock.png")
+        self.__pre_drawed_rock = ImageDataLoader.load_lanczos_resized_image_data(rock)
+
+    def pre_draw_scissor(self):
+        scissor = os.path.join(self.__project_root, "local_stoage", "rock_paper_scissors_image", "scissors.png")
+        self.__pre_drawed_scissor = ImageDataLoader.load_lanczos_resized_image_data(scissor)
+
+    def pre_draw_paper(self):
+        scissor = os.path.join(self.__project_root, "local_stoage", "rock_paper_scissors_image", "paper.png")
+        self.__pre_drawed_paper = ImageDataLoader.load_lanczos_resized_image_data(scissor)
+
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
         self.pre_draw_opponent_lost_zone()
@@ -590,6 +606,10 @@ class PreDrawedImage:
         self.pre_draw_unit_hp()
         self.pre_draw_unit_attack()
         self.pre_draw_unit_race()
+
+        self.pre_draw_rock()
+        self.pre_draw_scissor()
+        self.pre_draw_paper()
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
@@ -754,3 +774,12 @@ class PreDrawedImage:
 
     def get_pre_draw_my_card_background(self):
         return self.__pre_drawed_my_card_background
+
+    def get_pre_draw_rock(self):
+        return self.__pre_drawed_rock
+
+    def get_pre_draw_scissor(self):
+        return self.__pre_drawed_scissor
+
+    def get_pre_draw_paper(self):
+        return self.__pre_drawed_paper

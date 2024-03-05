@@ -101,6 +101,12 @@ class DomainInitializer:
 
     @staticmethod
     def initEachDomain():
+        # Read Csv File Domain
+        DomainInitializer.initReadCsvFileDomain()
+
+        # Pre Drawed Image Domain
+        DomainInitializer.initPreDrawedImageDomain()
+        
         # IPC Channel
         uiTransmitIpcChannel = multiprocessing.Queue()
         uiReceiveIpcChannel = multiprocessing.Queue()
@@ -127,12 +133,6 @@ class DomainInitializer:
 
         # Response Generator Domain
         DomainInitializer.initResponseGeneratorDomain()
-
-        # Read Csv File Domain
-        DomainInitializer.initReadCsvFileDomain()
-
-        # Pre Drawed Image Domain
-        DomainInitializer.initPreDrawedImageDomain()
 
         # Battle Field Card Controller Domain
         DomainInitializer.initBattleFieldCardControllerDomain()

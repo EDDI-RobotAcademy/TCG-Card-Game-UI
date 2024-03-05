@@ -13,6 +13,7 @@ from battle_lobby_frame.repository.battle_lobby_frame_repository_impl import Bat
 from battle_lobby_frame.service.request.request_deck_card_list import RequestDeckCardList
 from battle_lobby_frame.service.request.request_deck_name_list_for_battle import RequestDeckNameListForBattle
 from fake_battle_field.infra.fake_battle_field_frame_repository_impl import FakeBattleFieldFrameRepositoryImpl
+from fake_battle_field.infra.fake_opponent_hand_repository import FakeOpponentRepositoryImpl
 from fake_battle_field.service.request.create_fake_battle_room_request import CreateFakeBattleRoomRequest
 from fake_battle_field.service.request.real_battle_start_request import RealBattleStartRequest
 from lobby_frame.repository.lobby_menu_frame_repository_impl import LobbyMenuFrameRepositoryImpl
@@ -65,6 +66,8 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             cls.__instance.__rockPaperScissorsRepositoryImpl = RockPaperScissorsRepositoryImpl.getInstance()
             cls.__instance.__checkRockPaperScissorsWinnerServiceImpl = CheckRockPaperScissorsWinnerServiceImpl.getInstance()
             cls.__instance.__checkRockPaperScissorsWinnerRepositoryImpl = CheckRockPaperScissorsWinnerRepositoryImpl.getInstance()
+
+            cls.__instance.__fakeOpponentHandRepository = FakeOpponentRepositoryImpl.getInstance()
         return cls.__instance
 
     @classmethod
