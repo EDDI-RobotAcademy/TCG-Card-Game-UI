@@ -8,7 +8,7 @@ from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
 from battle_field.handler.legacy.circle_image_legacy_support_card_handler import CircleImageLegacySupportCardHandler
-from battle_field.infra.your_deck_repository import YourDeckRepository
+from battle_field.infra.legacy.circle_image_legacy_your_deck_repository import CircleImageLegacyYourDeckRepository
 from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
 from battle_field.infra.legacy.circle_image_legacy_your_tomb_repository import CircleImageLegacyYourTombRepository
@@ -62,7 +62,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_hand_repository = CircleImageLegacyYourHandRepository.getInstance()
         self.hand_card_list = None
 
-        self.your_deck_repository = YourDeckRepository.getInstance()
+        self.your_deck_repository = CircleImageLegacyYourDeckRepository.getInstance()
         self.your_deck_list = None
 
         self.your_field_unit_repository = CircleImageLegacyYourFieldUnitRepository.getInstance()
