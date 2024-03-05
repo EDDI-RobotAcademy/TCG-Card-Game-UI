@@ -106,7 +106,7 @@ class DomainInitializer:
 
         # Pre Drawed Image Domain
         DomainInitializer.initPreDrawedImageDomain()
-        
+
         # IPC Channel
         uiTransmitIpcChannel = multiprocessing.Queue()
         uiReceiveIpcChannel = multiprocessing.Queue()
