@@ -1,9 +1,7 @@
 from battle_field.infra.your_deck_repository import YourDeckRepository
-from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
+from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 
-from image_shape.circle_kinds import CircleKinds
-from image_shape.circle_number_image import CircleNumberImage
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
@@ -17,7 +15,7 @@ class ItemCardHandler:
     __itemCardHandlerTable = {}
 
     __yourDeckRepository = YourDeckRepository.getInstance()
-    __yourFieldUnitRepository = YourFieldUnitRepository.getInstance()
+    __yourFieldUnitRepository = CircleImageLegacyYourFieldUnitRepository.getInstance()
 
     def __new__(cls):
         if cls.__instance is None:

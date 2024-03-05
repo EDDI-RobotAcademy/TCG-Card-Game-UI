@@ -12,7 +12,7 @@ from battle_field.entity.legacy.your_tomb import YourTomb
 from battle_field.handler.support_card_handler import SupportCardHandler
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
-from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
+from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field.state.current_tomb import CurrentTombState
@@ -75,7 +75,7 @@ class HandToTomb(OpenGLFrame):
 
         self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
 
-        self.your_field_unit_repository = YourFieldUnitRepository.getInstance()
+        self.your_field_unit_repository = CircleImageLegacyYourFieldUnitRepository.getInstance()
 
         self.your_tomb_repository = YourTombRepository.getInstance()
         self.tomb_card_list = self.your_tomb_repository.get_current_tomb_state()

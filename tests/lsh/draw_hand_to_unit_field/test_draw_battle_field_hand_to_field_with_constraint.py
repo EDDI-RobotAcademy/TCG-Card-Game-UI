@@ -7,7 +7,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
-from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
+from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
 from battle_field_fixed_card.legacy.fixed_field_card import LegacyFixedFieldCard
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
@@ -66,7 +66,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         # self.battle_field_unit = FixedFieldCard(local_translation=(300, 580))
         # self.battle_field_unit.init_card(32)
 
-        self.your_field_unit_repository = YourFieldUnitRepository.getInstance()
+        self.your_field_unit_repository = CircleImageLegacyYourFieldUnitRepository.getInstance()
         # TODO: Naming Issue
         self.card_info = CardInfoFromCsvRepositoryImpl.getInstance()
 
