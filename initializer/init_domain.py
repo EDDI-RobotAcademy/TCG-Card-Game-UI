@@ -13,6 +13,7 @@ from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from receiver.controller.receiver_controller_impl import ReceiverControllerImpl
 from response_generator.repository.response_generator_repository_impl import ResponseGeneratorRepositoryImpl
 from task_worker.service.task_worker_service_impl import TaskWorkerServiceImpl
+from test_detector.detector import DetectorAboutTest
 from transmitter.controller.transmitter_controller_impl import TransmitterControllerImpl
 from ui_frame.controller.ui_frame_controller_impl import UiFrameControllerImpl
 
@@ -95,6 +96,10 @@ class DomainInitializer:
         LegacyCardControllerImpl.getInstance()
 
     @staticmethod
+    def initDetectorAboutTestDomain():
+        DetectorAboutTest.getInstance()
+
+    @staticmethod
     def initEachDomain():
         # IPC Channel
         uiTransmitIpcChannel = multiprocessing.Queue()
@@ -132,7 +137,8 @@ class DomainInitializer:
         # Battle Field Card Controller Domain
         DomainInitializer.initBattleFieldCardControllerDomain()
 
-
+        # Test Detector
+        DomainInitializer.initDetectorAboutTestDomain()
 
 
 

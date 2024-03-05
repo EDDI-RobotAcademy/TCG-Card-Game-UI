@@ -1,4 +1,5 @@
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
+from battle_field.infra.request.deploy_unit_card_request import DeployUnitCardRequest
 from battle_field.infra.your_deck_repository import YourDeckRepository
 
 from battle_field.infra.your_field_unit_action_repository import YourFieldUnitActionRepository
@@ -12,6 +13,7 @@ from common.card_type import CardType
 from shapely.geometry import Point, Polygon
 
 from session.repository.session_repository_impl import SessionRepositoryImpl
+from test_detector.detector import DetectorAboutTest
 
 
 class FieldAreaInsideHandler:
@@ -30,6 +32,7 @@ class FieldAreaInsideHandler:
     __session_info_repository = SessionRepositoryImpl.getInstance()
 
     __your_field_unit_action_repository = YourFieldUnitActionRepository.getInstance()
+    __detector_about_test = DetectorAboutTest.getInstance()
 
     __field_area_inside_handler_table = {}
 
@@ -105,15 +108,16 @@ class FieldAreaInsideHandler:
         return FieldAreaAction.Dummy
 
     def handle_unit_card(self, placed_card_id, placed_card_index):
-        # TODO: 실제 통합 테스트에서는 네트워크 연동이 필요함
-        # session = self.__session_info_repository.get_session_info()
-        # deploy_your_unit_request = self.__your_field_unit_repository.request_to_deploy_your_unit(
-        #     DeployUnitCardRequest(session, placed_card_id))
-        #
-        # print(f"deploy_your_unit_request: {deploy_your_unit_request}")
-        # deploy_is_success = deploy_your_unit_request['is_success']
-        # if deploy_is_success is False:
-        #     return FieldAreaAction.Dummy
+
+        if self.__detector_about_test.get_is_it_test() is False:
+            session = self.__session_info_repository.get_session_info()
+            deploy_your_unit_request = self.__your_field_unit_repository.request_to_deploy_your_unit(
+                DeployUnitCardRequest(session, placed_card_id))
+
+            print(f"deploy_your_unit_request: {deploy_your_unit_request}")
+            deploy_is_success = deploy_your_unit_request['is_success']
+            if deploy_is_success is False:
+                return FieldAreaAction.Dummy
 
         # TODO: Memory Leak에 대한 추가 작업이 필요할 수 있음
         # self.__your_hand_repository.remove_card_by_index(placed_card_index)
