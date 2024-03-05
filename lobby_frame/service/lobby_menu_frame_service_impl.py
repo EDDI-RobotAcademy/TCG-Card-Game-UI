@@ -174,7 +174,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                 deckCardListResponse = self.__fakeBattleFieldFrameRepository.request_card_list(
                     # 덱 Id 값을 Fake Test 목적으로 만든 숫자에 맞춰야함
                     RequestDeckCardList(config('FAKE_DECK_ID'),
-                                        first_fake_redis_token)
+                                        second_fake_redis_token)
                 )
 
                 opponent_hand_card_list = deckCardListResponse['hand_card_list']
