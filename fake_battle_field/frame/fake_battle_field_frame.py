@@ -38,7 +38,7 @@ from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.legacy.circle_image_legacy_opponent_field_unit_repository import CircleImageLegacyOpponentFieldUnitRepository
 from battle_field.infra.opponent_hp_repository import OpponentHpRepository
-from battle_field.infra.opponent_lost_zone_repository import OpponentLostZoneRepository
+from battle_field.infra.legacy.circle_image_legacy_opponent_lost_zone_repository import CircleImageLegacyOpponentLostZoneRepository
 from battle_field.infra.legacy.circle_image_legacy_opponent_tomb_repository import CircleImageLegacyOpponentTombRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
@@ -172,7 +172,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_lost_zone_popup_panel = None
         self.your_lost_zone_panel_selected = False
 
-        self.opponent_lost_zone_repository = OpponentLostZoneRepository.getInstance()
+        self.opponent_lost_zone_repository = CircleImageLegacyOpponentLostZoneRepository.getInstance()
         self.opponent_lost_zone_panel = None
         self.opponent_lost_zone = OpponentLostZone()
         self.opponent_lost_zone_popup_panel = None
