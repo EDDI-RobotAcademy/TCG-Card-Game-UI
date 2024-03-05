@@ -12,7 +12,7 @@ from lobby_frame.service.lobby_menu_frame_service_impl import LobbyMenuFrameServ
 from opengl_my_card_main_frame.entity.my_card_main_scene import MyCardMainScene
 from opengl_my_card_main_frame.entity.my_deck_register_scene import MyDeckRegisterScene
 
-from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
+from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_my_card_main_frame.renderer.fifth_page_card_renerer import FifthPageCardRenderer
 from opengl_my_card_main_frame.renderer.fourth_page_card_renderer import FourthPageCardRenderer
 from opengl_my_card_main_frame.renderer.my_card_main_frame_renderer import MyCardMainFrameRenderer
@@ -211,25 +211,25 @@ class MyCardMainFrame(OpenGLFrame):
         # print(f"카드 번호 리스트: {all_card_number}")
         # print(f"카드 번호 길이: {len(all_card_number)}")
 
-        x = 140
-        y = 95
+        x = 165
+        y = 30
 
         for i, number in enumerate(all_card_number):
             try:
                 #print(f"index: {i}, card number: {number}")
-                card = LegacyPickableCard(local_translation=(x, y))
+                card = PickableCard(local_translation=(x, y))
                 card.init_card_in_my_card_frame(number)
                 self.my_card_main_scene.add_card_list(card)
                 #print(f"카드 리스트: {self.my_card_main_scene.get_card_list()}")
 
-                x += 330
+                x += 315
 
                 if (i + 1) % 4 == 0:  # 4개씩
-                    y = 528
-                    x = 140
+                    y = 500
+                    x = 165
                     if (i + 1) % 8 == 0:
-                        x = 140
-                        y = 95
+                        x = 165
+                        y = 30
 
                 if (i + 1) % 8 == 0:
                     continue

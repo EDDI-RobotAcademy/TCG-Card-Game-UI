@@ -61,6 +61,8 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             #self.gameEndReward()
             self.__battle_field_repository.lose()
             self.preDrawedBattleFieldFrame.battle_finish()
+            # from ui_frame.controller.ui_frame_controller_impl import UiFrameControllerImpl
+            # UiFrameControllerImpl.getInstance().switchFrameWithMenuName("battle-result")
 
 
     def turnEnd(self):
