@@ -94,6 +94,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
     def notify_deploy_unit(self, notice_dictionary):
         print(f"notify_deploy_unit() -> notice_dictionary: {notice_dictionary}")
 
+        if self.__notify_reader_repository.get_is_your_turn_for_check_fake_process() is True:
+            return
+
         card_id = (notice_dictionary.get('NOTIFY_DEPLOY_UNIT', {})
                    .get('player_hand_use_map', {})
                    .get('Opponent',{})
