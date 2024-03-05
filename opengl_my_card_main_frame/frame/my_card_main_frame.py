@@ -124,10 +124,10 @@ class MyCardMainFrame(OpenGLFrame):
         # self.my_card_main_scene.add_button_list(next_page_button_rectangle)
 
         # 다음 페이지 버튼 도형으로 만든 것.
-        next_left_x_point = self.width * 0.760
-        next_right_x_point = self.width * 0.816
-        next_top_y_point = self.height * 0.463
-        next_bottom_y_point = self.height * 0.533
+        next_left_x_point = self.width * 0.730
+        next_right_x_point = self.width * 0.786
+        next_top_y_point = self.height * 0.483
+        next_bottom_y_point = self.height * 0.553
         next_gold_button_image_data = self.__pre_drawed_image_instance.get_pre_draw_next_gold_button()
         next_page_button = NonBackgroundImage(image_data=next_gold_button_image_data,
                                                vertices=[
@@ -150,10 +150,10 @@ class MyCardMainFrame(OpenGLFrame):
         # self.my_card_main_scene.add_button_list(before_page_button_rectangle)
 
         # 이전 페이지 버튼 도형으로 만든 것.
-        prev_left_x_point = self.width * 0.020
-        prev_right_x_point = self.width * 0.076
-        prev_top_y_point = self.height * 0.463
-        prev_bottom_y_point = self.height * 0.533
+        prev_left_x_point = self.width * 0.002
+        prev_right_x_point = self.width * 0.058
+        prev_top_y_point = self.height * 0.483
+        prev_bottom_y_point = self.height * 0.553
         prev_gold_button_image_data = self.__pre_drawed_image_instance.get_pre_draw_prev_gold_button()
         pre_page_button = NonBackgroundImage(image_data=prev_gold_button_image_data,
                                                vertices=[
@@ -171,8 +171,8 @@ class MyCardMainFrame(OpenGLFrame):
         # print(f"카드 번호 리스트: {all_card_number}")
         # print(f"카드 번호 길이: {len(all_card_number)}")
 
-        x = 185
-        y = 60
+        x = 140
+        y = 95
 
         for i, number in enumerate(all_card_number):
             try:
@@ -185,11 +185,11 @@ class MyCardMainFrame(OpenGLFrame):
                 x += 330
 
                 if (i + 1) % 4 == 0:  # 4개씩
-                    y = 520
-                    x = 185
+                    y = 528
+                    x = 140
                     if (i + 1) % 8 == 0:
-                        x = 185
-                        y = 60
+                        x = 140
+                        y = 95
 
                 if (i + 1) % 8 == 0:
                     continue
