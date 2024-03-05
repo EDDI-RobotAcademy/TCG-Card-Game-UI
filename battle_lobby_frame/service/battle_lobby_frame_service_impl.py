@@ -65,7 +65,7 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
 
                     # opponentId = response.get("opponentSessionId")
                     # TODO : battleField 도메인을 호출하여 프레임을 전환해야합니다.
-                    switchFrameWithMenuName('battle-field-muligun')
+                    switchFrameWithMenuName('rock-paper-scissors')
                     # TODO : 또한 opponentId를 넘겨주어 상대편 아이디가 표시되게 합니다.
                     # self.__battleFieldService.someFunction(opponentId)
 
