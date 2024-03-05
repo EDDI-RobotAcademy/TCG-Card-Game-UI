@@ -85,6 +85,7 @@ class PreDrawedImage:
     __pre_drawed_unit_race = {}
 
     __pre_drawed_my_card_background = None
+    __pre_drawed_number_of_cards = {}
 
     def __new__(cls):
         if cls.__instance is None:
@@ -524,6 +525,17 @@ class PreDrawedImage:
         my_card_background = os.path.join(self.__project_root, "local_storage", "my_card_frame", "my_card_background.png")
         self.__pre_drawed_my_card_background = ImageDataLoader.load_background_image_data(my_card_background, width, height)
 
+    def pre_draw_number_of_cards(self):
+        image_dir = os.path.join(self.__project_root, "local_storage", "my_card_frame", "number_of_cards_owned")
+        file_list = os.listdir(image_dir)
+
+        for number in range(2, 10):
+            text_image_data = os.path.join(self.__project_root, "local_storage", "my_card_frame", "number_of_cards_owned",
+                                           f"{number}.png")
+            print(f"animation image data = {text_image_data}")
+            self.__pre_drawed_number_of_cards[number] = ImageDataLoader.load_rectangle_image_data(text_image_data)
+
+
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
         self.pre_draw_opponent_lost_zone()
@@ -590,6 +602,8 @@ class PreDrawedImage:
         self.pre_draw_unit_hp()
         self.pre_draw_unit_attack()
         self.pre_draw_unit_race()
+
+        self.pre_draw_number_of_cards()
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
@@ -754,3 +768,6 @@ class PreDrawedImage:
 
     def get_pre_draw_my_card_background(self):
         return self.__pre_drawed_my_card_background
+
+    def get_pre_draw_number_of_cards(self, number):
+        return self.__pre_drawed_number_of_cards[number]
