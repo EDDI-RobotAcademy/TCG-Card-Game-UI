@@ -1,13 +1,14 @@
-from battle_field.infra.legacy.circle_image_legacy_opponent_field_unit_repository import CircleImageLegacyOpponentFieldUnitRepository
-from battle_field.infra.legacy.circle_image_legacy_opponent_tomb_repository import CircleImageLegacyOpponentTombRepository
-from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
-from battle_field.infra.legacy.circle_image_legacy_your_tomb_repository import CircleImageLegacyYourTombRepository
+from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
+from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
+from battle_field.infra.your_hand_repository import YourHandRepository
+from battle_field.infra.your_tomb_repository import YourTombRepository
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_grade import CardGrade
 from common.card_race import CardRace
 from common.card_type import CardType
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
+from image_shape.non_background_number_image import NonBackgroundNumberImage
 from opengl_shape.circle import Circle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
@@ -23,10 +24,10 @@ class OpponentFixedUnitCardInsideHandler:
     __action_set_card_index = -1
     __your_hand_card_id = -1
 
-    __your_hand_repository = CircleImageLegacyYourHandRepository.getInstance()
-    __your_tomb_repository = CircleImageLegacyYourTombRepository.getInstance()
-    __opponent_field_unit_repository = CircleImageLegacyOpponentFieldUnitRepository.getInstance()
-    __opponent_tomb_repository = CircleImageLegacyOpponentTombRepository.getInstance()
+    __your_hand_repository = YourHandRepository.getInstance()
+    __your_tomb_repository = YourTombRepository.getInstance()
+    __opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
+    __opponent_tomb_repository = OpponentTombRepository.getInstance()
     __card_info_repository = CardInfoFromCsvRepositoryImpl.getInstance()
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
 
@@ -186,10 +187,14 @@ class OpponentFixedUnitCardInsideHandler:
         count = 0
 
         for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
-            if isinstance(opponent_fixed_card_attached_shape, CircleNumberImage):
+            if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
                 if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+                    # opponent_fixed_card_attached_shape.set_image_data(
+                    #     self.__pre_drawed_image_instance.get_pre_draw_number_image(
+                    #         attached_energy_after_energy_burn))
+
                     opponent_fixed_card_attached_shape.set_image_data(
-                        self.__pre_drawed_image_instance.get_pre_draw_number_image(
+                        self.__pre_drawed_image_instance.get_pre_draw_unit_energy(
                             attached_energy_after_energy_burn))
 
             if isinstance(opponent_fixed_card_attached_shape, Circle):
@@ -245,7 +250,7 @@ class OpponentFixedUnitCardInsideHandler:
             opponent_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
 
             for opponent_attached_shape in opponent_attached_shape_list:
-                if isinstance(opponent_attached_shape, CircleNumberImage):
+                if isinstance(opponent_attached_shape, NonBackgroundNumberImage):
                     if opponent_attached_shape.get_circle_kinds() is CircleKinds.HP:
                         opponent_unit_hp = opponent_attached_shape.get_number()
                         opponent_unit_hp -= DEATH_SICE_FIXED_DAMAGE
@@ -254,15 +259,20 @@ class OpponentFixedUnitCardInsideHandler:
                         if opponent_unit_hp <= 0:
                             break
 
+                        # opponent_attached_shape.set_image_data(
+                        #     self.__pre_drawed_image_instance.get_pre_draw_number_image(
+                        #         opponent_unit_hp))
+
                         opponent_attached_shape.set_image_data(
-                            self.__pre_drawed_image_instance.get_pre_draw_number_image(
+                            self.__pre_drawed_image_instance.get_pre_draw_unit_hp(
                                 opponent_unit_hp))
 
             print(f"opponent_unit_hp: {opponent_unit_hp}")
             if opponent_unit_hp > 0:
                 is_opponent_unit_death = False
         else:
-            self.__opponent_tomb_repository.create_opponent_tomb_card(opponent_unit_card_id)
+            pass
+            # self.__opponent_tomb_repository.create_opponent_tomb_card(opponent_unit_card_id)
 
         # self.__your_hand_repository.replace_hand_card_position()
 
@@ -270,6 +280,8 @@ class OpponentFixedUnitCardInsideHandler:
             print(f"is it death ? {opponent_unit_hp}")
             self.__opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
             self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+            self.__opponent_tomb_repository.create_opponent_tomb_card(opponent_unit_card_id)
 
         # else:
         #     opponent_fixed_card_base = opponent_unit.get_fixed_card_base()
