@@ -3,9 +3,10 @@ from battle_field.state.current_field_unit import CurrentFieldUnitState
 from battle_field_fixed_card.legacy.fixed_field_card import LegacyFixedFieldCard
 
 
-class YourFieldUnitRepository:
+class CircleImageLegacyYourFieldUnitRepository:
     __instance = None
 
+    # TODO: 당장 구현이 매우 촉바가므로 에너지의 경우 종족에 관련한 사항은 배제하고 수치값만 고려
     attached_energy_info = AttachedEnergyInfoState()
 
     current_field_unit_state = CurrentFieldUnitState()

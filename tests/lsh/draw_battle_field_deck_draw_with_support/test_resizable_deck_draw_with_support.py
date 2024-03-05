@@ -1,7 +1,7 @@
 from screeninfo import get_monitors
 
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
-from battle_field.components.field_area_inside.field_area_inside_handler import FieldAreaInsideHandler
+from battle_field.components.field_area_inside.legacy.circle_image_legacy_field_area_inside_handler import CircleImageLegacyFieldAreaInsideHandler
 
 import tkinter
 import unittest
@@ -13,7 +13,7 @@ from pyopengltk import OpenGLFrame
 from battle_field.handler.support_card_handler import SupportCardHandler
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
-from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
+from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field_fixed_card.legacy.fixed_field_card import LegacyFixedFieldCard
@@ -71,7 +71,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_deck_repository = YourDeckRepository.getInstance()
         self.your_deck_list = None
 
-        self.your_field_unit_repository = YourFieldUnitRepository.getInstance()
+        self.your_field_unit_repository = CircleImageLegacyYourFieldUnitRepository.getInstance()
 
         self.card_info_repository = CardInfoFromCsvRepositoryImpl.getInstance()
 
@@ -87,7 +87,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
         # self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance()
-        self.field_area_inside_handler = FieldAreaInsideHandler.getInstance()
+        self.field_area_inside_handler = CircleImageLegacyFieldAreaInsideHandler.getInstance()
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)

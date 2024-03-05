@@ -1,6 +1,6 @@
 import unittest
 
-from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
+from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
 from battle_field.state.attached_energy_info import AttachedEnergyInfoState
 from initializer.init_domain import DomainInitializer
 
@@ -38,7 +38,7 @@ class TestAttachedEnergyInfoState(unittest.TestCase):
 
     def test_attach_energy(self):
         DomainInitializer.initEachDomain()
-        field_unit_repository = YourFieldUnitRepository.getInstance()
+        field_unit_repository = CircleImageLegacyYourFieldUnitRepository.getInstance()
 
         field_unit_repository.create_field_unit_card(8)
         field_unit_repository.attach_energy(0, 3)
@@ -52,7 +52,7 @@ class TestAttachedEnergyInfoState(unittest.TestCase):
 
     def test_detach_energy(self):
         DomainInitializer.initEachDomain()
-        field_unit_repository = YourFieldUnitRepository.getInstance()
+        field_unit_repository = CircleImageLegacyYourFieldUnitRepository.getInstance()
 
         field_unit_repository.create_field_unit_card(6)
         field_unit_repository.attach_energy(0, 7)

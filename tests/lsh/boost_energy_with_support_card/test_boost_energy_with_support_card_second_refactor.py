@@ -1,5 +1,5 @@
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
-from battle_field.components.field_area_inside.field_area_inside_handler import FieldAreaInsideHandler
+from battle_field.components.field_area_inside.legacy.circle_image_legacy_field_area_inside_handler import CircleImageLegacyFieldAreaInsideHandler
 from battle_field.components.fixed_unit_card_inside.fixed_unit_card_inside_handler import FixedUnitCardInsideHandler
 from battle_field.components.init_location.location_initializer import LocationInitializer
 from battle_field.components.mouse_drag.drag_handler import DragHandler
@@ -15,7 +15,7 @@ from pyopengltk import OpenGLFrame
 
 from battle_field.handler.support_card_handler import SupportCardHandler
 from battle_field.infra.your_deck_repository import YourDeckRepository
-from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
+from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field_fixed_card.legacy.fixed_field_card import LegacyFixedFieldCard
@@ -74,7 +74,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
 
-        self.your_field_unit_repository = YourFieldUnitRepository.getInstance()
+        self.your_field_unit_repository = CircleImageLegacyYourFieldUnitRepository.getInstance()
 
         self.your_tomb_repository = YourTombRepository.getInstance()
         # TODO: Naming Issue
@@ -90,7 +90,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.fixed_unit_card_inside_handler = FixedUnitCardInsideHandler.getInstance(
             self.your_hand_repository, self.your_field_unit_repository, self.card_info)
 
-        self.field_area_inside_handler = FieldAreaInsideHandler.getInstance(
+        self.field_area_inside_handler = CircleImageLegacyFieldAreaInsideHandler.getInstance(
             self.your_hand_repository,
             self.your_field_unit_repository,
             self.your_deck_repository,

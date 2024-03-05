@@ -4,7 +4,6 @@ from screeninfo import get_monitors
 from shapely import Polygon, Point
 
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
-from battle_field.components.field_area_inside.field_area_inside_handler import FieldAreaInsideHandler
 
 import tkinter
 import unittest
@@ -13,6 +12,7 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
+from battle_field.components.field_area_inside.field_area_inside_handler import FieldAreaInsideHandler
 from battle_field.components.fixed_unit_card_inside.fixed_unit_card_inside_action import FixedUnitCardInsideAction
 from battle_field.components.mouse_left_click.left_click_detector import LeftClickDetector
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area_action import OpponentFieldAreaAction
@@ -55,7 +55,7 @@ from battle_field.infra.round_repository import RoundRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.your_field_unit_action_repository import YourFieldUnitActionRepository
-from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
+from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
 
 from battle_field.infra.your_hp_repository import YourHpRepository
@@ -128,7 +128,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.selected_search_unit_page_number_list = []
         self.selected_search_unit_lightning_border = []
 
-        self.your_field_unit_repository = YourFieldUnitRepository.getInstance()
+        self.your_field_unit_repository = CircleImageLegacyYourFieldUnitRepository.getInstance()
 
         self.card_info_repository = CardInfoFromCsvRepositoryImpl.getInstance()
 
