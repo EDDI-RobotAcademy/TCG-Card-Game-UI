@@ -252,6 +252,11 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                 is_your_turn_value = real_battle_start_response.get('is_your_turn', None)
                 self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(is_your_turn_value)
 
+                your_draw_card_id = real_battle_start_response.get('player_draw_card_list_map', {}).get('You', [])[0]
+                print(f"your_draw_card_id: {your_draw_card_id}")
+
+                self.__fakeYourHandRepository.save_current_hand_state([your_draw_card_id])
+
                 # Second Fake Accounts (Your) Real Battle Start
                 real_battle_start_response = self.__fakeBattleFieldFrameRepository.request_real_battle_start(
                     RealBattleStartRequest(second_fake_redis_token)
