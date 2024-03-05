@@ -7,6 +7,7 @@ from OpenGL.GLUT import *
 
 from common.utility import get_project_root
 from image_shape.non_background_image import NonBackgroundImage
+from image_shape.rectangle_image import RectangleImage
 from lobby_frame.service.lobby_menu_frame_service_impl import LobbyMenuFrameServiceImpl
 from opengl_my_card_main_frame.entity.my_card_main_scene import MyCardMainScene
 from opengl_my_card_main_frame.entity.my_deck_register_scene import MyDeckRegisterScene
@@ -68,19 +69,25 @@ class MyCardMainFrame(OpenGLFrame):
         glClear(GL_COLOR_BUFFER_BIT)
 
         # 나의 카드 배경 화면
-        background_rectangle = ImageRectangleElement(image_path=os.path.join(project_root, "local_storage", "image", "battle_lobby", "background.png"),
-                                                     local_translation=(0, 0),
-                                                     vertices=[(0, 0), (self.width, 0), (self.width, self.height), (0, self.height)])
-        self.my_card_main_scene.add_my_card_background(background_rectangle)
+        # background_rectangle = ImageRectangleElement(image_path=os.path.join(project_root, "local_storage", "my_card_frame", "my_card_background.png"),
+        #                                              local_translation=(0, 0),
+        #                                              vertices=[(0, 0), (self.width, 0), (self.width, self.height), (0, self.height)])
+        # self.my_card_main_scene.add_my_card_background(background_rectangle)
         #print(f"카드 배경 잘 들어갔니?:{self.my_card_main_scene.get_my_card_background()}")
 
-        # 나의 덱 화면
-        my_deck_rectangle = Rectangle(color=(0.5137, 0.3608, 0.2314, 1.0),
-                                      local_translation=(0, 0),
-                                      vertices=[(0.84 * self.width, 0), (self.width, 0), (self.width, self.height),
-                                                (0.84 * self.width, self.height)])
+        self.__pre_drawed_image_instance.pre_draw_my_card_background(self.width, self.height)
+        background_data = self.__pre_drawed_image_instance.get_pre_draw_my_card_background()
+        my_card_background = RectangleImage(image_data=background_data,
+                                            vertices=[(0, 0), (self.width, 0), (self.width, self.height), (0, self.height)])
+        self.my_card_main_scene.add_my_card_background(my_card_background)
 
-        self.my_card_main_scene.add_my_card_background(my_deck_rectangle)
+        # 나의 덱 화면
+        # my_deck_rectangle = Rectangle(color=(0.5137, 0.3608, 0.2314, 1.0),
+        #                               local_translation=(0, 0),
+        #                               vertices=[(0.84 * self.width, 0), (self.width, 0), (self.width, self.height),
+        #                                         (0.84 * self.width, self.height)])
+        #
+        # self.my_card_main_scene.add_my_card_background(my_deck_rectangle)
         #print(f"덱 화면 잘 들어갔니?:{self.my_card_main_scene.get_my_card_background()}")
 
         # 덱 생성 버튼

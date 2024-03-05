@@ -84,6 +84,8 @@ class PreDrawedImage:
     __pre_drawed_unit_attack = {}
     __pre_drawed_unit_race = {}
 
+    __pre_drawed_my_card_background = None
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -516,6 +518,12 @@ class PreDrawedImage:
             unit_race_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_race", f"{png_file}")
             self.__pre_drawed_unit_race[race_number] = ImageDataLoader.load_rectangle_origin_image_data(unit_race_image_path)
 
+    def pre_draw_my_card_background(self, width, height):
+        print(f"pre_draw_my_card_background -> width = {width}, height = {height}")
+
+        my_card_background = os.path.join(self.__project_root, "local_storage", "my_card_frame", "my_card_background.png")
+        self.__pre_drawed_my_card_background = ImageDataLoader.load_background_image_data(my_card_background, width, height)
+
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
         self.pre_draw_opponent_lost_zone()
@@ -743,3 +751,6 @@ class PreDrawedImage:
     def get_pre_draw_unit_race(self, race_number):
         # return self.__pre_drawed_unit_race[number]
         return self.__pre_drawed_unit_race[race_number]
+
+    def get_pre_draw_my_card_background(self):
+        return self.__pre_drawed_my_card_background
