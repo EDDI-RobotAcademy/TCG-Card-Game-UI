@@ -9,7 +9,7 @@ from pyopengltk import OpenGLFrame
 
 from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
-from battle_field.infra.your_tomb_repository import YourTombRepository
+from battle_field.infra.legacy.circle_image_legacy_your_tomb_repository import CircleImageLegacyYourTombRepository
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from initializer.init_domain import DomainInitializer
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
@@ -63,7 +63,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.your_field_unit_repository = CircleImageLegacyYourFieldUnitRepository.getInstance()
 
-        self.your_tomb_repository = YourTombRepository.getInstance()
+        self.your_tomb_repository = CircleImageLegacyYourTombRepository.getInstance()
         # TODO: Naming Issue
         self.card_info = CardInfoFromCsvRepositoryImpl.getInstance()
 
