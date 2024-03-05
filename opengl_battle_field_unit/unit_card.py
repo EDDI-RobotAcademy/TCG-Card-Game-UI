@@ -30,13 +30,16 @@ class UnitCard:
 
 
     def create_non_background_unit_energy(self, image_data, energy_number, center, radius):
-        # 가로 대비 세로 => 1.343
-        # 양측으로 벌리니까 => 1.1715
+        start_x = center[0] - radius * 1.5
+        end_x = center[0] + radius * 1.5
+        start_y = center[1] - radius * 1.3438 * 1.5
+        end_y = center[1] + radius * 1.3438 * 1.5
+
         vertices = [
-            (center[0] - radius, center[1] + radius * 1.343),
-            (center[0] + radius, center[1] + radius * 1.343),
-            (center[0] + radius, center[1] - radius * 1.343),
-            (center[0] - radius, center[1] - radius * 1.343),
+            (start_x, start_y),
+            (end_x, start_y),
+            (end_x, end_y),
+            (start_x, end_y),
         ]
         unit_energy_image = NonBackgroundNumberImage(image_data=image_data,
                                                      vertices=vertices,
@@ -48,11 +51,23 @@ class UnitCard:
         self.add_shape(unit_energy_image)
 
     def create_non_background_unit_race(self, image_data, center, radius):
+        start_x = center[0] - radius * 1.2
+        end_x = center[0] + radius * 1.2
+        start_y = center[1] - radius * 1.2
+        end_y = center[1] + radius * 1.2
+
+        # vertices = [
+        #     (center[0] - radius, center[1] - radius),
+        #     (center[0] + radius, center[1] - radius),
+        #     (center[0] + radius, center[1] + radius),
+        #     (center[0] - radius, center[1] + radius),
+        # ]
+
         vertices = [
-            (center[0] - radius, center[1] - radius),
-            (center[0] + radius, center[1] - radius),
-            (center[0] + radius, center[1] + radius),
-            (center[0] - radius, center[1] + radius),
+            (start_x, start_y),
+            (end_x, start_y),
+            (end_x, end_y),
+            (start_x, end_y),
         ]
 
         unit_race_image = NonBackgroundImage(image_data=image_data,
@@ -61,10 +76,10 @@ class UnitCard:
         self.add_shape(unit_race_image)
 
     def create_non_background_unit_attack(self, image_data, attack_number, center, radius):
-        start_x = center[0] - 5 - radius * 1.8
-        end_x = center[0] - 5 + radius * 1.8
-        start_y = center[1] - 7 - radius * 1.651 * 1.8
-        end_y = center[1] - 7 + radius * 1.651 * 1.8
+        start_x = center[0] - 5 - radius * 2.0
+        end_x = center[0] - 5 + radius * 2.0
+        start_y = center[1] - 7 - radius * 1.651 * 2.0
+        end_y = center[1] - 7 + radius * 1.651 * 2.0
 
         # x: 376, y: 447
         # x: 371, y: 440
