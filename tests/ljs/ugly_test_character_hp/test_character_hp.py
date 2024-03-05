@@ -21,7 +21,7 @@ from battle_field.entity.tomb_type import TombType
 from battle_field.entity.your_tomb import YourTomb
 from battle_field.handler.legacy.circle_image_legacy_support_card_handler import CircleImageLegacySupportCardHandler
 from battle_field.infra.legacy.circle_image_legacy_opponent_field_unit_repository import CircleImageLegacyOpponentFieldUnitRepository
-from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
+from battle_field.infra.legacy.circle_image_legacy_opponent_tomb_repository import CircleImageLegacyOpponentTombRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
@@ -110,7 +110,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.tomb_panel_popup_rectangle = None
         self.tomb_panel_selected = False
 
-        self.opponent_tomb_repository = OpponentTombRepository.getInstance()
+        self.opponent_tomb_repository = CircleImageLegacyOpponentTombRepository.getInstance()
         self.opponent_tomb_panel = None
         self.opponent_tomb = OpponentTomb()
         self.opponent_tomb_popup_rectangle_panel = None
