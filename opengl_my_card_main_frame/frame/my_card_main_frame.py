@@ -204,10 +204,28 @@ class MyCardMainFrame(OpenGLFrame):
                                                ])
         self.my_card_main_scene.add_button_list(pre_page_button)
 
+        # TODO: 카드 갯수 표기 배치 (이건 한 개만 테스트 한 것)
+        # 가로 길이 비율 0.036, 세로 길이 비율 0.056
+        number_left_x_point = self.width * 0.630
+        number_right_x_point = self.width * 0.666
+        number_top_y_point = self.height * 0.455 # 첫 번째줄은 이 높이로 고정하면 될 듯
+        number_bottom_y_point = self.height * 0.511
+        number_of_cards_data = self.__pre_drawed_image_instance.get_pre_draw_number_of_cards(2)
+        number_of_cards_text = NonBackgroundImage(image_data=number_of_cards_data,
+                                                   vertices=[
+                                                       (number_left_x_point, number_top_y_point),
+                                                       (number_right_x_point, number_top_y_point),
+                                                       (number_right_x_point, number_bottom_y_point),
+                                                       (number_left_x_point, number_bottom_y_point)
+                                                   ])
+        self.my_card_main_scene.add_text_list(number_of_cards_text)
+
         # 모든 카드
         print(f"서버로 부터 가져온 카드 리스트: {self.lobby_service.get_card_data_list()}")
         #all_card_number = self.card_data_read().tolist()
         all_card_number = self.lobby_service.get_card_data_list()
+        number_of_cards = self.lobby_service.get_number_of_cards_list()
+        print(f"카드 갯수 리스트: {number_of_cards}")
         # print(f"카드 번호 리스트: {all_card_number}")
         # print(f"카드 번호 길이: {len(all_card_number)}")
 
