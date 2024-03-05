@@ -192,8 +192,8 @@ class UiFrameControllerImpl(UiFrameController):
         self.__yourDeckRepository.saveTransmitIpcChannel(transmitIpcChannel)
         self.__yourFieldUnitRepository.saveTransmitIpcChannel(transmitIpcChannel)
         self.__muligunYourHandRepository.saveTransmitIpcChannel(transmitIpcChannel)
-        self.__yourTombRepository.saveTransmitIpcChannel(transmitIpcChannel)
-        self.__yourHandRepository.saveTransmitIpcChannel(transmitIpcChannel)
+        self.__yourTombLegacyRepository.saveTransmitIpcChannel(transmitIpcChannel)
+        self.__yourHandLegacyRepository.saveTransmitIpcChannel(transmitIpcChannel)
         self.__yourFieldEnergyRepository.saveTransmitIpcChannel(transmitIpcChannel)
 
         self.__fakeBattleFieldFrameServiece.injectTransmitIpcChannel(transmitIpcChannel)
@@ -226,8 +226,8 @@ class UiFrameControllerImpl(UiFrameController):
         self.__yourDeckRepository.saveReceiveIpcChannel(receiveIpcChannel)
         self.__yourFieldUnitRepository.saveReceiveIpcChannel(receiveIpcChannel)
         self.__muligunYourHandRepository.saveReceiveIpcChannel(receiveIpcChannel)
-        self.__yourTombRepository.saveReceiveIpcChannel(receiveIpcChannel)
-        self.__yourHandRepository.saveReceiveIpcChannel(receiveIpcChannel)
+        self.__yourTombLegacyRepository.saveReceiveIpcChannel(receiveIpcChannel)
+        self.__yourHandLegacyRepository.saveReceiveIpcChannel(receiveIpcChannel)
         self.__yourFieldEnergyRepository.saveReceiveIpcChannel(receiveIpcChannel)
 
         self.__fakeBattleFieldFrameServiece.injectReceiveIpcChannel(receiveIpcChannel)
