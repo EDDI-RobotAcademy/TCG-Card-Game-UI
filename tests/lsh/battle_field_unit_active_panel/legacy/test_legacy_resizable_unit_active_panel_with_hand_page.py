@@ -57,7 +57,7 @@ from battle_field.infra.your_field_unit_action_repository import YourFieldUnitAc
 from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
 from battle_field.infra.your_hp_repository import YourHpRepository
-from battle_field.infra.your_lost_zone_repository import YourLostZoneRepository
+from battle_field.infra.legacy.circle_image_legacy_your_lost_zone_repository import CircleImageLegacyYourLostZoneRepository
 from battle_field.infra.legacy.circle_image_legacy_your_tomb_repository import CircleImageLegacyYourTombRepository
 from battle_field.state.FieldUnitActionStatus import FieldUnitActionStatus
 from battle_field.state.energy_type import EnergyType
@@ -215,7 +215,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_field_energy_repository = OpponentFieldEnergyRepository.getInstance()
         self.opponent_field_energy_repository.increase_opponent_field_energy(3)
 
-        self.your_lost_zone_repository = YourLostZoneRepository.getInstance()
+        self.your_lost_zone_repository = CircleImageLegacyYourLostZoneRepository.getInstance()
         self.your_lost_zone_panel = None
         self.your_lost_zone = YourLostZone()
         self.your_lost_zone_popup_panel = None
