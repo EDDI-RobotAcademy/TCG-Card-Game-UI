@@ -33,7 +33,7 @@ from battle_field.entity.your_field_energy import YourFieldEnergy
 from battle_field.entity.your_hp import YourHp
 from battle_field.entity.your_lost_zone import YourLostZone
 from battle_field.entity.your_tomb import YourTomb
-from battle_field.handler.support_card_handler import SupportCardHandler
+from battle_field.handler.legacy.circle_image_legacy_support_card_handler import CircleImageLegacySupportCardHandler
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.legacy.circle_image_legacy_opponent_field_unit_repository import CircleImageLegacyOpponentFieldUnitRepository
@@ -128,7 +128,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_field_unit_lightning_border_list = []
         self.boost_selection = False
 
-        self.support_card_handler = SupportCardHandler.getInstance()
+        self.support_card_handler = CircleImageLegacySupportCardHandler.getInstance()
         self.current_process_card_id = 0
 
         self.your_tomb_repository = CircleImageLegacyYourTombRepository.getInstance()

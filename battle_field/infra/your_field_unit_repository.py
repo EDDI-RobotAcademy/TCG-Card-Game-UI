@@ -94,6 +94,7 @@ class YourFieldUnitRepository:
         return self.attached_energy_info.get_race_energy_at_index(index, energy_race)
 
     def find_field_unit_by_index(self, index):
+        print(f"find_field_unit_by_index() -> index: {index}")
         return self.get_current_field_unit_list()[index]
         # for unit in self.current_field_unit_list:
         #     if unit.get_index() == index:
