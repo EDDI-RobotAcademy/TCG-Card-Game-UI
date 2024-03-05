@@ -1,3 +1,4 @@
+import colorama
 from screeninfo import get_monitors
 from shapely import Polygon, Point
 
@@ -33,23 +34,22 @@ from battle_field.entity.your_field_energy import YourFieldEnergy
 from battle_field.entity.your_hp import YourHp
 from battle_field.entity.your_lost_zone import YourLostZone
 from battle_field.entity.your_tomb import YourTomb
-from battle_field.handler.legacy.circle_image_legacy_support_card_handler import CircleImageLegacySupportCardHandler
+from battle_field.handler.support_card_handler import SupportCardHandler
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
-from battle_field.infra.legacy.circle_image_legacy_opponent_field_unit_repository import CircleImageLegacyOpponentFieldUnitRepository
+from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from battle_field.infra.opponent_hp_repository import OpponentHpRepository
-from battle_field.infra.legacy.circle_image_legacy_opponent_lost_zone_repository import CircleImageLegacyOpponentLostZoneRepository
-from battle_field.infra.legacy.circle_image_legacy_opponent_tomb_repository import CircleImageLegacyOpponentTombRepository
-from battle_field.infra.legacy.circle_image_legacy_your_deck_repository import CircleImageLegacyYourDeckRepository
+from battle_field.infra.opponent_lost_zone_repository import OpponentLostZoneRepository
+from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
+from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
-from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
+from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 from battle_field.infra.legacy.your_hand_repository import LegacyYourHandRepository
 from battle_field.infra.your_hp_repository import YourHpRepository
-from battle_field.infra.legacy.circle_image_legacy_your_lost_zone_repository import CircleImageLegacyYourLostZoneRepository
-from battle_field.infra.legacy.circle_image_legacy_your_tomb_repository import CircleImageLegacyYourTombRepository
+from battle_field.infra.your_lost_zone_repository import YourLostZoneRepository
+from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field.state.energy_type import EnergyType
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
-from battle_field_fixed_card.legacy.circle_image_legacy_fixed_field_card import LegacyFixedFieldCard
 from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
 
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
@@ -64,7 +64,6 @@ from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
 from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
-from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
@@ -118,10 +117,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_hand_repository = LegacyYourHandRepository.getInstance()
         self.hand_card_list = None
 
-        self.your_deck_repository = CircleImageLegacyYourDeckRepository.getInstance()
+        self.your_deck_repository = YourDeckRepository.getInstance()
         self.your_deck_list = None
 
-        self.your_field_unit_repository = CircleImageLegacyYourFieldUnitRepository.getInstance()
+        self.your_field_unit_repository = YourFieldUnitRepository.getInstance()
 
         self.card_info_repository = CardInfoFromCsvRepositoryImpl.getInstance()
 
@@ -130,16 +129,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_field_unit_lightning_border_list = []
         self.boost_selection = False
 
-        self.support_card_handler = CircleImageLegacySupportCardHandler.getInstance()
+        self.support_card_handler = SupportCardHandler.getInstance()
         self.current_process_card_id = 0
 
-        self.your_tomb_repository = CircleImageLegacyYourTombRepository.getInstance()
+        self.your_tomb_repository = YourTombRepository.getInstance()
         self.your_tomb_panel = None
         self.your_tomb = YourTomb()
         self.tomb_panel_popup_rectangle = None
         self.tomb_panel_selected = False
 
-        self.opponent_tomb_repository = CircleImageLegacyOpponentTombRepository.getInstance()
+        self.opponent_tomb_repository = OpponentTombRepository.getInstance()
         self.opponent_tomb_panel = None
         self.opponent_tomb = OpponentTomb()
         self.opponent_tomb_popup_rectangle_panel = None
@@ -147,7 +146,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.selected_tomb = TombType.Dummy
 
-        self.opponent_field_unit_repository = CircleImageLegacyOpponentFieldUnitRepository.getInstance()
+        self.opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
         # self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance()
         self.field_area_inside_handler = LegacyFieldAreaInsideHandler.getInstance()
         # TODO: Your 카드에 집어넣는 경우도 이것으로 감지하는 것이 더 좋을 것임
@@ -168,13 +167,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_deck_prev_button = None
         self.your_deck_ok_button = None
 
-        self.your_lost_zone_repository = CircleImageLegacyYourLostZoneRepository.getInstance()
+        self.your_lost_zone_repository = YourLostZoneRepository.getInstance()
         self.your_lost_zone_panel = None
         self.your_lost_zone = YourLostZone()
         self.your_lost_zone_popup_panel = None
         self.your_lost_zone_panel_selected = False
 
-        self.opponent_lost_zone_repository = CircleImageLegacyOpponentLostZoneRepository.getInstance()
+        self.opponent_lost_zone_repository = OpponentLostZoneRepository.getInstance()
         self.opponent_lost_zone_panel = None
         self.opponent_lost_zone = OpponentLostZone()
         self.opponent_lost_zone_popup_panel = None
@@ -833,11 +832,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
         if len(self.battle_result_panel_list) == 0:
             if self.selected_object:
                 card_base = None
+
                 if isinstance(self.selected_object, FixedFieldCard):
                     card_base = self.selected_object.get_fixed_card_base()
                 elif isinstance(self.selected_object, PickableCard):
                     card_base = self.selected_object.get_pickable_card_base()
-
 
                 self.lightning_border.set_width_ratio(self.width_ratio)
                 self.lightning_border.set_height_ratio(self.height_ratio)
@@ -1038,7 +1037,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         # print(f"on_canvas_drag -> x: {x}, y: {y}")
 
         if self.selected_object and self.drag_start:
-            if not isinstance(self.selected_object, LegacyPickableCard):
+            if not isinstance(self.selected_object, PickableCard):
                 return
 
             pickable_card = self.selected_object.get_pickable_card_base()
@@ -1111,7 +1110,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
 
 
-        if isinstance(self.selected_object, LegacyPickableCard):
+        if isinstance(self.selected_object, PickableCard):
             # Opponent Field Area 시작
             # is_pickable_card_inside_opponent_field =
 
@@ -1461,7 +1460,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.surrender_confirm_close_button_selected = False
 
             for hand_card in self.hand_card_list:
-                if isinstance(hand_card, LegacyPickableCard):
+                if isinstance(hand_card, PickableCard):
                     hand_card.selected = False
 
             self.selected_object = None
@@ -1628,7 +1627,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
             for your_field_unit in your_field_unit_list:
-                if isinstance(your_field_unit, LegacyFixedFieldCard):
+                if isinstance(your_field_unit, FixedFieldCard):
                     your_field_unit.selected = False
 
             for your_field_unit in your_field_unit_list:
@@ -1934,7 +1933,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
     def on_canvas_right_click(self, event):
         x, y = event.x, event.y
 
-        if self.selected_object and isinstance(self.selected_object, LegacyFixedFieldCard):
+        if self.selected_object and isinstance(self.selected_object, FixedFieldCard):
             convert_y = self.winfo_reqheight() - y
             fixed_card_base = self.selected_object.get_fixed_card_base()
             if fixed_card_base.is_point_inside((x, convert_y)):

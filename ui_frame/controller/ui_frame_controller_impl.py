@@ -9,6 +9,8 @@ from battle_field.infra.legacy.circle_image_legacy_your_deck_repository import C
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
+from battle_field.infra.your_hand_repository import YourHandRepository
+from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field_function.service.battle_field_function_service_impl import BattleFieldFunctionServiceImpl
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
 from battle_field.infra.legacy.circle_image_legacy_your_tomb_repository import CircleImageLegacyYourTombRepository
@@ -30,6 +32,7 @@ from rock_paper_scissors.service.rock_paper_scissors_service_impl import RockPap
 from rock_paper_scissors.frame.check_rock_paper_scissors_winner.service.check_rock_paper_scissors_winner_service_impl import CheckRockPaperScissorsWinnerServiceImpl
 
 from session.service.session_service_impl import SessionServiceImpl
+from tests.ljs.ugly_test_result_frame.service.test_result_frame_service import TestResultFrameService
 
 from ui_frame.controller.ui_frame_controller import UiFrameController
 from ui_frame.service.ui_frame_service_impl import UiFrameServiceImpl
@@ -70,14 +73,16 @@ class UiFrameControllerImpl(UiFrameController):
             # cls.__instance.__yourTombRepository = CircleImageLegacyYourTombRepository.getInstance()
             # cls.__instance.__yourHandRepository = YourHandRepository.getInstance()
             cls.__instance.__legacy_your_hand_repository = LegacyYourHandRepository.getInstance()
-            cls.__instance.__yourTombRepository = CircleImageLegacyYourTombRepository.getInstance()
-            cls.__instance.__yourHandRepository = CircleImageLegacyYourHandRepository.getInstance()
+            cls.__instance.__yourTombLegacyRepository = CircleImageLegacyYourTombRepository.getInstance()
+            cls.__instance.__yourHandLegacyRepository = CircleImageLegacyYourHandRepository.getInstance()
             cls.__instance.__yourFieldEnergyRepository = YourFieldEnergyRepository.getInstance()
             cls.__instance.__battleFieldMuligunFrameServiece = BattleFieldMuligunFrameServiceImpl.getInstance()
             cls.__instance.__rockPaperScissorsService = RockPaperScissorsServiceImpl.getInstance()
             cls.__instance.__checkRockPaperScissorsWinnerServiceImpl = CheckRockPaperScissorsWinnerServiceImpl.getInstance()
 
             cls.__instance.__decisionFirstStrikeFrameService = DecisionFirstStrikeFrameService.getInstance()
+
+            cls.__instance.__battle_result_frame_service = TestResultFrameService.getInstance()
 
         return cls.__instance
 
@@ -137,6 +142,9 @@ class UiFrameControllerImpl(UiFrameController):
         fakeBattleFieldFrame = self.__fakeBattleFieldFrameServiece.createFakeBattleFieldFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerFakeBattleFieldUiFrame(fakeBattleFieldFrame)
 
+        test_battle_result_frame = self.__battle_result_frame_service.create_battle_result_frame(rootWindow, self.switchFrameWithMenuName)
+        self.__uiFrameService.register_battle_result_frame(test_battle_result_frame)
+
         self.__battleFieldFunctionService.saveFrame(self, fakeBattleFieldFrame)
 
     def first_main_window(self):
@@ -184,8 +192,8 @@ class UiFrameControllerImpl(UiFrameController):
         self.__yourDeckRepository.saveTransmitIpcChannel(transmitIpcChannel)
         self.__yourFieldUnitRepository.saveTransmitIpcChannel(transmitIpcChannel)
         self.__muligunYourHandRepository.saveTransmitIpcChannel(transmitIpcChannel)
-        self.__yourTombRepository.saveTransmitIpcChannel(transmitIpcChannel)
-        self.__yourHandRepository.saveTransmitIpcChannel(transmitIpcChannel)
+        self.__yourTombLegacyRepository.saveTransmitIpcChannel(transmitIpcChannel)
+        self.__yourHandLegacyRepository.saveTransmitIpcChannel(transmitIpcChannel)
         self.__yourFieldEnergyRepository.saveTransmitIpcChannel(transmitIpcChannel)
 
         self.__fakeBattleFieldFrameServiece.injectTransmitIpcChannel(transmitIpcChannel)
@@ -218,8 +226,8 @@ class UiFrameControllerImpl(UiFrameController):
         self.__yourDeckRepository.saveReceiveIpcChannel(receiveIpcChannel)
         self.__yourFieldUnitRepository.saveReceiveIpcChannel(receiveIpcChannel)
         self.__muligunYourHandRepository.saveReceiveIpcChannel(receiveIpcChannel)
-        self.__yourTombRepository.saveReceiveIpcChannel(receiveIpcChannel)
-        self.__yourHandRepository.saveReceiveIpcChannel(receiveIpcChannel)
+        self.__yourTombLegacyRepository.saveReceiveIpcChannel(receiveIpcChannel)
+        self.__yourHandLegacyRepository.saveReceiveIpcChannel(receiveIpcChannel)
         self.__yourFieldEnergyRepository.saveReceiveIpcChannel(receiveIpcChannel)
 
         self.__fakeBattleFieldFrameServiece.injectReceiveIpcChannel(receiveIpcChannel)

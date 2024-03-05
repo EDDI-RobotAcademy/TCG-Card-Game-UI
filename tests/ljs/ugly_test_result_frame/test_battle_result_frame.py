@@ -71,6 +71,7 @@ from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.circle import Circle
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
+from ui_frame.controller.ui_frame_controller_impl import UiFrameControllerImpl
 
 
 class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
@@ -2809,6 +2810,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                     if self.surrender_confirm_ok_button_selected:
                         print(f"행복해용~~~")
+                        from ui_frame.controller.ui_frame_controller_impl import UiFrameControllerImpl
+                        UiFrameControllerImpl.getInstance().switchFrameWithMenuName("battle-result")
                       #  self.battle_field_function_controller.callSurrender()
 
                     self.surrender_confirm_close_button_selected = (
@@ -2901,9 +2904,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         return new_rectangle
 
 
-class TestOption(unittest.TestCase):
 
-    def test_option(self):
+class TestBattleResult(unittest.TestCase):
+
+    def test_battle_result_frame(self):
         DomainInitializer.initEachDomain()
 
         root = tkinter.Tk()
