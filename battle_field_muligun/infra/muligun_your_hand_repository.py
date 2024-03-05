@@ -1,5 +1,5 @@
 from battle_field_muligun.state.current_hand import CurrentHandState
-from opengl_battle_field_pickable_card.pickable_card import PickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 
 
 class MuligunYourHandRepository:
@@ -47,7 +47,7 @@ class MuligunYourHandRepository:
         for index, card_number in enumerate(current_hand):
             print(f"index: {index}, card_number: {card_number}")
             initial_position = self.get_start_hand_card_position(index)
-            new_card = PickableCard(local_translation=initial_position, scale=300)
+            new_card = LegacyPickableCard(local_translation=initial_position, scale=300)
             new_card.init_card_scale(card_number)
             self.current_hand_card_list.append(new_card)
 
@@ -74,7 +74,7 @@ class MuligunYourHandRepository:
     def create_muligun_hand_unit_card(self, card_id):
         index = len(self.current_hand_card_list)
         print(f"create_muligun_hand_unit_card() -> card_id: {card_id}, index: {index}")
-        new_card = PickableCard(local_translation=self.get_start_hand_card_position(index), scale=300)
+        new_card = LegacyPickableCard(local_translation=self.get_start_hand_card_position(index), scale=300)
         print("PickableCard 생성자 호출")
         new_card.init_card_scale(card_id)
         print("new_card.init_card_scale(card_id)")

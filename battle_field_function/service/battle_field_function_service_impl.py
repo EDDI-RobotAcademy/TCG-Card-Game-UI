@@ -1,6 +1,6 @@
 from battle_field.infra.battle_field_repository import BattleFieldRepository
-from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
-from battle_field.infra.your_hand_repository import YourHandRepository
+from battle_field.infra.legacy.circle_image_legacy_opponent_field_unit_repository import CircleImageLegacyOpponentFieldUnitRepository
+from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
 from battle_field_function.repository.battle_field_function_repository_impl import BattleFieldFunctionRepositoryImpl
 from battle_field_function.service.battle_field_function_service import BattleFieldFunctionService
 from battle_field_function.service.request.game_end_reward_request import GameEndRewardRequest
@@ -24,7 +24,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             cls.__instance.__battleFieldFunctionRepository = BattleFieldFunctionRepositoryImpl.getInstance()
             cls.__instance.__sessionRepository = SessionRepositoryImpl.getInstance()
             cls.__instance.__sessionService = SessionServiceImpl.getInstance()
-            cls.__instance.__yourHandRepository = YourHandRepository.getInstance()
+            cls.__instance.__yourHandRepository = CircleImageLegacyYourHandRepository.getInstance()
             cls.__instance.__battle_field_repository = BattleFieldRepository.getInstance()
             #cls.__instance.__opponentHandRepository = OpponentHandRepository.getInstance()
         return cls.__instance
@@ -149,7 +149,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             print(f"data: {data}")
             unit_card_id = data["Opponent"]
             print(f"unit_card_id: {unit_card_id}")
-            OpponentFieldUnitRepository.getInstance().create_field_unit_card(int(unit_card_id))
+            CircleImageLegacyOpponentFieldUnitRepository.getInstance().create_field_unit_card(int(unit_card_id))
 
 
     def searchOpponentCount(self, notify_dict_data):

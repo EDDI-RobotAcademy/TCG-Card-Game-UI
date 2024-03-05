@@ -36,12 +36,18 @@ class RockPaperScissorsRepositoryImpl(RockPaperScissorsRepository):
 
 
     def setRPS(self, rps):
-        print(f"CardShopFrameRepositoryImpl rps set {rps}")
+        print(f"RockPaperScissorsRepositoryImpl rps set {rps}")
         self.__rps = rps
 
     def getRPS(self):
         return self.__rps
 
-    def requestRockPaperscissors(self, RockPaperScissorsRequest):
+    def requestRockPaperScissors(self, RockPaperScissorsRequest):
+        print(f"RockPaperScissorsRepositoryImpl: requestRockPaperScissors() -> {RockPaperScissorsRequest}")
         self.__transmitIpcChannel.put(RockPaperScissorsRequest)
+        return self.__receiveIpcChannel.get()
+
+    def requestCheckRockPaperScissorsWinner(self, CheckRockPaperScissorsWinnerRequest):
+        print(f"RockPaperScissorsRepositoryImpl: requestCheckRockPaperScissorsWinner() -> {CheckRockPaperScissorsWinnerRequest}")
+        self.__transmitIpcChannel.put(CheckRockPaperScissorsWinnerRequest)
         return self.__receiveIpcChannel.get()

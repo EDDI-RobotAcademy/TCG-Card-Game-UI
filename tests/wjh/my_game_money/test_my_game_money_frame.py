@@ -15,11 +15,11 @@ class TestMyDeckRegisterFrame(unittest.TestCase):
         window = MyGameMoneyFrame(root)
         window.pack(fill=tkinter.BOTH, expand=1)
 
-        image_path = '/home/eddi/proj/TCG-Card-Game-UI/images/game_money.png'
-        original_image = Image.open(image_path)
-        resized_image = original_image.resize((15, 15), Image.LANCZOS)
-        money_image = ImageTk.PhotoImage(resized_image)
-        label_GameMoney = Label(window, text=1000, image=money_image, compound="left",
+        # image_path = '/home/eddi/proj/TCG-Card-Game-UI/images/game_money.png'
+        # original_image = Image.open(image_path)
+        # resized_image = original_image.resize((15, 15), Image.LANCZOS)
+        # money_image = ImageTk.PhotoImage(resized_image)
+        label_GameMoney = Label(window, text=1000,  compound="left",
                                 font=("Arial", 12))
         label_GameMoney.pack()
 

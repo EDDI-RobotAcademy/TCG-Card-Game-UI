@@ -1,15 +1,11 @@
-import os
-
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from image_shape.rectangle_image import RectangleImage
 from image_shape.rectangle_kinds import RectangleKinds
+from opengl_battle_field_card_controller.card_controller_impl import CardControllerImpl
 from opengl_pickable_shape.pickable_rectangle import PickableRectangle
-from common.utility import get_project_root
 from opengl_shape.image_rectangle_element import ImageRectangleElement
 from opengl_shape.rectangle import Rectangle
-from opengl_battle_field_card_controller.card_controller_impl import CardControllerImpl
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
-from tests.lsh.ugly_draw_battle_field.test_draw_battle_field import ImageRectangleElementRefactor
 
 
 class PickableCard:
@@ -77,8 +73,8 @@ class PickableCard:
         pickable_card_base = PickableRectangle(color=color,
                                                local_translation=local_translation,
                                                vertices=vertices)
-        # print(f"create_card_base_pickable_rectangle -> pickable_card_base: {pickable_card_base.vertices}")
-        pickable_card_base.set_draw_gradient(True)
+
+        # pickable_card_base.set_draw_gradient(True)
         pickable_card_base.set_initial_vertices(vertices)
         return pickable_card_base
 
@@ -91,7 +87,7 @@ class PickableCard:
         card_illustration.set_initial_vertices(vertices)
         return card_illustration
 
-    def creat_frame(self, image_data, vertices, local_translation):
+    def create_card_frame(self, image_data, vertices, local_translation):
         card_frame = RectangleImage(image_data=image_data,
                                     local_translation=local_translation,
                                     vertices=vertices)
@@ -113,25 +109,12 @@ class PickableCard:
         rectangle_height = 170
         rectangle_width = 105
 
-        print(f"rectangle_width: {rectangle_width}")
-        print(f"rectangle_height: {rectangle_height}")
-
-        # self.set_initial_position()
-
-        # cardInfo = CardInfoFromCsvRepositoryImpl.getInstance()
-        # csvInfo = cardInfo.readCardData(os.path.join(project_root, 'local_storage', 'card', 'data.csv'))
-        # cardInfo.build_dictionaries(csvInfo)
-
-        # CardControllerImpl()
-        # card_controller = CardControllerImpl.getInstance()
-
         self.tool_card = self.create_attached_tool_card_rectangle(
             color=(0.6, 0.4, 0.6, 1.0),
             local_translation=self.local_translation,
             vertices=[(15, 15), (120, 15), (120, 185), (15, 185)])
 
         basic_pickable_card_base_vertices = [(0, 0), (105, 0), (105, 170), (0, 170)]
-        # self.set_initial_vertices(basic_pickable_card_base_vertices)
 
         self.pickable_card_base = (
             self.create_card_base_pickable_rectangle(
@@ -142,7 +125,7 @@ class PickableCard:
         )
 
         self.pickable_card_base.set_attached_shapes(
-            self.creat_frame(
+            self.create_card_frame(
                 image_data=self.__pre_drawed_image_instance.get_pre_draw_card_frame_for_card_number(card_number),
                 local_translation=self.local_translation,
                 vertices=basic_pickable_card_base_vertices
@@ -156,14 +139,6 @@ class PickableCard:
                 vertices=[(10, 25), (95, 25), (95, 100), (10, 100)]
             )
         )
-
-        # self.pickable_card_base.set_attached_shapes(
-        #     self.create_equipped_mark(
-        #         image_path=os.path.join(project_root, "local_storage", "card_images", "equip_white.jpg"),
-        #         local_translation=self.local_translation,
-        #         vertices=[(rectangle_width + 40, 30), (rectangle_width + 80, 30), (rectangle_width + 80, 70), (rectangle_width + 40, 70)]
-        #     )
-        # )
 
         card_controller_shapes = self.card_controller.getCardTypeTable(self.card_info.getCardTypeForCardNumber(card_number))
         card_shapes = card_controller_shapes(self.local_translation, card_number, rectangle_height, rectangle_width)
@@ -206,7 +181,7 @@ class PickableCard:
         )
 
         self.pickable_card_base.set_attached_shapes(
-            self.creat_frame(
+            self.create_card_frame(
                 image_data=self.__pre_drawed_image_instance.get_pre_draw_card_frame_for_card_number(card_number),
                 local_translation=self.local_translation,
                 vertices=basic_pickable_card_base_vertices
@@ -220,6 +195,57 @@ class PickableCard:
                 local_translation=self.local_translation,
                 vertices=[(25, 67), (rectangle_width - 25, 67), (rectangle_width - 25, rectangle_height - 195),
                           (25, rectangle_height - 195)]
+            )
+        )
+
+        card_controller_shapes = self.card_controller.getCardTypeTable(
+            self.card_info.getCardTypeForCardNumber(card_number)
+        )
+        card_shapes = card_controller_shapes(self.local_translation, card_number, rectangle_height, rectangle_width)
+        for shape in card_shapes:
+            self.pickable_card_base.set_attached_shapes(shape)
+
+    def init_card_in_my_card_frame(self, card_number):
+        self.set_card_number(card_number)
+
+        rectangle_width = 240
+        rectangle_height = rectangle_width * 1.618
+
+        print(f"rectangle_width: {rectangle_width}")
+        print(f"rectangle_height: {rectangle_height}")
+
+        self.tool_card = self.create_attached_tool_card_rectangle(
+            color=(0.6, 0.4, 0.6, 1.0),
+            local_translation=self.local_translation,
+            vertices=[(15, 15), (rectangle_width + 15, 15), (rectangle_width + 15, rectangle_height + 15),
+                      (15, rectangle_height + 15)])
+
+        basic_pickable_card_base_vertices = [(0, 0), (rectangle_width, 0), (rectangle_width, rectangle_height),
+                                             (0, rectangle_height)]
+
+        self.pickable_card_base = (
+            self.create_card_base_pickable_rectangle(
+                color=(0.0, 0.78, 0.34, 1.0),
+                local_translation=self.local_translation,
+                vertices=basic_pickable_card_base_vertices
+            )
+        )
+
+        self.pickable_card_base.set_attached_shapes(
+            self.create_card_frame(
+                image_data=self.__pre_drawed_image_instance.get_pre_draw_card_frame_for_card_number(card_number),
+                local_translation=self.local_translation,
+                vertices=basic_pickable_card_base_vertices
+            )
+        )
+
+        self.pickable_card_base.set_attached_shapes(
+            self.create_illustration(
+                image_data=self.__pre_drawed_image_instance.get_pre_draw_card_illustration_for_card_number(
+                    card_number),
+                local_translation=self.local_translation,
+                vertices=[(17, 50), (rectangle_width - 17, 50), (rectangle_width - 17, rectangle_height - 155),
+                          (17, rectangle_height - 155)]
             )
         )
 

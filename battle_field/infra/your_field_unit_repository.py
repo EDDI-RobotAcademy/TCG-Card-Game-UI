@@ -6,7 +6,6 @@ from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 class YourFieldUnitRepository:
     __instance = None
 
-    # TODO: 당장 구현이 매우 촉바가므로 에너지의 경우 종족에 관련한 사항은 배제하고 수치값만 고려
     attached_energy_info = AttachedEnergyInfoState()
 
     current_field_unit_state = CurrentFieldUnitState()
@@ -38,6 +37,8 @@ class YourFieldUnitRepository:
 
     def create_field_unit_card(self, card_id):
         index = len(self.current_field_unit_list)
+        print(f"create_field_unit_card() -> index: {index}")
+        print(f"create_field_unit_card() -> self.current_field_unit_list: {self.current_field_unit_list}")
         new_card = FixedFieldCard(local_translation=self.get_next_card_position(index))
         new_card.init_card(card_id)
         new_card.set_index(index)
@@ -93,6 +94,7 @@ class YourFieldUnitRepository:
         return self.attached_energy_info.get_race_energy_at_index(index, energy_race)
 
     def find_field_unit_by_index(self, index):
+        print(f"find_field_unit_by_index() -> index: {index}")
         return self.get_current_field_unit_list()[index]
         # for unit in self.current_field_unit_list:
         #     if unit.get_index() == index:

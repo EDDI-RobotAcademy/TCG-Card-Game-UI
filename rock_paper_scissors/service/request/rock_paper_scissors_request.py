@@ -3,7 +3,7 @@ from common.protocol import CustomProtocol
 
 class RockPaperScissorsRequest:
     def __init__(self, sessionInfo, choice):
-        self.__protocolNumber = CustomProtocol.SHOP_DATA.value
+        self.__protocolNumber = CustomProtocol.ROCKPAPERSCISSORS.value
         self.__sessionInfo = sessionInfo
         self.__choice = choice
 
@@ -15,4 +15,4 @@ class RockPaperScissorsRequest:
         }
 
     def __str__(self):
-        return f"CheckGameMoneyRequest(protocolNumber={self.__protocolNumber}, sessionInfo={self.__sessionInfo}, choice={self.__choice})"
+        return f"RockPaperScissorsRequest(protocolNumber={self.__protocolNumber}, sessionInfo={self.__sessionInfo}, choice={self.__choice})"

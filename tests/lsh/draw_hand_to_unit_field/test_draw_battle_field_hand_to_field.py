@@ -7,11 +7,11 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
-from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
-from battle_field.infra.your_hand_repository import YourHandRepository
-from battle_field_fixed_card.fixed_field_card import FixedFieldCard
+from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
+from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
+from battle_field_fixed_card.legacy.circle_image_legacy_fixed_field_card import LegacyFixedFieldCard
 from initializer.init_domain import DomainInitializer
-from opengl_battle_field_pickable_card.pickable_card import PickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.rectangle import Rectangle
 
@@ -54,7 +54,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.battle_field_environment_shapes = self.battle_field_scene.get_battle_field_environment()
 
-        self.your_hand_repository = YourHandRepository.getInstance()
+        self.your_hand_repository = CircleImageLegacyYourHandRepository.getInstance()
         self.your_hand_repository.save_current_hand_state([6, 8, 19, 151])
         self.your_hand_repository.create_hand_card_list()
 
@@ -64,7 +64,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         # self.battle_field_unit = FixedFieldCard(local_translation=(300, 580))
         # self.battle_field_unit.init_card(32)
 
-        self.your_field_unit_repository = YourFieldUnitRepository.getInstance()
+        self.your_field_unit_repository = CircleImageLegacyYourFieldUnitRepository.getInstance()
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -180,9 +180,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             card_base = None
 
             # TODO: Ugly -> Need to Refactor
-            if isinstance(self.selected_object, FixedFieldCard):
+            if isinstance(self.selected_object, LegacyFixedFieldCard):
                 card_base = self.selected_object.get_fixed_card_base()
-            elif isinstance(self.selected_object, PickableCard):
+            elif isinstance(self.selected_object, LegacyPickableCard):
                 card_base = self.selected_object.get_pickable_card_base()
 
             self.lightning_border.set_padding(50)
@@ -232,7 +232,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         y = self.winfo_reqheight() - y
 
         # if self.selected_object and self.drag_start:
-        if isinstance(self.selected_object, PickableCard):
+        if isinstance(self.selected_object, LegacyPickableCard):
             y *= -1
 
             if self.is_drop_location_valid(x, y):
@@ -275,7 +275,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             y = self.winfo_reqheight() - y
 
             for hand_card in self.hand_card_list:
-                if isinstance(hand_card, PickableCard):
+                if isinstance(hand_card, LegacyPickableCard):
                     hand_card.selected = False
 
             self.selected_object = None
@@ -316,7 +316,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             #         self.prev_selected_object = self.selected_object
 
             for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
-                if isinstance(field_unit, FixedFieldCard):
+                if isinstance(field_unit, LegacyFixedFieldCard):
                     field_unit.selected = False
 
             for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
@@ -342,7 +342,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         x, y = event.x, event.y
 
         print(f"selected_object: {self.selected_object}")
-        if self.selected_object and isinstance(self.selected_object, FixedFieldCard):
+        if self.selected_object and isinstance(self.selected_object, LegacyFixedFieldCard):
             convert_y = self.winfo_reqheight() - y
             fixed_card_base = self.selected_object.get_fixed_card_base()
             if fixed_card_base.is_point_inside((x, convert_y)):

@@ -4,7 +4,6 @@ from opengl_battle_field_energy.energy_card import EnergyCard
 from opengl_battle_field_environment.environment_card import EnvironmentCard
 from opengl_battle_field_item.item_card import ItemCard
 from opengl_battle_field_support.support_card import SupportCard
-from opengl_battle_field_token import token_card
 from opengl_battle_field_token.token_card import TokenCard
 from opengl_battle_field_tool.tool_card import ToolCard
 from opengl_battle_field_trap.trap_card import TrapCard

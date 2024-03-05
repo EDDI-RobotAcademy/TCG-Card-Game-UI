@@ -5,11 +5,11 @@ from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.legacy.your_hand_repository import LegacyYourHandRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
-from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
-from battle_field.infra.your_hand_repository import YourHandRepository
+from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
+from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
 from battle_field_function.service.battle_field_function_service_impl import BattleFieldFunctionServiceImpl
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
-from battle_field.infra.your_tomb_repository import YourTombRepository
+from battle_field.infra.legacy.circle_image_legacy_your_tomb_repository import CircleImageLegacyYourTombRepository
 from battle_field_muligun.service.battle_field_muligun_service_impl import BattleFieldMuligunFrameServiceImpl
 from battle_lobby_frame.service.battle_lobby_frame_service_impl import BattleLobbyFrameServiceImpl
 from card_shop_frame.service.card_shop_service_impl import CardShopMenuFrameServiceImpl
@@ -25,6 +25,7 @@ from opengl_buy_random_card_frame.service.buy_random_card_frame_service_impl imp
 from opengl_my_deck_register_frame.service.my_deck_register_frame_service_impl import MyDeckRegisterFrameServiceImpl
 from notify_reader.controller.notify_reader_controller_impl import NotifyReaderControllerImpl
 from rock_paper_scissors.service.rock_paper_scissors_service_impl import RockPaperScissorsServiceImpl
+from rock_paper_scissors.frame.check_rock_paper_scissors_winner.service.check_rock_paper_scissors_winner_service_impl import CheckRockPaperScissorsWinnerServiceImpl
 
 from session.service.session_service_impl import SessionServiceImpl
 
@@ -62,14 +63,17 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__matchingWindowService = MatchingWindowServiceImpl.getInstance()
             cls.__instance.__battleFieldRepository = BattleFieldRepository.getInstance()
             cls.__instance.__yourDeckRepository = YourDeckRepository.getInstance()
-            cls.__instance.__yourFieldUnitRepository = YourFieldUnitRepository.getInstance()
+            cls.__instance.__yourFieldUnitRepository = CircleImageLegacyYourFieldUnitRepository.getInstance()
             cls.__instance.__muligunYourHandRepository = MuligunYourHandRepository.getInstance()
             cls.__instance.__yourTombRepository = YourTombRepository.getInstance()
             cls.__instance.__yourHandRepository = YourHandRepository.getInstance()
             cls.__instance.__legacy_your_hand_repository = LegacyYourHandRepository.getInstance()
+            cls.__instance.__yourTombRepository = CircleImageLegacyYourTombRepository.getInstance()
+            cls.__instance.__yourHandRepository = CircleImageLegacyYourHandRepository.getInstance()
             cls.__instance.__yourFieldEnergyRepository = YourFieldEnergyRepository.getInstance()
             cls.__instance.__battleFieldMuligunFrameServiece = BattleFieldMuligunFrameServiceImpl.getInstance()
             cls.__instance.__rockPaperScissorsService = RockPaperScissorsServiceImpl.getInstance()
+            cls.__instance.__checkRockPaperScissorsWinnerServiceImpl = CheckRockPaperScissorsWinnerServiceImpl.getInstance()
 
             cls.__instance.__decisionFirstStrikeFrameService = DecisionFirstStrikeFrameService.getInstance()
 
@@ -170,7 +174,8 @@ class UiFrameControllerImpl(UiFrameController):
 
         self.__buyCheckService.injectTransmitIpcChannel(transmitIpcChannel)
         self.__battleFieldMuligunFrameServiece.injectReceiveIpcChannel(transmitIpcChannel)
-        self.__rockPaperScissorsService.injectReceiveIpcChannel(transmitIpcChannel)
+        self.__rockPaperScissorsService.injectTransmitIpcChannel(transmitIpcChannel)
+        self.__checkRockPaperScissorsWinnerServiceImpl.injectTransmitIpcChannel(transmitIpcChannel)
 
         # TODO: Ugly -> Need to Refactor
         self.__battleFieldRepository.saveTransmitIpcChannel(transmitIpcChannel)
@@ -204,6 +209,7 @@ class UiFrameControllerImpl(UiFrameController):
         self.__buyCheckService.injectReceiveIpcChannel(receiveIpcChannel)
         self.__battleFieldMuligunFrameServiece.injectReceiveIpcChannel(receiveIpcChannel)
         self.__rockPaperScissorsService.injectReceiveIpcChannel(receiveIpcChannel)
+        self.__checkRockPaperScissorsWinnerServiceImpl.injectReceiveIpcChannel(receiveIpcChannel)
 
         # TODO: Ugly -> Need to Refactor
         self.__battleFieldRepository.saveReceiveIpcChannel(receiveIpcChannel)

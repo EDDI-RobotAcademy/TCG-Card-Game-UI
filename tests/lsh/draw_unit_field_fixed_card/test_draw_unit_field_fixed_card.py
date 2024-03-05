@@ -7,10 +7,10 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
-from battle_field.infra.your_hand_repository import YourHandRepository
-from battle_field_fixed_card.fixed_field_card import FixedFieldCard
+from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
+from battle_field_fixed_card.legacy.circle_image_legacy_fixed_field_card import LegacyFixedFieldCard
 from initializer.init_domain import DomainInitializer
-from opengl_battle_field_pickable_card.pickable_card import PickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.rectangle import Rectangle
 
@@ -53,14 +53,14 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.battle_field_environment_shapes = self.battle_field_scene.get_battle_field_environment()
 
-        self.your_hand_repository = YourHandRepository.getInstance()
+        self.your_hand_repository = CircleImageLegacyYourHandRepository.getInstance()
         self.your_hand_repository.save_current_hand_state([6, 8, 19, 151])
         self.your_hand_repository.create_hand_card_list()
 
         self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
 
         # add fixed field unit
-        self.battle_field_unit = FixedFieldCard(local_translation=(300, 580))
+        self.battle_field_unit = LegacyFixedFieldCard(local_translation=(300, 580))
         self.battle_field_unit.init_card(32)
 
         self.bind("<Configure>", self.on_resize)
@@ -173,10 +173,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             card_base = None
 
             # TODO: Ugly -> Need to Refactor
-            if isinstance(self.selected_object, FixedFieldCard):
+            if isinstance(self.selected_object, LegacyFixedFieldCard):
                 print(f"redraw -> card base type: {type(self.selected_object)}")
                 card_base = self.selected_object.get_fixed_card_base()
-            elif isinstance(self.selected_object, PickableCard):
+            elif isinstance(self.selected_object, LegacyPickableCard):
                 print(f"redraw -> card base type: {type(self.selected_object)}")
                 card_base = self.selected_object.get_pickable_card_base()
 
@@ -231,7 +231,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             y = self.winfo_reqheight() - y
 
             for hand_card in self.hand_card_list:
-                if isinstance(hand_card, PickableCard):
+                if isinstance(hand_card, LegacyPickableCard):
                     hand_card.selected = False
 
             self.selected_object = None
@@ -254,7 +254,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             # Field Unit
             print("let's find field unit")
-            if isinstance(self.battle_field_unit, FixedFieldCard):
+            if isinstance(self.battle_field_unit, LegacyFixedFieldCard):
                 self.battle_field_unit.selected = False
 
             print(f"type(fixed_card_base) = {type(self.battle_field_unit)}")
@@ -278,7 +278,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         x, y = event.x, event.y
 
         print(f"selected_object: {self.selected_object}")
-        if self.selected_object and isinstance(self.selected_object, FixedFieldCard):
+        if self.selected_object and isinstance(self.selected_object, LegacyFixedFieldCard):
             convert_y = self.winfo_reqheight() - y
             fixed_card_base = self.selected_object.get_fixed_card_base()
             if fixed_card_base.is_point_inside((x, convert_y)):

@@ -1,4 +1,4 @@
-from battle_field.infra.your_tomb_repository import YourTombRepository
+from battle_field.infra.legacy.circle_image_legacy_your_tomb_repository import CircleImageLegacyYourTombRepository
 from battle_field.state.current_tomb import CurrentTombState
 from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
 from battle_field_ui_button.battle_field_button import BattleFieldButton
@@ -14,7 +14,7 @@ class YourTomb:
         self.shapes = []
         self.local_translation = local_translation
         self.scale = scale
-        self.your_tomb_repository = YourTombRepository()
+        self.your_tomb_repository = CircleImageLegacyYourTombRepository()
         self.current_tomb_state = CurrentTombState()
 
     def get_tomb_shapes(self):

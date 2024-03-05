@@ -7,6 +7,7 @@ from card_info_from_csv.repository.card_info_from_csv_repository_impl import Car
 
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
+from image_shape.non_background_number_image import NonBackgroundNumberImage
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
@@ -90,15 +91,22 @@ class SupportCardHandler:
 
         if found_energy_count > 0:
             fixed_target_unit = self.__yourFieldUnitRepository.find_field_unit_by_index(target_unit_index)
+            print("fixed_target_unit")
             fixed_card_base = fixed_target_unit.get_fixed_card_base()
             fixed_card_attached_shape_list = fixed_card_base.get_attached_shapes()
 
             for fixed_card_attached_shape in fixed_card_attached_shape_list:
-                if isinstance(fixed_card_attached_shape, CircleNumberImage):
+                if isinstance(fixed_card_attached_shape, NonBackgroundNumberImage):
                     if fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+                        print("Let's change Energy Text")
+                        # fixed_card_attached_shape.set_image_data(
+                        #     self.__preDrawedImageInstance.get_pre_draw_number_image(
+                        #         total_attached_energy_info_at_index))
+
                         fixed_card_attached_shape.set_image_data(
-                            self.__preDrawedImageInstance.get_pre_draw_number_image(
+                            self.__preDrawedImageInstance.get_pre_draw_unit_energy(
                                 total_attached_energy_info_at_index))
+
                         # print(f"changed energy: {fixed_card_attached_shape.get_circle_kinds()}")
 
             for index in range(total_attached_energy_info_at_index):

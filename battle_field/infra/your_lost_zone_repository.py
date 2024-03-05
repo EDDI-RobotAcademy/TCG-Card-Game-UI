@@ -1,5 +1,5 @@
 from battle_field.state.current_lost_zone import CurrentLostZoneState
-from battle_field_fixed_card.fixed_field_card import FixedFieldCard
+from battle_field_fixed_card.legacy.circle_image_legacy_fixed_field_card import LegacyFixedFieldCard
 
 
 class YourLostZoneRepository:
@@ -34,7 +34,7 @@ class YourLostZoneRepository:
         index = len(self.your_lost_zone_card_list)
         print(f"create_your_lost_zone_card() -> index: {index}, card_id: {card_id}")
 
-        new_card = FixedFieldCard(local_translation=self.get_next_card_position(index))
+        new_card = LegacyFixedFieldCard(local_translation=self.get_next_card_position(index))
         new_card.init_card(card_id)
 
         self.your_lost_zone_card_list.append(new_card)
@@ -47,7 +47,7 @@ class YourLostZoneRepository:
 
         for index, card_number in enumerate(current_your_lost_zone_card_list):
             print(f"index: {index}, card_number: {card_number}")
-            new_card = FixedFieldCard(local_translation=self.get_next_card_position(index))
+            new_card = LegacyFixedFieldCard(local_translation=self.get_next_card_position(index))
             new_card.init_card(card_number)
             new_card.set_index(index)
             self.your_lost_zone_card_list.append(new_card)

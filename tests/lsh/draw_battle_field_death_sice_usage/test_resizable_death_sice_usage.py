@@ -1,7 +1,7 @@
 from screeninfo import get_monitors
 
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
-from battle_field.components.field_area_inside.field_area_inside_handler import FieldAreaInsideHandler
+from battle_field.components.field_area_inside.legacy.circle_image_legacy_field_area_inside_handler import CircleImageLegacyFieldAreaInsideHandler
 
 import tkinter
 import unittest
@@ -13,13 +13,13 @@ from pyopengltk import OpenGLFrame
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area_action import OpponentFieldAreaAction
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
     OpponentFixedUnitCardInsideHandler
-from battle_field.handler.support_card_handler import SupportCardHandler
-from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
+from battle_field.handler.legacy.circle_image_legacy_support_card_handler import CircleImageLegacySupportCardHandler
+from battle_field.infra.legacy.circle_image_legacy_opponent_field_unit_repository import CircleImageLegacyOpponentFieldUnitRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
-from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
-from battle_field.infra.your_hand_repository import YourHandRepository
-from battle_field.infra.your_tomb_repository import YourTombRepository
-from battle_field_fixed_card.fixed_field_card import FixedFieldCard
+from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
+from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
+from battle_field.infra.legacy.circle_image_legacy_your_tomb_repository import CircleImageLegacyYourTombRepository
+from battle_field_fixed_card.legacy.circle_image_legacy_fixed_field_card import LegacyFixedFieldCard
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_race import CardRace
@@ -28,7 +28,7 @@ from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
 from initializer.init_domain import DomainInitializer
-from opengl_battle_field_pickable_card.pickable_card import PickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.circle import Circle
 from opengl_shape.rectangle import Rectangle
@@ -68,13 +68,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.lightning_border = LightningBorder()
 
-        self.your_hand_repository = YourHandRepository.getInstance()
+        self.your_hand_repository = CircleImageLegacyYourHandRepository.getInstance()
         self.hand_card_list = None
 
         self.your_deck_repository = YourDeckRepository.getInstance()
         self.your_deck_list = None
 
-        self.your_field_unit_repository = YourFieldUnitRepository.getInstance()
+        self.your_field_unit_repository = CircleImageLegacyYourFieldUnitRepository.getInstance()
 
         self.card_info_repository = CardInfoFromCsvRepositoryImpl.getInstance()
 
@@ -83,14 +83,14 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.your_field_unit_lightning_border_list = []
         self.boost_selection = False
 
-        self.support_card_handler = SupportCardHandler.getInstance()
+        self.support_card_handler = CircleImageLegacySupportCardHandler.getInstance()
         self.current_process_card_id = 0
 
-        self.your_tomb_repository = YourTombRepository.getInstance()
+        self.your_tomb_repository = CircleImageLegacyYourTombRepository.getInstance()
 
-        self.opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
+        self.opponent_field_unit_repository = CircleImageLegacyOpponentFieldUnitRepository.getInstance()
         # self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance()
-        self.field_area_inside_handler = FieldAreaInsideHandler.getInstance()
+        self.field_area_inside_handler = CircleImageLegacyFieldAreaInsideHandler.getInstance()
         self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance()
 
         self.selected_object_for_check_required_energy = []
@@ -279,9 +279,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         if self.selected_object:
             card_base = None
 
-            if isinstance(self.selected_object, FixedFieldCard):
+            if isinstance(self.selected_object, LegacyFixedFieldCard):
                 card_base = self.selected_object.get_fixed_card_base()
-            elif isinstance(self.selected_object, PickableCard):
+            elif isinstance(self.selected_object, LegacyPickableCard):
                 card_base = self.selected_object.get_pickable_card_base()
 
             self.lightning_border.set_width_ratio(self.width_ratio)
@@ -327,7 +327,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         # print(f"on_canvas_drag -> x: {x}, y: {y}")
 
         if self.selected_object and self.drag_start:
-            if not isinstance(self.selected_object, PickableCard):
+            if not isinstance(self.selected_object, LegacyPickableCard):
                 return
 
             pickable_card = self.selected_object.get_pickable_card_base()
@@ -379,13 +379,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             self.drag_start = (x, y)
 
     def on_canvas_release(self, event):
-        if isinstance(self.selected_object, FixedFieldCard):
+        if isinstance(self.selected_object, LegacyFixedFieldCard):
             return
 
         x, y = event.x, event.y
         y = self.winfo_reqheight() - y
 
-        if isinstance(self.selected_object, PickableCard):
+        if isinstance(self.selected_object, LegacyPickableCard):
             # Opponent에 적용하는 카드 시작
             current_opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
             current_opponent_field_unit_list_length = len(current_opponent_field_unit_list)
@@ -553,7 +553,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             y = self.winfo_reqheight() - y
 
             for hand_card in self.hand_card_list:
-                if isinstance(hand_card, PickableCard):
+                if isinstance(hand_card, LegacyPickableCard):
                     hand_card.selected = False
 
             self.selected_object = None
@@ -627,7 +627,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
             your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
             for your_field_unit in your_field_unit_list:
-                if isinstance(your_field_unit, FixedFieldCard):
+                if isinstance(your_field_unit, LegacyFixedFieldCard):
                     your_field_unit.selected = False
 
             for your_field_unit in your_field_unit_list:
@@ -662,7 +662,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
     def on_canvas_right_click(self, event):
         x, y = event.x, event.y
 
-        if self.selected_object and isinstance(self.selected_object, FixedFieldCard):
+        if self.selected_object and isinstance(self.selected_object, LegacyFixedFieldCard):
             convert_y = self.winfo_reqheight() - y
             fixed_card_base = self.selected_object.get_fixed_card_base()
             if fixed_card_base.is_point_inside((x, convert_y)):

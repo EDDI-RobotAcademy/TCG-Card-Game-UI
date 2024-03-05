@@ -1,15 +1,11 @@
 import sys
-import time
 import tkinter
 
 from decouple import config
 
-from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.legacy.your_hand_repository import LegacyYourHandRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
-from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository as MuligunHandRepository, \
-    MuligunYourHandRepository
-from battle_field.infra.your_hand_repository import YourHandRepository
+from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository as MuligunHandRepository
 from battle_field_muligun.service.request.muligun_request import MuligunRequest
 from battle_lobby_frame.controller.battle_lobby_frame_controller_impl import BattleLobbyFrameControllerImpl
 from battle_lobby_frame.repository.battle_lobby_frame_repository_impl import BattleLobbyFrameRepositoryImpl
@@ -222,7 +218,8 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                     self.__cardShopFrameRepository.setMyMoney(responseData.get("account_point"))
                     from card_shop_frame.frame.my_game_money_frame.service.my_game_money_frame_service_impl import MyGameMoneyFrameServiceImpl
                     MyGameMoneyFrameServiceImpl.getInstance().findMyMoney()
-                    switchFrameWithMenuName("card-shop-menu")
+                    #switchFrameWithMenuName("card-shop-menu")
+                    switchFrameWithMenuName("rock-paper-scissors")
                 else:
                     print("checkGameMoney responseData not found")
 

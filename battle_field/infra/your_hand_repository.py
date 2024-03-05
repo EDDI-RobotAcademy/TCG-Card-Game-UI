@@ -2,7 +2,7 @@ from math import ceil
 
 from battle_field.state.current_hand import CurrentHandState
 from battle_field.state.your_hand_page import YourHandPage
-from image_shape.circle_image import CircleImage
+
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
@@ -267,8 +267,27 @@ class YourHandRepository:
         return self.current_page
 
     def get_current_page_your_hand_list(self):
-        # print(f"get_current_your_hand_page(): {self.get_current_your_hand_page()}")
+        # current_your_hand_page_number = self.get_current_your_hand_page()
+        # print(f"get_current_your_hand_page(): {current_your_hand_page_number}")
         # print(f"self.your_hand_page_list[current_page]: {self.your_hand_page_list[self.get_current_your_hand_page()]}")
+
+        # your_hand_page_length = len(self.your_hand_page_list)
+        # print(f"your_hand_page_length: {your_hand_page_length}")
+
+        your_hand_state_list = self.get_current_hand_state()
+        # print(f"your_hand_state_list: {your_hand_state_list}")
+
+        if ceil(len(your_hand_state_list) / 5) - 1 < self.get_current_your_hand_page():
+            return None
+
+        # print(f"self.your_hand_page_list[current_your_hand_page_number]: {self.your_hand_page_list[current_your_hand_page_number]}")
+        # your_hand_page_card_list = self.your_hand_page_list[current_your_hand_page_number].get_your_hand_page_card_list()
+        # print(f"length of your_hand_page_card_list: {len(your_hand_page_card_list)}")
+
+        # your_hand_page_list_length = len(self.your_hand_page_list[self.get_current_your_hand_page()])
+        # if your_hand_page_list_length == 0:
+        #     return None
+
         # print(f"specific_page -> get_your_hand_page_card_object_list(): {self.your_hand_page_list[self.get_current_your_hand_page()].get_your_hand_page_card_object_list()}")
 
         return self.your_hand_page_list[self.get_current_your_hand_page()].get_your_hand_page_card_object_list()

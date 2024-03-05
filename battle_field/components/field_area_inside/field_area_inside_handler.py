@@ -1,7 +1,6 @@
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
-from battle_field.infra.request.deploy_unit_card_request import DeployUnitCardRequest
-from battle_field.infra.request.drawCardByUseSupportCardRequest import DrawCardByUseSupportCardRequest
 from battle_field.infra.your_deck_repository import YourDeckRepository
+from battle_field.infra.your_field_unit_action_repository import YourFieldUnitActionRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
@@ -28,6 +27,9 @@ class FieldAreaInsideHandler:
     __card_info_repository = CardInfoFromCsvRepositoryImpl.getInstance()
     __your_tomb_repository = YourTombRepository.getInstance()
     __session_info_repository = SessionRepositoryImpl.getInstance()
+
+    __your_field_unit_action_repository = YourFieldUnitActionRepository.getInstance()
+
     __field_area_inside_handler_table = {}
 
     __width_ratio = 1
@@ -119,14 +121,21 @@ class FieldAreaInsideHandler:
         self.__your_field_unit_repository.create_field_unit_card(placed_card_id)
         self.__your_field_unit_repository.save_current_field_unit_state(placed_card_id)
 
+        # your_hand_page = self.__your_hand_repository.get_current_your_hand_page()
+        # your_hand_page_card_list = self.__your_hand_repository.your_hand_page_list[your_hand_page].get_your_hand_page_card_list()
+        # print(f"length of your_hand_page_card_list: {len(your_hand_page_card_list)}")
+
         # self.__your_hand_repository.replace_hand_card_position()
         self.__your_hand_repository.update_your_hand()
+        self.__your_field_unit_repository.replace_field_card_position()
 
         passive_skill_type = self.__card_info_repository.getCardPassiveFirstForCardNumber(placed_card_id)
         if passive_skill_type == 2:
             print("광역기")
         elif passive_skill_type == 1:
             print("단일기")
+
+        self.__your_field_unit_action_repository.create_field_unit_action_count(0)
 
         self.__field_area_action = FieldAreaAction.PLACE_UNIT
         return self.__field_area_action

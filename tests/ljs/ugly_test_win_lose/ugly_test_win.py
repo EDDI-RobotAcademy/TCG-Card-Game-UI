@@ -16,16 +16,16 @@ from OpenGL.GL import *
 from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
-from battle_field.handler.support_card_handler import SupportCardHandler
+from battle_field.handler.legacy.circle_image_legacy_support_card_handler import CircleImageLegacySupportCardHandler
 from battle_field.infra.your_deck_repository import YourDeckRepository
-from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
-from battle_field.infra.your_hand_repository import YourHandRepository
-from battle_field.infra.your_tomb_repository import YourTombRepository
-from battle_field_fixed_card.fixed_field_card import FixedFieldCard
+from battle_field.infra.legacy.circle_image_legacy_your_field_unit_repository import CircleImageLegacyYourFieldUnitRepository
+from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
+from battle_field.infra.legacy.circle_image_legacy_your_tomb_repository import CircleImageLegacyYourTombRepository
+from battle_field_fixed_card.legacy.circle_image_legacy_fixed_field_card import LegacyFixedFieldCard
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_type import CardType
 from initializer.init_domain import DomainInitializer
-from opengl_battle_field_pickable_card.pickable_card import PickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.rectangle import Rectangle
 
@@ -262,7 +262,7 @@ class PreDrawedBattleFieldFrameRefactorForWinTest(OpenGLFrame):
         self.battle_field_environment_shapes = self.battle_field_scene.get_battle_field_environment()
         self.turn_end_button_shapes = self.battle_field_scene.get_turn_end_button()
 
-        self.your_hand_repository = YourHandRepository.getInstance()
+        self.your_hand_repository = CircleImageLegacyYourHandRepository.getInstance()
         self.your_hand_repository.save_current_hand_state([8, 19, 151, 2, 9, 20, 30, 6])
         self.your_hand_repository.create_hand_card_list()
 
@@ -273,16 +273,16 @@ class PreDrawedBattleFieldFrameRefactorForWinTest(OpenGLFrame):
 
         self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
 
-        self.your_field_unit_repository = YourFieldUnitRepository.getInstance()
+        self.your_field_unit_repository = CircleImageLegacyYourFieldUnitRepository.getInstance()
 
-        self.your_tomb_repository = YourTombRepository.getInstance()
+        self.your_tomb_repository = CircleImageLegacyYourTombRepository.getInstance()
         # TODO: Naming Issue
         self.card_info = CardInfoFromCsvRepositoryImpl.getInstance()
 
         self.your_lightning_border_list = []
         self.boost_selection = False
 
-        self.support_card_handler = SupportCardHandler.getInstance()
+        self.support_card_handler = CircleImageLegacySupportCardHandler.getInstance()
         self.current_process_card_id = 0
 
         self.left_click_detector = LeftClickDetector.getInstance()
@@ -396,9 +396,9 @@ class PreDrawedBattleFieldFrameRefactorForWinTest(OpenGLFrame):
             card_base = None
 
             # TODO: Ugly -> Need to Refactor
-            if isinstance(self.selected_object, FixedFieldCard):
+            if isinstance(self.selected_object, LegacyFixedFieldCard):
                 card_base = self.selected_object.get_fixed_card_base()
-            elif isinstance(self.selected_object, PickableCard):
+            elif isinstance(self.selected_object, LegacyPickableCard):
                 card_base = self.selected_object.get_pickable_card_base()
 
             self.lightning_border.set_padding(50)
@@ -513,7 +513,7 @@ class PreDrawedBattleFieldFrameRefactorForWinTest(OpenGLFrame):
         #                                  self.your_field_unit_repository, self.card_info)
         # release_handler.handle_release(x, y)
 
-        if isinstance(self.selected_object, PickableCard):
+        if isinstance(self.selected_object, LegacyPickableCard):
             # print("I'm PickableCard")
             current_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
             current_field_unit_list_length = len(current_field_unit_list)
@@ -722,7 +722,7 @@ class PreDrawedBattleFieldFrameRefactorForWinTest(OpenGLFrame):
     def on_canvas_right_click(self, event):
         x, y = event.x, event.y
 
-        if self.selected_object and isinstance(self.selected_object, FixedFieldCard):
+        if self.selected_object and isinstance(self.selected_object, LegacyFixedFieldCard):
             convert_y = self.winfo_reqheight() - y
             fixed_card_base = self.selected_object.get_fixed_card_base()
             if fixed_card_base.is_point_inside((x, convert_y)):

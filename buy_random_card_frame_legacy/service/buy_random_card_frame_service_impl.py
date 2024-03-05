@@ -6,7 +6,7 @@ from buy_random_card_frame_legacy.service.buy_random_card_frame_service import B
 from buy_random_card_frame_legacy.service.request.buy_random_card_request import BuyRandomCardRequest
 from card_shop_frame.repository.card_shop_repository_impl import CardShopMenuFrameRepositoryImpl
 from session.service.session_service_impl import SessionServiceImpl
-from opengl_battle_field_pickable_card.pickable_card import PickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 
 
 class BuyRandomCardFrameServiceImpl(BuyRandomCardFrameService):
@@ -61,7 +61,7 @@ class BuyRandomCardFrameServiceImpl(BuyRandomCardFrameService):
                               anchor="center", justify="center")
         self.__label.place(relx=0.3, rely=0.95, anchor="center", bordermode="outside")  # 가운데 정렬
 
-        first_card = PickableCard(local_translation=(100, 100))
+        first_card = LegacyPickableCard(local_translation=(100, 100))
         first_card.init_card(card[0])
 
         # self.card_list.append(first_card)

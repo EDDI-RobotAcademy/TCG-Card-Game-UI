@@ -1,4 +1,4 @@
-from opengl_battle_field_pickable_card.pickable_card import PickableCard
+from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
 
 
 class DragHandler:
@@ -7,7 +7,7 @@ class DragHandler:
         self.drag_start = drag_start
 
     def update_selected_object_vertices_with_drag(self, dx, dy):
-        if not isinstance(self.selected_object, PickableCard):
+        if not isinstance(self.selected_object, LegacyPickableCard):
             return
 
         pickable_card = self.selected_object.get_pickable_card_base()
