@@ -180,7 +180,7 @@ class Option:
         point_x, point_y = point
         point_y *= -1
 
-        option_surrender = self.get_option_button_popup_list()[0]
+        option_surrender = self.get_option_button_popup_list()[1]
 
         translated_vertices = [
             (x * self.width_ratio + option_surrender.local_translation[0] * self.width_ratio,
