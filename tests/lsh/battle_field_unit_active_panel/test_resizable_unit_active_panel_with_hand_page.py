@@ -63,7 +63,8 @@ from battle_field.infra.your_lost_zone_repository import YourLostZoneRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field.state.FieldUnitActionStatus import FieldUnitActionStatus
 from battle_field.state.energy_type import EnergyType
-from battle_field_fixed_card.legacy.fixed_field_card import LegacyFixedFieldCard
+from battle_field_fixed_card.fixed_field_card import FixedFieldCard
+
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_grade import CardGrade
 from common.card_race import CardRace
@@ -1102,7 +1103,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         if self.selected_object:
             card_base = None
 
-            if isinstance(self.selected_object, LegacyFixedFieldCard):
+            if isinstance(self.selected_object, FixedFieldCard):
                 card_base = self.selected_object.get_fixed_card_base()
             elif isinstance(self.selected_object, PickableCard):
                 card_base = self.selected_object.get_pickable_card_base()
@@ -2431,7 +2432,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     if opponent_field_unit_object:
                         continue
 
-                    if isinstance(opponent_field_unit_object, LegacyFixedFieldCard):
+                    if isinstance(opponent_field_unit_object, FixedFieldCard):
                         opponent_field_unit_object.selected = False
 
                 print("지정한 상대 유닛 찾기")
@@ -2595,7 +2596,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     if opponent_field_unit_object:
                         continue
 
-                    if isinstance(opponent_field_unit_object, LegacyFixedFieldCard):
+                    if isinstance(opponent_field_unit_object, FixedFieldCard):
                         opponent_field_unit_object.selected = False
 
                 print("지정한 상대 유닛 찾기")
@@ -2713,7 +2714,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     if opponent_field_unit_object:
                         continue
 
-                    if isinstance(opponent_field_unit_object, LegacyFixedFieldCard):
+                    if isinstance(opponent_field_unit_object, FixedFieldCard):
                         opponent_field_unit_object.selected = False
 
                 print("지정한 상대 유닛 찾기")
@@ -2799,7 +2800,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 if your_field_unit is None:
                     continue
 
-                if isinstance(your_field_unit, LegacyFixedFieldCard):
+                if isinstance(your_field_unit, FixedFieldCard):
                     your_field_unit.selected = False
 
             for your_field_unit in self.your_field_unit_repository.get_current_field_unit_list():
@@ -2990,7 +2991,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     if opponent_field_unit_object is None:
                         continue
 
-                    if isinstance(opponent_field_unit_object, LegacyFixedFieldCard):
+                    if isinstance(opponent_field_unit_object, FixedFieldCard):
                         opponent_field_unit_object.selected = False
 
                 for opponent_field_unit_object in opponent_field_unit_object_list:
@@ -3324,7 +3325,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
     def on_canvas_right_click(self, event):
         x, y = event.x, event.y
 
-        if self.selected_object and isinstance(self.selected_object, LegacyFixedFieldCard):
+        if self.selected_object and isinstance(self.selected_object, FixedFieldCard):
             convert_y = self.winfo_reqheight() - y
             fixed_card_base = self.selected_object.get_fixed_card_base()
             if fixed_card_base.is_point_inside((x, convert_y)):
