@@ -96,4 +96,6 @@ class UiFrameServiceImpl(UiFrameService):
         print(f"{Fore.GREEN}UiFrameServiceImpl: injectMusicPlayIpcChannel(){Style.RESET_ALL}")
         self.__uiFrameRepository.saveMusicPlayIpcChannel(musicPlayIpcChannel)
 
-
+    def register_battle_result_frame(self, battleResultFrame):
+        print(f"{Fore.GREEN}UiFrameServiceImpl: register_battle_result_frame(){Style.RESET_ALL}")
+        self.__uiFrameRepository.registerUiFrame("battle-result", battleResultFrame)
