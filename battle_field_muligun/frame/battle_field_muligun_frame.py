@@ -7,6 +7,7 @@ from shapely import Polygon, Point
 
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
+from battle_field_muligun.service.request.check_opponent_muligun_request import CheckOpponentMuligunRequest
 from battle_field_muligun.service.request.muligun_request import MuligunRequest
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
@@ -374,9 +375,21 @@ class BattleFieldMuligunFrame(OpenGLFrame):
             # 그려져 있는 카드 선택 효과, 그려져 있는 버튼은 지워야 함.
             self.click_card_effect_rectangles = []
             self.checking_draw_effect = {}
-            # self.ok_button_visible = False
+            self.ok_button_visible = False
             self.execute_pick_card_effect = False
             self.ok_button_clicked = True
+
+            # TODO: 대기중이라는 창 만들어야 함.
+            for i in range(60):
+                responseData = self.your_hand_repository.requestCheckOpponentMuligun(
+                    CheckOpponentMuligunRequest(self.sessionRepository.get_session_info()))
+
+                print(f"check opponent muligun responseData:{responseData}")
+                if responseData.get("is_finished") is True:
+                    break
+
+            # TODO: 상대의 멀리건 실행을 완료했는지 체크해야 함.
+            #  is_finished
 
 
         else:
