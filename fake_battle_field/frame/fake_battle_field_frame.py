@@ -625,12 +625,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.animation_test_image_list.append(animation_test_image)
             self.animation_test_image_panel_list.append(animation_test_image_panel)
 
-        if key.lower() == 'kp_4':
-
-
+        if key.lower() == '4':
             opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
             print(f"opponent hand list : {opponent_hand_list}")
-            for opponent_hand in opponent_hand_list:
+            for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
                 opponent_hand_card_type = self.card_info_repository.getCardTypeForCardNumber(opponent_hand)
                 if opponent_hand_card_type == CardType.ENERGY.value:
                     print("상대방 에너지 부착 ")
@@ -642,7 +640,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             _energyCardId=93)
                     )
                     print(f"use energy card response: {response}")
+                    is_success_value = response.get('is_success', False)
 
+                    if is_success_value == False:
+                        return
+
+                    self.__fake_opponent_hand_repository.remove_card_by_index(opponent_hand_index)
 
                     break
 
