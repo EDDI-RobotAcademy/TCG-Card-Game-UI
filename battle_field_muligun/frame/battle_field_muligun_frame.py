@@ -385,11 +385,8 @@ class BattleFieldMuligunFrame(OpenGLFrame):
                     CheckOpponentMuligunRequest(self.sessionRepository.get_session_info()))
 
                 print(f"check opponent muligun responseData:{responseData}")
-                if responseData.get("is_finished") is True:
+                if responseData["is_done"] is True:
                     break
-
-            # TODO: 상대의 멀리건 실행을 완료했는지 체크해야 함.
-            #  is_finished
 
 
         else:
