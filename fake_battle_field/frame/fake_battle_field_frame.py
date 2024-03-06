@@ -51,6 +51,7 @@ from battle_field.infra.opponent_hp_repository import OpponentHpRepository
 from battle_field.infra.opponent_lost_zone_repository import OpponentLostZoneRepository
 
 from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
+from battle_field.infra.request.request_attach_field_energy_to_unit import RequestAttachFieldEnergyToUnit
 
 from battle_field.infra.round_repository import RoundRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
@@ -233,7 +234,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.opponent_field_energy = OpponentFieldEnergy()
         self.opponent_field_energy_panel = None
         self.opponent_field_energy_repository = OpponentFieldEnergyRepository.getInstance()
-        self.opponent_field_energy_repository.increase_opponent_field_energy(3)
+        # self.opponent_field_energy_repository.increase_opponent_field_energy(3)
 
         self.your_lost_zone_repository = YourLostZoneRepository.getInstance()
         self.your_lost_zone_panel = None
@@ -290,7 +291,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.bind("<Button-3>", self.on_canvas_right_click)
 
         # TODO: 이 부분은 임시 방편입니다 (상대방 행동 했다 가정하고 키보드 입력 받기 위함)
-        self.focus_set()
         self.bind("<Key>", self.on_key_press)
 
     def init_monitor_specification(self):
@@ -479,6 +479,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.battle_result.create_battle_result_panel_list()
             self.battle_result_panel_list = self.battle_result.get_battle_result_panel_list()
 
+        self.focus_set()
+
 
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
@@ -524,6 +526,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             opponent_hand))
                     print(f"fake opponent deploy unit result: {result}")
                     break
+
+        if key.lower() == 'x':
+            print("Opponent Turn을 종료합니다")
+
+            turn_end_request_result = self.round_repository.request_turn_end(
+                TurnEndRequest(
+                    self.__session_repository.get_second_fake_session_info()))
+            print(f"turn_end_request_result: {turn_end_request_result}")
 
         if key.lower() == '1':
             if self.animation_test_image_panel:
@@ -2357,6 +2367,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         print(f"energy_race: {energy_race}")
                         energy_count = self.your_field_energy_repository.get_to_use_field_energy_count()
                         before_energy_count = self.your_field_unit_repository.get_total_energy_at_index(unit_index)
+
+                        response = self.your_field_energy_repository.request_to_attach_energy_to_unit(
+                            RequestAttachFieldEnergyToUnit(
+                                _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                                _unitIndex=unit_index,
+                                _energyRace=energy_race,
+                                _energyCount=energy_count
+                            )
+                        )
+                        print(f"after energy attach server communication: {response}")
 
                         # response = self.__field_energy_application.send_request_to_attach_field_energy_to_unit(
                         #     unitIndex=unit_index, energyRace = energy_race, energyCount=energy_count

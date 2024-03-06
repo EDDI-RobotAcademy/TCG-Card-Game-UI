@@ -16,7 +16,10 @@ class SecondPageCardRenderer:
 
         # 나의 카드 텍스트
         for text in self.scene.text_list[8:16]:
-            self._render_shape(text)
+            if text is None:
+                pass
+            else:
+                self._render_shape(text)
 
         # 버튼 도형
         for button in self.scene.button_list:
