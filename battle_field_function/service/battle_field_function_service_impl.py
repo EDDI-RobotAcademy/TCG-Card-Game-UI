@@ -218,23 +218,23 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
     def useUnitEnergyRemoveItemCard(self, notify_dict_data):
 
         hand_use_card_id = int(notify_dict_data.get("player_hand_use_map", {})
-                                            .get("Opponent", {})
-                                            .get("card_id", None))
+                               .get("Opponent", {})
+                               .get("card_id", None))
 
         if notify_dict_data.get("player_field_unit_energy_map") != {}:
             field_unit_index = list(notify_dict_data.get("player_field_unit_energy_map", {})
-                                            .get("You", {})
-                                            .get("field_unit_energy_map", {}).keys())[0]
+                                    .get("You", {})
+                                    .get("field_unit_energy_map", {}).keys())[0]
 
             attach_energy_race_type = list(notify_dict_data.get("player_field_unit_energy_map", {})
-                                            .get("You", {})
-                                            .get("field_unit_energy_map", {})[field_unit_index]
-                                            .get("attached_energy_map", {}).keys())[0]
-
-            attach_race_energy_count = (notify_dict_data.get("player_field_unit_energy_map", {})
                                            .get("You", {})
                                            .get("field_unit_energy_map", {})[field_unit_index]
-                                           .get("attached_energy_map", {})[attach_energy_race_type])
+                                           .get("attached_energy_map", {}).keys())[0]
+
+            attach_race_energy_count = (notify_dict_data.get("player_field_unit_energy_map", {})
+            .get("You", {})
+            .get("field_unit_energy_map", {})[field_unit_index]
+            .get("attached_energy_map", {})[attach_energy_race_type])
 
             field_unit_index = int(field_unit_index)
             attach_energy_race_type = int(attach_energy_race_type)
@@ -246,31 +246,70 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
                                             .get("total_energy_count", None))
 
             result = {
-                "field_unit_index": field_unit_index, "attach_energy_race_type" : attach_energy_race_type,
-                "attach_race_energy_count" : attach_race_energy_count, "attach_total_energy_count" : attach_total_energy_count
+                "hand_use_card_id" : hand_use_card_id,
+                "field_unit_index": field_unit_index, "attach_energy_race_type": attach_energy_race_type,
+                "attach_race_energy_count": attach_race_energy_count,
+                "attach_total_energy_count": attach_total_energy_count
             }
 
 
         else:
             field_unit_index = int(list(notify_dict_data.get("player_field_unit_health_point_map", {})
-                                            .get("You", {})
-                                            .get("field_unit_health_point_map", {}).keys())[0])
+                                        .get("You", {})
+                                        .get("field_unit_health_point_map", {}).keys())[0])
 
             field_unit_hp = int(list(notify_dict_data.get("player_field_unit_health_point_map", {})
-                                            .get("You", {})
-                                            .get("field_unit_health_point_map", {}).values())[0])
+                                     .get("You", {})
+                                     .get("field_unit_health_point_map", {}).values())[0])
 
-            unit_death_index_list = list(notify_dict_data.get("player_field_unit_death_map", {})
-                                            .get("You", {})
-                                            .get("dead_field_unit_index_list", []))
+            dead_field_unit_index_list = list(notify_dict_data.get("player_field_unit_death_map", {})
+                                         .get("You", {})
+                                         .get("dead_field_unit_index_list", []))
 
             result = {
-                "field_unit_index" : field_unit_index, "field_unit_hp" : field_unit_hp,
-                "unit_death_index_list" : unit_death_index_list
+                "hand_use_card_id": hand_use_card_id,
+                "field_unit_index": field_unit_index, "field_unit_hp": field_unit_hp,
+                "dead_field_unit_index_list": dead_field_unit_index_list
             }
 
         print(result)
 
+    def useMultipleUnitDamageItemCard(self, notify_dict_data):
+        data = {
+            "player_hand_use_map": {"Opponent": {"card_id": 33, "card_kind": 2}},
+            "player_field_unit_health_point_map": {"You": {"field_unit_health_point_map": {"1": 10, "0": 10}}},
+            "player_field_unit_death_map": {"Opponent": {"dead_field_unit_index_list": [0]},
+                                            "You": {"dead_field_unit_index_list": []}}}
+
+
+        hand_use_card_id = int(notify_dict_data.get("player_hand_use_map", {})
+                               .get("Opponent", {})
+                               .get("card_id", None))
+
+        string_target_unit_index_list = list(notify_dict_data.get("player_field_unit_health_point_map", {})
+                                                  .get("You", {})
+                                                  .get("field_unit_health_point_map",{}).keys())
+        target_unit_index_list = []
+        for unit_index in string_target_unit_index_list:
+            target_unit_index_list.append(int(unit_index))
+
+        target_unit_hp_list = list(notify_dict_data.get("player_field_unit_health_point_map", {})
+                                                  .get("You", {})
+                                                  .get("field_unit_health_point_map",{}).values())
+
+        opponent_dead_field_unit_index_list = (notify_dict_data.get("player_field_unit_death_map", {})
+                                                  .get("Opponent", {})
+                                                  .get("dead_field_unit_index_list",[]))
+
+        your_dead_field_unit_index_list = (notify_dict_data.get("player_field_unit_death_map", {})
+                                                  .get("You", {})
+                                                  .get("dead_field_unit_index_list",[]))
+
+        result = {
+            "hand_use_card_id" : hand_use_card_id, "target_unit_index_list" : target_unit_index_list,
+            "target_unit_hp_list" : target_unit_hp_list, "opponent_dead_field_unit_index_list" : opponent_dead_field_unit_index_list,
+            "your_dead_field_unit_index_list" : your_dead_field_unit_index_list
+        }
 
     def searchOpponentCount(self, notify_dict_data):
         for data in notify_dict_data.values():
