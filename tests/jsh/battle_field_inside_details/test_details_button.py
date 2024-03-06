@@ -82,6 +82,7 @@ from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
 from image_shape.non_background_number_image import NonBackgroundNumberImage
+from image_shape.rectangle_kinds import RectangleKinds
 from initializer.init_domain import DomainInitializer
 from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
@@ -90,6 +91,7 @@ from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.circle import Circle
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
+from test_detector.detector import DetectorAboutTest
 
 
 class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
@@ -1036,19 +1038,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
-
-        if self.fixed_details_card:
-            self.fixed_details_card.set_width_ratio(self.width_ratio)
-            self.fixed_details_card.set_height_ratio(self.height_ratio)
-            self.fixed_details_card.draw()
-
-            attached_shape_list = self.fixed_details_card.get_attached_shapes()
-
-            for attached_shape in attached_shape_list:
-                attached_shape.set_width_ratio(self.width_ratio)
-                attached_shape.set_height_ratio(self.height_ratio)
-                attached_shape.draw()
-
         for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
             if field_unit is None:
                 continue
@@ -1071,6 +1060,36 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
+        if self.fixed_details_card:
+            self.fixed_details_card.set_width_ratio(self.width_ratio)
+            self.fixed_details_card.set_height_ratio(self.height_ratio)
+            self.fixed_details_card.draw()
+
+            attached_shape_list = self.fixed_details_card.get_attached_shapes()
+
+
+            for attached_shape in attached_shape_list:
+                if isinstance(attached_shape, Rectangle):
+                    if attached_shape.get_rectangle_kinds() is RectangleKinds.DETAIL:
+                        glEnable(GL_BLEND)
+                        glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA)
+                        attached_shape.set_width_ratio(self.width_ratio)
+                        attached_shape.set_height_ratio(self.height_ratio)
+                        attached_shape.draw()
+                        glDisable(GL_BLEND)
+
+            for attached_shape in attached_shape_list:
+                if isinstance(attached_shape, Rectangle):
+                    if attached_shape.get_rectangle_kinds() is RectangleKinds.DETAIL:
+                        continue
+                attached_shape.set_width_ratio(self.width_ratio)
+                attached_shape.set_height_ratio(self.height_ratio)
+                attached_shape.draw()
+
+
+
+
+            # glDisable(GL_BLEND)
         # for hand_card in self.hand_card_list:
         #     attached_tool_card = hand_card.get_tool_card()
         #     if attached_tool_card is not None:
@@ -1089,9 +1108,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         #         attached_shape.set_width_ratio(self.width_ratio)
         #         attached_shape.set_height_ratio(self.height_ratio)
         #         attached_shape.draw()
-
-
-
 
         for opponent_hand_card in self.opponent_hand_card_list:
             opponent_hand_card_base = opponent_hand_card.get_fixed_card_base()
@@ -2178,10 +2194,33 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     print("상세 보기 클릭")
 
                     your_field_unit_id = self.selected_object.get_card_number()
+                    your_field_unit_index = self.selected_object.get_index()
+                    your_field_unit_attached_energy = self.your_field_unit_repository.get_attached_energy_info()
+
+                    your_field_unit_total_energy = your_field_unit_attached_energy.get_total_energy_at_index(
+                        your_field_unit_index)
+                    print(f"your_field_unit_total_energy: {your_field_unit_total_energy}")
+
+                    your_field_unit_attached_energy_info = your_field_unit_attached_energy.get_energy_info_at_index(
+                        your_field_unit_index)
+                    print(f"your_field_unit_attached_energy_info: {your_field_unit_attached_energy_info}")
+
+                    your_field_unit_attached_undead_energy = your_field_unit_attached_energy.get_race_energy_at_index(
+                        your_field_unit_index, EnergyType.Undead)
+                    print(f"your_field_unit_attached_undead_energy: {your_field_unit_attached_undead_energy}")
+                    your_field_unit_attached_human_energy = your_field_unit_attached_energy.get_race_energy_at_index(
+                        your_field_unit_index, EnergyType.Human)
+                    print(f"your_field_unit_attached_human_energy: {your_field_unit_attached_human_energy}")
+                    your_field_unit_attached_trent_energy = your_field_unit_attached_energy.get_race_energy_at_index(
+                        your_field_unit_index, EnergyType.Trent)
+                    print(f"your_field_unit_attached_trent_energy: {your_field_unit_attached_trent_energy}")
+
                     select_details_card = FixedDetailsCard((self.width / 2 - 150, self.height / 2 - (150 * 1.618)))
                     select_details_card.init_card(your_field_unit_id)
                     select_details_card_base = select_details_card.get_fixed_card_base()
                     self.fixed_details_card = select_details_card_base
+
+                    # your_field_unit_id = self.selected_object.get_card_number()
                     # skill_type = self.card_info_repository.getCardSkillSecondForCardNumber(your_field_unit_id)
                     # print(f"skill_type: {skill_type}")
 
@@ -3441,6 +3480,8 @@ class TestDetailsButton(unittest.TestCase):
 
     def test_resizable_unit_active_panel_with_hand_page(self):
         DomainInitializer.initEachDomain()
+        detector_about_test = DetectorAboutTest.getInstance()
+        detector_about_test.set_is_it_test(True)
 
         root = tkinter.Tk()
         root.geometry(f"{root.winfo_screenwidth()}x{root.winfo_screenheight()}-0-0")
