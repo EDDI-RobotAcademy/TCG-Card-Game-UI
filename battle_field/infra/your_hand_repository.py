@@ -350,4 +350,8 @@ class YourHandRepository:
         self.__transmitIpcChannel.put(attach_energy_card_request)
         return self.__receiveIpcChannel.get()
 
+    def request_use_death_sice_to_unit(self, use_death_sice_to_unit_request):
+        self.__transmitIpcChannel.put(use_death_sice_to_unit_request)
+        return self.__receiveIpcChannel.get()
+
 
