@@ -1,5 +1,6 @@
 import random
 
+from colorama import Fore, Style
 from screeninfo import get_monitors
 from shapely import Polygon, Point
 
@@ -534,6 +535,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 TurnEndRequest(
                     self.__session_repository.get_second_fake_session_info()))
             print(f"turn_end_request_result: {turn_end_request_result}")
+
+            self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(True)
 
         if key.lower() == '1':
             if self.animation_test_image_panel:
@@ -3453,6 +3456,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         print(f"turn_end_request_result: {turn_end_request_result}")
 
         self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(False)
+        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        print(f"{Fore.RED}call_turn_end() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
 
         self.round_repository.increase_current_round_number()
         round = self.round_repository.get_current_round_number()
