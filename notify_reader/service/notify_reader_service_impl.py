@@ -4,6 +4,7 @@ from colorama import Fore, Style
 
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
+from fake_battle_field.infra.fake_opponent_hand_repository import FakeOpponentHandRepositoryImpl
 from notify_reader.entity.notice_type import NoticeType
 from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
 from notify_reader.service.notify_reader_service import NotifyReaderService
@@ -21,6 +22,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
             cls.__instance.__opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
             cls.__instance.__your_hand_repository = YourHandRepository.getInstance()
+            cls.__instance.__fake_opponent_hand_repository = FakeOpponentHandRepositoryImpl.getInstance()
 
             cls.__instance.notify_callback_table['NOTIFY_DEPLOY_UNIT'] = cls.__instance.notify_deploy_unit
             cls.__instance.notify_callback_table['NOTIFY_TURN_END'] = cls.__instance.notify_turn_end
@@ -123,6 +125,10 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         print(f"{Fore.RED}notify_turn_end() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
 
         if whose_turn is False:
+            your_drawn_card_list_you = notice_dictionary['NOTIFY_TURN_END']['player_drawn_card_list_map'].get('You', [])
+            self.__fake_opponent_hand_repository.save_fake_opponent_hand_list(your_drawn_card_list_you)
+            fake_opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
+            print(f"{Fore.RED}notify_turn_end() -> fake opponent hand list:{Fore.GREEN} {fake_opponent_hand_list}{Style.RESET_ALL}")
             return
 
         self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(True)
