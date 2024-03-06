@@ -1,6 +1,8 @@
 import tkinter
 from PIL import ImageTk, Image
 
+from common.utility import get_project_root
+from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from rock_paper_scissors.repository.rock_paper_scissors_repository_impl import RockPaperScissorsRepositoryImpl
 from rock_paper_scissors.service.rock_paper_scissors_service import RockPaperScissorsService
 from rock_paper_scissors.service.request.rock_paper_scissors_request import RockPaperScissorsRequest
@@ -10,12 +12,19 @@ from rock_paper_scissors.frame.check_rock_paper_scissors_winner.service.check_ro
 
 class RockPaperScissorsServiceImpl(RockPaperScissorsService):
     __instance = None
+
+    __paper_image = None
+    __scissors_image = None
+    __rock_image = None
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
             cls.__instance.__rockPaperScissorsRepositoryImpl = RockPaperScissorsRepositoryImpl.getInstance()
             cls.__instance.__sessionRepositoryImpl = SessionRepositoryImpl.getInstance()
             cls.__instance.__checkRockPaperScissorsWinnerServiceImpl = CheckRockPaperScissorsWinnerServiceImpl()
+
+            cls.__instance.__preDrawedImageInstance = PreDrawedImage.getInstance()
         return cls.__instance
 
     @classmethod
@@ -51,10 +60,23 @@ class RockPaperScissorsServiceImpl(RockPaperScissorsService):
             self.__rockPaperScissorsRepositoryImpl.setRPS("보")
             RPS_label.config(text=self.__rockPaperScissorsRepositoryImpl.getRPS())
 
-        image_path = "/home/eddi/proj/TCG-Card-Game-UI/local_storage/rock_paper_scissors_image/paper.png"
-        original_image = Image.open(image_path)
-        resized_image = original_image.resize((300, 250), Image.LANCZOS)
-        self.__paper_image = ImageTk.PhotoImage(resized_image)
+        # image_path = "/home/oem/proj/TCG-Card-Game-UI/local_storage/rock_paper_scissors_image/paper.png"
+        # original_image = Image.open(image_path)
+        # resized_paper_image = original_image.resize((300, 250), Image.LANCZOS)
+        # self.__paper_image = ImageTk.PhotoImage(resized_paper_image)
+
+        # self.__preDrawedImageInstance.pre_draw_paper()
+        # resized_paper_image = self.__preDrawedImageInstance.get_pre_draw_paper()
+        # if resized_paper_image is not None:
+        #     self.__paper_image = ImageTk.PhotoImage(resized_paper_image)
+
+        # self.__preDrawedImageInstance.pre_draw_paper()
+        # resized_paper_image = self.__preDrawedImageInstance.get_pre_draw_paper()
+        # self.__paper_image = ImageTk.PhotoImage(resized_paper_image)
+
+        resized_paper_image = self.__preDrawedImageInstance.get_pre_draw_paper()
+        if resized_paper_image is not None:
+            self.__paper_image = ImageTk.PhotoImage(resized_paper_image)
 
         paper_label = tkinter.Label(rockPaperScissorsFrame, image=self.__paper_image)
         paper_label.place(x=450, y=200)
@@ -64,10 +86,17 @@ class RockPaperScissorsServiceImpl(RockPaperScissorsService):
             self.__rockPaperScissorsRepositoryImpl.setRPS("가위")
             RPS_label.config(text=self.__rockPaperScissorsRepositoryImpl.getRPS())
 
-        image_path = "/home/eddi/proj/TCG-Card-Game-UI/local_storage/rock_paper_scissors_image/scissors.png"
-        original_image = Image.open(image_path)
-        resized_image = original_image.resize((300, 250), Image.LANCZOS)
-        self.__scissors_image = ImageTk.PhotoImage(resized_image)
+        # image_path = "/home/eddi/proj/TCG-Card-Game-UI/local_storage/rock_paper_scissors_image/scissors.png"
+        # original_image = Image.open(image_path)
+        # resized_image = original_image.resize((300, 250), Image.LANCZOS)
+        # self.__scissors_image = ImageTk.PhotoImage(resized_image)
+
+        # resized_scissor_image = self.__preDrawedImageInstance.get_pre_draw_scissor()
+        # self.__scissors_image = ImageTk.PhotoImage(Image.fromarray(resized_scissor_image))
+
+        resized_scissor_image = self.__preDrawedImageInstance.get_pre_draw_scissor()
+        if resized_scissor_image is not None:
+            self.__scissors_image = ImageTk.PhotoImage(resized_scissor_image)
 
         scissors_label = tkinter.Label(rockPaperScissorsFrame, image=self.__scissors_image)
         scissors_label.place(x=750, y=200)
@@ -77,10 +106,17 @@ class RockPaperScissorsServiceImpl(RockPaperScissorsService):
             self.__rockPaperScissorsRepositoryImpl.setRPS("바위")
             RPS_label.config(text=self.__rockPaperScissorsRepositoryImpl.getRPS())
 
-        image_path = "/home/eddi/proj/TCG-Card-Game-UI/local_storage/rock_paper_scissors_image/rock.png"
-        original_image = Image.open(image_path)
-        resized_image = original_image.resize((300, 250), Image.LANCZOS)
-        self.__rock_image = ImageTk.PhotoImage(resized_image)
+        # image_path = "/home/eddi/proj/TCG-Card-Game-UI/local_storage/rock_paper_scissors_image/rock.png"
+        # original_image = Image.open(image_path)
+        # resized_image = original_image.resize((300, 250), Image.LANCZOS)
+        # self.__rock_image = ImageTk.PhotoImage(resized_image)
+
+        # resized_rock_image = self.__preDrawedImageInstance.get_pre_draw_rock()
+        # self.__rock_image = ImageTk.PhotoImage(Image.fromarray(resized_rock_image))
+
+        resized_rock_image = self.__preDrawedImageInstance.get_pre_draw_rock()
+        if resized_rock_image is not None:
+            self.__rock_image = ImageTk.PhotoImage(resized_rock_image)
 
         rock_label = tkinter.Label(rockPaperScissorsFrame, image=self.__rock_image)
         rock_label.place(x=1050, y=200)

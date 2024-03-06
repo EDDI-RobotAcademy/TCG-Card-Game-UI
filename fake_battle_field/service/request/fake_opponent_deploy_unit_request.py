@@ -1,7 +1,7 @@
 from common.protocol import CustomProtocol
 
 
-class DeployUnitCardRequest:
+class FakeOpponentDeployUnitRequest:
     def __init__(self, sessionInfo, unitId):
         self.__protocolNumber = CustomProtocol.DEPLOY_UNIT_CARD.value
         self.__unitId = str(unitId)
@@ -15,4 +15,4 @@ class DeployUnitCardRequest:
         }
 
     def __str__(self):
-        return f"DeployUnitCardRequest(protocolNumber={self.__protocolNumber}, unitId={self.__unitId}, sessionInfo={self.__sessionInfo})"
+        return f"FakeOpponentDeployUnitRequest(protocolNumber={self.__protocolNumber}, unitId={self.__unitId}, sessionInfo={self.__sessionInfo})"

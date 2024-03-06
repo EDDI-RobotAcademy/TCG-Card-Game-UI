@@ -1,10 +1,13 @@
-class RoundRepository:
+from fake_battle_field.infra.fake_battle_field_frame_repository import FakeBattleFieldFrameRepository
+
+
+class FakeOpponentHandRepositoryImpl():
     __instance = None
+
+    __fake_opponent_hand_list = []
 
     __transmitIpcChannel = None
     __receiveIpcChannel = None
-
-    current_round_number = 1
 
     def __new__(cls):
         if cls.__instance is None:
@@ -25,18 +28,12 @@ class RoundRepository:
         print("FakeOpponentHandRepositoryImpl: saveReceiveIpcChannel()")
         self.__receiveIpcChannel = receiveIpcChannel
 
-    def increase_current_round_number(self):
-        self.current_round_number += 1
+    def save_fake_opponent_hand_list(self, fake_opponent_hand_list):
+        self.__fake_opponent_hand_list = fake_opponent_hand_list
 
-    def get_current_round_number(self):
-        return self.current_round_number
+    def get_fake_opponent_hand_list(self):
+        return self.__fake_opponent_hand_list
 
-    def request_turn_end(self, turn_end_request):
-        self.__transmitIpcChannel.put(turn_end_request)
+    def request_deploy_fake_opponent_unit(self, fake_opponent_deploy_unit_request):
+        self.__transmitIpcChannel.put(fake_opponent_deploy_unit_request)
         return self.__receiveIpcChannel.get()
-
-        # turnEndResponse = self.__battleFieldFunctionRepository.requestTurnEnd(
-        #     TurnEndRequest(
-        #         # _sessionInfo=self.__sessionService.getSessionInfo())
-        #         _sessionInfo=self.__sessionRepository.get_session_info())
-        # )
