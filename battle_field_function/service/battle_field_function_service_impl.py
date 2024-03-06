@@ -1,5 +1,6 @@
 from battle_field.infra.battle_field_repository import BattleFieldRepository
-from battle_field.infra.legacy.circle_image_legacy_opponent_field_unit_repository import CircleImageLegacyOpponentFieldUnitRepository
+from battle_field.infra.legacy.circle_image_legacy_opponent_field_unit_repository import \
+    CircleImageLegacyOpponentFieldUnitRepository
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
 from battle_field_function.repository.battle_field_function_repository_impl import BattleFieldFunctionRepositoryImpl
 from battle_field_function.service.battle_field_function_service import BattleFieldFunctionService
@@ -199,6 +200,77 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             unit_card_id = data["Opponent"]
             print(f"unit_card_id: {unit_card_id}")
             CircleImageLegacyOpponentFieldUnitRepository.getInstance().create_field_unit_card(int(unit_card_id))
+
+    def basicAttackToMainCharacter(self, notify_dict_data):
+
+        target_character = list(notify_dict_data.get("player_main_character_health_point_map", {}).keys())[0]
+
+        character_hp = int(notify_dict_data.get("player_main_character_health_point_map", {})[target_character])
+
+        if notify_dict_data.get("player_main_character_survival_map", {})[target_character] == "Survival":
+            character_survival = True
+        else:
+            character_survival = False
+
+        result = {"target_character": target_character, "character_hp": character_hp,
+                  "character_survival": character_survival}
+
+    def useUnitEnergyRemoveItemCard(self, notify_dict_data):
+
+        hand_use_card_id = int(notify_dict_data.get("player_hand_use_map", {})
+                                            .get("Opponent", {})
+                                            .get("card_id", None))
+
+        if notify_dict_data.get("player_field_unit_energy_map") != {}:
+            field_unit_index = list(notify_dict_data.get("player_field_unit_energy_map", {})
+                                            .get("You", {})
+                                            .get("field_unit_energy_map", {}).keys())[0]
+
+            attach_energy_race_type = list(notify_dict_data.get("player_field_unit_energy_map", {})
+                                            .get("You", {})
+                                            .get("field_unit_energy_map", {})[field_unit_index]
+                                            .get("attached_energy_map", {}).keys())[0]
+
+            attach_race_energy_count = (notify_dict_data.get("player_field_unit_energy_map", {})
+                                           .get("You", {})
+                                           .get("field_unit_energy_map", {})[field_unit_index]
+                                           .get("attached_energy_map", {})[attach_energy_race_type])
+
+            field_unit_index = int(field_unit_index)
+            attach_energy_race_type = int(attach_energy_race_type)
+            attach_race_energy_count = int(attach_race_energy_count)
+
+            attach_total_energy_count = int(notify_dict_data.get("player_field_unit_energy_map", {})
+                                            .get("You", {})
+                                            .get("field_unit_energy_map", {})[field_unit_index]
+                                            .get("total_energy_count", None))
+
+            result = {
+                "field_unit_index": field_unit_index, "attach_energy_race_type" : attach_energy_race_type,
+                "attach_race_energy_count" : attach_race_energy_count, "attach_total_energy_count" : attach_total_energy_count
+            }
+
+
+        else:
+            field_unit_index = int(list(notify_dict_data.get("player_field_unit_health_point_map", {})
+                                            .get("You", {})
+                                            .get("field_unit_health_point_map", {}).keys())[0])
+
+            field_unit_hp = int(list(notify_dict_data.get("player_field_unit_health_point_map", {})
+                                            .get("You", {})
+                                            .get("field_unit_health_point_map", {}).values())[0])
+
+            unit_death_index_list = list(notify_dict_data.get("player_field_unit_death_map", {})
+                                            .get("You", {})
+                                            .get("dead_field_unit_index_list", []))
+
+            result = {
+                "field_unit_index" : field_unit_index, "field_unit_hp" : field_unit_hp,
+                "unit_death_index_list" : unit_death_index_list
+            }
+
+        print(result)
+
 
     def searchOpponentCount(self, notify_dict_data):
         for data in notify_dict_data.values():
