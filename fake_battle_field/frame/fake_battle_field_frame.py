@@ -1824,11 +1824,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             response = self.your_hand_repository.request_use_energy_card_to_unit(
                                 RequestUseEnergyCardToUnit(
                                     _sessionInfo=self.__session_repository.get_first_fake_session_info(),
-                                    _unitIndex=current_field_unit.get_card_number(),
+                                    _unitIndex=unit_index,
                                     _energyCardId=self.selected_object.get_card_number())
                             )
 
                             print(f"response: {response}")
+                            is_success_value = response.get('is_success', False)
+
+                            if is_success_value == False:
+                                return
+
                             # self.selected_object = None
                             self.your_hand_repository.remove_card_by_index_with_page(placed_index)
                             # self.your_field_unit_repository.get_attached_energy_info().add_energy_at_index(unit_index, 1)
