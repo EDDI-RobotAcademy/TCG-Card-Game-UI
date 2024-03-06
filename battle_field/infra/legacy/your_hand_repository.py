@@ -253,3 +253,11 @@ class LegacyYourHandRepository:
         print(f"muligun_request: {muligun_request}")
         self.__transmitIpcChannel.put(muligun_request)
         return self.__receiveIpcChannel.get()
+
+    def request_use_opponent_field_unit_energy_removal_item(self, use_item_request):
+        self.__receiveIpcChannel.put(use_item_request)
+        return self.__receiveIpcChannel.get()
+
+    def request_use_energy_card_to_unit(self, attach_energy_card_request):
+        self.__receiveIpcChannel.put(attach_energy_card_request)
+        return self.__receiveIpcChannel.get()

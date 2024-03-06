@@ -41,6 +41,7 @@ from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitR
 from battle_field.infra.opponent_hp_repository import OpponentHpRepository
 from battle_field.infra.opponent_lost_zone_repository import OpponentLostZoneRepository
 from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
+from battle_field.infra.request.request_use_energy_card_to_unit import RequestUseEnergyCardToUnit
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
@@ -1248,6 +1249,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                         elif card_type == CardType.ENERGY.value:
                             print("에너지를 붙입니다!")
+
                             # self.selected_object = None
                             self.your_hand_repository.remove_card_by_index(placed_index)
                             # self.your_field_unit_repository.get_attached_energy_info().add_energy_at_index(unit_index, 1)
