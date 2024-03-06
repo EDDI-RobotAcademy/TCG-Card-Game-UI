@@ -1,5 +1,7 @@
 import json
 
+from colorama import Fore, Style
+
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from notify_reader.entity.notice_type import NoticeType
 from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
@@ -19,6 +21,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.__opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
 
             cls.__instance.notify_callback_table['NOTIFY_DEPLOY_UNIT'] = cls.__instance.notify_deploy_unit
+            cls.__instance.notify_callback_table['NOTIFY_TURN_END'] = cls.__instance.notify_turn_end
         return cls.__instance
 
     @classmethod
@@ -94,7 +97,12 @@ class NotifyReaderServiceImpl(NotifyReaderService):
     def notify_deploy_unit(self, notice_dictionary):
         print(f"notify_deploy_unit() -> notice_dictionary: {notice_dictionary}")
 
-        if self.__notify_reader_repository.get_is_your_turn_for_check_fake_process() is True:
+        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        print(f"{Fore.RED}notify_deploy_unit() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
+
+        if whose_turn is True:
+            # self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(not whose_turn)
+            # print(f"after set whose_turn: {self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()}")
             return
 
         card_id = (notice_dictionary.get('NOTIFY_DEPLOY_UNIT', {})
@@ -102,5 +110,28 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                    .get('Opponent',{})
                    .get('card_id', None))
 
+        print(f"{Fore.RED}notify_deploy_unit() -> Opponent deploy card_id:{Fore.GREEN} {card_id}{Style.RESET_ALL}")
+
         self.__opponent_field_unit_repository.create_field_unit_card(card_id)
+
+    def notify_turn_end(self, notice_dictionary):
+        print(f"{Fore.RED}notify_turn_end() -> notice_dictionary:{Fore.GREEN} {notice_dictionary}{Style.RESET_ALL}")
+
+        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        print(f"{Fore.RED}notify_turn_end() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
+
+        if whose_turn is False:
+            return
+
+        self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(True)
+
+        # if self.__notify_reader_repository.get_is_your_turn_for_check_fake_process() is True:
+        #     return
+        #
+        # card_id = (notice_dictionary.get('NOTIFY_DEPLOY_UNIT', {})
+        #            .get('player_hand_use_map', {})
+        #            .get('Opponent', {})
+        #            .get('card_id', None))
+        #
+        # self.__opponent_field_unit_repository.create_field_unit_card(card_id)
 
