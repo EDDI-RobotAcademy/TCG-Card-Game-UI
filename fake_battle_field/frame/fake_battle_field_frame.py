@@ -517,7 +517,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             print("만약 Opponent Hand에 출격시킬 유닛이 있다면 내보낸다.")
 
             opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
-            for opponent_hand in opponent_hand_list:
+            for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
                 opponent_hand_card_type = self.card_info_repository.getCardTypeForCardNumber(opponent_hand)
                 if opponent_hand_card_type == CardType.UNIT.value:
                     print("상대방 유닛 출격")
@@ -526,7 +526,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         FakeOpponentDeployUnitRequest(
                             self.__session_repository.get_second_fake_session_info(),
                             opponent_hand))
+
                     print(f"fake opponent deploy unit result: {result}")
+                    is_success_value = result.get('is_success', False)
+
+                    if is_success_value == False:
+                        return
+
+                    self.__fake_opponent_hand_repository.remove_card_by_index(opponent_hand_index)
+
                     break
 
         if key.lower() == 'x':
