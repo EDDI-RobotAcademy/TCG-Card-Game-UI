@@ -186,3 +186,8 @@ class MuligunYourHandRepository:
         print("여기까지 왔냐?")
         return self.__receiveIpcChannel.get()
 
+    def requestCheckOpponentMuligun(self, checkOpponentMuligunRequest):
+        self.__transmitIpcChannel.put(checkOpponentMuligunRequest)
+        print("상대 멀리건 확인 요청")
+        return self.__receiveIpcChannel.get()
+

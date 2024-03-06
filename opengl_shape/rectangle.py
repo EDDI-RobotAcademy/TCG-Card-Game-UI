@@ -5,6 +5,7 @@ from opengl_shape.shape import Shape
 
 
 class Rectangle(Shape):
+    __rectangle_kinds = None
     def __init__(self, color, vertices, global_translation=(0, 0), local_translation=(0, 0)):
         super().__init__(vertices, global_translation, local_translation)
 
@@ -21,6 +22,12 @@ class Rectangle(Shape):
     #
     # def set_height_ratio(self, height_ratio):
     #     self.height_ratio = height_ratio
+
+    def set_rectangle_kinds(self, rectangle_kinds):
+        self.__rectangle_kinds = rectangle_kinds
+
+    def get_rectangle_kinds(self):
+        return self.__rectangle_kinds
 
     def set_visible(self, visible):
         self.is_visible = visible
