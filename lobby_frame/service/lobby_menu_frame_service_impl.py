@@ -5,6 +5,7 @@ import tkinter
 from decouple import config
 
 from battle_field.infra.your_deck_repository import YourDeckRepository
+from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository as MuligunHandRepository
 from battle_field_muligun.service.request.muligun_request import MuligunRequest
@@ -70,6 +71,8 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
             cls.__instance.__fakeOpponentHandRepository = FakeOpponentHandRepositoryImpl.getInstance()
             cls.__instance.__notify_reader_repository = NotifyReaderRepositoryImpl.getInstance()
+
+            cls.__instance.__yourFieldEnergyRepository = YourFieldEnergyRepository.getInstance()
         return cls.__instance
 
     @classmethod
@@ -256,6 +259,11 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                 print(f"your_draw_card_id: {your_draw_card_id}")
 
                 self.__fakeYourHandRepository.save_current_hand_state([your_draw_card_id])
+
+                your_field_energy = real_battle_start_response['player_field_energy_map']['You']
+                print(f"your_field_energy: {your_field_energy}")
+
+                self.__yourFieldEnergyRepository.increase_your_field_energy(your_field_energy)
 
                 # Second Fake Accounts (Your) Real Battle Start
                 real_battle_start_response = self.__fakeBattleFieldFrameRepository.request_real_battle_start(

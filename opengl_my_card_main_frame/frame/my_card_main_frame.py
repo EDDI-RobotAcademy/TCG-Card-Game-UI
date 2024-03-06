@@ -288,7 +288,7 @@ class MyCardMainFrame(OpenGLFrame):
 
 
         # 카드 갯수 표기
-        #TODO: 갯수가 1개인 경우 임시 방편으로 X9 이미지를 불러와 사용중
+        #TODO: 갯수가 1개인 경우에는 표기 안 함.
         number_left_x_point = self.width * 0.130  # 첫 번째 카드는 이 위치로 고정
         number_right_x_point = self.width * 0.166
         number_top_y_point = self.height * 0.450  # 첫 번째줄은 이 높이로 고정하면 될 듯
@@ -296,18 +296,19 @@ class MyCardMainFrame(OpenGLFrame):
         for i, number in enumerate(number_of_cards):
             try:
                 if number == 1:
-                    number_of_cards_data = self.__pre_drawed_image_instance.get_pre_draw_number_of_cards(9)
+                    # number_of_cards_data = self.__pre_drawed_image_instance.get_pre_draw_number_of_cards(9)
+                    self.my_card_main_scene.add_text_list(None)
                 else:
                     number_of_cards_data = self.__pre_drawed_image_instance.get_pre_draw_number_of_cards(number)
 
-                number_of_cards_text = NonBackgroundImage(image_data=number_of_cards_data,
-                                                           vertices=[
-                                                               (number_left_x_point, number_top_y_point),
-                                                               (number_right_x_point, number_top_y_point),
-                                                               (number_right_x_point, number_bottom_y_point),
-                                                               (number_left_x_point, number_bottom_y_point)
-                                                           ])
-                self.my_card_main_scene.add_text_list(number_of_cards_text)
+                    number_of_cards_text = NonBackgroundImage(image_data=number_of_cards_data,
+                                                               vertices=[
+                                                                   (number_left_x_point, number_top_y_point),
+                                                                   (number_right_x_point, number_top_y_point),
+                                                                   (number_right_x_point, number_bottom_y_point),
+                                                                   (number_left_x_point, number_bottom_y_point)
+                                                               ])
+                    self.my_card_main_scene.add_text_list(number_of_cards_text)
 
                 number_left_x_point += self.width * 0.164
                 number_right_x_point += self.width * 0.164

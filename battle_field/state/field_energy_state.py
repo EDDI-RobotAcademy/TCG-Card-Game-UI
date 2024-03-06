@@ -4,6 +4,7 @@ class FieldEnergyState:
         self.opponent_field_energy_count = 0
 
     def increase_your_field_energy(self, count):
+        # print(f"increase_your_field_energy -> count: {count}, self.your_field_energy_count: {self.your_field_energy_count}")
         self.your_field_energy_count += count
         return True
 
@@ -21,6 +22,7 @@ class FieldEnergyState:
         return self.your_field_energy_count
 
     def increase_opponent_field_energy(self, count):
+        # print(f"increase_opponent_field_energy -> count: {count}, self.opponent_field_energy_count: {self.opponent_field_energy_count}")
         self.opponent_field_energy_count += count
         return True
 
