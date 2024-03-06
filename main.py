@@ -27,9 +27,9 @@ if __name__ == "__main__":
 
     receiverController = ReceiverControllerImpl.getInstance()
     receiverController.requestToInjectSocketClient(clientSocket)
-
-    notifyReaderController = NotifyReaderControllerImpl.getInstance()
-    notifyReaderController.requestToMappingNoticeWithFunction()
+    #
+    # notifyReaderController = NotifyReaderControllerImpl.getInstance()
+    # notifyReaderController.requestToMappingNoticeWithFunction()
 
     uiFrameController = UiFrameControllerImpl.getInstance()
     uiFrameController.requestToCreateUiFrame()
@@ -44,9 +44,9 @@ if __name__ == "__main__":
 
     taskWorkerService.createTaskWorker("Receiver", receiverController.requestToReceiveCommand)
     taskWorkerService.executeTaskWorker("Receiver")
-
-    taskWorkerService.createTaskWorker("NotifyReader", notifyReaderController.requestToReadNotifyCommand)
-    taskWorkerService.executeTaskWorker("NotifyReader")
+    #
+    # taskWorkerService.createTaskWorker("NotifyReader", notifyReaderController.requestToReadNotifyCommand)
+    # taskWorkerService.executeTaskWorker("NotifyReader")
 
     taskWorkerService.createTaskWorker("UI", uiFrameController.requestToStartPrintGameUi)
     taskWorkerService.executeTaskWorker("UI")

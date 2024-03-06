@@ -4,6 +4,7 @@ from colorama import Fore, Style
 
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
+from battle_field_function.service.battle_field_function_service_impl import BattleFieldFunctionServiceImpl
 from fake_battle_field.infra.fake_opponent_hand_repository import FakeOpponentHandRepositoryImpl
 from notify_reader.entity.notice_type import NoticeType
 from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
@@ -19,6 +20,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
             cls.__instance.__notify_reader_repository = NotifyReaderRepositoryImpl.getInstance()
+            cls.__instance.__battle_field_function_service = BattleFieldFunctionServiceImpl.getInstance()
 
             cls.__instance.__opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
             cls.__instance.__your_hand_repository = YourHandRepository.getInstance()
@@ -26,6 +28,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
             cls.__instance.notify_callback_table['NOTIFY_DEPLOY_UNIT'] = cls.__instance.notify_deploy_unit
             cls.__instance.notify_callback_table['NOTIFY_TURN_END'] = cls.__instance.notify_turn_end
+            cls.__instance.notify_callback_table['NOTIFY_USE_GENERAL_ENERGY_CARD_TO_UNIT'] = (
+                cls.__instance.__battle_field_function_service.useGeneralEnergyCardToUnit)
+
         return cls.__instance
 
     @classmethod

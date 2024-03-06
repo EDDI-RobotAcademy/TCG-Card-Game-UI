@@ -29,7 +29,8 @@ class FakeOpponentHandRepositoryImpl():
         self.__receiveIpcChannel = receiveIpcChannel
 
     def save_fake_opponent_hand_list(self, fake_opponent_hand_list):
-        self.__fake_opponent_hand_list = fake_opponent_hand_list
+        for hand in fake_opponent_hand_list:
+            self.__fake_opponent_hand_list.append(hand)
 
     def get_fake_opponent_hand_list(self):
         return self.__fake_opponent_hand_list
