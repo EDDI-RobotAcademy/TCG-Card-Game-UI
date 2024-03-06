@@ -153,8 +153,8 @@ class UiFrameControllerImpl(UiFrameController):
         fakeBattleFieldFrame = self.__fakeBattleFieldFrameServiece.createFakeBattleFieldFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerFakeBattleFieldUiFrame(fakeBattleFieldFrame)
 
-        test_battle_result_frame = self.__battle_result_frame_service.create_battle_result_frame(rootWindow, self.switchFrameWithMenuName)
-        self.__uiFrameService.register_battle_result_frame(test_battle_result_frame)
+        # test_battle_result_frame = self.__battle_result_frame_service.create_battle_result_frame(rootWindow, self.switchFrameWithMenuName)
+        # self.__uiFrameService.register_battle_result_frame(test_battle_result_frame)
 
         self.__battleFieldFunctionService.saveFrame(self, fakeBattleFieldFrame)
 

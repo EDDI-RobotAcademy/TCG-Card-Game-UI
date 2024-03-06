@@ -1,5 +1,8 @@
+from colorama import Fore, Style
+
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
+from battle_field.infra.request.request_use_death_sice_to_unit import RequestUseDeathSiceToUnit
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
@@ -11,6 +14,7 @@ from image_shape.circle_number_image import CircleNumberImage
 from image_shape.non_background_number_image import NonBackgroundNumberImage
 from opengl_shape.circle import Circle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
+from session.repository.session_repository_impl import SessionRepositoryImpl
 
 
 class OpponentFixedUnitCardInsideHandler:
@@ -30,6 +34,8 @@ class OpponentFixedUnitCardInsideHandler:
     __opponent_tomb_repository = OpponentTombRepository.getInstance()
     __card_info_repository = CardInfoFromCsvRepositoryImpl.getInstance()
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
+
+    __session_repository = SessionRepositoryImpl.getInstance()
 
     __lightning_border_list = []
 
@@ -230,6 +236,14 @@ class OpponentFixedUnitCardInsideHandler:
 
     def death_sice(self, placed_card_index, unit_index, placed_card_id):
         DEATH_SICE_FIXED_DAMAGE = 30
+
+        death_sice_usage_response = self.__your_hand_repository.request_use_death_sice_to_unit(
+            RequestUseDeathSiceToUnit(
+                _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                _itemCardId=placed_card_id,
+                _opponentTargetUnitIndex=unit_index)
+        )
+        print(f"{Fore.RED}death_sice() -> death_sice_usage_response:{Fore.GREEN} {death_sice_usage_response}{Style.RESET_ALL}")
 
         # self.__your_hand_repository.remove_card_by_index(placed_card_index)
         self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)

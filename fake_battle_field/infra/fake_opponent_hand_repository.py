@@ -1,3 +1,5 @@
+from colorama import Fore, Style
+
 from fake_battle_field.infra.fake_battle_field_frame_repository import FakeBattleFieldFrameRepository
 
 
@@ -29,10 +31,21 @@ class FakeOpponentHandRepositoryImpl():
         self.__receiveIpcChannel = receiveIpcChannel
 
     def save_fake_opponent_hand_list(self, fake_opponent_hand_list):
-        self.__fake_opponent_hand_list = fake_opponent_hand_list
+        for hand in fake_opponent_hand_list:
+            self.__fake_opponent_hand_list.append(hand)
 
     def get_fake_opponent_hand_list(self):
         return self.__fake_opponent_hand_list
+
+    def remove_card_by_index(self, card_placed_index):
+        # print(f"remove_card_by_index -> self.current_hand_card_list: {self.__fake_opponent_hand_list}, card_placed_index: {card_placed_index}")
+        print(f"{Fore.RED}remove_card_by_index -> self.current_hand_card_list: {Fore.GREEN} {self.__fake_opponent_hand_list}, card_placed_index: {card_placed_index}{Style.RESET_ALL}")
+
+        if 0 <= card_placed_index < len(self.__fake_opponent_hand_list):
+            removed_card = self.__fake_opponent_hand_list.pop(card_placed_index)
+            print(f"Removed card index {card_placed_index}: {removed_card}")
+        else:
+            print(f"Invalid index: {card_placed_index}. 지울 것이 없다")
 
     def request_deploy_fake_opponent_unit(self, fake_opponent_deploy_unit_request):
         self.__transmitIpcChannel.put(fake_opponent_deploy_unit_request)
