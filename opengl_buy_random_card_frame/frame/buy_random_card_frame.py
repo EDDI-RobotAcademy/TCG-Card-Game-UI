@@ -13,8 +13,10 @@ from card_shop_frame.frame.buy_check_frame.repository.buy_check_repository_impl 
 
 
 
+
 class BuyRandomCardFrame(OpenGLFrame):
     __instance = None
+
 
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
@@ -52,7 +54,6 @@ class BuyRandomCardFrame(OpenGLFrame):
                                                      local_translation=(0, 0),
                                                      vertices=[(0, 0), (self.width, 0), (self.width, self.height), (0, self.height)])
         self.buy_random_card_scene.add_my_card_background(background_rectangle)
-        print(f"카드 배경 잘 들어갔니?:{self.buy_random_card_scene.get_my_card_background()}")
 
 
         # 뒤로가기 버튼
@@ -95,6 +96,7 @@ class BuyRandomCardFrame(OpenGLFrame):
             except Exception as e:
                 print(f"Error creating card: {e}")
                 pass
+
 
     def redraw(self):
         if self.redraw_check is True:

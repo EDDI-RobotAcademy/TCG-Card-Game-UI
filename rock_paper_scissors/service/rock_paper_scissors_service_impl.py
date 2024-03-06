@@ -55,7 +55,6 @@ class RockPaperScissorsServiceImpl(RockPaperScissorsService):
                 self.__checkRockPaperScissorsWinnerServiceImpl.createCheckRockPaperScissorsWinnerUiFrame(
                     rockPaperScissorsFrame, switchFrameWithMenuName)
 
-
         def on_paper_image_click(event):
             self.__rockPaperScissorsRepositoryImpl.setRPS("보")
             RPS_label.config(text=self.__rockPaperScissorsRepositoryImpl.getRPS())
