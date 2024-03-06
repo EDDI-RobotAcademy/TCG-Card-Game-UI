@@ -3,6 +3,7 @@ import json
 from colorama import Fore, Style
 
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
+from battle_field.infra.your_hand_repository import YourHandRepository
 from notify_reader.entity.notice_type import NoticeType
 from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
 from notify_reader.service.notify_reader_service import NotifyReaderService
@@ -19,6 +20,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.__notify_reader_repository = NotifyReaderRepositoryImpl.getInstance()
 
             cls.__instance.__opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
+            cls.__instance.__your_hand_repository = YourHandRepository.getInstance()
 
             cls.__instance.notify_callback_table['NOTIFY_DEPLOY_UNIT'] = cls.__instance.notify_deploy_unit
             cls.__instance.notify_callback_table['NOTIFY_TURN_END'] = cls.__instance.notify_turn_end
@@ -124,6 +126,10 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             return
 
         self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(True)
+
+        your_drawn_card_list_you = notice_dictionary['NOTIFY_TURN_END']['player_drawn_card_list_map'].get('You', [])
+        self.__your_hand_repository.save_current_hand_state(your_drawn_card_list_you)
+        self.__your_hand_repository.update_your_hand()
 
         # if self.__notify_reader_repository.get_is_your_turn_for_check_fake_process() is True:
         #     return
