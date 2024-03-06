@@ -70,7 +70,7 @@ class BattleResultFrame(OpenGLFrame):
         self.opponent_field_energy = OpponentFieldEnergy()
         self.opponent_field_energy_panel = None
         self.opponent_field_energy_repository = OpponentFieldEnergyRepository.getInstance()
-        self.opponent_field_energy_repository.increase_opponent_field_energy(3)
+        # self.opponent_field_energy_repository.increase_opponent_field_energy(3)
 
         self.round_repository = RoundRepository.getInstance()
 
