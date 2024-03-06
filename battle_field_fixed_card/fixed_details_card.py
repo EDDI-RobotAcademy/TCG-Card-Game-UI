@@ -43,12 +43,25 @@ class FixedDetailsCard:
     def get_fixed_card_base(self):
         return self.fixed_card_base
 
+    def creat_fixed_card_dark_flame_image_circle(self, image_data, local_translation, vertices):
+        attached_dark_flame_image = CircleImage(image_data=image_data,
+                                                local_translation=local_translation,
+                                                center=vertices,
+                                                radius=15)
+        return attached_dark_flame_image
 
-    def creat_fixed_card_energy_race_circle(self, color, vertices, local_translation):
-        attached_energy_circle = Circle(color=color,
-                                        local_translation=local_translation,
-                                        center=vertices,
-                                        radius=5)
+    def creat_fixed_card_freezing_image_circle(self, image_data, local_translation, vertices):
+        attached_freezing_image = CircleImage(image_data=image_data,
+                                              local_translation=local_translation,
+                                              center=vertices,
+                                              radius=15)
+        return attached_freezing_image
+
+    def creat_fixed_card_energy_race_circle(self, image_data, vertices, local_translation):
+        attached_energy_circle = CircleImage(image_data=image_data,
+                                             local_translation=local_translation,
+                                             center=vertices,
+                                             radius=5)
         return attached_energy_circle
 
     def create_fixed_card_base_rectangle(self, color, vertices, local_translation):
