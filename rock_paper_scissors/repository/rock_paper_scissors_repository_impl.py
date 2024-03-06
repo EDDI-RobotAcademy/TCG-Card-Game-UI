@@ -8,7 +8,7 @@ class RockPaperScissorsRepositoryImpl(RockPaperScissorsRepository):
     __receiveIpcChannel = None
 
     def __init__(self):
-        self.__rps = None
+        self.__rps = ""
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
