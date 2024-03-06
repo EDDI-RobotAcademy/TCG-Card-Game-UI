@@ -530,15 +530,15 @@ class PreDrawedImage:
         self.__pre_drawed_my_card_background = ImageDataLoader.load_background_image_data(my_card_background, width, height)
 
     def pre_draw_rock(self):
-        rock = os.path.join(self.__project_root, "local_stoage", "rock_paper_scissors_image", "rock.png")
+        rock = os.path.join(self.__project_root, "local_storage", "rock_paper_scissors_image", "rock.png")
         self.__pre_drawed_rock = ImageDataLoader.load_lanczos_resized_image_data(rock)
 
     def pre_draw_scissor(self):
-        scissor = os.path.join(self.__project_root, "local_stoage", "rock_paper_scissors_image", "scissors.png")
+        scissor = os.path.join(self.__project_root, "local_storage", "rock_paper_scissors_image", "scissors.png")
         self.__pre_drawed_scissor = ImageDataLoader.load_lanczos_resized_image_data(scissor)
 
     def pre_draw_paper(self):
-        scissor = os.path.join(self.__project_root, "local_stoage", "rock_paper_scissors_image", "paper.png")
+        scissor = os.path.join(self.__project_root, "local_storage", "rock_paper_scissors_image", "paper.png")
         self.__pre_drawed_paper = ImageDataLoader.load_lanczos_resized_image_data(scissor)
 
     def pre_draw_number_of_cards(self):
