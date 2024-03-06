@@ -1,6 +1,6 @@
 import random
 
-from battle_field.infra.legacy.circle_image_legacy_your_deck_repository import CircleImageLegacyYourDeckRepository
+from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 from battle_field.state.energy_type import EnergyType
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
@@ -19,7 +19,7 @@ class SupportCardHandler:
     # 에너지 부스트(2), 덱 드로우(20), 유닛 검색(30), 상대 필드 에너지 파괴(36)
     __supportCardHandlerTable = {}
 
-    __yourDeckRepository = CircleImageLegacyYourDeckRepository.getInstance()
+    __yourDeckRepository = YourDeckRepository.getInstance()
     __yourFieldUnitRepository = YourFieldUnitRepository.getInstance()
 
     def __new__(cls):

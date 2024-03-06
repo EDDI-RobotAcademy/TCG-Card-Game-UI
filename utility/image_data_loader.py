@@ -55,10 +55,45 @@ class ImageDataLoader:
             return None
 
     @staticmethod
+    def load_lanczos_resized_image_data(path):
+        try:
+            image = Image.open(path)
+            resized_image = image.resize((300, 250), Image.LANCZOS)
+
+            # rgba_image = resized_image.convert("RGBA")
+            # img_data = np.array(rgba_image)
+            # resized_image.close()
+            # image.close()
+
+            return resized_image
+
+        except Exception as e:
+            print(f"Error loading image data: {e}")
+            return None
+
+    @staticmethod
     def load_rectangle_image_data(path):
         try:
             image = Image.open(path)
             resized_image = image.resize((300, 300))
+
+            rgba_image = resized_image.convert("RGBA")
+            img_data = np.array(rgba_image)
+
+            resized_image.close()
+            image.close()
+
+            return img_data
+
+        except Exception as e:
+            print(f"Error loading image data: {e}")
+            return None
+
+    @staticmethod
+    def load_surrender_screen_image_data(path):
+        try:
+            image = Image.open(path)
+            resized_image = image.resize((1200, 600))
 
             rgba_image = resized_image.convert("RGBA")
             img_data = np.array(rgba_image)

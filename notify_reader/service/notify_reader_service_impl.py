@@ -1,5 +1,6 @@
 import json
 
+from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from notify_reader.entity.notice_type import NoticeType
 from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
 from notify_reader.service.notify_reader_service import NotifyReaderService
@@ -8,12 +9,16 @@ from notify_reader.service.notify_reader_service import NotifyReaderService
 class NotifyReaderServiceImpl(NotifyReaderService):
     __instance = None
 
-
+    notify_callback_table = {}
 
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
             cls.__instance.__notify_reader_repository = NotifyReaderRepositoryImpl.getInstance()
+
+            cls.__instance.__opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
+
+            cls.__instance.notify_callback_table['NOTIFY_DEPLOY_UNIT'] = cls.__instance.notify_deploy_unit
         return cls.__instance
 
     @classmethod
@@ -66,15 +71,36 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 if raw_notice_data:
                     print(f"raw_notice_data: {raw_notice_data}")
                     notice_dict = json.loads(raw_notice_data)
+                    print(f"notice_dict: {notice_dict}")
+                    notify_key = list(notice_dict.keys())[0]
+                    print(f"Notify key: {notify_key}")
 
-                    for notice_type in NoticeType:
-                        if notice_type.name in notice_dict:
-                            self.__notify_reader_repository.isFinish = True
-                            print(f"noticeType: {notice_type.name}")
-                            called_function = self.__notify_reader_repository.getFunctionByNoticeName(notice_type.name)
-                            called_function(notice_dict[notice_type.name])
+                    notify_callback_function = self.notify_callback_table[notify_key]
+                    notify_callback_function(notice_dict)
+
+                    # for notice_type in NoticeType:
+                    #     print(f"notice_type: {notice_type.name}")
+                    #     if notice_type.name in notice_dict:
+                    #         self.__notify_reader_repository.isFinish = True
+                    #         print(f"noticeType: {notice_type.name}")
+                    #         called_function = self.__notify_reader_repository.getFunctionByNoticeName(notice_type.name)
+                    #         called_function(notice_dict[notice_type.name])
 
             except Exception as e:
                 self.readNoticeAndCallFunction()
                 print(e)
               #  continue
+
+    def notify_deploy_unit(self, notice_dictionary):
+        print(f"notify_deploy_unit() -> notice_dictionary: {notice_dictionary}")
+
+        if self.__notify_reader_repository.get_is_your_turn_for_check_fake_process() is True:
+            return
+
+        card_id = (notice_dictionary.get('NOTIFY_DEPLOY_UNIT', {})
+                   .get('player_hand_use_map', {})
+                   .get('Opponent',{})
+                   .get('card_id', None))
+
+        self.__opponent_field_unit_repository.create_field_unit_card(card_id)
+

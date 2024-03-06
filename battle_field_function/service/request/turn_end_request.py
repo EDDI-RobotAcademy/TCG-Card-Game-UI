@@ -2,10 +2,10 @@ from common.protocol import CustomProtocol
 
 
 class TurnEndRequest:
-    def __init__(self, _sessionInfo):
+    def __init__(self, sessionInfo):
         self.__protocolNumber = CustomProtocol.TURN_END.value
       #  self.__roomNumber = BattleFieldFunctionRepositoryImpl.getInstance().getRoomNumber()
-        self.__sessionInfo = _sessionInfo
+        self.__sessionInfo = sessionInfo
 
     def toDictionary(self):
         return {

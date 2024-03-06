@@ -10,7 +10,7 @@ class UiFrameRepositoryImpl(UiFrameRepository):
     __receiveIpcChannel = None
     __musicPlayIpcChannel = None
     __windowFrameList = {}
-
+    __animation_running = False
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -45,6 +45,7 @@ class UiFrameRepositoryImpl(UiFrameRepository):
         if self.__currentFrame is not None:
             print("기존 Frame 해제")
             self.__currentFrame.pack_forget()
+            self.__animation_running = False
 
         foundUiFrame.pack(expand=True, fill="both")
         self.__currentFrame = foundUiFrame
@@ -53,11 +54,12 @@ class UiFrameRepositoryImpl(UiFrameRepository):
 
         if isinstance(foundUiFrame, OpenGLFrame):
             # foundUiFrame.start_redraw_loop()
-
+            self.__animation_running = True
             def animate():
+                if self.__animation_running:
                 # print(f"OpenGL redrawing")
-                foundUiFrame.redraw()
-                foundUiFrame.after(17, animate)
+                    foundUiFrame.redraw()
+                    foundUiFrame.after(17, animate)
 
             foundUiFrame.after(0, animate)
 

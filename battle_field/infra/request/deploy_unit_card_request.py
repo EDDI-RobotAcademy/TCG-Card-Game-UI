@@ -15,4 +15,4 @@ class DeployUnitCardRequest:
         }
 
     def __str__(self):
-        return f"DrawCardByUseSupportCardRequest(protocolNumber={self.__protocolNumber}, unitId={self.__unitId}, sessionInfo={self.__sessionInfo})"
+        return f"DeployUnitCardRequest(protocolNumber={self.__protocolNumber}, unitId={self.__unitId}, sessionInfo={self.__sessionInfo})"

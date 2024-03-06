@@ -49,7 +49,7 @@ class CheckRockPaperScissorsWinnerServiceImpl(CheckRockPaperScissorsWinnerServic
                 self.__checkRockPaperScissorsWinnerRepositoryImpl.setRPSWinner(responseData.get("am_i_first_turn"))
                 self.check_RPS_label.configure(text="당신이 " + self.findWinner() + "입니다.")
                 time.sleep(3)
-                #switchFrameWithMenuName("")
+                switchFrameWithMenuName('battle-field-muligun')
                 break
 
             rootWindow.update()

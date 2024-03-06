@@ -86,10 +86,10 @@ class Option:
 
 
     def create_option_button_popup_list(self):
-        self.create_option_button_popup_surrender_button()
+
         #self.create_option_button_popup_cancel_button()
         self.create_option_button_popup()
-
+        self.create_option_button_popup_surrender_button()
 
     def create_option_button_popup(self):
         width_left = self.total_width * 0.045
@@ -180,7 +180,7 @@ class Option:
         point_x, point_y = point
         point_y *= -1
 
-        option_surrender = self.get_option_button_popup_list()[0]
+        option_surrender = self.get_option_button_popup_list()[1]
 
         translated_vertices = [
             (x * self.width_ratio + option_surrender.local_translation[0] * self.width_ratio,
