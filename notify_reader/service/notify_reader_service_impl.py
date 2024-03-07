@@ -47,7 +47,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.notify_callback_table['NOTIFY_USE_UNIT_ENERGY_REMOVE_ITEM_CARD'] = (
                 cls.__instance.__battle_field_function_service.useUnitEnergyRemoveItemCard)
             cls.__instance.notify_callback_table['NOTIFY_BASIC_ATTACK_TO_MAIN_CHARACTER'] = cls.__instance.damage_to_main_character
-
+            # cls.__instance.notify_callback_table['NOTIFY_USE_MULTIPLE_UNIT_DAMAGE_ITEM_CARD'] = cls.__instance.damage_to_multiple_unit
+            cls.__instance.notify_callback_table['NOTIFY_USE_MULTIPLE_UNIT_DAMAGE_ITEM_CARD'] = (
+                cls.__instance.__battle_field_function_service.useMultipleUnitDamageItemCard)
 
         return cls.__instance
 
@@ -243,3 +245,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         else:
             print("나죽어~~~ ")
+
+    def damage_to_multiple_unit(self, notice_dictionary):
+        notify_dict_data = notice_dictionary['NOTIFY_USE_MULTIPLE_UNIT_DAMAGE_ITEM_CARD']
+

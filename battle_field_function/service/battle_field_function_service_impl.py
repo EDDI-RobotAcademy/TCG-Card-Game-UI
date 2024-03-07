@@ -439,7 +439,8 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
 
         print(result)
 
-    def useMultipleUnitDamageItemCard(self, notify_dict_data):
+    def useMultipleUnitDamageItemCard(self, _notify_dict_data):
+        notify_dict_data = _notify_dict_data['NOTIFY_USE_MULTIPLE_UNIT_DAMAGE_ITEM_CARD']
 
         is_my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
         if is_my_turn is True:
@@ -452,6 +453,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
         string_target_unit_index_list = list(notify_dict_data.get("player_field_unit_health_point_map", {})
                                              .get("You", {})
                                              .get("field_unit_health_point_map", {}).keys())
+        print(string_target_unit_index_list)
         target_unit_index_list = []
         for unit_index in string_target_unit_index_list:
             target_unit_index_list.append(int(unit_index))
@@ -474,6 +476,8 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             "opponent_dead_field_unit_index_list": opponent_dead_field_unit_index_list,
             "your_dead_field_unit_index_list": your_dead_field_unit_index_list
         }
+
+        self.preDrawedBattleFieldFrame.damage_to_multiple_unit_by_sacrifice(result)
 
     def useSpecialEnergyCardToUnit(self, _notify_dict_data):
 
