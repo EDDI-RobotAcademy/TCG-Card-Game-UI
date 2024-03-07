@@ -560,6 +560,19 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(True)
 
+        # ` (숫자 1 옆에 있는 것)
+        if key.lower() == 'grave':
+            print(f"{Fore.RED}상대방 20장 뽑기{Style.RESET_ALL}")
+
+            multi_draw_response = self.__fake_battle_field_frame_repository.request_fake_multi_draw(
+                FakeMultiDrawRequest(self.__session_repository.get_second_fake_session_info()))
+
+            print(f"{Fore.RED}opponent multi_draw_response:{Fore.GREEN} {multi_draw_response}{Style.RESET_ALL}")
+            opponent_multi_draw_hand_list = multi_draw_response['player_multi_drawn_card_list']['You']
+
+            self.__fake_opponent_hand_repository.save_fake_opponent_hand_list(opponent_multi_draw_hand_list)
+            print(f"{Fore.RED}current opponent_multi_draw_hand_list:{Fore.GREEN} {self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()}{Style.RESET_ALL}")
+
         if key.lower() == '1':
             if self.animation_test_image_panel:
                 self.animation_test_image_panel = None
