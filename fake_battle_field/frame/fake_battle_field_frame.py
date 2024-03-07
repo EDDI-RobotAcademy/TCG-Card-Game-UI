@@ -86,6 +86,7 @@ from fake_battle_field.entity.muligun_reset_button import MuligunResetButton
 from fake_battle_field.entity.multi_draw_button import MultiDrawButton
 from fake_battle_field.infra.fake_battle_field_frame_repository_impl import FakeBattleFieldFrameRepositoryImpl
 from fake_battle_field.infra.fake_opponent_hand_repository import FakeOpponentHandRepositoryImpl
+from fake_battle_field.service.request.call_of_leonic_request import RequestUseCallOfLeonic
 from fake_battle_field.service.request.fake_multi_draw_request import FakeMultiDrawRequest
 from fake_battle_field.service.request.fake_opponent_deploy_unit_request import FakeOpponentDeployUnitRequest
 from image_shape.circle_image import CircleImage
@@ -3211,6 +3212,18 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     #
                     # print(f"will_remove_index_from_deck: {will_remove_index_from_deck}")
                     # self.your_deck_repository
+
+                    response = self.your_deck_repository.request_use_call_of_leonic(
+                        RequestUseCallOfLeonic(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _supportCardId=30,
+                            _targetUnitCardIndexList=self.selected_search_unit_index_list)
+                    )
+                    print(f"{Fore.RED}call_of_leonic -> response:{Fore.GREEN} {response}{Style.RESET_ALL}")
+                    is_success_value = response.get('is_success', False)
+
+                    if is_success_value == False:
+                        return
 
                     # 실제로 지울 때 몇 개 지우는지만 알면 된다.
                     # 어차피 셔플 받아서 이미지만 갈아 끼워넣을 것이기 때문

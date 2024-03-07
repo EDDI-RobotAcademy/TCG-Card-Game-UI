@@ -99,10 +99,15 @@ class UnitCard:
         self.add_shape(unit_attack_image)
 
     def create_non_background_unit_hp(self, image_data, hp_number, center, radius):
-        start_x = center[0] - 5 - radius * 1.8
-        end_x = center[0] - 5 + radius * 1.8
-        start_y = center[1] - 12 - radius * 1.2913 * 1.8
-        end_y = center[1] - 12 + radius * 1.2913 * 1.8
+        # start_x = center[0] - 5 - radius * 1.8
+        # end_x = center[0] - 5 + radius * 1.8
+        # start_y = center[1] - 12 - radius * 1.2913 * 1.8
+        # end_y = center[1] - 12 + radius * 1.2913 * 1.8
+
+        start_x = center[0] - 5 - radius * 1.0
+        end_x = center[0] - 5 + radius * 1.0
+        start_y = center[1] - 12 - radius * 1.618 * 1.0
+        end_y = center[1] - 12 + radius * 1.618 * 1.0
 
         # x: 267, y: 662
         # x: 272, y: 674

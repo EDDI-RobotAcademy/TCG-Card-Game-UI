@@ -200,7 +200,9 @@ class YourDeckRepository:
             max_page_deck_object_list = max_page_deck.get_deck_page_card_object_list()
             del max_page_deck_object_list[-count:]
 
-
+    def request_use_call_of_leonic(self, call_of_leonic_request):
+        self.__transmitIpcChannel.put(call_of_leonic_request)
+        return self.__receiveIpcChannel.get()
 
 
     # def convert_to_list_index(self, page_number, index_on_page):
