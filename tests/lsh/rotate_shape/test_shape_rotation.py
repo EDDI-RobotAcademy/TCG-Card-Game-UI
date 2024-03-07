@@ -41,7 +41,7 @@ class RectDrawingApp(OpenGLFrame):
             self.animate_rotation()
 
 class TestAppWindow(unittest.TestCase):
-    def test_opengl_basic(self):
+    def test_rotate_basic(self):
         root = tk.Tk()
         root.title("OpenGL Rectangle Drawing")
 
