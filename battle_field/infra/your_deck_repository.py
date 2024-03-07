@@ -207,6 +207,10 @@ class YourDeckRepository:
         self.__transmitIpcChannel.put(call_of_leonic_request)
         return self.__receiveIpcChannel.get()
 
+    def request_use_swamp_of_dead(self, use_swamp_of_dead_request):
+        self.__transmitIpcChannel.put(use_swamp_of_dead_request)
+        return self.__receiveIpcChannel.get()
+
 
     # def convert_to_list_index(self, page_number, index_on_page):
     #     return page_number * 12 + index_on_page
