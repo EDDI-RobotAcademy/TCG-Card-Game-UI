@@ -118,6 +118,9 @@ class YourDeckRepository:
         self.current_deck_state.add_to_deck(deck_list)
         print(f"Saved current deck state: {deck_list}")
 
+    def clear_deck_state(self):
+        self.current_deck_state.clear_deck()
+
     def get_current_deck_state_object(self):
         return self.current_deck_state
 
