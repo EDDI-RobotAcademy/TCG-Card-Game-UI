@@ -146,6 +146,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
 
     # protocolNumber: 1000번(기본 공격)
     def basicAttackToUnit(self, notify_dict_data):
+    
         is_my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
         if is_my_turn is True:
             return
@@ -198,6 +199,155 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
     #     TOdo
     #      You     : index:피격 유닛 hp:피격 유닛의 체력 harmful_status: 피격 유닛의 해로윤 효과 death:유닛의 인덱스가 있거나 빈 리스트
     #      Opponent: index:공격 유닛 hp:공격 유닛의 체력 harmful_status: 공격 유닛의 해로윤 효과 death:유닛의 인덱스가 있거나 빈 리스트
+
+
+
+    # protocolNumber: 1006번(즉사 아이템 사용 - 죽음의 낫)
+    def use_instant_unit_death_item_card(self, notify_dict_data):
+        # 1006 = {"NOTIFY_USE_INSTANT_UNIT_DEATH_ITEM_CARD":
+        #     {"player_hand_use_map":
+        #          {"Opponent": {"card_id": 8, "card_kind": 2}},
+        #     "player_field_unit_health_point_map":
+        #         {"You": {"field_unit_health_point_map": {"0": 0}}},
+        #     "player_field_unit_death_map":
+        #          {"You": {"dead_field_unit_index_list": [0]}}}}
+        print(f"useInstantUnitDeathItemCard() -> notify_dict_data: {notify_dict_data}")
+
+        # if self.__notify
+        card_id = (notify_dict_data.get("USE_INSTANT_UNIT_DEATH_ITEM_CARD", {})
+                   .get("player_hand_use_map", {})
+                   .get("Opponent", {})
+                   .get("card_id", None))
+
+        # if self.__
+        card_kind = (notify_dict_data.get("USE_INSTANT_UNIT_DEATH_ITEM_CARD", {})
+                     .get("player_hand_use_map", {})
+                     .get("Opponent", {})
+                     .get("card_kind", None))
+
+        # if self.__notify
+        field_unit_health_point_map = (notify_dict_data.get("USE_INSTANT_UNIT_DEATH_ITEM_CARD", {})
+                                       .get("player_field_unit_health_point_map", {})
+                                       .get("You", {})
+                                       .get("0", None))
+
+        # if self.__notify
+        dead_field_unit_index_list = (notify_dict_data.get("USE_INSTANT_UNIT_DEATH_ITEM_CARD", {})
+                                      .get("player_field_unit_death_map", {})
+                                      .get("You", {})
+                                      .get(None))
+
+    # protocolNumber: 1008번(상대 필드 에너지 제거 서포트 사용 - 죽음의 대지)
+    def use_field_energy_support_card(self, notify_dict_data):
+        #     1008 = {"NOTIFY_USE_FIELD_ENERGY_REMOVE_SUPPORT_CARD":
+        #         {"player_hand_use_map":
+        #         {"Opponent": {"card_id": 36, "card_kind": 4}},
+        #
+        #         "player_field_energy_map":
+        #         {"You": 2}}}
+        print(f"useFieldEnergySupportCard() -> notify_dict_data: {notify_dict_data}")
+
+        # if self.__notify
+
+        card_id = (notify_dict_data.get("NOTIFY_USE_FIELD_ENERGY_REMOVE_SUPPORT_CARD", {})
+                   .get("player_hand_use_map", {})
+                   .get("Opponent", {})
+                   .get("card_id", None))
+
+        card_kind = (notify_dict_data.get("NOTIFY_USE_FIELD_ENERGY_REMOVE_SUPPORT_CARD", {})
+                     .get("player_hand_use_map", {})
+                     .get("Opponent", {})
+                     .get("card_kind", None))
+
+        # if self.__notify
+        you = (notify_dict_data.get("NOTIFY_USE_FIELD_ENERGY_REMOVE_SUPPORT_CARD", {})
+               .get("player_field_energy_map", {})
+               .get("You", None))
+
+    # protocolNumber: 1009번(필드 에너지 충전 아이템 사용 - 사기 전환)
+    def use_general_energy_card_to_unit(self, notify_dict_data):
+        # 1009 = {"NOTIFY_USE_FIELD_ENERGY_INCREASE_ITEM_CARD":
+        #        {"player_hand_use_map":
+        #        {"Opponent": {"card_id": 35, "card_kind": 2}},
+        #
+        #        "player_field_energy_map":
+        #        {"Opponent": 12}}}
+        print(f"use_general_energy_card_to_unit() -> notify_dict_data: {notify_dict_data}")
+
+        # if self.__notify_
+
+        card_id = (notify_dict_data.get("NOTIFY_USE_FIELD_ENERGY_INCREASE_ITEM_CARD", {})
+                   .get("player_hand_use_map", {})
+                   .get("Opponent", {})
+                   .get("card_id", None))
+
+        # if self.__notify_
+
+        card_kind = (notify_dict_data.get("NOTIFY_USE_FIELD_ENERGY_INCREASE_ITEM_CARD", {})
+                     .get("player_hand_use_map", {})
+                     .get("You", {})
+                     .get("card_kind", None))
+
+        # if self.__notify_
+        opponent = (notify_dict_data.get("NOTIFY_USE_FIELD_ENERGY_INCREASE_ITEM_CARD", {})
+                    .get("player_hand_use_map", {})
+                    .get("Opponent", None))
+
+    # protocolNumber: 1011번(검색 서포트 카드 사용 - 30 (레오닉의 부름))
+    def use_search_deck_support_card(self, notify_dict_data):
+        # 1011 = {"NOTIFY_USE_SEARCH_DECK_SUPPORT_CARD":
+        #        {"player_hand_use_map":
+        #        {"Opponent": {"card_id": 30, "card_kind": 4}},
+        #
+        #        "player_search_count_map": {"Opponent": 1}}}
+        print(f"use_search_deck_support_card() -> notify_dict_data: {notify_dict_data}")
+
+        # if self.__notify_
+
+        card_id = (notify_dict_data.get("NOTIFY_USE_SEARCH_DECK_SUPPORT_CARD", {})
+                   .get("player_hand_use_map", {})
+                   .get("Opponent", {})
+                   .get("card_id", None))
+
+        # if self.__notify_
+        card_kind = (notify_dict_data.get("NOTIFY_USE_SEARCH_DECK_SUPPORT_CARD", {})
+                     .get("player_hand_use_map", {})
+                     .get("Opponent", {})
+                     .get("card_kind", None))
+
+        # if self.__notify_
+        opponent = (notify_dict_data.get("NOTIFY_USE_SEARCH_DECK_SUPPORT_CARD", {})
+                    .get("player_hand_use_map", {})
+                    .get("Opponent", None))
+
+    # protocolNumber: 1013번(드로우 서포트 카드 사용 - 망자의 늪)
+    def use_draw_support_card(self, notify_dict_data):
+        # 1013 = {"NOTIFY_USE_DRAW_SUPPORT_CARD":
+        #            {"player_hand_use_map":
+        #            {"Opponent": {"card_id": 20, "card_kind": 4}},
+        #
+        #            "player_draw_count_map":
+        #            {"Opponent": 3}}}
+        print(f"use_draw_support_card() -> notify_dict_data: {notify_dict_data}")
+        # if self.__notify_
+
+        card_id = (notify_dict_data.get("NOTIFY_USE_DRAW_SUPPORT_CARD", {})
+                   .get("player_hand_use_map", {})
+                   .get("Opponent", {})
+                   .get("card_id", None))
+
+        # if self.__notify_
+
+        card_kind = (notify_dict_data.get("NOTIFY_USE_DRAW_SUPPORT_CARD", {})
+                     .get("player_hand_use_map", {})
+                     .get("Opponent", {})
+                     .get("card_kind", None))
+
+        # if self.__notify_
+
+        opponent = (notify_dict_data.get("NOTIFY_USE_DRAW_SUPPORT_CARD", {})
+                    .get("player_hand_use_map", {})
+                    .get("Opponent", None))
 
     def spawnOpponentUnit(self, notify_dict_data):
         print(f"Spawn Opponent: {notify_dict_data}")
