@@ -44,6 +44,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 cls.__instance.__battle_field_function_service.useSpecialEnergyCardToUnit)
             cls.__instance.notify_callback_table['NOTIFY_USE_UNIT_ENERGY_REMOVE_ITEM_CARD'] = (
                 cls.__instance.__battle_field_function_service.useUnitEnergyRemoveItemCard)
+            cls.__instance.notify_callback_table['NOTIFY_BASIC_ATTACK_TO_MAIN_CHARACTER'] = (
+                cls.__instance.__battle_field_function_service.basicAttackToMainCharacter)
 
 
         return cls.__instance
