@@ -44,4 +44,8 @@ class FakeBattleFieldFrameRepositoryImpl(FakeBattleFieldFrameRepository):
         self.__transmitIpcChannel.put(requestRealBattleStart)
         return self.__receiveIpcChannel.get()
 
+    def request_fake_multi_draw(self, fakeMultiDrawRequest):
+        self.__transmitIpcChannel.put(fakeMultiDrawRequest)
+        return self.__receiveIpcChannel.get()
+
 

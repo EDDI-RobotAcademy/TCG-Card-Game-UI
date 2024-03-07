@@ -54,6 +54,7 @@ class CustomProtocol(Enum):
     PROGRAM_EXIT = 4444
 
     CREATE_FAKE_BATTLE_ROOM = 8001
+    FAKE_MULTI_DRAW = 8003
 
 
 
