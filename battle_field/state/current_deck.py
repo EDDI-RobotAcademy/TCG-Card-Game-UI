@@ -10,6 +10,9 @@ class CurrentDeckState:
         for card in card_list:
             self.current_deck_list.append(card)
 
+    def clear_deck(self):
+        self.current_deck_list = []
+
     # def add_to_deck(self, *cards):
     #     self.current_deck_list.extend(cards)
 

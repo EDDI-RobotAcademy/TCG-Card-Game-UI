@@ -3277,11 +3277,25 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     # print(f"will_remove_index_from_deck: {will_remove_index_from_deck}")
                     # self.your_deck_repository
 
+                    # search_request_index_list = []
+                    #
+                    # processing_length = len(self.selected_search_unit_index_list)
+                    # for index in range(processing_length):
+                    #     search_request_index_list.append(
+                    #         self.selected_search_unit_index_list[index] + 12 *
+                    #         self.selected_search_unit_page_number_list[index])
+
+                    search_request_index_list = [
+                        str(index + 12 * page_number)
+                        for index, page_number in
+                        zip(self.selected_search_unit_index_list, self.selected_search_unit_page_number_list)
+                    ]
+
                     response = self.your_deck_repository.request_use_call_of_leonic(
                         RequestUseCallOfLeonic(
-                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
-                            _supportCardId=30,
-                            _targetUnitCardIndexList=self.selected_search_unit_index_list)
+                            _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                            _supportCardId="30",
+                            _targetUnitCardIndexList=search_request_index_list)
                     )
                     print(f"{Fore.RED}call_of_leonic -> response:{Fore.GREEN} {response}{Style.RESET_ALL}")
                     is_success_value = response.get('is_success', False)
@@ -3637,6 +3651,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.your_hand_repository.update_your_hand()
 
                 deck_card_list = muligunResponseData['updated_deck_card_list']
+                # self.your_deck_repository.clear_deck_state()
+                self.your_deck_repository.update_deck(deck_card_list)
 
                 return
 

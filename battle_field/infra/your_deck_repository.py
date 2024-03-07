@@ -118,6 +118,9 @@ class YourDeckRepository:
         self.current_deck_state.add_to_deck(deck_list)
         print(f"Saved current deck state: {deck_list}")
 
+    def clear_deck_state(self):
+        self.current_deck_state.clear_deck()
+
     def get_current_deck_state_object(self):
         return self.current_deck_state
 
@@ -202,6 +205,10 @@ class YourDeckRepository:
 
     def request_use_call_of_leonic(self, call_of_leonic_request):
         self.__transmitIpcChannel.put(call_of_leonic_request)
+        return self.__receiveIpcChannel.get()
+
+    def request_use_swamp_of_dead(self, use_swamp_of_dead_request):
+        self.__transmitIpcChannel.put(use_swamp_of_dead_request)
         return self.__receiveIpcChannel.get()
 
 
