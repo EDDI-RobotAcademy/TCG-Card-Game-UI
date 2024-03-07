@@ -3521,13 +3521,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
         round = self.round_repository.get_current_round_number()
         print(f"current round: {round}")
 
-        before_turn_end_field_energy_count = self.your_field_energy_repository.get_your_field_energy()
-        print(f"before_turn_end_field_energy_count: {before_turn_end_field_energy_count}")
-
-        self.your_field_energy_repository.increase_your_field_energy(1)
-
-        after_turn_end_field_energy_count = self.your_field_energy_repository.get_your_field_energy()
-        print(f"after_turn_end_field_energy_count: {after_turn_end_field_energy_count}")
+        # before_turn_end_field_energy_count = self.your_field_energy_repository.get_your_field_energy()
+        # print(f"before_turn_end_field_energy_count: {before_turn_end_field_energy_count}")
+        #
+        # self.your_field_energy_repository.increase_your_field_energy(1)
+        #
+        # after_turn_end_field_energy_count = self.your_field_energy_repository.get_your_field_energy()
+        # print(f"after_turn_end_field_energy_count: {after_turn_end_field_energy_count}")
 
         current_your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
         for current_your_field_unit in current_your_field_unit_list:

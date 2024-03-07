@@ -4,6 +4,7 @@ import tkinter
 
 from decouple import config
 
+from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
@@ -73,6 +74,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             cls.__instance.__notify_reader_repository = NotifyReaderRepositoryImpl.getInstance()
 
             cls.__instance.__yourFieldEnergyRepository = YourFieldEnergyRepository.getInstance()
+            cls.__instance.__opponentFieldEnergyRepository = OpponentFieldEnergyRepository.getInstance()
         return cls.__instance
 
     @classmethod
@@ -272,6 +274,11 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                 print(f"opponent real_battle_start_response: {real_battle_start_response}")
 
                 self.__fakeOpponentHandRepository.save_fake_opponent_hand_list(opponent_hand_card_list)
+
+                opponent_field_energy = real_battle_start_response['player_field_energy_map']['Opponent']
+                print(f"opponent_field_energy: {opponent_field_energy}")
+
+                self.__opponentFieldEnergyRepository.increase_opponent_field_energy(opponent_field_energy)
 
             switchFrameWithMenuName("fake-battle-field")
 

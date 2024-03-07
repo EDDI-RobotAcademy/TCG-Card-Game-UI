@@ -2,7 +2,9 @@ import json
 
 from colorama import Fore, Style
 
+from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
+from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field_function.service.battle_field_function_service_impl import BattleFieldFunctionServiceImpl
 from fake_battle_field.infra.fake_opponent_hand_repository import FakeOpponentHandRepositoryImpl
@@ -23,6 +25,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.__battle_field_function_service = BattleFieldFunctionServiceImpl.getInstance()
 
             cls.__instance.__opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
+            cls.__instance.__opponent_field_energy_repository = OpponentFieldEnergyRepository.getInstance()
+            cls.__instance.__your_field_energy_repository = YourFieldEnergyRepository.getInstance()
             cls.__instance.__your_hand_repository = YourHandRepository.getInstance()
             cls.__instance.__fake_opponent_hand_repository = FakeOpponentHandRepositoryImpl.getInstance()
 
@@ -130,17 +134,31 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         print(f"{Fore.RED}notify_turn_end() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
 
         if whose_turn is False:
-            your_drawn_card_list_you = notice_dictionary['NOTIFY_TURN_END']['player_drawn_card_list_map'].get('You', [])
-            self.__fake_opponent_hand_repository.save_fake_opponent_hand_list(your_drawn_card_list_you)
+            # Fake Opponent Draw
+            opponent_drawn_card_list = notice_dictionary['NOTIFY_TURN_END']['player_drawn_card_list_map'].get('You', [])
+            self.__fake_opponent_hand_repository.save_fake_opponent_hand_list(opponent_drawn_card_list)
             fake_opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
             print(f"{Fore.RED}notify_turn_end() -> fake opponent hand list:{Fore.GREEN} {fake_opponent_hand_list}{Style.RESET_ALL}")
+
+            fake_opponent_field_energy = notice_dictionary['NOTIFY_TURN_END']['player_field_energy_map'].get('You', [])
+            self.__opponent_field_energy_repository.set_opponent_field_energy(fake_opponent_field_energy)
+            print(f"{Fore.RED}notify_turn_end() -> fake opponent_field_energy:{Fore.GREEN} {fake_opponent_field_energy}{Style.RESET_ALL}")
+
+            opponent_field_energy_count = self.__opponent_field_energy_repository.get_opponent_field_energy()
+            print(f"{Fore.RED}opponent_field_energy_count:{Fore.GREEN} {opponent_field_energy_count}{Style.RESET_ALL}")
+
             return
 
         self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(True)
 
-        your_drawn_card_list_you = notice_dictionary['NOTIFY_TURN_END']['player_drawn_card_list_map'].get('You', [])
-        self.__your_hand_repository.save_current_hand_state(your_drawn_card_list_you)
+        # Your Draw
+        your_drawn_card_list = notice_dictionary['NOTIFY_TURN_END']['player_drawn_card_list_map'].get('You', [])
+        self.__your_hand_repository.save_current_hand_state(your_drawn_card_list)
         self.__your_hand_repository.update_your_hand()
+
+        your_field_energy = notice_dictionary['NOTIFY_TURN_END']['player_field_energy_map'].get('You', [])
+        self.__your_field_energy_repository.set_your_field_energy(your_field_energy)
+        print(f"{Fore.RED}notify_turn_end() -> your_field_energy:{Fore.GREEN} {your_field_energy}{Style.RESET_ALL}")
 
         # if self.__notify_reader_repository.get_is_your_turn_for_check_fake_process() is True:
         #     return
