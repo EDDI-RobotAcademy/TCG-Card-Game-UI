@@ -73,4 +73,3 @@ class OpponentFieldEnergy:
         self.opponent_field_energy_panel.set_image_data(
             self.__pre_drawed_image.get_pre_draw_field_energy(
                 opponent_field_energy_count))
-
