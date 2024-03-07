@@ -3874,3 +3874,34 @@ class FakeBattleFieldFrame(OpenGLFrame):
     #         local_translation=opponent_fixed_card_base.get_local_translation())
     #     opponent_fixed_card_base.set_attached_shapes(card_race_circle)
 
+    def damage_to_your_field_unit(self, field_unit_info):
+
+        for dead_field_unit_index in field_unit_info["dead_field_unit_index_list"]:
+            self.your_tomb_repository.create_tomb_card(
+                self.your_field_unit_repository.find_field_unit_by_index(dead_field_unit_index).get_card_number())
+            self.your_field_unit_repository.remove_card_by_index(dead_field_unit_index)
+            self.your_field_unit_repository.replace_field_card_position()
+
+
+        try:
+            your_unit_index = field_unit_info['field_unit_index']
+
+            your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(your_unit_index)
+
+            your_fixed_card_base = your_field_unit.get_fixed_card_base()
+            your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+
+            for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+                if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                    if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+
+                        hp_number = your_fixed_card_attached_shape.get_number()
+                        hp_number -= 10
+
+                        your_fixed_card_attached_shape.set_image_data(
+                            self.pre_drawed_image_instance.get_pre_draw_unit_hp(
+                                hp_number))
+
+                        print(f"changed energy: {your_fixed_card_attached_shape.get_circle_kinds()}")
+        except Exception as e:
+            print(f"error occured!! : {e}")

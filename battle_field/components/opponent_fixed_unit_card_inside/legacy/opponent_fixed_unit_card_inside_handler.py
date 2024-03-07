@@ -161,6 +161,7 @@ class LegacyOpponentFixedUnitCardInsideHandler:
         print("energy_burn")
 
         opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(unit_index)
+        print(f"opponent_field_unit: {opponent_field_unit}")
 
         detach_count = 2
         total_attached_energy_count = self.__opponent_field_unit_repository.get_total_energy_at_index(unit_index)
@@ -169,52 +170,77 @@ class LegacyOpponentFixedUnitCardInsideHandler:
         # attached_energy = self.__opponent_field_unit_repository.attached_energy_info.get(unit_index, [])
 
         if total_attached_energy_count == 0:
-            detach_count = 0
-        elif total_attached_energy_count == 1:
-            detach_count = 1
+            print("데미지를 입힙니다.")
+            remove_from_field = False
+            opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+            opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+            for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                if isinstance(opponent_fixed_card_attached_shape, CircleNumberImage):
+                    if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                        hp = opponent_fixed_card_attached_shape.get_number()
+                        hp -= 10
+                        print(f"hp : {hp}")
 
-        attached_energy_after_energy_burn = total_attached_energy_count - detach_count
-        if attached_energy_after_energy_burn < 0:
-            attached_energy_after_energy_burn = 0
+                        if hp <= 0:
+                            remove_from_field = True
+                            break
 
-        opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
-        opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+                        opponent_fixed_card_attached_shape.set_image_data(
+                            self.__pre_drawed_image_instance.get_pre_draw_unit_hp(hp))
 
-        energy_circle_list = []
-        energy_circle_index_list = []
-        count = 0
+            if remove_from_field:
+                self.__opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
+                self.__opponent_tomb_repository.create_opponent_tomb_card(placed_card_id)
 
-        for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
-            if isinstance(opponent_fixed_card_attached_shape, CircleNumberImage):
-                if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
-                    opponent_fixed_card_attached_shape.set_image_data(
-                        self.__pre_drawed_image_instance.get_pre_draw_number_image(
-                            attached_energy_after_energy_burn))
+                self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
-            if isinstance(opponent_fixed_card_attached_shape, Circle):
-                energy_circle_index_list.append(count)
-                print(f"Energy burn opponent unit vertices: {opponent_fixed_card_attached_shape.get_vertices()}")
-                energy_circle_list.append(opponent_fixed_card_attached_shape)
+        else:
+            print("에너지를 태웁니다.")
+            if total_attached_energy_count == 1:
+                detach_count = 1
 
-                del opponent_fixed_card_attached_shape
+            attached_energy_after_energy_burn = total_attached_energy_count - detach_count
+            if attached_energy_after_energy_burn < 0:
+                attached_energy_after_energy_burn = 0
 
-            count += 1
+            opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+            opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
 
-        energy_circle_index_list.reverse()
-        for index in energy_circle_index_list:
-            if 0 <= index < len(opponent_fixed_card_attached_shape_list):
-                if detach_count == 0:
-                    break
+            energy_circle_list = []
+            energy_circle_index_list = []
+            count = 0
 
-                del opponent_fixed_card_attached_shape_list[index]
-                detach_count -= 1
+            for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                if isinstance(opponent_fixed_card_attached_shape, CircleNumberImage):
+                    if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+                        opponent_fixed_card_attached_shape.set_image_data(
+                            self.__pre_drawed_image_instance.get_pre_draw_number_image(
+                                attached_energy_after_energy_burn))
 
-        # energy_circle_list.reverse()
-        # extract_energy_circle = energy_circle_list[:2]
-        # print(f"energy_circle_list: {extract_energy_circle}")
-        #
-        # opponent_fixed_card_attached_shape_list = [shape for shape in opponent_fixed_card_attached_shape_list if shape not in extract_energy_circle]
-        # print(f"opponent_fixed_card_attached_shape_list: {opponent_fixed_card_attached_shape_list}")
+                if isinstance(opponent_fixed_card_attached_shape, Circle):
+                    energy_circle_index_list.append(count)
+                    print(f"Energy burn opponent unit vertices: {opponent_fixed_card_attached_shape.get_vertices()}")
+                    energy_circle_list.append(opponent_fixed_card_attached_shape)
+
+                    del opponent_fixed_card_attached_shape
+
+                count += 1
+
+            energy_circle_index_list.reverse()
+            for index in energy_circle_index_list:
+                if 0 <= index < len(opponent_fixed_card_attached_shape_list):
+                    if detach_count == 0:
+                        break
+
+                    del opponent_fixed_card_attached_shape_list[index]
+                    detach_count -= 1
+
+            # energy_circle_list.reverse()
+            # extract_energy_circle = energy_circle_list[:2]
+            # print(f"energy_circle_list: {extract_energy_circle}")
+            #
+            # opponent_fixed_card_attached_shape_list = [shape for shape in opponent_fixed_card_attached_shape_list if shape not in extract_energy_circle]
+            # print(f"opponent_fixed_card_attached_shape_list: {opponent_fixed_card_attached_shape_list}")
 
         self.__your_hand_repository.remove_card_by_index(placed_card_index)
         self.__your_tomb_repository.create_tomb_card(placed_card_id)
