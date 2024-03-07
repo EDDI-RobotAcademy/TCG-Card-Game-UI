@@ -3,6 +3,7 @@ from colorama import Fore, Style
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
 from battle_field.infra.request.request_use_death_sice_to_unit import RequestUseDeathSiceToUnit
+from battle_field.infra.request.request_use_energy_burn_to_unit import RequestUseEnergyBurnToUnit
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
@@ -140,7 +141,7 @@ class OpponentFixedUnitCardInsideHandler:
                 self.handle_inside_field_unit(selected_object, opponent_unit_index)
                 self.__opponent_unit_id = opponent_field_unit.get_card_number()
                 print("handle_pickable_card_inside_unit -> True")
-                return True
+                return (opponent_field_unit, opponent_unit_index)
 
         print("handle_pickable_card_inside_unit -> False")
         return False
@@ -167,6 +168,22 @@ class OpponentFixedUnitCardInsideHandler:
 
     def energy_burn(self, placed_card_index, unit_index, placed_card_id):
         print("energy_burn")
+        try:
+
+            energy_burn_response = self.__your_hand_repository.request_use_energy_burn_to_unit(
+                RequestUseEnergyBurnToUnit(
+                    _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                    _itemCardId=placed_card_id,
+                    _opponentTargetUnitIndex=unit_index)
+                )
+            if energy_burn_response.get('is_success', False) is True:
+                print(f"energy burn response : {energy_burn_response}")
+            else:
+                print(f"use energy burn false!! ")
+                return
+        except Exception as e:
+            print(f"energy burn error : {e}")
+            return
 
         opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(unit_index)
 

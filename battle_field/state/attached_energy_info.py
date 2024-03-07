@@ -19,6 +19,7 @@ class AttachedEnergyInfoState:
     #     return self.attached_energy_info[index][energy_type]
 
     def add_race_energy_at_index(self, index, energy_type, energy_quantity):
+        print(f"first elf.attached_energy_info: {self.attached_energy_info}")
         if index not in self.attached_energy_info:
             self.attached_energy_info[index] = []
         print(f"add_race_energy_at_index() -> self.attached_energy_info: {self.attached_energy_info}")

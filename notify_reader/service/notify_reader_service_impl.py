@@ -34,6 +34,11 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.notify_callback_table['NOTIFY_TURN_END'] = cls.__instance.notify_turn_end
             cls.__instance.notify_callback_table['NOTIFY_USE_GENERAL_ENERGY_CARD_TO_UNIT'] = (
                 cls.__instance.__battle_field_function_service.useGeneralEnergyCardToUnit)
+            cls.__instance.notify_callback_table['NOTIFY_USE_SPECIAL_ENERGY_CARD_TO_UNIT'] = (
+                cls.__instance.__battle_field_function_service.useSpecialEnergyCardToUnit)
+            cls.__instance.notify_callback_table['NOTIFY_USE_UNIT_ENERGY_REMOVE_ITEM_CARD'] = (
+                cls.__instance.__battle_field_function_service.useUnitEnergyRemoveItemCard)
+
 
         return cls.__instance
 
