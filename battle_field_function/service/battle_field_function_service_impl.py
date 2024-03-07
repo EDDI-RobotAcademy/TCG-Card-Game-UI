@@ -8,6 +8,7 @@ from battle_field_function.service.request.game_end_reward_request import GameEn
 from battle_field_function.service.request.surrender_request import SurrenderRequest
 from battle_field_function.service.request.turn_end_request import TurnEndRequest
 from common.card_race import CardRace
+from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
 
 from session.repository.session_repository_impl import SessionRepositoryImpl
 from session.service.session_service_impl import SessionServiceImpl
@@ -26,6 +27,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             cls.__instance.__sessionService = SessionServiceImpl.getInstance()
             cls.__instance.__yourHandRepository = CircleImageLegacyYourHandRepository.getInstance()
             cls.__instance.__battle_field_repository = BattleFieldRepository.getInstance()
+            cls.__instance.__notify_reader_repository = NotifyReaderRepositoryImpl.getInstance()
             # cls.__instance.__opponentHandRepository = OpponentHandRepository.getInstance()
         return cls.__instance
 
@@ -144,6 +146,10 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
 
     # protocolNumber: 1000번(기본 공격)
     def basicAttackToUnit(self, notify_dict_data):
+    
+        is_my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        if is_my_turn is True:
+            return
 
         your_field_unit_hp_index = None
         your_field_unit_hp = None
@@ -366,6 +372,12 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
                   "character_survival": character_survival}
 
     def useUnitEnergyRemoveItemCard(self, _notify_dict_data):
+
+        is_my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        print(f"is my turn: {is_my_turn}")
+        if is_my_turn is True:
+            return
+
         notify_dict_data = _notify_dict_data['NOTIFY_USE_UNIT_ENERGY_REMOVE_ITEM_CARD']
         print(notify_dict_data)
 
@@ -436,9 +448,15 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
                 "dead_field_unit_index_list": dead_field_unit_index_list
             }
 
+            self.preDrawedBattleFieldFrame.damage_to_your_field_unit(result)
+
         print(result)
 
     def useMultipleUnitDamageItemCard(self, notify_dict_data):
+
+        is_my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        if is_my_turn is True:
+            return
 
         hand_use_card_id = int(notify_dict_data.get("player_hand_use_map", {})
                                .get("Opponent", {})
@@ -471,6 +489,11 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
         }
 
     def useSpecialEnergyCardToUnit(self, _notify_dict_data):
+
+        is_my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        if is_my_turn is True:
+            return
+
         notify_dict_data = _notify_dict_data['NOTIFY_USE_SPECIAL_ENERGY_CARD_TO_UNIT']
 
         hand_use_card_id = int(notify_dict_data.get("player_hand_use_map", {})
@@ -512,6 +535,11 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
         print(f"special energy notify result : {result}")
 
     def useGeneralEnergyCardToUnit(self, _notify_dict_data):
+
+        is_my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        if is_my_turn is True:
+            return
+
         print("use General Energy Card To Unit!! ", _notify_dict_data)
         notify_dict_data = _notify_dict_data["NOTIFY_USE_GENERAL_ENERGY_CARD_TO_UNIT"]
         print(f"notify dict data: {notify_dict_data}")
