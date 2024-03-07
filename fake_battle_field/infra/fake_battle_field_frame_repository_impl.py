@@ -48,4 +48,7 @@ class FakeBattleFieldFrameRepositoryImpl(FakeBattleFieldFrameRepository):
         self.__transmitIpcChannel.put(fakeMultiDrawRequest)
         return self.__receiveIpcChannel.get()
 
+    def request_attack_main_character(self, attackMainCharacterRequest):
+        self.__transmitIpcChannel.put(attackMainCharacterRequest)
+        return self.__receiveIpcChannel.get()
 

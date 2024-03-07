@@ -86,6 +86,7 @@ from fake_battle_field.entity.muligun_reset_button import MuligunResetButton
 from fake_battle_field.entity.multi_draw_button import MultiDrawButton
 from fake_battle_field.infra.fake_battle_field_frame_repository_impl import FakeBattleFieldFrameRepositoryImpl
 from fake_battle_field.infra.fake_opponent_hand_repository import FakeOpponentHandRepositoryImpl
+from fake_battle_field.service.request.attack_main_character_request import RequestAttackMainCharacter
 from fake_battle_field.service.request.call_of_leonic_request import RequestUseCallOfLeonic
 from fake_battle_field.service.request.fake_multi_draw_request import FakeMultiDrawRequest
 from fake_battle_field.service.request.fake_opponent_deploy_unit_request import FakeOpponentDeployUnitRequest
@@ -2713,6 +2714,19 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     print("메인 캐릭터 공격")
 
                     your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
+
+                    response = self.__fake_battle_field_frame_repository.request_attack_main_character(
+                        RequestAttackMainCharacter(
+                            _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                            _attacker_unit_index=your_field_card_index,
+                            _target_game_main_character_index="0")
+                    )
+                    print(f"{Fore.RED}attack main character -> response:{Fore.GREEN} {response}{Style.RESET_ALL}")
+                    is_success_value = response.get('is_success', False)
+
+                    if is_success_value == False:
+                        return
+
                     self.your_field_unit_action_repository.use_field_unit_action_count_by_index(your_field_card_index)
 
                     your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
