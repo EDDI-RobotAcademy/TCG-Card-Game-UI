@@ -361,4 +361,6 @@ class YourHandRepository:
         self.__transmitIpcChannel.put(use_energy_burn_to_unit_request)
         return self.__receiveIpcChannel.get()
 
-
+    def request_use_corpse_explosion(self, use_corpse_explosion_request):
+        self.__transmitIpcChannel.put(use_corpse_explosion_request)
+        return self.__receiveIpcChannel.get()

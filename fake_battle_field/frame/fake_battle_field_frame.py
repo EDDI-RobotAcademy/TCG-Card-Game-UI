@@ -53,6 +53,7 @@ from battle_field.infra.opponent_lost_zone_repository import OpponentLostZoneRep
 
 from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
 from battle_field.infra.request.request_attach_field_energy_to_unit import RequestAttachFieldEnergyToUnit
+from battle_field.infra.request.request_use_corpse_explosion import RequestUseCorpseExplosion
 from battle_field.infra.request.request_use_energy_burn_to_unit import RequestUseEnergyBurnToUnit
 from battle_field.infra.request.request_use_energy_card_to_unit import RequestUseEnergyCardToUnit
 
@@ -703,6 +704,32 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     break
 
+        if key.lower() == '6':
+            opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
+            print(f"opponent hand list : {opponent_hand_list}")
+            for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
+                if opponent_hand == 33:
+                    print("상대방 시폭 사용~ ")
+
+                    response = self.your_hand_repository.request_use_corpse_explosion(
+                        RequestUseCorpseExplosion(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _itemCardId = 33,
+                            _opponentTargetUnitIndexList = ["0","1"],
+                            _unitIndex = "0"
+                        )
+
+                    )
+                    print(f"use corpse explosion response: {response}")
+                    is_success_value = response.get('is_success', False)
+
+                    if is_success_value == False:
+                        return
+
+                    self.__fake_opponent_hand_repository.remove_card_by_index(opponent_hand_index)
+
+                    break
+
 
 
         if key.lower() == 'kp_enter':
@@ -925,7 +952,30 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.opponent_field_energy_repository.decrease_opponent_field_energy()
 
         if key.lower() == 'd':
-            self.your_hp_repository.take_damage()
+            opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+            print(f"opponent_field_unit_list : {opponent_field_unit_list}")
+            for opponent_field_index, opponent_unit in enumerate(opponent_field_unit_list):
+                total_energy = self.opponent_field_unit_repository.get_total_energy_at_index(opponent_field_index)
+                print(total_energy)
+                race_energy = self.opponent_field_unit_repository.get_energy_info_at_index(opponent_field_index)
+                print(race_energy)
+
+                if total_energy >= 1:
+                    print("상대방 평타공격~ ")
+
+                    response = self.__fake_battle_field_frame_repository.request_attack_main_character(
+                        RequestAttackMainCharacter(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _attacker_unit_index=opponent_field_index,
+                            _target_game_main_character_index="0")
+                    )
+                    print(f"{Fore.RED}attack main character -> response:{Fore.GREEN} {response}{Style.RESET_ALL}")
+                    is_success_value = response.get('is_success', False)
+
+                    if is_success_value == False:
+                        return
+
+                    break
 
         if key.lower() == 'o':
             self.opponent_hp_repository.take_damage()
@@ -3365,6 +3415,26 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         print(f"selected_opponent_unit index: {opponent_field_unit_object.get_index()}")
 
                         if self.targeting_enemy_select_count == 0:
+                            opponent_you_selected_object_index_list = []
+                            for selected_object in  self.opponent_you_selected_object_list:
+                                opponent_you_selected_object_index_list.append(selected_object.get_index())
+
+                            corpse_explosion_response = self.your_hand_repository.request_use_corpse_explosion(
+                                RequestUseCorpseExplosion(
+                                    _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                                    _itemCardId=33,
+                                    _unitIndex=self.targeting_enemy_select_using_your_field_card_index,
+                                    _opponentTargetUnitIndexList=opponent_you_selected_object_index_list
+                                )
+                            )
+                            print(f"corpse_explosion_response : {corpse_explosion_response}")
+
+                            is_success_value = corpse_explosion_response.get('is_success', False)
+
+                            if is_success_value == False:
+
+                                return
+
                             remove_from_field_index_list = []
                             remove_from_field_id_list = []
 
@@ -3929,6 +3999,41 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             self.pre_drawed_image_instance.get_pre_draw_unit_hp(
                                 hp_number))
 
-                        print(f"changed energy: {your_fixed_card_attached_shape.get_circle_kinds()}")
+                        print(f"changed hp: {your_fixed_card_attached_shape.get_circle_kinds()}")
         except Exception as e:
             print(f"error occured!! : {e}")
+
+
+    def damage_to_multiple_unit_by_sacrifice(self, field_unit_info):
+
+        sacrifice_opponent_unit_index = field_unit_info['opponent_dead_field_unit_index_list'][0]
+        dead_your_unit_index_list = field_unit_info['your_dead_field_unit_index_list']
+        target_unit_index_list = field_unit_info['target_unit_index_list']
+        target_unit_hp_list = field_unit_info['target_unit_hp_list']
+        try:
+
+            self.opponent_field_unit_repository.remove_current_field_unit_card(sacrifice_opponent_unit_index)
+
+            for dead_your_unit_index in dead_your_unit_index_list:
+                self.your_field_unit_repository.remove_card_by_index(dead_your_unit_index)
+
+            for target_unit_index, target_unit_hp in zip(target_unit_index_list, target_unit_hp_list):
+                if target_unit_hp == 0:
+                    continue
+
+                your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(target_unit_index)
+
+                your_fixed_card_base = your_field_unit.get_fixed_card_base()
+                your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+
+                for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+                    if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                        if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                            your_fixed_card_attached_shape.set_image_data(
+                                self.pre_drawed_image_instance.get_pre_draw_unit_hp(
+                                    target_unit_hp))
+
+
+        except Exception as e:
+            print(f"notify corpse explision error!! : {e}")
+
