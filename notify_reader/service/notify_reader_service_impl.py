@@ -198,7 +198,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                     print(f"{Fore.RED}energy_key:{Fore.GREEN} {race_energy_number}{Style.RESET_ALL}")
                     print(f"{Fore.RED}energy_count:{Fore.GREEN} {race_energy_count}{Style.RESET_ALL}")
 
-                    self.__opponent_field_unit_repository.attach_race_energy(unit_index, EnergyType.Undead, race_energy_count)
+                    self.__opponent_field_unit_repository.attach_race_energy(int(unit_index), EnergyType.Undead, race_energy_count)
 
                     opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(int(unit_index))
 

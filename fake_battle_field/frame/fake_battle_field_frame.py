@@ -53,6 +53,7 @@ from battle_field.infra.opponent_lost_zone_repository import OpponentLostZoneRep
 
 from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
 from battle_field.infra.request.request_attach_field_energy_to_unit import RequestAttachFieldEnergyToUnit
+from battle_field.infra.request.request_use_corpse_explosion import RequestUseCorpseExplosion
 from battle_field.infra.request.request_use_energy_burn_to_unit import RequestUseEnergyBurnToUnit
 from battle_field.infra.request.request_use_energy_card_to_unit import RequestUseEnergyCardToUnit
 
@@ -933,7 +934,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 race_energy = self.opponent_field_unit_repository.get_energy_info_at_index(opponent_field_index)
                 print(race_energy)
 
-                if total_energy >= 0:
+                if total_energy >= 1:
                     print("상대방 평타공격~ ")
 
                     response = self.__fake_battle_field_frame_repository.request_attack_main_character(
@@ -3388,6 +3389,26 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         print(f"selected_opponent_unit index: {opponent_field_unit_object.get_index()}")
 
                         if self.targeting_enemy_select_count == 0:
+                            opponent_you_selected_object_index_list = []
+                            for selected_object in  self.opponent_you_selected_object_list:
+                                opponent_you_selected_object_index_list.append(selected_object.get_index())
+
+                            corpse_explosion_response = self.your_hand_repository.request_use_corpse_explosion(
+                                RequestUseCorpseExplosion(
+                                    _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                                    _itemCardId=33,
+                                    _unitIndex=self.targeting_enemy_select_using_your_field_card_index,
+                                    _opponentTargetUnitIndexList=opponent_you_selected_object_index_list
+                                )
+                            )
+                            print(f"corpse_explosion_response : {corpse_explosion_response}")
+
+                            is_success_value = corpse_explosion_response.get('is_success', False)
+
+                            if is_success_value == False:
+
+                                return
+
                             remove_from_field_index_list = []
                             remove_from_field_id_list = []
 
