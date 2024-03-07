@@ -83,7 +83,9 @@ from common.card_type import CardType
 from fake_battle_field.entity.animation_test_image import AnimationTestImage
 from fake_battle_field.entity.muligun_reset_button import MuligunResetButton
 from fake_battle_field.entity.multi_draw_button import MultiDrawButton
+from fake_battle_field.infra.fake_battle_field_frame_repository_impl import FakeBattleFieldFrameRepositoryImpl
 from fake_battle_field.infra.fake_opponent_hand_repository import FakeOpponentHandRepositoryImpl
+from fake_battle_field.service.request.fake_multi_draw_request import FakeMultiDrawRequest
 from fake_battle_field.service.request.fake_opponent_deploy_unit_request import FakeOpponentDeployUnitRequest
 from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
@@ -103,6 +105,7 @@ from session.repository.session_repository_impl import SessionRepositoryImpl
 class FakeBattleFieldFrame(OpenGLFrame):
     battle_field_function_controller = BattleFieldFunctionControllerImpl.getInstance()
 
+    __fake_battle_field_frame_repository = FakeBattleFieldFrameRepositoryImpl.getInstance()
     __fake_opponent_hand_repository = FakeOpponentHandRepositoryImpl.getInstance()
     __session_repository = SessionRepositoryImpl.getInstance()
     __notify_reader_repository = NotifyReaderRepositoryImpl.getInstance()
@@ -3432,8 +3435,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 deck_card_list = muligunResponseData['updated_deck_card_list']
 
-                self.your_deck_repository.save_deck_state(deck_card_list)
-
                 return
 
             self.multi_draw_button_clicked = self.is_point_inside_multi_draw_button(
@@ -3450,10 +3451,23 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.opponent_lost_zone_panel_selected = False
                 self.muligun_reset_button_clicked = False
 
-                # multi_draw_response = self.your_hand_repository.request_fake_multi_draw(
-                #     FakeMultiDrawRequest(self.__session_repository.get_first_fake_session_info()))
-                #
-                # print(f"{Fore.RED}multi_draw_response:{Fore.GREEN} {multi_draw_response}{Style.RESET_ALL}")
+                multi_draw_response = self.__fake_battle_field_frame_repository.request_fake_multi_draw(
+                    FakeMultiDrawRequest(self.__session_repository.get_first_fake_session_info()))
+
+                print(f"{Fore.RED}multi_draw_response:{Fore.GREEN} {multi_draw_response}{Style.RESET_ALL}")
+                multi_draw_hand_list = multi_draw_response['player_multi_drawn_card_list']['You']
+
+                self.your_hand_repository.save_current_hand_state(multi_draw_hand_list)
+                self.your_hand_repository.update_your_hand()
+
+                before_current_deck_list = self.your_deck_repository.get_current_deck_state_object().get_current_deck()
+                print(f"{Fore.RED}before multi draw -> before_current_deck_list:{Fore.GREEN} {before_current_deck_list}{Style.RESET_ALL}")
+
+                for _ in range(20):
+                    self.your_deck_repository.get_current_deck_state_object().draw_card()
+
+                after_current_deck_list = self.your_deck_repository.get_current_deck_state_object().get_current_deck()
+                print(f"{Fore.RED}after multi draw -> after_current_deck_list:{Fore.GREEN} {after_current_deck_list}{Style.RESET_ALL}")
 
             self.turn_end_button_selected = self.left_click_detector.which_one_select_is_in_turn_end_area(
                 (x, y),

@@ -262,6 +262,8 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
                 self.__fakeYourHandRepository.save_current_hand_state([your_draw_card_id])
 
+                self.__fakeYourDeckRepository.get_current_deck_state_object().draw_card()
+
                 your_field_energy = real_battle_start_response['player_field_energy_map']['You']
                 print(f"your_field_energy: {your_field_energy}")
 
