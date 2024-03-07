@@ -357,4 +357,8 @@ class YourHandRepository:
         self.__transmitIpcChannel.put(use_death_sice_to_unit_request)
         return self.__receiveIpcChannel.get()
 
+    def request_use_energy_burn_to_unit(self, use_energy_burn_to_unit_request):
+        self.__transmitIpcChannel.put(use_energy_burn_to_unit_request)
+        return self.__receiveIpcChannel.get()
+
 
