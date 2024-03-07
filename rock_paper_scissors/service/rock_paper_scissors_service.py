@@ -7,6 +7,14 @@ class RockPaperScissorsService(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def findRPS(self):
+        pass
+
+    @abc.abstractmethod
+    def startRPS_Timer(self):
+        pass
+
+    @abc.abstractmethod
     def injectTransmitIpcChannel(self, transmitIpcChannel):
         pass
 

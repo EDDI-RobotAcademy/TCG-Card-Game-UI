@@ -1,7 +1,6 @@
 from opengl_buy_random_card_frame.entity.buy_random_card_scene import BuyRandomCardScene
 from opengl_buy_random_card_frame.frame.buy_random_card_frame import BuyRandomCardFrame
 from opengl_buy_random_card_frame.service.buy_random_card_frame_service import BuyRandomCardFrameService
-from card_shop_frame.frame.buy_check_frame.service.request.buy_random_card_request import BuyRandomCardRequest
 from opengl_button.button_binding.buy_random_card_button_bind import BuyRandomCardFrameButtonBind
 
 from session.repository.session_repository_impl import SessionRepositoryImpl
@@ -33,5 +32,6 @@ class BuyRandomCardFrameServiceImpl(BuyRandomCardFrameService):
         buyRandomCardrame = self.__buyRandomCardFrame(rootWindow)
         buttonBinding = BuyRandomCardFrameButtonBind(master=rootWindow, frame=buyRandomCardrame)
         buttonBinding.button_bind()
+
 
         return buyRandomCardrame

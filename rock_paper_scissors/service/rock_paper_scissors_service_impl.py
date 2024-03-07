@@ -45,27 +45,17 @@ class RockPaperScissorsServiceImpl(RockPaperScissorsService):
         Eg_RPS = RPS_mapping.get(RPS, "Unknown")
         return Eg_RPS
 
-    def RPS_Timer(self):
+    def startRPS_Timer(self):
         self.RPS_Timer.resetTimer()
         self.RPS_Timer.startTimer()
 
-    def RPS_TimerFunction(self, rootWindow, switchFrameWithMenuName):
-        rockPaperScissorsFrame = self.__rockPaperScissorsRepositoryImpl.createRockPaperScissorsFrame(rootWindow)
-        for i in range(60):
-            responseData = self.__rockPaperScissorsRepositoryImpl.requestRockPaperScissors(
-                RockPaperScissorsRequest(self.__sessionRepositoryImpl.get_session_info(), self.__rockPaperScissorsRepositoryImpl.getRPS()))
-            print(f"responseData: {responseData}")
-            if responseData.get("is_success") is True:
-                self.__checkRockPaperScissorsWinnerServiceImpl.createCheckRockPaperScissorsWinnerUiFrame(
-                    rockPaperScissorsFrame, switchFrameWithMenuName)
-
-            time.sleep(1)
 
     def createRockPaperScissorsUiFrame(self, rootWindow, switchFrameWithMenuName):
         rockPaperScissorsFrame = self.__rockPaperScissorsRepositoryImpl.createRockPaperScissorsFrame(rootWindow)
 
         def final_decision_button_click(target_rps):
             print(f"target_rps: {target_rps}")
+            self.__rockPaperScissorsRepositoryImpl.setRPSLoop(target_rps)
             responseData = self.__rockPaperScissorsRepositoryImpl.requestRockPaperScissors(
                 RockPaperScissorsRequest(self.__sessionRepositoryImpl.get_session_info(), target_rps))
             print(f"responseData: {responseData}")
@@ -73,8 +63,6 @@ class RockPaperScissorsServiceImpl(RockPaperScissorsService):
                 self.__checkRockPaperScissorsWinnerServiceImpl.createCheckRockPaperScissorsWinnerUiFrame(
                     rockPaperScissorsFrame, switchFrameWithMenuName)
 
-
-        self.RPS_Timer = Timer(rockPaperScissorsFrame, 30, 0.2, 0.6, final_decision_button_click)
 
         def on_paper_image_click(event):
             self.__rockPaperScissorsRepositoryImpl.setRPS("보")
@@ -155,6 +143,29 @@ class RockPaperScissorsServiceImpl(RockPaperScissorsService):
                                              command=lambda: final_decision_button_click(self.findRPS()),
                                              width=24, height=2)
         self.final_decision_button.place(relx=0.5, rely=0.9, anchor="center")
+
+        def timeout():
+            if responseData.get("is_success") is True:
+                self.__checkRockPaperScissorsWinnerServiceImpl.createCheckRockPaperScissorsWinnerUiFrame(
+                    rockPaperScissorsFrame, switchFrameWithMenuName)
+
+        self.RPS_Timer = Timer(rockPaperScissorsFrame, 30, 0.2, 0.6, timeout)
+
+
+        # self.RPS_Timer_click = self.__rockPaperScissorsRepositoryImpl.getRPSTimerClick()
+        # if self.RPS_Timer_click is True:
+        #     self.RPS_Timer.startTimer()
+        #     for i in range(60):
+        #         responseData = self.__rockPaperScissorsRepositoryImpl.requestRockPaperScissors(
+        #             RockPaperScissorsRequest(self.__sessionRepositoryImpl.get_session_info(),
+        #                                      self.__rockPaperScissorsRepositoryImpl.getRPSLoop()))
+        #         print(f"responseData: {responseData}")
+        #         if responseData.get("is_success") is True:
+        #             self.__checkRockPaperScissorsWinnerServiceImpl.createCheckRockPaperScissorsWinnerUiFrame(
+        #                 rockPaperScissorsFrame, switchFrameWithMenuName)
+        #
+        #         rootWindow.update()
+        #         time.sleep(1)
 
 
         return rockPaperScissorsFrame

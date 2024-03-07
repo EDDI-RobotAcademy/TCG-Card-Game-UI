@@ -39,7 +39,7 @@ class CheckRockPaperScissorsWinnerServiceImpl(CheckRockPaperScissorsWinnerServic
 
         checkRockPaperScissorsWinnerFrame.pack()
 
-        for i in range(60):
+        for i in range(70):
             responseData = self.__checkRockPaperScissorsWinnerRepositoryImpl.requestCheckRockPaperScissorsWinner(
                 CheckRockPaperScissorsWinnerRequest(self.__sessionRepositoryImpl.get_session_info()))
             print(f"responseData: {responseData}")
