@@ -929,6 +929,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
             print(f"opponent_field_unit_list : {opponent_field_unit_list}")
             for opponent_field_index, opponent_unit in enumerate(opponent_field_unit_list):
                 total_energy = self.opponent_field_unit_repository.get_total_energy_at_index(opponent_field_index)
+                print(total_energy)
+                race_energy = self.opponent_field_unit_repository.get_energy_info_at_index(opponent_field_index)
+                print(race_energy)
 
                 if total_energy >= 0:
                     print("상대방 평타공격~ ")
@@ -3953,22 +3956,4 @@ class FakeBattleFieldFrame(OpenGLFrame):
         except Exception as e:
             print(f"error occured!! : {e}")
 
-    def damage_to_main_character(self, result_info):
-        print(result_info)
-        target = result_info["target_character"]
 
-        # if target != "You":
-        #     return
-
-        remain_hp = result_info["character_hp"]
-        is_survival = result_info["character_survival"]
-
-        # before_hp = self.your_hp_repository.get_current_your_hp_state().get_current_health()
-        #
-        # hp_difference = before_hp - remain_hp
-        #
-        if is_survival:
-            self.your_hp_repository.change_hp(remain_hp)
-
-        else:
-            print("나죽어~~~ ")

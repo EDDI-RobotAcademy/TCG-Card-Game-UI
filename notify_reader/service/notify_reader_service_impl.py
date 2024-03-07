@@ -6,6 +6,7 @@ from battle_field.infra.opponent_field_energy_repository import OpponentFieldEne
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
+from battle_field.infra.your_hp_repository import YourHpRepository
 from battle_field.state.energy_type import EnergyType
 from battle_field_function.service.battle_field_function_service_impl import BattleFieldFunctionServiceImpl
 from fake_battle_field.infra.fake_opponent_hand_repository import FakeOpponentHandRepositoryImpl
@@ -34,6 +35,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.__your_hand_repository = YourHandRepository.getInstance()
             cls.__instance.__fake_opponent_hand_repository = FakeOpponentHandRepositoryImpl.getInstance()
             cls.__instance.__pre_drawed_image_instance = PreDrawedImage.getInstance()
+            cls.__instance.__your_hp_repository = YourHpRepository.getInstance()
 
             cls.__instance.notify_callback_table['NOTIFY_DEPLOY_UNIT'] = cls.__instance.notify_deploy_unit
             cls.__instance.notify_callback_table['NOTIFY_TURN_END'] = cls.__instance.notify_turn_end
@@ -44,8 +46,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 cls.__instance.__battle_field_function_service.useSpecialEnergyCardToUnit)
             cls.__instance.notify_callback_table['NOTIFY_USE_UNIT_ENERGY_REMOVE_ITEM_CARD'] = (
                 cls.__instance.__battle_field_function_service.useUnitEnergyRemoveItemCard)
-            cls.__instance.notify_callback_table['NOTIFY_BASIC_ATTACK_TO_MAIN_CHARACTER'] = (
-                cls.__instance.__battle_field_function_service.basicAttackToMainCharacter)
+            cls.__instance.notify_callback_table['NOTIFY_BASIC_ATTACK_TO_MAIN_CHARACTER'] = cls.__instance.damage_to_main_character
 
 
         return cls.__instance
@@ -215,3 +216,30 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                                         total_energy_count))
 
 
+    def damage_to_main_character(self, notice_dictionary):
+        notify_dict_data = notice_dictionary['NOTIFY_BASIC_ATTACK_TO_MAIN_CHARACTER']
+
+        is_my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        print(f"is my turn: {is_my_turn}")
+        if is_my_turn is True:
+            return
+
+        target_character = list(notify_dict_data.get("player_main_character_health_point_map", {}).keys())[0]
+
+        if target_character != "You":
+            print("error : is not You")
+            return
+
+        character_hp = int(notify_dict_data.get("player_main_character_health_point_map", {})[target_character])
+
+        if notify_dict_data.get("player_main_character_survival_map", {})[target_character] == "Survival":
+            character_survival = True
+        else:
+            character_survival = False
+
+
+        if character_survival:
+            self.__your_hp_repository.change_hp(character_hp)
+
+        else:
+            print("나죽어~~~ ")

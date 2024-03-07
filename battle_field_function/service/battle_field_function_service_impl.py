@@ -357,27 +357,6 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             print(f"unit_card_id: {unit_card_id}")
             CircleImageLegacyOpponentFieldUnitRepository.getInstance().create_field_unit_card(int(unit_card_id))
 
-    def basicAttackToMainCharacter(self, _notify_dict_data):
-        notify_dict_data = _notify_dict_data['NOTIFY_BASIC_ATTACK_TO_MAIN_CHARACTER']
-
-        is_my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
-        print(f"is my turn: {is_my_turn}")
-        if is_my_turn is True:
-            return
-
-        target_character = list(notify_dict_data.get("player_main_character_health_point_map", {}).keys())[0]
-
-        character_hp = int(notify_dict_data.get("player_main_character_health_point_map", {})[target_character])
-
-        if notify_dict_data.get("player_main_character_survival_map", {})[target_character] == "Survival":
-            character_survival = True
-        else:
-            character_survival = False
-
-        result = {"target_character": target_character, "character_hp": character_hp,
-                  "character_survival": character_survival}
-        print(result)
-        self.preDrawedBattleFieldFrame.damage_to_main_character(result)
 
     def useUnitEnergyRemoveItemCard(self, _notify_dict_data):
 
