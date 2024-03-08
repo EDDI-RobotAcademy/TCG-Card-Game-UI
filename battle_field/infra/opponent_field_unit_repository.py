@@ -122,4 +122,11 @@ class OpponentFieldUnitRepository:
         else:
             return None
 
+    def get_opponent_card_id_by_index(self, index):
+        card_list = self.get_current_field_unit_card_object_list()
 
+        for card in card_list:
+            if card.get_index() == index:
+                return card.get_card_number()
+
+        return -1

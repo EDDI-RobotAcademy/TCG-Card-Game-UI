@@ -52,3 +52,6 @@ class FakeBattleFieldFrameRepositoryImpl(FakeBattleFieldFrameRepository):
         self.__transmitIpcChannel.put(attackMainCharacterRequest)
         return self.__receiveIpcChannel.get()
 
+    def request_attack_opponent_unit(self, attackOpponentUnitRequest):
+        self.__transmitIpcChannel.put(attackOpponentUnitRequest)
+        return self.__receiveIpcChannel.get()

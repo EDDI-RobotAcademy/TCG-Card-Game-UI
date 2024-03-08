@@ -101,6 +101,15 @@ class YourFieldUnitRepository:
         #         return unit
         # return None
 
+    def get_card_id_by_index(self, index):
+        card_list = self.get_current_field_unit_list()
+
+        for card in card_list:
+            if card.get_index() == index:
+                return card.get_card_number()
+
+        return -1
+
     def get_attached_energy_info(self):
         return self.attached_energy_info
     def remove_card_by_id(self, card_id):

@@ -29,6 +29,8 @@ class CustomProtocol(Enum):
     FREE_GACHA = 73
     EVENT_DISTRIBUTE_CARDS = 90
 
+    ATTACK_UNIT = 1000
+
     MULLIGAN_CARD = 1012
 
     ATTACH_FIELD_ENERGY = 1003
