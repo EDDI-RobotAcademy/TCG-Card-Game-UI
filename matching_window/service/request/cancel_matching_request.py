@@ -3,7 +3,7 @@ from common.protocol import CustomProtocol
 
 class CancelMatchingRequest():
     def __init__(self, sessionInfo):
-        self.__protocolNumber = CustomProtocol.CANCEL_MATCHING.value
+        self.__protocolNumber = CustomProtocol.CANCEL_MATCH.value
         self.__sessionInfo = sessionInfo
 
 
