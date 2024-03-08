@@ -145,7 +145,8 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
                         # total_energy_count => 모든 종족 에너지의 총 합
 
     # protocolNumber: 1000번(기본 공격)
-    def basicAttackToUnit(self, notify_dict_data):
+    def basicAttackToUnit(self, _notify_dict_data):
+        notify_dict_data = _notify_dict_data['NOTIFY_BASIC_ATTACK_TO_UNIT']
     
         is_my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
         if is_my_turn is True:
