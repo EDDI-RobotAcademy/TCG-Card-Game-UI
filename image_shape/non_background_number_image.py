@@ -1,4 +1,5 @@
 from OpenGL.GL import *
+from colorama import Fore, Style
 
 from opengl_shape.shape import Shape
 
@@ -13,6 +14,11 @@ class NonBackgroundNumberImage(Shape):
         self.number = number
         self.texture_id = None
         self.texture_initialized = False
+
+        self.rotation_angle = 0
+
+    def update_rotation_angle(self, angle):
+        self.rotation_angle = angle
 
     def set_visible(self, visible):
         self.is_visible = visible
@@ -72,7 +78,29 @@ class NonBackgroundNumberImage(Shape):
             glEnable(GL_TEXTURE_2D)
             glBindTexture(GL_TEXTURE_2D, self.texture_id)
 
-            # print(f"NonBackgroundImage width_ratio: {self.width_ratio}, height_ratio: {self.height_ratio}")
+            glPushMatrix()
+
+            print(f"{Fore.RED}vertices[0][0]: {Fore.GREEN} {self.vertices[0][0]}{Style.RESET_ALL}")
+            print(f"{Fore.RED}vertices[1][0]: {Fore.GREEN} {self.vertices[1][0]}{Style.RESET_ALL}")
+            print(f"{Fore.RED}vertices[2][0]: {Fore.GREEN} {self.vertices[2][0]}{Style.RESET_ALL}")
+            print(f"{Fore.RED}vertices[3][0]: {Fore.GREEN} {self.vertices[3][0]}{Style.RESET_ALL}")
+            print(f"{Fore.RED}local_translation[0]: {Fore.GREEN} {self.local_translation[0]}{Style.RESET_ALL}")
+
+            print(f"{Fore.RED}vertices[0][1]: {Fore.GREEN} {self.vertices[0][1]}{Style.RESET_ALL}")
+            print(f"{Fore.RED}vertices[1][1]: {Fore.GREEN} {self.vertices[1][1]}{Style.RESET_ALL}")
+            print(f"{Fore.RED}vertices[2][1]: {Fore.GREEN} {self.vertices[2][1]}{Style.RESET_ALL}")
+            print(f"{Fore.RED}vertices[3][1]: {Fore.GREEN} {self.vertices[3][1]}{Style.RESET_ALL}")
+            print(f"{Fore.RED}local_translation[1]: {Fore.GREEN} {self.local_translation[1]}{Style.RESET_ALL}")
+            # glTranslatef(-self.local_translation[0] * self.width_ratio,
+            # glTranslatef(-self.vertices[0][0] + 5 - self.local_translation[0] * self.width_ratio,
+            #              -self.vertices[0][1] * self.height_ratio + self.local_translation[1] * self.height_ratio, 0)
+            # glTranslatef(-80 - 25 - self.local_translation[0] * self.width_ratio,
+            #              # -self.vertices[0][1] * self.height_ratio + self.local_translation[1] * self.height_ratio,
+            #              1041 - (self.vertices[0][1] * self.height_ratio + self.local_translation[1] * self.height_ratio),
+            #              0)
+            glRotatef(self.rotation_angle, 0, 0, 1)
+            # glTranslatef(self.local_translation[0], self.local_translation[1], 0)
+            # glTranslatef(-self.local_translation[0], -self.local_translation[1], 0)
 
             glBegin(GL_QUADS)
             glTexCoord2f(0, 0)
@@ -91,6 +119,8 @@ class NonBackgroundNumberImage(Shape):
             glVertex2f(self.vertices[3][0] * self.width_ratio + self.local_translation[0] * self.width_ratio + self.global_translation[0],
                        self.vertices[3][1] * self.height_ratio + self.local_translation[1] * self.height_ratio + self.global_translation[1])
             glEnd()
+
+            glPopMatrix()
 
             glDisable(GL_TEXTURE_2D)
             glBindTexture(GL_TEXTURE_2D, 0)

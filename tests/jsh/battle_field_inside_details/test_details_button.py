@@ -2423,6 +2423,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             self.your_active_panel.clear_your_active_panel_attack_button()
                             self.your_active_panel.clear_your_active_panel()
                             self.active_panel_rectangle = None
+                            self.fixed_details_card = None
 
                             self.prev_selected_object = self.selected_object
 
@@ -2615,6 +2616,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                     self.selected_object = None
                     self.active_panel_rectangle = None
+                    self.fixed_details_card = None
 
                     return
 
@@ -2759,6 +2761,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                         self.selected_object = None
                         self.active_panel_rectangle = None
+                        self.fixed_details_card = None
 
 
 
@@ -2789,6 +2792,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                     self.selected_object = None
                     self.active_panel_rectangle = None
+                    self.fixed_details_card = None
 
                     return
 
@@ -2879,6 +2883,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                         self.selected_object = None
                         self.active_panel_rectangle = None
+                        self.fixed_details_card = None
 
                         return
 
@@ -2910,6 +2915,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                     self.selected_object = None
                     self.active_panel_rectangle = None
+                    self.fixed_details_card = None
 
                     return
 
@@ -2999,6 +3005,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                         self.selected_object = None
                         self.active_panel_rectangle = None
+                        self.fixed_details_card = None
 
                         return
 
@@ -3060,6 +3067,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                     if self.selected_object != self.prev_selected_object:
                         self.active_panel_rectangle = None
+                        self.fixed_details_card = None
                         self.your_active_panel.clear_your_active_panel_details_button()
                         self.your_active_panel.clear_your_active_panel_second_skill_button()
                         self.your_active_panel.clear_your_active_panel_first_skill_button()
