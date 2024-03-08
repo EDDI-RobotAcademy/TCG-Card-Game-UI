@@ -45,6 +45,13 @@ class YourActivePanel:
     def get_your_active_panel(self):
         return self.your_active_panel
 
+    def clear_all_your_active_panel(self):
+        self.clear_your_active_panel_details_button()
+        self.clear_your_active_panel_second_skill_button()
+        self.clear_your_active_panel_first_skill_button()
+        self.clear_your_active_panel_attack_button()
+        self.clear_your_active_panel()
+
     def clear_your_active_panel(self):
         del self.your_active_panel
         self.your_active_panel = None
