@@ -1,6 +1,7 @@
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.card_type import CardType
 from image_shape.circle_image import CircleImage
+from image_shape.non_background_image import NonBackgroundImage
 from image_shape.rectangle_image import RectangleImage
 from image_shape.rectangle_kinds import RectangleKinds
 from opengl_battle_field_card_controller.card_controller_impl import CardControllerImpl
@@ -62,7 +63,7 @@ class FixedDetailsCard:
         attached_energy_circle = CircleImage(image_data=image_data,
                                              local_translation=local_translation,
                                              center=vertices,
-                                             radius=15)
+                                             radius=20)
         return attached_energy_circle
 
     def create_fixed_card_base_rectangle(self, color, vertices, local_translation):
@@ -110,6 +111,13 @@ class FixedDetailsCard:
         nerf_check_rectangle.set_rectangle_kinds(RectangleKinds.DETAIL)
         return nerf_check_rectangle
 
+    def create_number_of_cards(self, number_of_cards_data, vertices, local_translation):
+        number_of_cards_text = NonBackgroundImage(image_data=number_of_cards_data,
+                                                  vertices=vertices,
+                                                  local_translation=local_translation
+                                                  )
+        return number_of_cards_text
+
 
     def init_card(self, card_number):
         self.set_card_number(card_number)
@@ -152,10 +160,10 @@ class FixedDetailsCard:
                 self.create_energy_check_rectangle(color=(0, 0, 0, 0.40),
                                                    local_translation=self.local_translation,
                                                    vertices=[
-                                                       (fixed_card_vertices[0][0] - 200, fixed_card_vertices[0][1] - 70),
+                                                       (fixed_card_vertices[0][0] - 250, fixed_card_vertices[0][1] - 70),
                                                        (fixed_card_vertices[0][0], fixed_card_vertices[0][1] - 70),
                                                        (fixed_card_vertices[0][0], fixed_card_vertices[0][1] + 70),
-                                                       (fixed_card_vertices[0][0] - 200, fixed_card_vertices[0][1] + 70)]
+                                                       (fixed_card_vertices[0][0] - 250, fixed_card_vertices[0][1] + 70)]
                                                    )
             )
 

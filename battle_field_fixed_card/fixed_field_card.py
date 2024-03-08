@@ -169,3 +169,43 @@ class FixedFieldCard:
         #         vertices=[(0, 0), (rectangle_width, 0), (rectangle_width, rectangle_height), (0, rectangle_height)]
         #     )
         # )
+
+    def init_card_view_larger(self, card_number):
+        self.set_card_number(card_number)
+        rectangle_width = 300
+        rectangle_height = rectangle_width * 1.618
+
+        basic_fixed_card_base_vertices = [(0, 0), (rectangle_width, 0), (rectangle_width, rectangle_height),
+                                          (0, rectangle_height)]
+
+        self.fixed_card_base = (
+            self.create_fixed_card_base_rectangle(
+                color=(0.0, 0.78, 0.34, 1.0),
+                local_translation=self.local_translation,
+                vertices=basic_fixed_card_base_vertices
+            )
+        )
+
+        self.fixed_card_base.set_attached_shapes(
+            self.create_card_frame(
+                image_data=self.__pre_drawed_image_instance.get_pre_draw_card_frame_for_card_number(card_number),
+                local_translation=self.local_translation,
+                vertices=basic_fixed_card_base_vertices
+            )
+        )
+
+        self.fixed_card_base.set_attached_shapes(
+            self.create_illustration(
+                image_data=self.__pre_drawed_image_instance.get_pre_draw_card_illustration_for_card_number(card_number),
+                local_translation=self.local_translation,
+                vertices=[(25, 67), (rectangle_width - 25, 67), (rectangle_width - 25, rectangle_height - 195),
+                          (25, rectangle_height - 195)]
+            )
+        )
+
+        card_controller_shapes = (
+            self.card_controller.getCardTypeTable(self.card_info.getCardTypeForCardNumber(card_number)))
+        card_shapes = card_controller_shapes(self.local_translation, card_number, rectangle_height, rectangle_width)
+        for shape in card_shapes:
+            shape.set_visible(True)
+            self.fixed_card_base.set_attached_shapes(shape)

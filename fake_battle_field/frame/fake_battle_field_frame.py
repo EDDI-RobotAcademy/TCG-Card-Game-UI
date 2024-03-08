@@ -305,7 +305,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.battle_result = BattleResult()
         self.battle_result_panel_list = []
 
-        self.fixed_details_card = FixedDetailsCard(local_translation=(self.width / 2 - 150, self.height / 2 - (150 * 1.618)))
+        self.fixed_details_card = FixedFieldCard(local_translation=(self.width / 2 - 150, self.height / 2 - (150 * 1.618)))
 
 
         self.bind("<Configure>", self.on_resize)
@@ -545,7 +545,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         print(f"Key pressed: {key}")
 
         if key.lower() == 'kp_0':
-            self.battle_field_repository.set_current_use_card_id(9)
+            self.battle_field_repository.set_current_use_card_id(33)
 
         if key.lower() == 'z':
             print("만약 Opponent Hand에 출격시킬 유닛이 있다면 내보낸다.")
@@ -1275,7 +1275,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         if self.battle_field_repository.get_current_use_card_id():
 
-            self.fixed_details_card.init_card(self.battle_field_repository.get_current_use_card_id())
+            self.fixed_details_card.init_card_view_larger(self.battle_field_repository.get_current_use_card_id())
             fixed_details_card_base = self.fixed_details_card.get_fixed_card_base()
             fixed_details_card_base.set_width_ratio(self.width_ratio)
             fixed_details_card_base.set_height_ratio(self.height_ratio)
