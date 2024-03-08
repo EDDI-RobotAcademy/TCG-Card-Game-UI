@@ -2197,6 +2197,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if your_selected_unit_action_count <= 0:
                         print("행동을 마친 유닛은 더 이상 공격 할 수 없습니다")
+                        self.selected_object = None
+                        self.active_panel_rectangle = None
+                        self.your_active_panel.clear_all_your_active_panel()
                         return
 
                     your_selected_unit_action_status = self.your_field_unit_action_repository.get_current_field_unit_action_status(
@@ -2204,6 +2207,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if your_selected_unit_action_status == FieldUnitActionStatus.WAIT:
                         print(f"처음 필드에 출격한 유닛은 공격 할 수 없습니다")
+                        self.selected_object = None
+                        self.active_panel_rectangle = None
+                        self.your_active_panel.clear_all_your_active_panel()
                         return
 
                     elif your_selected_unit_action_status == FieldUnitActionStatus.Dummy:
@@ -2575,11 +2581,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.drag_start = (x, y)
 
                         if self.selected_object != self.prev_selected_object:
-                            self.your_active_panel.clear_your_active_panel_details_button()
-                            self.your_active_panel.clear_your_active_panel_second_skill_button()
-                            self.your_active_panel.clear_your_active_panel_first_skill_button()
-                            self.your_active_panel.clear_your_active_panel_attack_button()
-                            self.your_active_panel.clear_your_active_panel()
+                            self.your_active_panel.clear_all_your_active_panel()
                             self.active_panel_rectangle = None
 
                             self.prev_selected_object = self.selected_object
@@ -2796,6 +2798,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     self.selected_object = None
                     self.active_panel_rectangle = None
+                    self.your_active_panel.clear_all_your_active_panel()
 
                     return
 
@@ -2837,9 +2840,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         if attack_opponent_unit_response.get('is_success', False) == False:
                             print("attack unit failed!! ")
 
+                        is_opponent_data_in_response = False
+                        is_your_data_in_response = False
 
-                        if 'Opponent' in attack_opponent_unit_response:
-
+                        try:
                             dead_opponent_unit_index_list = (
                                 attack_opponent_unit_response.get('player_field_unit_death_map', {})
                                 .get('Opponent', {})['dead_field_unit_index_list'])
@@ -2853,6 +2857,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                                        .get('Opponent', {}).get('field_unit_health_point_map',{})
                                                        .get(str(opponent_field_card_index), None))
 
+                            is_opponent_data_in_response = True
+                        except:
+                            print("opponent data is not in response")
+
+                        if is_opponent_data_in_response:
                             opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
 
                             for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
@@ -2890,8 +2899,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
 
-                        if 'You' in attack_opponent_unit_response:
-
+                        try:
                             dead_your_unit_index_list = (
                                 attack_opponent_unit_response.get('player_field_unit_death_map', {})
                                 .get('You', {})['dead_field_unit_index_list'])
@@ -2904,8 +2912,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 attack_opponent_unit_response.get('player_field_unit_health_point_map', {})
                                 .get('You', {}).get('field_unit_health_point_map', {})
                                 .get(str(your_field_card_index), None))
+                            is_your_data_in_response = True
+                        except:
+                            print("your data is not in response")
 
-
+                        if is_your_data_in_response:
                             your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(
                                 your_unit_index)
                             your_fixed_card_base = your_field_unit.get_fixed_card_base()
@@ -2951,11 +2962,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                         self.selected_object = None
                         self.active_panel_rectangle = None
-                        self.your_active_panel.clear_your_active_panel_details_button()
-                        self.your_active_panel.clear_your_active_panel_second_skill_button()
-                        self.your_active_panel.clear_your_active_panel_first_skill_button()
-                        self.your_active_panel.clear_your_active_panel_attack_button()
-                        self.your_active_panel.clear_your_active_panel()
+                        self.your_active_panel.clear_all_your_active_panel()
 
 
                         return
@@ -2985,6 +2992,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     self.selected_object = None
                     self.active_panel_rectangle = None
+                    self.your_active_panel.clear_all_your_active_panel()
 
                     return
 
@@ -3076,6 +3084,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                         self.selected_object = None
                         self.active_panel_rectangle = None
+                        self.your_active_panel.clear_all_your_active_panel()
 
                         return
 
@@ -3107,6 +3116,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     self.selected_object = None
                     self.active_panel_rectangle = None
+                    self.your_active_panel.clear_all_your_active_panel()
 
                     return
 
@@ -3197,6 +3207,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                         self.selected_object = None
                         self.active_panel_rectangle = None
+                        self.your_active_panel.clear_all_your_active_panel()
 
                         return
 
@@ -3258,11 +3269,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if self.selected_object != self.prev_selected_object:
                         self.active_panel_rectangle = None
-                        self.your_active_panel.clear_your_active_panel_details_button()
-                        self.your_active_panel.clear_your_active_panel_second_skill_button()
-                        self.your_active_panel.clear_your_active_panel_first_skill_button()
-                        self.your_active_panel.clear_your_active_panel_attack_button()
-                        self.your_active_panel.clear_your_active_panel()
+                        self.your_active_panel.clear_all_your_active_panel()
 
                         self.prev_selected_object = self.selected_object
 
