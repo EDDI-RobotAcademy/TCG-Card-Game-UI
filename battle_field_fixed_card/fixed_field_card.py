@@ -43,6 +43,10 @@ class FixedFieldCard:
     def get_fixed_card_base(self):
         return self.fixed_card_base
 
+    def reset_fixed_card_base(self, card_id):
+        if card_id == self.card_number:
+            self.fixed_card_base = None
+
     def get_tool_card(self):
         return self.tool_card
 
