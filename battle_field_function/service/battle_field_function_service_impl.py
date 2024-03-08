@@ -321,6 +321,8 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
                     .get("player_hand_use_map", {})
                     .get("Opponent", None))
 
+
+
     # protocolNumber: 1013번(드로우 서포트 카드 사용 - 망자의 늪)
     def use_draw_support_card(self, notify_dict_data):
         # 1013 = {"NOTIFY_USE_DRAW_SUPPORT_CARD":
