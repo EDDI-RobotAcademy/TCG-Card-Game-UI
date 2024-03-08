@@ -1,5 +1,7 @@
 import random
+import time
 
+from colorama import Fore, Style
 from screeninfo import get_monitors
 from shapely import Polygon, Point
 
@@ -90,6 +92,7 @@ from opengl_shape.circle import Circle
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from test_detector.detector import DetectorAboutTest
+from tests.lsh.rotate_shape.animation_support.attack_animation import AttackAnimation
 
 
 class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
@@ -98,6 +101,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         super().__init__(master, **kwargs)
 
         self.init_monitor_specification()
+
+        self.current_your_attacker_unit_local_translation = None
+        self.is_attack_motion_finished = False
+        self.your_attacker_unit_destination_local_translation = None
+        self.attack_animation_object = AttackAnimation.getInstance()
 
         self.battle_field_background_shape_list = None
 
@@ -188,6 +196,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.prev_width = self.width
         self.prev_height = self.height
         self.is_reshape_not_complete = False
+
+        self.attack_animation_object.set_total_window_size(self.width, self.height)
 
         battle_field_scene = BattleFieldScene()
         battle_field_scene.create_battle_field_cene(self.width, self.height)
@@ -287,6 +297,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.draw_base()
 
+        if self.attack_animation_object.get_need_post_process():
+            print(f"{Fore.RED}애니메이션 처리 후 구동 할 코드가 있습니다!{Style.RESET_ALL}")
+
         for opponent_field_unit in self.opponent_field_unit_repository.get_current_field_unit_card_object_list():
             if opponent_field_unit is None:
                 continue
@@ -327,6 +340,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             attached_shape_list = fixed_card_base.get_attached_shapes()
 
             for attached_shape in attached_shape_list:
+                if isinstance(attached_shape, NonBackgroundNumberImage):
+                    if attached_shape.get_circle_kinds() == CircleKinds.ATTACK:
+                        print("검 위치")
+
                 attached_shape.set_width_ratio(self.width_ratio)
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
@@ -860,8 +877,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     opponent_fixed_card_base = opponent_field_unit_object.get_fixed_card_base()
                     print("지정한 상대 유닛 베이스 찾기")
 
-                    self.master.after(0, self.attack_animation)
-
                     if opponent_fixed_card_base.is_point_inside((x, y)):
                         your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
 
@@ -896,6 +911,21 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                                     print(f"opponent_damage: {opponent_damage}")
 
+                                    # 공격을 위해 your_field_unit 살짝 위로 올라옴
+                                    current_your_attacker_unit_vertices = your_fixed_card_base.get_vertices()
+                                    print(f"{Fore.RED}current_your_attacker_unit_vertices{Fore.GREEN} {current_your_attacker_unit_vertices}{Style.RESET_ALL}")
+                                    current_your_attacker_unit_local_translation = your_fixed_card_base.get_local_translation()
+                                    print(f"{Fore.RED}current_your_attacker_unit_local_translation{Fore.GREEN} {current_your_attacker_unit_local_translation}{Style.RESET_ALL}")
+
+                                    new_y_value = current_your_attacker_unit_local_translation[1] + 20
+                                    self.your_attacker_unit_destination_local_translation = (current_your_attacker_unit_local_translation[0], new_y_value)
+                                    self.attack_animation_object.set_animation_actor(self.selected_object)
+
+                                    self.master.after(0, self.attack_animation)
+
+                                    # while not self.attack_animation_object.get_is_finished():
+                                    #     time.sleep(1)
+
                                     are_your_field_unit_death = False
                                     for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
                                         if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
@@ -907,20 +937,25 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                                 if your_hp_number <= 0:
                                                     are_your_field_unit_death = True
 
+                                                    self.attack_animation_object.set_your_field_death_unit_index(
+                                                        your_field_card_index)
+
                                                     break
 
                                                 print(f"공격 후 your unit 체력 -> hp_number: {your_hp_number}")
                                                 your_fixed_card_attached_shape.set_number(your_hp_number)
 
-                                                your_fixed_card_attached_shape.set_image_data(
-                                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(
-                                                        your_hp_number))
+                                                self.attack_animation_object.set_your_field_hp_shape(your_fixed_card_attached_shape)
 
-                                    if are_your_field_unit_death is True:
-                                        self.your_field_unit_repository.remove_card_by_index(
-                                            your_field_card_index)
+                                                # your_fixed_card_attached_shape.set_image_data(
+                                                #     self.pre_drawed_image_instance.get_pre_draw_unit_hp(
+                                                #         your_hp_number))
 
-                                        self.your_field_unit_repository.replace_field_card_position()
+                                    # if are_your_field_unit_death is True:
+                                    #     self.your_field_unit_repository.remove_card_by_index(
+                                    #         your_field_card_index)
+                                    #
+                                    #     self.your_field_unit_repository.replace_field_card_position()
 
                                     print("your 유닛 hp 갱신")
 
@@ -929,10 +964,14 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                                     print(f"opponent_hp_number: {opponent_hp_number}")
 
+                                    self.attack_animation_object.set_opponent_field_hp_shape(opponent_fixed_card_attached_shape)
+
                                     # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
                                     # (지금 당장 불사가 존재하지 않음)
                                     if opponent_hp_number <= 0:
                                         are_opponent_field_unit_death = True
+
+                                        self.attack_animation_object.set_opponent_field_death_unit_index(opponent_field_card_index)
 
                                         break
 
@@ -943,19 +982,19 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                     #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
                                     #     self.pre_drawed_image_instance.get_pre_draw_number_image(opponent_hp_number))
 
-                                    opponent_fixed_card_attached_shape.set_image_data(
-                                        self.pre_drawed_image_instance.get_pre_draw_unit_hp(opponent_hp_number))
+                                    # opponent_fixed_card_attached_shape.set_image_data(
+                                    #     self.pre_drawed_image_instance.get_pre_draw_unit_hp(opponent_hp_number))
 
                         # opponent_field_card_index = None
                         # opponent_field_card_id = None
 
                         print(f"opponent_field_card_index: {opponent_field_card_index}")
 
-                        if are_opponent_field_unit_death is True:
-                            self.opponent_field_unit_repository.remove_card_by_multiple_index(
-                                [opponent_field_card_index])
-
-                            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                        # if are_opponent_field_unit_death is True:
+                        #     self.opponent_field_unit_repository.remove_card_by_multiple_index(
+                        #         [opponent_field_card_index])
+                        #
+                        #     self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
                         self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
                         self.targeting_enemy_select_using_your_field_card_index = None
@@ -965,8 +1004,6 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                         self.selected_object = None
                         self.active_panel_rectangle = None
-
-
 
                         return
 
@@ -1257,9 +1294,116 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         new_rectangle.created_by_right_click = True
         return new_rectangle
 
-    def attack_animation(opponent_fixed_card_base, rotation_angle=0):
-        rotation_angle += 1
-        opponent_fixed_card_base.set_rotation_angle(rotation_angle)
+    def attack_animation(self):
+        attack_animation_object = AttackAnimation.getInstance()
+        animation_actor = attack_animation_object.get_animation_actor()
+        print(f"{Fore.RED}animation_actor(selected_object){Fore.GREEN} {animation_actor}{Style.RESET_ALL}")
+
+        your_fixed_card_base = animation_actor.get_fixed_card_base()
+        current_your_attacker_unit_vertices = your_fixed_card_base.get_vertices()
+        print(f"{Fore.RED}current_your_attacker_unit_vertices{Fore.GREEN} {current_your_attacker_unit_vertices}{Style.RESET_ALL}")
+        current_your_attacker_unit_local_translation = your_fixed_card_base.get_local_translation()
+        print(f"{Fore.RED}current_your_attacker_unit_local_translation{Fore.GREEN} {current_your_attacker_unit_local_translation}{Style.RESET_ALL}")
+
+        new_y_value = current_your_attacker_unit_local_translation[1] + 30
+        your_attacker_unit_destination_local_translation = (current_your_attacker_unit_local_translation[0], new_y_value)
+        print(f"{Fore.RED}your_attacker_unit_destination_local_translation{Fore.GREEN} {your_attacker_unit_destination_local_translation}{Style.RESET_ALL}")
+
+        steps = 15
+        step_x = (your_attacker_unit_destination_local_translation[0] - current_your_attacker_unit_local_translation[0]) / steps
+        step_y = (your_attacker_unit_destination_local_translation[1] - current_your_attacker_unit_local_translation[1]) / steps
+        step_y *= -1
+        print(f"{Fore.RED}step ->{Fore.GREEN}step_x: {step_x}, step_y: {step_y}{Style.RESET_ALL}")
+
+        sword_target_x = 0.084375 * attack_animation_object.get_total_width()
+        print(f"{Fore.RED}sword_target_x: {Fore.GREEN}{sword_target_x}{Style.RESET_ALL}")
+
+        sword_target_y = 0.278 * attack_animation_object.get_total_height()
+        print(f"{Fore.RED}sword_target_y: {Fore.GREEN}{sword_target_y}{Style.RESET_ALL}")
+
+        # S = v0 * t + 0.5 * a * t^2
+        # S = 0.5 * a * t^2 => step = 15
+        # S = 0.5 * a * 225 = 580 / 225 = 2.57777
+
+        # 670 -> 450 = 220 -> 440 / 225
+        sword_accel_y = 1.9555
+
+        # 370 - 215 = 155 -> 310 / 225
+        sword_accel_x = 1.3777
+
+        def update_position(step_count):
+            print(f"{Fore.RED}step_count: {Fore.GREEN}{step_count}{Style.RESET_ALL}")
+            # your_fixed_card_base = selected_object.get_fixed_card_base()
+
+            new_x = current_your_attacker_unit_local_translation[0] + step_x * step_count
+            new_y = current_your_attacker_unit_local_translation[1] + step_y * step_count
+            # dy *= -1
+            print(f"{Fore.RED}step ->{Fore.GREEN}new_x: {new_x}, new_y: {new_y}{Style.RESET_ALL}")
+
+            new_vertices = [
+                (vx + step_x * step_count, vy + step_y * step_count) for vx, vy in current_your_attacker_unit_vertices
+            ]
+            your_fixed_card_base.update_vertices(new_vertices)
+            print(f"{Fore.RED}new_vertices{Fore.GREEN} {new_vertices}{Style.RESET_ALL}")
+
+            # tool_card = self.selected_object.get_tool_card()
+            # if tool_card is not None:
+            #     new_tool_card_vertices = [
+            #         (vx + new_x, vy + new_y) for vx, vy in tool_card.vertices
+            #     ]
+            #     tool_card.update_vertices(new_tool_card_vertices)
+
+            for attached_shape in your_fixed_card_base.get_attached_shapes():
+                # if isinstance(attached_shape, CircleImage):
+                #     new_attached_shape_center = (attached_shape.vertices[0][0] + new_x, attached_shape.vertices[0][1] + new_y)
+                #     attached_shape.update_circle_vertices(new_attached_shape_center)
+                #     continue
+                #
+                # if isinstance(attached_shape, CircleNumberImage):
+                #     new_attached_shape_center = (attached_shape.vertices[0][0] + new_x, attached_shape.vertices[0][1] + new_y)
+                #     attached_shape.update_circle_vertices(new_attached_shape_center)
+                #     continue
+                #
+                # if isinstance(attached_shape, Circle):
+                #     new_attached_shape_center = (attached_shape.vertices[0][0] + new_x, attached_shape.vertices[0][1] + new_y)
+                #     attached_shape.update_center(new_attached_shape_center)
+                #     continue
+
+                if isinstance(attached_shape, NonBackgroundNumberImage):
+                    if attached_shape.get_circle_kinds() is CircleKinds.ATTACK:
+                        accel_y_dist = sword_accel_y * step_count
+                        accel_y_dist *= -1
+
+                        accel_x_dist = sword_accel_x * step_count
+                        # x: 236 / 1920, y: -367 / 1043
+                        new_attached_shape_vertices = [
+                            (vx - accel_x_dist, vy + accel_y_dist) for vx, vy in attached_shape.vertices
+                        ]
+                        attached_shape.update_vertices(new_attached_shape_vertices)
+                        continue
+
+                print(
+                    f"{Fore.RED}attached_shape.vertices: {Fore.GREEN}{attached_shape.vertices}{Style.RESET_ALL}")
+
+                new_attached_shape_vertices = [
+                    (vx + step_x, vy + step_y) for vx, vy in attached_shape.vertices
+                ]
+                attached_shape.update_vertices(new_attached_shape_vertices)
+                print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+
+
+            # new_x = current_your_attacker_unit_local_translation[0] + step_x * step_count
+            # new_y = current_your_attacker_unit_local_translation[1] + step_y * step_count
+            # your_fixed_card_base.set_local_translation(new_x, new_y)
+            if step_count < steps:
+
+                self.master.after(20, update_position, step_count + 1)
+            else:
+                self.is_attack_motion_finished = True
+                attack_animation_object.set_is_finished(True)
+                attack_animation_object.set_need_post_process(True)
+
+        update_position(1)
 
 
 
