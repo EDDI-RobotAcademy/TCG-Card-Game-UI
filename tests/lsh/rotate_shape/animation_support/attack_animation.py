@@ -7,9 +7,11 @@ class AttackAnimation:
     is_finished = False
     your_field_hp_shape = None
     your_field_card_index = None
+    your_weapon_shape = None
 
     opponent_fixed_card_attached_shape = None
     opponent_field_card_index = None
+    opponent_field_unit = None
 
     need_post_process = False
 
@@ -76,5 +78,17 @@ class AttackAnimation:
 
     def get_need_post_process(self):
         return self.need_post_process
+
+    def set_your_weapon_shape(self, your_weapon_shape):
+        self.your_weapon_shape = your_weapon_shape
+
+    def get_your_weapon_shape(self):
+        return self.your_weapon_shape
+
+    def set_opponent_field_unit(self, opponent_field_unit):
+        self.opponent_field_unit = opponent_field_unit
+
+    def get_opponent_field_unit(self):
+        return self.opponent_field_unit
 
 
