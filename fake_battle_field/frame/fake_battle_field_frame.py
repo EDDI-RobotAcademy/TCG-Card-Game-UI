@@ -54,6 +54,8 @@ from battle_field.infra.opponent_lost_zone_repository import OpponentLostZoneRep
 
 from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
 from battle_field.infra.request.request_attach_field_energy_to_unit import RequestAttachFieldEnergyToUnit
+from battle_field.infra.request.request_attack_main_character_with_active_skill import \
+    RequestAttackMainCharacterWithActiveSkill
 from battle_field.infra.request.request_attack_opponent_unit import RequestAttackOpponentUnit
 from battle_field.infra.request.request_use_corpse_explosion import RequestUseCorpseExplosion
 from battle_field.infra.request.request_use_energy_burn_to_unit import RequestUseEnergyBurnToUnit
@@ -547,7 +549,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
         if key.lower() == 'kp_0':
             self.battle_field_repository.set_current_use_card_id(33)
         if key.lower() == 'kp_decimal':
-            self.battle_field_repository.set_current_use_card_id(9)
+
+            response = self.your_field_energy_repository.request_to_attach_energy_to_unit(
+                RequestAttachFieldEnergyToUnit(
+                    _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                    _unitIndex=0,
+                    _energyRace=CardRace.UNDEAD,
+                    _energyCount=2
+                )
+            )
 
         if key.lower() == 'z':
             print("만약 Opponent Hand에 출격시킬 유닛이 있다면 내보낸다.")
@@ -3033,8 +3043,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         #
                         #     self.your_field_unit_repository.replace_field_card_position()
 
-
-
                         self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
                         self.targeting_enemy_select_using_your_field_card_index = None
                         self.targeting_enemy_select_using_your_field_card_id = None
@@ -3049,7 +3057,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         return
 
             if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() is OpponentFieldAreaAction.PASSIVE_SKILL_TARGETING_ENEMY:
-                print("단일기 사용")
+                print("단일기 패시브")
 
                 if self.opponent_main_character.is_point_inside((x, y)):
                     print("메인 캐릭터 공격")
@@ -3183,6 +3191,18 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
                     print(f"your_field_card_id: {your_field_card_id}")
+
+                    response = self.__fake_battle_field_frame_repository.request_attack_main_character_with_active_skill(
+                        RequestAttackMainCharacterWithActiveSkill(
+                            _sessionInfo = self.__session_repository.get_first_fake_session_info(),
+                            _unitCardIndex=your_field_card_index,
+                            _targetGameMainCharacterIndex="0"
+                        )
+                    )
+
+                    if response.get('is_success', False) == False:
+                        print('active skill target one error : ', response)
+                        return
 
                     your_damage = self.card_info_repository.getCardSkillFirstDamageForCardNumber(your_field_card_id)
                     print(f"your_damage: {your_damage}")

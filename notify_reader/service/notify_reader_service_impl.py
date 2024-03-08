@@ -47,6 +47,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.__opponent_hand_repository = OpponentHandRepository.getInstance()
             cls.__instance.__battle_field_repository = BattleFieldRepository.getInstance()
 
+
             cls.__instance.notify_callback_table['NOTIFY_DEPLOY_UNIT'] = cls.__instance.notify_deploy_unit
             cls.__instance.notify_callback_table['NOTIFY_TURN_END'] = cls.__instance.notify_turn_end
             cls.__instance.notify_callback_table['NOTIFY_USE_GENERAL_ENERGY_CARD_TO_UNIT'] = cls.__instance.notify_attach_general_energy_card
@@ -64,6 +65,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.notify_callback_table['NOTIFY_BASIC_ATTACK_TO_UNIT'] = cls.__instance.damage_to_each_unit_by_basic_attack
 
             cls.__instance.notify_callback_table['NOTIFY_USE_SEARCH_DECK_SUPPORT_CARD'] = cls.__instance.search_card
+
+            cls.__instance.notify_callback_table['NOTIFY_USE_FIELD_ENERGY_TO_UNIT'] = cls.__instance.notify_attach_field_energy_card
 
         return cls.__instance
 
@@ -415,3 +418,55 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 self.__your_field_unit_repository.remove_card_by_index(dead_your_unit_index)
 
             self.__your_field_unit_repository.replace_field_card_position()
+
+    def notify_attach_field_energy_card(self, notice_dictionary):
+
+        print(
+            f"{Fore.RED}notify_attach_general_energy_card() -> notice_dictionary:{Fore.GREEN} {notice_dictionary}{Style.RESET_ALL}")
+
+        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        print(
+            f"{Fore.RED}notify_attach_general_energy_card() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
+
+        if whose_turn is False:
+            # Fake Opponent Attach Energy
+            # opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(0)
+            # print(f"opponent_field_unit card_id: {opponent_field_unit.get_card_number()}")
+
+            # fake_opponent_field_unit_energy_map = notice_dictionary['NOTIFY_USE_GENERAL_ENERGY_CARD_TO_UNIT']['player_field_unit_energy_map']['Opponent']
+            # print(f"{Fore.RED}fake_opponent_field_unit_energy_map:{Fore.GREEN} {fake_opponent_field_unit_energy_map}{Style.RESET_ALL}")
+            self.__battle_field_repository.set_current_use_card_id(93)
+
+            remain_opponent_field_energy = notice_dictionary['NOTIFY_USE_FIELD_ENERGY_TO_UNIT']['player_field_energy_map']['Opponent']
+
+            self.__opponent_field_energy_repository.set_opponent_field_energy(remain_opponent_field_energy)
+            for unit_index, unit_value in \
+            notice_dictionary['NOTIFY_USE_FIELD_ENERGY_TO_UNIT']['player_field_unit_energy_map']['Opponent'][
+                'field_unit_energy_map'].items():
+                print(f"{Fore.RED}opponent_unit_index:{Fore.GREEN} {unit_index}{Style.RESET_ALL}")
+                print(f"{Fore.RED}opponent_unit_value:{Fore.GREEN} {unit_value}{Style.RESET_ALL}")
+
+                # opponent_unit_attached_undead_energy_count = unit_value['attached_energy_map']['2']
+
+                for race_energy_number, race_energy_count in unit_value['attached_energy_map'].items():
+                    print(f"{Fore.RED}energy_key:{Fore.GREEN} {race_energy_number}{Style.RESET_ALL}")
+                    print(f"{Fore.RED}energy_count:{Fore.GREEN} {race_energy_count}{Style.RESET_ALL}")
+
+                    self.__opponent_field_unit_repository.attach_race_energy(int(unit_index), EnergyType.Undead,
+                                                                             race_energy_count)
+
+                    opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                        int(unit_index))
+
+                    opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                    opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+
+                    total_energy_count = unit_value['total_energy_count']
+                    print(f"{Fore.RED}total_energy_count:{Fore.GREEN} {total_energy_count}{Style.RESET_ALL}")
+
+                    for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                        if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
+                            if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+                                opponent_fixed_card_attached_shape.set_image_data(
+                                    self.__pre_drawed_image_instance.get_pre_draw_unit_energy(
+                                        total_energy_count))
