@@ -75,6 +75,7 @@ from battle_field.infra.your_tomb_repository import YourTombRepository
 
 from battle_field.state.FieldUnitActionStatus import FieldUnitActionStatus
 from battle_field.state.energy_type import EnergyType
+from battle_field_fixed_card.fixed_details_card import FixedDetailsCard
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
 from battle_field_function.service.request.turn_end_request import TurnEndRequest
@@ -303,6 +304,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.battle_field_repository = BattleFieldRepository.getInstance()
         self.battle_result = BattleResult()
         self.battle_result_panel_list = []
+
+        self.fixed_details_card = FixedDetailsCard(local_translation=(self.width / 2 - 150, self.height / 2 - (150 * 1.618)))
+
 
         self.bind("<Configure>", self.on_resize)
         self.bind("<B1-Motion>", self.on_canvas_drag)
@@ -539,6 +543,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
     def on_key_press(self, event):
         key = event.keysym
         print(f"Key pressed: {key}")
+
+        if key.lower() == 'kp_0':
+            self.battle_field_repository.set_current_use_card_id(9)
 
         if key.lower() == 'z':
             print("만약 Opponent Hand에 출격시킬 유닛이 있다면 내보낸다.")
@@ -1266,6 +1273,23 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
+        if self.battle_field_repository.get_current_use_card_id():
+
+            self.fixed_details_card.init_card(self.battle_field_repository.get_current_use_card_id())
+            fixed_details_card_base = self.fixed_details_card.get_fixed_card_base()
+            fixed_details_card_base.set_width_ratio(self.width_ratio)
+            fixed_details_card_base.set_height_ratio(self.height_ratio)
+            fixed_details_card_base.draw()
+
+            attached_shape_list = fixed_details_card_base.get_attached_shapes()
+            for attached_shape in attached_shape_list:
+                attached_shape.set_width_ratio(self.width_ratio)
+                attached_shape.set_height_ratio(self.height_ratio)
+                attached_shape.draw()
+
+            self.master.after(1000, lambda: self.battle_field_repository.reset_current_use_card_id())
+
+
         for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
             if field_unit is None:
                 continue
@@ -1619,12 +1643,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             glDisable(GL_BLEND)
 
+
         # self.post_draw()
         if self.battle_field_repository.get_is_game_end():
         # if len(self.battle_result_panel_list) != 0:
             self.battle_result.set_width_ratio(self.width_ratio)
             self.battle_result.set_height_ratio(self.height_ratio)
             self.battle_result_panel_list[0].draw()
+
+
+
 
         glEnable(GL_DEPTH_TEST)
 

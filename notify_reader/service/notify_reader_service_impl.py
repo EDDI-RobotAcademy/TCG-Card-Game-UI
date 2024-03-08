@@ -2,8 +2,10 @@ import json
 
 from colorama import Fore, Style
 
+from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
+from battle_field.infra.opponent_hand_repository import OpponentHandRepository
 from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
@@ -42,6 +44,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.__your_tomb_repository = YourTombRepository.getInstance()
             cls.__instance.__opponent_tomb_repository = OpponentTombRepository.getInstance()
             cls.__instance.__your_field_unit_repository = YourFieldUnitRepository.getInstance()
+            cls.__instance.__opponent_hand_repository = OpponentHandRepository.getInstance()
+            cls.__instance.__battle_field_repository = BattleFieldRepository.getInstance()
 
             cls.__instance.notify_callback_table['NOTIFY_DEPLOY_UNIT'] = cls.__instance.notify_deploy_unit
             cls.__instance.notify_callback_table['NOTIFY_TURN_END'] = cls.__instance.notify_turn_end
@@ -58,6 +62,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 cls.__instance.__battle_field_function_service.useMultipleUnitDamageItemCard)
 
             cls.__instance.notify_callback_table['NOTIFY_BASIC_ATTACK_TO_UNIT'] = cls.__instance.damage_to_each_unit_by_basic_attack
+
+            cls.__instance.notify_callback_table['NOTIFY_USE_SEARCH_DECK_SUPPORT_CARD'] = cls.__instance.search_card
 
         return cls.__instance
 
@@ -256,6 +262,31 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
     def damage_to_multiple_unit(self, notice_dictionary):
         notify_dict_data = notice_dictionary['NOTIFY_USE_MULTIPLE_UNIT_DAMAGE_ITEM_CARD']
+
+    def search_card(self, notice_dictionary):
+        notify_dict_data = notice_dictionary['NOTIFY_USE_SEARCH_DECK_SUPPORT_CARD']
+
+        card_id = (notify_dict_data.get("player_hand_use_map", {})
+                   .get("Opponent", {})
+                   .get("card_id", None))
+
+        card_kind = (notify_dict_data.get("player_hand_use_map", {})
+                     .get("Opponent", {})
+                     .get("card_kind", None))
+
+        search_count = (notify_dict_data.get("player_hand_use_map", {})
+                    .get("Opponent", None))
+
+        fake_search_list = []
+        for count in range(0, search_count):
+            fake_search_list.append(-1)
+
+        self.__battle_field_repository.set_current_use_card_id(card_id)
+
+        self.__fake_opponent_hand_repository.save_fake_opponent_hand_list(fake_search_list)
+
+        #self.__opponent_hand_repository.save_current_opponent_hand_state(fake_search_list)
+
 
     def damage_to_each_unit_by_basic_attack(self, notice_dictionary):
 

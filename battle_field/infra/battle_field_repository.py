@@ -1,6 +1,7 @@
 from battle_field.state.current_deck import CurrentDeckState
 from battle_field.state.current_hand import CurrentHandState
 from battle_field.state.game_end import GameEndState
+from battle_field_fixed_card.fixed_details_card import FixedDetailsCard
 
 
 class BattleFieldRepository:
@@ -8,6 +9,9 @@ class BattleFieldRepository:
 
     battle_field_button_list = []
     __game_end_state = GameEndState()
+    __current_use_card_id = None
+
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -49,3 +53,13 @@ class BattleFieldRepository:
 
     def reset_game_state(self):
         self.__game_end_state.reset_state()
+
+    def set_current_use_card_id(self, card_id):
+        self.__current_use_card_id = card_id
+
+    def get_current_use_card_id(self):
+        return self.__current_use_card_id
+
+    def reset_current_use_card_id(self):
+        self.__current_use_card_id = None
+
