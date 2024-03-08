@@ -26,3 +26,6 @@ class OpponentHpRepository:
     def take_damage(self, damage=5):
         print("take damaged!!!")
         self.current_hp_state.damage_to_hp(damage)
+
+    def change_opponent_hp(self, new_hp):
+        self.current_hp_state.set_health(new_hp)

@@ -3204,10 +3204,20 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         print('active skill target one error : ', response)
                         return
 
-                    your_damage = self.card_info_repository.getCardSkillFirstDamageForCardNumber(your_field_card_id)
-                    print(f"your_damage: {your_damage}")
+                    opponent_character_survival_state = response['player_main_character_survival_map_for_notice']['Opponent']
 
-                    self.opponent_hp_repository.take_damage(your_damage)
+                    if opponent_character_survival_state != 'Survival':
+                        print('상대방이 죽었습니다!!')
+                        return
+
+                    remain_character_hp = response['player_main_character_health_point_map_for_notice']['Opponent']
+
+                    self.opponent_hp_repository.change_opponent_hp(remain_character_hp)
+
+                    # your_damage = self.card_info_repository.getCardSkillFirstDamageForCardNumber(your_field_card_id)
+                    # print(f"your_damage: {your_damage}")
+                    #
+                    # self.opponent_hp_repository.take_damage(your_damage)
 
                     self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
                     self.targeting_enemy_select_using_your_field_card_index = None
