@@ -68,6 +68,10 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
             cls.__instance.notify_callback_table['NOTIFY_USE_FIELD_ENERGY_TO_UNIT'] = cls.__instance.notify_attach_field_energy_card
 
+            cls.__instance.notify_callback_table['NOTIFY_TARGETING_ATTACK_ACTIVE_SKILL_TO_GAME_MAIN_CHARACTER'] = (
+                cls.__instance.notify_targeting_attack_active_skill_to_main_character
+            )
+
         return cls.__instance
 
     @classmethod
@@ -470,3 +474,17 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                                 opponent_fixed_card_attached_shape.set_image_data(
                                     self.__pre_drawed_image_instance.get_pre_draw_unit_energy(
                                         total_energy_count))
+
+    def notify_targeting_attack_active_skill_to_main_character(self, notice_dictionary):
+
+        your_character_survival_state = notice_dictionary['NOTIFY_TARGETING_ATTACK_ACTIVE_SKILL_TO_GAME_MAIN_CHARACTER'][
+            'player_main_character_survival_map']['You']
+
+        if your_character_survival_state != 'Survival':
+            print('죽었습니다!!')
+            return
+
+        remain_hp = notice_dictionary['NOTIFY_TARGETING_ATTACK_ACTIVE_SKILL_TO_GAME_MAIN_CHARACTER'][
+            'player_main_character_health_point_map']['You']
+
+        self.__your_hp_repository.change_hp(remain_hp)
