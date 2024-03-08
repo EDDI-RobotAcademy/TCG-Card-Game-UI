@@ -80,27 +80,27 @@ class NonBackgroundNumberImage(Shape):
 
             glPushMatrix()
 
-            print(f"{Fore.RED}vertices[0][0]: {Fore.GREEN} {self.vertices[0][0]}{Style.RESET_ALL}")
-            print(f"{Fore.RED}vertices[1][0]: {Fore.GREEN} {self.vertices[1][0]}{Style.RESET_ALL}")
-            print(f"{Fore.RED}vertices[2][0]: {Fore.GREEN} {self.vertices[2][0]}{Style.RESET_ALL}")
-            print(f"{Fore.RED}vertices[3][0]: {Fore.GREEN} {self.vertices[3][0]}{Style.RESET_ALL}")
-            print(f"{Fore.RED}local_translation[0]: {Fore.GREEN} {self.local_translation[0]}{Style.RESET_ALL}")
+            # print(f"{Fore.RED}local_translation: {Fore.GREEN} {self.local_translation}{Style.RESET_ALL}")
+            # print(f"{Fore.RED}vertices: {Fore.GREEN} {self.vertices}{Style.RESET_ALL}")
+            #
+            # print(f"{Fore.RED}current(y): {Fore.GREEN} {self.vertices[0][1] * self.height_ratio + self.local_translation[1] * self.height_ratio}{Style.RESET_ALL}")
+            # print(f"{Fore.RED}glTranslate(y): {Fore.GREEN} {-self.vertices[0][1] * self.height_ratio - self.local_translation[1] * self.height_ratio}{Style.RESET_ALL}")
+            # print(f"check: { -200 + (self.vertices[0][1] * self.height_ratio + self.local_translation[1] * self.height_ratio)}")
 
-            print(f"{Fore.RED}vertices[0][1]: {Fore.GREEN} {self.vertices[0][1]}{Style.RESET_ALL}")
-            print(f"{Fore.RED}vertices[1][1]: {Fore.GREEN} {self.vertices[1][1]}{Style.RESET_ALL}")
-            print(f"{Fore.RED}vertices[2][1]: {Fore.GREEN} {self.vertices[2][1]}{Style.RESET_ALL}")
-            print(f"{Fore.RED}vertices[3][1]: {Fore.GREEN} {self.vertices[3][1]}{Style.RESET_ALL}")
-            print(f"{Fore.RED}local_translation[1]: {Fore.GREEN} {self.local_translation[1]}{Style.RESET_ALL}")
-            # glTranslatef(-self.local_translation[0] * self.width_ratio,
-            # glTranslatef(-self.vertices[0][0] + 5 - self.local_translation[0] * self.width_ratio,
-            #              -self.vertices[0][1] * self.height_ratio + self.local_translation[1] * self.height_ratio, 0)
-            # glTranslatef(-80 - 25 - self.local_translation[0] * self.width_ratio,
-            #              # -self.vertices[0][1] * self.height_ratio + self.local_translation[1] * self.height_ratio,
-            #              1041 - (self.vertices[0][1] * self.height_ratio + self.local_translation[1] * self.height_ratio),
-            #              0)
+            # 회전 중심을 사각형의 중심으로 이동
+            center_x = (self.vertices[0][0] + self.vertices[1][0] + self.vertices[2][0] + self.vertices[3][
+                0]) * 0.25 * self.width_ratio
+            center_y = (self.vertices[0][1] + self.vertices[1][1] + self.vertices[2][1] + self.vertices[3][
+                1]) * 0.25 * self.height_ratio
+
+            glTranslatef(center_x + self.local_translation[0], center_y + self.local_translation[1], 0)
+
+            # 회전
             glRotatef(self.rotation_angle, 0, 0, 1)
-            # glTranslatef(self.local_translation[0], self.local_translation[1], 0)
-            # glTranslatef(-self.local_translation[0], -self.local_translation[1], 0)
+            # glRotatef(-45, 0, 0, 1)
+
+            # 중심으로 이동한 것을 되돌림
+            glTranslatef(-center_x - self.local_translation[0], -center_y - self.local_translation[1], 0)
 
             glBegin(GL_QUADS)
             glTexCoord2f(0, 0)
