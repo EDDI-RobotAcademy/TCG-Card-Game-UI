@@ -2197,70 +2197,69 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     your_field_unit_index = self.selected_object.get_index()
                     your_field_unit_attached_energy = self.your_field_unit_repository.get_attached_energy_info()
 
-                    your_field_unit_total_energy = your_field_unit_attached_energy.get_total_energy_at_index(
-                        your_field_unit_index)
-                    print(f"your_field_unit_total_energy: {your_field_unit_total_energy}")
-
-                    your_field_unit_attached_energy_info = your_field_unit_attached_energy.get_energy_info_at_index(
-                        your_field_unit_index)
-                    print(f"your_field_unit_attached_energy_info: {your_field_unit_attached_energy_info}")
-
-                    your_field_unit_attached_undead_energy = your_field_unit_attached_energy.get_race_energy_at_index(
-                        your_field_unit_index, EnergyType.Undead)
-                    print(f"your_field_unit_attached_undead_energy: {your_field_unit_attached_undead_energy}")
-                    your_field_unit_attached_human_energy = your_field_unit_attached_energy.get_race_energy_at_index(
-                        your_field_unit_index, EnergyType.Human)
-                    print(f"your_field_unit_attached_human_energy: {your_field_unit_attached_human_energy}")
-                    your_field_unit_attached_trent_energy = your_field_unit_attached_energy.get_race_energy_at_index(
-                        your_field_unit_index, EnergyType.Trent)
-                    print(f"your_field_unit_attached_trent_energy: {your_field_unit_attached_trent_energy}")
-
                     select_details_card = FixedDetailsCard((self.width / 2 - 150, self.height / 2 - (150 * 1.618)))
                     select_details_card.init_card(your_field_unit_id)
                     select_details_card_base = select_details_card.get_fixed_card_base()
                     select_details_card_base_vertices = select_details_card_base.get_vertices()
 
+                    your_field_unit_total_energy = your_field_unit_attached_energy.get_total_energy_at_index(
+                        your_field_unit_index)
+                    print(f"your_field_unit_total_energy: {your_field_unit_total_energy}")
 
+                    if your_field_unit_total_energy:
+                        your_field_unit_attached_energy_info = your_field_unit_attached_energy.get_energy_info_at_index(
+                            your_field_unit_index)
+                        print(f"your_field_unit_attached_energy_info: {your_field_unit_attached_energy_info}")
+
+                        your_field_unit_attached_undead_energy = your_field_unit_attached_energy.get_race_energy_at_index(
+                            your_field_unit_index, EnergyType.Undead)
+                        print(f"your_field_unit_attached_undead_energy: {your_field_unit_attached_undead_energy}")
+                        your_field_unit_attached_human_energy = your_field_unit_attached_energy.get_race_energy_at_index(
+                            your_field_unit_index, EnergyType.Human)
+                        print(f"your_field_unit_attached_human_energy: {your_field_unit_attached_human_energy}")
+                        your_field_unit_attached_trent_energy = your_field_unit_attached_energy.get_race_energy_at_index(
+                            your_field_unit_index, EnergyType.Trent)
+                        print(f"your_field_unit_attached_trent_energy: {your_field_unit_attached_trent_energy}")
                     # 언데드 에너지 갯수에 따른 표시
-                    if your_field_unit_attached_undead_energy > 0:
-                        print("상세 보기 언데드 생성")
-                        select_details_card_base.set_attached_shapes(
-                            select_details_card.creat_fixed_card_energy_race_circle(
-                                image_data=self.pre_drawed_image_instance.get_pre_draw_energy_race_with_race_number(EnergyType.Undead),
-                                local_translation=select_details_card_base.get_local_translation(),
-                                vertices=(select_details_card_base_vertices[0][0] - 180,
-                                          select_details_card_base_vertices[0][1] + 50)
+                        if your_field_unit_attached_undead_energy > 0:
+                            print("상세 보기 언데드 생성")
+                            select_details_card_base.set_attached_shapes(
+                                select_details_card.creat_fixed_card_energy_race_circle(
+                                    image_data=self.pre_drawed_image_instance.get_pre_draw_energy_race_with_race_number(EnergyType.Undead.value),
+                                    local_translation=select_details_card_base.get_local_translation(),
+                                    vertices=(select_details_card_base_vertices[0][0] - 180,
+                                              select_details_card_base_vertices[0][1] + 50)
+                                )
                             )
-                        )
-                        #if your_field_unit_attached_undead_energy > 1:
+                            #if your_field_unit_attached_undead_energy > 1:
 
-                    # 휴먼 에너지 갯수에 따른 표시
-                    if your_field_unit_attached_human_energy > 0:
-                        print("상세 보기 휴먼 생성")
-                        select_details_card_base.set_attached_shapes(
-                            select_details_card.creat_fixed_card_energy_race_circle(
-                                image_data=self.pre_drawed_image_instance.get_pre_draw_energy_race_with_race_number(
-                                    EnergyType.Human),
-                                local_translation=select_details_card_base.get_local_translation(),
-                                vertices=(select_details_card_base_vertices[0][0] - 150,
-                                          select_details_card_base_vertices[0][1] + 50)
+                        # 휴먼 에너지 갯수에 따른 표시
+                        if your_field_unit_attached_human_energy > 0:
+                            print("상세 보기 휴먼 생성")
+                            select_details_card_base.set_attached_shapes(
+                                select_details_card.creat_fixed_card_energy_race_circle(
+                                    image_data=self.pre_drawed_image_instance.get_pre_draw_energy_race_with_race_number(
+                                        EnergyType.Human.value),
+                                    local_translation=select_details_card_base.get_local_translation(),
+                                    vertices=(select_details_card_base_vertices[0][0] - 150,
+                                              select_details_card_base_vertices[0][1] + 50)
+                                )
                             )
-                        )
 
-                        #if your_field_unit_attached_human_energy > 1:
+                            #if your_field_unit_attached_human_energy > 1:
 
-                    # 트런트 에너지 갯수에 따른 표시
-                    if your_field_unit_attached_trent_energy > 0:
-                        print("상세 보기 트런트 생성")
-                        select_details_card_base.set_attached_shapes(
-                            select_details_card.creat_fixed_card_energy_race_circle(
-                                image_data=self.pre_drawed_image_instance.get_pre_draw_energy_race_with_race_number(
-                                    EnergyType.Trent),
-                                local_translation=select_details_card_base.get_local_translation(),
-                                vertices=(select_details_card_base_vertices[0][0] - 120,
-                                          select_details_card_base_vertices[0][1] + 50)
+                        # 트런트 에너지 갯수에 따른 표시
+                        if your_field_unit_attached_trent_energy > 0:
+                            print("상세 보기 트런트 생성")
+                            select_details_card_base.set_attached_shapes(
+                                select_details_card.creat_fixed_card_energy_race_circle(
+                                    image_data=self.pre_drawed_image_instance.get_pre_draw_energy_race_with_race_number(
+                                        EnergyType.Trent.value),
+                                    local_translation=select_details_card_base.get_local_translation(),
+                                    vertices=(select_details_card_base_vertices[0][0] - 120,
+                                              select_details_card_base_vertices[0][1] + 50)
+                                )
                             )
-                        )
 
                         #if your_field_unit_attached_trent_energy > 1:
 
