@@ -1487,11 +1487,12 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     attached_shape.update_vertices(new_attached_shape_vertices)
 
                 # Return to the original position
-                fixed_card_base.update_vertices(fixed_card_base.get_vertices())
-                if tool_card is not None:
-                    tool_card.update_vertices(tool_card.get_vertices())
-                for attached_shape in attached_shape_list:
-                    attached_shape.update_vertices(attached_shape.get_vertices())
+                # fixed_card_base.update_vertices(fixed_card_base.get_vertices())
+                # if tool_card is not None:
+                #     tool_card.update_vertices(tool_card.get_vertices())
+                # for attached_shape in attached_shape_list:
+                #     attached_shape.update_vertices(attached_shape.get_vertices())
+                self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
             if step_count < steps:
 
