@@ -20,6 +20,9 @@ class NonBackgroundNumberImage(Shape):
     def update_rotation_angle(self, angle):
         self.rotation_angle = angle
 
+    def get_rotation_angle(self):
+        return self.rotation_angle
+
     def set_visible(self, visible):
         self.is_visible = visible
 
