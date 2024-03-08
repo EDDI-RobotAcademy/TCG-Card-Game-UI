@@ -349,7 +349,6 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                     from card_shop_frame.frame.my_game_money_frame.service.my_game_money_frame_service_impl import MyGameMoneyFrameServiceImpl
                     MyGameMoneyFrameServiceImpl.getInstance().findMyMoney()
                     switchFrameWithMenuName("card-shop-menu")
-                    #switchFrameWithMenuName("rock-paper-scissors")
                 else:
                     print("checkGameMoney responseData not found")
 
