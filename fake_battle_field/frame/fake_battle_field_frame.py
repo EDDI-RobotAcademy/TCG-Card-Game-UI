@@ -572,14 +572,27 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     print("test dark ball : ", response)
         if key.lower() == 'kp_decimal':
 
-            response = self.your_field_energy_repository.request_to_attach_energy_to_unit(
-                RequestAttachFieldEnergyToUnit(
-                    _sessionInfo=self.__session_repository.get_second_fake_session_info(),
-                    _unitIndex=0,
-                    _energyRace=CardRace.UNDEAD,
-                    _energyCount=2
-                )
-            )
+            opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+            for opponent_unit_index, opponent_unit in enumerate(opponent_field_unit_list):
+                if opponent_unit.get_card_number() == 27:
+                    self.your_field_energy_repository.request_to_attach_energy_to_unit(
+                        RequestAttachFieldEnergyToUnit(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _unitIndex=opponent_unit.get_index(),
+                            _energyRace=CardRace.UNDEAD,
+                            _energyCount=2
+                        )
+                    )
+
+                    response = self.__fake_battle_field_frame_repository.request_attack_main_character_with_active_skill(
+                        RequestAttackToOpponentFieldUnitWithActiveSkill(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _unitCardIndex=opponent_unit.get_index(),
+                            _opponentTargetCardIndex=0
+                        )
+                    )
+
+                    print("test dark ball : ", response)
 
         if key.lower() == 'z':
             print("만약 Opponent Hand에 출격시킬 유닛이 있다면 내보낸다.")
@@ -3294,6 +3307,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                         for opponent_field_unit_index, opponent_field_unit_remain_hp in response['player_field_unit_health_point_map']['Opponent'][
                             'field_unit_health_point_map'].items():
+
+                            if opponent_field_unit_remain_hp == 0:
+                                break
+
                             opponent_field_unit = (
                                 self.opponent_field_unit_repository.find_opponent_field_unit_by_index(int(opponent_field_unit_index)))
                             opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()

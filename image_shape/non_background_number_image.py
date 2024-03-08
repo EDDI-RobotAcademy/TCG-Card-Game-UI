@@ -80,17 +80,17 @@ class NonBackgroundNumberImage(Shape):
 
             glPushMatrix()
 
-            print(f"{Fore.RED}vertices[0][0]: {Fore.GREEN} {self.vertices[0][0]}{Style.RESET_ALL}")
-            print(f"{Fore.RED}vertices[1][0]: {Fore.GREEN} {self.vertices[1][0]}{Style.RESET_ALL}")
-            print(f"{Fore.RED}vertices[2][0]: {Fore.GREEN} {self.vertices[2][0]}{Style.RESET_ALL}")
-            print(f"{Fore.RED}vertices[3][0]: {Fore.GREEN} {self.vertices[3][0]}{Style.RESET_ALL}")
-            print(f"{Fore.RED}local_translation[0]: {Fore.GREEN} {self.local_translation[0]}{Style.RESET_ALL}")
-
-            print(f"{Fore.RED}vertices[0][1]: {Fore.GREEN} {self.vertices[0][1]}{Style.RESET_ALL}")
-            print(f"{Fore.RED}vertices[1][1]: {Fore.GREEN} {self.vertices[1][1]}{Style.RESET_ALL}")
-            print(f"{Fore.RED}vertices[2][1]: {Fore.GREEN} {self.vertices[2][1]}{Style.RESET_ALL}")
-            print(f"{Fore.RED}vertices[3][1]: {Fore.GREEN} {self.vertices[3][1]}{Style.RESET_ALL}")
-            print(f"{Fore.RED}local_translation[1]: {Fore.GREEN} {self.local_translation[1]}{Style.RESET_ALL}")
+            # print(f"{Fore.RED}vertices[0][0]: {Fore.GREEN} {self.vertices[0][0]}{Style.RESET_ALL}")
+            # print(f"{Fore.RED}vertices[1][0]: {Fore.GREEN} {self.vertices[1][0]}{Style.RESET_ALL}")
+            # print(f"{Fore.RED}vertices[2][0]: {Fore.GREEN} {self.vertices[2][0]}{Style.RESET_ALL}")
+            # print(f"{Fore.RED}vertices[3][0]: {Fore.GREEN} {self.vertices[3][0]}{Style.RESET_ALL}")
+            # print(f"{Fore.RED}local_translation[0]: {Fore.GREEN} {self.local_translation[0]}{Style.RESET_ALL}")
+            #
+            # print(f"{Fore.RED}vertices[0][1]: {Fore.GREEN} {self.vertices[0][1]}{Style.RESET_ALL}")
+            # print(f"{Fore.RED}vertices[1][1]: {Fore.GREEN} {self.vertices[1][1]}{Style.RESET_ALL}")
+            # print(f"{Fore.RED}vertices[2][1]: {Fore.GREEN} {self.vertices[2][1]}{Style.RESET_ALL}")
+            # print(f"{Fore.RED}vertices[3][1]: {Fore.GREEN} {self.vertices[3][1]}{Style.RESET_ALL}")
+            # print(f"{Fore.RED}local_translation[1]: {Fore.GREEN} {self.local_translation[1]}{Style.RESET_ALL}")
             # glTranslatef(-self.local_translation[0] * self.width_ratio,
             # glTranslatef(-self.vertices[0][0] + 5 - self.local_translation[0] * self.width_ratio,
             #              -self.vertices[0][1] * self.height_ratio + self.local_translation[1] * self.height_ratio, 0)
