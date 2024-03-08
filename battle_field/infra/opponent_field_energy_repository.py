@@ -30,3 +30,6 @@ class OpponentFieldEnergyRepository:
     def get_opponent_field_energy(self):
         return self.field_energy_state.get_opponent_field_energy_count()
 
+    def set_opponent_field_energy(self, field_energy_count):
+        self.field_energy_state.set_opponent_field_energy(field_energy_count)
+

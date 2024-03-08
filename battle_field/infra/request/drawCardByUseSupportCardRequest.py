@@ -1,6 +1,7 @@
 from common.protocol import CustomProtocol
 
 
+# 망자의 늪
 class DrawCardByUseSupportCardRequest:
     def __init__(self, _sessionInfo, _cardId):
         self.__protocolNumber = CustomProtocol.DRAW_CARD_BY_SUPPORT_CARD.value

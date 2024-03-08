@@ -46,6 +46,9 @@ class YourHandRepository:
         self.total_width = width
         self.total_height = height
 
+    def clear_your_hand_state(self):
+        self.current_hand_state.clear_current_hand()
+
     def save_current_hand_state(self, hand_list):
         self.current_hand_state.add_to_hand(hand_list)
         print(f"Saved current hand state: {hand_list}")
@@ -354,4 +357,10 @@ class YourHandRepository:
         self.__transmitIpcChannel.put(use_death_sice_to_unit_request)
         return self.__receiveIpcChannel.get()
 
+    def request_use_energy_burn_to_unit(self, use_energy_burn_to_unit_request):
+        self.__transmitIpcChannel.put(use_energy_burn_to_unit_request)
+        return self.__receiveIpcChannel.get()
 
+    def request_use_corpse_explosion(self, use_corpse_explosion_request):
+        self.__transmitIpcChannel.put(use_corpse_explosion_request)
+        return self.__receiveIpcChannel.get()

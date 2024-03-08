@@ -31,9 +31,11 @@ class YourFieldEnergyRepository:
     def increase_your_field_energy(self, count = 1):
         return self.field_energy_state.increase_your_field_energy(count)
 
-
     def decrease_your_field_energy(self, count = 1):
         return self.field_energy_state.decrease_your_field_energy(count)
+
+    def set_your_field_energy(self, field_energy_count):
+        self.field_energy_state.set_your_field_energy(field_energy_count)
 
     def get_your_field_energy(self):
         return self.field_energy_state.get_your_field_energy_count()

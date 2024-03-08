@@ -67,6 +67,8 @@ class PreDrawedImage:
     __pre_drawed_general_attack_button = None
     __pre_drawed_detail_button = None
 
+    __pre_drawed_multi_draw_button = None
+
     # TODO: 실제로는 숫자로 처리해야함 (유닛 번호 -> 액티브 스킬 1)
     # 유닛 번호 -> 액티브 스킬 2 형태가 되어야함
     __pre_drawed_shadow_ball_button = None #스킬1 버튼(쉐도우 볼)
@@ -551,6 +553,10 @@ class PreDrawedImage:
             print(f"animation image data = {text_image_data}")
             self.__pre_drawed_number_of_cards[number] = ImageDataLoader.load_rectangle_image_data(text_image_data)
 
+    def pre_draw_multi_draw_button(self):
+        multi_draw_button_image_data = os.path.join(self.__project_root, "local_storage", "button_image", "multi_draw_button.jpg")
+        self.__pre_drawed_multi_draw_button = ImageDataLoader.load_rectangle_origin_image_data(multi_draw_button_image_data)
+
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
         self.pre_draw_opponent_lost_zone()
@@ -623,6 +629,7 @@ class PreDrawedImage:
         self.pre_draw_paper()
 
         self.pre_draw_number_of_cards()
+        self.pre_draw_multi_draw_button()
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
@@ -799,3 +806,6 @@ class PreDrawedImage:
 
     def get_pre_draw_number_of_cards(self, number):
         return self.__pre_drawed_number_of_cards[number]
+
+    def get_pre_draw_multi_draw_button(self):
+        return self.__pre_drawed_multi_draw_button

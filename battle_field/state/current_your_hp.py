@@ -11,3 +11,6 @@ class CurrentYourHpState:
 
     def reset_health(self):
         self.health = 100
+
+    def set_health(self, health):
+        self.health = health

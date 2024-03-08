@@ -1,5 +1,8 @@
+from colorama import Fore, Style
+
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
 from battle_field.infra.request.deploy_unit_card_request import DeployUnitCardRequest
+from battle_field.infra.request.drawCardByUseSupportCardRequest import DrawCardByUseSupportCardRequest
 from battle_field.infra.your_deck_repository import YourDeckRepository
 
 from battle_field.infra.your_field_unit_action_repository import YourFieldUnitActionRepository
@@ -167,11 +170,27 @@ class FieldAreaInsideHandler:
         before_draw_deck_list = self.__your_deck_repository.get_current_deck_state()
         print(f"before draw 3: {before_draw_deck_list}")
 
-        # TODO: Summary와 연동하도록 재구성 필요
-        drawn_card_list = self.__your_deck_repository.draw_deck_with_count(3)
+        response = self.__your_deck_repository.request_use_swamp_of_dead(
+            DrawCardByUseSupportCardRequest(
+                _sessionInfo=self.__session_info_repository.get_session_info(),
+                _cardId="20")
+        )
+        print(f"{Fore.RED}swamp_of_dead -> response:{Fore.GREEN} {response}{Style.RESET_ALL}")
+        is_success_value = response.get('is_success', False)
 
-        after_draw_deck_list = self.__your_deck_repository.get_current_deck_state()
-        print(f"after draw 3: {after_draw_deck_list}")
+        if is_success_value == False:
+            return
+
+        # TODO: Summary와 연동하도록 재구성 필요
+        # drawn_card_list = self.__your_deck_repository.draw_deck_with_count(3)
+        drawn_card_list = response['player_draw_card_list_map']['You']
+        print(f"{Fore.RED}drawn_card_list:{Fore.GREEN} {drawn_card_list}{Style.RESET_ALL}")
+
+        # after_draw_deck_list = self.__your_deck_repository.get_current_deck_state()
+        # print(f"after draw 3: {after_draw_deck_list}")
+
+        after_draw_deck_list = response['updated_deck_card_list']
+        print(f"{Fore.RED}after_draw_deck_list:{Fore.GREEN} {after_draw_deck_list}{Style.RESET_ALL}")
 
         self.__your_deck_repository.update_deck(after_draw_deck_list)
 

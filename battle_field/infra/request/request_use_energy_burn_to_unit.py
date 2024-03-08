@@ -1,7 +1,7 @@
 from common.protocol import CustomProtocol
 
 
-class RequestUseDeathSiceToUnit:
+class RequestUseEnergyBurnToUnit:
     def __init__(self, _sessionInfo, _itemCardId, _opponentTargetUnitIndex):
         self.__protocolNumber = CustomProtocol.USE_ENERGY_BURN.value
         self.__opponentTargetUnitIndex = str(_opponentTargetUnitIndex)
