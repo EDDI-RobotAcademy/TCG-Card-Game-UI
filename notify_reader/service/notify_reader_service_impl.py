@@ -155,6 +155,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         print(f"{Fore.RED}notify_deploy_unit() -> Opponent deploy card_id:{Fore.GREEN} {card_id}{Style.RESET_ALL}")
 
+        self.__battle_field_repository.set_current_use_card_id(card_id)
         self.__opponent_field_unit_repository.create_field_unit_card(card_id)
 
     def notify_turn_end(self, notice_dictionary):
@@ -191,6 +192,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         print(f"{Fore.RED}notify_turn_end() -> your_field_energy:{Fore.GREEN} {your_field_energy}{Style.RESET_ALL}")
 
     def notify_attach_general_energy_card(self, notice_dictionary):
+
+
+
         print(f"{Fore.RED}notify_attach_general_energy_card() -> notice_dictionary:{Fore.GREEN} {notice_dictionary}{Style.RESET_ALL}")
 
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
@@ -203,6 +207,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
             # fake_opponent_field_unit_energy_map = notice_dictionary['NOTIFY_USE_GENERAL_ENERGY_CARD_TO_UNIT']['player_field_unit_energy_map']['Opponent']
             # print(f"{Fore.RED}fake_opponent_field_unit_energy_map:{Fore.GREEN} {fake_opponent_field_unit_energy_map}{Style.RESET_ALL}")
+            self.__battle_field_repository.set_current_use_card_id(93)
 
             for unit_index, unit_value in notice_dictionary['NOTIFY_USE_GENERAL_ENERGY_CARD_TO_UNIT']['player_field_unit_energy_map']['Opponent']['field_unit_energy_map'].items():
                 print(f"{Fore.RED}opponent_unit_index:{Fore.GREEN} {unit_index}{Style.RESET_ALL}")

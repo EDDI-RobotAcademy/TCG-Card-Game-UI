@@ -416,6 +416,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             }
 
             print(f"result : {result}")
+            self.__battle_field_repository.set_current_use_card_id(hand_use_card_id)
             self.preDrawedBattleFieldFrame.detach_energy_to_your_unit(result)
 
 
@@ -437,7 +438,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
                 "field_unit_index": field_unit_index, "field_unit_hp": field_unit_hp,
                 "dead_field_unit_index_list": dead_field_unit_index_list
             }
-
+            self.__battle_field_repository.set_current_use_card_id(hand_use_card_id)
             self.preDrawedBattleFieldFrame.damage_to_your_field_unit(result)
 
         print(result)
@@ -479,7 +480,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             "opponent_dead_field_unit_index_list": opponent_dead_field_unit_index_list,
             "your_dead_field_unit_index_list": your_dead_field_unit_index_list
         }
-
+        self.__battle_field_repository.set_current_use_card_id(hand_use_card_id)
         self.preDrawedBattleFieldFrame.damage_to_multiple_unit_by_sacrifice(result)
 
     def useSpecialEnergyCardToUnit(self, _notify_dict_data):
@@ -575,7 +576,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             }
 
             print(f"result : {result}")
-
+            self.__battle_field_repository.set_current_use_card_id(hand_use_card_id)
             self.preDrawedBattleFieldFrame.attach_energy_to_opponent_unit(result)
         except Exception as e:
             print(f"Notify Error : {e}")
