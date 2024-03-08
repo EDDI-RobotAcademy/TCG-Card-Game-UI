@@ -2,20 +2,23 @@ from battle_field.infra.opponent_hp_repository import OpponentHpRepository
 from image_shape.rectangle_image import RectangleImage
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
+from pyopengltk import OpenGLFrame
 
-
-class BattleFieldTimer:
+class BattleFieldTimer(OpenGLFrame):
     __pre_drawed_image = PreDrawedImage.getInstance()
 
-    def __init__(self):
+    def __init__(self, function):
+        super().__init__()
         self.timer_panel = None
-        self.timer = 30
+        self.timer = 0
 
         self.total_width = None
         self.total_height = None
 
         self.width_ratio = 1
         self.height_ratio = 1
+
+        self.function = function
 
 
     def set_total_window_size(self, width, height):
@@ -43,13 +46,12 @@ class BattleFieldTimer:
     def set_timer(self, timer):
         self.timer = timer
 
-    def draw_current_opponent_hp_panel(self):
+    def draw_current_timer_panel(self):
 
-
-        left_x_point = self.total_width * 0.33
-        right_x_point = self.total_width * 0.42
-        top_y_point = self.total_height * 0.135
-        bottom_y_point = self.total_height * 0.206
+        left_x_point = self.total_width * 0.05
+        right_x_point = self.total_width * 0.12
+        top_y_point = self.total_height * 0.44
+        bottom_y_point = self.total_height * 0.55
 
         self.timer_panel = RectangleImage(
             image_data=self.__pre_drawed_image.get_pre_draw_character_hp_image(self.timer),
@@ -63,7 +65,13 @@ class BattleFieldTimer:
 
         #self.opponent_hp_panel.draw()
 
-    def update_current_opponent_hp_panel(self):
-        self.timer -= 1
-        self.timer_panel.set_image_data(self.__pre_drawed_image.get_pre_draw_character_hp_image(self.timer))
+    def update_current_timer_panel(self):
+        if self.timer >= 0:
+            self.timer_panel.set_image_data(self.__pre_drawed_image.get_pre_draw_character_hp_image(self.timer))
 
+    def start_timer(self):
+        if self.timer >= -1:
+            self.timer -= 1
+            self.master.after(1000, self.start_timer)
+        if self.timer == -1:
+            self.function()

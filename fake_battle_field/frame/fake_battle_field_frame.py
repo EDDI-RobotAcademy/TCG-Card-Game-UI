@@ -42,6 +42,7 @@ from battle_field.entity.your_hand import YourHand
 from battle_field.entity.your_hp import YourHp
 from battle_field.entity.your_lost_zone import YourLostZone
 from battle_field.entity.your_tomb import YourTomb
+from battle_field.entity.battle_field_timer import BattleFieldTimer
 from battle_field.handler.support_card_handler import SupportCardHandler
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 
@@ -290,6 +291,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.muligun_reset_button_clicked = False
         self.battle_field_muligun_background_shape_list = None
 
+        self.timer_panel = None
+        self.timer = BattleFieldTimer(self.call_turn_end)
+
         self.animation_test_image_panel = None
         self.animation_test_image = AnimationTestImage()
         self.animation_test_image_list = []
@@ -482,6 +486,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.surrender_confirm.set_total_window_size(self.width, self.height)
         self.surrender_confirm.create_surrender_confirm_panel_list()
         self.surrender_confirm_panel_list = self.surrender_confirm.get_surrender_confirm_panel_list()
+
+        self.timer.set_total_window_size(self.width, self.height)
+        self.timer.draw_current_timer_panel()
+        self.timer_panel = self.timer.get_timer_panel()
 
         muligun_reset_button_instance = MuligunResetButton()
         muligun_reset_button_instance.set_total_window_size(self.width, self.height)
@@ -1010,6 +1018,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             NotifyReaderRepositoryImpl.getInstance().getNoWaitIpcChannel().put(notify_raw_data)
 
+        if key.lower() == '0':
+            self.timer.set_timer(30)
+            self.timer.start_timer()
+
     def on_resize(self, event):
         self.reshape(event.width, event.height)
 
@@ -1116,6 +1128,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.opponent_hp_panel.set_width_ratio(self.width_ratio)
         self.opponent_hp_panel.set_height_ratio(self.height_ratio)
         self.opponent_hp_panel.draw()
+
+        self.timer.set_width_ratio(self.width_ratio)
+        self.timer.set_height_ratio(self.height_ratio)
+        self.timer.update_current_timer_panel()
+        self.timer_panel.set_width_ratio(self.width_ratio)
+        self.timer_panel.set_height_ratio(self.height_ratio)
+        self.timer_panel.draw()
 
         self.option.set_width_ratio(self.width_ratio)
         self.option.set_height_ratio(self.height_ratio)
