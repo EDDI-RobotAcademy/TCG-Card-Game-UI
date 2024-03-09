@@ -8,10 +8,14 @@ class AttackAnimation:
     your_field_hp_shape = None
     your_field_card_index = None
     your_weapon_shape = None
+    your_field_unit = None
 
     opponent_fixed_card_attached_shape = None
     opponent_field_card_index = None
     opponent_field_unit = None
+
+    is_opponent_field_unit_death = False
+    is_your_field_unit_death = False
 
     need_post_process = False
 
@@ -64,8 +68,14 @@ class AttackAnimation:
     def set_your_field_hp_shape(self, your_field_hp_shape):
         self.your_field_hp_shape = your_field_hp_shape
 
+    def get_your_field_hp_shape(self):
+        return self.your_field_hp_shape
+
     def set_your_field_death_unit_index(self, your_field_card_index):
         self.your_field_card_index = your_field_card_index
+
+    def get_your_field_death_unit_index(self):
+        return self.your_field_card_index
 
     def set_opponent_field_hp_shape(self, opponent_fixed_card_attached_shape):
         self.opponent_fixed_card_attached_shape = opponent_fixed_card_attached_shape
@@ -90,5 +100,24 @@ class AttackAnimation:
 
     def get_opponent_field_unit(self):
         return self.opponent_field_unit
+
+    def set_opponent_field_unit_death(self, opponent_field_unit_death):
+        self.is_opponent_field_unit_death = opponent_field_unit_death
+
+    def get_opponent_field_unit_death(self):
+        return self.is_opponent_field_unit_death
+
+    def set_your_field_unit_death(self, your_field_unit_death):
+        self.is_your_field_unit_death = your_field_unit_death
+
+    def get_your_field_unit_death(self):
+        return self.is_your_field_unit_death
+
+    def set_your_field_unit(self, your_field_unit):
+        self.your_field_unit = your_field_unit
+
+    def get_your_field_unit(self):
+        return self.your_field_unit
+
 
 
