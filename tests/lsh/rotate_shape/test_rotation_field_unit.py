@@ -215,9 +215,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         opponent_field_panel_instance.create_opponent_field_panel()
         self.opponent_field_panel = opponent_field_panel_instance.get_opponent_field_panel()
 
-        self.opponent_field_unit_repository.create_field_unit_card(27)
-        # self.your_field_unit_repository.create_field_unit_card(31)
-        self.your_field_unit_repository.create_field_unit_card(19)
+        self.opponent_field_unit_repository.create_field_unit_card(31)
+        # self.opponent_field_unit_repository.create_field_unit_card(27)
+        self.your_field_unit_repository.create_field_unit_card(31)
+        # self.your_field_unit_repository.create_field_unit_card(19)
         # self.your_field_unit_repository.create_field_unit_card(27)
 
         self.your_active_panel = YourActivePanel()
@@ -340,15 +341,15 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             attached_shape_list = fixed_card_base.get_attached_shapes()
 
             for attached_shape in attached_shape_list:
-                if isinstance(attached_shape, NonBackgroundNumberImage):
-                    if attached_shape.get_circle_kinds() == CircleKinds.ATTACK:
-                        print("검 위치")
+                # if isinstance(attached_shape, NonBackgroundNumberImage):
+                #     if attached_shape.get_circle_kinds() == CircleKinds.ATTACK:
+                #         print("검 위치")
 
                 attached_shape.set_width_ratio(self.width_ratio)
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
-        self.post_draw()
+        # self.post_draw()
 
         if self.selected_object:
             card_base = None
@@ -938,6 +939,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                                                 if your_hp_number <= 0:
                                                     are_your_field_unit_death = True
+                                                    self.attack_animation_object.set_your_field_unit_death(True)
 
                                                     self.attack_animation_object.set_your_field_death_unit_index(
                                                         your_field_card_index)
@@ -948,6 +950,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                                 your_fixed_card_attached_shape.set_number(your_hp_number)
 
                                                 self.attack_animation_object.set_your_field_hp_shape(your_fixed_card_attached_shape)
+                                                self.attack_animation_object.set_your_field_unit_death(False)
 
                                                 # your_fixed_card_attached_shape.set_image_data(
                                                 #     self.pre_drawed_image_instance.get_pre_draw_unit_hp(
@@ -972,6 +975,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                     # (지금 당장 불사가 존재하지 않음)
                                     if opponent_hp_number <= 0:
                                         are_opponent_field_unit_death = True
+                                        self.attack_animation_object.set_opponent_field_unit_death(True)
 
                                         self.attack_animation_object.set_opponent_field_death_unit_index(opponent_field_card_index)
 
@@ -979,6 +983,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
                                     print(f"공격 후 opponent unit 체력 -> hp_number: {opponent_hp_number}")
                                     opponent_fixed_card_attached_shape.set_number(opponent_hp_number)
+                                    self.attack_animation_object.set_opponent_field_unit_death(False)
 
                                     # opponent_fixed_card_attached_shape.set_image_data(
                                     #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
@@ -1633,6 +1638,50 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 self.is_attack_motion_finished = True
                 attack_animation_object.set_is_finished(True)
                 attack_animation_object.set_need_post_process(True)
+
+                if self.attack_animation_object.get_your_field_unit_death():
+                    your_field_death_unit_index = self.attack_animation_object.get_your_field_death_unit_index()
+                    self.your_field_unit_repository.remove_card_by_index(your_field_death_unit_index)
+                    self.your_field_unit_repository.replace_field_card_position()
+                else:
+                    your_field_hp_shape = self.attack_animation_object.get_your_field_hp_shape()
+                    your_hp_number = your_field_hp_shape.get_number()
+
+                    your_field_hp_shape.set_image_data(
+                        self.pre_drawed_image_instance.get_pre_draw_unit_hp(
+                            your_hp_number))
+
+                if self.attack_animation_object.get_opponent_field_unit_death():
+                    opponent_field_unit = self.attack_animation_object.get_opponent_field_unit()
+                    opponent_field_unit_index = opponent_field_unit.get_index()
+                    self.opponent_field_unit_repository.remove_card_by_multiple_index([opponent_field_unit_index])
+                    self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                else:
+                    opponent_field_hp_shape = self.attack_animation_object.get()
+                    opponent_hp_number = opponent_field_hp_shape.get_number()
+
+                    opponent_field_hp_shape.set_image_data(
+                        self.pre_drawed_image_instance.get_pre_draw_unit_hp(
+                            opponent_hp_number))
+
+                # your_fixed_card_attached_shape.set_image_data(
+                #     self.pre_drawed_image_instance.get_pre_draw_unit_hp(
+                #         your_hp_number))
+
+                # if are_your_field_unit_death is True:
+                #     self.your_field_unit_repository.remove_card_by_index(
+                #         your_field_card_index)
+                #
+                #     self.your_field_unit_repository.replace_field_card_position()
+
+                # opponent_fixed_card_attached_shape.set_image_data(
+                #     self.pre_drawed_image_instance.get_pre_draw_unit_hp(opponent_hp_number))
+
+                # if are_opponent_field_unit_death is True:
+                #     self.opponent_field_unit_repository.remove_card_by_multiple_index(
+                #         [opponent_field_card_index])
+                #
+                #     self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
         move_to_origin_location(1)
 
