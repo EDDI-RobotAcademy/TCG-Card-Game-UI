@@ -1,3 +1,4 @@
+import math
 import random
 import time
 
@@ -216,8 +217,21 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.opponent_field_panel = opponent_field_panel_instance.get_opponent_field_panel()
 
         self.opponent_field_unit_repository.create_field_unit_card(31)
+        self.opponent_field_unit_repository.create_field_unit_card(32)
+        self.opponent_field_unit_repository.create_field_unit_card(32)
+        self.opponent_field_unit_repository.create_field_unit_card(32)
+        self.opponent_field_unit_repository.create_field_unit_card(32)
+        self.opponent_field_unit_repository.create_field_unit_card(32)
+        self.opponent_field_unit_repository.create_field_unit_card(32)
         # self.opponent_field_unit_repository.create_field_unit_card(27)
         self.your_field_unit_repository.create_field_unit_card(31)
+        self.your_field_unit_repository.create_field_unit_card(19)
+        self.your_field_unit_repository.create_field_unit_card(27)
+        self.your_field_unit_repository.create_field_unit_card(31)
+        self.your_field_unit_repository.create_field_unit_card(31)
+        self.your_field_unit_repository.create_field_unit_card(31)
+        self.your_field_unit_repository.create_field_unit_card(31)
+        self.your_field_unit_repository.create_field_unit_card(19)
         # self.your_field_unit_repository.create_field_unit_card(19)
         # self.your_field_unit_repository.create_field_unit_card(27)
 
@@ -298,8 +312,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         self.draw_base()
 
-        if self.attack_animation_object.get_need_post_process():
-            print(f"{Fore.RED}애니메이션 처리 후 구동 할 코드가 있습니다!{Style.RESET_ALL}")
+        # if self.attack_animation_object.get_need_post_process():
+        #     print(f"{Fore.RED}애니메이션 처리 후 구동 할 코드가 있습니다!{Style.RESET_ALL}")
 
         for opponent_field_unit in self.opponent_field_unit_repository.get_current_field_unit_card_object_list():
             if opponent_field_unit is None:
@@ -1310,23 +1324,55 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         current_your_attacker_unit_vertices = your_fixed_card_base.get_vertices()
         # print(f"{Fore.RED}current_your_attacker_unit_vertices{Fore.GREEN} {current_your_attacker_unit_vertices}{Style.RESET_ALL}")
         current_your_attacker_unit_local_translation = your_fixed_card_base.get_local_translation()
-        # print(f"{Fore.RED}current_your_attacker_unit_local_translation{Fore.GREEN} {current_your_attacker_unit_local_translation}{Style.RESET_ALL}")
+        print(f"{Fore.RED}current_your_attacker_unit_local_translation{Fore.GREEN} {current_your_attacker_unit_local_translation}{Style.RESET_ALL}")
 
         new_y_value = current_your_attacker_unit_local_translation[1] + 30
         your_attacker_unit_destination_local_translation = (current_your_attacker_unit_local_translation[0], new_y_value)
         # print(f"{Fore.RED}your_attacker_unit_destination_local_translation{Fore.GREEN} {your_attacker_unit_destination_local_translation}{Style.RESET_ALL}")
 
-        steps = 15
+        steps = 20
         step_x = (your_attacker_unit_destination_local_translation[0] - current_your_attacker_unit_local_translation[0]) / steps
         step_y = (your_attacker_unit_destination_local_translation[1] - current_your_attacker_unit_local_translation[1]) / steps
         step_y *= -1
         # print(f"{Fore.RED}step ->{Fore.GREEN}step_x: {step_x}, step_y: {step_y}{Style.RESET_ALL}")
 
-        sword_target_x = 0.084375 * attack_animation_object.get_total_width()
-        # print(f"{Fore.RED}sword_target_x: {Fore.GREEN}{sword_target_x}{Style.RESET_ALL}")
+        # sword_target_x = 0.084375 * attack_animation_object.get_total_width()
+        # # print(f"{Fore.RED}sword_target_x: {Fore.GREEN}{sword_target_x}{Style.RESET_ALL}")
+        #
+        # sword_target_y = 0.278 * attack_animation_object.get_total_height()
+        # # print(f"{Fore.RED}sword_target_y: {Fore.GREEN}{sword_target_y}{Style.RESET_ALL}")
 
-        sword_target_y = 0.278 * attack_animation_object.get_total_height()
-        # print(f"{Fore.RED}sword_target_y: {Fore.GREEN}{sword_target_y}{Style.RESET_ALL}")
+        opponent_unit = attack_animation_object.get_opponent_field_unit()
+        opponent_fixed_base = opponent_unit.get_fixed_card_base()
+        opponent_fixed_base_vertices = opponent_fixed_base.get_vertices()
+        opponent_unit_local_translation = opponent_fixed_base.get_local_translation()
+        print(f"{Fore.RED}opponent_unit_local_translation: {Fore.GREEN}{opponent_unit_local_translation}{Style.RESET_ALL}")
+        # opponent_unit_destination_x = opponent_unit_local_translation[0] - 125
+        opponent_unit_destination_y = opponent_unit_local_translation[1] - 300
+        # print(f"{Fore.RED}opponent_unit_destination -> {Fore.GREEN}x: {opponent_unit_destination_x}, y: {opponent_unit_destination_y}{Style.RESET_ALL}")
+        your_biased_local_translation = 0
+
+        epsilon = 1e-6
+        if (abs(current_your_attacker_unit_local_translation[0] - opponent_unit_local_translation[0]) < epsilon or
+                current_your_attacker_unit_local_translation[0] - opponent_unit_local_translation[0] > 0):
+            # 이 경우 칼은 왼쪽으로 카드 width 만큼 추가 이동이 필요함
+            angle_radians = math.radians(-65)
+            bias_result = 170 * math.cos(angle_radians)
+            # print(f"200 * cos(x): {bias_result}")
+            your_biased_local_translation = current_your_attacker_unit_local_translation[0] - bias_result
+            # your_biased_local_translation = current_your_attacker_unit_local_translation[0]
+            opponent_unit_destination_x = opponent_unit_local_translation[0] - 145
+            print("자신을 기준으로 같은 위치 혹은 좌측 공격 -> x 보정 진행")
+        else:
+            # opponent_unit_destination_x = opponent_unit_local_translation[0] - 145
+            angle_radians = math.radians(-65)
+            bias_result = 170 * math.cos(angle_radians)
+            # print(f"200 * cos(x): {bias_result}")
+            # your_biased_local_translation = current_your_attacker_unit_local_translation[0] - bias_result
+            your_biased_local_translation = current_your_attacker_unit_local_translation[0]
+            opponent_unit_destination_x = opponent_unit_local_translation[0] - 145
+
+            print("자신을 기준으로 우측 공격 -> 보정 없음")
 
         # S = v0 * t + 0.5 * a * t^2
         # S = 0.5 * a * t^2 => step = 15
@@ -1335,10 +1381,18 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         # 670 -> 450 = 220 -> 440 / 225 = 1.9555
         # 670 -> 420 = 250 -> 500 / 225 = 2.2222
         # 670 -> 400 = 270 -> 540 / 225 = 2.4
-        sword_accel_y = 2.4
+        sword_accel_y = (current_your_attacker_unit_local_translation[1] - opponent_unit_destination_y) / 400
+        print(f"{Fore.RED}sword_accel_y: {Fore.GREEN}{sword_accel_y}{Style.RESET_ALL}")
+        # sword_accel_y *= -1
+        # sword_accel_y = 2.4
 
         # 370 - 215 = 155 -> 310 / 225
-        sword_accel_x = 1.3777
+        # sword_accel_x = (opponent_unit_destination_x - current_your_attacker_unit_local_translation[0]) / 400
+
+        sword_accel_x = (opponent_unit_destination_x - your_biased_local_translation) / 200
+        # sword_accel_x = opponent_unit_destination_x / 400
+        print(f"{Fore.RED}sword_accel_x: {Fore.GREEN}{sword_accel_x}{Style.RESET_ALL}")
+        # sword_accel_x = 1.3777
 
         def update_position(step_count):
             print(f"{Fore.RED}step_count: {Fore.GREEN}{step_count}{Style.RESET_ALL}")
@@ -1347,13 +1401,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             new_x = current_your_attacker_unit_local_translation[0] + step_x * step_count
             new_y = current_your_attacker_unit_local_translation[1] + step_y * step_count
             # dy *= -1
-            print(f"{Fore.RED}step ->{Fore.GREEN}new_x: {new_x}, new_y: {new_y}{Style.RESET_ALL}")
+            # print(f"{Fore.RED}step ->{Fore.GREEN}new_x: {new_x}, new_y: {new_y}{Style.RESET_ALL}")
 
             new_vertices = [
                 (vx + step_x * step_count, vy + step_y * step_count) for vx, vy in current_your_attacker_unit_vertices
             ]
             your_fixed_card_base.update_vertices(new_vertices)
-            print(f"{Fore.RED}new_vertices{Fore.GREEN} {new_vertices}{Style.RESET_ALL}")
+            # print(f"{Fore.RED}new_vertices{Fore.GREEN} {new_vertices}{Style.RESET_ALL}")
 
             # tool_card = self.selected_object.get_tool_card()
             # if tool_card is not None:
@@ -1363,25 +1417,11 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             #     tool_card.update_vertices(new_tool_card_vertices)
 
             for attached_shape in your_fixed_card_base.get_attached_shapes():
-                # if isinstance(attached_shape, CircleImage):
-                #     new_attached_shape_center = (attached_shape.vertices[0][0] + new_x, attached_shape.vertices[0][1] + new_y)
-                #     attached_shape.update_circle_vertices(new_attached_shape_center)
-                #     continue
-                #
-                # if isinstance(attached_shape, CircleNumberImage):
-                #     new_attached_shape_center = (attached_shape.vertices[0][0] + new_x, attached_shape.vertices[0][1] + new_y)
-                #     attached_shape.update_circle_vertices(new_attached_shape_center)
-                #     continue
-                #
-                # if isinstance(attached_shape, Circle):
-                #     new_attached_shape_center = (attached_shape.vertices[0][0] + new_x, attached_shape.vertices[0][1] + new_y)
-                #     attached_shape.update_center(new_attached_shape_center)
-                #     continue
-
                 # theta = w0 * t + 0.5 * alpha * t^2
                 # theta = 0.5 * alpha * t^2 => step_count = 15
                 # theta = 0.5 * alpha * 225 = 65 / 225 = 0.28888
-                omega_accel_alpha = -0.28888
+                # theta = 0.5 * alpha * 400 = 65 / 400 = 0.1625
+                omega_accel_alpha = -0.1625
 
                 if isinstance(attached_shape, NonBackgroundNumberImage):
                     if attached_shape.get_circle_kinds() is CircleKinds.ATTACK:
@@ -1391,18 +1431,18 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                         accel_x_dist = sword_accel_x * step_count
                         # x: 236 / 1920, y: -367 / 1043
                         new_attached_shape_vertices = [
-                            (vx - accel_x_dist, vy + accel_y_dist) for vx, vy in attached_shape.vertices
+                            (vx + accel_x_dist, vy + accel_y_dist) for vx, vy in attached_shape.vertices
                         ]
                         attached_shape.update_vertices(new_attached_shape_vertices)
                         attached_shape.update_rotation_angle(omega_accel_alpha * step_count * step_count)
+                        print(f"{Fore.RED}sword new_attached_shape_vertices{Fore.GREEN} {new_attached_shape_vertices}{Style.RESET_ALL}")
 
-                        if step_count == 15:
+                        if step_count == 20:
                             attack_animation_object.set_your_weapon_shape(attached_shape)
 
                         continue
 
-                print(
-                    f"{Fore.RED}attached_shape.vertices: {Fore.GREEN}{attached_shape.vertices}{Style.RESET_ALL}")
+                # print(f"{Fore.RED}attached_shape.vertices: {Fore.GREEN}{attached_shape.vertices}{Style.RESET_ALL}")
 
                 new_attached_shape_vertices = [
                     (vx + step_x, vy + step_y) for vx, vy in attached_shape.vertices
