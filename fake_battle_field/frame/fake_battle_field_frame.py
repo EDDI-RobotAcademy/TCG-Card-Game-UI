@@ -59,6 +59,8 @@ from battle_field.infra.request.request_attack_main_character_with_active_skill 
 from battle_field.infra.request.request_attack_opponent_unit import RequestAttackOpponentUnit
 from battle_field.infra.request.request_attack_to_opponent_field_unit_with_active_skill import \
     RequestAttackToOpponentFieldUnitWithActiveSkill
+from battle_field.infra.request.request_attack_with_non_targeting_active_skill import \
+    RequestAttackWithNonTargetingActiveSkill
 from battle_field.infra.request.request_use_corpse_explosion import RequestUseCorpseExplosion
 from battle_field.infra.request.request_use_energy_burn_to_unit import RequestUseEnergyBurnToUnit
 from battle_field.infra.request.request_use_energy_card_to_unit import RequestUseEnergyCardToUnit
@@ -2540,56 +2542,106 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     # 광역기
                     elif skill_type == 2:
-                        damage = self.card_info_repository.getCardSkillSecondDamageForCardNumber(your_field_unit_id)
-                        print(f"wide area damage: {damage}")
 
-                        # TODO: 즉발이므로 대기 액션이 필요없음 (서버와의 통신을 위해 대기가 발생 할 수 있긴함) 그 때 가서 추가
-                        for index in range(
-                                len(self.opponent_field_unit_repository.get_current_field_unit_card_object_list()) - 1,
-                                -1,
-                                -1):
-                            opponent_field_unit = \
-                                self.opponent_field_unit_repository.get_current_field_unit_card_object_list()[index]
+                        response = self.__fake_battle_field_frame_repository.request_attack_opponent_unit(
+                            RequestAttackWithNonTargetingActiveSkill(
+                                _sessionInfo = self.__session_repository.get_first_fake_session_info(),
+                                _unitCardIndex = your_field_unit_index
+                            )
+                        )
 
-                            if opponent_field_unit is None:
-                                continue
+                        print(f"non targeting active skill response : {response}")
 
-                            remove_from_field = False
+                        if response.get('is_success',False) == False:
+                            print('non targeting active skill error!! ')
+                            return
 
-                            fixed_card_base = opponent_field_unit.get_fixed_card_base()
-                            attached_shape_list = fixed_card_base.get_attached_shapes()
+                        try:
+                            for unit_index, remain_hp in response['NON_TARGETING_ACTIVE_SKILL']['player_field_unit_health_point_map']['Opponent']['field_unit_health_point_map'].items():
+                                opponent_field_unit = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()[int(unit_index)]
+                                if opponent_field_unit is None:
+                                    continue
+                                fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                                attached_shape_list = fixed_card_base.get_attached_shapes()
 
-                            # TODO: 가만 보면 이 부분이 은근히 많이 사용되고 있음 (중복 많이 발생함)
-                            for attached_shape in attached_shape_list:
-                                if isinstance(attached_shape, NonBackgroundNumberImage):
-                                    if attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                # TODO: 가만 보면 이 부분이 은근히 많이 사용되고 있음 (중복 많이 발생함)
+                                for attached_shape in attached_shape_list:
+                                    if isinstance(attached_shape, NonBackgroundNumberImage):
+                                        if attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                            attached_shape.set_number(remain_hp)
 
-                                        hp_number = attached_shape.get_number()
-                                        hp_number -= damage
+                                            attached_shape.set_image_data(
+                                                self.pre_drawed_image_instance.get_pre_draw_unit_hp(remain_hp))
+                        except Exception as e:
+                            print('no field units!! : ', e)
 
-                                        # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
-                                        # (지금 당장 불사가 존재하지 않음)
-                                        if hp_number <= 0:
-                                            remove_from_field = True
-                                            break
+                        try:
+                            dead_unit_index_list = \
+                                response['NON_TARGETING_ACTIVE_SKILL']['player_field_unit_death_map']['Opponent'][
+                                    'dead_field_unit_index_list']
 
-                                        print(f"contract_of_doom -> hp_number: {hp_number}")
-                                        attached_shape.set_number(hp_number)
+                            for dead_unit_index in dead_unit_index_list:
+                                card_id = self.opponent_field_unit_repository.get_opponent_card_id_by_index(dead_unit_index)
 
-                                        # attached_shape.set_image_data(
-                                        #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
-                                        #     self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
-
-                                        attached_shape.set_image_data(
-                                            self.pre_drawed_image_instance.get_pre_draw_unit_hp(hp_number))
-
-                            if remove_from_field:
-                                card_id = opponent_field_unit.get_card_number()
-
-                                self.opponent_field_unit_repository.remove_current_field_unit_card(index)
+                                self.opponent_field_unit_repository.remove_current_field_unit_card(dead_unit_index)
                                 self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
 
-                        self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                        except Exception as e:
+                            print('no dead units!! : ', e)
+
+
+
+                        # damage = self.card_info_repository.getCardSkillSecondDamageForCardNumber(your_field_unit_id)
+                        # print(f"wide area damage: {damage}")
+                        #
+                        # # TODO: 즉발이므로 대기 액션이 필요없음 (서버와의 통신을 위해 대기가 발생 할 수 있긴함) 그 때 가서 추가
+                        # for index in range(
+                        #         len(self.opponent_field_unit_repository.get_current_field_unit_card_object_list()) - 1,
+                        #         -1,
+                        #         -1):
+                        #     opponent_field_unit = \
+                        #         self.opponent_field_unit_repository.get_current_field_unit_card_object_list()[index]
+                        #
+                        #     if opponent_field_unit is None:
+                        #         continue
+                        #
+                        #     remove_from_field = False
+                        #
+                        #     fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                        #     attached_shape_list = fixed_card_base.get_attached_shapes()
+                        #
+                        #     # TODO: 가만 보면 이 부분이 은근히 많이 사용되고 있음 (중복 많이 발생함)
+                        #     for attached_shape in attached_shape_list:
+                        #         if isinstance(attached_shape, NonBackgroundNumberImage):
+                        #             if attached_shape.get_circle_kinds() is CircleKinds.HP:
+                        #
+                        #                 hp_number = attached_shape.get_number()
+                        #                 hp_number -= damage
+                        #
+                        #                 # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
+                        #                 # (지금 당장 불사가 존재하지 않음)
+                        #                 if hp_number <= 0:
+                        #                     remove_from_field = True
+                        #                     break
+                        #
+                        #                 print(f"contract_of_doom -> hp_number: {hp_number}")
+                        #                 attached_shape.set_number(hp_number)
+                        #
+                        #                 # attached_shape.set_image_data(
+                        #                 #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+                        #                 #     self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
+                        #
+                        #                 attached_shape.set_image_data(
+                        #                     self.pre_drawed_image_instance.get_pre_draw_unit_hp(hp_number))
+                        #
+                        #     if remove_from_field:
+                        #         card_id = opponent_field_unit.get_card_number()
+                        #
+                        #         self.opponent_field_unit_repository.remove_current_field_unit_card(index)
+                        #         self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                        #
+                        # self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
                         self.selected_object = None
                         return

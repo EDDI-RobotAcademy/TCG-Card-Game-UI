@@ -47,26 +47,29 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.__opponent_hand_repository = OpponentHandRepository.getInstance()
             cls.__instance.__battle_field_repository = BattleFieldRepository.getInstance()
 
-
             cls.__instance.notify_callback_table['NOTIFY_DEPLOY_UNIT'] = cls.__instance.notify_deploy_unit
             cls.__instance.notify_callback_table['NOTIFY_TURN_END'] = cls.__instance.notify_turn_end
-            cls.__instance.notify_callback_table['NOTIFY_USE_GENERAL_ENERGY_CARD_TO_UNIT'] = cls.__instance.notify_attach_general_energy_card
+            cls.__instance.notify_callback_table[
+                'NOTIFY_USE_GENERAL_ENERGY_CARD_TO_UNIT'] = cls.__instance.notify_attach_general_energy_card
             # cls.__instance.notify_callback_table['NOTIFY_USE_GENERAL_ENERGY_CARD_TO_UNIT'] = (
             #     cls.__instance.__battle_field_function_service.useGeneralEnergyCardToUnit)
             cls.__instance.notify_callback_table['NOTIFY_USE_SPECIAL_ENERGY_CARD_TO_UNIT'] = (
                 cls.__instance.__battle_field_function_service.useSpecialEnergyCardToUnit)
             cls.__instance.notify_callback_table['NOTIFY_USE_UNIT_ENERGY_REMOVE_ITEM_CARD'] = (
                 cls.__instance.__battle_field_function_service.useUnitEnergyRemoveItemCard)
-            cls.__instance.notify_callback_table['NOTIFY_BASIC_ATTACK_TO_MAIN_CHARACTER'] = cls.__instance.damage_to_main_character
+            cls.__instance.notify_callback_table[
+                'NOTIFY_BASIC_ATTACK_TO_MAIN_CHARACTER'] = cls.__instance.damage_to_main_character
             # cls.__instance.notify_callback_table['NOTIFY_USE_MULTIPLE_UNIT_DAMAGE_ITEM_CARD'] = cls.__instance.damage_to_multiple_unit
             cls.__instance.notify_callback_table['NOTIFY_USE_MULTIPLE_UNIT_DAMAGE_ITEM_CARD'] = (
                 cls.__instance.__battle_field_function_service.useMultipleUnitDamageItemCard)
 
-            cls.__instance.notify_callback_table['NOTIFY_BASIC_ATTACK_TO_UNIT'] = cls.__instance.damage_to_each_unit_by_basic_attack
+            cls.__instance.notify_callback_table[
+                'NOTIFY_BASIC_ATTACK_TO_UNIT'] = cls.__instance.damage_to_each_unit_by_basic_attack
 
             cls.__instance.notify_callback_table['NOTIFY_USE_SEARCH_DECK_SUPPORT_CARD'] = cls.__instance.search_card
 
-            cls.__instance.notify_callback_table['NOTIFY_USE_FIELD_ENERGY_TO_UNIT'] = cls.__instance.notify_attach_field_energy_card
+            cls.__instance.notify_callback_table[
+                'NOTIFY_USE_FIELD_ENERGY_TO_UNIT'] = cls.__instance.notify_attach_field_energy_card
 
             cls.__instance.notify_callback_table['NOTIFY_TARGETING_ATTACK_ACTIVE_SKILL_TO_GAME_MAIN_CHARACTER'] = (
                 cls.__instance.notify_targeting_attack_active_skill_to_main_character
@@ -74,6 +77,10 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
             cls.__instance.notify_callback_table['NOTIFY_TARGETING_ATTACK_ACTIVE_SKILL_TO_UNIT'] = (
                 cls.__instance.notify_targeting_attack_active_skill_to_your_unit
+            )
+
+            cls.__instance.notify_callback_table['NOTIFY_NON_TARGETING_ACTIVE_SKILL'] = (
+                cls.__instance.notify_non_targeting_active_skill
             )
 
         return cls.__instance
@@ -89,70 +96,77 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
     def saveHandCardUseFunction(self, hand_card_use_function):
         print(f"saveHandCardUseFunction: {hand_card_use_function}")
-        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_HAND_CARD_USE.name, hand_card_use_function)
+        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_HAND_CARD_USE.name,
+                                                                       hand_card_use_function)
 
     def saveDrawCountFunction(self, draw_count_function):
         print(f"saveDrawCountFunction: {draw_count_function}")
-        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_DRAW_COUNT.name, draw_count_function)
+        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_DRAW_COUNT.name,
+                                                                       draw_count_function)
 
     def saveDrawnCardListFunction(self, drawn_card_list_function):
         print(f"saveDrawnCardListFunction: {drawn_card_list_function}")
-        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_DRAWN_CARD_LIST.name, drawn_card_list_function)
-
+        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_DRAWN_CARD_LIST.name,
+                                                                       drawn_card_list_function)
 
     def saveDeckCardUseListFunction(self, deck_card_list_use_function):
         print(f"saveDeckCardListUseFunction: {deck_card_list_use_function}")
-        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_DECK_CARD_LIST_USE.name, deck_card_list_use_function)
+        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_DECK_CARD_LIST_USE.name,
+                                                                       deck_card_list_use_function)
 
     def saveFieldUnitEnergyFunction(self, field_unit_energy_function):
         print(f"saveFieldUnitEnergy: {field_unit_energy_function}")
-        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_FIELD_UNIT_ENERGY.name, field_unit_energy_function)
+        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_FIELD_UNIT_ENERGY.name,
+                                                                       field_unit_energy_function)
 
     def saveSearchCountFunction(self, search_count_function):
         print(f"saveSearchCount: {search_count_function}")
-        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_SEARCH_COUNT.name, search_count_function)
+        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_SEARCH_COUNT.name,
+                                                                       search_count_function)
 
     def saveSearchCardListFunction(self, search_card_list_function):
         print(f"saveSearchCardListFunction: {search_card_list_function}")
-        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_SEARCH_CARD_LIST.name, search_card_list_function)
-
+        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_SEARCH_CARD_LIST.name,
+                                                                       search_card_list_function)
 
     def saveSpawnUnitFunction(self, spawn_unit_function):
-        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_UNIT_SPAWN.name, spawn_unit_function)
+        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_UNIT_SPAWN.name,
+                                                                       spawn_unit_function)
 
     def readNoticeAndCallFunction(self):
-        #while True:
-            try:
-                raw_notice_data = self.__notify_reader_repository.getNotice()
+        # while True:
+        try:
+            raw_notice_data = self.__notify_reader_repository.getNotice()
 
-                if raw_notice_data:
-                    print(f"raw_notice_data: {raw_notice_data}")
-                    notice_dict = json.loads(raw_notice_data)
-                    print(f"notice_dict: {notice_dict}")
-                    notify_key = list(notice_dict.keys())[0]
-                    print(f"Notify key: {notify_key}")
+            if raw_notice_data:
+                print(f"raw_notice_data: {raw_notice_data}")
+                notice_dict = json.loads(raw_notice_data)
+                print(f"notice_dict: {notice_dict}")
+                notify_key = list(notice_dict.keys())[0]
+                print(f"Notify key: {notify_key}")
 
-                    notify_callback_function = self.notify_callback_table[notify_key]
-                    notify_callback_function(notice_dict)
+                notify_callback_function = self.notify_callback_table[notify_key]
+                notify_callback_function(notice_dict)
 
-                    # for notice_type in NoticeType:
-                    #     print(f"notice_type: {notice_type.name}")
-                    #     if notice_type.name in notice_dict:
-                    #         self.__notify_reader_repository.isFinish = True
-                    #         print(f"noticeType: {notice_type.name}")
-                    #         called_function = self.__notify_reader_repository.getFunctionByNoticeName(notice_type.name)
-                    #         called_function(notice_dict[notice_type.name])
+                # for notice_type in NoticeType:
+                #     print(f"notice_type: {notice_type.name}")
+                #     if notice_type.name in notice_dict:
+                #         self.__notify_reader_repository.isFinish = True
+                #         print(f"noticeType: {notice_type.name}")
+                #         called_function = self.__notify_reader_repository.getFunctionByNoticeName(notice_type.name)
+                #         called_function(notice_dict[notice_type.name])
 
-            except Exception as e:
-                self.readNoticeAndCallFunction()
-                print(e)
-              #  continue
+        except Exception as e:
+            self.readNoticeAndCallFunction()
+            print(e)
+        #  continue
 
     def notify_deploy_unit(self, notice_dictionary):
         print(f"notify_deploy_unit() -> notice_dictionary: {notice_dictionary}")
 
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
-        print(f"{Fore.RED}notify_deploy_unit() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
+        print(
+            f"{Fore.RED}notify_deploy_unit() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
 
         if whose_turn is True:
             # self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(not whose_turn)
@@ -161,7 +175,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         card_id = (notice_dictionary.get('NOTIFY_DEPLOY_UNIT', {})
                    .get('player_hand_use_map', {})
-                   .get('Opponent',{})
+                   .get('Opponent', {})
                    .get('card_id', None))
 
         print(f"{Fore.RED}notify_deploy_unit() -> Opponent deploy card_id:{Fore.GREEN} {card_id}{Style.RESET_ALL}")
@@ -173,18 +187,21 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         print(f"{Fore.RED}notify_turn_end() -> notice_dictionary:{Fore.GREEN} {notice_dictionary}{Style.RESET_ALL}")
 
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
-        print(f"{Fore.RED}notify_turn_end() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
+        print(
+            f"{Fore.RED}notify_turn_end() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
 
         if whose_turn is False:
             # Fake Opponent Draw
             opponent_drawn_card_list = notice_dictionary['NOTIFY_TURN_END']['player_drawn_card_list_map'].get('You', [])
             self.__fake_opponent_hand_repository.save_fake_opponent_hand_list(opponent_drawn_card_list)
             fake_opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
-            print(f"{Fore.RED}notify_turn_end() -> fake opponent hand list:{Fore.GREEN} {fake_opponent_hand_list}{Style.RESET_ALL}")
+            print(
+                f"{Fore.RED}notify_turn_end() -> fake opponent hand list:{Fore.GREEN} {fake_opponent_hand_list}{Style.RESET_ALL}")
 
             fake_opponent_field_energy = notice_dictionary['NOTIFY_TURN_END']['player_field_energy_map'].get('You', [])
             self.__opponent_field_energy_repository.set_opponent_field_energy(fake_opponent_field_energy)
-            print(f"{Fore.RED}notify_turn_end() -> fake opponent_field_energy:{Fore.GREEN} {fake_opponent_field_energy}{Style.RESET_ALL}")
+            print(
+                f"{Fore.RED}notify_turn_end() -> fake opponent_field_energy:{Fore.GREEN} {fake_opponent_field_energy}{Style.RESET_ALL}")
 
             opponent_field_energy_count = self.__opponent_field_energy_repository.get_opponent_field_energy()
             print(f"{Fore.RED}opponent_field_energy_count:{Fore.GREEN} {opponent_field_energy_count}{Style.RESET_ALL}")
@@ -204,12 +221,12 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
     def notify_attach_general_energy_card(self, notice_dictionary):
 
-
-
-        print(f"{Fore.RED}notify_attach_general_energy_card() -> notice_dictionary:{Fore.GREEN} {notice_dictionary}{Style.RESET_ALL}")
+        print(
+            f"{Fore.RED}notify_attach_general_energy_card() -> notice_dictionary:{Fore.GREEN} {notice_dictionary}{Style.RESET_ALL}")
 
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
-        print(f"{Fore.RED}notify_attach_general_energy_card() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
+        print(
+            f"{Fore.RED}notify_attach_general_energy_card() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
 
         if whose_turn is False:
             # Fake Opponent Attach Energy
@@ -220,7 +237,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             # print(f"{Fore.RED}fake_opponent_field_unit_energy_map:{Fore.GREEN} {fake_opponent_field_unit_energy_map}{Style.RESET_ALL}")
             self.__battle_field_repository.set_current_use_card_id(93)
 
-            for unit_index, unit_value in notice_dictionary['NOTIFY_USE_GENERAL_ENERGY_CARD_TO_UNIT']['player_field_unit_energy_map']['Opponent']['field_unit_energy_map'].items():
+            for unit_index, unit_value in \
+            notice_dictionary['NOTIFY_USE_GENERAL_ENERGY_CARD_TO_UNIT']['player_field_unit_energy_map']['Opponent'][
+                'field_unit_energy_map'].items():
                 print(f"{Fore.RED}opponent_unit_index:{Fore.GREEN} {unit_index}{Style.RESET_ALL}")
                 print(f"{Fore.RED}opponent_unit_value:{Fore.GREEN} {unit_value}{Style.RESET_ALL}")
 
@@ -230,9 +249,11 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                     print(f"{Fore.RED}energy_key:{Fore.GREEN} {race_energy_number}{Style.RESET_ALL}")
                     print(f"{Fore.RED}energy_count:{Fore.GREEN} {race_energy_count}{Style.RESET_ALL}")
 
-                    self.__opponent_field_unit_repository.attach_race_energy(int(unit_index), EnergyType.Undead, race_energy_count)
+                    self.__opponent_field_unit_repository.attach_race_energy(int(unit_index), EnergyType.Undead,
+                                                                             race_energy_count)
 
-                    opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(int(unit_index))
+                    opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                        int(unit_index))
 
                     opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
                     opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
@@ -246,7 +267,6 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                                 opponent_fixed_card_attached_shape.set_image_data(
                                     self.__pre_drawed_image_instance.get_pre_draw_unit_energy(
                                         total_energy_count))
-
 
     def damage_to_main_character(self, notice_dictionary):
         notify_dict_data = notice_dictionary['NOTIFY_BASIC_ATTACK_TO_MAIN_CHARACTER']
@@ -269,7 +289,6 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         else:
             character_survival = False
 
-
         if character_survival:
             self.__your_hp_repository.change_hp(character_hp)
 
@@ -291,7 +310,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                      .get("card_kind", None))
 
         search_count = (notify_dict_data.get("player_hand_use_map", {})
-                    .get("Opponent", None))
+                        .get("Opponent", None))
 
         fake_search_list = []
         for count in range(0, search_count):
@@ -301,8 +320,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         self.__fake_opponent_hand_repository.save_fake_opponent_hand_list(fake_search_list)
 
-        #self.__opponent_hand_repository.save_current_opponent_hand_state(fake_search_list)
-
+        # self.__opponent_hand_repository.save_current_opponent_hand_state(fake_search_list)
 
     def damage_to_each_unit_by_basic_attack(self, notice_dictionary):
 
@@ -336,8 +354,6 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         if is_opponent_data_in_data:
 
-
-
             opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
                 opponent_unit_index)
             opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
@@ -358,7 +374,6 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
                         # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
                         # (지금 당장 불사가 존재하지 않음)
-
 
                         print(f"공격 후 opponent unit 체력 -> hp_number: {remain_opponent_unit_hp}")
                         opponent_fixed_card_attached_shape.set_number(remain_opponent_unit_hp)
@@ -397,7 +412,6 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             print("your data is not in data")
 
         if is_your_data_in_data:
-
 
             your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(
                 your_unit_index)
@@ -451,12 +465,13 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             # print(f"{Fore.RED}fake_opponent_field_unit_energy_map:{Fore.GREEN} {fake_opponent_field_unit_energy_map}{Style.RESET_ALL}")
             self.__battle_field_repository.set_current_use_card_id(93)
 
-            remain_opponent_field_energy = notice_dictionary['NOTIFY_USE_FIELD_ENERGY_TO_UNIT']['player_field_energy_map']['Opponent']
+            remain_opponent_field_energy = \
+            notice_dictionary['NOTIFY_USE_FIELD_ENERGY_TO_UNIT']['player_field_energy_map']['Opponent']
 
             self.__opponent_field_energy_repository.set_opponent_field_energy(remain_opponent_field_energy)
             for unit_index, unit_value in \
-            notice_dictionary['NOTIFY_USE_FIELD_ENERGY_TO_UNIT']['player_field_unit_energy_map']['Opponent'][
-                'field_unit_energy_map'].items():
+                    notice_dictionary['NOTIFY_USE_FIELD_ENERGY_TO_UNIT']['player_field_unit_energy_map']['Opponent'][
+                        'field_unit_energy_map'].items():
                 print(f"{Fore.RED}opponent_unit_index:{Fore.GREEN} {unit_index}{Style.RESET_ALL}")
                 print(f"{Fore.RED}opponent_unit_value:{Fore.GREEN} {unit_value}{Style.RESET_ALL}")
 
@@ -487,7 +502,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
     def notify_targeting_attack_active_skill_to_main_character(self, notice_dictionary):
 
-        your_character_survival_state = notice_dictionary['NOTIFY_TARGETING_ATTACK_ACTIVE_SKILL_TO_GAME_MAIN_CHARACTER'][
+        your_character_survival_state = \
+        notice_dictionary['NOTIFY_TARGETING_ATTACK_ACTIVE_SKILL_TO_GAME_MAIN_CHARACTER'][
             'player_main_character_survival_map']['You']
 
         if your_character_survival_state != 'Survival':
@@ -529,7 +545,6 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         if is_your_data_in_data:
 
-
             your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(
                 your_unit_index)
             your_fixed_card_base = your_field_unit.get_fixed_card_base()
@@ -541,7 +556,6 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
                         if remain_your_unit_hp <= 0:
                             break
-
 
                         print(f"공격 후 your unit 체력 -> hp_number: {remain_your_unit_hp}")
                         your_fixed_card_attached_shape.set_number(remain_your_unit_hp)
@@ -564,3 +578,44 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 self.__your_field_unit_repository.remove_card_by_index(dead_your_unit_index)
 
             self.__your_field_unit_repository.replace_field_card_position()
+
+    def notify_non_targeting_active_skill(self, notice_dictionary):
+
+        data = {"NOTIFY_NON_TARGETING_ACTIVE_SKILL": {
+            "player_field_unit_health_point_map": {"You": {"field_unit_health_point_map": {}}},
+            "player_field_unit_harmful_effect_map": {"You": {"field_unit_harmful_status_map": {}}},
+            "player_field_unit_death_map": {"You": {"dead_field_unit_index_list": [2, 3, 4]}}}}
+
+        for unit_index, remain_hp in \
+        notice_dictionary['NOTIFY_NON_TARGETING_ACTIVE_SKILL']['player_field_unit_health_point_map'][
+            'You']['field_unit_health_point_map'].items():
+
+            if remain_hp <= 0:
+                continue
+
+            your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(
+                unit_index)
+            your_fixed_card_base = your_field_unit.get_fixed_card_base()
+            your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+
+            for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+                if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                    if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                        your_fixed_card_attached_shape.set_number(remain_hp)
+
+                        your_fixed_card_attached_shape.set_image_data(
+                            self.__pre_drawed_image_instance.get_pre_draw_unit_hp(
+                                remain_hp))
+
+        dead_unit_index_list = \
+            notice_dictionary['NOTIFY_NON_TARGETING_ACTIVE_SKILL']['player_field_unit_death_map']['You'][
+                'dead_field_unit_index_list']
+
+
+        for dead_unit_index in dead_unit_index_list:
+            field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(
+                dead_unit_index)
+            self.__your_tomb_repository.create_tomb_card(field_unit_id)
+            self.__your_field_unit_repository.remove_card_by_index(dead_unit_index)
+
+        self.__your_field_unit_repository.replace_field_card_position()
