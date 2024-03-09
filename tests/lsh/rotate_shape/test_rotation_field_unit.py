@@ -1457,54 +1457,109 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 sword_shape.update_rotation_angle(current_angle + omega_accel_alpha * step_count * step_count)
 
             if step_count > 2:
-                vibration_factor = 10
-                random_translation = (random.uniform(-vibration_factor, vibration_factor),
-                                      random.uniform(-vibration_factor, vibration_factor))
-
                 fixed_card_base = opponent_field_unit.get_fixed_card_base()
                 tool_card = opponent_field_unit.get_tool_card()
-
-                new_fixed_card_base_vertices = [
-                    (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
-                    fixed_card_base.get_vertices()
-                ]
-                fixed_card_base.update_vertices(new_fixed_card_base_vertices)
-
-                if tool_card is not None:
-                    new_tool_card_vertices = [
-                        (vx + random_translation[0], vy + random_translation[1]) for vx, vy in tool_card.get_vertices()
-                    ]
-                    tool_card.update_vertices(new_tool_card_vertices)
-
                 attached_shape_list = fixed_card_base.get_attached_shapes()
 
-                for attached_shape in attached_shape_list:
-                    # Apply random translation
-                    new_attached_shape_vertices = [
-                        (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
-                        attached_shape.get_vertices()
-                    ]
-                    attached_shape.update_vertices(new_attached_shape_vertices)
+                if step_count % 2 == 1:
+                    vibration_factor = 10
+                    random_translation = (random.uniform(-vibration_factor, vibration_factor),
+                                          random.uniform(-vibration_factor, vibration_factor))
 
-                # Return to the original position
-                fixed_card_base.update_vertices(fixed_card_base.get_vertices())
-                if tool_card is not None:
-                    tool_card.update_vertices(tool_card.get_vertices())
-                for attached_shape in attached_shape_list:
-                    attached_shape.update_vertices(attached_shape.get_vertices())
+                    new_fixed_card_base_vertices = [
+                        (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                        fixed_card_base.get_vertices()
+                    ]
+                    fixed_card_base.update_vertices(new_fixed_card_base_vertices)
+
+                    if tool_card is not None:
+                        new_tool_card_vertices = [
+                            (vx + random_translation[0], vy + random_translation[1]) for vx, vy in tool_card.get_vertices()
+                        ]
+                        tool_card.update_vertices(new_tool_card_vertices)
+
+                    for attached_shape in attached_shape_list:
+                        # Apply random translation
+                        new_attached_shape_vertices = [
+                            (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                            attached_shape.get_vertices()
+                        ]
+                        attached_shape.update_vertices(new_attached_shape_vertices)
+
+                else:
+                    # Return to the original position
+                    # fixed_card_base.update_vertices(fixed_card_base.get_vertices())
+                    # if tool_card is not None:
+                    #     tool_card.update_vertices(tool_card.get_vertices())
+                    # for attached_shape in attached_shape_list:
+                    #     attached_shape.update_vertices(attached_shape.get_vertices())
+
+                    # self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                    fixed_card_base.update_vertices(fixed_card_base.get_initial_vertices())
+                    if tool_card is not None:
+                        tool_card.update_vertices(tool_card.get_initial_vertices())
+                    for attached_shape in attached_shape_list:
+                        attached_shape.update_vertices(attached_shape.get_initial_vertices())
 
             if step_count < steps:
 
                 self.master.after(20, slash_with_sword, step_count + 1)
             else:
-                # self.start_post_animation(attack_animation_object)
-                self.is_attack_motion_finished = True
-                attack_animation_object.set_is_finished(True)
-                attack_animation_object.set_need_post_process(True)
+                self.finish_post_animation(attack_animation_object)
+                # self.is_attack_motion_finished = True
+                # attack_animation_object.set_is_finished(True)
+                # attack_animation_object.set_need_post_process(True)
 
         slash_with_sword(1)
 
+    def finish_post_animation(self, attack_animation_object):
+        sword_shape = attack_animation_object.get_your_weapon_shape()
 
+        steps = 15
+        # (390 - 153) / 1848 = 0.1282
+        current_sword_shape = attack_animation_object.get_your_weapon_shape()
+        print(f"{Fore.RED}current_sword_shape{Fore.GREEN} {current_sword_shape}{Style.RESET_ALL}")
+
+        current_sword_shape_target_x = current_sword_shape.get_initial_vertices()
+        print(f"{Fore.RED}current_sword_shape_target_x{Fore.GREEN} {current_sword_shape_target_x}{Style.RESET_ALL}")
+
+        # S = v0 * t + 0.5 * a * t^2
+        # S = 0.5 * a * t^2 => step = 10
+        # S = 0.5 * a * 225 = sword_target_x / 100 = 2
+        # 100 = (steps * steps)
+
+        # sword_accel_x = sword_target_x / 100
+        # print(f"{Fore.RED}sword_accel_x{Fore.GREEN} {sword_accel_x}{Style.RESET_ALL}")
+        #
+        # # theta = w0 * t + 0.5 * alpha * t^2
+        # # theta = 0.5 * alpha * t^2 => step_count = 10
+        # # theta = 0.5 * alpha * 100 = 30 / 100 = 0.3
+        # omega_accel_alpha = 0.3
+        #
+        # def move_to_origin_location(step_count):
+        #     if step_count < 11:
+        #         sword_accel_x_dist = sword_accel_x * step_count
+        #
+        #         new_attached_shape_vertices = [
+        #             (vx + sword_accel_x_dist, vy) for vx, vy in sword_shape.vertices
+        #         ]
+        #         sword_shape.update_vertices(new_attached_shape_vertices)
+        #         print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+        #
+        #         current_angle = sword_shape.get_rotation_angle()
+        #         sword_shape.update_rotation_angle(current_angle + omega_accel_alpha * step_count * step_count)
+        #
+        #     if step_count < steps:
+        #
+        #         self.master.after(20, move_to_origin_location, step_count + 1)
+        #     else:
+        #         self.finish_post_animation(attack_animation_object)
+        #         self.is_attack_motion_finished = True
+        #         attack_animation_object.set_is_finished(True)
+        #         attack_animation_object.set_need_post_process(True)
+        #
+        # move_to_origin_location(1)
 
 
 

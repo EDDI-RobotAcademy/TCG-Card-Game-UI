@@ -55,6 +55,7 @@ class FixedFieldCard:
                                                 local_translation=local_translation,
                                                 center=vertices,
                                                 radius=15)
+        attached_dark_flame_image.set_initial_vertices(vertices)
         return attached_dark_flame_image
 
     def creat_fixed_card_freezing_image_circle(self, image_data, local_translation, vertices):
@@ -62,6 +63,7 @@ class FixedFieldCard:
                                               local_translation=local_translation,
                                               center=vertices,
                                               radius=15)
+        attached_freezing_image.set_initial_vertices(vertices)
         return attached_freezing_image
 
     def creat_fixed_card_energy_race_circle(self, color, vertices, local_translation):
@@ -69,6 +71,7 @@ class FixedFieldCard:
                                         local_translation=local_translation,
                                         center=vertices,
                                         radius=5)
+        attached_energy_circle.set_initial_vertices(vertices)
         return attached_energy_circle
     def create_attached_tool_card_rectangle(self, color, vertices, local_translation):
         attached_tool_card = Rectangle(color=color,
@@ -76,6 +79,8 @@ class FixedFieldCard:
                                        vertices=vertices)
         attached_tool_card.set_draw_gradient(True)
         attached_tool_card.set_visible(False)
+        attached_tool_card.set_initial_vertices(vertices)
+
         return attached_tool_card
 
     def create_card_background_rectangle(self, image_data, vertices, local_translation):
@@ -83,13 +88,19 @@ class FixedFieldCard:
                                                       local_translation=local_translation,
                                                       vertices=vertices)
         card_background_illustration.set_visible(False)
+        card_background_illustration.set_initial_vertices(vertices)
+
         return card_background_illustration
 
     def create_fixed_card_base_rectangle(self, color, vertices, local_translation):
         fixed_card_base = PickableRectangle(color=color,
                                             local_translation=local_translation,
                                             vertices=vertices)
-        fixed_card_base.set_draw_gradient(True)
+
+        # fixed_card_base.set_draw_gradient(True)
+        fixed_card_base.set_draw_gradient(False)
+        fixed_card_base.set_initial_vertices(vertices)
+
         return fixed_card_base
 
     def create_card_frame(self, image_data, vertices, local_translation):
@@ -107,13 +118,18 @@ class FixedFieldCard:
                                            vertices=vertices)
 
         card_illustration.set_rectangle_kinds(RectangleKinds.ILLUSTRATION)
+        card_illustration.set_initial_vertices(vertices)
+
         return card_illustration
 
     def create_equipped_mark(self, image_data, vertices, local_translation):
         card_equipped_mark = RectangleImage(image_data=image_data,
                                             local_translation=local_translation,
                                             vertices=vertices)
+
         card_equipped_mark.set_visible(False)
+        card_equipped_mark.set_initial_vertices(vertices)
+
         return card_equipped_mark
 
     def init_card(self, card_number):
