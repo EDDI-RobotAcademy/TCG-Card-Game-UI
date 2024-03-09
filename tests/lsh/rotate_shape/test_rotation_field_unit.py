@@ -1516,50 +1516,125 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
     def finish_post_animation(self, attack_animation_object):
         sword_shape = attack_animation_object.get_your_weapon_shape()
 
+        animation_actor = attack_animation_object.get_animation_actor()
+        your_fixed_card_base = animation_actor.get_fixed_card_base()
+        tool_card = animation_actor.get_tool_card()
+        attached_shape_list = your_fixed_card_base.get_attached_shapes()
+
+        current_your_attacker_unit_vertices = your_fixed_card_base.get_vertices()
+
+        current_your_attacker_unit_local_translation = your_fixed_card_base.get_local_translation()
+        print(f"{Fore.RED}current_your_attacker_unit_local_translation{Fore.GREEN} {current_your_attacker_unit_local_translation}{Style.RESET_ALL}")
+
+        new_y_value = current_your_attacker_unit_local_translation[1] + 30
+        your_attacker_unit_destination_local_translation = (
+        current_your_attacker_unit_local_translation[0], new_y_value)
+        print(f"{Fore.RED}your_attacker_unit_destination_local_translation{Fore.GREEN} {your_attacker_unit_destination_local_translation}{Style.RESET_ALL}")
+
         steps = 15
+        # step_x = (your_attacker_unit_destination_local_translation[0] - current_your_attacker_unit_local_translation[0]) / steps
+        step_y = (your_attacker_unit_destination_local_translation[1] - current_your_attacker_unit_local_translation[1]) / steps
+        step_y *= -1
+
         # (390 - 153) / 1848 = 0.1282
         current_sword_shape = attack_animation_object.get_your_weapon_shape()
-        print(f"{Fore.RED}current_sword_shape{Fore.GREEN} {current_sword_shape}{Style.RESET_ALL}")
+        current_sword_shape_target = current_sword_shape.get_initial_vertices()
 
-        current_sword_shape_target_x = current_sword_shape.get_initial_vertices()
-        print(f"{Fore.RED}current_sword_shape_target_x{Fore.GREEN} {current_sword_shape_target_x}{Style.RESET_ALL}")
+        current_sword_shape_target_x = current_sword_shape_target[0][0]
+        current_sword_shape_target_y = current_sword_shape_target[0][1]
 
-        # S = v0 * t + 0.5 * a * t^2
-        # S = 0.5 * a * t^2 => step = 10
-        # S = 0.5 * a * 225 = sword_target_x / 100 = 2
-        # 100 = (steps * steps)
+        # theta = w0 * t + 0.5 * alpha * t^2
+        # theta = 0.5 * alpha * t^2 => step_count = 15
+        # theta = 0.5 * alpha * 225 = angle / 112.5
+        target_rotation_angle = sword_shape.get_rotation_angle()
+        return_omega_accel_alpha = target_rotation_angle / 112.5
 
-        # sword_accel_x = sword_target_x / 100
-        # print(f"{Fore.RED}sword_accel_x{Fore.GREEN} {sword_accel_x}{Style.RESET_ALL}")
-        #
-        # # theta = w0 * t + 0.5 * alpha * t^2
-        # # theta = 0.5 * alpha * t^2 => step_count = 10
-        # # theta = 0.5 * alpha * 100 = 30 / 100 = 0.3
-        # omega_accel_alpha = 0.3
-        #
-        # def move_to_origin_location(step_count):
-        #     if step_count < 11:
-        #         sword_accel_x_dist = sword_accel_x * step_count
-        #
-        #         new_attached_shape_vertices = [
-        #             (vx + sword_accel_x_dist, vy) for vx, vy in sword_shape.vertices
-        #         ]
-        #         sword_shape.update_vertices(new_attached_shape_vertices)
-        #         print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
-        #
-        #         current_angle = sword_shape.get_rotation_angle()
-        #         sword_shape.update_rotation_angle(current_angle + omega_accel_alpha * step_count * step_count)
-        #
-        #     if step_count < steps:
-        #
-        #         self.master.after(20, move_to_origin_location, step_count + 1)
-        #     else:
-        #         self.finish_post_animation(attack_animation_object)
-        #         self.is_attack_motion_finished = True
-        #         attack_animation_object.set_is_finished(True)
-        #         attack_animation_object.set_need_post_process(True)
-        #
-        # move_to_origin_location(1)
+        def move_to_origin_location(step_count):
+            new_y = current_your_attacker_unit_local_translation[1] + step_y * step_count
+            print(f"{Fore.RED}step ->{Fore.GREEN}new_y: {new_y}{Style.RESET_ALL}")
+
+            new_vertices = [
+                (vx, vy - step_y * step_count) for vx, vy in current_your_attacker_unit_vertices
+            ]
+            your_fixed_card_base.update_vertices(new_vertices)
+            print(f"{Fore.RED}new_vertices{Fore.GREEN} {new_vertices}{Style.RESET_ALL}")
+
+            # tool_card = self.selected_object.get_tool_card()
+            # if tool_card is not None:
+            #     new_tool_card_vertices = [
+            #         (vx + new_x, vy + new_y) for vx, vy in tool_card.vertices
+            #     ]
+            #     tool_card.update_vertices(new_tool_card_vertices)
+
+            for attached_shape in your_fixed_card_base.get_attached_shapes():
+                # theta = w0 * t + 0.5 * alpha * t^2
+                # theta = 0.5 * alpha * t^2 => step_count = 15
+                # theta = 0.5 * alpha * 225 = 65 / 225 = 0.28888
+                omega_accel_alpha = -0.28888
+
+                if isinstance(attached_shape, NonBackgroundNumberImage):
+                    if attached_shape.get_circle_kinds() is CircleKinds.ATTACK:
+                        current_sword_shape_vertices = current_sword_shape.get_vertices()
+
+                        current_sword_shape_x_vertex = current_sword_shape_vertices[0][0]
+                        current_sword_shape_y_vertex = current_sword_shape_vertices[0][1]
+
+                        # S = v0 * t + 0.5 * a * t^2
+                        # S = 0.5 * a * t^2 => step = 15
+                        # S = 0.5 * a * 225 = distance / 112.5
+                        # 225 = (steps * steps)
+
+                        # difference_x: 11.434448575145638, difference_y: 94.0313609929536
+
+                        sword_accel_x = (current_sword_shape_target_x - current_sword_shape_x_vertex + 15.1677706645) / 112.5
+                        sword_accel_y = (current_sword_shape_target_y - current_sword_shape_y_vertex + 124.732391723) / 112.5
+
+                        sword_accel_x_dist = sword_accel_x * step_count
+                        sword_accel_y_dist = sword_accel_y * step_count
+
+                        new_attached_shape_vertices = [
+                            (vx + sword_accel_x_dist, vy + sword_accel_y_dist) for vx, vy in sword_shape.vertices
+                        ]
+                        sword_shape.update_vertices(new_attached_shape_vertices)
+                        print(
+                            f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+
+                        current_angle = sword_shape.get_rotation_angle()
+                        sword_shape.update_rotation_angle(current_angle - return_omega_accel_alpha * step_count)
+
+                        continue
+
+                print(
+                    f"{Fore.RED}attached_shape.vertices: {Fore.GREEN}{attached_shape.vertices}{Style.RESET_ALL}")
+
+                new_attached_shape_vertices = [
+                    (vx, vy - step_y) for vx, vy in attached_shape.vertices
+                ]
+                attached_shape.update_vertices(new_attached_shape_vertices)
+                print(
+                    f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+
+            if step_count < steps:
+
+                self.master.after(20, move_to_origin_location, step_count + 1)
+            else:
+                # print(f"{Fore.RED}current_sword_shape_target{Fore.GREEN} {current_sword_shape_target}{Style.RESET_ALL}")
+                # difference_x = current_sword_shape_target[0][0] - sword_shape.vertices[0][0]
+                # difference_y = current_sword_shape_target[0][1] - sword_shape.vertices[0][1]
+                #
+                # print(f"{Fore.RED}difference -> {Fore.GREEN}difference_x: {difference_x}, difference_y: {difference_y}{Style.RESET_ALL}")
+
+                your_fixed_card_base.update_vertices(your_fixed_card_base.get_initial_vertices())
+                if tool_card is not None:
+                    tool_card.update_vertices(tool_card.get_initial_vertices())
+                for attached_shape in attached_shape_list:
+                    attached_shape.update_vertices(attached_shape.get_initial_vertices())
+
+                self.is_attack_motion_finished = True
+                attack_animation_object.set_is_finished(True)
+                attack_animation_object.set_need_post_process(True)
+
+        move_to_origin_location(1)
 
 
 
