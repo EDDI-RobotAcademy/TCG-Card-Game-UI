@@ -54,7 +54,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             # cls.__instance.notify_callback_table['NOTIFY_USE_GENERAL_ENERGY_CARD_TO_UNIT'] = (
             #     cls.__instance.__battle_field_function_service.useGeneralEnergyCardToUnit)
             cls.__instance.notify_callback_table['NOTIFY_USE_SPECIAL_ENERGY_CARD_TO_UNIT'] = (
-                cls.__instance.__battle_field_function_service.useSpecialEnergyCardToUnit)
+                cls.__instance.notify_use_special_energy_card_to_unit)
             cls.__instance.notify_callback_table['NOTIFY_USE_UNIT_ENERGY_REMOVE_ITEM_CARD'] = (
                 cls.__instance.__battle_field_function_service.useUnitEnergyRemoveItemCard)
             cls.__instance.notify_callback_table[
@@ -619,3 +619,69 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             self.__your_field_unit_repository.remove_card_by_index(dead_unit_index)
 
         self.__your_field_unit_repository.replace_field_card_position()
+
+    def notify_use_special_energy_card_to_unit(self, notice_dictionary):
+        # 일단은 opponent 밖에 없으니 아래와 같이 처리할 수 있음
+        data = notice_dictionary['NOTIFY_USE_SPECIAL_ENERGY_CARD_TO_UNIT']
+
+        opponent_usage_card_info = (
+            data)['player_hand_use_map']['Opponent']
+        opponent_field_unit_energy_map = (
+            data)['player_field_unit_energy_map']['Opponent']['field_unit_energy_map']
+        opponent_field_unit_extra_effect_map = (
+            data)['player_field_unit_extra_effect_map']['Opponent']['field_unit_extra_effect_map']
+
+        # 사용된 카드 묘지로 보냄
+        used_card_id = opponent_usage_card_info['card_id']
+        self.__opponent_tomb_repository.create_opponent_tomb_card(used_card_id)
+        self.__battle_field_repository.set_current_use_card_id(used_card_id)
+
+        for opponent_unit_index, opponent_unit_energy_info in opponent_field_unit_energy_map.items():
+            print(f"{Fore.RED}opponent_unit_index:{Fore.GREEN} {opponent_unit_index}{Style.RESET_ALL}")
+            print(f"{Fore.RED}opponent_unit_energy_info:{Fore.GREEN} {opponent_unit_energy_info}{Style.RESET_ALL}")
+
+            for race_energy_number, race_energy_count in opponent_unit_energy_info['attached_energy_map'].items():
+                extra_effect_list = opponent_field_unit_extra_effect_map[str(opponent_unit_index)]['extra_effect_list']
+                print(f"{Fore.RED}race_energy_number:{Fore.GREEN} {race_energy_number}{Style.RESET_ALL}")
+                print(f"{Fore.RED}race_energy_count:{Fore.GREEN} {race_energy_count}{Style.RESET_ALL}")
+                print(f"{Fore.RED}extra_effect_list:{Fore.GREEN} {extra_effect_list}{Style.RESET_ALL}")
+
+                current_opponent_field_unit_race_energy_count = (
+                    self.__opponent_field_unit_repository.get_opponent_field_unit_race_energy(
+                        int(opponent_unit_index), int(race_energy_number)))
+                print(f"{Fore.RED}current_opponent_field_unit_race_energy_count:{Fore.GREEN}"
+                      f" {current_opponent_field_unit_race_energy_count}{Style.RESET_ALL}")
+
+                self.__opponent_field_unit_repository.attach_race_energy(
+                    int(opponent_unit_index),
+                    int(race_energy_number),
+                    (race_energy_count - current_opponent_field_unit_race_energy_count))
+
+                self.__opponent_field_unit_repository.update_opponent_unit_extra_effect_at_index(
+                    int(opponent_unit_index), extra_effect_list)
+
+                opponent_field_unit = (
+                    self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(int(opponent_unit_index)))
+
+                opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+
+                total_energy_count = opponent_unit_energy_info['total_energy_count']
+                print(f"{Fore.RED}total_energy_count:{Fore.GREEN} {total_energy_count}{Style.RESET_ALL}")
+
+                for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                    if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
+                        if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+                            opponent_fixed_card_attached_shape.set_image_data(
+                                self.__pre_drawed_image_instance.get_pre_draw_unit_energy(
+                                    total_energy_count))
+
+                        # TODO: 특수 효과에 맞는 이미지 Setting
+                        # if 'DarkFire' in extra_effect_list:
+                        #     print("set_image_data: dark_fire")
+                        #     opponent_fixed_card_attached_shape.set_image_data(
+                        #         self.__pre_drawed_image_instance.get_pre_draw_dark_flame_energy())
+                        # if 'Freeze' in extra_effect_list:
+                        #     print("set_image_data: freeze")
+                        #     opponent_fixed_card_attached_shape.set_image_data(
+                        #         self.__pre_drawed_image_instance.get_pre_draw_freezing_energy())
