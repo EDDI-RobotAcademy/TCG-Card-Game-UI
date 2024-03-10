@@ -11,7 +11,6 @@ from rock_paper_scissors.service.request.rock_paper_scissors_request import Rock
 from session.repository.session_repository_impl import SessionRepositoryImpl
 from rock_paper_scissors.frame.check_rock_paper_scissors_winner.service.check_rock_paper_scissors_winner_service_impl import CheckRockPaperScissorsWinnerServiceImpl
 
-
 class RockPaperScissorsServiceImpl(RockPaperScissorsService):
     __instance = None
 
@@ -60,6 +59,7 @@ class RockPaperScissorsServiceImpl(RockPaperScissorsService):
                 RockPaperScissorsRequest(self.__sessionRepositoryImpl.get_session_info(), target_rps))
             print(f"responseData: {responseData}")
             if responseData.get("is_success") is True:
+                self.RPS_Timer.deleteTimer()
                 self.__checkRockPaperScissorsWinnerServiceImpl.createCheckRockPaperScissorsWinnerUiFrame(
                     rockPaperScissorsFrame, switchFrameWithMenuName)
 
@@ -154,20 +154,6 @@ class RockPaperScissorsServiceImpl(RockPaperScissorsService):
         self.RPS_Timer = Timer(rockPaperScissorsFrame, 30, 0.2, 0.6, timeout)
 
 
-        # self.RPS_Timer_click = self.__rockPaperScissorsRepositoryImpl.getRPSTimerClick()
-        # if self.RPS_Timer_click is True:
-        #     self.RPS_Timer.startTimer()
-        #     for i in range(60):
-        #         responseData = self.__rockPaperScissorsRepositoryImpl.requestRockPaperScissors(
-        #             RockPaperScissorsRequest(self.__sessionRepositoryImpl.get_session_info(),
-        #                                      self.__rockPaperScissorsRepositoryImpl.getRPSLoop()))
-        #         print(f"responseData: {responseData}")
-        #         if responseData.get("is_success") is True:
-        #             self.__checkRockPaperScissorsWinnerServiceImpl.createCheckRockPaperScissorsWinnerUiFrame(
-        #                 rockPaperScissorsFrame, switchFrameWithMenuName)
-        #
-        #         rootWindow.update()
-        #         time.sleep(1)
 
 
         return rockPaperScissorsFrame
