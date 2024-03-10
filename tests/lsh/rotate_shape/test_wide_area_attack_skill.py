@@ -818,28 +818,31 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                         hp_number = attached_shape.get_number()
                                         hp_number -= damage
 
+                                        self.attack_animation_object.add_wide_attack_opponent_field_hp_list(hp_number)
+
                                         # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
                                         # (지금 당장 불사가 존재하지 않음)
-                                        if hp_number <= 0:
-                                            remove_from_field = True
-                                            break
+                                        # if hp_number <= 0:
+                                        #     remove_from_field = True
+                                        #     self.attack_animation_object.add_wide_attack_opponent_field_death_list(hp_number)
+                                        #     break
 
-                                        print(f"hp_number: {hp_number}")
-                                        attached_shape.set_number(hp_number)
+                                        # print(f"hp_number: {hp_number}")
+                                        # attached_shape.set_number(hp_number)
 
                                         # attached_shape.set_image_data(
                                         #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
                                         #     self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
 
-                                        attached_shape.set_image_data(
-                                            self.pre_drawed_image_instance.get_pre_draw_unit_hp(hp_number))
+                                        # attached_shape.set_image_data(
+                                        #     self.pre_drawed_image_instance.get_pre_draw_unit_hp(hp_number))
 
-                            if remove_from_field:
-                                card_id = opponent_field_unit.get_card_number()
+                            # if remove_from_field:
+                            #     card_id = opponent_field_unit.get_card_number()
+                            #
+                            #     self.opponent_field_unit_repository.remove_current_field_unit_card(index)
 
-                                self.opponent_field_unit_repository.remove_current_field_unit_card(index)
-
-                        self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                        # self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
                         self.selected_object = None
                         return
@@ -1721,7 +1724,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         move_to_origin_location(1)
 
     def wide_area_attack_animation(self):
-        steps = 20
+        steps = 10
         attack_animation_object = AttackAnimation.getInstance()
         animation_actor = attack_animation_object.get_animation_actor()
 
@@ -1788,12 +1791,84 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
             else:
-                # self.start_post_animation(attack_animation_object)
+                self.start_wide_area_motion_animation(attack_animation_object)
                 self.is_attack_motion_finished = True
                 attack_animation_object.set_is_finished(True)
                 attack_animation_object.set_need_post_process(True)
 
         update_position(1)
+
+    def start_wide_area_motion_animation(self, attack_animation_object):
+        steps = 50
+
+        opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+        opponent_field_unit_list_length = len(self.opponent_field_unit_repository.get_current_field_unit_card_object_list())
+
+        def wide_area_attack(step_count):
+            for index in range(
+                    opponent_field_unit_list_length - 1,
+                    -1,
+                    -1):
+                opponent_field_unit = opponent_field_unit_list[index]
+
+                if opponent_field_unit is None:
+                    continue
+
+                fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                tool_card = opponent_field_unit.get_tool_card()
+                attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                if step_count % 2 == 1:
+                    vibration_factor = 10
+                    random_translation = (random.uniform(-vibration_factor, vibration_factor),
+                                          random.uniform(-vibration_factor, vibration_factor))
+
+                    new_fixed_card_base_vertices = [
+                        (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                        fixed_card_base.get_vertices()
+                    ]
+                    fixed_card_base.update_vertices(new_fixed_card_base_vertices)
+
+                    if tool_card is not None:
+                        new_tool_card_vertices = [
+                            (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                            tool_card.get_vertices()
+                        ]
+                        tool_card.update_vertices(new_tool_card_vertices)
+
+                    for attached_shape in attached_shape_list:
+                        # Apply random translation
+                        new_attached_shape_vertices = [
+                            (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                            attached_shape.get_vertices()
+                        ]
+                        attached_shape.update_vertices(new_attached_shape_vertices)
+
+                else:
+                    # Return to the original position
+                    # fixed_card_base.update_vertices(fixed_card_base.get_vertices())
+                    # if tool_card is not None:
+                    #     tool_card.update_vertices(tool_card.get_vertices())
+                    # for attached_shape in attached_shape_list:
+                    #     attached_shape.update_vertices(attached_shape.get_vertices())
+
+                    # self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                    fixed_card_base.update_vertices(fixed_card_base.get_initial_vertices())
+                    if tool_card is not None:
+                        tool_card.update_vertices(tool_card.get_initial_vertices())
+                    for attached_shape in attached_shape_list:
+                        attached_shape.update_vertices(attached_shape.get_initial_vertices())
+
+            if step_count < steps:
+                self.master.after(20, wide_area_attack, step_count + 1)
+            else:
+                # self.finish_post_animation(attack_animation_object)
+                self.is_attack_motion_finished = True
+                # attack_animation_object.set_is_finished(True)
+                # attack_animation_object.set_need_post_process(True)
+
+        wide_area_attack(1)
 
 class TestWideAreaAttackSkill(unittest.TestCase):
 
