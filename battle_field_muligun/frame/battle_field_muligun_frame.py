@@ -9,7 +9,6 @@ from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourH
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
 from battle_field_muligun.service.request.check_opponent_muligun_request import CheckOpponentMuligunRequest
 from battle_field_muligun.service.request.muligun_request import MuligunRequest
-from battle_field_muligun_timer.battle_field_muligun_timer import BattleFieldMuligunTimer
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.image_rectangle_element import ImageRectangleElement
@@ -78,8 +77,6 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         self.bind("<Button-1>", self.on_canvas_left_click)
         self.bind("<Button-3>", self.on_canvas_ok_button_click)
 
-        self.timer_panel = None
-        self.timer = BattleFieldMuligunTimer()
     def initgl(self):
         glClearColor(1.0, 1.0, 1.0, 0.0)
         glOrtho(0, self.width, self.height, 0, -1, 1)
@@ -97,13 +94,6 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         self.prev_width = self.width
         self.prev_height = self.height
         self.is_reshape_not_complete = False
-
-        self.timer.set_total_window_size(self.width, self.height)
-        self.timer.draw_current_timer_panel()
-        self.timer_panel = self.timer.get_timer_panel()
-        self.timer.set_function(self.muligunTimeOut)
-        self.timer.set_timer(30)
-        self.timer.start_timer()
 
         self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
         # self.hand_card_state = self.your_hand_repository.get_current_hand_state()
@@ -136,7 +126,6 @@ class BattleFieldMuligunFrame(OpenGLFrame):
 
     def start_redraw_loop(self):
         print(f"start_redraw_loop")
-        self.after(17, self.draw_muligun_timer)
         self.after(17, self.redraw)
 
     def on_resize(self, event):
@@ -159,7 +148,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
 
         self.draw_base()
         self.alpha_background.draw()
-        self.draw_muligun_timer()
+
         # glDisable(GL_BLEND)
 
         if self.ok_button_visible is True:
@@ -495,14 +484,3 @@ class BattleFieldMuligunFrame(OpenGLFrame):
     #     # print(f"현재 카드 뭐 있니?: {self.hand_card_state}")
     #     self.your_hand_repository.create_hand_card_list()
     #     return self.hand_card_list
-    def draw_muligun_timer(self):
-        self.timer.set_width_ratio(self.width_ratio)
-        self.timer.set_height_ratio(self.height_ratio)
-        self.timer.update_current_timer_panel()
-        self.timer_panel.set_width_ratio(self.width_ratio)
-        self.timer_panel.set_height_ratio(self.height_ratio)
-        self.timer_panel.draw()
-        self.master.after(17, self.draw_muligun_timer)
-
-    def muligunTimeOut(self):
-        print("muligunTimeOut")
