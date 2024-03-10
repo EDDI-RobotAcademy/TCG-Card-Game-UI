@@ -7,7 +7,7 @@ from pyopengltk import OpenGLFrame
 class BattleFieldTimer(OpenGLFrame):
     __pre_drawed_image = PreDrawedImage.getInstance()
 
-    def __init__(self, function):
+    def __init__(self):
         super().__init__()
         self.timer_panel = None
         self.timer = 0
@@ -18,7 +18,7 @@ class BattleFieldTimer(OpenGLFrame):
         self.width_ratio = 1
         self.height_ratio = 1
 
-        self.function = function
+        self.function = None
 
 
     def set_total_window_size(self, width, height):
@@ -45,6 +45,9 @@ class BattleFieldTimer(OpenGLFrame):
 
     def set_timer(self, timer):
         self.timer = timer
+
+    def set_function(self, function):
+        self.function = function
 
     def draw_current_timer_panel(self):
 
@@ -75,3 +78,6 @@ class BattleFieldTimer(OpenGLFrame):
             self.master.after(1000, self.start_timer)
         if self.timer == -1:
             self.function()
+
+    def deleteTimer(self):
+        self.destroy()
