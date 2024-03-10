@@ -145,6 +145,8 @@ class RockPaperScissorsServiceImpl(RockPaperScissorsService):
         self.final_decision_button.place(relx=0.5, rely=0.9, anchor="center")
 
         def timeout():
+            responseData = self.__rockPaperScissorsRepositoryImpl.requestRockPaperScissors(
+                RockPaperScissorsRequest(self.__sessionRepositoryImpl.get_session_info(), ""))
             if responseData.get("is_success") is True:
                 self.__checkRockPaperScissorsWinnerServiceImpl.createCheckRockPaperScissorsWinnerUiFrame(
                     rockPaperScissorsFrame, switchFrameWithMenuName)
