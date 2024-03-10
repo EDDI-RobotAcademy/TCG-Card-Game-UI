@@ -753,39 +753,30 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     your_field_unit_index = self.selected_object.get_index()
                     your_field_unit_attached_energy = self.your_field_unit_repository.get_attached_energy_info()
 
-                    your_field_unit_total_energy = your_field_unit_attached_energy.get_total_energy_at_index(
-                        your_field_unit_index)
-                    print(f"your_field_unit_total_energy: {your_field_unit_total_energy}")
-
-                    your_field_unit_attached_energy_info = your_field_unit_attached_energy.get_energy_info_at_index(
-                        your_field_unit_index)
-                    print(f"your_field_unit_attached_energy_info: {your_field_unit_attached_energy_info}")
-
-                    your_field_unit_attached_undead_energy = your_field_unit_attached_energy.get_race_energy_at_index(
-                        your_field_unit_index, EnergyType.Undead)
-                    print(f"your_field_unit_attached_undead_energy: {your_field_unit_attached_undead_energy}")
-                    your_field_unit_attached_human_energy = your_field_unit_attached_energy.get_race_energy_at_index(
-                        your_field_unit_index, EnergyType.Human)
-                    print(f"your_field_unit_attached_human_energy: {your_field_unit_attached_human_energy}")
-                    your_field_unit_attached_trent_energy = your_field_unit_attached_energy.get_race_energy_at_index(
-                        your_field_unit_index, EnergyType.Trent)
-                    print(f"your_field_unit_attached_trent_energy: {your_field_unit_attached_trent_energy}")
-
-                    your_field_unit_required_undead_energy = self.card_info_repository.getCardSkillFirstUndeadEnergyRequiredForCardNumber(
-                        your_field_unit_id)
-                    your_field_unit_required_human_energy = self.card_info_repository.getCardSkillFirstHumanEnergyRequiredForCardNumber(
-                        your_field_unit_id)
-                    your_field_unit_required_trent_energy = self.card_info_repository.getCardSkillFirstTrentEnergyRequiredForCardNumber(
-                        your_field_unit_id)
-
-                    if your_field_unit_required_undead_energy > your_field_unit_attached_undead_energy:
-                        return
-
-                    if your_field_unit_required_human_energy > your_field_unit_attached_human_energy:
-                        return
-
-                    if your_field_unit_required_trent_energy > your_field_unit_attached_trent_energy:
-                        return
+                    # your_field_unit_total_energy = your_field_unit_attached_energy.get_total_energy_at_index(
+                    #     your_field_unit_index)
+                    # print(f"your_field_unit_total_energy: {your_field_unit_total_energy}")
+                    #
+                    # your_field_unit_attached_energy_info = your_field_unit_attached_energy.get_energy_info_at_index(
+                    #     your_field_unit_index)
+                    # print(f"your_field_unit_attached_energy_info: {your_field_unit_attached_energy_info}")
+                    #
+                    # your_field_unit_attached_undead_energy = your_field_unit_attached_energy.get_race_energy_at_index(
+                    #     your_field_unit_index, EnergyType.Undead)
+                    # print(f"your_field_unit_attached_undead_energy: {your_field_unit_attached_undead_energy}")
+                    # your_field_unit_attached_human_energy = your_field_unit_attached_energy.get_race_energy_at_index(
+                    #     your_field_unit_index, EnergyType.Human)
+                    # print(f"your_field_unit_attached_human_energy: {your_field_unit_attached_human_energy}")
+                    # your_field_unit_attached_trent_energy = your_field_unit_attached_energy.get_race_energy_at_index(
+                    #     your_field_unit_index, EnergyType.Trent)
+                    # print(f"your_field_unit_attached_trent_energy: {your_field_unit_attached_trent_energy}")
+                    #
+                    # your_field_unit_required_undead_energy = self.card_info_repository.getCardSkillFirstUndeadEnergyRequiredForCardNumber(
+                    #     your_field_unit_id)
+                    # your_field_unit_required_human_energy = self.card_info_repository.getCardSkillFirstHumanEnergyRequiredForCardNumber(
+                    #     your_field_unit_id)
+                    # your_field_unit_required_trent_energy = self.card_info_repository.getCardSkillFirstTrentEnergyRequiredForCardNumber(
+                    #     your_field_unit_id)
 
                     skill_type = self.card_info_repository.getCardSkillSecondForCardNumber(your_field_unit_id)
                     print(f"skill_type: {skill_type}")
@@ -798,6 +789,10 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     elif skill_type == 2:
                         damage = self.card_info_repository.getCardSkillSecondDamageForCardNumber(your_field_unit_id)
                         print(f"wide area damage: {damage}")
+
+                        self.attack_animation_object.set_animation_actor(self.selected_object)
+
+                        self.master.after(0, self.wide_area_attack_animation)
 
                         # TODO: 즉발이므로 대기 액션이 필요없음 (서버와의 통신을 위해 대기가 발생 할 수 있긴함) 그 때 가서 추가
                         for index in range(
@@ -1725,11 +1720,84 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
 
         move_to_origin_location(1)
 
+    def wide_area_attack_animation(self):
+        steps = 20
+        attack_animation_object = AttackAnimation.getInstance()
+        animation_actor = attack_animation_object.get_animation_actor()
 
+        your_fixed_card_base = animation_actor.get_fixed_card_base()
+        current_your_attacker_unit_vertices = your_fixed_card_base.get_vertices()
+        current_your_attacker_unit_local_translation = your_fixed_card_base.get_local_translation()
 
-class TestRotationFieldUnit(unittest.TestCase):
+        new_y_value = current_your_attacker_unit_local_translation[1] - 270
+        new_x_value = attack_animation_object.get_total_width() / 2 - 52.5
+        # your_attacker_unit_destination_local_translation = (current_your_attacker_unit_local_translation[0], new_y_value)
+        your_attacker_unit_destination_local_translation = (new_x_value, new_y_value)
 
-    def test_rotate_field_unit(self):
+        step_x = (your_attacker_unit_destination_local_translation[0] - current_your_attacker_unit_local_translation[0]) / steps
+        step_y = (your_attacker_unit_destination_local_translation[1] - current_your_attacker_unit_local_translation[1]) / steps
+        step_y *= -1
+
+        def update_position(step_count):
+            print(f"{Fore.RED}step_count: {Fore.GREEN}{step_count}{Style.RESET_ALL}")
+
+            new_vertices = [
+                (vx + step_x * step_count, vy + step_y * step_count) for vx, vy in current_your_attacker_unit_vertices
+            ]
+            your_fixed_card_base.update_vertices(new_vertices)
+
+            # tool_card = self.selected_object.get_tool_card()
+            # if tool_card is not None:
+            #     new_tool_card_vertices = [
+            #         (vx + new_x, vy + new_y) for vx, vy in tool_card.vertices
+            #     ]
+            #     tool_card.update_vertices(new_tool_card_vertices)
+
+            for attached_shape in your_fixed_card_base.get_attached_shapes():
+                # theta = w0 * t + 0.5 * alpha * t^2
+                # theta = 0.5 * alpha * t^2 => step_count = 15
+                # theta = 0.5 * alpha * 225 = 65 / 225 = 0.28888
+                # theta = 0.5 * alpha * 400 = 65 / 400 = 0.1625
+                # omega_accel_alpha = -0.1625
+
+                # if isinstance(attached_shape, NonBackgroundNumberImage):
+                #     if attached_shape.get_circle_kinds() is CircleKinds.ATTACK:
+                #         accel_y_dist = sword_accel_y * step_count
+                #         accel_y_dist *= -1
+                #
+                #         accel_x_dist = sword_accel_x * step_count
+                #         # x: 236 / 1920, y: -367 / 1043
+                #         new_attached_shape_vertices = [
+                #             (vx + accel_x_dist, vy + accel_y_dist) for vx, vy in attached_shape.vertices
+                #         ]
+                #         attached_shape.update_vertices(new_attached_shape_vertices)
+                #         attached_shape.update_rotation_angle(omega_accel_alpha * step_count * step_count)
+                #         print(f"{Fore.RED}sword new_attached_shape_vertices{Fore.GREEN} {new_attached_shape_vertices}{Style.RESET_ALL}")
+                #
+                #         if step_count == 20:
+                #             attack_animation_object.set_your_weapon_shape(attached_shape)
+                #
+                #         continue
+
+                new_attached_shape_vertices = [
+                    (vx + step_x, vy + step_y) for vx, vy in attached_shape.vertices
+                ]
+                attached_shape.update_vertices(new_attached_shape_vertices)
+                print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+
+            if step_count < steps:
+                self.master.after(20, update_position, step_count + 1)
+            else:
+                # self.start_post_animation(attack_animation_object)
+                self.is_attack_motion_finished = True
+                attack_animation_object.set_is_finished(True)
+                attack_animation_object.set_need_post_process(True)
+
+        update_position(1)
+
+class TestWideAreaAttackSkill(unittest.TestCase):
+
+    def test_wide_area_attack_skill(self):
         DomainInitializer.initEachDomain()
         detector_about_test = DetectorAboutTest.getInstance()
         detector_about_test.set_is_it_test(True)
