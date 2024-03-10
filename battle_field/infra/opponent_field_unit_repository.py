@@ -1,5 +1,6 @@
 from battle_field.state.attached_energy_info import AttachedEnergyInfoState
 from battle_field.state.current_field_unit import CurrentFieldUnitState
+from battle_field.state.extra_effect_info import ExtraEffectInfo
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 
 
@@ -7,6 +8,7 @@ class OpponentFieldUnitRepository:
     __instance = None
 
     attached_energy_info = AttachedEnergyInfoState()
+    extra_effect_info = ExtraEffectInfo()
 
     current_field_unit_state = CurrentFieldUnitState()
     current_field_unit_card_object_list = []
@@ -130,3 +132,6 @@ class OpponentFieldUnitRepository:
                 return card.get_card_number()
 
         return -1
+
+    def update_opponent_unit_extra_effect_at_index(self, unit_index, extra_effect_list):
+        self.extra_effect_info.update_extra_effect_of_unit(unit_index, extra_effect_list)
