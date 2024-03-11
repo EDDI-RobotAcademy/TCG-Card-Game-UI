@@ -129,6 +129,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
     attack_animation_object = AttackAnimation.getInstance()
 
+    animation_step_count = 0
 
     def __init__(self, master=None, switchFrameWithMenuName=None, **kwargs):
         super().__init__(master, **kwargs)
@@ -1349,10 +1350,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.draw_base()
 
-        if self.attack_animation_object.get_animation_action() is AnimationAction.CONTRACT_OF_DOOM:
-            print("상대방이 파멸의 계약 사용하였으므로 애니메이션 재생")
-            self.attack_animation_object.set_animation_action(AnimationAction.DUMMY)
-
         for opponent_field_unit in self.opponent_field_unit_repository.get_current_field_unit_card_object_list():
             if opponent_field_unit is None:
                 continue
@@ -1375,14 +1372,18 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
-
         if self.battle_field_repository.get_current_use_card_id():
-
             card_id = self.battle_field_repository.get_current_use_card_id()
             self.fixed_details_card.init_card_view_larger(card_id)
             self.master.after(2000, lambda: self.fixed_details_card.reset_fixed_card_base(card_id))
             self.battle_field_repository.reset_current_use_card_id()
 
+
+        if self.attack_animation_object.get_animation_action() is AnimationAction.CONTRACT_OF_DOOM:
+            print(f"{Fore.RED}파멸의 계약 animation 재생{Style.RESET_ALL}")
+
+            self.master.after(2000, self.your_contract_of_doom_attack_animation)
+            self.attack_animation_object.set_animation_action(AnimationAction.DUMMY)
 
         for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
             if field_unit is None:
@@ -5287,3 +5288,69 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 pass
 
         move_to_origin_location(1)
+
+    def your_contract_of_doom_attack_animation(self):
+        steps = 50
+
+        attack_animation_object = AttackAnimation.getInstance()
+
+        your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
+        your_field_unit_list_length = len(
+            self.your_field_unit_repository.get_current_field_unit_list())
+
+        def wide_area_attack(step_count):
+            for index in range(
+                    your_field_unit_list_length - 1,
+                    -1,
+                    -1):
+                your_field_unit = your_field_unit_list[index]
+
+                if your_field_unit is None:
+                    continue
+
+                fixed_card_base = your_field_unit.get_fixed_card_base()
+                tool_card = your_field_unit.get_tool_card()
+                attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                if step_count % 2 == 1:
+                    vibration_factor = 10
+                    random_translation = (random.uniform(-vibration_factor, vibration_factor),
+                                          random.uniform(-vibration_factor, vibration_factor))
+
+                    new_fixed_card_base_vertices = [
+                        (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                        fixed_card_base.get_vertices()
+                    ]
+                    fixed_card_base.update_vertices(new_fixed_card_base_vertices)
+
+                    if tool_card is not None:
+                        new_tool_card_vertices = [
+                            (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                            tool_card.get_vertices()
+                        ]
+                        tool_card.update_vertices(new_tool_card_vertices)
+
+                    for attached_shape in attached_shape_list:
+                        # Apply random translation
+                        new_attached_shape_vertices = [
+                            (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                            attached_shape.get_vertices()
+                        ]
+                        attached_shape.update_vertices(new_attached_shape_vertices)
+
+                else:
+                    fixed_card_base.update_vertices(fixed_card_base.get_initial_vertices())
+                    if tool_card is not None:
+                        tool_card.update_vertices(tool_card.get_initial_vertices())
+                    for attached_shape in attached_shape_list:
+                        attached_shape.update_vertices(attached_shape.get_initial_vertices())
+
+            if step_count < steps:
+                self.master.after(20, wide_area_attack, step_count + 1)
+            else:
+                # self.finish_wide_area_motion_animation(attack_animation_object)
+                self.is_attack_motion_finished = True
+                # attack_animation_object.set_is_finished(True)
+                # attack_animation_object.set_need_post_process(True)
+
+        wide_area_attack(1)
