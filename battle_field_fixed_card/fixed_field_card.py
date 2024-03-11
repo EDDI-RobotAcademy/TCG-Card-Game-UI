@@ -1,5 +1,7 @@
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from image_shape.circle_image import CircleImage
+from image_shape.non_background_image import NonBackgroundImage
+from image_shape.non_background_number_image import NonBackgroundNumberImage
 from image_shape.rectangle_image import RectangleImage
 from image_shape.rectangle_kinds import RectangleKinds
 from opengl_battle_field_card_controller.card_controller_impl import CardControllerImpl
@@ -50,19 +52,17 @@ class FixedFieldCard:
     def get_tool_card(self):
         return self.tool_card
 
-    def creat_fixed_card_dark_flame_image_circle(self, image_data, local_translation, vertices):
-        attached_dark_flame_image = CircleImage(image_data=image_data,
-                                                local_translation=local_translation,
-                                                center=vertices,
-                                                radius=15)
+    def creat_fixed_card_dark_flame_image_circle(self, image_data, vertices):
+        attached_dark_flame_image = NonBackgroundImage(image_data=image_data,
+                                                       vertices=vertices)
+
         attached_dark_flame_image.set_initial_vertices(vertices)
         return attached_dark_flame_image
 
-    def creat_fixed_card_freezing_image_circle(self, image_data, local_translation, vertices):
-        attached_freezing_image = CircleImage(image_data=image_data,
-                                              local_translation=local_translation,
-                                              center=vertices,
-                                              radius=15)
+    def creat_fixed_card_freezing_image_circle(self, image_data, vertices):
+        attached_freezing_image = NonBackgroundImage(image_data=image_data,
+                                                     vertices=vertices)
+
         attached_freezing_image.set_initial_vertices(vertices)
         return attached_freezing_image
 
@@ -154,7 +154,7 @@ class FixedFieldCard:
 
         self.fixed_card_base.set_attached_shapes(
             self.create_card_frame(
-                image_data=self.__pre_drawed_image_instance.get_pre_draw_card_frame_for_card_number(card_number),
+                image_data=self.__pre_drawed_image_instance.get_pre_draw_battle_field_card_frame_for_card_number(card_number),
                 local_translation=self.local_translation,
                 vertices=basic_fixed_card_base_vertices
             )
@@ -164,7 +164,7 @@ class FixedFieldCard:
             self.create_illustration(
                 image_data=self.__pre_drawed_image_instance.get_pre_draw_card_illustration_for_card_number(card_number),
                 local_translation=self.local_translation,
-                vertices=[(10, 25), (95, 25), (95, 100), (10, 100)]
+                vertices=[(8, 12), (97, 12), (97, 126), (8, 126)]
             )
         )
 

@@ -2224,15 +2224,15 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     # 언데드 에너지 갯수에 따른 표시
                         if your_field_unit_attached_undead_energy > 0:
                             print("상세 보기 언데드 생성")
+                            energy_length = race_energy_count * 80
                             select_details_card_base.set_attached_shapes(
                                 select_details_card.creat_fixed_card_energy_race_circle(
                                     image_data=self.pre_drawed_image_instance.get_pre_draw_energy_race_with_race_number(EnergyType.Undead.value),
                                     local_translation=select_details_card_base.get_local_translation(),
-                                    vertices=(select_details_card_base_vertices[0][0] - 220 + race_energy_count * 80,
+                                    vertices=(select_details_card_base_vertices[0][0] - 220 + energy_length,
                                               select_details_card_base_vertices[0][1] - 40)
                                 )
                             )
-                            race_energy_count += 1
                             if your_field_unit_attached_undead_energy > 1:
                                 print("상세 보기 언데드 숫자 생성")
                                 select_details_card_base.set_attached_shapes(
@@ -2241,31 +2241,33 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                         self.pre_drawed_image_instance.get_pre_draw_number_of_details_energy(
                                             your_field_unit_attached_undead_energy),
                                         local_translation=select_details_card_base.get_local_translation(),
-                                        vertices=[(select_details_card_base_vertices[0][0] - 200,
+                                        vertices=[(select_details_card_base_vertices[0][0] - 200 + energy_length,
                                                    select_details_card_base_vertices[0][1] - 80),
-                                                  (select_details_card_base_vertices[0][0] - 160,
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
                                                    select_details_card_base_vertices[0][1] - 80),
-                                                  (select_details_card_base_vertices[0][0] - 160,
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
                                                    select_details_card_base_vertices[0][1] - 0),
-                                                  (select_details_card_base_vertices[0][0] - 200,
+                                                  (select_details_card_base_vertices[0][0] - 200 + energy_length,
                                                    select_details_card_base_vertices[0][1] - 0)
                                                   ]
                                     )
                                 )
+                            race_energy_count += 1
 
                         # 휴먼 에너지 갯수에 따른 표시
                         if your_field_unit_attached_human_energy > 0:
                             print("상세 보기 휴먼 생성")
+                            energy_length = race_energy_count * 80
                             select_details_card_base.set_attached_shapes(
                                 select_details_card.creat_fixed_card_energy_race_circle(
                                     image_data=self.pre_drawed_image_instance.get_pre_draw_energy_race_with_race_number(
                                         EnergyType.Human.value),
                                     local_translation=select_details_card_base.get_local_translation(),
-                                    vertices=(select_details_card_base_vertices[0][0] - 220 + race_energy_count * 80,
+                                    vertices=(select_details_card_base_vertices[0][0] - 220 + energy_length,
                                               select_details_card_base_vertices[0][1] - 40)
                                 )
                             )
-                            race_energy_count += 1
+
 
                             if your_field_unit_attached_human_energy > 1:
                                 print("상세 보기 휴먼 숫자 생성")
@@ -2275,21 +2277,23 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                         self.pre_drawed_image_instance.get_pre_draw_number_of_details_energy(
                                             your_field_unit_attached_human_energy),
                                         local_translation=select_details_card_base.get_local_translation(),
-                                        vertices=[(select_details_card_base_vertices[0][0] - 120,
+                                        vertices=[(select_details_card_base_vertices[0][0] - 200 + energy_length,
                                                    select_details_card_base_vertices[0][1] - 80),
-                                                  (select_details_card_base_vertices[0][0] - 80,
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
                                                    select_details_card_base_vertices[0][1] - 80),
-                                                  (select_details_card_base_vertices[0][0] - 80,
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
                                                    select_details_card_base_vertices[0][1] - 0),
-                                                  (select_details_card_base_vertices[0][0] - 120,
+                                                  (select_details_card_base_vertices[0][0] - 200 + energy_length,
                                                    select_details_card_base_vertices[0][1] - 0)
                                                   ]
                                     )
                                 )
+                            race_energy_count += 1
 
                         # 트런트 에너지 갯수에 따른 표시
                         if your_field_unit_attached_trent_energy > 0:
                             print("상세 보기 트런트 생성")
+                            energy_length = race_energy_count * 80
                             select_details_card_base.set_attached_shapes(
                                 select_details_card.creat_fixed_card_energy_race_circle(
                                     image_data=self.pre_drawed_image_instance.get_pre_draw_energy_race_with_race_number(
@@ -2308,13 +2312,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                     self.pre_drawed_image_instance.get_pre_draw_number_of_details_energy(
                                         your_field_unit_attached_trent_energy),
                                     local_translation=select_details_card_base.get_local_translation(),
-                                    vertices=[(select_details_card_base_vertices[0][0] - 45,
+                                    vertices=[(select_details_card_base_vertices[0][0] - 200 + energy_length,
                                                select_details_card_base_vertices[0][1] - 80),
-                                              (select_details_card_base_vertices[0][0] - 5,
+                                              (select_details_card_base_vertices[0][0] - 160 + energy_length,
                                                select_details_card_base_vertices[0][1] - 80),
-                                              (select_details_card_base_vertices[0][0] - 5,
+                                              (select_details_card_base_vertices[0][0] - 160 + energy_length,
                                                select_details_card_base_vertices[0][1] - 0),
-                                              (select_details_card_base_vertices[0][0] - 45,
+                                              (select_details_card_base_vertices[0][0] - 200 + energy_length,
                                                select_details_card_base_vertices[0][1] - 0)
                                               ]
                                 )

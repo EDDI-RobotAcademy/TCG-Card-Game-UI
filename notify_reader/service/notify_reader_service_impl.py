@@ -14,6 +14,7 @@ from battle_field.infra.your_hp_repository import YourHpRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field.state.energy_type import EnergyType
 from battle_field_function.service.battle_field_function_service_impl import BattleFieldFunctionServiceImpl
+from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
 from fake_battle_field.infra.fake_opponent_hand_repository import FakeOpponentHandRepositoryImpl
 from image_shape.circle_kinds import CircleKinds
 from image_shape.non_background_number_image import NonBackgroundNumberImage
@@ -46,6 +47,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.__your_field_unit_repository = YourFieldUnitRepository.getInstance()
             cls.__instance.__opponent_hand_repository = OpponentHandRepository.getInstance()
             cls.__instance.__battle_field_repository = BattleFieldRepository.getInstance()
+            cls.__instance.__mulligan_repository = MuligunYourHandRepository.getInstance()
 
             cls.__instance.notify_callback_table['NOTIFY_DEPLOY_UNIT'] = cls.__instance.notify_deploy_unit
             cls.__instance.notify_callback_table['NOTIFY_TURN_END'] = cls.__instance.notify_turn_end
@@ -81,6 +83,13 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
             cls.__instance.notify_callback_table['NOTIFY_NON_TARGETING_ACTIVE_SKILL'] = (
                 cls.__instance.notify_non_targeting_active_skill
+            )
+
+            cls.__instance.notify_callback_table['NOTIFY_USE_DRAW_SUPPORT_CARD'] = (
+                cls.__instance.notify_use_draw_support_card
+            )
+            cls.__instance.notify_callback_table['NOTIFY_MULLIGAN_END'] = (
+                cls.__instance.notify_mulligan_end
             )
 
         return cls.__instance
@@ -687,6 +696,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                         #         self.__pre_drawed_image_instance.get_pre_draw_freezing_energy())
 
 
+
     def apply_notify_data_of_your_field_unit_energy(self, player_field_unit_energy_data):
         data = {"player_field_unit_energy_map": {
                 "You": {"field_unit_energy_map": {"0": {"attached_energy_map": {"2": 1}, "total_energy_count": 1}}}}}
@@ -875,3 +885,40 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             self.__opponent_field_energy_repository.set_opponent_field_energy(opponent_energy_count)
         except Exception as e:
             print('no opponent field energy data!! ', e)
+
+    def notify_use_draw_support_card(self, notice_dictionary):
+        # 일단은 opponent 밖에 없으니 아래와 같이 처리할 수 있음
+        data = notice_dictionary['NOTIFY_USE_DRAW_SUPPORT_CARD']
+
+        opponent_usage_card_info = (
+            data)['player_hand_use_map']['Opponent']
+        opponent_draw_count = (
+            data)['player_draw_count_map']['Opponent']
+
+        # 사용된 카드 묘지로 보냄
+        used_card_id = opponent_usage_card_info['card_id']
+        self.__opponent_tomb_repository.create_opponent_tomb_card(used_card_id)
+        self.__battle_field_repository.set_current_use_card_id(used_card_id)
+
+        # 뒷면 카드 3장 추가
+        unknown_hand_list = []
+        for count in range(opponent_draw_count):
+            unknown_hand_list.append(-1)
+
+        current_opponent_hand = self.__opponent_hand_repository.get_current_opponent_hand_state()
+        print(f"current_opponent_hand: {current_opponent_hand}")
+        self.__opponent_hand_repository.save_current_opponent_hand_state(unknown_hand_list)
+
+        updated_opponent_hand = self.__opponent_hand_repository.get_current_opponent_hand_state()
+        print(f"updated_opponent_hand: {updated_opponent_hand}")
+
+        # TODO: 상대 핸드 뒷면 이미지를 추가된 카드 장수 만큼 띄워야 함
+
+    def notify_mulligan_end(self, notice_dictionary):
+        is_mulligan_done = notice_dictionary['NOTIFY_MULLIGAN_END'].get('is_done')
+
+        print(f"{Fore.RED}mulligan end?:{Fore.GREEN} {is_mulligan_done}{Style.RESET_ALL}")
+
+        if is_mulligan_done is True:
+            self.__mulligan_repository.set_is_mulligan_done(True)
+
