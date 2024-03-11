@@ -145,6 +145,33 @@ class TestNotifyDataAnalysis(unittest.TestCase):
 
         notify_reader_service.notify_use_multiple_unit_damage_item_card(notice_dictionary)
 
+    def test_notify_turn_start_targeting_attack_skill_to_unit(self):
+        card_date_csv_controller = CardInfoFromCsvControllerImpl.getInstance()
+        card_date_csv_controller.requestToCardInfoSettingInMemory()
+
+        pre_draw = PreDrawedImage.getInstance()
+        pre_draw.pre_draw_every_image()
+
+        your_field_unit_repository = YourFieldUnitRepository.getInstance()
+        your_field_unit_repository.create_field_unit_card(27)
+        your_field_unit_repository.create_field_unit_card(27)
+
+        notify_reader_service = NotifyReaderServiceImpl.getInstance()
+        notice_dictionary = {"NOTIFY_TURN_START_TARGETING_ATTACK_PASSIVE_SKILL_TO_UNIT": {
+            "player_field_unit_health_point_map": {
+                "You": {
+                    "field_unit_health_point_map": {
+                        "0": 5}}},
+            "player_field_unit_harmful_effect_map": {
+                "You": {
+                    "field_unit_harmful_status_map": {
+                        "0": {"harmful_status_list": ['DarkFire', 'Freeze']}}}},
+            "player_field_unit_death_map": {
+                "You": {
+                    "dead_field_unit_index_list": [1]}}}}
+
+        notify_reader_service.notify_turn_start_targeting_attack_passive_skill_to_unit(notice_dictionary)
+
 
 if __name__ == "__main__":
     unittest.main()
