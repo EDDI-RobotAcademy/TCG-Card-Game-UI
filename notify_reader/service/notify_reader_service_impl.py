@@ -83,6 +83,10 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 cls.__instance.notify_non_targeting_active_skill
             )
 
+            cls.__instance.notify_callback_table['NOTIFY_USE_DRAW_SUPPORT_CARD'] = (
+                cls.__instance.notify_use_draw_support_card
+            )
+
         return cls.__instance
 
     @classmethod
@@ -685,3 +689,31 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                         #     print("set_image_data: freeze")
                         #     opponent_fixed_card_attached_shape.set_image_data(
                         #         self.__pre_drawed_image_instance.get_pre_draw_freezing_energy())
+
+    def notify_use_draw_support_card(self, notice_dictionary):
+        # 일단은 opponent 밖에 없으니 아래와 같이 처리할 수 있음
+        data = notice_dictionary['NOTIFY_USE_DRAW_SUPPORT_CARD']
+
+        opponent_usage_card_info = (
+            data)['player_hand_use_map']['Opponent']
+        opponent_draw_count = (
+            data)['player_draw_count_map']['Opponent']
+
+        # 사용된 카드 묘지로 보냄
+        used_card_id = opponent_usage_card_info['card_id']
+        self.__opponent_tomb_repository.create_opponent_tomb_card(used_card_id)
+        self.__battle_field_repository.set_current_use_card_id(used_card_id)
+
+        # 뒷면 카드 3장 추가
+        unknown_hand_list = []
+        for count in range(opponent_draw_count):
+            unknown_hand_list.append(-1)
+
+        current_opponent_hand = self.__opponent_hand_repository.get_current_opponent_hand_state()
+        print(f"current_opponent_hand: {current_opponent_hand}")
+        self.__opponent_hand_repository.save_current_opponent_hand_state(unknown_hand_list)
+
+        updated_opponent_hand = self.__opponent_hand_repository.get_current_opponent_hand_state()
+        print(f"updated_opponent_hand: {updated_opponent_hand}")
+
+        # TODO: 상대 핸드 뒷면 이미지를 추가된 카드 장수 만큼 띄워야 함
