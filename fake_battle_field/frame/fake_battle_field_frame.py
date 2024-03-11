@@ -5,6 +5,7 @@ from colorama import Fore, Style
 from screeninfo import get_monitors
 from shapely import Polygon, Point
 
+from battle_field.animation_support.animation_action import AnimationAction
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
 
 from OpenGL.GL import *
@@ -82,7 +83,6 @@ from battle_field.infra.your_tomb_repository import YourTombRepository
 
 from battle_field.state.FieldUnitActionStatus import FieldUnitActionStatus
 from battle_field.state.energy_type import EnergyType
-from battle_field_fixed_card.fixed_details_card import FixedDetailsCard
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
 from battle_field_function.service.request.turn_end_request import TurnEndRequest
@@ -116,7 +116,7 @@ from opengl_shape.circle import Circle
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from session.repository.session_repository_impl import SessionRepositoryImpl
-from tests.lsh.rotate_shape.animation_support.attack_animation import AttackAnimation
+from battle_field.animation_support.attack_animation import AttackAnimation
 
 
 class FakeBattleFieldFrame(OpenGLFrame):
@@ -1348,6 +1348,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
         glDisable(GL_DEPTH_TEST)
 
         self.draw_base()
+
+        if self.attack_animation_object.get_animation_action() is AnimationAction.CONTRACT_OF_DOOM:
+            print("상대방이 파멸의 계약 사용하였으므로 애니메이션 재생")
+            self.attack_animation_object.set_animation_action(AnimationAction.DUMMY)
 
         for opponent_field_unit in self.opponent_field_unit_repository.get_current_field_unit_card_object_list():
             if opponent_field_unit is None:

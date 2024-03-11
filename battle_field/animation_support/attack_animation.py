@@ -10,6 +10,11 @@ class AttackAnimation:
     your_weapon_shape = None
     your_field_unit = None
 
+    your_field_unit_hp_shape_list = []
+    your_dead_field_unit_index_list = []
+    your_main_character_health_point = None
+    your_lost_card_id_list = []
+
     opponent_fixed_card_attached_shape = None
     opponent_field_card_index = None
     opponent_field_unit = None
@@ -24,6 +29,8 @@ class AttackAnimation:
 
     your_attacker_unit_moving_x = 0
     animation_actor_damage = 0
+
+    animation_action = None
 
 
     def __new__(cls):
@@ -155,3 +162,41 @@ class AttackAnimation:
     def get_animation_actor_damage(self):
         return self.animation_actor_damage
 
+    def add_your_field_unit_hp_shape_list(self, your_field_unit_hp_shape):
+        self.your_field_unit_hp_shape_list.append(your_field_unit_hp_shape)
+
+    def get_your_field_unit_hp_shape_list(self):
+        return self.your_field_unit_hp_shape_list
+
+    def clear_your_field_unit_hp_shape_list(self):
+        self.your_field_unit_hp_shape_list = []
+
+    def add_your_dead_field_unit_index_list(self, your_dead_field_unit_index):
+        self.your_dead_field_unit_index_list.append(your_dead_field_unit_index)
+
+    def get_your_dead_field_unit_index_list(self):
+        return self.your_dead_field_unit_index_list
+
+    def clear_your_dead_field_unit_index_list(self):
+        self.your_dead_field_unit_index_list = []
+
+    def set_your_main_character_health_point(self, your_main_character_health_point):
+        self.your_main_character_health_point = your_main_character_health_point
+
+    def get_your_main_character_health_point(self):
+        return self.your_main_character_health_point
+
+    def add_your_lost_card_id_list(self, your_lost_card_id_list):
+        self.your_lost_card_id_list.append(your_lost_card_id_list)
+
+    def get_your_lost_card_id_list(self):
+        return self.your_lost_card_id_list
+
+    def clear_your_lost_card_id_list(self):
+        self.your_lost_card_id_list = []
+
+    def set_animation_action(self, animation_action):
+        self.animation_action = animation_action
+
+    def get_animation_action(self):
+        return self.animation_action
