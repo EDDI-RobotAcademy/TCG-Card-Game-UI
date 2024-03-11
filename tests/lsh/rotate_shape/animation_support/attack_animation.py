@@ -19,6 +19,12 @@ class AttackAnimation:
 
     need_post_process = False
 
+    is_it_wide_area_attack = False
+    wide_attack_opponent_field_hp_list = []
+
+    your_attacker_unit_moving_x = 0
+    animation_actor_damage = 0
+
 
     def __new__(cls):
         if cls.__instance is None:
@@ -119,5 +125,30 @@ class AttackAnimation:
     def get_your_field_unit(self):
         return self.your_field_unit
 
+    def set_is_it_wide_area_attack(self, is_it_wide_area_attack):
+        self.is_it_wide_area_attack = is_it_wide_area_attack
 
+    def get_is_it_wide_area_attack(self):
+        return self.is_it_wide_area_attack
+
+    def add_wide_attack_opponent_field_hp_list(self, hp_number):
+        self.wide_attack_opponent_field_hp_list.append(hp_number)
+
+    def get_wide_attack_opponent_field_hp_list(self):
+        return self.wide_attack_opponent_field_hp_list
+
+    def clear_wide_attack_opponent_field_hp_list(self):
+        self.wide_attack_opponent_field_hp_list = []
+
+    def set_your_attacker_unit_moving_x(self, your_attacker_unit_moving_x):
+        self.your_attacker_unit_moving_x = your_attacker_unit_moving_x
+
+    def get_your_attacker_unit_moving_x(self):
+        return self.your_attacker_unit_moving_x
+
+    def set_animation_actor_damage(self, damage):
+        self.animation_actor_damage = damage
+
+    def get_animation_actor_damage(self):
+        return self.animation_actor_damage
 

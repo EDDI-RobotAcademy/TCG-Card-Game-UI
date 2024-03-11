@@ -2238,7 +2238,8 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                 select_details_card_base.set_attached_shapes(
                                     select_details_card.create_number_of_cards(
                                         number_of_cards_data=
-                                        self.pre_drawed_image_instance.get_pre_draw_number_of_cards(your_field_unit_attached_undead_energy),
+                                        self.pre_drawed_image_instance.get_pre_draw_number_of_details_energy(
+                                            your_field_unit_attached_undead_energy),
                                         local_translation=select_details_card_base.get_local_translation(),
                                         vertices=[(select_details_card_base_vertices[0][0] - 200,
                                                    select_details_card_base_vertices[0][1] - 80),
@@ -2271,7 +2272,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                 select_details_card_base.set_attached_shapes(
                                     select_details_card.create_number_of_cards(
                                         number_of_cards_data=
-                                        self.pre_drawed_image_instance.get_pre_draw_number_of_cards(
+                                        self.pre_drawed_image_instance.get_pre_draw_number_of_details_energy(
                                             your_field_unit_attached_human_energy),
                                         local_translation=select_details_card_base.get_local_translation(),
                                         vertices=[(select_details_card_base_vertices[0][0] - 120,
@@ -2304,7 +2305,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                             select_details_card_base.set_attached_shapes(
                                 select_details_card.create_number_of_cards(
                                     number_of_cards_data=
-                                    self.pre_drawed_image_instance.get_pre_draw_number_of_cards(
+                                    self.pre_drawed_image_instance.get_pre_draw_number_of_details_energy(
                                         your_field_unit_attached_trent_energy),
                                     local_translation=select_details_card_base.get_local_translation(),
                                     vertices=[(select_details_card_base_vertices[0][0] - 45,
