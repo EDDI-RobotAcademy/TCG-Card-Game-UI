@@ -101,6 +101,7 @@ from fake_battle_field.service.request.attack_main_character_request import Requ
 from fake_battle_field.service.request.call_of_leonic_request import RequestUseCallOfLeonic
 from fake_battle_field.service.request.fake_multi_draw_request import FakeMultiDrawRequest
 from fake_battle_field.service.request.fake_opponent_deploy_unit_request import FakeOpponentDeployUnitRequest
+from fake_battle_field.service.request.request_use_contract_of_doom import RequestUseContractOfDoom
 from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
@@ -1104,6 +1105,21 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                          {"attached_energy_map": {"2": 2}, "total_energy_count": 2}}}}
 
             NotifyReaderRepositoryImpl.getInstance().getNoWaitIpcChannel().put(notify_raw_data)
+
+        if key.lower() == 'c':
+            print("파멸의 계약 사용!")
+
+            response = self.__fake_battle_field_frame_repository.request_use_contract_of_doom(
+                RequestUseContractOfDoom(
+                    _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                    _itemCardId="25"
+                )
+            )
+            print(f"{Fore.RED}파멸의 계약 -> response:{Fore.GREEN} {response}{Style.RESET_ALL}")
+            is_success_value = response.get('is_success', False)
+
+            if is_success_value == False:
+                return
 
         if key.lower() == '0':
             self.timer.set_function(self.call_turn_end)
