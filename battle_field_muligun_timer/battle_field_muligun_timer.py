@@ -4,13 +4,14 @@ from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from pyopengltk import OpenGLFrame
 
-class BattleFieldTimer(OpenGLFrame):
+class BattleFieldMuligunTimer(OpenGLFrame):
     __pre_drawed_image = PreDrawedImage.getInstance()
+    __instance = None
 
     def __init__(self):
         super().__init__()
         self.timer_panel = None
-        self.timer = 0
+        self.timer = 30
 
         self.total_width = None
         self.total_height = None
@@ -53,8 +54,8 @@ class BattleFieldTimer(OpenGLFrame):
 
         left_x_point = self.total_width * 0.05
         right_x_point = self.total_width * 0.12
-        top_y_point = self.total_height * 0.44
-        bottom_y_point = self.total_height * 0.55
+        top_y_point = self.total_height * 0.11
+        bottom_y_point = self.total_height * 0.22
 
         self.timer_panel = RectangleImage(
             image_data=self.__pre_drawed_image.get_pre_draw_character_hp_image(self.timer),
@@ -74,6 +75,7 @@ class BattleFieldTimer(OpenGLFrame):
 
     def start_timer(self):
         if self.timer >= -1:
+            print(self.timer)
             self.timer -= 1
             self.master.after(1000, self.start_timer)
         if self.timer == -1:

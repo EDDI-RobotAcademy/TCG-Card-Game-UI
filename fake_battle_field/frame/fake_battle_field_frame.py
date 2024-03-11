@@ -304,7 +304,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.battle_field_muligun_background_shape_list = None
 
         self.timer_panel = None
-        self.timer = BattleFieldTimer(self.call_turn_end)
+        self.timer = BattleFieldTimer()
 
         self.animation_test_image_panel = None
         self.animation_test_image = AnimationTestImage()
@@ -1106,6 +1106,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             NotifyReaderRepositoryImpl.getInstance().getNoWaitIpcChannel().put(notify_raw_data)
 
         if key.lower() == '0':
+            self.timer.set_function(self.call_turn_end)
             self.timer.set_timer(30)
             self.timer.start_timer()
 
