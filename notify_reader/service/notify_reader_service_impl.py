@@ -2,6 +2,7 @@ import json
 
 from colorama import Fore, Style
 
+from battle_field.animation_support.animation_action import AnimationAction
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
@@ -24,7 +25,7 @@ from notify_reader.entity.notice_type import NoticeType
 from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
 from notify_reader.service.notify_reader_service import NotifyReaderService
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
-from tests.lsh.rotate_shape.animation_support.attack_animation import AttackAnimation
+from battle_field.animation_support.attack_animation import AttackAnimation
 
 
 class NotifyReaderServiceImpl(NotifyReaderService):
@@ -1051,9 +1052,12 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         # 덱 위에서 카드 한 장 뽑아서 로스트 존 보내기
         for lost_card_id in your_deck_card_lost_list:
-            self.__your_deck_repository.draw_deck()
-            print(f"{Fore.RED}current_deck: {Fore.GREEN}"
-                  f"{self.__your_deck_repository.get_current_deck_state()}{Style.RESET_ALL}")
-            self.__your_lost_zone_repository.create_your_lost_zone_card(int(lost_card_id))
-            print(f"{Fore.RED}current_lost_zone: {Fore.GREEN}"
-                  f"{self.__your_lost_zone_repository.get_your_lost_zone_state()}{Style.RESET_ALL}")
+            self.__attack_animation_object.add_your_lost_card_id_list(lost_card_id)
+            # self.__your_deck_repository.draw_deck()
+            # print(f"{Fore.RED}current_deck: {Fore.GREEN}"
+            #       f"{self.__your_deck_repository.get_current_deck_state()}{Style.RESET_ALL}")
+            # self.__your_lost_zone_repository.create_your_lost_zone_card(int(lost_card_id))
+            # print(f"{Fore.RED}current_lost_zone: {Fore.GREEN}"
+            #       f"{self.__your_lost_zone_repository.get_your_lost_zone_state()}{Style.RESET_ALL}")
+
+        self.__attack_animation_object.set_animation_action(AnimationAction.CONTRACT_OF_DOOM)
