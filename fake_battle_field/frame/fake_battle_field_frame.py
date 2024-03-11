@@ -106,6 +106,7 @@ from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
 from image_shape.non_background_number_image import NonBackgroundNumberImage
+from image_shape.rectangle_kinds import RectangleKinds
 
 from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
@@ -135,6 +136,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.init_monitor_specification()
 
         self.battle_field_background_shape_list = None
+
+        self.current_fixed_details_card = None
 
         self.your_field_panel = None
         self.opponent_field_panel = None
@@ -598,6 +601,28 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             _sessionInfo=self.__session_repository.get_second_fake_session_info(),
                             _unitCardIndex=opponent_unit.get_index(),
                             _opponentTargetCardIndex=0
+                        )
+                    )
+
+                    print("test dark ball : ", response)
+
+        if key.lower() == 'kp_add':
+            opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+            for opponent_unit_index, opponent_unit in enumerate(opponent_field_unit_list):
+                if opponent_unit.get_card_number() == 27:
+                    self.your_field_energy_repository.request_to_attach_energy_to_unit(
+                        RequestAttachFieldEnergyToUnit(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _unitIndex=opponent_unit.get_index(),
+                            _energyRace=CardRace.UNDEAD,
+                            _energyCount=3
+                        )
+                    )
+
+                    response = self.__fake_battle_field_frame_repository.request_attack_with_non_targeting_active_skill(
+                        RequestAttackWithNonTargetingActiveSkill(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _unitCardIndex=opponent_unit.get_index()
                         )
                     )
 
@@ -1126,6 +1151,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.timer.set_timer(30)
             self.timer.start_timer()
 
+
     def on_resize(self, event):
         self.reshape(event.width, event.height)
 
@@ -1349,18 +1375,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
-        if self.fixed_details_card.get_fixed_card_base():
-
-            fixed_details_card_base = self.fixed_details_card.get_fixed_card_base()
-            fixed_details_card_base.set_width_ratio(self.width_ratio)
-            fixed_details_card_base.set_height_ratio(self.height_ratio)
-            fixed_details_card_base.draw()
-
-            attached_shape_list = fixed_details_card_base.get_attached_shapes()
-            for attached_shape in attached_shape_list:
-                attached_shape.set_width_ratio(self.width_ratio)
-                attached_shape.set_height_ratio(self.height_ratio)
-                attached_shape.draw()
 
         if self.battle_field_repository.get_current_use_card_id():
 
@@ -1405,6 +1419,32 @@ class FakeBattleFieldFrame(OpenGLFrame):
             #     battle_result_panel.draw()
 
             glDisable(GL_BLEND)
+
+        if self.current_fixed_details_card:
+            self.current_fixed_details_card.set_width_ratio(self.width_ratio)
+            self.current_fixed_details_card.set_height_ratio(self.height_ratio)
+            self.current_fixed_details_card.draw()
+
+            current_attached_shape_list = self.current_fixed_details_card.get_attached_shapes()
+
+
+            for attached_shape in current_attached_shape_list:
+                if isinstance(attached_shape, Rectangle):
+                    if attached_shape.get_rectangle_kinds() is RectangleKinds.DETAIL:
+                        glEnable(GL_BLEND)
+                        glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA)
+                        attached_shape.set_width_ratio(self.width_ratio)
+                        attached_shape.set_height_ratio(self.height_ratio)
+                        attached_shape.draw()
+                        glDisable(GL_BLEND)
+
+            for attached_shape in current_attached_shape_list:
+                if isinstance(attached_shape, Rectangle):
+                    if attached_shape.get_rectangle_kinds() is RectangleKinds.DETAIL:
+                        continue
+                attached_shape.set_width_ratio(self.width_ratio)
+                attached_shape.set_height_ratio(self.height_ratio)
+                attached_shape.draw()
 
         # for hand_card in self.hand_card_list:
         #     attached_tool_card = hand_card.get_tool_card()
@@ -1723,6 +1763,18 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             glDisable(GL_BLEND)
 
+        if self.fixed_details_card.get_fixed_card_base():
+
+            fixed_details_card_base = self.fixed_details_card.get_fixed_card_base()
+            fixed_details_card_base.set_width_ratio(self.width_ratio)
+            fixed_details_card_base.set_height_ratio(self.height_ratio)
+            fixed_details_card_base.draw()
+
+            attached_shape_list = fixed_details_card_base.get_attached_shapes()
+            for attached_shape in attached_shape_list:
+                attached_shape.set_width_ratio(self.width_ratio)
+                attached_shape.set_height_ratio(self.height_ratio)
+                attached_shape.draw()
 
         # self.post_draw()
         if self.battle_field_repository.get_is_game_end():
@@ -2351,6 +2403,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         print("행동을 마친 유닛은 더 이상 공격 할 수 없습니다")
                         self.selected_object = None
                         self.active_panel_rectangle = None
+                        self.current_fixed_details_card = None
                         self.your_active_panel.clear_all_your_active_panel()
                         return
 
@@ -2361,6 +2414,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         print(f"처음 필드에 출격한 유닛은 공격 할 수 없습니다")
                         self.selected_object = None
                         self.active_panel_rectangle = None
+                        self.current_fixed_details_card = None
                         self.your_active_panel.clear_all_your_active_panel()
                         return
 
@@ -2697,6 +2751,139 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     # your_field_unit_id = self.selected_object.get_card_number()
                     # skill_type = self.card_info_repository.getCardSkillSecondForCardNumber(your_field_unit_id)
                     # print(f"skill_type: {skill_type}")
+                    your_field_unit_id = self.selected_object.get_card_number()
+                    your_field_unit_index = self.selected_object.get_index()
+                    your_field_unit_attached_energy = self.your_field_unit_repository.get_attached_energy_info()
+
+                    select_details_card = FixedDetailsCard((self.width / 2 - 150, self.height / 2 - (150 * 1.618)))
+                    select_details_card.init_card(your_field_unit_id)
+                    select_details_card_base = select_details_card.get_fixed_card_base()
+                    select_details_card_base_vertices = select_details_card_base.get_vertices()
+
+                    your_field_unit_total_energy = your_field_unit_attached_energy.get_total_energy_at_index(
+                        your_field_unit_index)
+                    print(f"your_field_unit_total_energy: {your_field_unit_total_energy}")
+
+                    if your_field_unit_total_energy:
+                        your_field_unit_attached_energy_info = your_field_unit_attached_energy.get_energy_info_at_index(
+                            your_field_unit_index)
+                        print(f"your_field_unit_attached_energy_info: {your_field_unit_attached_energy_info}")
+
+                        your_field_unit_attached_undead_energy = your_field_unit_attached_energy.get_race_energy_at_index(
+                            your_field_unit_index, EnergyType.Undead)
+                        print(f"your_field_unit_attached_undead_energy: {your_field_unit_attached_undead_energy}")
+                        your_field_unit_attached_human_energy = your_field_unit_attached_energy.get_race_energy_at_index(
+                            your_field_unit_index, EnergyType.Human)
+                        print(f"your_field_unit_attached_human_energy: {your_field_unit_attached_human_energy}")
+                        your_field_unit_attached_trent_energy = your_field_unit_attached_energy.get_race_energy_at_index(
+                            your_field_unit_index, EnergyType.Trent)
+                        print(f"your_field_unit_attached_trent_energy: {your_field_unit_attached_trent_energy}")
+                        race_energy_count = 0
+                        # 언데드 에너지 갯수에 따른 표시
+                        if your_field_unit_attached_undead_energy > 0:
+                            print("상세 보기 언데드 생성")
+                            energy_length = race_energy_count * 80
+                            select_details_card_base.set_attached_shapes(
+                                select_details_card.creat_fixed_card_energy_race_circle(
+                                    image_data=self.pre_drawed_image_instance.get_pre_draw_energy_race_with_race_number(
+                                        EnergyType.Undead.value),
+                                    local_translation=select_details_card_base.get_local_translation(),
+                                    vertices=(select_details_card_base_vertices[0][0] - 220 + energy_length,
+                                              select_details_card_base_vertices[0][1] - 40)
+                                )
+                            )
+                            if your_field_unit_attached_undead_energy > 1:
+                                print("상세 보기 언데드 숫자 생성")
+                                select_details_card_base.set_attached_shapes(
+                                    select_details_card.create_number_of_cards(
+                                        number_of_cards_data=
+                                        self.pre_drawed_image_instance.get_pre_draw_number_of_details_energy(
+                                            your_field_unit_attached_undead_energy),
+                                        local_translation=select_details_card_base.get_local_translation(),
+                                        vertices=[(select_details_card_base_vertices[0][0] - 200 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 80),
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 80),
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 0),
+                                                  (select_details_card_base_vertices[0][0] - 200 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 0)
+                                                  ]
+                                    )
+                                )
+                            race_energy_count += 1
+
+                        # 휴먼 에너지 갯수에 따른 표시
+                        if your_field_unit_attached_human_energy > 0:
+                            print("상세 보기 휴먼 생성")
+                            energy_length = race_energy_count * 80
+                            select_details_card_base.set_attached_shapes(
+                                select_details_card.creat_fixed_card_energy_race_circle(
+                                    image_data=self.pre_drawed_image_instance.get_pre_draw_energy_race_with_race_number(
+                                        EnergyType.Human.value),
+                                    local_translation=select_details_card_base.get_local_translation(),
+                                    vertices=(select_details_card_base_vertices[0][0] - 220 + energy_length,
+                                              select_details_card_base_vertices[0][1] - 40)
+                                )
+                            )
+
+                            if your_field_unit_attached_human_energy > 1:
+                                print("상세 보기 휴먼 숫자 생성")
+                                select_details_card_base.set_attached_shapes(
+                                    select_details_card.create_number_of_cards(
+                                        number_of_cards_data=
+                                        self.pre_drawed_image_instance.get_pre_draw_number_of_details_energy(
+                                            your_field_unit_attached_human_energy),
+                                        local_translation=select_details_card_base.get_local_translation(),
+                                        vertices=[(select_details_card_base_vertices[0][0] - 200 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 80),
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 80),
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 0),
+                                                  (select_details_card_base_vertices[0][0] - 200 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 0)
+                                                  ]
+                                    )
+                                )
+                            race_energy_count += 1
+
+                        # 트런트 에너지 갯수에 따른 표시
+                        if your_field_unit_attached_trent_energy > 0:
+                            print("상세 보기 트런트 생성")
+                            energy_length = race_energy_count * 80
+                            select_details_card_base.set_attached_shapes(
+                                select_details_card.creat_fixed_card_energy_race_circle(
+                                    image_data=self.pre_drawed_image_instance.get_pre_draw_energy_race_with_race_number(
+                                        EnergyType.Trent.value),
+                                    local_translation=select_details_card_base.get_local_translation(),
+                                    vertices=(select_details_card_base_vertices[0][0] - 220 + race_energy_count * 80,
+                                              select_details_card_base_vertices[0][1] - 40)
+                                )
+                            )
+
+                            if your_field_unit_attached_trent_energy > 1:
+                                print("상세 보기 트런트 숫자 생성")
+                                select_details_card_base.set_attached_shapes(
+                                    select_details_card.create_number_of_cards(
+                                        number_of_cards_data=
+                                        self.pre_drawed_image_instance.get_pre_draw_number_of_details_energy(
+                                            your_field_unit_attached_trent_energy),
+                                        local_translation=select_details_card_base.get_local_translation(),
+                                        vertices=[(select_details_card_base_vertices[0][0] - 200 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 80),
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 80),
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 0),
+                                                  (select_details_card_base_vertices[0][0] - 200 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 0)
+                                                  ]
+                                    )
+                                )
+
+                    self.current_fixed_details_card = select_details_card_base
+
 
                     return
 
@@ -2795,6 +2982,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         if self.selected_object != self.prev_selected_object:
                             self.your_active_panel.clear_all_your_active_panel()
                             self.active_panel_rectangle = None
+                            self.current_fixed_details_card = None
 
                             self.prev_selected_object = self.selected_object
 
@@ -3011,6 +3199,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     self.selected_object = None
                     self.active_panel_rectangle = None
+                    self.current_fixed_details_card = None
                     self.your_active_panel.clear_all_your_active_panel()
 
                     return
@@ -3181,6 +3370,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                         self.selected_object = None
                         self.active_panel_rectangle = None
+                        self.current_fixed_details_card = None
                         self.your_active_panel.clear_all_your_active_panel()
 
 
@@ -3211,6 +3401,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     self.selected_object = None
                     self.active_panel_rectangle = None
+                    self.current_fixed_details_card = None
                     self.your_active_panel.clear_all_your_active_panel()
 
                     return
@@ -3303,6 +3494,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                         self.selected_object = None
                         self.active_panel_rectangle = None
+                        self.current_fixed_details_card = None
                         self.your_active_panel.clear_all_your_active_panel()
 
                         return
@@ -3357,6 +3549,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     self.selected_object = None
                     self.active_panel_rectangle = None
+                    self.current_fixed_details_card = None
                     self.your_active_panel.clear_all_your_active_panel()
 
                     return
@@ -3488,6 +3681,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                         self.selected_object = None
                         self.active_panel_rectangle = None
+                        self.current_fixed_details_card = None
                         self.your_active_panel.clear_all_your_active_panel()
 
                         return
@@ -3550,6 +3744,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if self.selected_object != self.prev_selected_object:
                         self.active_panel_rectangle = None
+                        self.current_fixed_details_card = None
                         self.your_active_panel.clear_all_your_active_panel()
 
                         self.prev_selected_object = self.selected_object
@@ -4103,6 +4298,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         return True
 
     def call_turn_end(self):
+        self.timer.stop_timer()
         turn_end_request_result = self.round_repository.request_turn_end(
             TurnEndRequest(
                 self.__session_repository.get_session_info()))
