@@ -581,10 +581,10 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
     def notify_non_targeting_active_skill(self, notice_dictionary):
 
-        data = {"NOTIFY_NON_TARGETING_ACTIVE_SKILL": {
-            "player_field_unit_health_point_map": {"You": {"field_unit_health_point_map": {}}},
-            "player_field_unit_harmful_effect_map": {"You": {"field_unit_harmful_status_map": {}}},
-            "player_field_unit_death_map": {"You": {"dead_field_unit_index_list": [2, 3, 4]}}}}
+        is_my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        print(f"is my turn: {is_my_turn}")
+        if is_my_turn is True:
+            return
 
         for unit_index, remain_hp in \
         notice_dictionary['NOTIFY_NON_TARGETING_ACTIVE_SKILL']['player_field_unit_health_point_map'][
@@ -687,7 +687,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                         #         self.__pre_drawed_image_instance.get_pre_draw_freezing_energy())
 
 
-    def apply_notify_data_to_your_field_unit_energy(self, player_field_unit_energy_data):
+    def apply_notify_data_of_your_field_unit_energy(self, player_field_unit_energy_data):
         data = {"player_field_unit_energy_map": {
                 "You": {"field_unit_energy_map": {"0": {"attached_energy_map": {"2": 1}, "total_energy_count": 1}}}}}
 
@@ -723,7 +723,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                                 self.__pre_drawed_image_instance.get_pre_draw_unit_energy(
                                     total_energy_count))
 
-    def apply_notify_data_to_opponent_field_unit_energy(self, player_field_unit_energy_data):
+    def apply_notify_data_of_opponent_field_unit_energy(self, player_field_unit_energy_data):
 
         for unit_index, unit_value in \
                 player_field_unit_energy_data['Opponent']['field_unit_energy_map'].items():
@@ -756,7 +756,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                                 self.__pre_drawed_image_instance.get_pre_draw_unit_energy(
                                     total_energy_count))
 
-    def apply_notify_data_to_field_unit_hp(self, player_field_unit_health_point_data):
+    def apply_notify_data_of_field_unit_hp(self, player_field_unit_health_point_data):
         data = {
             "player_field_unit_health_point_map": {"You": {"field_unit_health_point_map": {"0": 0}},
                                                    "Opponent": {"field_unit_health_point_map": {"0": 15}}}}
@@ -808,7 +808,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         except Exception as e:
             print('no Opponent field unit data!! : ', e)
 
-    def apply_notify_data_to_dead_unit(self, player_field_unit_death_data):
+    def apply_notify_data_of_dead_unit(self, player_field_unit_death_data):
         data = {
             "player_field_unit_death_map": {"You": {"dead_field_unit_index_list": [0]},
                                             "Opponent": {"dead_field_unit_index_list": []}}}
@@ -834,8 +834,44 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             print('no Opponent dead unit data!! ', e)
 
 
-    def check_harmful_status(self, player_field_unit_harmful_effect_data):
+    def apply_notify_data_of_harmful_status(self, player_field_unit_harmful_effect_data):
         data = {
                 "Opponent": {"field_unit_harmful_status_map": {"0": {"harmful_status_list": []}}},
                 "You": {"field_unit_harmful_status_map": {"0": {"harmful_status_list": ["DarkFire", "Freeze"]}}}}
 
+        try:
+            for opponent_unit_index, harmful_status_value in player_field_unit_harmful_effect_data['Opponent']['field_unit_harmful_status_map'].items():
+                harmful_status_list = harmful_status_value['harmful_status_list']
+                if len(harmful_status_list) == 0:
+                    continue
+
+                self.__opponent_field_unit_repository.apply_harmful_status(int(opponent_unit_index), harmful_status_list)
+        except Exception as e:
+            print('no Opponent harmful status data!! ', e)
+
+
+
+        try:
+            for your_unit_index, harmful_status_value in player_field_unit_harmful_effect_data['You'][
+                'field_unit_harmful_status_map'].items():
+                harmful_status_list = harmful_status_value['harmful_status_list']
+                if len(harmful_status_list) == 0:
+                    continue
+
+                self.__your_field_unit_repository.apply_harmful_status(int(your_unit_index), harmful_status_list)
+        except Exception as e:
+            print('no your harmful status data!! ', e)
+
+
+    def apply_notify_data_of_field_energy(self, player_field_energy_data):
+        try:
+            your_energy_count =  player_field_energy_data['You']
+            self.__your_field_energy_repository.set_your_field_energy(your_energy_count)
+        except Exception as e:
+            print('no your field energy data!! ', e)
+
+        try:
+            opponent_energy_count = player_field_energy_data['Opponent']
+            self.__opponent_field_energy_repository.set_opponent_field_energy(opponent_energy_count)
+        except Exception as e:
+            print('no opponent field energy data!! ', e)

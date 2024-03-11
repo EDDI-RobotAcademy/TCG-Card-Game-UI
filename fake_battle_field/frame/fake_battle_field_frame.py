@@ -2566,7 +2566,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             return
 
                         try:
-                            for unit_index, remain_hp in response['NON_TARGETING_ACTIVE_SKILL']['player_field_unit_health_point_map']['Opponent']['field_unit_health_point_map'].items():
+                            for unit_index, remain_hp in response['player_field_unit_health_point_map']['Opponent']['field_unit_health_point_map'].items():
                                 opponent_field_unit = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()[int(unit_index)]
                                 if opponent_field_unit is None:
                                     continue
@@ -2586,8 +2586,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                         try:
                             dead_unit_index_list = \
-                                response['NON_TARGETING_ACTIVE_SKILL']['player_field_unit_death_map']['Opponent'][
-                                    'dead_field_unit_index_list']
+                                response['player_field_unit_death_map']['Opponent']['dead_field_unit_index_list']
 
                             for dead_unit_index in dead_unit_index_list:
                                 card_id = self.opponent_field_unit_repository.get_opponent_card_id_by_index(dead_unit_index)
