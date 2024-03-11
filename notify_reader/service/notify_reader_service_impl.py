@@ -715,17 +715,20 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 print(f"{Fore.RED}race_energy_count:{Fore.GREEN} {race_energy_count}{Style.RESET_ALL}")
                 print(f"{Fore.RED}extra_effect_list:{Fore.GREEN} {extra_effect_list}{Style.RESET_ALL}")
 
+                # if race_energy_number == EnergyType.Undead.value:
+
                 current_opponent_field_unit_race_energy_count = (
                     self.__opponent_field_unit_repository.get_opponent_field_unit_race_energy(
-                        int(opponent_unit_index), int(race_energy_number)))
+                        int(opponent_unit_index), EnergyType(int(race_energy_number))))
                 print(f"{Fore.RED}current_opponent_field_unit_race_energy_count:{Fore.GREEN}"
                       f" {current_opponent_field_unit_race_energy_count}{Style.RESET_ALL}")
 
                 self.__opponent_field_unit_repository.attach_race_energy(
                     int(opponent_unit_index),
-                    int(race_energy_number),
+                    EnergyType(int(race_energy_number)),
                     (race_energy_count - current_opponent_field_unit_race_energy_count))
 
+                # TODO: String 이 아닌 Enum 으로 처리해야 함
                 self.__opponent_field_unit_repository.update_opponent_unit_extra_effect_at_index(
                     int(opponent_unit_index), extra_effect_list)
 
