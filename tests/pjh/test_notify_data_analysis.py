@@ -114,6 +114,37 @@ class TestNotifyDataAnalysis(unittest.TestCase):
 
         notify_reader_service.notify_use_draw_support_card(notice_dictionary)
 
+    def test_notify_use_multiple_unit_damage_item_card(self):
+        # notice_type : NOTIFY_USE_MULTIPLE_UNIT_DAMAGE_ITEM_CARD
+        card_date_csv_controller = CardInfoFromCsvControllerImpl.getInstance()
+        card_date_csv_controller.requestToCardInfoSettingInMemory()
+
+        pre_draw = PreDrawedImage.getInstance()
+        pre_draw.pre_draw_every_image()
+
+        your_field_unit_repository = YourFieldUnitRepository.getInstance()
+        your_field_unit_repository.create_field_unit_card(27)
+        your_field_unit_repository.create_field_unit_card(27)
+
+        opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
+        opponent_field_unit_repository.create_field_unit_card(31)
+
+        notify_reader_service = NotifyReaderServiceImpl.getInstance()
+        notice_dictionary = {"NOTIFY_USE_MULTIPLE_UNIT_DAMAGE_ITEM_CARD": {
+            "player_hand_use_map": {
+                "Opponent": {
+                    "card_id": 33, "card_kind": 2}},
+            "player_field_unit_health_point_map": {
+                "You": {
+                    "field_unit_health_point_map": {"1": 10, "0": 10}}},
+            "player_field_unit_death_map": {
+                "Opponent": {
+                    "dead_field_unit_index_list": [0]},
+                "You": {
+                    "dead_field_unit_index_list": []}}}}
+
+        notify_reader_service.notify_use_multiple_unit_damage_item_card(notice_dictionary)
+
 
 if __name__ == "__main__":
     unittest.main()
