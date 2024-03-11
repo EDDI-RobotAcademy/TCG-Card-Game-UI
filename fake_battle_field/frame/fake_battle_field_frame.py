@@ -1110,6 +1110,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.timer.set_timer(30)
             self.timer.start_timer()
 
+        if key.lower() == '9':
+            self.timer.stop_timer()
+
     def on_resize(self, event):
         self.reshape(event.width, event.height)
 

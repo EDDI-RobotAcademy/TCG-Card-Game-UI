@@ -11,6 +11,7 @@ class BattleFieldTimer(OpenGLFrame):
         super().__init__()
         self.timer_panel = None
         self.timer = 0
+        self.timer_id = None
 
         self.total_width = None
         self.total_height = None
@@ -75,9 +76,14 @@ class BattleFieldTimer(OpenGLFrame):
     def start_timer(self):
         if self.timer >= -1:
             self.timer -= 1
-            self.master.after(1000, self.start_timer)
+            self.timer_id = self.master.after(1000, self.start_timer)
         if self.timer == -1:
             self.function()
+
+    def stop_timer(self):
+        if self.timer_id is not None:
+            self.master.after_cancel(self.timer_id)
+            self.timer_id = None
 
     def deleteTimer(self):
         self.destroy()
