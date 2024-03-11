@@ -25,7 +25,7 @@ class ImageDataLoader:
     def load_battle_field_card_frame_image_data(path):
         try:
             image = Image.open(path)
-            resized_image = image.resize((652, 890))
+            resized_image = image.resize((105, 170))
 
             rgba_image = resized_image.convert("RGBA")
             img_data = np.array(rgba_image)

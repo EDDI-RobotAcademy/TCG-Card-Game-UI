@@ -2304,25 +2304,25 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                 )
                             )
 
-                        if your_field_unit_attached_trent_energy > 1:
-                            print("상세 보기 트런트 숫자 생성")
-                            select_details_card_base.set_attached_shapes(
-                                select_details_card.create_number_of_cards(
-                                    number_of_cards_data=
-                                    self.pre_drawed_image_instance.get_pre_draw_number_of_details_energy(
-                                        your_field_unit_attached_trent_energy),
-                                    local_translation=select_details_card_base.get_local_translation(),
-                                    vertices=[(select_details_card_base_vertices[0][0] - 200 + energy_length,
-                                               select_details_card_base_vertices[0][1] - 80),
-                                              (select_details_card_base_vertices[0][0] - 160 + energy_length,
-                                               select_details_card_base_vertices[0][1] - 80),
-                                              (select_details_card_base_vertices[0][0] - 160 + energy_length,
-                                               select_details_card_base_vertices[0][1] - 0),
-                                              (select_details_card_base_vertices[0][0] - 200 + energy_length,
-                                               select_details_card_base_vertices[0][1] - 0)
-                                              ]
+                            if your_field_unit_attached_trent_energy > 1:
+                                print("상세 보기 트런트 숫자 생성")
+                                select_details_card_base.set_attached_shapes(
+                                    select_details_card.create_number_of_cards(
+                                        number_of_cards_data=
+                                        self.pre_drawed_image_instance.get_pre_draw_number_of_details_energy(
+                                            your_field_unit_attached_trent_energy),
+                                        local_translation=select_details_card_base.get_local_translation(),
+                                        vertices=[(select_details_card_base_vertices[0][0] - 200 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 80),
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 80),
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 0),
+                                                  (select_details_card_base_vertices[0][0] - 200 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 0)
+                                                  ]
+                                    )
                                 )
-                            )
 
                     self.fixed_details_card = select_details_card_base
 
