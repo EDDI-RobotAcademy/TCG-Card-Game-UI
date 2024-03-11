@@ -351,6 +351,10 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         is_opponent_data_in_data = False
         is_your_data_in_data = False
 
+
+        self.apply_notify_data_of_harmful_status(data['player_field_unit_harmful_effect_map'])
+
+
         try:
             dead_opponent_unit_index_list = (
                 data.get('player_field_unit_death_map', {})
@@ -541,6 +545,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         data = notice_dictionary['NOTIFY_TARGETING_ATTACK_ACTIVE_SKILL_TO_UNIT']
 
+        self.apply_notify_data_of_harmful_status(data['player_field_unit_harmful_effect_map'])
+
         is_your_data_in_data = False
 
         try:
@@ -602,6 +608,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         print(f"is my turn: {is_my_turn}")
         if is_my_turn is True:
             return
+        
+        self.apply_notify_data_of_harmful_status(notice_dictionary['NOTIFY_NON_TARGETING_ACTIVE_SKILL']['player_field_unit_harmful_effect_map'])
 
         for unit_index, remain_hp in \
         notice_dictionary['NOTIFY_NON_TARGETING_ACTIVE_SKILL']['player_field_unit_health_point_map'][
@@ -853,9 +861,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
 
     def apply_notify_data_of_harmful_status(self, player_field_unit_harmful_effect_data):
-        data = {
-                "Opponent": {"field_unit_harmful_status_map": {"0": {"harmful_status_list": []}}},
-                "You": {"field_unit_harmful_status_map": {"0": {"harmful_status_list": ["DarkFire", "Freeze"]}}}}
+
 
         try:
             for opponent_unit_index, harmful_status_value in player_field_unit_harmful_effect_data['Opponent']['field_unit_harmful_status_map'].items():

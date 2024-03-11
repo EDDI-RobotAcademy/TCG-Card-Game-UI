@@ -1329,18 +1329,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
-        if self.fixed_details_card.get_fixed_card_base():
-
-            fixed_details_card_base = self.fixed_details_card.get_fixed_card_base()
-            fixed_details_card_base.set_width_ratio(self.width_ratio)
-            fixed_details_card_base.set_height_ratio(self.height_ratio)
-            fixed_details_card_base.draw()
-
-            attached_shape_list = fixed_details_card_base.get_attached_shapes()
-            for attached_shape in attached_shape_list:
-                attached_shape.set_width_ratio(self.width_ratio)
-                attached_shape.set_height_ratio(self.height_ratio)
-                attached_shape.draw()
 
         if self.battle_field_repository.get_current_use_card_id():
 
@@ -1703,6 +1691,18 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             glDisable(GL_BLEND)
 
+        if self.fixed_details_card.get_fixed_card_base():
+
+            fixed_details_card_base = self.fixed_details_card.get_fixed_card_base()
+            fixed_details_card_base.set_width_ratio(self.width_ratio)
+            fixed_details_card_base.set_height_ratio(self.height_ratio)
+            fixed_details_card_base.draw()
+
+            attached_shape_list = fixed_details_card_base.get_attached_shapes()
+            for attached_shape in attached_shape_list:
+                attached_shape.set_width_ratio(self.width_ratio)
+                attached_shape.set_height_ratio(self.height_ratio)
+                attached_shape.draw()
 
         # self.post_draw()
         if self.battle_field_repository.get_is_game_end():
