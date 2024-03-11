@@ -101,6 +101,7 @@ from fake_battle_field.service.request.attack_main_character_request import Requ
 from fake_battle_field.service.request.call_of_leonic_request import RequestUseCallOfLeonic
 from fake_battle_field.service.request.fake_multi_draw_request import FakeMultiDrawRequest
 from fake_battle_field.service.request.fake_opponent_deploy_unit_request import FakeOpponentDeployUnitRequest
+from fake_battle_field.service.request.request_use_contract_of_doom import RequestUseContractOfDoom
 from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
@@ -597,6 +598,28 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             _sessionInfo=self.__session_repository.get_second_fake_session_info(),
                             _unitCardIndex=opponent_unit.get_index(),
                             _opponentTargetCardIndex=0
+                        )
+                    )
+
+                    print("test dark ball : ", response)
+
+        if key.lower() == 'kp_add':
+            opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+            for opponent_unit_index, opponent_unit in enumerate(opponent_field_unit_list):
+                if opponent_unit.get_card_number() == 27:
+                    self.your_field_energy_repository.request_to_attach_energy_to_unit(
+                        RequestAttachFieldEnergyToUnit(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _unitIndex=opponent_unit.get_index(),
+                            _energyRace=CardRace.UNDEAD,
+                            _energyCount=3
+                        )
+                    )
+
+                    response = self.__fake_battle_field_frame_repository.request_attack_with_non_targeting_active_skill(
+                        RequestAttackWithNonTargetingActiveSkill(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _unitCardIndex=opponent_unit.get_index()
                         )
                     )
 
@@ -1105,10 +1128,26 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             NotifyReaderRepositoryImpl.getInstance().getNoWaitIpcChannel().put(notify_raw_data)
 
+        if key.lower() == 'c':
+            print("파멸의 계약 사용!")
+
+            response = self.__fake_battle_field_frame_repository.request_use_contract_of_doom(
+                RequestUseContractOfDoom(
+                    _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                    _itemCardId="25"
+                )
+            )
+            print(f"{Fore.RED}파멸의 계약 -> response:{Fore.GREEN} {response}{Style.RESET_ALL}")
+            is_success_value = response.get('is_success', False)
+
+            if is_success_value == False:
+                return
+
         if key.lower() == '0':
             self.timer.set_function(self.call_turn_end)
             self.timer.set_timer(30)
             self.timer.start_timer()
+
 
     def on_resize(self, event):
         self.reshape(event.width, event.height)
@@ -1329,18 +1368,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
-        if self.fixed_details_card.get_fixed_card_base():
-
-            fixed_details_card_base = self.fixed_details_card.get_fixed_card_base()
-            fixed_details_card_base.set_width_ratio(self.width_ratio)
-            fixed_details_card_base.set_height_ratio(self.height_ratio)
-            fixed_details_card_base.draw()
-
-            attached_shape_list = fixed_details_card_base.get_attached_shapes()
-            for attached_shape in attached_shape_list:
-                attached_shape.set_width_ratio(self.width_ratio)
-                attached_shape.set_height_ratio(self.height_ratio)
-                attached_shape.draw()
 
         if self.battle_field_repository.get_current_use_card_id():
 
@@ -1703,6 +1730,18 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             glDisable(GL_BLEND)
 
+        if self.fixed_details_card.get_fixed_card_base():
+
+            fixed_details_card_base = self.fixed_details_card.get_fixed_card_base()
+            fixed_details_card_base.set_width_ratio(self.width_ratio)
+            fixed_details_card_base.set_height_ratio(self.height_ratio)
+            fixed_details_card_base.draw()
+
+            attached_shape_list = fixed_details_card_base.get_attached_shapes()
+            for attached_shape in attached_shape_list:
+                attached_shape.set_width_ratio(self.width_ratio)
+                attached_shape.set_height_ratio(self.height_ratio)
+                attached_shape.draw()
 
         # self.post_draw()
         if self.battle_field_repository.get_is_game_end():
@@ -4083,6 +4122,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         return True
 
     def call_turn_end(self):
+        self.timer.stop_timer()
         turn_end_request_result = self.round_repository.request_turn_end(
             TurnEndRequest(
                 self.__session_repository.get_session_info()))

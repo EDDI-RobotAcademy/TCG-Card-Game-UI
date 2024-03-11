@@ -583,7 +583,7 @@ class PreDrawedImage:
     def pre_draw_waiting_message(self):
         waiting_message_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
                                                   "waiting_message_opponent_meligun_select.png")
-        self.__pre_drawed_waiting_message = ImageDataLoader.load_rectangle_image_data(waiting_message_image_path)
+        self.__pre_drawed_waiting_message = ImageDataLoader.load_rectangle_origin_image_data(waiting_message_image_path)
 
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
