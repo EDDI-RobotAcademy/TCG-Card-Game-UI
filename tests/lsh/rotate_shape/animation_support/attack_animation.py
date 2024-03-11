@@ -86,6 +86,9 @@ class AttackAnimation:
     def set_opponent_field_hp_shape(self, opponent_fixed_card_attached_shape):
         self.opponent_fixed_card_attached_shape = opponent_fixed_card_attached_shape
 
+    def get_opponent_field_hp_shape(self):
+        return self.opponent_fixed_card_attached_shape
+
     def set_opponent_field_death_unit_index(self, opponent_field_card_index):
         self.opponent_field_card_index = opponent_field_card_index
 
