@@ -1110,8 +1110,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.timer.set_timer(30)
             self.timer.start_timer()
 
-        if key.lower() == '9':
-            self.timer.stop_timer()
 
     def on_resize(self, event):
         self.reshape(event.width, event.height)
@@ -4077,6 +4075,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         return True
 
     def call_turn_end(self):
+        self.timer.stop_timer()
         turn_end_request_result = self.round_repository.request_turn_end(
             TurnEndRequest(
                 self.__session_repository.get_session_info()))
