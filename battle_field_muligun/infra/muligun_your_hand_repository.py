@@ -13,8 +13,9 @@ class MuligunYourHandRepository:
     card_dic = {}
 
     x_base_muligun = 90 # 멀리건에서의 맨 처음 카드 위치.
-    is_mulligan_done = False
-
+    is_opponent_mulligan_done = False
+    is_my_mulligan_done = False
+    is_doing_mulligan = True
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -174,11 +175,17 @@ class MuligunYourHandRepository:
     def get_current_hand_card_list(self):
         return self.current_hand_card_list
 
-    def set_is_mulligan_done(self, mulligan_done):
-        self.is_mulligan_done = mulligan_done
+    def set_is_opponent_mulligan(self, mulligan_done):
+        self.is_opponent_mulligan_done = mulligan_done
 
-    def get_is_mulligan_done(self):
-        return self.is_mulligan_done
+    def get_is_opponent_mulligan(self):
+        return self.is_opponent_mulligan_done
+
+    def set_is_my_mulligan(self, mulligan_done):
+        self.is_my_mulligan_done = mulligan_done
+
+    def get_is_my_mulligan(self):
+        return self.is_my_mulligan_done
 
     def saveTransmitIpcChannel(self, transmitIpcChannel):
         print("BattleFieldMeligunFrameRepositoryImpl: saveTransmitIpcChannel()")
