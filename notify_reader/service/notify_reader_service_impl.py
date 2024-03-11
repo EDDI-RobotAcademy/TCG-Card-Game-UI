@@ -1059,19 +1059,24 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         self.__attack_animation_object.set_animation_actor_damage(contract_of_doom_damage)
 
         # 체력 정보 Update
+        self.__attack_animation_object.set_your_field_unit_health_point_map(your_field_unit_health_point_map)
+
         for unit_index, remaining_health_point in your_field_unit_health_point_map.items():
+            self.__attack_animation_object.add_your_field_unit_index_list(int(unit_index))
             your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(int(unit_index))
             your_fixed_card_base = your_field_unit.get_fixed_card_base()
             your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
 
+            self.__attack_animation_object.add_your_field_unit_remaining_hp_list(int(remaining_health_point))
             if remaining_health_point <= 0:
                 continue
 
             for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
                 if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
                     if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
-                        self.__attack_animation_object.add_your_field_unit_hp_shape_list(int(remaining_health_point))
-                        # your_fixed_card_attached_shape.set_number(int(remaining_health_point))
+                        self.__attack_animation_object.add_your_field_unit_hp_shape_list(your_fixed_card_attached_shape)
+                        your_fixed_card_attached_shape.set_number(int(remaining_health_point))
+                        print(f"{Fore.RED}your_fixed_card -> int(remaining_health_point): {Fore.GREEN}{int(remaining_health_point)}{Style.RESET_ALL}")
 
                         # your_fixed_card_attached_shape.set_image_data(
                         #     self.__pre_drawed_image_instance.get_pre_draw_unit_hp(int(remaining_health_point)))

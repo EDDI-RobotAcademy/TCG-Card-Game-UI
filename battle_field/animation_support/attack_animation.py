@@ -11,9 +11,12 @@ class AttackAnimation:
     your_field_unit = None
 
     your_field_unit_hp_shape_list = []
+    your_field_unit_remaining_hp_list = []
     your_dead_field_unit_index_list = []
     your_main_character_health_point = None
     your_lost_card_id_list = []
+    your_field_unit_index_list = []
+    your_field_unit_health_point_map = {}
 
     opponent_fixed_card_attached_shape = None
     opponent_field_card_index = None
@@ -200,3 +203,31 @@ class AttackAnimation:
 
     def get_animation_action(self):
         return self.animation_action
+
+    def add_your_field_unit_index_list(self, your_field_unit_index_list):
+        self.your_field_unit_index_list.append(your_field_unit_index_list)
+
+    def get_your_field_unit_index_list(self):
+        return self.your_field_unit_index_list
+
+    def clear_your_field_unit_index_list(self):
+        self.your_field_unit_index_list = []
+
+    def add_your_field_unit_remaining_hp_list(self, your_field_unit_remaining_hp_list):
+        self.your_field_unit_remaining_hp_list.append(your_field_unit_remaining_hp_list)
+
+    def get_your_field_unit_remaining_hp_list(self):
+        return self.your_field_unit_remaining_hp_list
+
+    def clear_your_field_unit_remaining_hp_list(self):
+        self.your_field_unit_remaining_hp_list = []
+
+    def set_your_field_unit_health_point_map(self, your_field_unit_health_point_map):
+        self.your_field_unit_health_point_map = your_field_unit_health_point_map
+
+    def get_your_field_unit_health_point_map(self):
+        return self.your_field_unit_health_point_map
+
+    def clear_your_field_unit_health_point_map(self):
+        self.your_field_unit_health_point_map = {}
+

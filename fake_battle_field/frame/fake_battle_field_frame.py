@@ -5348,7 +5348,60 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if step_count < steps:
                 self.master.after(20, wide_area_attack, step_count + 1)
             else:
-                # self.finish_wide_area_motion_animation(attack_animation_object)
+                contract_of_doom_damage = attack_animation_object.get_animation_actor_damage()
+
+                # 체력 정보 Update
+                # for your_field_unit_index in attack_animation_object.get_your_field_unit_index_list():
+                your_field_unit_health_point_map = attack_animation_object.get_your_field_unit_health_point_map()
+                for unit_index, remaining_health_point in your_field_unit_health_point_map.items():
+                    your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(int(unit_index))
+                    your_fixed_card_base = your_field_unit.get_fixed_card_base()
+                    your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+
+                    if remaining_health_point <= 0:
+                        continue
+
+                    for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+                        if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                            if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                # your_fixed_card_attached_shape.set_number(int(remaining_health_point))
+                                remaining_hp_number = your_fixed_card_attached_shape.get_number()
+                                print(f"{Fore.RED}remaining_hp_number: {Fore.GREEN}{remaining_hp_number}{Style.RESET_ALL}")
+
+                                your_fixed_card_attached_shape.set_image_data(
+                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(
+                                        remaining_hp_number))
+
+                # 죽은 유닛들 묘지에 배치 및 Replacing
+                for dead_unit_index in attack_animation_object.get_your_dead_field_unit_index_list():
+                    # self.__attack_animation_object.add_your_dead_field_unit_index_list(int(dead_unit_index))
+                    field_unit_id = self.your_field_unit_repository.get_card_id_by_index(dead_unit_index)
+                    self.your_tomb_repository.create_tomb_card(field_unit_id)
+                    self.your_field_unit_repository.remove_card_by_index(dead_unit_index)
+
+                self.your_field_unit_repository.replace_field_card_position()
+
+                # 메인 캐릭터 상태 확인 및 체력 Update
+                # if your_main_character_survival_state != 'Survival':
+                #     print("Player who get notice is dead.")
+                #     # TODO: 배틀 정리 요청을 띄우는 화면으로 넘어가야 함
+
+                your_main_character_health_point = self.attack_animation_object.get_your_main_character_health_point()
+
+                # self.__your_hp_repository.change_hp(your_main_character_health_point)
+                # print(f"{Fore.RED}current_main_character_health:{Fore.GREEN} "
+                #       f"{self.__your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
+
+                # 덱 위에서 카드 한 장 뽑아서 로스트 존 보내기
+                for lost_card_id in attack_animation_object.get_your_lost_card_id_list():
+                    # attack_animation_object.add_your_lost_card_id_list(lost_card_id)
+                    self.your_deck_repository.draw_deck()
+                    print(f"{Fore.RED}current_deck: {Fore.GREEN}"
+                          f"{self.your_deck_repository.get_current_deck_state()}{Style.RESET_ALL}")
+                    self.your_lost_zone_repository.create_your_lost_zone_card(lost_card_id)
+                    print(f"{Fore.RED}current_lost_zone: {Fore.GREEN}"
+                          f"{self.your_lost_zone_repository.get_your_lost_zone_state()}{Style.RESET_ALL}")
+
                 self.is_attack_motion_finished = True
                 # attack_animation_object.set_is_finished(True)
                 # attack_animation_object.set_need_post_process(True)
