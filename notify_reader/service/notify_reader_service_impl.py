@@ -403,6 +403,10 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         is_opponent_data_in_data = False
         is_your_data_in_data = False
 
+
+        self.apply_notify_data_of_harmful_status(data['player_field_unit_harmful_effect_map'])
+
+
         try:
             dead_opponent_unit_index_list = (
                 data.get('player_field_unit_death_map', {})
@@ -593,6 +597,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         data = notice_dictionary['NOTIFY_TARGETING_ATTACK_ACTIVE_SKILL_TO_UNIT']
 
+        self.apply_notify_data_of_harmful_status(data['player_field_unit_harmful_effect_map'])
+
         is_your_data_in_data = False
 
         try:
@@ -655,6 +661,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         if is_my_turn is True:
             return
 
+        self.apply_notify_data_of_harmful_status(notice_dictionary['NOTIFY_NON_TARGETING_ACTIVE_SKILL']['player_field_unit_harmful_effect_map'])
+
         for unit_index, remain_hp in \
         notice_dictionary['NOTIFY_NON_TARGETING_ACTIVE_SKILL']['player_field_unit_health_point_map'][
             'You']['field_unit_health_point_map'].items():
@@ -663,7 +671,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 continue
 
             your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(
-                unit_index)
+                int(unit_index))
             your_fixed_card_base = your_field_unit.get_fixed_card_base()
             your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
 
@@ -906,34 +914,45 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         except Exception as e:
             print('no Opponent dead unit data!! ', e)
 
-
     def apply_notify_data_of_harmful_status(self, player_field_unit_harmful_effect_data):
-        data = {
-                "Opponent": {"field_unit_harmful_status_map": {"0": {"harmful_status_list": []}}},
-                "You": {"field_unit_harmful_status_map": {"0": {"harmful_status_list": ["DarkFire", "Freeze"]}}}}
 
         try:
-            for opponent_unit_index, harmful_status_value in player_field_unit_harmful_effect_data['Opponent']['field_unit_harmful_status_map'].items():
-                harmful_status_list = harmful_status_value['harmful_status_list']
-                if len(harmful_status_list) == 0:
-                    continue
+            for player, field_data in player_field_unit_harmful_effect_data.items():
+                for unit_index, harmful_status_value in field_data.get('field_unit_harmful_status_map', {}).items():
+                    harmful_status_list = harmful_status_value.get('harmful_status_list', [])
+                    if len(harmful_status_list) == 0:
+                        continue
 
-                self.__opponent_field_unit_repository.apply_harmful_status(int(opponent_unit_index), harmful_status_list)
+                    if player == 'Opponent':
+                        self.__opponent_field_unit_repository.apply_harmful_status(int(unit_index), harmful_status_list)
+                    elif player == 'You':
+                        self.__your_field_unit_repository.apply_harmful_status(int(unit_index), harmful_status_list)
         except Exception as e:
-            print('no Opponent harmful status data!! ', e)
+            print('An error occurred while applying harmful status data:', e)
 
 
-
-        try:
-            for your_unit_index, harmful_status_value in player_field_unit_harmful_effect_data['You'][
-                'field_unit_harmful_status_map'].items():
-                harmful_status_list = harmful_status_value['harmful_status_list']
-                if len(harmful_status_list) == 0:
-                    continue
-
-                self.__your_field_unit_repository.apply_harmful_status(int(your_unit_index), harmful_status_list)
-        except Exception as e:
-            print('no your harmful status data!! ', e)
+        # try:
+        #     for opponent_unit_index, harmful_status_value in player_field_unit_harmful_effect_data['Opponent']['field_unit_harmful_status_map'].items():
+        #         harmful_status_list = harmful_status_value['harmful_status_list']
+        #         if len(harmful_status_list) == 0:
+        #             continue
+        #
+        #         self.__opponent_field_unit_repository.apply_harmful_status(int(opponent_unit_index), harmful_status_list)
+        # except Exception as e:
+        #     print('no Opponent harmful status data!! ', e)
+        #
+        #
+        #
+        # try:
+        #     for your_unit_index, harmful_status_value in player_field_unit_harmful_effect_data['You'][
+        #         'field_unit_harmful_status_map'].items():
+        #         harmful_status_list = harmful_status_value['harmful_status_list']
+        #         if len(harmful_status_list) == 0:
+        #             continue
+        #
+        #         self.__your_field_unit_repository.apply_harmful_status(int(your_unit_index), harmful_status_list)
+        # except Exception as e:
+        #     print('no your harmful status data!! ', e)
 
 
     def apply_notify_data_of_field_energy(self, player_field_energy_data):

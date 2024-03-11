@@ -603,6 +603,28 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     print("test dark ball : ", response)
 
+        if key.lower() == 'kp_add':
+            opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+            for opponent_unit_index, opponent_unit in enumerate(opponent_field_unit_list):
+                if opponent_unit.get_card_number() == 27:
+                    self.your_field_energy_repository.request_to_attach_energy_to_unit(
+                        RequestAttachFieldEnergyToUnit(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _unitIndex=opponent_unit.get_index(),
+                            _energyRace=CardRace.UNDEAD,
+                            _energyCount=3
+                        )
+                    )
+
+                    response = self.__fake_battle_field_frame_repository.request_attack_with_non_targeting_active_skill(
+                        RequestAttackWithNonTargetingActiveSkill(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _unitCardIndex=opponent_unit.get_index()
+                        )
+                    )
+
+                    print("test dark ball : ", response)
+
         if key.lower() == 'z':
             print("만약 Opponent Hand에 출격시킬 유닛이 있다면 내보낸다.")
 
@@ -1346,18 +1368,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
-        if self.fixed_details_card.get_fixed_card_base():
-
-            fixed_details_card_base = self.fixed_details_card.get_fixed_card_base()
-            fixed_details_card_base.set_width_ratio(self.width_ratio)
-            fixed_details_card_base.set_height_ratio(self.height_ratio)
-            fixed_details_card_base.draw()
-
-            attached_shape_list = fixed_details_card_base.get_attached_shapes()
-            for attached_shape in attached_shape_list:
-                attached_shape.set_width_ratio(self.width_ratio)
-                attached_shape.set_height_ratio(self.height_ratio)
-                attached_shape.draw()
 
         if self.battle_field_repository.get_current_use_card_id():
 
@@ -1720,6 +1730,18 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             glDisable(GL_BLEND)
 
+        if self.fixed_details_card.get_fixed_card_base():
+
+            fixed_details_card_base = self.fixed_details_card.get_fixed_card_base()
+            fixed_details_card_base.set_width_ratio(self.width_ratio)
+            fixed_details_card_base.set_height_ratio(self.height_ratio)
+            fixed_details_card_base.draw()
+
+            attached_shape_list = fixed_details_card_base.get_attached_shapes()
+            for attached_shape in attached_shape_list:
+                attached_shape.set_width_ratio(self.width_ratio)
+                attached_shape.set_height_ratio(self.height_ratio)
+                attached_shape.draw()
 
         # self.post_draw()
         if self.battle_field_repository.get_is_game_end():
