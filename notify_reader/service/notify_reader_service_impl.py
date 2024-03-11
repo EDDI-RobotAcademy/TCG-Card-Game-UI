@@ -109,6 +109,30 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 cls.__instance.notify_use_catastrophic_damage_item_card
             )
 
+            cls.__instance.notify_callback_table['NOTIFY_DEPLOY_TARGETING_ATTACK_PASSIVE_SKILL_TO_UNIT'] = (
+                cls.__instance.notify_deploy_targeting_attack_passive_skill_to_unit
+            )
+
+            cls.__instance.notify_callback_table['NOTIFY_DEPLOY_TARGETING_ATTACK_TO_GAME_MAIN_CHARACTER'] = (
+                cls.__instance.notify_deploy_targeting_attack_to_game_main_character
+            )
+
+            cls.__instance.notify_callback_table['NOTIFY_DEPLOY_NON_TARGETING_ATTACK_PASSIVE_SKILL'] = (
+                cls.__instance.notify_deploy_non_targeting_attack_passive_skill
+            )
+
+            cls.__instance.notify_callback_table['NOTIFY_TURN_START_TARGETING_ATTACK_PASSIVE_SKILL_TO_UNIT'] = (
+                cls.__instance.notify_turn_start_targeting_attack_passive_skill_to_unit
+            )
+
+            cls.__instance.notify_callback_table['NOTIFY_TURN_START_TARGETING_ATTACK_TO_GAME_MAIN_CHARACTER'] = (
+                cls.__instance.notify_turn_start_targeting_attack_to_game_main_character
+            )
+
+            cls.__instance.notify_callback_table['NOTIFY_TURN_START_NON_TARGETING_ATTACK_PASSIVE_SKILL'] = (
+                cls.__instance.notify_turn_start_non_targeting_attack_passive_skill
+            )
+
         return cls.__instance
 
     @classmethod
@@ -1171,3 +1195,187 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                                         your_fixed_card_attached_shape.set_image_data(
                                             self.__pre_drawed_image_instance.get_pre_draw_unit_energy(
                                                 total_energy_count))
+
+    def notify_turn_start_targeting_attack_passive_skill_to_unit(self, notice_dictionary):
+        data = notice_dictionary['NOTIFY_TURN_START_TARGETING_ATTACK_PASSIVE_SKILL_TO_UNIT']
+
+        your_field_unit_health_point_map = (
+            data)['player_field_unit_health_point_map']['You']['field_unit_health_point_map']
+        your_field_unit_harmful_effect_list = (
+            data)['player_field_unit_harmful_effect_map']['You']['field_unit_harmful_status_map']
+        your_dead_field_unit_index_list = (
+            data)['player_field_unit_death_map']['You']['dead_field_unit_index_list']
+
+        for unit_index, remaining_health_point in your_field_unit_health_point_map.items():
+            your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(int(unit_index))
+            your_fixed_card_base = your_field_unit.get_fixed_card_base()
+            your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+
+            if remaining_health_point <= 0:
+                continue
+
+            for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+                if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                    if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                        your_fixed_card_attached_shape.set_number(int(remaining_health_point))
+
+                        your_fixed_card_attached_shape.set_image_data(
+                            self.__pre_drawed_image_instance.get_pre_draw_unit_hp(int(remaining_health_point)))
+
+        for unit_index, harmful_effect_info in your_field_unit_harmful_effect_list.items():
+            harmful_effect_list = harmful_effect_info['harmful_status_list']
+            self.__your_field_unit_repository.apply_harmful_status(int(unit_index), harmful_effect_list)
+
+        # 죽은 유닛들 묘지에 배치 및 Replacing
+        for dead_unit_index in your_dead_field_unit_index_list:
+            field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
+            self.__your_tomb_repository.create_tomb_card(field_unit_id)
+            self.__your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
+
+        self.__your_field_unit_repository.replace_field_card_position()
+
+    def notify_deploy_targeting_attack_passive_skill_to_unit(self, notice_dictionary):
+        data = notice_dictionary['NOTIFY_DEPLOY_TARGETING_ATTACK_PASSIVE_SKILL_TO_UNIT']
+
+        your_field_unit_health_point_map = (
+            data)['player_field_unit_health_point_map']['You']['field_unit_health_point_map']
+        your_field_unit_harmful_effect_list = (
+            data)['player_field_unit_harmful_effect_map']['You']['field_unit_harmful_status_map']
+        your_dead_field_unit_index_list = (
+            data)['player_field_unit_death_map']['You']['dead_field_unit_index_list']
+
+        for unit_index, remaining_health_point in your_field_unit_health_point_map.items():
+            your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(int(unit_index))
+            your_fixed_card_base = your_field_unit.get_fixed_card_base()
+            your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+
+            if remaining_health_point <= 0:
+                continue
+
+            for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+                if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                    if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                        your_fixed_card_attached_shape.set_number(int(remaining_health_point))
+
+                        your_fixed_card_attached_shape.set_image_data(
+                            self.__pre_drawed_image_instance.get_pre_draw_unit_hp(int(remaining_health_point)))
+
+        for unit_index, harmful_effect_info in your_field_unit_harmful_effect_list.items():
+            harmful_effect_list = harmful_effect_info['harmful_status_list']
+            self.__your_field_unit_repository.apply_harmful_status(int(unit_index), harmful_effect_list)
+
+        # 죽은 유닛들 묘지에 배치 및 Replacing
+        for dead_unit_index in your_dead_field_unit_index_list:
+            field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
+            self.__your_tomb_repository.create_tomb_card(field_unit_id)
+            self.__your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
+
+        self.__your_field_unit_repository.replace_field_card_position()
+
+    def notify_turn_start_non_targeting_attack_passive_skill(self, notice_dictionary):
+        data = notice_dictionary['NOTIFY_TURN_START_NON_TARGETING_ATTACK_PASSIVE_SKILL']
+
+        your_field_unit_health_point_map = (
+            data)['player_field_unit_health_point_map']['You']['field_unit_health_point_map']
+        your_field_unit_harmful_effect_list = (
+            data)['player_field_unit_harmful_effect_map']['You']['field_unit_harmful_status_map']
+        your_dead_field_unit_index_list = (
+            data)['player_field_unit_death_map']['You']['dead_field_unit_index_list']
+
+        for unit_index, remaining_health_point in your_field_unit_health_point_map.items():
+            your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(int(unit_index))
+            your_fixed_card_base = your_field_unit.get_fixed_card_base()
+            your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+
+            if remaining_health_point <= 0:
+                continue
+
+            for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+                if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                    if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                        your_fixed_card_attached_shape.set_number(int(remaining_health_point))
+
+                        your_fixed_card_attached_shape.set_image_data(
+                            self.__pre_drawed_image_instance.get_pre_draw_unit_hp(int(remaining_health_point)))
+
+        for unit_index, harmful_effect_info in your_field_unit_harmful_effect_list.items():
+            harmful_effect_list = harmful_effect_info['harmful_status_list']
+            self.__your_field_unit_repository.apply_harmful_status(int(unit_index), harmful_effect_list)
+
+        # 죽은 유닛들 묘지에 배치 및 Replacing
+        for dead_unit_index in your_dead_field_unit_index_list:
+            field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
+            self.__your_tomb_repository.create_tomb_card(field_unit_id)
+            self.__your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
+
+        self.__your_field_unit_repository.replace_field_card_position()
+
+    def notify_deploy_non_targeting_attack_passive_skill(self, notice_dictionary):
+        data = notice_dictionary['NOTIFY_DEPLOY_NON_TARGETING_ATTACK_PASSIVE_SKILL']
+
+        your_field_unit_health_point_map = (
+            data)['player_field_unit_health_point_map']['You']['field_unit_health_point_map']
+        your_field_unit_harmful_effect_list = (
+            data)['player_field_unit_harmful_effect_map']['You']['field_unit_harmful_status_map']
+        your_dead_field_unit_index_list = (
+            data)['player_field_unit_death_map']['You']['dead_field_unit_index_list']
+
+        for unit_index, remaining_health_point in your_field_unit_health_point_map.items():
+            your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(int(unit_index))
+            your_fixed_card_base = your_field_unit.get_fixed_card_base()
+            your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+
+            if remaining_health_point <= 0:
+                continue
+
+            for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+                if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                    if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                        your_fixed_card_attached_shape.set_number(int(remaining_health_point))
+
+                        your_fixed_card_attached_shape.set_image_data(
+                            self.__pre_drawed_image_instance.get_pre_draw_unit_hp(int(remaining_health_point)))
+
+        for unit_index, harmful_effect_info in your_field_unit_harmful_effect_list.items():
+            harmful_effect_list = harmful_effect_info['harmful_status_list']
+            self.__your_field_unit_repository.apply_harmful_status(int(unit_index), harmful_effect_list)
+
+        # 죽은 유닛들 묘지에 배치 및 Replacing
+        for dead_unit_index in your_dead_field_unit_index_list:
+            field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
+            self.__your_tomb_repository.create_tomb_card(field_unit_id)
+            self.__your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
+
+        self.__your_field_unit_repository.replace_field_card_position()
+
+    def notify_turn_start_targeting_attack_to_game_main_character(self, notice_dictionary):
+        data = notice_dictionary['NOTIFY_TURN_START_TARGETING_ATTACK_TO_GAME_MAIN_CHARACTER']
+
+        your_main_character_health_point = (
+            data)['player_main_character_health_point_map']['You']
+        your_main_character_survival_state = (
+            data)['player_main_character_survival_map']['You']
+
+        if your_main_character_survival_state != 'Survival':
+            print('Your main character is dead!')
+            return
+
+        self.__your_hp_repository.change_hp(int(your_main_character_health_point))
+        print(f"{Fore.RED}current_main_character_health:{Fore.GREEN} "
+              f"{self.__your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
+
+    def notify_deploy_targeting_attack_to_game_main_character(self, notice_dictionary):
+        data = notice_dictionary['NOTIFY_DEPLOY_TARGETING_ATTACK_TO_GAME_MAIN_CHARACTER']
+
+        your_main_character_health_point = (
+            data)['player_main_character_health_point_map']['You']
+        your_main_character_survival_state = (
+            data)['player_main_character_survival_map']['You']
+
+        if your_main_character_survival_state != 'Survival':
+            print('Your main character is dead!')
+            return
+
+        self.__your_hp_repository.change_hp(int(your_main_character_health_point))
+        print(f"{Fore.RED}current_main_character_health:{Fore.GREEN} "
+              f"{self.__your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
