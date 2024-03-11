@@ -14,6 +14,7 @@ from battle_field.infra.your_hp_repository import YourHpRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field.state.energy_type import EnergyType
 from battle_field_function.service.battle_field_function_service_impl import BattleFieldFunctionServiceImpl
+from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
 from fake_battle_field.infra.fake_opponent_hand_repository import FakeOpponentHandRepositoryImpl
 from image_shape.circle_kinds import CircleKinds
 from image_shape.non_background_number_image import NonBackgroundNumberImage
@@ -46,6 +47,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.__your_field_unit_repository = YourFieldUnitRepository.getInstance()
             cls.__instance.__opponent_hand_repository = OpponentHandRepository.getInstance()
             cls.__instance.__battle_field_repository = BattleFieldRepository.getInstance()
+            cls.__instance.__mulligan_repository = MuligunYourHandRepository.getInstance()
 
             cls.__instance.notify_callback_table['NOTIFY_DEPLOY_UNIT'] = cls.__instance.notify_deploy_unit
             cls.__instance.notify_callback_table['NOTIFY_TURN_END'] = cls.__instance.notify_turn_end
@@ -85,6 +87,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
             cls.__instance.notify_callback_table['NOTIFY_USE_DRAW_SUPPORT_CARD'] = (
                 cls.__instance.notify_use_draw_support_card
+            )
+            cls.__instance.notify_callback_table['NOTIFY_MULLIGAN_END'] = (
+                cls.__instance.notify_mulligan_end
             )
 
         return cls.__instance
@@ -717,3 +722,11 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         print(f"updated_opponent_hand: {updated_opponent_hand}")
 
         # TODO: 상대 핸드 뒷면 이미지를 추가된 카드 장수 만큼 띄워야 함
+
+    def notify_mulligan_end(self, notice_dictionary):
+        is_mulligan_done = notice_dictionary['NOTIFY_MULLIGAN_END'].get('is_done')
+
+        print(f"{Fore.RED}mulligan end?:{Fore.GREEN} {is_mulligan_done}{Style.RESET_ALL}")
+
+        if is_mulligan_done is True:
+            self.__mulligan_repository.set_is_mulligan_done(True)

@@ -10,15 +10,18 @@ from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleF
 from battle_field_muligun.service.request.check_opponent_muligun_request import CheckOpponentMuligunRequest
 from battle_field_muligun.service.request.muligun_request import MuligunRequest
 from battle_field_muligun_timer.battle_field_muligun_timer import BattleFieldMuligunTimer
+from image_shape.rectangle_image import RectangleImage
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.image_rectangle_element import ImageRectangleElement
 from opengl_shape.rectangle import Rectangle
+from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from session.repository.session_repository_impl import SessionRepositoryImpl
 
 
 class BattleFieldMuligunFrame(OpenGLFrame):
     sessionRepository = SessionRepositoryImpl.getInstance()
+    __pre_drawed_image_instance = PreDrawedImage.getInstance()
 
     def __init__(self,  master=None, switchFrameWithMenuName=None, **kwargs):
         super().__init__(master, **kwargs)
@@ -70,6 +73,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         self.hand_card_state = None
 
         self.button_click_processing = False
+        self.message_visible = True
 
         # self.select_card_id = self.your_hand_repository.select_card_id_list()
         # self.delete_select_card = self.your_hand_repository.delete_select_card()
@@ -80,6 +84,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
 
         self.timer_panel = None
         self.timer = BattleFieldMuligunTimer()
+
     def initgl(self):
         glClearColor(1.0, 1.0, 1.0, 0.0)
         glOrtho(0, self.width, self.height, 0, -1, 1)
@@ -181,6 +186,10 @@ class BattleFieldMuligunFrame(OpenGLFrame):
 
         if self.execute_pick_card_effect is True:
             self.draw_pick_card_effect()
+
+        if self.your_hand_repository.get_is_mulligan_done() is False:
+            # TODO: waiting 창 띄우기
+            self.waiting_message().draw()
 
         self.tkSwapBuffers()
 
@@ -390,15 +399,18 @@ class BattleFieldMuligunFrame(OpenGLFrame):
             self.execute_pick_card_effect = False
             self.ok_button_clicked = True
 
-            # TODO: 대기중이라는 창 만들어야 함.
-            for i in range(60):
-                responseData = self.your_hand_repository.requestCheckOpponentMuligun(
-                    CheckOpponentMuligunRequest(self.sessionRepository.get_session_info()))
+            try:
+                #     # responseData = self.your_hand_repository.requestCheckOpponentMuligun(
+                #     #     CheckOpponentMuligunRequest(self.sessionRepository.get_session_info()))
+                mulligan_done = self.your_hand_repository.get_is_mulligan_done()
+                print(f"check opponent muligun responseData:{mulligan_done}")
+                if mulligan_done is True:
+                    self.message_visible = False
+                    print("사용자 둘 다 멀리건 선택 완료")
+                    # TODO: 배틀 필드 화면으로 넘어가야 함.
 
-                print(f"check opponent muligun responseData:{responseData}")
-                if responseData["is_done"] is True:
-                    break
-
+            except Exception as e:
+                print(f"멀리건 에러: {e}")
 
         else:
             #self.master.after(self.__switchFrameWithMenuName('decision-first'))
@@ -430,6 +442,17 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         new_rectangle = Rectangle(rectangle_color,
                                   [(0, 0), (self.width, 0), (self.width, self.height), (0, self.height)])
         return new_rectangle
+
+
+    def waiting_message(self):
+        if self.message_visible is True:
+            self.__pre_drawed_image_instance.pre_draw_waiting_message()
+            data = self.__pre_drawed_image_instance.get_pre_draw_waiting_message()
+            vertices = [(450, 150), (1050, 150), (1050, 800), (450, 800)]
+            waiting_message_image = RectangleImage(
+                image_data=data,
+                vertices=vertices)
+            return waiting_message_image
 
     # 확인 버튼
     # def create_ok_button(self):
