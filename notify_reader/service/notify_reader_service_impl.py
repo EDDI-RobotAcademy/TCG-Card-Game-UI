@@ -1002,12 +1002,12 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         # TODO: 상대 핸드 뒷면 이미지를 추가된 카드 장수 만큼 띄워야 함
 
     def notify_mulligan_end(self, notice_dictionary):
-        is_mulligan_done = notice_dictionary['NOTIFY_MULLIGAN_END'].get('is_done')
+        is_opponent_mulligan = notice_dictionary['NOTIFY_MULLIGAN_END'].get('is_done')
 
-        print(f"{Fore.RED}mulligan end?:{Fore.GREEN} {is_mulligan_done}{Style.RESET_ALL}")
+        print(f"{Fore.RED}mulligan end?:{Fore.GREEN} {is_opponent_mulligan}{Style.RESET_ALL}")
 
-        if is_mulligan_done is True:
-            self.__mulligan_repository.set_is_mulligan_done(True)
+        if is_opponent_mulligan is True:
+            self.__mulligan_repository.set_is_opponent_mulligan(True)
 
     def notify_use_catastrophic_damage_item_card(self, notice_dictionary):
         data = notice_dictionary['NOTIFY_USE_CATASTROPHIC_DAMAGE_ITEM_CARD']
