@@ -1697,7 +1697,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                     self.opponent_field_unit_repository.remove_card_by_multiple_index([opponent_field_unit_index])
                     self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
                 else:
-                    opponent_field_hp_shape = self.attack_animation_object.get()
+                    opponent_field_hp_shape = self.attack_animation_object.get_opponent_field_hp_shape()
                     opponent_hp_number = opponent_field_hp_shape.get_number()
 
                     opponent_field_hp_shape.set_image_data(
