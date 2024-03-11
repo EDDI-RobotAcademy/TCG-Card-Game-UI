@@ -602,6 +602,28 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     print("test dark ball : ", response)
 
+        if key.lower() == 'kp_add':
+            opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+            for opponent_unit_index, opponent_unit in enumerate(opponent_field_unit_list):
+                if opponent_unit.get_card_number() == 27:
+                    self.your_field_energy_repository.request_to_attach_energy_to_unit(
+                        RequestAttachFieldEnergyToUnit(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _unitIndex=opponent_unit.get_index(),
+                            _energyRace=CardRace.UNDEAD,
+                            _energyCount=3
+                        )
+                    )
+
+                    response = self.__fake_battle_field_frame_repository.request_attack_with_non_targeting_active_skill(
+                        RequestAttackWithNonTargetingActiveSkill(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _unitCardIndex=opponent_unit.get_index()
+                        )
+                    )
+
+                    print("test dark ball : ", response)
+
         if key.lower() == 'z':
             print("만약 Opponent Hand에 출격시킬 유닛이 있다면 내보낸다.")
 
