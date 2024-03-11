@@ -1,6 +1,7 @@
 import unittest
 
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
+from battle_field.infra.opponent_hand_repository import OpponentHandRepository
 from card_info_from_csv.controller.card_info_from_csv_controller_impl import CardInfoFromCsvControllerImpl
 from notify_reader.service.notify_reader_service_impl import NotifyReaderServiceImpl
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
@@ -68,7 +69,13 @@ class TestNotifyDataAnalysis(unittest.TestCase):
                 "You":[35]}}}
 
     def test_notify_use_draw_support_card(self):
-        # notice_type : NOTIFY_USE_CATASTROPHIC_DAMAGE_ITEM_CARD
+        # notice_type : NOTIFY_USE_DRAW_SUPPORT_CARD
+        card_date_csv_controller = CardInfoFromCsvControllerImpl.getInstance()
+        card_date_csv_controller.requestToCardInfoSettingInMemory()
+
+        pre_draw = PreDrawedImage.getInstance()
+        pre_draw.pre_draw_every_image()
+
         notify_reader_service = NotifyReaderServiceImpl.getInstance()
         notice_dictionary = {"NOTIFY_USE_DRAW_SUPPORT_CARD":{
             "player_hand_use_map":{
@@ -76,6 +83,11 @@ class TestNotifyDataAnalysis(unittest.TestCase):
                     "card_id":20,"card_kind":4}},
             "player_draw_count_map":{
                 "Opponent":3}}}
+
+        opponent_hand_repository = OpponentHandRepository.getInstance()
+        opponent_hand_repository.create_opponent_hand_card_list()
+
+        notify_reader_service.notify_use_draw_support_card(notice_dictionary)
 
 
 if __name__ == "__main__":
