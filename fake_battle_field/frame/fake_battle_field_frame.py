@@ -1890,6 +1890,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                             damage = 15
 
+                            self.master.after(2000, self.opponent_contract_of_doom_attack_animation)
+
                             # TODO: 즉발이므로 대기 액션이 필요없음 (서버와의 통신을 위해 대기가 발생 할 수 있긴함) 그 때 가서 추가
                             for index in range(
                                     len(self.opponent_field_unit_repository.get_current_field_unit_card_object_list()) - 1,
@@ -5407,3 +5409,126 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # attack_animation_object.set_need_post_process(True)
 
         wide_area_attack(1)
+
+    def opponent_contract_of_doom_attack_animation(self):
+        steps = 50
+        damage = 15
+
+        attack_animation_object = AttackAnimation.getInstance()
+
+        your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
+        your_field_unit_list_length = len(
+            self.your_field_unit_repository.get_current_field_unit_list())
+
+        def opponent_wide_area_attack(step_count):
+            for index in range(
+                    your_field_unit_list_length - 1,
+                    -1,
+                    -1):
+                your_field_unit = your_field_unit_list[index]
+
+                if your_field_unit is None:
+                    continue
+
+                fixed_card_base = your_field_unit.get_fixed_card_base()
+                tool_card = your_field_unit.get_tool_card()
+                attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                if step_count % 2 == 1:
+                    vibration_factor = 10
+                    random_translation = (random.uniform(-vibration_factor, vibration_factor),
+                                          random.uniform(-vibration_factor, vibration_factor))
+
+                    new_fixed_card_base_vertices = [
+                        (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                        fixed_card_base.get_vertices()
+                    ]
+                    fixed_card_base.update_vertices(new_fixed_card_base_vertices)
+
+                    if tool_card is not None:
+                        new_tool_card_vertices = [
+                            (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                            tool_card.get_vertices()
+                        ]
+                        tool_card.update_vertices(new_tool_card_vertices)
+
+                    for attached_shape in attached_shape_list:
+                        # Apply random translation
+                        new_attached_shape_vertices = [
+                            (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                            attached_shape.get_vertices()
+                        ]
+                        attached_shape.update_vertices(new_attached_shape_vertices)
+
+                else:
+                    fixed_card_base.update_vertices(fixed_card_base.get_initial_vertices())
+                    if tool_card is not None:
+                        tool_card.update_vertices(tool_card.get_initial_vertices())
+                    for attached_shape in attached_shape_list:
+                        attached_shape.update_vertices(attached_shape.get_initial_vertices())
+
+            if step_count < steps:
+                self.master.after(20, opponent_wide_area_attack, step_count + 1)
+            else:
+                contract_of_doom_damage = 15
+
+                # 체력 정보 Update
+                # for your_field_unit_index in attack_animation_object.get_your_field_unit_index_list():
+                your_field_unit_health_point_map = attack_animation_object.get_your_field_unit_health_point_map()
+                for unit_index, remaining_health_point in your_field_unit_health_point_map.items():
+                    your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(int(unit_index))
+                    your_fixed_card_base = your_field_unit.get_fixed_card_base()
+                    your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+
+                    if remaining_health_point <= 0:
+                        continue
+
+                    for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+                        if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                            if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                # your_fixed_card_attached_shape.set_number(int(remaining_health_point))
+                                remaining_hp_number = your_fixed_card_attached_shape.get_number()
+                                print(
+                                    f"{Fore.RED}remaining_hp_number: {Fore.GREEN}{remaining_hp_number}{Style.RESET_ALL}")
+
+                                your_fixed_card_attached_shape.set_image_data(
+                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(
+                                        remaining_hp_number))
+
+                # 죽은 유닛들 묘지에 배치 및 Replacing
+                for dead_unit_index in attack_animation_object.get_your_dead_field_unit_index_list():
+                    # self.__attack_animation_object.add_your_dead_field_unit_index_list(int(dead_unit_index))
+                    field_unit_id = self.your_field_unit_repository.get_card_id_by_index(dead_unit_index)
+                    self.your_tomb_repository.create_tomb_card(field_unit_id)
+                    self.your_field_unit_repository.remove_card_by_index(dead_unit_index)
+
+                self.your_field_unit_repository.replace_field_card_position()
+
+                # 메인 캐릭터 상태 확인 및 체력 Update
+                # if your_main_character_survival_state != 'Survival':
+                #     print("Player who get notice is dead.")
+                #     # TODO: 배틀 정리 요청을 띄우는 화면으로 넘어가야 함
+
+                your_main_character_health_point = self.attack_animation_object.get_your_main_character_health_point()
+
+                # self.__your_hp_repository.change_hp(your_main_character_health_point)
+                # print(f"{Fore.RED}current_main_character_health:{Fore.GREEN} "
+                #       f"{self.__your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
+
+                # 덱 위에서 카드 한 장 뽑아서 로스트 존 보내기
+                for lost_card_id in attack_animation_object.get_your_lost_card_id_list():
+                    # attack_animation_object.add_your_lost_card_id_list(lost_card_id)
+                    self.your_deck_repository.draw_deck()
+                    print(f"{Fore.RED}current_deck: {Fore.GREEN}"
+                          f"{self.your_deck_repository.get_current_deck_state()}{Style.RESET_ALL}")
+                    self.your_lost_zone_repository.create_your_lost_zone_card(lost_card_id)
+                    print(f"{Fore.RED}current_lost_zone: {Fore.GREEN}"
+                          f"{self.your_lost_zone_repository.get_your_lost_zone_state()}{Style.RESET_ALL}")
+
+                self.is_attack_motion_finished = True
+                # attack_animation_object.set_is_finished(True)
+                # attack_animation_object.set_need_post_process(True)
+
+        opponent_wide_area_attack(1)
+
+
