@@ -63,3 +63,7 @@ class FakeBattleFieldFrameRepositoryImpl(FakeBattleFieldFrameRepository):
     def request_attack_with_non_targeting_active_skill(self, attackWithNonTargetingActiveSkill):
         self.__transmitIpcChannel.put(attackWithNonTargetingActiveSkill)
         return self.__receiveIpcChannel.get()
+
+    def request_use_contract_of_doom(self, requestContractOfDoom):
+        self.__transmitIpcChannel.put(requestContractOfDoom)
+        return self.__receiveIpcChannel.get()

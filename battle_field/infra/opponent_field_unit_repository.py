@@ -115,7 +115,7 @@ class OpponentFieldUnitRepository:
         self.harmful_status_info.update_harmful_status(unit_index, harmful_status_list)
 
     def get_harmful_status_by_index(self, index):
-        self.harmful_status_info.get_extra_effect_of_index(index)
+        self.harmful_status_info.get_harmful_status_of_index(index)
 
 
     def get_total_energy_at_index(self, index):
@@ -135,12 +135,14 @@ class OpponentFieldUnitRepository:
 
     def get_opponent_card_id_by_index(self, index):
         card_list = self.get_current_field_unit_card_object_list()
-        print(f"card_list: {card_list}")
-        for card in card_list:
-            if card:
-                print(f'card in card_list: {card}')
-                if card.get_index() == index:
-                    return card.get_card_number()
+        if index < len(card_list):
+            return card_list[index].get_card_number()
+        # print(f"card_list: {card_list}")
+        # for card in card_list:
+        #     if card:
+        #         print(f'card in card_list: {card}')
+        #         if card.get_index() == index:
+        #             return card.get_card_number()
 
         return -1
 
