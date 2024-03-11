@@ -1,5 +1,6 @@
 from battle_field.state.attached_energy_info import AttachedEnergyInfoState
 from battle_field.state.current_field_unit import CurrentFieldUnitState
+from battle_field.state.harmful_status_info import HarmfulStatusInfo
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 
 
@@ -7,6 +8,7 @@ class YourFieldUnitRepository:
     __instance = None
 
     attached_energy_info = AttachedEnergyInfoState()
+    harmful_status_info = HarmfulStatusInfo()
 
     current_field_unit_state = CurrentFieldUnitState()
     current_field_unit_list = []
@@ -90,6 +92,12 @@ class YourFieldUnitRepository:
     def get_energy_info_at_index(self, index):
         return self.attached_energy_info.get_energy_info_at_index(index)
 
+    def apply_harmful_status(self, unit_index, harmful_status_list):
+        self.harmful_status_info.update_harmful_status(unit_index, harmful_status_list)
+
+    def get_harmful_status_by_index(self, index):
+        self.harmful_status_info.get_extra_effect_of_index(index)
+
     def get_your_field_unit_race_energy(self, index, energy_race):
         return self.attached_energy_info.get_race_energy_at_index(index, energy_race)
 
@@ -105,8 +113,9 @@ class YourFieldUnitRepository:
         card_list = self.get_current_field_unit_list()
 
         for card in card_list:
-            if card.get_index() == index:
-                return card.get_card_number()
+            if card:
+                if card.get_index() == index:
+                    return card.get_card_number()
 
         return -1
 

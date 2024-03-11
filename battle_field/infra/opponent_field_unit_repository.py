@@ -1,6 +1,7 @@
 from battle_field.state.attached_energy_info import AttachedEnergyInfoState
 from battle_field.state.current_field_unit import CurrentFieldUnitState
 from battle_field.state.extra_effect_info import ExtraEffectInfo
+from battle_field.state.harmful_status_info import HarmfulStatusInfo
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 
 
@@ -9,6 +10,7 @@ class OpponentFieldUnitRepository:
 
     attached_energy_info = AttachedEnergyInfoState()
     extra_effect_info = ExtraEffectInfo()
+    harmful_status_info = HarmfulStatusInfo()
 
     current_field_unit_state = CurrentFieldUnitState()
     current_field_unit_card_object_list = []
@@ -109,6 +111,13 @@ class OpponentFieldUnitRepository:
     def detach_race_energy(self, opponent_field_unit_index, energy_race, energy_count):
         self.attached_energy_info.remove_race_energy_at_index(opponent_field_unit_index, energy_race, energy_count)
 
+    def apply_harmful_status(self, unit_index, harmful_status_list):
+        self.harmful_status_info.update_harmful_status(unit_index, harmful_status_list)
+
+    def get_harmful_status_by_index(self, index):
+        self.harmful_status_info.get_extra_effect_of_index(index)
+
+
     def get_total_energy_at_index(self, index):
         return self.attached_energy_info.get_total_energy_at_index(index)
 
@@ -126,10 +135,12 @@ class OpponentFieldUnitRepository:
 
     def get_opponent_card_id_by_index(self, index):
         card_list = self.get_current_field_unit_card_object_list()
-
+        print(f"card_list: {card_list}")
         for card in card_list:
-            if card.get_index() == index:
-                return card.get_card_number()
+            if card:
+                print(f'card in card_list: {card}')
+                if card.get_index() == index:
+                    return card.get_card_number()
 
         return -1
 
