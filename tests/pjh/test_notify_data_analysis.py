@@ -257,6 +257,22 @@ class TestNotifyDataAnalysis(unittest.TestCase):
 
         notify_reader_service.notify_deploy_non_targeting_attack_passive_skill(notice_dictionary)
 
+    def test_notify_turn_start_targeting_attack_to_game_main_character(self):
+        card_date_csv_controller = CardInfoFromCsvControllerImpl.getInstance()
+        card_date_csv_controller.requestToCardInfoSettingInMemory()
+
+        pre_draw = PreDrawedImage.getInstance()
+        pre_draw.pre_draw_every_image()
+
+        notify_reader_service = NotifyReaderServiceImpl.getInstance()
+        notice_dictionary = {"NOTIFY_TURN_START_TARGETING_ATTACK_TO_GAME_MAIN_CHARACTER":{
+            "player_main_character_health_point_map":{
+                "You":60},
+            "player_main_character_survival_map":{
+                "You":"Survival"}}}
+
+        notify_reader_service.notify_turn_start_targeting_attack_to_game_main_character(notice_dictionary)
+
 
 if __name__ == "__main__":
     unittest.main()
