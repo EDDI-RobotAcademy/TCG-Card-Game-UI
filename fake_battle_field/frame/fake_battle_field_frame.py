@@ -2553,19 +2553,19 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     elif skill_type == 2:
 
 
-                        # response = self.__fake_battle_field_frame_repository.request_attack_opponent_unit(
-                        #     RequestAttackWithNonTargetingActiveSkill(
-                        #         _sessionInfo = self.__session_repository.get_first_fake_session_info(),
-                        #         _unitCardIndex = your_field_unit_index
-                        #     )
-                        # )
-                        #
-                        # print(f"non targeting active skill response : {response}")
-                        #
-                        # if response.get('is_success',False) == False:
-                        #     print('non targeting active skill error!! ')
-                        #     return
-                        #
+                        response = self.__fake_battle_field_frame_repository.request_attack_opponent_unit(
+                            RequestAttackWithNonTargetingActiveSkill(
+                                _sessionInfo = self.__session_repository.get_first_fake_session_info(),
+                                _unitCardIndex = your_field_unit_index
+                            )
+                        )
+
+                        print(f"non targeting active skill response : {response}")
+
+                        if response.get('is_success',False) == False:
+                            print('non targeting active skill error!! ')
+                            return
+
 
 
                         damage = self.card_info_repository.getCardSkillSecondDamageForCardNumber(your_field_unit_id)
