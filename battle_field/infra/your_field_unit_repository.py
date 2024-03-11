@@ -104,9 +104,11 @@ class YourFieldUnitRepository:
     def get_card_id_by_index(self, index):
         card_list = self.get_current_field_unit_list()
 
-        for card in card_list:
-            if card.get_index() == index:
-                return card.get_card_number()
+        if index < len(card_list):
+            return card_list[index].get_card_number()
+        # for card in card_list:
+        #     if card.get_index() == index:
+        #         return card.get_card_number()
 
         return -1
 
