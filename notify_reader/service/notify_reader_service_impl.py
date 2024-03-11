@@ -104,6 +104,30 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 cls.__instance.notify_use_catastrophic_damage_item_card
             )
 
+            cls.__instance.notify_callback_table['NOTIFY_DEPLOY_TARGETING_ATTACK_PASSIVE_SKILL_TO_UNIT'] = (
+                cls.__instance.notify_deploy_targeting_attack_passive_skill_to_unit
+            )
+
+            cls.__instance.notify_callback_table['NOTIFY_DEPLOY_TARGETING_ATTACK_TO_GAME_MAIN_CHARACTER'] = (
+                cls.__instance.notify_deploy_targeting_attack_to_game_main_character
+            )
+
+            cls.__instance.notify_callback_table['NOTIFY_DEPLOY_NON_TARGETING_ATTACK_PASSIVE_SKILL'] = (
+                cls.__instance.notify_deploy_non_targeting_attack_passive_skill
+            )
+
+            cls.__instance.notify_callback_table['NOTIFY_TURN_START_TARGETING_ATTACK_PASSIVE_SKILL_TO_UNIT'] = (
+                cls.__instance.notify_turn_start_targeting_attack_passive_skill_to_unit
+            )
+
+            cls.__instance.notify_callback_table['NOTIFY_TURN_START_TARGETING_ATTACK_TO_GAME_MAIN_CHARACTER'] = (
+                cls.__instance.notify_turn_start_targeting_attack_to_game_main_character
+            )
+
+            cls.__instance.notify_callback_table['NOTIFY_TURN_START_NON_TARGETING_ATTACK_PASSIVE_SKILL'] = (
+                cls.__instance.notify_turn_start_non_targeting_attack_passive_skill
+            )
+
         return cls.__instance
 
     @classmethod
@@ -1310,6 +1334,22 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
     def notify_turn_start_targeting_attack_to_game_main_character(self, notice_dictionary):
         data = notice_dictionary['NOTIFY_TURN_START_TARGETING_ATTACK_TO_GAME_MAIN_CHARACTER']
+
+        your_main_character_health_point = (
+            data)['player_main_character_health_point_map']['You']
+        your_main_character_survival_state = (
+            data)['player_main_character_survival_map']['You']
+
+        if your_main_character_survival_state != 'Survival':
+            print('Your main character is dead!')
+            return
+
+        self.__your_hp_repository.change_hp(int(your_main_character_health_point))
+        print(f"{Fore.RED}current_main_character_health:{Fore.GREEN} "
+              f"{self.__your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
+
+    def notify_deploy_targeting_attack_to_game_main_character(self, notice_dictionary):
+        data = notice_dictionary['NOTIFY_DEPLOY_TARGETING_ATTACK_TO_GAME_MAIN_CHARACTER']
 
         your_main_character_health_point = (
             data)['player_main_character_health_point_map']['You']
