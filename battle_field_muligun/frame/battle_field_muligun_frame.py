@@ -73,7 +73,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         self.hand_card_state = None
 
         self.button_click_processing = False
-        self.message_visible = True
+        self.message_visible = False
 
         # self.select_card_id = self.your_hand_repository.select_card_id_list()
         # self.delete_select_card = self.your_hand_repository.delete_select_card()
@@ -188,8 +188,8 @@ class BattleFieldMuligunFrame(OpenGLFrame):
             self.draw_pick_card_effect()
 
         if self.your_hand_repository.get_is_mulligan_done() is False:
-            # TODO: waiting 창 띄우기
-            self.waiting_message().draw()
+            if self.message_visible is True:
+                self.waiting_message().draw()
 
         self.tkSwapBuffers()
 
@@ -399,18 +399,20 @@ class BattleFieldMuligunFrame(OpenGLFrame):
             self.execute_pick_card_effect = False
             self.ok_button_clicked = True
 
-            try:
+            # try:
                 #     # responseData = self.your_hand_repository.requestCheckOpponentMuligun(
                 #     #     CheckOpponentMuligunRequest(self.sessionRepository.get_session_info()))
-                mulligan_done = self.your_hand_repository.get_is_mulligan_done()
-                print(f"check opponent muligun responseData:{mulligan_done}")
-                if mulligan_done is True:
-                    self.message_visible = False
-                    print("사용자 둘 다 멀리건 선택 완료")
-                    # TODO: 배틀 필드 화면으로 넘어가야 함.
+            mulligan_done = self.your_hand_repository.get_is_mulligan_done()
+            print(f"check opponent muligun responseData:{mulligan_done}")
+            if mulligan_done is True:
+                self.message_visible = False
+                print("사용자 둘 다 멀리건 선택 완료")
+                # TODO: 배틀 필드 화면으로 넘어가야 함.
+            else:
+                self.message_visible = True
 
-            except Exception as e:
-                print(f"멀리건 에러: {e}")
+            # except Exception as e:
+            #     print(f"멀리건 에러: {e}")
 
         else:
             #self.master.after(self.__switchFrameWithMenuName('decision-first'))
@@ -445,10 +447,9 @@ class BattleFieldMuligunFrame(OpenGLFrame):
 
 
     def waiting_message(self):
-        if self.message_visible is True:
             self.__pre_drawed_image_instance.pre_draw_waiting_message()
             data = self.__pre_drawed_image_instance.get_pre_draw_waiting_message()
-            vertices = [(450, 150), (1050, 150), (1050, 800), (450, 800)]
+            vertices = [(350, 150), (1250, 150), (1250, 600), (350, 600)]
             waiting_message_image = RectangleImage(
                 image_data=data,
                 vertices=vertices)
