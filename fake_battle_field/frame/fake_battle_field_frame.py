@@ -2951,17 +2951,18 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
 
-                    response = self.__fake_battle_field_frame_repository.request_attack_main_character(
-                        RequestAttackMainCharacter(
-                            _sessionInfo=self.__session_repository.get_first_fake_session_info(),
-                            _attacker_unit_index=your_field_card_index,
-                            _target_game_main_character_index="0")
-                    )
-                    print(f"{Fore.RED}attack main character -> response:{Fore.GREEN} {response}{Style.RESET_ALL}")
-                    is_success_value = response.get('is_success', False)
-
-                    if is_success_value == False:
-                        return
+                    # Todo : response방식 변경 필요
+                    # response = self.__fake_battle_field_frame_repository.request_attack_main_character(
+                    #     RequestAttackMainCharacter(
+                    #         _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                    #         _attacker_unit_index=your_field_card_index,
+                    #         _target_game_main_character_index="0")
+                    # )
+                    # print(f"{Fore.RED}attack main character -> response:{Fore.GREEN} {response}{Style.RESET_ALL}")
+                    # is_success_value = response.get('is_success', False)
+                    #
+                    # if is_success_value == False:
+                    #     return
 
                     self.your_field_unit_action_repository.use_field_unit_action_count_by_index(your_field_card_index)
 
