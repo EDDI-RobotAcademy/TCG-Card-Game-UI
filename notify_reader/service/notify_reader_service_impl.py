@@ -65,7 +65,11 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 cls.__instance.__battle_field_function_service.useUnitEnergyRemoveItemCard)
             cls.__instance.notify_callback_table[
                 'NOTIFY_BASIC_ATTACK_TO_MAIN_CHARACTER'] = cls.__instance.damage_to_main_character
-            # cls.__instance.notify_callback_table['NOTIFY_USE_MULTIPLE_UNIT_DAMAGE_ITEM_CARD'] = cls.__instance.damage_to_multiple_unit
+
+            cls.__instance.notify_callback_table['NOTIFY_USE_MULTIPLE_UNIT_DAMAGE_ITEM_CARD'] = (
+                cls.__instance.notify_use_multiple_unit_damage_item_card
+            )
+
             cls.__instance.notify_callback_table['NOTIFY_USE_MULTIPLE_UNIT_DAMAGE_ITEM_CARD'] = (
                 cls.__instance.__battle_field_function_service.useMultipleUnitDamageItemCard)
 
@@ -312,8 +316,56 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         else:
             print("나죽어~~~ ")
 
-    def damage_to_multiple_unit(self, notice_dictionary):
-        notify_dict_data = notice_dictionary['NOTIFY_USE_MULTIPLE_UNIT_DAMAGE_ITEM_CARD']
+    def notify_use_multiple_unit_damage_item_card(self, notice_dictionary):
+        data = notice_dictionary['NOTIFY_USE_MULTIPLE_UNIT_DAMAGE_ITEM_CARD']
+
+        opponent_usage_card_info = (
+            data)['player_hand_use_map']['Opponent']
+        your_field_unit_health_point_map = (
+            data)['player_field_unit_health_point_map']['You']['field_unit_health_point_map']
+        your_dead_field_unit_index_list = (
+            data)['player_field_unit_death_map']['You']['dead_field_unit_index_list']
+        opponent_sacrificed_field_unit_index_list = (
+            data)['player_field_unit_death_map']['Opponent']['dead_field_unit_index_list']
+
+        # 사용된 카드 묘지로 보냄
+        used_card_id = opponent_usage_card_info['card_id']
+        self.__opponent_tomb_repository.create_opponent_tomb_card(used_card_id)
+        self.__battle_field_repository.set_current_use_card_id(used_card_id)
+
+        # 체력 정보 Update
+        for unit_index, remaining_health_point in your_field_unit_health_point_map.items():
+            your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(int(unit_index))
+            your_fixed_card_base = your_field_unit.get_fixed_card_base()
+            your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+
+            if remaining_health_point <= 0:
+                continue
+
+            for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+                if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                    if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                        your_fixed_card_attached_shape.set_number(int(remaining_health_point))
+
+                        your_fixed_card_attached_shape.set_image_data(
+                            self.__pre_drawed_image_instance.get_pre_draw_unit_hp(int(remaining_health_point)))
+
+        # 죽은 유닛들 묘지에 배치 및 Replacing
+        if your_dead_field_unit_index_list:
+            for dead_unit_index in your_dead_field_unit_index_list:
+                field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
+                self.__your_tomb_repository.create_tomb_card(field_unit_id)
+                self.__your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
+
+            self.__your_field_unit_repository.replace_field_card_position()
+
+        if opponent_sacrificed_field_unit_index_list:
+            for dead_unit_index in opponent_sacrificed_field_unit_index_list:
+                field_unit_id = self.__opponent_field_unit_repository.get_opponent_card_id_by_index(int(dead_unit_index))
+                self.__opponent_tomb_repository.create_opponent_tomb_card(field_unit_id)
+                self.__opponent_field_unit_repository.remove_current_field_unit_card(int(dead_unit_index))
+
+            self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
     def search_card(self, notice_dictionary):
         notify_dict_data = notice_dictionary['NOTIFY_USE_SEARCH_DECK_SUPPORT_CARD']
@@ -671,17 +723,20 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 print(f"{Fore.RED}race_energy_count:{Fore.GREEN} {race_energy_count}{Style.RESET_ALL}")
                 print(f"{Fore.RED}extra_effect_list:{Fore.GREEN} {extra_effect_list}{Style.RESET_ALL}")
 
+                # if race_energy_number == EnergyType.Undead.value:
+
                 current_opponent_field_unit_race_energy_count = (
                     self.__opponent_field_unit_repository.get_opponent_field_unit_race_energy(
-                        int(opponent_unit_index), int(race_energy_number)))
+                        int(opponent_unit_index), EnergyType(int(race_energy_number))))
                 print(f"{Fore.RED}current_opponent_field_unit_race_energy_count:{Fore.GREEN}"
                       f" {current_opponent_field_unit_race_energy_count}{Style.RESET_ALL}")
 
                 self.__opponent_field_unit_repository.attach_race_energy(
                     int(opponent_unit_index),
-                    int(race_energy_number),
+                    EnergyType(int(race_energy_number)),
                     (race_energy_count - current_opponent_field_unit_race_energy_count))
 
+                # TODO: String 이 아닌 Enum 으로 처리해야 함
                 self.__opponent_field_unit_repository.update_opponent_unit_extra_effect_at_index(
                     int(opponent_unit_index), extra_effect_list)
 
