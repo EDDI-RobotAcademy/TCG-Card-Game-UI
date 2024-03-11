@@ -1,12 +1,9 @@
 import math
 import random
-import time
 
 from colorama import Fore, Style
 from screeninfo import get_monitors
 from shapely import Polygon, Point
-
-from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
 
 import tkinter
 import unittest
@@ -22,70 +19,24 @@ from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
     OpponentFixedUnitCardInsideHandler
 from battle_field.entity.battle_field_scene import BattleFieldScene
-from battle_field.entity.current_field_energy_race import CurrentFieldEnergyRace
-from battle_field.entity.current_to_use_field_energy_count import CurrentToUseFieldEnergyCount
-from battle_field.entity.decrease_to_use_field_energy_count import DecreaseToUseFieldEnergyCount
-from battle_field.entity.increase_to_use_field_energy_count import IncreaseToUseFieldEnergyCount
-from battle_field.entity.next_field_energy_race import NextFieldEnergyRace
-from battle_field.entity.opponent_field_energy import OpponentFieldEnergy
 from battle_field.entity.opponent_field_panel import OpponentFieldPanel
-from battle_field.entity.opponent_hp import OpponentHp
-from battle_field.entity.opponent_main_character import OpponentMainCharacter
-from battle_field.entity.option import Option
-from battle_field.entity.prev_field_energy_race import PrevFieldEnergyRace
-from battle_field.entity.surrender_confirm import SurrenderConfirm
-from battle_field.entity.turn_end import TurnEnd
 from battle_field.entity.your_active_panel import YourActivePanel
-from battle_field.entity.your_deck import YourDeck
-from battle_field.entity.your_field_energy import YourFieldEnergy
 from battle_field.entity.your_field_panel import YourFieldPanel
-from battle_field.entity.opponent_lost_zone import OpponentLostZone
-from battle_field.entity.opponent_tomb import OpponentTomb
-from battle_field.entity.tomb_type import TombType
-from battle_field.entity.your_hand import YourHand
-from battle_field.entity.your_hp import YourHp
-from battle_field.entity.your_lost_zone import YourLostZone
-from battle_field.entity.your_tomb import YourTomb
-from battle_field.handler.support_card_handler import SupportCardHandler
 
-from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
-from battle_field.infra.opponent_hand_repository import OpponentHandRepository
-from battle_field.infra.opponent_hp_repository import OpponentHpRepository
-from battle_field.infra.opponent_lost_zone_repository import OpponentLostZoneRepository
 
-from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
-
-from battle_field.infra.round_repository import RoundRepository
-from battle_field.infra.your_deck_repository import YourDeckRepository
-
-from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
-from battle_field.infra.your_field_unit_action_repository import YourFieldUnitActionRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 
-from battle_field.infra.your_hand_repository import YourHandRepository
-
-from battle_field.infra.your_hp_repository import YourHpRepository
-from battle_field.infra.your_lost_zone_repository import YourLostZoneRepository
-
-from battle_field.infra.your_tomb_repository import YourTombRepository
-
-from battle_field.state.FieldUnitActionStatus import FieldUnitActionStatus
 from battle_field.state.energy_type import EnergyType
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
-from common.card_grade import CardGrade
-from common.card_race import CardRace
-from common.card_type import CardType
-from fake_battle_field.entity.animation_test_image import AnimationTestImage
 from fake_battle_field.entity.muligun_reset_button import MuligunResetButton
 from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
 from image_shape.non_background_number_image import NonBackgroundNumberImage
 from initializer.init_domain import DomainInitializer
-from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
@@ -93,7 +44,7 @@ from opengl_shape.circle import Circle
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from test_detector.detector import DetectorAboutTest
-from tests.lsh.rotate_shape.animation_support.attack_animation import AttackAnimation
+from battle_field.animation_support.attack_animation import AttackAnimation
 
 
 class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):

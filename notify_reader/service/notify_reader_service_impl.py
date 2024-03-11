@@ -2,6 +2,7 @@ import json
 
 from colorama import Fore, Style
 
+from battle_field.animation_support.animation_action import AnimationAction
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
@@ -24,6 +25,7 @@ from notify_reader.entity.notice_type import NoticeType
 from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
 from notify_reader.service.notify_reader_service import NotifyReaderService
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
+from battle_field.animation_support.attack_animation import AttackAnimation
 
 
 class NotifyReaderServiceImpl(NotifyReaderService):
@@ -34,6 +36,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
+
+            cls.__instance.__attack_animation_object = AttackAnimation.getInstance()
+
             cls.__instance.__notify_reader_repository = NotifyReaderRepositoryImpl.getInstance()
             cls.__instance.__battle_field_function_service = BattleFieldFunctionServiceImpl.getInstance()
 
@@ -1021,12 +1026,12 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         # TODO: 상대 핸드 뒷면 이미지를 추가된 카드 장수 만큼 띄워야 함
 
     def notify_mulligan_end(self, notice_dictionary):
-        is_mulligan_done = notice_dictionary['NOTIFY_MULLIGAN_END'].get('is_done')
+        is_opponent_mulligan = notice_dictionary['NOTIFY_MULLIGAN_END'].get('is_done')
 
-        print(f"{Fore.RED}mulligan end?:{Fore.GREEN} {is_mulligan_done}{Style.RESET_ALL}")
+        print(f"{Fore.RED}mulligan end?:{Fore.GREEN} {is_opponent_mulligan}{Style.RESET_ALL}")
 
-        if is_mulligan_done is True:
-            self.__mulligan_repository.set_is_mulligan_done(True)
+        if is_opponent_mulligan is True:
+            self.__mulligan_repository.set_is_opponent_mulligan(True)
 
     def notify_use_catastrophic_damage_item_card(self, notice_dictionary):
         data = notice_dictionary['NOTIFY_USE_CATASTROPHIC_DAMAGE_ITEM_CARD']
@@ -1049,6 +1054,10 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         self.__opponent_tomb_repository.create_opponent_tomb_card(used_card_id)
         self.__battle_field_repository.set_current_use_card_id(used_card_id)
 
+        # 파멸의 계약 데미지
+        contract_of_doom_damage = 15
+        self.__attack_animation_object.set_animation_actor_damage(contract_of_doom_damage)
+
         # 체력 정보 Update
         for unit_index, remaining_health_point in your_field_unit_health_point_map.items():
             your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(int(unit_index))
@@ -1061,36 +1070,43 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
                 if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
                     if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
-                        your_fixed_card_attached_shape.set_number(int(remaining_health_point))
+                        self.__attack_animation_object.add_your_field_unit_hp_shape_list(int(remaining_health_point))
+                        # your_fixed_card_attached_shape.set_number(int(remaining_health_point))
 
-                        your_fixed_card_attached_shape.set_image_data(
-                            self.__pre_drawed_image_instance.get_pre_draw_unit_hp(int(remaining_health_point)))
+                        # your_fixed_card_attached_shape.set_image_data(
+                        #     self.__pre_drawed_image_instance.get_pre_draw_unit_hp(int(remaining_health_point)))
 
         # 죽은 유닛들 묘지에 배치 및 Replacing
         for dead_unit_index in your_dead_field_unit_index_list:
-            field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
-            self.__your_tomb_repository.create_tomb_card(field_unit_id)
-            self.__your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
+            self.__attack_animation_object.add_your_dead_field_unit_index_list(int(dead_unit_index))
+            # field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
+            # self.__your_tomb_repository.create_tomb_card(field_unit_id)
+            # self.__your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
 
-        self.__your_field_unit_repository.replace_field_card_position()
+        # self.__your_field_unit_repository.replace_field_card_position()
 
         # 메인 캐릭터 상태 확인 및 체력 Update
         if your_main_character_survival_state != 'Survival':
             print("Player who get notice is dead.")
             # TODO: 배틀 정리 요청을 띄우는 화면으로 넘어가야 함
 
-        self.__your_hp_repository.change_hp(your_main_character_health_point)
-        print(f"{Fore.RED}current_main_character_health:{Fore.GREEN} "
-              f"{self.__your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
+        self.__attack_animation_object.set_your_main_character_health_point(your_main_character_health_point)
+
+        # self.__your_hp_repository.change_hp(your_main_character_health_point)
+        # print(f"{Fore.RED}current_main_character_health:{Fore.GREEN} "
+        #       f"{self.__your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
 
         # 덱 위에서 카드 한 장 뽑아서 로스트 존 보내기
         for lost_card_id in your_deck_card_lost_list:
-            self.__your_deck_repository.draw_deck()
-            print(f"{Fore.RED}current_deck: {Fore.GREEN}"
-                  f"{self.__your_deck_repository.get_current_deck_state()}{Style.RESET_ALL}")
-            self.__your_lost_zone_repository.create_your_lost_zone_card(int(lost_card_id))
-            print(f"{Fore.RED}current_lost_zone: {Fore.GREEN}"
-                  f"{self.__your_lost_zone_repository.get_your_lost_zone_state()}{Style.RESET_ALL}")
+            self.__attack_animation_object.add_your_lost_card_id_list(lost_card_id)
+            # self.__your_deck_repository.draw_deck()
+            # print(f"{Fore.RED}current_deck: {Fore.GREEN}"
+            #       f"{self.__your_deck_repository.get_current_deck_state()}{Style.RESET_ALL}")
+            # self.__your_lost_zone_repository.create_your_lost_zone_card(int(lost_card_id))
+            # print(f"{Fore.RED}current_lost_zone: {Fore.GREEN}"
+            #       f"{self.__your_lost_zone_repository.get_your_lost_zone_state()}{Style.RESET_ALL}")
+
+        self.__attack_animation_object.set_animation_action(AnimationAction.CONTRACT_OF_DOOM)
 
     def notify_use_unit_energy_boost_support(self, notice_dictionary):
         # 수신된 정보를 대입

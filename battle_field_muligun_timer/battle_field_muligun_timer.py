@@ -83,9 +83,10 @@ class BattleFieldMuligunTimer(OpenGLFrame):
             self.function()
 
     def stop_timer(self):
-        if self.timer_id is not None:
-            self.master.after_cancel(self.timer_id)
-            self.timer_id = None
+        self.timer = -9999
+        # if self.timer_id is not None:
+        #     self.master.after_cancel(self.timer_id)
+        #     self.timer_id = None
 
     def deleteTimer(self):
         self.destroy()
