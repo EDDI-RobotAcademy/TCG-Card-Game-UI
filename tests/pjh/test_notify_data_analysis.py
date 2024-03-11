@@ -2,6 +2,9 @@ import unittest
 
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from battle_field.infra.opponent_hand_repository import OpponentHandRepository
+from battle_field.infra.your_deck_repository import YourDeckRepository
+from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
+from battle_field.infra.your_lost_zone_repository import YourLostZoneRepository
 from card_info_from_csv.controller.card_info_from_csv_controller_impl import CardInfoFromCsvControllerImpl
 from notify_reader.service.notify_reader_service_impl import NotifyReaderServiceImpl
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
@@ -50,6 +53,26 @@ class TestNotifyDataAnalysis(unittest.TestCase):
 
     def test_notify_use_catastrophic_damage_item_card(self):
         # notice_type : NOTIFY_USE_CATASTROPHIC_DAMAGE_ITEM_CARD
+        card_date_csv_controller = CardInfoFromCsvControllerImpl.getInstance()
+        card_date_csv_controller.requestToCardInfoSettingInMemory()
+
+        pre_draw = PreDrawedImage.getInstance()
+        pre_draw.pre_draw_every_image()
+
+        your_deck_repository = YourDeckRepository.getInstance()
+        your_deck_repository.save_deck_state([35, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+
+        your_field_unit_repository = YourFieldUnitRepository.getInstance()
+        your_field_unit_repository.create_field_unit_card(27)
+        your_field_unit_repository.create_field_unit_card(27)
+        your_field_unit_repository.create_field_unit_card(31)
+        your_field_unit_repository.create_field_unit_card(31)
+        your_field_unit_repository.create_field_unit_card(31)
+        your_field_unit_repository.create_field_unit_card(26)
+
+        your_lost_zone_repository = YourLostZoneRepository.getInstance()
+        your_lost_zone_repository.create_your_lost_zone_card_list()
+
         notify_reader_service = NotifyReaderServiceImpl.getInstance()
         notice_dictionary = {"NOTIFY_USE_CATASTROPHIC_DAMAGE_ITEM_CARD":{
             "player_hand_use_map":{
@@ -67,6 +90,8 @@ class TestNotifyDataAnalysis(unittest.TestCase):
                 "You":"Survival"},
             "player_deck_card_lost_list_map":{
                 "You":[35]}}}
+
+        notify_reader_service.notify_use_catastrophic_damage_item_card(notice_dictionary)
 
     def test_notify_use_draw_support_card(self):
         # notice_type : NOTIFY_USE_DRAW_SUPPORT_CARD
@@ -88,6 +113,37 @@ class TestNotifyDataAnalysis(unittest.TestCase):
         opponent_hand_repository.create_opponent_hand_card_list()
 
         notify_reader_service.notify_use_draw_support_card(notice_dictionary)
+
+    def test_notify_use_multiple_unit_damage_item_card(self):
+        # notice_type : NOTIFY_USE_MULTIPLE_UNIT_DAMAGE_ITEM_CARD
+        card_date_csv_controller = CardInfoFromCsvControllerImpl.getInstance()
+        card_date_csv_controller.requestToCardInfoSettingInMemory()
+
+        pre_draw = PreDrawedImage.getInstance()
+        pre_draw.pre_draw_every_image()
+
+        your_field_unit_repository = YourFieldUnitRepository.getInstance()
+        your_field_unit_repository.create_field_unit_card(27)
+        your_field_unit_repository.create_field_unit_card(27)
+
+        opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
+        opponent_field_unit_repository.create_field_unit_card(31)
+
+        notify_reader_service = NotifyReaderServiceImpl.getInstance()
+        notice_dictionary = {"NOTIFY_USE_MULTIPLE_UNIT_DAMAGE_ITEM_CARD": {
+            "player_hand_use_map": {
+                "Opponent": {
+                    "card_id": 33, "card_kind": 2}},
+            "player_field_unit_health_point_map": {
+                "You": {
+                    "field_unit_health_point_map": {"1": 10, "0": 10}}},
+            "player_field_unit_death_map": {
+                "Opponent": {
+                    "dead_field_unit_index_list": [0]},
+                "You": {
+                    "dead_field_unit_index_list": []}}}}
+
+        notify_reader_service.notify_use_multiple_unit_damage_item_card(notice_dictionary)
 
 
 if __name__ == "__main__":

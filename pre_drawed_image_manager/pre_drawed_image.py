@@ -12,6 +12,7 @@ class PreDrawedImage:
     __project_root = get_project_root()
 
     __pre_drawed_card_frame = {}
+    __pre_drawed_battle_field_card_frame = {}
 
     __pre_drawed_card_illustration = {}
 
@@ -93,6 +94,8 @@ class PreDrawedImage:
     __pre_drawed_my_card_background = None
     __pre_drawed_number_of_cards = {}
     __pre_drawed_number_of_details_energy = {}
+
+    __pre_drawed_waiting_message = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -341,12 +344,12 @@ class PreDrawedImage:
     def pre_draw_dark_flame_energy(self):
         dark_flame_energy_image_path = os.path.join(self.__project_root, "local_storage", "card_special_energy_image",
                                                     "dark_flame.png")
-        self.__pre_drawed_dark_flame = ImageDataLoader.load_circle_image_data(dark_flame_energy_image_path)
+        self.__pre_drawed_dark_flame = ImageDataLoader.load_rectangle_image_data(dark_flame_energy_image_path)
 
     def pre_draw_freezing_energy(self):
         freezing_energy_image_path = os.path.join(self.__project_root, "local_storage", "card_special_energy_image",
                                                   "freezing.png")
-        self.__pre_drawed_freezing = ImageDataLoader.load_circle_image_data(freezing_energy_image_path)
+        self.__pre_drawed_freezing = ImageDataLoader.load_rectangle_image_data(freezing_energy_image_path)
 
     def pre_draw_reset_button(self):
         reset_button_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
@@ -568,6 +571,20 @@ class PreDrawedImage:
             print(f"animation image data = {text_image_data}")
             self.__pre_drawed_number_of_details_energy[number] = ImageDataLoader.load_rectangle_image_data(text_image_data)
 
+    def pre_draw_battle_field_card_frame(self):
+        for card_number in self.__card_info_from_csv_repository.getCardNumber():
+            battle_field_card_frame_image_data = os.path.join(self.__project_root, "local_storage",
+                                                              "battle_field_card_frame",
+                                                              f"{card_number}.png")
+            self.__pre_drawed_battle_field_card_frame[card_number] = (
+                ImageDataLoader.load_battle_field_card_frame_image_data(battle_field_card_frame_image_data)
+            )
+
+    def pre_draw_waiting_message(self):
+        waiting_message_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
+                                                  "waiting_message_opponent_meligun_select.png")
+        self.__pre_drawed_waiting_message = ImageDataLoader.load_rectangle_origin_image_data(waiting_message_image_path)
+
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
         self.pre_draw_opponent_lost_zone()
@@ -604,6 +621,7 @@ class PreDrawedImage:
         self.pre_draw_confirm_button()
 
         self.pre_draw_card_frame()
+        self.pre_draw_battle_field_card_frame()
         self.pre_draw_dark_flame_energy()
         self.pre_draw_freezing_energy()
 
@@ -642,6 +660,8 @@ class PreDrawedImage:
         self.pre_draw_number_of_cards()
         self.pre_draw_multi_draw_button()
         self.pre_draw_number_of_details_energy()
+
+        self.pre_draw_waiting_message()
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
@@ -824,3 +844,9 @@ class PreDrawedImage:
 
     def get_pre_draw_number_of_details_energy(self, number):
         return self.__pre_drawed_number_of_details_energy[number]
+
+    def get_pre_draw_battle_field_card_frame_for_card_number(self, card_number):
+        return self.__pre_drawed_battle_field_card_frame[card_number]
+
+    def get_pre_draw_waiting_message(self):
+        return self.__pre_drawed_waiting_message
