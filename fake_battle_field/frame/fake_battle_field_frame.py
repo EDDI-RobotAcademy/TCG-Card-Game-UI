@@ -2552,18 +2552,21 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     # 광역기
                     elif skill_type == 2:
 
-                        # response = self.__fake_battle_field_frame_repository.request_attack_opponent_unit(
-                        #     RequestAttackWithNonTargetingActiveSkill(
-                        #         _sessionInfo = self.__session_repository.get_first_fake_session_info(),
-                        #         _unitCardIndex = your_field_unit_index
-                        #     )
-                        # )
 
-                        # print(f"non targeting active skill response : {response}")
-                        #
-                        # if response.get('is_success',False) == False:
-                        #     print('non targeting active skill error!! ')
-                        #     return
+                        response = self.__fake_battle_field_frame_repository.request_attack_opponent_unit(
+                            RequestAttackWithNonTargetingActiveSkill(
+                                _sessionInfo = self.__session_repository.get_first_fake_session_info(),
+                                _unitCardIndex = your_field_unit_index
+                            )
+                        )
+
+                        print(f"non targeting active skill response : {response}")
+
+                        if response.get('is_success',False) == False:
+                            print('non targeting active skill error!! ')
+                            return
+
+
 
                         damage = self.card_info_repository.getCardSkillSecondDamageForCardNumber(your_field_unit_id)
                         self.attack_animation_object.set_animation_actor(self.selected_object)
@@ -2572,7 +2575,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.master.after(0, self.wide_area_attack_animation)
 
                         # try:
-                        #     for unit_index, remain_hp in response['NON_TARGETING_ACTIVE_SKILL']['player_field_unit_health_point_map']['Opponent']['field_unit_health_point_map'].items():
+                        #     for unit_index, remain_hp in response['player_field_unit_health_point_map']['Opponent']['field_unit_health_point_map'].items():
                         #         opponent_field_unit = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()[int(unit_index)]
                         #         if opponent_field_unit is None:
                         #             continue
@@ -2592,8 +2595,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         #
                         # try:
                         #     dead_unit_index_list = \
-                        #         response['NON_TARGETING_ACTIVE_SKILL']['player_field_unit_death_map']['Opponent'][
-                        #             'dead_field_unit_index_list']
+                        #         response['player_field_unit_death_map']['Opponent']['dead_field_unit_index_list']
                         #
                         #     for dead_unit_index in dead_unit_index_list:
                         #         card_id = self.opponent_field_unit_repository.get_opponent_card_id_by_index(dead_unit_index)
@@ -2958,17 +2960,18 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
 
-                    response = self.__fake_battle_field_frame_repository.request_attack_main_character(
-                        RequestAttackMainCharacter(
-                            _sessionInfo=self.__session_repository.get_first_fake_session_info(),
-                            _attacker_unit_index=your_field_card_index,
-                            _target_game_main_character_index="0")
-                    )
-                    print(f"{Fore.RED}attack main character -> response:{Fore.GREEN} {response}{Style.RESET_ALL}")
-                    is_success_value = response.get('is_success', False)
-
-                    if is_success_value == False:
-                        return
+                    # Todo : response방식 변경 필요
+                    # response = self.__fake_battle_field_frame_repository.request_attack_main_character(
+                    #     RequestAttackMainCharacter(
+                    #         _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                    #         _attacker_unit_index=your_field_card_index,
+                    #         _target_game_main_character_index="0")
+                    # )
+                    # print(f"{Fore.RED}attack main character -> response:{Fore.GREEN} {response}{Style.RESET_ALL}")
+                    # is_success_value = response.get('is_success', False)
+                    #
+                    # if is_success_value == False:
+                    #     return
 
                     self.your_field_unit_action_repository.use_field_unit_action_count_by_index(your_field_card_index)
 
