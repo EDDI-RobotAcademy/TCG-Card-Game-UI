@@ -10,6 +10,7 @@ from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleF
 from battle_field_muligun.service.request.check_opponent_muligun_request import CheckOpponentMuligunRequest
 from battle_field_muligun.service.request.muligun_request import MuligunRequest
 from battle_field_muligun_timer.battle_field_muligun_timer import BattleFieldMuligunTimer
+from image_shape.non_background_image import NonBackgroundImage
 from image_shape.rectangle_image import RectangleImage
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
@@ -449,8 +450,8 @@ class BattleFieldMuligunFrame(OpenGLFrame):
     def waiting_message(self):
             self.__pre_drawed_image_instance.pre_draw_waiting_message()
             data = self.__pre_drawed_image_instance.get_pre_draw_waiting_message()
-            vertices = [(350, 150), (1250, 150), (1250, 600), (350, 600)]
-            waiting_message_image = RectangleImage(
+            vertices = [(300, 300), (1600, 300), (1600, 650), (300, 650)]
+            waiting_message_image = NonBackgroundImage(
                 image_data=data,
                 vertices=vertices)
             return waiting_message_image
