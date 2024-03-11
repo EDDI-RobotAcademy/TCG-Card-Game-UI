@@ -2553,54 +2553,19 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     elif skill_type == 2:
 
 
-                        response = self.__fake_battle_field_frame_repository.request_attack_opponent_unit(
-                            RequestAttackWithNonTargetingActiveSkill(
-                                _sessionInfo = self.__session_repository.get_first_fake_session_info(),
-                                _unitCardIndex = your_field_unit_index
-                            )
-                        )
-
-                        print(f"non targeting active skill response : {response}")
-
-                        if response.get('is_success',False) == False:
-                            print('non targeting active skill error!! ')
-                            return
-
-                        try:
-                            for unit_index, remain_hp in response['player_field_unit_health_point_map']['Opponent']['field_unit_health_point_map'].items():
-                                opponent_field_unit = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()[int(unit_index)]
-                                if opponent_field_unit is None:
-                                    continue
-                                fixed_card_base = opponent_field_unit.get_fixed_card_base()
-                                attached_shape_list = fixed_card_base.get_attached_shapes()
-
-                                # TODO: 가만 보면 이 부분이 은근히 많이 사용되고 있음 (중복 많이 발생함)
-                                for attached_shape in attached_shape_list:
-                                    if isinstance(attached_shape, NonBackgroundNumberImage):
-                                        if attached_shape.get_circle_kinds() is CircleKinds.HP:
-                                            attached_shape.set_number(remain_hp)
-
-                                            attached_shape.set_image_data(
-                                                self.pre_drawed_image_instance.get_pre_draw_unit_hp(remain_hp))
-                        except Exception as e:
-                            print('no field units!! : ', e)
-
-                        try:
-                            dead_unit_index_list = \
-                                response['player_field_unit_death_map']['Opponent']['dead_field_unit_index_list']
-
                         # response = self.__fake_battle_field_frame_repository.request_attack_opponent_unit(
                         #     RequestAttackWithNonTargetingActiveSkill(
                         #         _sessionInfo = self.__session_repository.get_first_fake_session_info(),
                         #         _unitCardIndex = your_field_unit_index
                         #     )
                         # )
-
+                        #
                         # print(f"non targeting active skill response : {response}")
                         #
                         # if response.get('is_success',False) == False:
                         #     print('non targeting active skill error!! ')
                         #     return
+                        #
 
 
                         damage = self.card_info_repository.getCardSkillSecondDamageForCardNumber(your_field_unit_id)
@@ -2610,7 +2575,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.master.after(0, self.wide_area_attack_animation)
 
                         # try:
-                        #     for unit_index, remain_hp in response['NON_TARGETING_ACTIVE_SKILL']['player_field_unit_health_point_map']['Opponent']['field_unit_health_point_map'].items():
+                        #     for unit_index, remain_hp in response['player_field_unit_health_point_map']['Opponent']['field_unit_health_point_map'].items():
                         #         opponent_field_unit = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()[int(unit_index)]
                         #         if opponent_field_unit is None:
                         #             continue
@@ -2630,8 +2595,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         #
                         # try:
                         #     dead_unit_index_list = \
-                        #         response['NON_TARGETING_ACTIVE_SKILL']['player_field_unit_death_map']['Opponent'][
-                        #             'dead_field_unit_index_list']
+                        #         response['player_field_unit_death_map']['Opponent']['dead_field_unit_index_list']
                         #
                         #     for dead_unit_index in dead_unit_index_list:
                         #         card_id = self.opponent_field_unit_repository.get_opponent_card_id_by_index(dead_unit_index)
