@@ -1307,3 +1307,19 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             self.__your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
 
         self.__your_field_unit_repository.replace_field_card_position()
+
+    def notify_turn_start_targeting_attack_to_game_main_character(self, notice_dictionary):
+        data = notice_dictionary['NOTIFY_TURN_START_TARGETING_ATTACK_TO_GAME_MAIN_CHARACTER']
+
+        your_main_character_health_point = (
+            data)['player_main_character_health_point_map']['You']
+        your_main_character_survival_state = (
+            data)['player_main_character_survival_map']['You']
+
+        if your_main_character_survival_state != 'Survival':
+            print('Your main character is dead!')
+            return
+
+        self.__your_hp_repository.change_hp(int(your_main_character_health_point))
+        print(f"{Fore.RED}current_main_character_health:{Fore.GREEN} "
+              f"{self.__your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
