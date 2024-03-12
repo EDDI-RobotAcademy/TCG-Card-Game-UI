@@ -315,7 +315,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.battle_result = BattleResult()
         self.battle_result_panel_list = []
 
-        self.fixed_details_card = FixedFieldCard(local_translation=(self.width / 2 - 150, self.height / 2 - (150 * 1.618)))
+        self.notice_card = FixedFieldCard(local_translation=(self.width / 2 - 150, self.height / 2 - (150 * 1.618)))
 
 
         self.bind("<Configure>", self.on_resize)
@@ -1356,8 +1356,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         if self.battle_field_repository.get_current_use_card_id():
 
             card_id = self.battle_field_repository.get_current_use_card_id()
-            self.fixed_details_card.init_card_view_larger(card_id)
-            self.master.after(2000, lambda: self.fixed_details_card.reset_fixed_card_base(card_id))
+            self.notice_card.init_card_view_larger(card_id)
+            self.master.after(2000, lambda: self.notice_card.reset_fixed_card_base(card_id))
             self.battle_field_repository.reset_current_use_card_id()
 
 
@@ -1714,14 +1714,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             glDisable(GL_BLEND)
 
-        if self.fixed_details_card.get_fixed_card_base():
+        if self.notice_card.get_fixed_card_base():
 
-            fixed_details_card_base = self.fixed_details_card.get_fixed_card_base()
-            fixed_details_card_base.set_width_ratio(self.width_ratio)
-            fixed_details_card_base.set_height_ratio(self.height_ratio)
-            fixed_details_card_base.draw()
+            notice_card_base = self.notice_card.get_fixed_card_base()
+            notice_card_base.set_width_ratio(self.width_ratio)
+            notice_card_base.set_height_ratio(self.height_ratio)
+            notice_card_base.draw()
 
-            attached_shape_list = fixed_details_card_base.get_attached_shapes()
+            attached_shape_list = notice_card_base.get_attached_shapes()
             for attached_shape in attached_shape_list:
                 attached_shape.set_width_ratio(self.width_ratio)
                 attached_shape.set_height_ratio(self.height_ratio)
@@ -2151,12 +2151,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                         elif card_type == CardType.ENERGY.value:
                             print("에너지를 붙입니다!")
-
+                            card_id = self.selected_object.get_card_number()
                             response = self.your_hand_repository.request_use_energy_card_to_unit(
                                 RequestUseEnergyCardToUnit(
                                     _sessionInfo=self.__session_repository.get_first_fake_session_info(),
                                     _unitIndex=unit_index,
-                                    _energyCardId=self.selected_object.get_card_number())
+                                    _energyCardId=card_id)
                             )
 
                             print(f"response: {response}")
@@ -2180,6 +2180,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 unit_index,
                                 race,
                                 1)
+
+
+                            if card_id == 151:
+                                self.your_field_unit_repository.update_your_unit_extra_effect_at_index(unit_index, ["DarkFire","Freeze"])
+                                print('attached extra effect to unit at index ', unit_index)
 
                             every_list = self.your_field_unit_repository.get_current_field_unit_list()
                             print(f"every_list: {every_list}")
