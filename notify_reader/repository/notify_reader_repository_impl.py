@@ -21,6 +21,7 @@ class NotifyReaderRepositoryImpl(NotifyReaderRepository):
         return cls.__instance
 
     def set_is_your_turn_for_check_fake_process(self, is_your_turn_for_check_fake_process):
+        print(f'change whose turn!! : {not is_your_turn_for_check_fake_process} -> {is_your_turn_for_check_fake_process}')
         self.__is_your_turn_for_check_fake_process = is_your_turn_for_check_fake_process
 
     def get_is_your_turn_for_check_fake_process(self):

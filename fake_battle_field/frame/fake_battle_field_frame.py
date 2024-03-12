@@ -67,6 +67,7 @@ from battle_field.infra.request.request_attack_with_non_targeting_active_skill i
 from battle_field.infra.request.request_use_corpse_explosion import RequestUseCorpseExplosion
 from battle_field.infra.request.request_use_energy_burn_to_unit import RequestUseEnergyBurnToUnit
 from battle_field.infra.request.request_use_energy_card_to_unit import RequestUseEnergyCardToUnit
+from battle_field.infra.request.request_use_special_energy_card_to_unit import RequestUseSpecialEnergyCardToUnit
 
 from battle_field.infra.round_repository import RoundRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
@@ -854,7 +855,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     print("상대방 특수 에너지 부착 ")
 
                     response = self.__fake_opponent_hand_repository.request_use_energy_card_to_unit(
-                        RequestUseEnergyCardToUnit(
+                        RequestUseSpecialEnergyCardToUnit(
                             _sessionInfo=self.__session_repository.get_second_fake_session_info(),
                             _unitIndex=0,
                             _energyCardId=opponent_hand)
@@ -2279,20 +2280,39 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
 
                         elif card_type == CardType.ENERGY.value:
+
                             print("에너지를 붙입니다!")
                             card_id = self.selected_object.get_card_number()
-                            response = self.your_hand_repository.request_use_energy_card_to_unit(
-                                RequestUseEnergyCardToUnit(
-                                    _sessionInfo=self.__session_repository.get_first_fake_session_info(),
-                                    _unitIndex=unit_index,
-                                    _energyCardId=card_id)
-                            )
 
-                            print(f"response: {response}")
-                            is_success_value = response.get('is_success', False)
+                            if card_id == 151:
+                                response = self.your_hand_repository.request_use_energy_card_to_unit(
+                                    RequestUseSpecialEnergyCardToUnit(
+                                        _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                                        _unitIndex=unit_index,
+                                        _energyCardId=card_id)
+                                )
 
-                            if is_success_value == False:
-                                return
+                                print(f"response: {response}")
+                                is_success_value = response.get('is_success', False)
+
+                                if is_success_value == False:
+                                    return
+
+                                self.your_field_unit_repository.update_your_unit_extra_effect_at_index(unit_index, ["DarkFire","Freeze"])
+                                print('attached extra effect to unit at index ', unit_index)
+                            else:
+                                response = self.your_hand_repository.request_use_energy_card_to_unit(
+                                    RequestUseEnergyCardToUnit(
+                                        _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                                        _unitIndex=unit_index,
+                                        _energyCardId=card_id)
+                                )
+
+                                print(f"response: {response}")
+                                is_success_value = response.get('is_success', False)
+
+                                if is_success_value == False:
+                                    return
 
                             # self.selected_object = None
                             self.your_hand_repository.remove_card_by_index_with_page(placed_index)
@@ -2321,9 +2341,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             print(f"placed_card_id : {placed_card_id}")
                             print(f"card grade : {self.card_info_repository.getCardGradeForCardNumber(placed_card_id)}")
 
-                            if card_id == 151:
-                                self.your_field_unit_repository.update_your_unit_extra_effect_at_index(unit_index, ["DarkFire","Freeze"])
-                                print('attached extra effect to unit at index ', unit_index)
+
 
                                 # print(f"placed_card_id : {placed_card_id}사용")
                                 # card_freezing_image_circle = (
@@ -4545,6 +4563,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
         print(f"{Fore.RED}call_turn_end() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
 
+        hp_data = turn_end_request_result['player_field_unit_health_point_map']
+        harmful_data = turn_end_request_result['player_field_unit_harmful_effect_map']
+        dead_data = turn_end_request_result['player_field_unit_death_map']
+
+        self.apply_response_data_of_field_unit_hp(hp_data)
+        self.apply_response_data_of_harmful_status(harmful_data)
+        self.apply_response_data_of_dead_unit(dead_data)
+
         self.round_repository.increase_current_round_number()
         round = self.round_repository.get_current_round_number()
         print(f"current round: {round}")
@@ -5244,6 +5270,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     your_field_death_unit_index = self.attack_animation_object.get_your_field_death_unit_index()
                     self.your_field_unit_repository.remove_card_by_index(your_field_death_unit_index)
                     self.your_field_unit_repository.replace_field_card_position()
+                    self.your_field_unit_repository.remove_harmful_status_by_index(your_field_death_unit_index)
                 else:
 
                     your_field_hp_shape = self.attack_animation_object.get_your_field_hp_shape()
@@ -5259,6 +5286,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     opponent_field_unit_index = opponent_field_unit.get_index()
                     self.opponent_field_unit_repository.remove_card_by_multiple_index([opponent_field_unit_index])
                     self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                    self.opponent_field_unit_repository.remove_harmful_status_by_index(opponent_field_unit_index)
                 else:
                     opponent_field_hp_shape = self.attack_animation_object.get_opponent_field_hp_shape()
                     if opponent_field_hp_shape:
@@ -5526,7 +5554,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         card_id = opponent_field_unit.get_card_number()
 
                         self.opponent_field_unit_repository.remove_current_field_unit_card(index)
-                        # self.opponent_tomb
+
+                        self.opponent_field_unit_repository.remove_harmful_status_by_index(index)
+                        self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
 
                 self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
@@ -5966,7 +5996,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         sword_accel_x = (current_sword_shape_x_vertex - current_sword_shape_target_x - 52.5 + 15) / 112.5
         sword_accel_y = (current_sword_shape_y_vertex - current_sword_shape_target_y + 85 - 60) / 112.5
-
         def move_to_origin_location(step_count):
             new_y = current_your_attacker_unit_local_translation[1] + step_y * step_count
             print(f"{Fore.RED}step ->{Fore.GREEN}new_y: {new_y}{Style.RESET_ALL}")
@@ -6073,3 +6102,81 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 #                 opponent_hp_number))
 
         move_to_origin_location(1)
+
+
+    def apply_response_data_of_field_unit_hp(self, player_field_unit_health_point_data):
+        print('apply notify data of field unit hp!! : ', player_field_unit_health_point_data)
+
+        for player, hp_map in player_field_unit_health_point_data.items():
+            for unit_index, remain_hp in hp_map['field_unit_health_point_map'].items():
+                if remain_hp <= 0:
+                    continue
+
+                if player == 'You':
+                    field_unit = self.your_field_unit_repository.find_field_unit_by_index(int(unit_index))
+                    fixed_card_base = field_unit.get_fixed_card_base()
+                    fixed_card_attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                    for fixed_card_attached_shape in fixed_card_attached_shape_list:
+                        if isinstance(fixed_card_attached_shape, NonBackgroundNumberImage):
+                            if fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                fixed_card_attached_shape.set_number(remain_hp)
+                                fixed_card_attached_shape.set_image_data(
+                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(remain_hp))
+
+                elif player == 'Opponent':
+                    field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(int(unit_index))
+                    fixed_card_base = field_unit.get_fixed_card_base()
+                    fixed_card_attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                    for fixed_card_attached_shape in fixed_card_attached_shape_list:
+                        if isinstance(fixed_card_attached_shape, NonBackgroundNumberImage):
+                            if fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                fixed_card_attached_shape.set_number(remain_hp)
+                                fixed_card_attached_shape.set_image_data(
+                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(remain_hp))
+
+
+
+    def apply_response_data_of_dead_unit(self, player_field_unit_death_data):
+
+        for player, dead_field_unit_index_list_map in player_field_unit_death_data.items():
+            dead_field_unit_index_list = dead_field_unit_index_list_map.get('dead_field_unit_index_list', [])
+            if len(dead_field_unit_index_list) == 0:
+                continue
+
+            if player == 'You':
+                for unit_index in dead_field_unit_index_list:
+                    card_id = self.your_field_unit_repository.get_card_id_by_index(unit_index)
+                    self.your_tomb_repository.create_tomb_card(card_id)
+                    self.your_field_unit_repository.remove_card_by_index(unit_index)
+                    self.your_field_unit_repository.remove_harmful_status_by_index(unit_index)
+                self.your_field_unit_repository.replace_field_card_position()
+            elif player == 'Opponent':
+                for unit_index in dead_field_unit_index_list:
+                    card_id = self.opponent_field_unit_repository.get_opponent_card_id_by_index(unit_index)
+                    self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                    self.opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
+                    self.opponent_field_unit_repository.remove_harmful_status_by_index(unit_index)
+
+                self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+            else:
+                print(f'apply_notify_data_of_dead_unit error : unknown player {player}')
+
+    def apply_response_data_of_harmful_status(self, player_field_unit_harmful_effect_data):
+
+        try:
+            for player, field_data in player_field_unit_harmful_effect_data.items():
+                for unit_index, harmful_status_value in field_data.get('field_unit_harmful_status_map', {}).items():
+                    harmful_status_list = harmful_status_value.get('harmful_status_list', [])
+                    if len(harmful_status_list) == 0:
+                        continue
+
+                    if player == 'Opponent':
+                        self.opponent_field_unit_repository.apply_harmful_status(int(unit_index), harmful_status_list)
+                    elif player == 'You':
+                        self.your_field_unit_repository.apply_harmful_status(int(unit_index), harmful_status_list)
+        except Exception as e:
+            print('An error occurred while applying harmful status data:', e)
+
