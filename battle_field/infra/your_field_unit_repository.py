@@ -39,6 +39,9 @@ class YourFieldUnitRepository:
     def get_current_field_unit_state(self):
         return self.current_field_unit_state.get_current_field_unit_list()
 
+    def get_recently_added_field_unit_index(self):
+        return len(self.current_field_unit_list) - 1
+
     def create_field_unit_card(self, card_id):
         index = len(self.current_field_unit_list)
         print(f"create_field_unit_card() -> index: {index}")
@@ -95,10 +98,14 @@ class YourFieldUnitRepository:
         return self.attached_energy_info.get_energy_info_at_index(index)
 
     def apply_harmful_status(self, unit_index, harmful_status_list):
+        print('apply harmful status to your unit!!')
         self.harmful_status_info.update_harmful_status(unit_index, harmful_status_list)
 
     def get_harmful_status_by_index(self, index):
         self.harmful_status_info.get_harmful_status_of_index(index)
+
+    def remove_harmful_status_by_index(self, index):
+        self.harmful_status_info.remove_harmful_status_of_index(index)
 
     def get_your_field_unit_race_energy(self, index, energy_race):
         return self.attached_energy_info.get_race_energy_at_index(index, energy_race)
@@ -145,6 +152,8 @@ class YourFieldUnitRepository:
 
     def get_your_unit_extra_ability_at_index(self, unit_index):
         return self.extra_effect_info.get_extra_effect_of_index(unit_index)
+
+
     def replace_field_card_position(self):
         # current_y = 580
         # x_increment = 170

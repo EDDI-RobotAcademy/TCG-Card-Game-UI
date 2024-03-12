@@ -112,11 +112,14 @@ class OpponentFieldUnitRepository:
         self.attached_energy_info.remove_race_energy_at_index(opponent_field_unit_index, energy_race, energy_count)
 
     def apply_harmful_status(self, unit_index, harmful_status_list):
+        print('apply_harmful_status to opponent!!')
         self.harmful_status_info.update_harmful_status(unit_index, harmful_status_list)
 
     def get_harmful_status_by_index(self, index):
         self.harmful_status_info.get_harmful_status_of_index(index)
 
+    def remove_harmful_status_by_index(self, index):
+        self.harmful_status_info.remove_harmful_status_of_index(index)
 
     def get_total_energy_at_index(self, index):
         return self.attached_energy_info.get_total_energy_at_index(index)

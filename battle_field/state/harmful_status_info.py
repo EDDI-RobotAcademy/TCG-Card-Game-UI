@@ -20,3 +20,9 @@ class HarmfulStatusInfo:
         else:
             return self.harmful_status[unit_index]
 
+    def remove_harmful_status_of_index(self, unit_index):
+        if unit_index not in self.harmful_status.keys():
+            return None
+        else:
+            self.harmful_status.pop(unit_index, None)
+
