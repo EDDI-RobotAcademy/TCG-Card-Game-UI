@@ -145,6 +145,150 @@ class TestNotifyDataAnalysis(unittest.TestCase):
 
         notify_reader_service.notify_use_multiple_unit_damage_item_card(notice_dictionary)
 
+    def test_notify_turn_start_targeting_attack_skill_to_unit(self):
+        card_date_csv_controller = CardInfoFromCsvControllerImpl.getInstance()
+        card_date_csv_controller.requestToCardInfoSettingInMemory()
+
+        pre_draw = PreDrawedImage.getInstance()
+        pre_draw.pre_draw_every_image()
+
+        your_field_unit_repository = YourFieldUnitRepository.getInstance()
+        your_field_unit_repository.create_field_unit_card(27)
+        your_field_unit_repository.create_field_unit_card(27)
+
+        notify_reader_service = NotifyReaderServiceImpl.getInstance()
+        notice_dictionary = {"NOTIFY_TURN_START_TARGETING_ATTACK_PASSIVE_SKILL_TO_UNIT": {
+            "player_field_unit_health_point_map": {
+                "You": {
+                    "field_unit_health_point_map": {
+                        "0": 5}}},
+            "player_field_unit_harmful_effect_map": {
+                "You": {
+                    "field_unit_harmful_status_map": {
+                        "0": {"harmful_status_list": ['DarkFire', 'Freeze']}}}},
+            "player_field_unit_death_map": {
+                "You": {
+                    "dead_field_unit_index_list": [1]}}}}
+
+        notify_reader_service.notify_turn_start_targeting_attack_passive_skill_to_unit(notice_dictionary)
+
+    def test_notify_deploy_targeting_attack_skill_to_unit(self):
+        card_date_csv_controller = CardInfoFromCsvControllerImpl.getInstance()
+        card_date_csv_controller.requestToCardInfoSettingInMemory()
+
+        pre_draw = PreDrawedImage.getInstance()
+        pre_draw.pre_draw_every_image()
+
+        your_field_unit_repository = YourFieldUnitRepository.getInstance()
+        your_field_unit_repository.create_field_unit_card(27)
+        your_field_unit_repository.create_field_unit_card(27)
+
+        notify_reader_service = NotifyReaderServiceImpl.getInstance()
+        notice_dictionary = {"NOTIFY_DEPLOY_TARGETING_ATTACK_PASSIVE_SKILL_TO_UNIT":{
+            "player_field_unit_health_point_map": {
+                "You": {
+                    "field_unit_health_point_map": {
+                        "0": 5}}},
+            "player_field_unit_harmful_effect_map": {
+                "You": {
+                    "field_unit_harmful_status_map": {
+                        "0": {"harmful_status_list": ['DarkFire', 'Freeze']}}}},
+            "player_field_unit_death_map": {
+                "You": {
+                    "dead_field_unit_index_list": [1]}}}}
+
+        notify_reader_service.notify_deploy_targeting_attack_passive_skill_to_unit(notice_dictionary)
+
+    def test_notify_turn_start_non_targeting_attack_passive_skill(self):
+        card_date_csv_controller = CardInfoFromCsvControllerImpl.getInstance()
+        card_date_csv_controller.requestToCardInfoSettingInMemory()
+
+        pre_draw = PreDrawedImage.getInstance()
+        pre_draw.pre_draw_every_image()
+
+        your_field_unit_repository = YourFieldUnitRepository.getInstance()
+        your_field_unit_repository.create_field_unit_card(27)
+        your_field_unit_repository.create_field_unit_card(27)
+
+        notify_reader_service = NotifyReaderServiceImpl.getInstance()
+        notice_dictionary = {"NOTIFY_TURN_START_NON_TARGETING_ATTACK_PASSIVE_SKILL": {
+            "player_field_unit_health_point_map": {
+                "You": {
+                    "field_unit_health_point_map": {
+                        "0": 5}}},
+            "player_field_unit_harmful_effect_map": {
+                "You": {
+                    "field_unit_harmful_status_map": {
+                        "0": {"harmful_status_list": ['DarkFire', 'Freeze']}}}},
+            "player_field_unit_death_map": {
+                "You": {
+                    "dead_field_unit_index_list": [1]}}}}
+
+        notify_reader_service.notify_turn_start_non_targeting_attack_passive_skill(notice_dictionary)
+
+    def test_notify_deploy_non_targeting_attack_passive_skill(self):
+        card_date_csv_controller = CardInfoFromCsvControllerImpl.getInstance()
+        card_date_csv_controller.requestToCardInfoSettingInMemory()
+
+        pre_draw = PreDrawedImage.getInstance()
+        pre_draw.pre_draw_every_image()
+
+        your_field_unit_repository = YourFieldUnitRepository.getInstance()
+        your_field_unit_repository.create_field_unit_card(27)
+        your_field_unit_repository.create_field_unit_card(27)
+        your_field_unit_repository.create_field_unit_card(27)
+        your_field_unit_repository.create_field_unit_card(27)
+
+        notify_reader_service = NotifyReaderServiceImpl.getInstance()
+        notice_dictionary = {"NOTIFY_DEPLOY_NON_TARGETING_ATTACK_PASSIVE_SKILL": {
+            "player_field_unit_health_point_map": {
+                "You": {
+                    "field_unit_health_point_map": {"3": 0, "1": 0, "2": 0, "0": 10}}},
+            "player_field_unit_harmful_effect_map": {
+                "You": {
+                    "field_unit_harmful_status_map": {
+                      "3": {"harmful_status_list": ['DarkFire', 'Freeze']},
+                      "1": {"harmful_status_list": ['DarkFire', 'Freeze']},
+                      "2": {"harmful_status_list": ['DarkFire', 'Freeze']},
+                      "0": {"harmful_status_list": ['DarkFire', 'Freeze']}}}},
+            "player_field_unit_death_map": {
+                "You": {
+                    "dead_field_unit_index_list": [1, 2, 3]}}}}
+
+        notify_reader_service.notify_deploy_non_targeting_attack_passive_skill(notice_dictionary)
+
+    def test_notify_turn_start_targeting_attack_to_game_main_character(self):
+        card_date_csv_controller = CardInfoFromCsvControllerImpl.getInstance()
+        card_date_csv_controller.requestToCardInfoSettingInMemory()
+
+        pre_draw = PreDrawedImage.getInstance()
+        pre_draw.pre_draw_every_image()
+
+        notify_reader_service = NotifyReaderServiceImpl.getInstance()
+        notice_dictionary = {"NOTIFY_TURN_START_TARGETING_ATTACK_TO_GAME_MAIN_CHARACTER":{
+            "player_main_character_health_point_map":{
+                "You":60},
+            "player_main_character_survival_map":{
+                "You":"Survival"}}}
+
+        notify_reader_service.notify_turn_start_targeting_attack_to_game_main_character(notice_dictionary)
+
+    def test_notify_deploy_targeting_attack_to_game_main_character(self):
+        card_date_csv_controller = CardInfoFromCsvControllerImpl.getInstance()
+        card_date_csv_controller.requestToCardInfoSettingInMemory()
+
+        pre_draw = PreDrawedImage.getInstance()
+        pre_draw.pre_draw_every_image()
+
+        notify_reader_service = NotifyReaderServiceImpl.getInstance()
+        notice_dictionary = {"NOTIFY_DEPLOY_TARGETING_ATTACK_TO_GAME_MAIN_CHARACTER":{
+            "player_main_character_health_point_map":{
+                "You":80},
+            "player_main_character_survival_map":{
+                "You":"Survival"}}}
+
+        notify_reader_service.notify_deploy_targeting_attack_to_game_main_character(notice_dictionary)
+
 
 if __name__ == "__main__":
     unittest.main()

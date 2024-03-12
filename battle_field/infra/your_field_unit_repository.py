@@ -1,5 +1,6 @@
 from battle_field.state.attached_energy_info import AttachedEnergyInfoState
 from battle_field.state.current_field_unit import CurrentFieldUnitState
+from battle_field.state.extra_effect_info import ExtraEffectInfo
 from battle_field.state.harmful_status_info import HarmfulStatusInfo
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 
@@ -9,6 +10,7 @@ class YourFieldUnitRepository:
 
     attached_energy_info = AttachedEnergyInfoState()
     harmful_status_info = HarmfulStatusInfo()
+    extra_effect_info = ExtraEffectInfo()
 
     current_field_unit_state = CurrentFieldUnitState()
     current_field_unit_list = []
@@ -36,6 +38,9 @@ class YourFieldUnitRepository:
 
     def get_current_field_unit_state(self):
         return self.current_field_unit_state.get_current_field_unit_list()
+
+    def get_recently_added_field_unit_index(self):
+        return len(self.current_field_unit_list) - 1
 
     def create_field_unit_card(self, card_id):
         index = len(self.current_field_unit_list)
@@ -93,10 +98,14 @@ class YourFieldUnitRepository:
         return self.attached_energy_info.get_energy_info_at_index(index)
 
     def apply_harmful_status(self, unit_index, harmful_status_list):
+        print('apply harmful status to your unit!!')
         self.harmful_status_info.update_harmful_status(unit_index, harmful_status_list)
 
     def get_harmful_status_by_index(self, index):
-        self.harmful_status_info.get_extra_effect_of_index(index)
+        self.harmful_status_info.get_harmful_status_of_index(index)
+
+    def remove_harmful_status_by_index(self, index):
+        self.harmful_status_info.remove_harmful_status_of_index(index)
 
     def get_your_field_unit_race_energy(self, index, energy_race):
         return self.attached_energy_info.get_race_energy_at_index(index, energy_race)
@@ -137,6 +146,13 @@ class YourFieldUnitRepository:
         removed_card = self.current_field_unit_list.pop(card_placed_index)
         self.current_field_unit_list.insert(card_placed_index, None)
         print(f"Removed card index {card_placed_index} -> current_hand_list: {self.current_field_unit_list}, current_hand_state: {self.get_current_field_unit_state()}")
+
+    def update_your_unit_extra_effect_at_index(self, unit_index, extra_effect_list):
+        self.extra_effect_info.update_extra_effect_of_unit(unit_index, extra_effect_list)
+
+    def get_your_unit_extra_ability_at_index(self, unit_index):
+        return self.extra_effect_info.get_extra_effect_of_index(unit_index)
+
 
     def replace_field_card_position(self):
         # current_y = 580

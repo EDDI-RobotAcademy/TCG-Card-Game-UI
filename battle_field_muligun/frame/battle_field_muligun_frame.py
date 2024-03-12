@@ -76,6 +76,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         self.button_click_processing = False
         self.message_visible = False
 
+        self.timer_visible = True
         # self.select_card_id = self.your_hand_repository.select_card_id_list()
         # self.delete_select_card = self.your_hand_repository.delete_select_card()
 
@@ -85,6 +86,8 @@ class BattleFieldMuligunFrame(OpenGLFrame):
 
         self.timer_panel = None
         self.timer = BattleFieldMuligunTimer()
+
+        self.is_doing_mulligan = True
 
     def initgl(self):
         glClearColor(1.0, 1.0, 1.0, 0.0)
@@ -153,6 +156,8 @@ class BattleFieldMuligunFrame(OpenGLFrame):
             battle_field_muligun_background_shape.draw()
 
     def redraw(self):
+        if self.is_doing_mulligan == False:
+            return
         # print("redrawing")
         if self.is_reshape_not_complete:
             return
@@ -165,11 +170,30 @@ class BattleFieldMuligunFrame(OpenGLFrame):
 
         self.draw_base()
         self.alpha_background.draw()
-        self.draw_muligun_timer()
         # glDisable(GL_BLEND)
+        if self.your_hand_repository.get_is_my_mulligan():
+            if self.your_hand_repository.get_is_opponent_mulligan():
+              #  print(f"check opponent muligun responseData:{mulligan_done}")
+
+               # if mulligan_done is True:
+                self.message_visible = False
+                self.timer.stop_timer()
+                print("사용자 둘 다 멀리건 선택 완료")
+                # TODO: 배틀 필드 화면으로 넘어가야 함.
+                self.timer_visible = False
+                # self.master.after(self.__switchFrameWithMenuName('fake-battle-field'))
+                self.is_doing_mulligan = False
+                self.__switchFrameWithMenuName('fake-battle-field')
+            else:
+                self.message_visible = True
+                #TODO: 시간 초가 종료 되었을 때 상대가 선택하지 않으면 배틀 필드 화면으로 넘어감.
 
         if self.ok_button_visible is True:
             self.ok_button.draw()
+
+        if self.timer_visible is True:
+            self.draw_muligun_timer()
+
 
         # self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
         for hand_card in self.hand_card_list:
@@ -188,7 +212,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         if self.execute_pick_card_effect is True:
             self.draw_pick_card_effect()
 
-        if self.your_hand_repository.get_is_mulligan_done() is False:
+        if self.your_hand_repository.get_is_opponent_mulligan() is False:
             if self.message_visible is True:
                 self.waiting_message().draw()
 
@@ -300,25 +324,25 @@ class BattleFieldMuligunFrame(OpenGLFrame):
 
             # for hand_card in reversed(self.hand_card_list):
             #     pickable_card_base = hand_card.get_pickable_card_base()
-            # 
+            #
             #     if pickable_card_base.is_point_inside((x, y)):
             #         hand_card.selected = not hand_card.selected
             #         self.selected_object = hand_card
             #         hand_card_index = self.hand_card_list.index(hand_card)
             #         self.change_card_object_list[hand_card_index] = hand_card
-            # 
+            #
             #         fixed_x, fixed_y = pickable_card_base.get_local_translation()
             #         new_rectangle = self.create_change_card_expression((fixed_x, fixed_y))
             #         self.click_card_effect_rectangles.append(new_rectangle)
-            # 
+            #
             #         # 교체할 카드 선택 취소 기능)
             #         if hand_card_index in self.checking_draw_effect:
             #             del self.checking_draw_effect[hand_card_index]
-            # 
+            #
             #             # 선택한 카드 리스트에 담긴 것을 다시 지워야 함.
             #             if hand_card_index in self.change_card_object_list:
             #                 del self.change_card_object_list[self.hand_card_list.index(hand_card)]
-            # 
+            #
             #         else:
             #             fixed_x, fixed_y = pickable_card_base.get_local_translation()
             #             new_rectangle = self.create_change_card_expression((fixed_x, fixed_y))
@@ -400,25 +424,40 @@ class BattleFieldMuligunFrame(OpenGLFrame):
             self.execute_pick_card_effect = False
             self.ok_button_clicked = True
 
-            # try:
-                #     # responseData = self.your_hand_repository.requestCheckOpponentMuligun(
-                #     #     CheckOpponentMuligunRequest(self.sessionRepository.get_session_info()))
-            mulligan_done = self.your_hand_repository.get_is_mulligan_done()
-            print(f"check opponent muligun responseData:{mulligan_done}")
-            if mulligan_done is True:
-                self.message_visible = False
-                print("사용자 둘 다 멀리건 선택 완료")
-                # TODO: 배틀 필드 화면으로 넘어가야 함.
-            else:
-                self.message_visible = True
+            self.your_hand_repository.set_is_my_mulligan(True)
 
+
+            # try:
+            #     #     # responseData = self.your_hand_repository.requestCheckOpponentMuligun(
+            #     #     #     CheckOpponentMuligunRequest(self.sessionRepository.get_session_info()))
+            #     mulligan_done = self.your_hand_repository.get_is_mulligan_done()
+            #     print(f"check opponent muligun responseData:{mulligan_done}")
+            #
+            #     if mulligan_done is True:
+            #         self.message_visible = False
+            #         self.timer.stop_timer()
+            #         print("사용자 둘 다 멀리건 선택 완료")
+            #         # TODO: 배틀 필드 화면으로 넘어가야 함.
+            #         self.timer_visible = False
+            #         # self.master.after(self.__switchFrameWithMenuName('fake-battle-field'))
+            #         self.__switchFrameWithMenuName('fake-battle-field')
+            #     else:
+            #         self.message_visible = True
+            #
             # except Exception as e:
             #     print(f"멀리건 에러: {e}")
 
         else:
             #self.master.after(self.__switchFrameWithMenuName('decision-first'))
             #self.master.after(self.__switchFrameWithMenuName('rock-paper-scissors'))
-            self.master.after(self.__switchFrameWithMenuName('fake-battle-field'))
+            default_list = []
+            responseData = self.your_hand_repository.requestMuligun(
+                MuligunRequest(self.sessionRepository.get_session_info(),
+                               default_list))
+
+            print("muligun responseData:", responseData)
+            self.your_hand_repository.set_is_my_mulligan(False)
+            # self.master.after(self.__switchFrameWithMenuName('fake-battle-field'))
 
 
     # 멀리건 화면에서 교체하려는 카드 클릭시 나타나는 표현
@@ -520,14 +559,35 @@ class BattleFieldMuligunFrame(OpenGLFrame):
     #     # print(f"현재 카드 뭐 있니?: {self.hand_card_state}")
     #     self.your_hand_repository.create_hand_card_list()
     #     return self.hand_card_list
+
     def draw_muligun_timer(self):
-        self.timer.set_width_ratio(self.width_ratio)
-        self.timer.set_height_ratio(self.height_ratio)
-        self.timer.update_current_timer_panel()
-        self.timer_panel.set_width_ratio(self.width_ratio)
-        self.timer_panel.set_height_ratio(self.height_ratio)
-        self.timer_panel.draw()
-        self.master.after(17, self.draw_muligun_timer)
+        if self.is_doing_mulligan == True:
+            self.timer.set_width_ratio(self.width_ratio)
+            self.timer.set_height_ratio(self.height_ratio)
+            self.timer.update_current_timer_panel()
+            self.timer_panel.set_width_ratio(self.width_ratio)
+            self.timer_panel.set_height_ratio(self.height_ratio)
+            self.timer_panel.draw()
+            self.master.after(17, self.draw_muligun_timer)
 
     def muligunTimeOut(self):
         print("muligunTimeOut")
+        self.timer.stop_timer()
+        # 내가 멀리건을 선택하지 않았을 경우
+        if not self.your_hand_repository.get_is_my_mulligan():
+            default_list = []
+            responseData = self.your_hand_repository.requestMuligun(
+                MuligunRequest(self.sessionRepository.get_session_info(),
+                               default_list))
+
+            print(f"{Fore.RED}Mulligan ResponseData:{Fore.GREEN} {responseData}{Style.RESET_ALL}")
+            self.is_doing_mulligan = False
+            self.__switchFrameWithMenuName('fake-battle-field')
+
+        # 나는 멀리건을 선택하고 상대가 선택하지 않았을 경우
+        else:
+            if not self.your_hand_repository.get_is_opponent_mulligan():
+                self.message_visible = False
+                self.is_doing_mulligan = False
+                self.__switchFrameWithMenuName('fake-battle-field')
+        # self.master.after(self.__switchFrameWithMenuName('fake-battle-field'))

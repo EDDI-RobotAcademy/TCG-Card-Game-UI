@@ -1,11 +1,17 @@
 from common.card_type import CardType
 from opengl_battle_field_card_controller.legacy.card_controller import LegacyCardController
 from opengl_battle_field_energy.energy_card import EnergyCard
+from opengl_battle_field_energy.legacy.energy_card import LegacyEnergyCard
 from opengl_battle_field_environment.environment_card import EnvironmentCard
+from opengl_battle_field_environment.legacy.environment_card import LegacyEnvironmentCard
 from opengl_battle_field_item.item_card import ItemCard
+from opengl_battle_field_item.legacy.item_card import LegacyItemCard
+from opengl_battle_field_support.legacy.support_card import LegacySupportCard
 from opengl_battle_field_support.support_card import SupportCard
 from opengl_battle_field_token.token_card import TokenCard
+from opengl_battle_field_tool.legacy.tool_card import LegacyToolCard
 from opengl_battle_field_tool.tool_card import ToolCard
+from opengl_battle_field_trap.legacy.trap_card import LegacyTrapCard
 from opengl_battle_field_trap.trap_card import TrapCard
 from opengl_battle_field_unit.legacy.unit_card import LegacyUnitCard
 
@@ -70,7 +76,7 @@ class LegacyCardControllerImpl(LegacyCardController):
 
     def itemCardInitShapes(self, local_translation, card_number, rectangle_height, rectangle_width):
         print("itemCardInitShapes 생성")
-        itemCard = ItemCard(local_translation)
+        itemCard = LegacyItemCard(local_translation)
         print("카드 생성")
         itemCard.init_shapes(circle_radius, card_number, rectangle_height, rectangle_width)
         print("모양 생성")
@@ -78,7 +84,7 @@ class LegacyCardControllerImpl(LegacyCardController):
 
     def trapCardInitShapes(self, local_translation, card_number, rectangle_height, rectangle_width):
         print("trapCardInitShapes 생성")
-        trapCard = TrapCard(local_translation)
+        trapCard = LegacyTrapCard(local_translation)
         print("카드 생성")
         trapCard.init_shapes(circle_radius, card_number, rectangle_height, rectangle_width)
         print("모양 생성")
@@ -86,7 +92,7 @@ class LegacyCardControllerImpl(LegacyCardController):
 
     def supportCardInitShapes(self, local_translation, card_number, rectangle_height, rectangle_width):
         print("supplyCardInitShapes 생성")
-        supportCard = SupportCard(local_translation)
+        supportCard = LegacySupportCard(local_translation)
         print("카드 생성")
         supportCard.init_shapes(circle_radius, card_number, rectangle_height, rectangle_width)
         print("모양 생성")
@@ -94,7 +100,7 @@ class LegacyCardControllerImpl(LegacyCardController):
 
     def toolCardInitShapes(self, local_translation, card_number, rectangle_height, rectangle_width):
         print("toolCardInitShapes 생성")
-        toolCard = ToolCard(local_translation)
+        toolCard = LegacyToolCard(local_translation)
         print("카드 생성")
         toolCard.init_shapes(circle_radius, card_number, rectangle_height, rectangle_width)
         print("모양 생성")
@@ -102,7 +108,7 @@ class LegacyCardControllerImpl(LegacyCardController):
 
     def energyCardInitShapes(self, local_translation, card_number, rectangle_height, rectangle_width):
         print("energyCardInitShapes 생성")
-        energyCard = EnergyCard(local_translation)
+        energyCard = LegacyEnergyCard(local_translation)
         print("카드 생성")
         energyCard.init_shapes(circle_radius, card_number, rectangle_height, rectangle_width)
         print("모양 생성")
@@ -110,7 +116,7 @@ class LegacyCardControllerImpl(LegacyCardController):
 
     def environmentCardInitShapes(self, local_translation, card_number, rectangle_height, rectangle_width):
         print("environmentCardInitShapes 생성")
-        environmentCard = EnvironmentCard(local_translation)
+        environmentCard = LegacyEnvironmentCard(local_translation)
         print("카드 생성")
         environmentCard.init_shapes(circle_radius, card_number, rectangle_height, rectangle_width)
         print("모양 생성")
