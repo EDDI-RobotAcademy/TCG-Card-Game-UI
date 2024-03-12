@@ -1042,6 +1042,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         if is_opponent_mulligan is True:
             self.__mulligan_repository.set_is_opponent_mulligan(True)
+        else:
+            self.__mulligan_repository.set_is_opponent_mulligan(False)
 
     def notify_use_catastrophic_damage_item_card(self, notice_dictionary):
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
