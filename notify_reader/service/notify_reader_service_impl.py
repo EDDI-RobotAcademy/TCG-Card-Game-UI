@@ -347,6 +347,12 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             print("나죽어~~~ ")
 
     def notify_use_multiple_unit_damage_item_card(self, notice_dictionary):
+
+        is_my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        print(f"is my turn: {is_my_turn}")
+        if is_my_turn is True:
+            return
+
         data = notice_dictionary['NOTIFY_USE_MULTIPLE_UNIT_DAMAGE_ITEM_CARD']
 
         opponent_usage_card_info = (
@@ -488,12 +494,15 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                         opponent_fixed_card_attached_shape.set_image_data(
                             self.__pre_drawed_image_instance.get_pre_draw_unit_hp(remain_opponent_unit_hp))
 
+
+
             for dead_opponent_unit_index in dead_opponent_unit_index_list:
                 opponent_field_card_id = self.__opponent_field_unit_repository.get_opponent_card_id_by_index(
                     dead_opponent_unit_index)
 
                 self.__opponent_field_unit_repository.remove_current_field_unit_card(dead_opponent_unit_index)
                 self.__opponent_tomb_repository.create_opponent_tomb_card(opponent_field_card_id)
+                self.__opponent_field_unit_repository.remove_harmful_status_by_index(dead_opponent_unit_index)
 
             self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
@@ -547,6 +556,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                     dead_your_unit_index)
                 self.__your_tomb_repository.create_tomb_card(your_field_card_id)
                 self.__your_field_unit_repository.remove_card_by_index(dead_your_unit_index)
+                self.__your_field_unit_repository.remove_harmful_status_by_index(dead_your_unit_index)
 
             self.__your_field_unit_repository.replace_field_card_position()
 
@@ -681,6 +691,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                     dead_your_unit_index)
                 self.__your_tomb_repository.create_tomb_card(your_field_card_id)
                 self.__your_field_unit_repository.remove_card_by_index(dead_your_unit_index)
+                self.__your_field_unit_repository.remove_harmful_status_by_index(dead_your_unit_index)
 
             self.__your_field_unit_repository.replace_field_card_position()
 
@@ -724,10 +735,18 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 dead_unit_index)
             self.__your_tomb_repository.create_tomb_card(field_unit_id)
             self.__your_field_unit_repository.remove_card_by_index(dead_unit_index)
+            self.__your_field_unit_repository.remove_harmful_status_by_index(dead_unit_index)
 
         self.__your_field_unit_repository.replace_field_card_position()
 
     def notify_use_special_energy_card_to_unit(self, notice_dictionary):
+
+        is_my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        print(f"is my turn: {is_my_turn}")
+        if is_my_turn is True:
+            return
+
+
         # 일단은 opponent 밖에 없으니 아래와 같이 처리할 수 있음
         data = notice_dictionary['NOTIFY_USE_SPECIAL_ENERGY_CARD_TO_UNIT']
 

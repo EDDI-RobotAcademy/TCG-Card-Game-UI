@@ -67,6 +67,7 @@ from battle_field.infra.request.request_attack_with_non_targeting_active_skill i
 from battle_field.infra.request.request_use_corpse_explosion import RequestUseCorpseExplosion
 from battle_field.infra.request.request_use_energy_burn_to_unit import RequestUseEnergyBurnToUnit
 from battle_field.infra.request.request_use_energy_card_to_unit import RequestUseEnergyCardToUnit
+from battle_field.infra.request.request_use_special_energy_card_to_unit import RequestUseSpecialEnergyCardToUnit
 
 from battle_field.infra.round_repository import RoundRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
@@ -849,7 +850,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     print("상대방 특수 에너지 부착 ")
 
                     response = self.__fake_opponent_hand_repository.request_use_energy_card_to_unit(
-                        RequestUseEnergyCardToUnit(
+                        RequestUseSpecialEnergyCardToUnit(
                             _sessionInfo=self.__session_repository.get_second_fake_session_info(),
                             _unitIndex=0,
                             _energyCardId=opponent_hand)
@@ -5233,6 +5234,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     your_field_death_unit_index = self.attack_animation_object.get_your_field_death_unit_index()
                     self.your_field_unit_repository.remove_card_by_index(your_field_death_unit_index)
                     self.your_field_unit_repository.replace_field_card_position()
+                    self.your_field_unit_repository.remove_harmful_status_by_index(your_field_death_unit_index)
                 else:
 
                     your_field_hp_shape = self.attack_animation_object.get_your_field_hp_shape()
@@ -5248,6 +5250,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     opponent_field_unit_index = opponent_field_unit.get_index()
                     self.opponent_field_unit_repository.remove_card_by_multiple_index([opponent_field_unit_index])
                     self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                    self.opponent_field_unit_repository.remove_harmful_status_by_index(opponent_field_unit_index)
                 else:
                     opponent_field_hp_shape = self.attack_animation_object.get_opponent_field_hp_shape()
                     if opponent_field_hp_shape:
@@ -5515,7 +5518,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         card_id = opponent_field_unit.get_card_number()
 
                         self.opponent_field_unit_repository.remove_current_field_unit_card(index)
-                        # self.opponent_tomb
+
+                        self.opponent_field_unit_repository.remove_harmful_status_by_index(index)
+                        self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
 
                 self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 

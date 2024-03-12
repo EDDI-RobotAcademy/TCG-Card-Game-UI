@@ -117,6 +117,8 @@ class OpponentFieldUnitRepository:
     def get_harmful_status_by_index(self, index):
         self.harmful_status_info.get_harmful_status_of_index(index)
 
+    def remove_harmful_status_by_index(self, index):
+        self.harmful_status_info.remove_harmful_status_of_index(index)
 
     def get_total_energy_at_index(self, index):
         return self.attached_energy_info.get_total_energy_at_index(index)
