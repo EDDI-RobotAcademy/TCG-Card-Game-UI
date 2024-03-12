@@ -88,6 +88,7 @@ from battle_field_fixed_card.fixed_details_card import FixedDetailsCard
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
 from battle_field_function.service.request.turn_end_request import TurnEndRequest
+from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
 from battle_field_muligun.service.request.muligun_request import MuligunRequest
 
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
@@ -172,6 +173,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.opponent_hand_repository = OpponentHandRepository.getInstance()
         self.opponent_hand_card_list = None
+
+        self.mulligan_repository = MuligunYourHandRepository()
 
         self.selected_search_unit_id_list = []
         self.selected_search_unit_index_list = []
@@ -406,11 +409,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         # self.your_hand_repository.set_x_base(550)
         self.your_hand_repository.set_total_window_size(self.width, self.height)
+        self.your_hand_card_state = self.mulligan_repository.get_current_hand_state()
+        self.your_hand_repository.save_current_hand_state(self.your_hand_card_state)
         # self.your_hand_repository.save_current_hand_state([30, 30, 8, 93, 8, 2, 33, 35, 9, 20, 25, 36, 151])
         # self.your_hand_repository.save_current_hand_state(
         #     [30, 8, 93, 27, 27, 27, 32, 30, 8, 93, 8, 2, 33, 35, 9, 20, 25, 36, 151])
         # self.your_hand_repository.save_current_hand_state([151])
-        # self.your_hand_repository.create_hand_card_list()
+        self.your_hand_repository.create_hand_card_list()
         self.your_hand_repository.build_your_hand_page()
         self.your_hand.set_total_window_size(self.width, self.height)
         self.your_hand.init_next_prev_gold_button_hand()
@@ -1493,24 +1498,24 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
-        # for hand_card in self.hand_card_list:
-        #     attached_tool_card = hand_card.get_tool_card()
-        #     if attached_tool_card is not None:
-        #         attached_tool_card.set_width_ratio(self.width_ratio)
-        #         attached_tool_card.set_height_ratio(self.height_ratio)
-        #         attached_tool_card.draw()
-        #
-        #     pickable_card_base = hand_card.get_pickable_card_base()
-        #     pickable_card_base.set_width_ratio(self.width_ratio)
-        #     pickable_card_base.set_height_ratio(self.height_ratio)
-        #     pickable_card_base.draw()
-        #
-        #     attached_shape_list = pickable_card_base.get_attached_shapes()
-        #
-        #     for attached_shape in attached_shape_list:
-        #         attached_shape.set_width_ratio(self.width_ratio)
-        #         attached_shape.set_height_ratio(self.height_ratio)
-        #         attached_shape.draw()
+        for hand_card in self.hand_card_list:
+            attached_tool_card = hand_card.get_tool_card()
+            if attached_tool_card is not None:
+                attached_tool_card.set_width_ratio(self.width_ratio)
+                attached_tool_card.set_height_ratio(self.height_ratio)
+                attached_tool_card.draw()
+
+            pickable_card_base = hand_card.get_pickable_card_base()
+            pickable_card_base.set_width_ratio(self.width_ratio)
+            pickable_card_base.set_height_ratio(self.height_ratio)
+            pickable_card_base.draw()
+
+            attached_shape_list = pickable_card_base.get_attached_shapes()
+
+            for attached_shape in attached_shape_list:
+                attached_shape.set_width_ratio(self.width_ratio)
+                attached_shape.set_height_ratio(self.height_ratio)
+                attached_shape.draw()
 
         for opponent_hand_card in self.opponent_hand_card_list:
             opponent_hand_card_base = opponent_hand_card.get_fixed_card_base()
@@ -1539,14 +1544,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     attached_shape.set_height_ratio(self.height_ratio)
                     attached_shape.draw()
 
-                # for selected_search_unit in self.selected_search_unit_lightning_border:
-                #     if selected_search_unit == fixed_card_base:
-                #         selected_search_unit.set_width_ratio(self.width_ratio)
-                #         selected_search_unit.set_height_ratio(self.height_ratio)
-                #
-                #         self.lightning_border.set_padding(20)
-                #         self.lightning_border.update_shape(selected_search_unit)
-                #         self.lightning_border.draw_lightning_border()
+                for selected_search_unit in self.selected_search_unit_lightning_border:
+                    if selected_search_unit == fixed_card_base:
+                        selected_search_unit.set_width_ratio(self.width_ratio)
+                        selected_search_unit.set_height_ratio(self.height_ratio)
+
+                        self.lightning_border.set_padding(20)
+                        self.lightning_border.update_shape(selected_search_unit)
+                        self.lightning_border.draw_lightning_border()
 
         self.your_hand_prev_button.draw()
         self.your_hand_next_button.draw()
