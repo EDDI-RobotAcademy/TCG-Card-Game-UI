@@ -247,6 +247,7 @@ class AttackAnimation:
     def get_opponent_lost_card_id(self):
         return self.opponent_lost_card_id
 
+
     def set_extra_ability(self, extra_ability):
         self.extra_ability = extra_ability
 

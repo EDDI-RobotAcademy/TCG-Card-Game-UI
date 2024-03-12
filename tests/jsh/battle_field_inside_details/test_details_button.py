@@ -32,6 +32,7 @@ from battle_field.entity.option import Option
 from battle_field.entity.prev_field_energy_race import PrevFieldEnergyRace
 from battle_field.entity.surrender_confirm import SurrenderConfirm
 from battle_field.entity.turn_end import TurnEnd
+from battle_field.entity.turn_number import CurrentFieldTurnNumber
 from battle_field.entity.your_active_panel import YourActivePanel
 from battle_field.entity.your_deck import YourDeck
 from battle_field.entity.your_field_energy import YourFieldEnergy
@@ -252,6 +253,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.turn_end_button = None
         self.turn_end_button_selected = False
 
+        self.current_field_turn_number_panel = None
+        self.turn_number = CurrentFieldTurnNumber()
+
         self.your_field_unit_action_repository = YourFieldUnitActionRepository.getInstance()
 
         self.option = Option()
@@ -469,6 +473,12 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.option_button = self.option.get_option_button()
         self.option.create_option_button_popup_list()
         self.option_popup_panel_list = self.option.get_option_button_popup_list()
+
+        self.turn_number.set_total_window_size(self.width, self.height)
+        self.turn_number.create_current_field_turn_number_panel()
+        self.current_field_turn_number_panel = (
+            self.turn_number.get_current_field_turn_number_panel()
+        )
 
         self.surrender_confirm.set_total_window_size(self.width, self.height)
         self.surrender_confirm.create_surrender_confirm_panel_list()
@@ -924,6 +934,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.turn_end_button.set_height_ratio(self.height_ratio)
         self.turn_end_button.draw()
 
+        self.current_to_use_field_energy_count.set_width_ratio(self.width_ratio)
+        self.current_to_use_field_energy_count.set_height_ratio(self.height_ratio)
+        self.current_to_use_field_energy_count.update_current_to_use_field_energy_count_panel()
+        self.current_to_use_field_energy_count_panel.set_width_ratio(self.width_ratio)
+        self.current_to_use_field_energy_count_panel.set_height_ratio(self.height_ratio)
+        self.current_to_use_field_energy_count_panel.draw()
+
         self.your_hp.set_width_ratio(self.width_ratio)
         self.your_hp.set_height_ratio(self.height_ratio)
         self.your_hp.update_current_your_hp_panel()
@@ -985,6 +1002,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.current_to_use_field_energy_count_panel.set_width_ratio(self.width_ratio)
         self.current_to_use_field_energy_count_panel.set_height_ratio(self.height_ratio)
         self.current_to_use_field_energy_count_panel.draw()
+
+        self.turn_number.set_width_ratio(self.width_ratio)
+        self.turn_number.set_height_ratio(self.height_ratio)
+        self.turn_number.update_current_field_turn_number_panel()
+        self.current_field_turn_number_panel.set_width_ratio(self.width_ratio)
+        self.current_field_turn_number_panel.set_height_ratio(self.height_ratio)
+        self.current_field_turn_number_panel.draw()
 
         self.muligun_reset_button.set_width_ratio(self.width_ratio)
         self.muligun_reset_button.set_height_ratio(self.height_ratio)
@@ -2304,25 +2328,25 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                                 )
                             )
 
-                        if your_field_unit_attached_trent_energy > 1:
-                            print("상세 보기 트런트 숫자 생성")
-                            select_details_card_base.set_attached_shapes(
-                                select_details_card.create_number_of_cards(
-                                    number_of_cards_data=
-                                    self.pre_drawed_image_instance.get_pre_draw_number_of_details_energy(
-                                        your_field_unit_attached_trent_energy),
-                                    local_translation=select_details_card_base.get_local_translation(),
-                                    vertices=[(select_details_card_base_vertices[0][0] - 200 + energy_length,
-                                               select_details_card_base_vertices[0][1] - 80),
-                                              (select_details_card_base_vertices[0][0] - 160 + energy_length,
-                                               select_details_card_base_vertices[0][1] - 80),
-                                              (select_details_card_base_vertices[0][0] - 160 + energy_length,
-                                               select_details_card_base_vertices[0][1] - 0),
-                                              (select_details_card_base_vertices[0][0] - 200 + energy_length,
-                                               select_details_card_base_vertices[0][1] - 0)
-                                              ]
+                            if your_field_unit_attached_trent_energy > 1:
+                                print("상세 보기 트런트 숫자 생성")
+                                select_details_card_base.set_attached_shapes(
+                                    select_details_card.create_number_of_cards(
+                                        number_of_cards_data=
+                                        self.pre_drawed_image_instance.get_pre_draw_number_of_details_energy(
+                                            your_field_unit_attached_trent_energy),
+                                        local_translation=select_details_card_base.get_local_translation(),
+                                        vertices=[(select_details_card_base_vertices[0][0] - 200 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 80),
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 80),
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 0),
+                                                  (select_details_card_base_vertices[0][0] - 200 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 0)
+                                                  ]
+                                    )
                                 )
-                            )
 
                     self.fixed_details_card = select_details_card_base
 
