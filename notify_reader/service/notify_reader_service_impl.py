@@ -890,29 +890,25 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             print('no Opponent field unit data!! : ', e)
 
     def apply_notify_data_of_dead_unit(self, player_field_unit_death_data):
-        data = {
-            "player_field_unit_death_map": {"You": {"dead_field_unit_index_list": [0]},
-                                            "Opponent": {"dead_field_unit_index_list": []}}}
 
-        try:
-            for your_unit_index in player_field_unit_death_data['You']['dead_field_unit_index_list']:
-                card_id = self.__your_field_unit_repository.get_card_id_by_index(your_unit_index)
-                self.__your_tomb_repository.create_tomb_card(card_id)
-                self.__your_field_unit_repository.remove_card_by_index(your_unit_index)
+        for player, dead_field_unit_index_list_map in player_field_unit_death_data.items():
+            dead_field_unit_index_list = dead_field_unit_index_list_map.get('dead_field_unit_index_list', [])
+            if player == 'You':
+                for unit_index in dead_field_unit_index_list:
+                    card_id = self.__your_field_unit_repository.get_card_id_by_index(unit_index)
+                    self.__your_tomb_repository.create_tomb_card(card_id)
+                    self.__your_field_unit_repository.remove_card_by_index(unit_index)
+                self.__your_field_unit_repository.replace_field_card_position()
+            elif player == 'Opponent':
+                for unit_index in dead_field_unit_index_list:
+                    card_id = self.__opponent_field_unit_repository.get_opponent_card_id_by_index(unit_index)
+                    self.__opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                    self.__opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
 
-            self.__your_field_unit_repository.replace_field_card_position()
-        except Exception as e:
-            print('no Your dead unit data!! ', e)
+                self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
-        try:
-            for opponent_unit_index in player_field_unit_death_data['Opponent']['dead_field_unit_index_list']:
-                card_id = self.__opponent_field_unit_repository.get_opponent_card_id_by_index(opponent_unit_index)
-                self.__opponent_tomb_repository.create_opponent_tomb_card(opponent_unit_index)
-                self.__opponent_field_unit_repository.remove_current_field_unit_card(opponent_unit_index)
-
-            self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-        except Exception as e:
-            print('no Opponent dead unit data!! ', e)
+            else:
+                print(f'apply_notify_data_of_dead_unit error : unknown player {player}')
 
     def apply_notify_data_of_harmful_status(self, player_field_unit_harmful_effect_data):
 
@@ -956,17 +952,14 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
 
     def apply_notify_data_of_field_energy(self, player_field_energy_data):
-        try:
-            your_energy_count =  player_field_energy_data['You']
-            self.__your_field_energy_repository.set_your_field_energy(your_energy_count)
-        except Exception as e:
-            print('no your field energy data!! ', e)
 
-        try:
-            opponent_energy_count = player_field_energy_data['Opponent']
-            self.__opponent_field_energy_repository.set_opponent_field_energy(opponent_energy_count)
-        except Exception as e:
-            print('no opponent field energy data!! ', e)
+        for player, field_energy_count in player_field_energy_data.items():
+            if player == 'You':
+                self.__your_field_energy_repository.set_your_field_energy(field_energy_count)
+            elif player == 'Opponent':
+                self.__opponent_field_energy_repository.set_opponent_field_energy(field_energy_count)
+            else:
+                print('apply_notify_data_of_field_energy error! : unknown player ->', player)
 
     def notify_use_draw_support_card(self, notice_dictionary):
         # 일단은 opponent 밖에 없으니 아래와 같이 처리할 수 있음
