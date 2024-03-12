@@ -1904,6 +1904,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                             self.attack_animation_object.set_your_usage_card_id(your_card_id)
 
+                            # 추후 이 부분은 노티로 받아야함
+                            opponent_deck_card_lost_list = response['player_deck_card_lost_list_map']['Opponent']
+                            lost_card_id = opponent_deck_card_lost_list[0]
+
+                            self.attack_animation_object.set_opponent_lost_card_id(lost_card_id)
+
                             self.master.after(2000, self.opponent_contract_of_doom_attack_animation)
 
                             # # TODO: 즉발이므로 대기 액션이 필요없음 (서버와의 통신을 위해 대기가 발생 할 수 있긴함) 그 때 가서 추가
@@ -5539,7 +5545,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 # 로스트 존 배치의 경우 서버로부터 응답을 받아야만 배치 할 수 있음
                 # Eventually Consistency 상황이라면 여기서 상대 어떤 것이 Lost Zone으로 들어가야 하는지 확인
-                self.opponent_lost_zone_repository.create_opponent_lost_zone_card(32)
+                lost_card_id = attack_animation_object.get_opponent_lost_card_id()
+                self.opponent_lost_zone_repository.create_opponent_lost_zone_card(lost_card_id)
                 self.selected_object = None
 
         opponent_wide_area_attack(1)
