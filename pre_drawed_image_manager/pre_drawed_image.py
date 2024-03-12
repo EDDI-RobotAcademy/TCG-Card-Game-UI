@@ -594,7 +594,7 @@ class PreDrawedImage:
         for png_file in png_files:
             turn_number = int(png_file[:-4])
             turn_number_image_path = os.path.join(self.__project_root, "local_storage", "turn_number", f"{png_file}")
-            self.__pre_drawed_turn_number[turn_number] = ImageDataLoader.load_rectangle_origin_image_data(
+            self.__pre_drawed_turn_number[turn_number] = ImageDataLoader.load_rectangle_image_data(
                 turn_number_image_path)
 
     def pre_draw_every_image(self):
