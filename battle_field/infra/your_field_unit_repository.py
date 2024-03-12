@@ -95,6 +95,7 @@ class YourFieldUnitRepository:
         return self.attached_energy_info.get_energy_info_at_index(index)
 
     def apply_harmful_status(self, unit_index, harmful_status_list):
+        print('apply harmful status to your unit!!')
         self.harmful_status_info.update_harmful_status(unit_index, harmful_status_list)
 
     def get_harmful_status_by_index(self, index):

@@ -258,12 +258,85 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             opponent_field_energy_count = self.__opponent_field_energy_repository.get_opponent_field_energy()
             print(f"{Fore.RED}opponent_field_energy_count:{Fore.GREEN} {opponent_field_energy_count}{Style.RESET_ALL}")
 
-            self.apply_notify_data_of_harmful_status(notice_dictionary['NOTIFY_TURN_END']['player_field_unit_harmful_effect_map'])
 
-            self.apply_notify_data_of_field_unit_hp(
-                notice_dictionary['NOTIFY_TURN_END']['player_field_unit_health_point_map'])
 
-            self.apply_notify_data_of_dead_unit(notice_dictionary['NOTIFY_TURN_END']['player_field_unit_death_map'])
+            for player, field_data in notice_dictionary['NOTIFY_TURN_END']['player_field_unit_harmful_effect_map'].items():
+                if player == 'You':
+                    player = 'Opponent'
+                elif player == 'Opponent':
+                    player = 'You'
+                for unit_index, harmful_status_value in field_data.get('field_unit_harmful_status_map', {}).items():
+                    harmful_status_list = harmful_status_value.get('harmful_status_list', [])
+                    if len(harmful_status_list) == 0:
+                        continue
+
+                    if player == 'Opponent':
+                        self.__opponent_field_unit_repository.apply_harmful_status(int(unit_index), harmful_status_list)
+                    elif player == 'You':
+                        self.__your_field_unit_repository.apply_harmful_status(int(unit_index), harmful_status_list)
+
+
+            for player, hp_map in notice_dictionary['NOTIFY_TURN_END']['player_field_unit_health_point_map'].items():
+                if player == 'You':
+                    player = 'Opponent'
+                elif player == 'Opponent':
+                    player = 'You'
+                for unit_index, remain_hp in hp_map['field_unit_health_point_map'].items():
+                    if remain_hp <= 0:
+                        continue
+
+                    if player == 'You':
+                        field_unit = self.__your_field_unit_repository.find_field_unit_by_index(int(unit_index))
+                        fixed_card_base = field_unit.get_fixed_card_base()
+                        fixed_card_attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                        for fixed_card_attached_shape in fixed_card_attached_shape_list:
+                            if isinstance(fixed_card_attached_shape, NonBackgroundNumberImage):
+                                if fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                    fixed_card_attached_shape.set_number(remain_hp)
+                                    fixed_card_attached_shape.set_image_data(
+                                        self.__pre_drawed_image_instance.get_pre_draw_unit_hp(remain_hp))
+
+                    elif player == 'Opponent':
+                        field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                            int(unit_index))
+                        fixed_card_base = field_unit.get_fixed_card_base()
+                        fixed_card_attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                        for fixed_card_attached_shape in fixed_card_attached_shape_list:
+                            if isinstance(fixed_card_attached_shape, NonBackgroundNumberImage):
+                                if fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                    fixed_card_attached_shape.set_number(remain_hp)
+                                    fixed_card_attached_shape.set_image_data(
+                                        self.__pre_drawed_image_instance.get_pre_draw_unit_hp(remain_hp))
+
+            for player, dead_field_unit_index_list_map in notice_dictionary['NOTIFY_TURN_END']['player_field_unit_death_map'].items():
+                if player == 'You':
+                    player = 'Opponent'
+                elif player == 'Opponent':
+                    player = 'You'
+                dead_field_unit_index_list = dead_field_unit_index_list_map.get('dead_field_unit_index_list', [])
+                if len(dead_field_unit_index_list) == 0:
+                    continue
+
+                if player == 'You':
+                    for unit_index in dead_field_unit_index_list:
+                        card_id = self.__your_field_unit_repository.get_card_id_by_index(unit_index)
+                        self.__your_tomb_repository.create_tomb_card(card_id)
+                        self.__your_field_unit_repository.remove_card_by_index(unit_index)
+                        self.__your_field_unit_repository.remove_harmful_status_by_index(unit_index)
+                    self.__your_field_unit_repository.replace_field_card_position()
+                elif player == 'Opponent':
+                    for unit_index in dead_field_unit_index_list:
+                        card_id = self.__opponent_field_unit_repository.get_opponent_card_id_by_index(unit_index)
+                        self.__opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                        self.__opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
+                        self.__opponent_field_unit_repository.remove_harmful_status_by_index(unit_index)
+
+                    self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                else:
+                    print(f'apply_notify_data_of_dead_unit error : unknown player {player}')
 
             return
 
@@ -278,13 +351,13 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         self.__your_field_energy_repository.set_your_field_energy(your_field_energy)
         print(f"{Fore.RED}notify_turn_end() -> your_field_energy:{Fore.GREEN} {your_field_energy}{Style.RESET_ALL}")
 
-        # self.apply_notify_data_of_harmful_status(
-        #     notice_dictionary['NOTIFY_TURN_END']['player_field_unit_harmful_effect_map'])
-        #
-        # self.apply_notify_data_of_field_unit_hp(
-        #     notice_dictionary['NOTIFY_TURN_END']['player_field_unit_health_point_map'])
-        #
-        # self.apply_notify_data_of_dead_unit(notice_dictionary['NOTIFY_TURN_END']['player_field_unit_death_map'])
+        self.apply_notify_data_of_harmful_status(
+            notice_dictionary['NOTIFY_TURN_END']['player_field_unit_harmful_effect_map'])
+
+        self.apply_notify_data_of_field_unit_hp(
+            notice_dictionary['NOTIFY_TURN_END']['player_field_unit_health_point_map'])
+
+        self.apply_notify_data_of_dead_unit(notice_dictionary['NOTIFY_TURN_END']['player_field_unit_death_map'])
 
     def notify_attach_general_energy_card(self, notice_dictionary):
 
