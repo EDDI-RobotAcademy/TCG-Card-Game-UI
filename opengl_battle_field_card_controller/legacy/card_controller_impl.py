@@ -10,6 +10,7 @@ from opengl_battle_field_support.legacy.support_card import LegacySupportCard
 from opengl_battle_field_support.support_card import SupportCard
 from opengl_battle_field_token.token_card import TokenCard
 from opengl_battle_field_tool.tool_card import ToolCard
+from opengl_battle_field_trap.legacy.trap_card import LegacyTrapCard
 from opengl_battle_field_trap.trap_card import TrapCard
 from opengl_battle_field_unit.legacy.unit_card import LegacyUnitCard
 
@@ -82,7 +83,7 @@ class LegacyCardControllerImpl(LegacyCardController):
 
     def trapCardInitShapes(self, local_translation, card_number, rectangle_height, rectangle_width):
         print("trapCardInitShapes 생성")
-        trapCard = TrapCard(local_translation)
+        trapCard = LegacyTrapCard(local_translation)
         print("카드 생성")
         trapCard.init_shapes(circle_radius, card_number, rectangle_height, rectangle_width)
         print("모양 생성")
