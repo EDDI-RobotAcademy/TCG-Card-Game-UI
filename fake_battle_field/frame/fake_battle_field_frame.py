@@ -1454,6 +1454,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if is_success is False:
                 return FieldAreaAction.Dummy
 
+            your_animation_actor = self.your_field_unit_repository.find_field_unit_by_index(recently_added_card_index)
+            self.attack_animation_object.set_animation_actor(your_animation_actor)
+
             self.master.after(0, self.nether_blade_first_passive_skill_animation)
             self.attack_animation_object.set_animation_action(AnimationAction.DUMMY)
             self.field_area_inside_handler.clear_field_area_action()
@@ -6086,38 +6089,61 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 your_damage = attack_animation_object.get_animation_actor_damage()
                 self.opponent_hp_repository.take_damage(your_damage)
-                # attack_animation_object.set_need_post_process(True)
-                #
-                # if self.attack_animation_object.get_your_field_unit_death():
-                #     your_field_death_unit_index = self.attack_animation_object.get_your_field_death_unit_index()
-                #     self.your_field_unit_repository.remove_card_by_index(your_field_death_unit_index)
-                #     self.your_field_unit_repository.replace_field_card_position()
-                # else:
-                #
-                #     your_field_hp_shape = self.attack_animation_object.get_your_field_hp_shape()
-                #     if your_field_hp_shape:
-                #         your_hp_number = your_field_hp_shape.get_number()
-                #
-                #         your_field_hp_shape.set_image_data(
-                #             self.pre_drawed_image_instance.get_pre_draw_unit_hp(
-                #                 your_hp_number))
-                #
-                # if self.attack_animation_object.get_opponent_field_unit_death():
-                #     opponent_field_unit = self.attack_animation_object.get_opponent_field_unit()
-                #     opponent_field_unit_index = opponent_field_unit.get_index()
-                #     self.opponent_field_unit_repository.remove_card_by_multiple_index([opponent_field_unit_index])
-                #     self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-                # else:
-                #     opponent_field_hp_shape = self.attack_animation_object.get_opponent_field_hp_shape()
-                #     if opponent_field_hp_shape:
-                #         opponent_hp_number = opponent_field_hp_shape.get_number()
-                #
-                #         opponent_field_hp_shape.set_image_data(
-                #             self.pre_drawed_image_instance.get_pre_draw_unit_hp(
-                #                 opponent_hp_number))
 
         move_to_origin_location(1)
 
+    def nether_blade_first_passive_skill_animation(self):
+        steps = 10
+        attack_animation_object = AttackAnimation.getInstance()
+        animation_actor = attack_animation_object.get_animation_actor()
+
+        your_fixed_card_base = animation_actor.get_fixed_card_base()
+        current_your_attacker_unit_vertices = your_fixed_card_base.get_vertices()
+        current_your_attacker_unit_local_translation = your_fixed_card_base.get_local_translation()
+
+        new_y_value = current_your_attacker_unit_local_translation[1] - 270
+        new_x_value = attack_animation_object.get_total_width() / 2 - 52.5
+        # your_attacker_unit_destination_local_translation = (current_your_attacker_unit_local_translation[0], new_y_value)
+        your_attacker_unit_destination_local_translation = (new_x_value, new_y_value)
+
+        attack_animation_object.set_your_attacker_unit_moving_x(
+            your_attacker_unit_destination_local_translation[0] - current_your_attacker_unit_local_translation[0])
+
+        step_x = (your_attacker_unit_destination_local_translation[0] - current_your_attacker_unit_local_translation[0]) / steps
+        step_y = (your_attacker_unit_destination_local_translation[1] - current_your_attacker_unit_local_translation[1]) / steps
+        step_y *= -1
+
+        def update_position(step_count):
+            print(f"{Fore.RED}step_count: {Fore.GREEN}{step_count}{Style.RESET_ALL}")
+
+            new_vertices = [
+                (vx + step_x * step_count, vy + step_y * step_count) for vx, vy in current_your_attacker_unit_vertices
+            ]
+            your_fixed_card_base.update_vertices(new_vertices)
+
+            # tool_card = self.selected_object.get_tool_card()
+            # if tool_card is not None:
+            #     new_tool_card_vertices = [
+            #         (vx + new_x, vy + new_y) for vx, vy in tool_card.vertices
+            #     ]
+            #     tool_card.update_vertices(new_tool_card_vertices)
+
+            for attached_shape in your_fixed_card_base.get_attached_shapes():
+                new_attached_shape_vertices = [
+                    (vx + step_x, vy + step_y) for vx, vy in attached_shape.vertices
+                ]
+                attached_shape.update_vertices(new_attached_shape_vertices)
+                # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+
+            if step_count < steps:
+                self.master.after(20, update_position, step_count + 1)
+            else:
+                # self.start_wide_area_motion_animation(attack_animation_object)
+                self.is_attack_motion_finished = True
+                attack_animation_object.set_is_finished(True)
+                attack_animation_object.set_need_post_process(True)
+
+        update_position(1)
 
     def apply_response_data_of_field_unit_hp(self, player_field_unit_health_point_data):
         print('apply notify data of field unit hp!! : ', player_field_unit_health_point_data)
