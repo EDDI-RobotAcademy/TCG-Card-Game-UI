@@ -38,10 +38,10 @@ class EnvironmentCard:
             (start_x, end_y),
         ]
 
-        energy_card_type_image = NonBackgroundImage(image_data=image_data,
-                                                    vertices=vertices)
-        energy_card_type_image.set_initial_vertices(vertices)
-        self.add_shape(energy_card_type_image)
+        environment_card_type_image = NonBackgroundImage(image_data=image_data,
+                                                         vertices=vertices)
+        environment_card_type_image.set_initial_vertices(vertices)
+        self.add_shape(environment_card_type_image)
 
     def create_non_background_environment_card_race(self, image_data, center, radius):
         start_x = center[0] - radius * 1.2
@@ -56,10 +56,10 @@ class EnvironmentCard:
             (start_x, end_y),
         ]
 
-        energy_card_race_image = NonBackgroundImage(image_data=image_data,
-                                                    vertices=vertices)
-        energy_card_race_image.set_initial_vertices(vertices)
-        self.add_shape(energy_card_race_image)
+        environment_card_race_image = NonBackgroundImage(image_data=image_data,
+                                                         vertices=vertices)
+        environment_card_race_image.set_initial_vertices(vertices)
+        self.add_shape(environment_card_race_image)
 
     def init_shapes(self, circle_radius, card_number, rectangle_height, rectangle_width):
         race_number = self.__card_info_from_csv_repository.getCardRaceForCardNumber(card_number)
