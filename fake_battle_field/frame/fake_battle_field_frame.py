@@ -33,6 +33,7 @@ from battle_field.entity.option import Option
 from battle_field.entity.prev_field_energy_race import PrevFieldEnergyRace
 from battle_field.entity.surrender_confirm import SurrenderConfirm
 from battle_field.entity.turn_end import TurnEnd
+from battle_field.entity.turn_number import CurrentFieldTurnNumber
 from battle_field.entity.your_active_panel import YourActivePanel
 from battle_field.entity.your_deck import YourDeck
 from battle_field.entity.your_field_energy import YourFieldEnergy
@@ -83,6 +84,7 @@ from battle_field.infra.your_tomb_repository import YourTombRepository
 
 from battle_field.state.FieldUnitActionStatus import FieldUnitActionStatus
 from battle_field.state.energy_type import EnergyType
+from battle_field_fixed_card.fixed_details_card import FixedDetailsCard
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
 from battle_field_function.service.request.turn_end_request import TurnEndRequest
@@ -286,6 +288,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.turn_end = TurnEnd()
         self.turn_end_button = None
         self.turn_end_button_selected = False
+
+        self.current_field_turn_number_panel = None
+        self.turn_number = CurrentFieldTurnNumber()
 
         self.your_field_unit_action_repository = YourFieldUnitActionRepository.getInstance()
 
@@ -498,6 +503,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.turn_end.set_total_window_size(self.width, self.height)
         self.turn_end.create_turn_end_button()
         self.turn_end_button = self.turn_end.get_turn_end_button()
+
+        self.turn_number.set_total_window_size(self.width, self.height)
+        self.turn_number.create_current_field_turn_number_panel()
+        self.current_field_turn_number_panel = (
+            self.turn_number.get_current_field_turn_number_panel()
+        )
 
         self.option.set_total_window_size(self.width, self.height)
         self.option.create_option_button()
@@ -1314,6 +1325,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.current_to_use_field_energy_count_panel.set_width_ratio(self.width_ratio)
         self.current_to_use_field_energy_count_panel.set_height_ratio(self.height_ratio)
         self.current_to_use_field_energy_count_panel.draw()
+
+        self.turn_number.set_width_ratio(self.width_ratio)
+        self.turn_number.set_height_ratio(self.height_ratio)
+        self.turn_number.update_current_field_turn_number_panel()
+        self.current_field_turn_number_panel.set_width_ratio(self.width_ratio)
+        self.current_field_turn_number_panel.set_height_ratio(self.height_ratio)
+        self.current_field_turn_number_panel.draw()
 
         self.muligun_reset_button.set_width_ratio(self.width_ratio)
         self.muligun_reset_button.set_height_ratio(self.height_ratio)
@@ -4326,6 +4344,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
             TurnEndRequest(
                 self.__session_repository.get_session_info()))
         print(f"turn_end_request_result: {turn_end_request_result}")
+
+        if turn_end_request_result.get('is_success',False) == False:
+            return
 
         self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(False)
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
