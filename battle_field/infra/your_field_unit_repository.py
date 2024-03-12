@@ -143,6 +143,8 @@ class YourFieldUnitRepository:
     def update_your_unit_extra_effect_at_index(self, unit_index, extra_effect_list):
         self.extra_effect_info.update_extra_effect_of_unit(unit_index, extra_effect_list)
 
+    def get_your_unit_extra_ability_at_index(self, unit_index):
+        return self.extra_effect_info.get_extra_effect_of_index(unit_index)
     def replace_field_card_position(self):
         # current_y = 580
         # x_increment = 170

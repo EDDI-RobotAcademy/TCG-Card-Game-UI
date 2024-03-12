@@ -2988,18 +2988,18 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
 
-                    # Todo : response방식 변경 필요
-                    # response = self.__fake_battle_field_frame_repository.request_attack_main_character(
-                    #     RequestAttackMainCharacter(
-                    #         _sessionInfo=self.__session_repository.get_first_fake_session_info(),
-                    #         _attacker_unit_index=your_field_card_index,
-                    #         _target_game_main_character_index="0")
-                    # )
-                    # print(f"{Fore.RED}attack main character -> response:{Fore.GREEN} {response}{Style.RESET_ALL}")
-                    # is_success_value = response.get('is_success', False)
-                    #
-                    # if is_success_value == False:
-                    #     return
+                    #Todo : response방식 변경 필요
+                    response = self.__fake_battle_field_frame_repository.request_attack_main_character(
+                        RequestAttackMainCharacter(
+                            _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                            _attacker_unit_index=your_field_card_index,
+                            _target_game_main_character_index="0")
+                    )
+                    print(f"{Fore.RED}attack main character -> response:{Fore.GREEN} {response}{Style.RESET_ALL}")
+                    is_success_value = response.get('is_success', False)
+
+                    if is_success_value == False:
+                        return
 
                     self.your_field_unit_action_repository.use_field_unit_action_count_by_index(your_field_card_index)
 
@@ -3066,8 +3066,120 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         if attack_opponent_unit_response.get('is_success', False) == False:
                             print("attack unit failed!! ")
 
+                        self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
+                        opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+                        are_opponent_field_unit_death = False
+                        opponent_field_card_index = None
+                        opponent_field_card_id = None
 
-                        self.apply_basic_attack_result_to_ui_with_response(attack_opponent_unit_response)
+                        for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                            if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
+                                if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                    print("지정한 상대방 유닛 HP Circle 찾기")
+
+                                    # self.targeting_enemy_select_using_your_field_card_index = your_field_unit_index
+                                    # self.targeting_enemy_select_using_your_field_card_id
+                                    # your_field_card_id = self.targeting_ememy_select_using_hand_card_id
+                                    # print(f"your_field_card_id: {your_field_card_id}")
+                                    # your_field_card_index = self.targeting_ememy_select_using_hand_card_index
+                                    # print(f"your_field_card_index: {your_field_card_index}")
+                                    your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
+                                    print(f"your_field_card_id: {your_field_card_id}")
+
+                                    your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
+                                    print(f"your_field_card_index: {your_field_card_index}")
+
+                                    your_damage = self.card_info_repository.getCardAttackForCardNumber(
+                                        your_field_card_id)
+                                    print(f"your_damage: {your_damage}")
+
+                                    your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(
+                                        your_field_card_index)
+
+                                    your_fixed_card_base = your_field_unit.get_fixed_card_base()
+                                    your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+
+                                    opponent_field_card_id = opponent_field_unit_object.get_card_number()
+                                    opponent_field_card_index = opponent_field_unit_object.get_index()
+                                    opponent_damage = self.card_info_repository.getCardAttackForCardNumber(
+                                        opponent_field_card_id)
+                                    print(f"opponent_damage: {opponent_damage}")
+
+                                    are_your_field_unit_death = False
+                                    your_extra_ability = self.your_field_unit_repository.get_your_unit_extra_ability_at_index(your_field_card_index)
+                                    opponent_harmful_status = self.opponent_field_unit_repository.get_harmful_status_by_index(opponent_field_card_index)
+
+                                    for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+                                        if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                                            if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                                your_hp_number = your_fixed_card_attached_shape.get_number()
+                                                your_hp_number -= opponent_damage
+                                                print(f"your 유닛 hp number: {your_hp_number}")
+
+                                                if your_hp_number <= 0:
+                                                    are_your_field_unit_death = True
+                                                    break
+
+                                                print(f"공격 후 your unit 체력 -> hp_number: {your_hp_number}")
+                                                your_fixed_card_attached_shape.set_number(your_hp_number)
+
+                                                # your_fixed_card_attached_shape.set_image_data(
+                                                #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+                                                #     self.pre_drawed_image_instance.get_pre_draw_number_image(
+                                                #         your_hp_number))
+
+                                                your_fixed_card_attached_shape.set_image_data(
+                                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(
+                                                        your_hp_number))
+
+                                    if are_your_field_unit_death is True:
+                                        self.your_field_unit_repository.remove_card_by_index(
+                                            your_field_card_index)
+                                        self.your_tomb_repository.create_tomb_card(
+                                            your_field_card_id)
+                                        self.your_field_unit_repository.replace_field_card_position()
+
+                                    print("your 유닛 hp 갱신")
+
+
+
+                                    opponent_hp_number = opponent_fixed_card_attached_shape.get_number()
+                                    opponent_hp_number -= your_damage
+
+                                    print(f"opponent_hp_number: {opponent_hp_number}")
+
+                                    # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
+                                    # (지금 당장 불사가 존재하지 않음)
+                                    if opponent_hp_number <= 0:
+                                        are_opponent_field_unit_death = True
+                                        break
+
+                                    print(f"공격 후 opponent unit 체력 -> hp_number: {opponent_hp_number}")
+                                    opponent_fixed_card_attached_shape.set_number(opponent_hp_number)
+
+                                    # opponent_fixed_card_attached_shape.set_image_data(
+                                    #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+                                    #     self.pre_drawed_image_instance.get_pre_draw_number_image(opponent_hp_number))
+
+                                    opponent_fixed_card_attached_shape.set_image_data(
+                                        self.pre_drawed_image_instance.get_pre_draw_unit_hp(opponent_hp_number))
+
+                                    if your_extra_ability:
+                                        self.opponent_field_unit_repository.apply_harmful_status(
+                                            opponent_field_card_index, your_extra_ability)
+
+                        print(f"opponent_field_card_index: {opponent_field_card_index}")
+
+                        if are_opponent_field_unit_death is True:
+                            self.opponent_field_unit_repository.remove_card_by_multiple_index(
+                                [opponent_field_card_index])
+                            self.opponent_tomb_repository.create_opponent_tomb_card(
+                                opponent_field_card_id)
+
+                            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+
+                        #self.apply_basic_attack_result_to_ui_with_response(attack_opponent_unit_response)
 
                         # is_opponent_data_in_response = False
                         # is_your_data_in_response = False
