@@ -186,6 +186,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
                 self.__switchFrameWithMenuName('fake-battle-field')
             else:
                 self.message_visible = True
+                #TODO: 시간 초가 종료 되었을 때 상대가 선택하지 않으면 배틀 필드 화면으로 넘어감.
 
         if self.ok_button_visible is True:
             self.ok_button.draw()
@@ -449,7 +450,14 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         else:
             #self.master.after(self.__switchFrameWithMenuName('decision-first'))
             #self.master.after(self.__switchFrameWithMenuName('rock-paper-scissors'))
-            self.master.after(self.__switchFrameWithMenuName('fake-battle-field'))
+            default_list = []
+            responseData = self.your_hand_repository.requestMuligun(
+                MuligunRequest(self.sessionRepository.get_session_info(),
+                               default_list))
+
+            print("muligun responseData:", responseData)
+            self.your_hand_repository.set_is_my_mulligan(False)
+            # self.master.after(self.__switchFrameWithMenuName('fake-battle-field'))
 
 
     # 멀리건 화면에서 교체하려는 카드 클릭시 나타나는 표현
@@ -565,4 +573,21 @@ class BattleFieldMuligunFrame(OpenGLFrame):
     def muligunTimeOut(self):
         print("muligunTimeOut")
         self.timer.stop_timer()
-        self.master.after(self.__switchFrameWithMenuName('fake-battle-field'))
+        # 내가 멀리건을 선택하지 않았을 경우
+        if not self.your_hand_repository.get_is_my_mulligan():
+            default_list = []
+            responseData = self.your_hand_repository.requestMuligun(
+                MuligunRequest(self.sessionRepository.get_session_info(),
+                               default_list))
+
+            print(f"{Fore.RED}Mulligan ResponseData:{Fore.GREEN} {responseData}{Style.RESET_ALL}")
+            self.is_doing_mulligan = False
+            self.__switchFrameWithMenuName('fake-battle-field')
+
+        # 나는 멀리건을 선택하고 상대가 선택하지 않았을 경우
+        else:
+            if not self.your_hand_repository.get_is_opponent_mulligan():
+                self.message_visible = False
+                self.is_doing_mulligan = False
+                self.__switchFrameWithMenuName('fake-battle-field')
+        # self.master.after(self.__switchFrameWithMenuName('fake-battle-field'))
