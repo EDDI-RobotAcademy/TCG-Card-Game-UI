@@ -67,3 +67,7 @@ class FakeBattleFieldFrameRepositoryImpl(FakeBattleFieldFrameRepository):
     def request_use_contract_of_doom(self, requestContractOfDoom):
         self.__transmitIpcChannel.put(requestContractOfDoom)
         return self.__receiveIpcChannel.get()
+
+    def request_to_process_first_passive_skill(self, wideAreaPassiveSkillFromDeployRequest):
+        self.__transmitIpcChannel.put(wideAreaPassiveSkillFromDeployRequest)
+        return self.__receiveIpcChannel.get()

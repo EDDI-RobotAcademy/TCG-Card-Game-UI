@@ -67,6 +67,7 @@ from battle_field.infra.request.request_attack_with_non_targeting_active_skill i
 from battle_field.infra.request.request_use_corpse_explosion import RequestUseCorpseExplosion
 from battle_field.infra.request.request_use_energy_burn_to_unit import RequestUseEnergyBurnToUnit
 from battle_field.infra.request.request_use_energy_card_to_unit import RequestUseEnergyCardToUnit
+from battle_field.infra.request.wide_area_passive_skill_from_deploy_request import WideAreaPassiveSkillFromDeployRequest
 
 from battle_field.infra.round_repository import RoundRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
@@ -1434,13 +1435,26 @@ class FakeBattleFieldFrame(OpenGLFrame):
             print(f"{Fore.RED}패시브 처리가 필요합니다!{Style.RESET_ALL}")
 
             # {"protocolNumber":2002, "unitCardIndex": "0", "usageSkillIndex": "1", "sessionInfo":""}
-            session = self.__session_repository.get_session_info()
+            # session = self.__session_repository.get_session_info()
             recently_added_card_index = self.field_area_inside_handler.get_recently_added_card_index()
-            self.__fake_battle_field_frame_repository.request_to_process_first_passive_skill(
-                WideAreaPassiveSkillFromDeployRequest(session, placed_card_id))
+            process_first_passive_skill_response = self.__fake_battle_field_frame_repository.request_to_process_first_passive_skill(
+                WideAreaPassiveSkillFromDeployRequest(
+                    _sessionInfo=self.__session_repository.get_session_info(),
+                    _unitCardIndex=str(recently_added_card_index),
+                    _usageSkillIndex="1"))
 
-            self.master.after(2000, self.your_contract_of_doom_attack_animation)
+            # {"is_success":true,
+            # "player_field_unit_health_point_map":{"Opponent":{"field_unit_health_point_map":{"1":10,"0":10}}},
+            # "player_field_unit_harmful_effect_map":{"Opponent":{"field_unit_harmful_status_map":{"0":{"harmful_status_list":[]},"1":{"harmful_status_list":[]}}}},"player_field_unit_death_map":{"Opponent":{"dead_field_unit_index_list":[]}}}
+            print(f"{Fore.RED}process_first_passive_skill_response:{Fore.GREEN} {process_first_passive_skill_response}{Style.RESET_ALL}")
+
+            is_success = process_first_passive_skill_response['is_success']
+            if is_success is False:
+                return FieldAreaAction.Dummy
+
+            self.master.after(0, self.nether_blade_first_passive_skill_animation)
             self.attack_animation_object.set_animation_action(AnimationAction.DUMMY)
+            self.field_area_inside_handler.clear_field_area_action()
 
         for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
             if field_unit is None:
