@@ -10,9 +10,21 @@ class AttackAnimation:
     your_weapon_shape = None
     your_field_unit = None
 
+    your_usage_card_id = None
+
+    your_field_unit_hp_shape_list = []
+    your_field_unit_remaining_hp_list = []
+    your_dead_field_unit_index_list = []
+    your_main_character_health_point = None
+    your_lost_card_id_list = []
+    your_field_unit_index_list = []
+    your_field_unit_health_point_map = {}
+
     opponent_fixed_card_attached_shape = None
     opponent_field_card_index = None
     opponent_field_unit = None
+
+    opponent_lost_card_id = None
 
     is_opponent_field_unit_death = False
     is_your_field_unit_death = False
@@ -25,6 +37,7 @@ class AttackAnimation:
     your_attacker_unit_moving_x = 0
     animation_actor_damage = 0
 
+    animation_action = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -47,6 +60,84 @@ class AttackAnimation:
         self.height_ratio = 1
 
         self.selected_object = None
+
+    def add_your_field_unit_hp_shape_list(self, your_field_unit_hp_shape):
+        self.your_field_unit_hp_shape_list.append(your_field_unit_hp_shape)
+
+    def get_your_field_unit_hp_shape_list(self):
+        return self.your_field_unit_hp_shape_list
+
+    def clear_your_field_unit_hp_shape_list(self):
+        self.your_field_unit_hp_shape_list = []
+
+    def add_your_dead_field_unit_index_list(self, your_dead_field_unit_index):
+        self.your_dead_field_unit_index_list.append(your_dead_field_unit_index)
+
+    def get_your_dead_field_unit_index_list(self):
+        return self.your_dead_field_unit_index_list
+
+    def clear_your_dead_field_unit_index_list(self):
+        self.your_dead_field_unit_index_list = []
+
+    def set_your_main_character_health_point(self, your_main_character_health_point):
+        self.your_main_character_health_point = your_main_character_health_point
+
+    def get_your_main_character_health_point(self):
+        return self.your_main_character_health_point
+
+    def add_your_lost_card_id_list(self, your_lost_card_id_list):
+        self.your_lost_card_id_list.append(your_lost_card_id_list)
+
+    def get_your_lost_card_id_list(self):
+        return self.your_lost_card_id_list
+
+    def clear_your_lost_card_id_list(self):
+        self.your_lost_card_id_list = []
+
+    def set_animation_action(self, animation_action):
+        self.animation_action = animation_action
+
+    def get_animation_action(self):
+        return self.animation_action
+
+    def add_your_field_unit_index_list(self, your_field_unit_index_list):
+        self.your_field_unit_index_list.append(your_field_unit_index_list)
+
+    def get_your_field_unit_index_list(self):
+        return self.your_field_unit_index_list
+
+    def clear_your_field_unit_index_list(self):
+        self.your_field_unit_index_list = []
+
+    def add_your_field_unit_remaining_hp_list(self, your_field_unit_remaining_hp_list):
+        self.your_field_unit_remaining_hp_list.append(your_field_unit_remaining_hp_list)
+
+    def get_your_field_unit_remaining_hp_list(self):
+        return self.your_field_unit_remaining_hp_list
+
+    def clear_your_field_unit_remaining_hp_list(self):
+        self.your_field_unit_remaining_hp_list = []
+
+    def set_your_field_unit_health_point_map(self, your_field_unit_health_point_map):
+        self.your_field_unit_health_point_map = your_field_unit_health_point_map
+
+    def get_your_field_unit_health_point_map(self):
+        return self.your_field_unit_health_point_map
+
+    def clear_your_field_unit_health_point_map(self):
+        self.your_field_unit_health_point_map = {}
+
+    def set_your_usage_card_id(self, your_usage_card_id):
+        self.your_usage_card_id = your_usage_card_id
+
+    def get_your_usage_card_id(self):
+        return self.your_usage_card_id
+
+    def set_opponent_lost_card_id(self, opponent_lost_card_id):
+        self.opponent_lost_card_id = opponent_lost_card_id
+
+    def get_opponent_lost_card_id(self):
+        return self.opponent_lost_card_id
 
     def set_total_window_size(self, width, height):
         self.total_width = width
