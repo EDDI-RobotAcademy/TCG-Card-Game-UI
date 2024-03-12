@@ -15,4 +15,7 @@ class ExtraEffectInfo:
         print(f"updated_extra_effect_info: {self.extra_effect_info}")
 
     def get_extra_effect_of_index(self, unit_index):
-        return self.extra_effect_info[unit_index]
+        if unit_index not in self.extra_effect_info.keys():
+            return None
+        else:
+            return self.extra_effect_info[unit_index]
