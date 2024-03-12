@@ -1,6 +1,7 @@
 from common.card_type import CardType
 from opengl_battle_field_card_controller.legacy.card_controller import LegacyCardController
 from opengl_battle_field_energy.energy_card import EnergyCard
+from opengl_battle_field_energy.legacy.energy_card import LegacyEnergyCard
 from opengl_battle_field_environment.environment_card import EnvironmentCard
 from opengl_battle_field_item.item_card import ItemCard
 from opengl_battle_field_support.support_card import SupportCard
@@ -102,7 +103,7 @@ class LegacyCardControllerImpl(LegacyCardController):
 
     def energyCardInitShapes(self, local_translation, card_number, rectangle_height, rectangle_width):
         print("energyCardInitShapes 생성")
-        energyCard = EnergyCard(local_translation)
+        energyCard = LegacyEnergyCard(local_translation)
         print("카드 생성")
         energyCard.init_shapes(circle_radius, card_number, rectangle_height, rectangle_width)
         print("모양 생성")
