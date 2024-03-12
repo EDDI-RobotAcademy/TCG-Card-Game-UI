@@ -998,6 +998,15 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             print('no opponent field energy data!! ', e)
 
     def notify_use_draw_support_card(self, notice_dictionary):
+
+        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+
+        print(f"{Fore.RED}notify_use_draw_support_card() -> "
+              f"whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
+
+        if whose_turn is True:
+            return
+
         # 일단은 opponent 밖에 없으니 아래와 같이 처리할 수 있음
         data = notice_dictionary['NOTIFY_USE_DRAW_SUPPORT_CARD']
 
@@ -1114,6 +1123,14 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         self.__attack_animation_object.set_animation_action(AnimationAction.CONTRACT_OF_DOOM)
 
     def notify_use_unit_energy_boost_support(self, notice_dictionary):
+        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+
+        print(f"{Fore.RED}notify_use_unit_energy_boost_support() -> "
+              f"whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
+
+        if whose_turn is True:
+            return
+
         # 수신된 정보를 대입
         data = notice_dictionary['NOTIFY_USE_UNIT_ENERGY_BOOST_SUPPORT_CARD']
         for key in data['player_hand_use_map']:
@@ -1202,6 +1219,14 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                                                 total_energy_count))
 
     def notify_turn_start_targeting_attack_passive_skill_to_unit(self, notice_dictionary):
+        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+
+        print(f"{Fore.RED}notify_turn_start_targeting_attack_passive_skill_to_unit() -> "
+              f"whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
+
+        if whose_turn is True:
+            return
+
         data = notice_dictionary['NOTIFY_TURN_START_TARGETING_ATTACK_PASSIVE_SKILL_TO_UNIT']
 
         your_field_unit_health_point_map = (
@@ -1240,6 +1265,14 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         self.__your_field_unit_repository.replace_field_card_position()
 
     def notify_deploy_targeting_attack_passive_skill_to_unit(self, notice_dictionary):
+        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+
+        print(f"{Fore.RED}notify_deploy_targeting_attack_passive_skill_to_unit() -> "
+              f"whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
+
+        if whose_turn is True:
+            return
+
         data = notice_dictionary['NOTIFY_DEPLOY_TARGETING_ATTACK_PASSIVE_SKILL_TO_UNIT']
 
         your_field_unit_health_point_map = (
@@ -1278,6 +1311,14 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         self.__your_field_unit_repository.replace_field_card_position()
 
     def notify_turn_start_non_targeting_attack_passive_skill(self, notice_dictionary):
+        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+
+        print(f"{Fore.RED}notify_turn_start_non_targeting_attack_passive_skill() -> "
+              f"whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
+
+        if whose_turn is True:
+            return
+
         data = notice_dictionary['NOTIFY_TURN_START_NON_TARGETING_ATTACK_PASSIVE_SKILL']
 
         your_field_unit_health_point_map = (
@@ -1316,6 +1357,14 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         self.__your_field_unit_repository.replace_field_card_position()
 
     def notify_deploy_non_targeting_attack_passive_skill(self, notice_dictionary):
+        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+
+        print(f"{Fore.RED}notify_deploy_non_targeting_attack_passive_skill() -> "
+              f"whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
+
+        if whose_turn is True:
+            return
+
         data = notice_dictionary['NOTIFY_DEPLOY_NON_TARGETING_ATTACK_PASSIVE_SKILL']
 
         your_field_unit_health_point_map = (
@@ -1354,6 +1403,14 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         self.__your_field_unit_repository.replace_field_card_position()
 
     def notify_turn_start_targeting_attack_to_game_main_character(self, notice_dictionary):
+        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+
+        print(f"{Fore.RED}notify_turn_start_targeting_attack_to_game_main_character() -> "
+              f"whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
+
+        if whose_turn is True:
+            return
+
         data = notice_dictionary['NOTIFY_TURN_START_TARGETING_ATTACK_TO_GAME_MAIN_CHARACTER']
 
         your_main_character_health_point = (
@@ -1370,6 +1427,14 @@ class NotifyReaderServiceImpl(NotifyReaderService):
               f"{self.__your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
 
     def notify_deploy_targeting_attack_to_game_main_character(self, notice_dictionary):
+        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+
+        print(f"{Fore.RED}notify_deploy_targeting_attack_to_game_main_character() -> "
+              f"whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
+
+        if whose_turn is True:
+            return
+
         data = notice_dictionary['NOTIFY_DEPLOY_TARGETING_ATTACK_TO_GAME_MAIN_CHARACTER']
 
         your_main_character_health_point = (
