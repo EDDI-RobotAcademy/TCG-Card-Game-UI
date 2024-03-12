@@ -79,6 +79,7 @@ class PreDrawedImage:
     __pre_drawed_sea_of_spector_button = None #스킬2 버튼(망령의 바다)
 
     __pre_drawed_animation = {}
+    __pre_drawed_effect_animation = {}
 
     __pre_drawed_number_of_energy = {}
 
@@ -409,6 +410,18 @@ class PreDrawedImage:
             print(f"image data = {field_energy_image_data}")
             self.__pre_drawed_field_energy[number] = ImageDataLoader.load_rectangle_image_data(field_energy_image_data)
 
+    def pre_draw_effect_animation(self):
+        burst_shadow_ball_animation = {}
+        moving_shadow_ball_animation = {}
+        dark_blast_animation = {}
+        magic_attack_animation = {}
+        sword_attack_animation = {}
+        death_scythe_animation = {}
+
+        burst_shadow_ball_image_dir = os.path.join(self.__project_root, "local_storage", "animation", 'burst_shadow_ball')
+        
+
+
     def pre_draw_animation(self):
         image_dir = os.path.join(self.__project_root, "local_storage", "animation")
         # image_dir = os.path.join(self.__project_root, "local_storage", "animation_for_test")
@@ -668,6 +681,7 @@ class PreDrawedImage:
         self.pre_draw_sea_of_spector_button()
 
         self.pre_draw_animation()
+        self.pre_draw_effect_animation()
 
         self.pre_draw_number_of_energy()
 
@@ -883,3 +897,6 @@ class PreDrawedImage:
 
     def get_pre_draw_card_type_mark(self, type_number):
         return self.__pre_drawed_card_type_mark[type_number]
+
+    def get_pre_draw_effect_animation(self, effect_name, index):
+        return self.__pre_drawed_effect_animation[effect_name][index]
