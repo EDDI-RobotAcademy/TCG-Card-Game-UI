@@ -155,3 +155,8 @@ class AttackAnimation:
     def get_animation_actor_damage(self):
         return self.animation_actor_damage
 
+    def set_extra_ability(self, extra_ability):
+        self.extra_ability = extra_ability
+    def get_extra_ability(self):
+        return self.extra_ability
+
