@@ -1888,72 +1888,86 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             print("파멸의 계약 사용")
                             self.__required_energy = 0
 
-                            damage = 15
+                            # damage = 15
+
+                            response = self.__fake_battle_field_frame_repository.request_use_contract_of_doom(
+                                RequestUseContractOfDoom(
+                                    _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                                    _itemCardId="25"
+                                )
+                            )
+                            print(f"{Fore.RED}파멸의 계약 -> response:{Fore.GREEN} {response}{Style.RESET_ALL}")
+                            is_success_value = response.get('is_success', False)
+
+                            if is_success_value == False:
+                                return
+
+                            self.attack_animation_object.set_your_usage_card_id(your_card_id)
 
                             self.master.after(2000, self.opponent_contract_of_doom_attack_animation)
 
-                            # TODO: 즉발이므로 대기 액션이 필요없음 (서버와의 통신을 위해 대기가 발생 할 수 있긴함) 그 때 가서 추가
-                            for index in range(
-                                    len(self.opponent_field_unit_repository.get_current_field_unit_card_object_list()) - 1,
-                                    -1,
-                                    -1):
-                                opponent_field_unit = \
-                                    self.opponent_field_unit_repository.get_current_field_unit_card_object_list()[index]
+                            # # TODO: 즉발이므로 대기 액션이 필요없음 (서버와의 통신을 위해 대기가 발생 할 수 있긴함) 그 때 가서 추가
+                            # for index in range(
+                            #         len(self.opponent_field_unit_repository.get_current_field_unit_card_object_list()) - 1,
+                            #         -1,
+                            #         -1):
+                            #     opponent_field_unit = \
+                            #         self.opponent_field_unit_repository.get_current_field_unit_card_object_list()[index]
+                            #
+                            #     if opponent_field_unit is None:
+                            #         continue
+                            #
+                            #     remove_from_field = False
+                            #
+                            #     fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                            #     attached_shape_list = fixed_card_base.get_attached_shapes()
+                            #
+                            #     # TODO: 가만 보면 이 부분이 은근히 많이 사용되고 있음 (중복 많이 발생함)
+                            #     for attached_shape in attached_shape_list:
+                            #         if isinstance(attached_shape, NonBackgroundNumberImage):
+                            #             if attached_shape.get_circle_kinds() is CircleKinds.HP:
+                            #
+                            #                 hp_number = attached_shape.get_number()
+                            #                 hp_number -= damage
+                            #
+                            #                 # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
+                            #                 # (지금 당장 불사가 존재하지 않음)
+                            #                 if hp_number <= 0:
+                            #                     remove_from_field = True
+                            #                     break
+                            #
+                            #                 print(f"contract_of_doom -> hp_number: {hp_number}")
+                            #                 attached_shape.set_number(hp_number)
+                            #
+                            #                 # attached_shape.set_image_data(
+                            #                 #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+                            #                 #     self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
+                            #
+                            #                 attached_shape.set_image_data(
+                            #                     self.pre_drawed_image_instance.get_pre_draw_unit_hp(hp_number))
+                            #
+                            #     if remove_from_field:
+                            #         card_id = opponent_field_unit.get_card_number()
+                            #
+                            #         self.opponent_field_unit_repository.remove_current_field_unit_card(index)
+                            #         self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                            #
+                            # # your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
+                            # # self.your_hand_repository.remove_card_by_index(your_card_index)
+                            # your_card_index = self.your_hand_repository.find_index_by_selected_object_with_page(
+                            #     self.selected_object)
+                            # self.your_hand_repository.remove_card_by_index_with_page(your_card_index)
+                            #
+                            # self.your_tomb_repository.create_tomb_card(your_card_id)
+                            #
+                            # # self.your_hand_repository.replace_hand_card_position()
+                            # self.your_hand_repository.update_your_hand()
+                            # self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                            #
+                            # # 실제 날리는 데이터의 경우 서버로부터 응답 받은 정보를 로스트 존으로 배치
+                            # self.opponent_lost_zone_repository.create_opponent_lost_zone_card(32)
 
-                                if opponent_field_unit is None:
-                                    continue
-
-                                remove_from_field = False
-
-                                fixed_card_base = opponent_field_unit.get_fixed_card_base()
-                                attached_shape_list = fixed_card_base.get_attached_shapes()
-
-                                # TODO: 가만 보면 이 부분이 은근히 많이 사용되고 있음 (중복 많이 발생함)
-                                for attached_shape in attached_shape_list:
-                                    if isinstance(attached_shape, NonBackgroundNumberImage):
-                                        if attached_shape.get_circle_kinds() is CircleKinds.HP:
-
-                                            hp_number = attached_shape.get_number()
-                                            hp_number -= damage
-
-                                            # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
-                                            # (지금 당장 불사가 존재하지 않음)
-                                            if hp_number <= 0:
-                                                remove_from_field = True
-                                                break
-
-                                            print(f"contract_of_doom -> hp_number: {hp_number}")
-                                            attached_shape.set_number(hp_number)
-
-                                            # attached_shape.set_image_data(
-                                            #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
-                                            #     self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
-
-                                            attached_shape.set_image_data(
-                                                self.pre_drawed_image_instance.get_pre_draw_unit_hp(hp_number))
-
-                                if remove_from_field:
-                                    card_id = opponent_field_unit.get_card_number()
-
-                                    self.opponent_field_unit_repository.remove_current_field_unit_card(index)
-                                    self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
-
-                            # your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
-                            # self.your_hand_repository.remove_card_by_index(your_card_index)
-                            your_card_index = self.your_hand_repository.find_index_by_selected_object_with_page(
-                                self.selected_object)
-                            self.your_hand_repository.remove_card_by_index_with_page(your_card_index)
-
-                            self.your_tomb_repository.create_tomb_card(your_card_id)
-
-                            # self.your_hand_repository.replace_hand_card_position()
-                            self.your_hand_repository.update_your_hand()
-                            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-
-                            # 실제 날리는 데이터의 경우 서버로부터 응답 받은 정보를 로스트 존으로 배치
-                            self.opponent_lost_zone_repository.create_opponent_lost_zone_card(32)
-
-                            self.selected_object = None
+                            # self.selected_object = None
                             return
 
                     # if your_card_id == 9:
@@ -5416,22 +5430,22 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         attack_animation_object = AttackAnimation.getInstance()
 
-        your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
-        your_field_unit_list_length = len(
-            self.your_field_unit_repository.get_current_field_unit_list())
+        opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+        opponent_field_unit_list_length = len(
+            self.opponent_field_unit_repository.get_current_field_unit_card_object_list())
 
         def opponent_wide_area_attack(step_count):
             for index in range(
-                    your_field_unit_list_length - 1,
+                    opponent_field_unit_list_length - 1,
                     -1,
                     -1):
-                your_field_unit = your_field_unit_list[index]
+                opponent_field_unit = opponent_field_unit_list[index]
 
-                if your_field_unit is None:
+                if opponent_field_unit is None:
                     continue
 
-                fixed_card_base = your_field_unit.get_fixed_card_base()
-                tool_card = your_field_unit.get_tool_card()
+                fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                tool_card = opponent_field_unit.get_tool_card()
                 attached_shape_list = fixed_card_base.get_attached_shapes()
 
                 if step_count % 2 == 1:
@@ -5472,63 +5486,122 @@ class FakeBattleFieldFrame(OpenGLFrame):
             else:
                 contract_of_doom_damage = 15
 
-                # 체력 정보 Update
-                # for your_field_unit_index in attack_animation_object.get_your_field_unit_index_list():
-                your_field_unit_health_point_map = attack_animation_object.get_your_field_unit_health_point_map()
-                for unit_index, remaining_health_point in your_field_unit_health_point_map.items():
-                    your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(int(unit_index))
-                    your_fixed_card_base = your_field_unit.get_fixed_card_base()
-                    your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+                for index in range(
+                        len(self.opponent_field_unit_repository.get_current_field_unit_card_object_list()) - 1,
+                        -1,
+                        -1):
+                    opponent_field_unit = \
+                        self.opponent_field_unit_repository.get_current_field_unit_card_object_list()[index]
 
-                    if remaining_health_point <= 0:
+                    if opponent_field_unit is None:
                         continue
 
-                    for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
-                        if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
-                            if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
-                                # your_fixed_card_attached_shape.set_number(int(remaining_health_point))
-                                remaining_hp_number = your_fixed_card_attached_shape.get_number()
-                                print(
-                                    f"{Fore.RED}remaining_hp_number: {Fore.GREEN}{remaining_hp_number}{Style.RESET_ALL}")
+                    remove_from_field = False
 
-                                your_fixed_card_attached_shape.set_image_data(
-                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(
-                                        remaining_hp_number))
+                    fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                    attached_shape_list = fixed_card_base.get_attached_shapes()
 
-                # 죽은 유닛들 묘지에 배치 및 Replacing
-                for dead_unit_index in attack_animation_object.get_your_dead_field_unit_index_list():
-                    # self.__attack_animation_object.add_your_dead_field_unit_index_list(int(dead_unit_index))
-                    field_unit_id = self.your_field_unit_repository.get_card_id_by_index(dead_unit_index)
-                    self.your_tomb_repository.create_tomb_card(field_unit_id)
-                    self.your_field_unit_repository.remove_card_by_index(dead_unit_index)
+                    for attached_shape in attached_shape_list:
+                        if isinstance(attached_shape, NonBackgroundNumberImage):
+                            if attached_shape.get_circle_kinds() is CircleKinds.HP:
 
-                self.your_field_unit_repository.replace_field_card_position()
+                                hp_number = attached_shape.get_number()
+                                hp_number -= contract_of_doom_damage
 
-                # 메인 캐릭터 상태 확인 및 체력 Update
-                # if your_main_character_survival_state != 'Survival':
-                #     print("Player who get notice is dead.")
-                #     # TODO: 배틀 정리 요청을 띄우는 화면으로 넘어가야 함
+                                # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
+                                if hp_number <= 0:
+                                    remove_from_field = True
+                                    break
 
-                your_main_character_health_point = self.attack_animation_object.get_your_main_character_health_point()
+                                print(f"contract_of_doom -> hp_number: {hp_number}")
+                                attached_shape.set_number(hp_number)
 
-                # self.__your_hp_repository.change_hp(your_main_character_health_point)
-                # print(f"{Fore.RED}current_main_character_health:{Fore.GREEN} "
-                #       f"{self.__your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
+                                attached_shape.set_image_data(
+                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(hp_number))
 
-                # 덱 위에서 카드 한 장 뽑아서 로스트 존 보내기
-                for lost_card_id in attack_animation_object.get_your_lost_card_id_list():
-                    # attack_animation_object.add_your_lost_card_id_list(lost_card_id)
-                    self.your_deck_repository.draw_deck()
-                    print(f"{Fore.RED}current_deck: {Fore.GREEN}"
-                          f"{self.your_deck_repository.get_current_deck_state()}{Style.RESET_ALL}")
-                    self.your_lost_zone_repository.create_your_lost_zone_card(lost_card_id)
-                    print(f"{Fore.RED}current_lost_zone: {Fore.GREEN}"
-                          f"{self.your_lost_zone_repository.get_your_lost_zone_state()}{Style.RESET_ALL}")
+                    if remove_from_field:
+                        card_id = opponent_field_unit.get_card_number()
 
-                self.is_attack_motion_finished = True
-                # attack_animation_object.set_is_finished(True)
-                # attack_animation_object.set_need_post_process(True)
+                        self.opponent_field_unit_repository.remove_current_field_unit_card(index)
+                        self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+
+                # your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
+                # self.your_hand_repository.remove_card_by_index(your_card_index)
+                your_card_index = self.your_hand_repository.find_index_by_selected_object_with_page(
+                    self.selected_object)
+                self.your_hand_repository.remove_card_by_index_with_page(your_card_index)
+                your_card_id = attack_animation_object.get_your_usage_card_id()
+                self.your_tomb_repository.create_tomb_card(your_card_id)
+
+                # self.your_hand_repository.replace_hand_card_position()
+                self.your_hand_repository.update_your_hand()
+                self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                # 로스트 존 배치의 경우 서버로부터 응답을 받아야만 배치 할 수 있음
+                # Eventually Consistency 상황이라면 여기서 상대 어떤 것이 Lost Zone으로 들어가야 하는지 확인
+                self.opponent_lost_zone_repository.create_opponent_lost_zone_card(32)
+                self.selected_object = None
 
         opponent_wide_area_attack(1)
 
 
+
+#                             for index in range(
+#                                     len(self.opponent_field_unit_repository.get_current_field_unit_card_object_list()) - 1,
+#                                     -1,
+#                                     -1):
+#                                 opponent_field_unit = \
+#                                     self.opponent_field_unit_repository.get_current_field_unit_card_object_list()[index]
+#
+#                                 if opponent_field_unit is None:
+#                                     continue
+#
+#                                 remove_from_field = False
+#
+#                                 fixed_card_base = opponent_field_unit.get_fixed_card_base()
+#                                 attached_shape_list = fixed_card_base.get_attached_shapes()
+#
+#                                 # TODO: 가만 보면 이 부분이 은근히 많이 사용되고 있음 (중복 많이 발생함)
+#                                 for attached_shape in attached_shape_list:
+#                                     if isinstance(attached_shape, NonBackgroundNumberImage):
+#                                         if attached_shape.get_circle_kinds() is CircleKinds.HP:
+#
+#                                             hp_number = attached_shape.get_number()
+#                                             hp_number -= damage
+#
+#                                             # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
+#                                             # (지금 당장 불사가 존재하지 않음)
+#                                             if hp_number <= 0:
+#                                                 remove_from_field = True
+#                                                 break
+#
+#                                             print(f"contract_of_doom -> hp_number: {hp_number}")
+#                                             attached_shape.set_number(hp_number)
+#
+#                                             # attached_shape.set_image_data(
+#                                             #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+#                                             #     self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
+#
+#                                             attached_shape.set_image_data(
+#                                                 self.pre_drawed_image_instance.get_pre_draw_unit_hp(hp_number))
+#
+#                                 if remove_from_field:
+#                                     card_id = opponent_field_unit.get_card_number()
+#
+#                                     self.opponent_field_unit_repository.remove_current_field_unit_card(index)
+#                                     self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+#
+#                             # your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
+#                             # self.your_hand_repository.remove_card_by_index(your_card_index)
+#                             your_card_index = self.your_hand_repository.find_index_by_selected_object_with_page(
+#                                 self.selected_object)
+#                             self.your_hand_repository.remove_card_by_index_with_page(your_card_index)
+#
+#                             self.your_tomb_repository.create_tomb_card(your_card_id)
+#
+#                             # self.your_hand_repository.replace_hand_card_position()
+#                             self.your_hand_repository.update_your_hand()
+#                             self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+#
+#                             # 실제 날리는 데이터의 경우 서버로부터 응답 받은 정보를 로스트 존으로 배치
+#                             self.opponent_lost_zone_repository.create_opponent_lost_zone_card(32)

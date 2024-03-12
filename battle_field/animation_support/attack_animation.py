@@ -10,6 +10,8 @@ class AttackAnimation:
     your_weapon_shape = None
     your_field_unit = None
 
+    your_usage_card_id = None
+
     your_field_unit_hp_shape_list = []
     your_field_unit_remaining_hp_list = []
     your_dead_field_unit_index_list = []
@@ -230,4 +232,10 @@ class AttackAnimation:
 
     def clear_your_field_unit_health_point_map(self):
         self.your_field_unit_health_point_map = {}
+
+    def set_your_usage_card_id(self, your_usage_card_id):
+        self.your_usage_card_id = your_usage_card_id
+
+    def get_your_usage_card_id(self):
+        return self.your_usage_card_id
 
