@@ -39,6 +39,9 @@ class YourFieldUnitRepository:
     def get_current_field_unit_state(self):
         return self.current_field_unit_state.get_current_field_unit_list()
 
+    def get_recently_added_field_unit_index(self):
+        return len(self.current_field_unit_list) - 1
+
     def create_field_unit_card(self, card_id):
         index = len(self.current_field_unit_list)
         print(f"create_field_unit_card() -> index: {index}")

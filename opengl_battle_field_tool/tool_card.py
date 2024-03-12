@@ -3,6 +3,7 @@ import os
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.utility import get_project_root
 from image_shape.circle_image import CircleImage
+from image_shape.non_background_image import NonBackgroundImage
 from opengl_shape.circle import Circle
 from opengl_shape.image_circle_element import ImageCircleElement
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
@@ -10,6 +11,7 @@ from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 class ToolCard:
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
+    __card_info_from_csv_repository = CardInfoFromCsvRepositoryImpl.getInstance()
 
     def __init__(self, local_translation=(0, 0)):
         self.shapes = []
@@ -25,38 +27,52 @@ class ToolCard:
         shape.local_translate(self.local_translation)
         self.shapes.append(shape)
 
-    def create_tool_energy_circle(self, color, center, radius):
-        tool_energy_circle = Circle(color=color,
-                                    center=center,
-                                    radius=radius)
-        self.add_shape(tool_energy_circle)
+    def create_non_background_energy_card_type(self, image_data, center, radius):
+        start_x = center[0] - radius * 1.2
+        end_x = center[0] + radius * 1.2
+        start_y = center[1] - radius * 1.2
+        end_y = center[1] + radius * 1.2
 
-    def create_tool_race_illustration_circle(self, image_data, center, radius):
-        support_tool_circle = CircleImage(image_data=image_data,
-                                          center=center,
-                                          radius=radius)
-        self.add_shape(support_tool_circle)
+        vertices = [
+            (start_x, start_y),
+            (end_x, start_y),
+            (end_x, end_y),
+            (start_x, end_y),
+        ]
 
-    def create_tool_type_illustration_circle(self, image_data, center, radius):
-        tool_type_circle = CircleImage(image_data=image_data,
-                                       center=center,
-                                       radius=radius)
-        self.add_shape(tool_type_circle)
+        energy_card_type_image = NonBackgroundImage(image_data=image_data,
+                                                    vertices=vertices)
+        energy_card_type_image.set_initial_vertices(vertices)
+        self.add_shape(energy_card_type_image)
 
+    def create_non_background_energy_card_race(self, image_data, center, radius):
+        start_x = center[0] - radius * 1.2
+        end_x = center[0] + radius * 1.2
+        start_y = center[1] - radius * 1.2
+        end_y = center[1] + radius * 1.2
+
+        vertices = [
+            (start_x, start_y),
+            (end_x, start_y),
+            (end_x, end_y),
+            (start_x, end_y),
+        ]
+
+        energy_card_race_image = NonBackgroundImage(image_data=image_data,
+                                                    vertices=vertices)
+        energy_card_race_image.set_initial_vertices(vertices)
+        self.add_shape(energy_card_race_image)
 
     def init_shapes(self, circle_radius, card_number, rectangle_height, rectangle_width):
-        project_root = get_project_root()
+        race_number = self.__card_info_from_csv_repository.getCardRaceForCardNumber(card_number)
+        type_number = self.__card_info_from_csv_repository.getCardTypeForCardNumber(card_number)
 
-        self.create_tool_energy_circle(color=(1.0, 0.33, 0.34, 1.0),
-                                       center=(0, 0),
-                                       radius=circle_radius)
-
-        self.create_tool_race_illustration_circle(
-            image_data=self.__pre_drawed_image_instance.get_pre_draw_card_race_with_card_number(card_number),
-            center=(rectangle_width, 0),
+        self.create_non_background_energy_card_type(
+            image_data=self.__pre_drawed_image_instance.get_pre_draw_card_type_mark(type_number),
+            center=(rectangle_width, rectangle_height),
             radius=circle_radius)
 
-        self.create_tool_type_illustration_circle(
-            image_data=self.__pre_drawed_image_instance.get_pre_draw_card_type_with_card_number(card_number),
-            center=(rectangle_width, rectangle_height),
+        self.create_non_background_energy_card_race(
+            image_data=self.__pre_drawed_image_instance.get_pre_draw_unit_race(race_number),
+            center=(rectangle_width, 0),
             radius=circle_radius)

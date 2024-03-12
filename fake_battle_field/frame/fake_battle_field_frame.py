@@ -89,6 +89,7 @@ from battle_field_fixed_card.fixed_details_card import FixedDetailsCard
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
 from battle_field_function.service.request.turn_end_request import TurnEndRequest
+from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
 from battle_field_muligun.service.request.muligun_request import MuligunRequest
 
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
@@ -173,6 +174,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.opponent_hand_repository = OpponentHandRepository.getInstance()
         self.opponent_hand_card_list = None
+
+        self.mulligan_repository = MuligunYourHandRepository()
 
         self.selected_search_unit_id_list = []
         self.selected_search_unit_index_list = []
@@ -407,11 +410,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         # self.your_hand_repository.set_x_base(550)
         self.your_hand_repository.set_total_window_size(self.width, self.height)
+        self.your_hand_card_state = self.mulligan_repository.get_current_hand_state()
+        self.your_hand_repository.save_current_hand_state(self.your_hand_card_state)
         # self.your_hand_repository.save_current_hand_state([30, 30, 8, 93, 8, 2, 33, 35, 9, 20, 25, 36, 151])
         # self.your_hand_repository.save_current_hand_state(
         #     [30, 8, 93, 27, 27, 27, 32, 30, 8, 93, 8, 2, 33, 35, 9, 20, 25, 36, 151])
         # self.your_hand_repository.save_current_hand_state([151])
-        # self.your_hand_repository.create_hand_card_list()
+        self.your_hand_repository.create_hand_card_list()
         self.your_hand_repository.build_your_hand_page()
         self.your_hand.set_total_window_size(self.width, self.height)
         self.your_hand.init_next_prev_gold_button_hand()
@@ -1426,8 +1431,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.master.after(2000, self.your_contract_of_doom_attack_animation)
             self.attack_animation_object.set_animation_action(AnimationAction.DUMMY)
 
-        if self.attack_animation_object.get_animation_action() is AnimationAction.CONTRACT_OF_DOOM:
-            print(f"{Fore.RED}파멸의 계약 animation 재생{Style.RESET_ALL}")
+        if self.field_area_inside_handler.get_field_area_action() is FieldAreaAction.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS:
+            print(f"{Fore.RED}패시브 처리가 필요합니다!{Style.RESET_ALL}")
+
+            # {"protocolNumber":2002, "unitCardIndex": "0", "usageSkillIndex": "1", "sessionInfo":""}
+            session = self.__session_repository.get_session_info()
+            recently_added_card_index = self.field_area_inside_handler.get_recently_added_card_index()
+            self.__fake_battle_field_frame_repository.request_to_process_first_passive_skill(
+                WideAreaPassiveSkillFromDeployRequest(session, placed_card_id))
 
             self.master.after(2000, self.your_contract_of_doom_attack_animation)
             self.attack_animation_object.set_animation_action(AnimationAction.DUMMY)
@@ -1494,24 +1505,24 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
-        # for hand_card in self.hand_card_list:
-        #     attached_tool_card = hand_card.get_tool_card()
-        #     if attached_tool_card is not None:
-        #         attached_tool_card.set_width_ratio(self.width_ratio)
-        #         attached_tool_card.set_height_ratio(self.height_ratio)
-        #         attached_tool_card.draw()
-        #
-        #     pickable_card_base = hand_card.get_pickable_card_base()
-        #     pickable_card_base.set_width_ratio(self.width_ratio)
-        #     pickable_card_base.set_height_ratio(self.height_ratio)
-        #     pickable_card_base.draw()
-        #
-        #     attached_shape_list = pickable_card_base.get_attached_shapes()
-        #
-        #     for attached_shape in attached_shape_list:
-        #         attached_shape.set_width_ratio(self.width_ratio)
-        #         attached_shape.set_height_ratio(self.height_ratio)
-        #         attached_shape.draw()
+        for hand_card in self.hand_card_list:
+            attached_tool_card = hand_card.get_tool_card()
+            if attached_tool_card is not None:
+                attached_tool_card.set_width_ratio(self.width_ratio)
+                attached_tool_card.set_height_ratio(self.height_ratio)
+                attached_tool_card.draw()
+
+            pickable_card_base = hand_card.get_pickable_card_base()
+            pickable_card_base.set_width_ratio(self.width_ratio)
+            pickable_card_base.set_height_ratio(self.height_ratio)
+            pickable_card_base.draw()
+
+            attached_shape_list = pickable_card_base.get_attached_shapes()
+
+            for attached_shape in attached_shape_list:
+                attached_shape.set_width_ratio(self.width_ratio)
+                attached_shape.set_height_ratio(self.height_ratio)
+                attached_shape.draw()
 
         for opponent_hand_card in self.opponent_hand_card_list:
             opponent_hand_card_base = opponent_hand_card.get_fixed_card_base()
@@ -1540,14 +1551,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     attached_shape.set_height_ratio(self.height_ratio)
                     attached_shape.draw()
 
-                # for selected_search_unit in self.selected_search_unit_lightning_border:
-                #     if selected_search_unit == fixed_card_base:
-                #         selected_search_unit.set_width_ratio(self.width_ratio)
-                #         selected_search_unit.set_height_ratio(self.height_ratio)
-                #
-                #         self.lightning_border.set_padding(20)
-                #         self.lightning_border.update_shape(selected_search_unit)
-                #         self.lightning_border.draw_lightning_border()
+                for selected_search_unit in self.selected_search_unit_lightning_border:
+                    if selected_search_unit == fixed_card_base:
+                        selected_search_unit.set_width_ratio(self.width_ratio)
+                        selected_search_unit.set_height_ratio(self.height_ratio)
+
+                        self.lightning_border.set_padding(20)
+                        self.lightning_border.update_shape(selected_search_unit)
+                        self.lightning_border.draw_lightning_border()
 
         self.your_hand_prev_button.draw()
         self.your_hand_next_button.draw()
@@ -3298,10 +3309,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         return
 
                     self.attack_animation_object.set_opponent_main_character(self.opponent_main_character_panel)
-                    # self.attack_animation_object.set_animation_actor(self.selected_object)
-
-                    self.master.after(0, self.you_attack_main_character_animation)
-
                     self.your_field_unit_action_repository.use_field_unit_action_count_by_index(your_field_card_index)
 
                     your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
@@ -3310,7 +3317,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     your_damage = self.card_info_repository.getCardAttackForCardNumber(your_field_card_id)
                     print(f"your_damage: {your_damage}")
 
-                    self.opponent_hp_repository.take_damage(your_damage)
+                    self.attack_animation_object.set_animation_actor_damage(your_damage)
+
+                    self.master.after(0, self.you_attack_main_character_animation)
+
+                    # self.opponent_hp_repository.take_damage(your_damage)
 
                     self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
                     self.targeting_enemy_select_using_your_field_card_index = None
@@ -5948,65 +5959,150 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         slash_with_sword(1)
 
-#                             for index in range(
-#                                     len(self.opponent_field_unit_repository.get_current_field_unit_card_object_list()) - 1,
-#                                     -1,
-#                                     -1):
-#                                 opponent_field_unit = \
-#                                     self.opponent_field_unit_repository.get_current_field_unit_card_object_list()[index]
-#
-#                                 if opponent_field_unit is None:
-#                                     continue
-#
-#                                 remove_from_field = False
-#
-#                                 fixed_card_base = opponent_field_unit.get_fixed_card_base()
-#                                 attached_shape_list = fixed_card_base.get_attached_shapes()
-#
-#                                 # TODO: 가만 보면 이 부분이 은근히 많이 사용되고 있음 (중복 많이 발생함)
-#                                 for attached_shape in attached_shape_list:
-#                                     if isinstance(attached_shape, NonBackgroundNumberImage):
-#                                         if attached_shape.get_circle_kinds() is CircleKinds.HP:
-#
-#                                             hp_number = attached_shape.get_number()
-#                                             hp_number -= damage
-#
-#                                             # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
-#                                             # (지금 당장 불사가 존재하지 않음)
-#                                             if hp_number <= 0:
-#                                                 remove_from_field = True
-#                                                 break
-#
-#                                             print(f"contract_of_doom -> hp_number: {hp_number}")
-#                                             attached_shape.set_number(hp_number)
-#
-#                                             # attached_shape.set_image_data(
-#                                             #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
-#                                             #     self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
-#
-#                                             attached_shape.set_image_data(
-#                                                 self.pre_drawed_image_instance.get_pre_draw_unit_hp(hp_number))
-#
-#                                 if remove_from_field:
-#                                     card_id = opponent_field_unit.get_card_number()
-#
-#                                     self.opponent_field_unit_repository.remove_current_field_unit_card(index)
-#                                     self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
-#
-#                             # your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
-#                             # self.your_hand_repository.remove_card_by_index(your_card_index)
-#                             your_card_index = self.your_hand_repository.find_index_by_selected_object_with_page(
-#                                 self.selected_object)
-#                             self.your_hand_repository.remove_card_by_index_with_page(your_card_index)
-#
-#                             self.your_tomb_repository.create_tomb_card(your_card_id)
-#
-#                             # self.your_hand_repository.replace_hand_card_position()
-#                             self.your_hand_repository.update_your_hand()
-#                             self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-#
-#                             # 실제 날리는 데이터의 경우 서버로부터 응답 받은 정보를 로스트 존으로 배치
-#                             self.opponent_lost_zone_repository.create_opponent_lost_zone_card(32)
+    def finish_you_attack_main_character_post_animation(self, attack_animation_object):
+        sword_shape = attack_animation_object.get_your_weapon_shape()
+
+        animation_actor = attack_animation_object.get_animation_actor()
+        your_fixed_card_base = animation_actor.get_fixed_card_base()
+        tool_card = animation_actor.get_tool_card()
+        attached_shape_list = your_fixed_card_base.get_attached_shapes()
+
+        current_your_attacker_unit_vertices = your_fixed_card_base.get_vertices()
+        current_your_attacker_unit_local_translation = your_fixed_card_base.get_local_translation()
+
+        new_y_value = current_your_attacker_unit_local_translation[1] + 30
+        your_attacker_unit_destination_local_translation = (current_your_attacker_unit_local_translation[0], new_y_value)
+
+        steps = 15
+        step_y = (your_attacker_unit_destination_local_translation[1] - current_your_attacker_unit_local_translation[1]) / steps
+        step_y *= -1
+
+        # (390 - 153) / 1848 = 0.1282
+        current_sword_shape = attack_animation_object.get_your_weapon_shape()
+        current_sword_shape_target = current_sword_shape.get_initial_vertices()
+
+        current_sword_shape_target_x = current_sword_shape_target[0][0]
+        current_sword_shape_target_y = current_sword_shape_target[0][1]
+
+        # theta = w0 * t + 0.5 * alpha * t^2
+        # theta = 0.5 * alpha * t^2 => step_count = 15
+        # theta = 0.5 * alpha * 225 = angle / 112.5
+        target_rotation_angle = sword_shape.get_rotation_angle()
+        return_omega_accel_alpha = target_rotation_angle / 112.5
+
+        current_sword_shape_vertices = current_sword_shape.get_vertices()
+        current_sword_shape_x_vertex = current_sword_shape_vertices[0][0]
+        current_sword_shape_y_vertex = current_sword_shape_vertices[0][1]
+
+        sword_accel_x = (current_sword_shape_x_vertex - current_sword_shape_target_x - 52.5 + 15) / 112.5
+        sword_accel_y = (current_sword_shape_y_vertex - current_sword_shape_target_y + 85 - 60) / 112.5
+        def move_to_origin_location(step_count):
+            new_y = current_your_attacker_unit_local_translation[1] + step_y * step_count
+            print(f"{Fore.RED}step ->{Fore.GREEN}new_y: {new_y}{Style.RESET_ALL}")
+
+            new_vertices = [
+                (vx, vy - step_y * step_count) for vx, vy in current_your_attacker_unit_vertices
+            ]
+            your_fixed_card_base.update_vertices(new_vertices)
+            print(f"{Fore.RED}new_vertices{Fore.GREEN} {new_vertices}{Style.RESET_ALL}")
+
+            # tool_card = self.selected_object.get_tool_card()
+            # if tool_card is not None:
+            #     new_tool_card_vertices = [
+            #         (vx + new_x, vy + new_y) for vx, vy in tool_card.vertices
+            #     ]
+            #     tool_card.update_vertices(new_tool_card_vertices)
+
+            for attached_shape in your_fixed_card_base.get_attached_shapes():
+                # theta = w0 * t + 0.5 * alpha * t^2
+                # theta = 0.5 * alpha * t^2 => step_count = 15
+                # theta = 0.5 * alpha * 225 = 65 / 225 = 0.28888
+                omega_accel_alpha = -0.28888
+
+                if isinstance(attached_shape, NonBackgroundNumberImage):
+                    if attached_shape.get_circle_kinds() is CircleKinds.ATTACK:
+                        current_sword_shape_vertices = current_sword_shape.get_vertices()
+
+                        current_sword_shape_x_vertex = current_sword_shape_vertices[0][0]
+                        current_sword_shape_y_vertex = current_sword_shape_vertices[0][1]
+
+                        # S = v0 * t + 0.5 * a * t^2
+                        # S = 0.5 * a * t^2 => step = 15
+                        # S = 0.5 * a * 225 = distance / 112.5
+                        # 225 = (steps * steps)
+
+                        # difference_x: 11.434448575145638, difference_y: 94.0313609929536
+
+                        # sword_accel_x = (current_sword_shape_target_x - current_sword_shape_x_vertex - 195) / 112.5
+                        # sword_accel_x = (current_sword_shape_x_vertex - current_sword_shape_target_x) / 112.5
+                        # sword_accel_y = (current_sword_shape_target_y - current_sword_shape_y_vertex + 124.732391723) / 112.5
+                        print(f"{Fore.RED}sword_accel -> {Fore.GREEN}x: {sword_accel_x}, y: {sword_accel_y}{Style.RESET_ALL}")
+
+                        sword_accel_x_dist = sword_accel_x * step_count
+                        sword_accel_y_dist = sword_accel_y * step_count
+
+                        new_attached_shape_vertices = [
+                            (vx - sword_accel_x_dist, vy - sword_accel_y_dist) for vx, vy in sword_shape.vertices
+                        ]
+                        sword_shape.update_vertices(new_attached_shape_vertices)
+                        print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+
+                        current_angle = sword_shape.get_rotation_angle()
+                        sword_shape.update_rotation_angle(current_angle - return_omega_accel_alpha * step_count)
+
+                        continue
+
+                new_attached_shape_vertices = [
+                    (vx, vy - step_y) for vx, vy in attached_shape.vertices
+                ]
+                attached_shape.update_vertices(new_attached_shape_vertices)
+
+            if step_count < steps:
+                self.master.after(20, move_to_origin_location, step_count + 1)
+            else:
+                your_fixed_card_base.update_vertices(your_fixed_card_base.get_initial_vertices())
+                if tool_card is not None:
+                    tool_card.update_vertices(tool_card.get_initial_vertices())
+                for attached_shape in attached_shape_list:
+                    attached_shape.update_vertices(attached_shape.get_initial_vertices())
+
+                self.is_attack_motion_finished = True
+                attack_animation_object.set_is_finished(True)
+
+                your_damage = attack_animation_object.get_animation_actor_damage()
+                self.opponent_hp_repository.take_damage(your_damage)
+                # attack_animation_object.set_need_post_process(True)
+                #
+                # if self.attack_animation_object.get_your_field_unit_death():
+                #     your_field_death_unit_index = self.attack_animation_object.get_your_field_death_unit_index()
+                #     self.your_field_unit_repository.remove_card_by_index(your_field_death_unit_index)
+                #     self.your_field_unit_repository.replace_field_card_position()
+                # else:
+                #
+                #     your_field_hp_shape = self.attack_animation_object.get_your_field_hp_shape()
+                #     if your_field_hp_shape:
+                #         your_hp_number = your_field_hp_shape.get_number()
+                #
+                #         your_field_hp_shape.set_image_data(
+                #             self.pre_drawed_image_instance.get_pre_draw_unit_hp(
+                #                 your_hp_number))
+                #
+                # if self.attack_animation_object.get_opponent_field_unit_death():
+                #     opponent_field_unit = self.attack_animation_object.get_opponent_field_unit()
+                #     opponent_field_unit_index = opponent_field_unit.get_index()
+                #     self.opponent_field_unit_repository.remove_card_by_multiple_index([opponent_field_unit_index])
+                #     self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                # else:
+                #     opponent_field_hp_shape = self.attack_animation_object.get_opponent_field_hp_shape()
+                #     if opponent_field_hp_shape:
+                #         opponent_hp_number = opponent_field_hp_shape.get_number()
+                #
+                #         opponent_field_hp_shape.set_image_data(
+                #             self.pre_drawed_image_instance.get_pre_draw_unit_hp(
+                #                 opponent_hp_number))
+
+        move_to_origin_location(1)
+
 
     def apply_response_data_of_field_unit_hp(self, player_field_unit_health_point_data):
         print('apply notify data of field unit hp!! : ', player_field_unit_health_point_data)
@@ -6083,3 +6179,4 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.your_field_unit_repository.apply_harmful_status(int(unit_index), harmful_status_list)
         except Exception as e:
             print('An error occurred while applying harmful status data:', e)
+
