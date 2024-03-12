@@ -24,6 +24,8 @@ class AttackAnimation:
     opponent_field_card_index = None
     opponent_field_unit = None
 
+    opponent_lost_card_id = None
+
     is_opponent_field_unit_death = False
     is_your_field_unit_death = False
 
@@ -238,4 +240,10 @@ class AttackAnimation:
 
     def get_your_usage_card_id(self):
         return self.your_usage_card_id
+
+    def set_opponent_lost_card_id(self, opponent_lost_card_id):
+        self.opponent_lost_card_id = opponent_lost_card_id
+
+    def get_opponent_lost_card_id(self):
+        return self.opponent_lost_card_id
 
