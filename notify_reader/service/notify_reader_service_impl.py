@@ -798,74 +798,130 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
 
 
-    def apply_notify_data_of_your_field_unit_energy(self, player_field_unit_energy_data):
-        data = {"player_field_unit_energy_map": {
-                "You": {"field_unit_energy_map": {"0": {"attached_energy_map": {"2": 1}, "total_energy_count": 1}}}}}
+    def analyze_notify_data_of_field_unit_energy(self, player_field_unit_energy_data):
+        try:
+            for player, field_unit_energy_map in player_field_unit_energy_data.items():
+                for unit_index, attached_energy_map in field_unit_energy_map['field_unit_energy_map'].items():
+                    for energy_race, energy_count in attached_energy_map.get('attached_energy_map', {}).items():
+                        total_energy_count = attached_energy_map.get('total_energy_count', 0)
 
+                        if player == 'You':
+                            self.apply_notify_data_of_your_field_unit_energy(int(unit_index), energy_count,
+                                                                             total_energy_count)
+                        elif player == 'Opponent':
+                            self.apply_notify_data_of_opponent_field_unit_energy(int(unit_index), energy_count,
+                                                                                 total_energy_count)
+                        else:
+                            print('Target error: Target is not "You" or "Opponent"')
 
-        for unit_index, unit_value in \
-                player_field_unit_energy_data['You']['field_unit_energy_map'].items():
-            print(f"{Fore.RED}your_unit_index:{Fore.GREEN} {unit_index}{Style.RESET_ALL}")
-            print(f"{Fore.RED}your_unit_value:{Fore.GREEN} {unit_value}{Style.RESET_ALL}")
+        except Exception as e:
+            print('apply_notify_data_of_your_field_unit_energy error! ', e)
 
-            # your_unit_attached_undead_energy_count = unit_value['attached_energy_map']['2']
+    def apply_notify_data_of_your_field_unit_energy(self, unit_index, race_energy_count, total_energy_count):
+        self.__your_field_unit_repository.attach_race_energy(unit_index, EnergyType.Undead, race_energy_count)
 
-            for race_energy_number, race_energy_count in unit_value['attached_energy_map'].items():
-                print(f"{Fore.RED}energy_key:{Fore.GREEN} {race_energy_number}{Style.RESET_ALL}")
-                print(f"{Fore.RED}energy_count:{Fore.GREEN} {race_energy_count}{Style.RESET_ALL}")
+        your_field_unit = self.__your_field_unit_repository.find_your_field_unit_by_index(unit_index)
 
-                self.__your_field_unit_repository.attach_race_energy(int(unit_index), EnergyType.Undead,
-                                                                         race_energy_count)
+        your_fixed_card_base = your_field_unit.get_fixed_card_base()
+        your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
 
-                your_field_unit = self.__your_field_unit_repository.find_your_field_unit_by_index(
-                    int(unit_index))
+        print(f"{Fore.RED}total_energy_count:{Fore.GREEN} {total_energy_count}{Style.RESET_ALL}")
 
-                your_fixed_card_base = your_field_unit.get_fixed_card_base()
-                your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+        for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+            if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+                    your_fixed_card_attached_shape.set_number(total_energy_count)
+                    your_fixed_card_attached_shape.set_image_data(
+                        self.__pre_drawed_image_instance.get_pre_draw_unit_energy(
+                            total_energy_count))
 
-                total_energy_count = unit_value['total_energy_count']
-                print(f"{Fore.RED}total_energy_count:{Fore.GREEN} {total_energy_count}{Style.RESET_ALL}")
+    # def apply_notify_data_of_your_field_unit_energy(self, player_field_unit_energy_data):
+    #
+    #
+    #
+    #     data = {"player_field_unit_energy_map": {
+    #             "You": {"field_unit_energy_map": {"0": {"attached_energy_map": {"2": 1}, "total_energy_count": 1}}}}}
+    #
+    #
+    #     for unit_index, unit_value in \
+    #             player_field_unit_energy_data['You']['field_unit_energy_map'].items():
+    #         print(f"{Fore.RED}your_unit_index:{Fore.GREEN} {unit_index}{Style.RESET_ALL}")
+    #         print(f"{Fore.RED}your_unit_value:{Fore.GREEN} {unit_value}{Style.RESET_ALL}")
+    #
+    #         # your_unit_attached_undead_energy_count = unit_value['attached_energy_map']['2']
+    #
+    #         for race_energy_number, race_energy_count in unit_value['attached_energy_map'].items():
+    #             print(f"{Fore.RED}energy_key:{Fore.GREEN} {race_energy_number}{Style.RESET_ALL}")
+    #             print(f"{Fore.RED}energy_count:{Fore.GREEN} {race_energy_count}{Style.RESET_ALL}")
+    #
+    #             self.__your_field_unit_repository.attach_race_energy(int(unit_index), EnergyType.Undead,
+    #                                                                      race_energy_count)
+    #
+    #             your_field_unit = self.__your_field_unit_repository.find_your_field_unit_by_index(
+    #                 int(unit_index))
+    #
+    #             your_fixed_card_base = your_field_unit.get_fixed_card_base()
+    #             your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+    #
+    #             total_energy_count = unit_value['total_energy_count']
+    #             print(f"{Fore.RED}total_energy_count:{Fore.GREEN} {total_energy_count}{Style.RESET_ALL}")
+    #
+    #             for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+    #                 if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+    #                     if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+    #                         your_fixed_card_attached_shape.set_number(total_energy_count)
+    #                         your_fixed_card_attached_shape.set_image_data(
+    #                             self.__pre_drawed_image_instance.get_pre_draw_unit_energy(
+    #                                 total_energy_count))
 
-                for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
-                    if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
-                        if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
-                            your_fixed_card_attached_shape.set_number(total_energy_count)
-                            your_fixed_card_attached_shape.set_image_data(
-                                self.__pre_drawed_image_instance.get_pre_draw_unit_energy(
-                                    total_energy_count))
+    def apply_notify_data_of_opponent_field_unit_energy(self, unit_index, race_energy_count, total_energy_count):
+        self.__opponent_field_unit_repository.attach_race_energy(unit_index, EnergyType.Undead, race_energy_count)
 
-    def apply_notify_data_of_opponent_field_unit_energy(self, player_field_unit_energy_data):
+        opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(unit_index)
 
-        for unit_index, unit_value in \
-                player_field_unit_energy_data['Opponent']['field_unit_energy_map'].items():
-            print(f"{Fore.RED}opponent_unit_index:{Fore.GREEN} {unit_index}{Style.RESET_ALL}")
-            print(f"{Fore.RED}opponent_unit_value:{Fore.GREEN} {unit_value}{Style.RESET_ALL}")
+        opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+        opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
 
-            # opponent_unit_attached_undead_energy_count = unit_value['attached_energy_map']['2']
+        print(f"{Fore.RED}total_energy_count:{Fore.GREEN} {total_energy_count}{Style.RESET_ALL}")
 
-            for race_energy_number, race_energy_count in unit_value['attached_energy_map'].items():
-                print(f"{Fore.RED}energy_key:{Fore.GREEN} {race_energy_number}{Style.RESET_ALL}")
-                print(f"{Fore.RED}energy_count:{Fore.GREEN} {race_energy_count}{Style.RESET_ALL}")
-
-                self.__opponent_field_unit_repository.attach_race_energy(int(unit_index), EnergyType.Undead,
-                                                                         race_energy_count)
-
-                opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
-                    int(unit_index))
-
-                opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
-                opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
-
-                total_energy_count = unit_value['total_energy_count']
-                print(f"{Fore.RED}total_energy_count:{Fore.GREEN} {total_energy_count}{Style.RESET_ALL}")
-
-                for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
-                    if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
-                        if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
-                            opponent_fixed_card_attached_shape.set_number(total_energy_count)
-                            opponent_fixed_card_attached_shape.set_image_data(
-                                self.__pre_drawed_image_instance.get_pre_draw_unit_energy(
-                                    total_energy_count))
+        for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+            if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
+                if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+                    opponent_fixed_card_attached_shape.set_number(total_energy_count)
+                    opponent_fixed_card_attached_shape.set_image_data(
+                        self.__pre_drawed_image_instance.get_pre_draw_unit_energy(
+                            total_energy_count))
+    # def apply_notify_data_of_opponent_field_unit_energy(self, player_field_unit_energy_data):
+    #     for unit_index, unit_value in \
+    #             player_field_unit_energy_data['Opponent']['field_unit_energy_map'].items():
+    #         print(f"{Fore.RED}opponent_unit_index:{Fore.GREEN} {unit_index}{Style.RESET_ALL}")
+    #         print(f"{Fore.RED}opponent_unit_value:{Fore.GREEN} {unit_value}{Style.RESET_ALL}")
+    #
+    #         # opponent_unit_attached_undead_energy_count = unit_value['attached_energy_map']['2']
+    #
+    #         for race_energy_number, race_energy_count in unit_value['attached_energy_map'].items():
+    #             print(f"{Fore.RED}energy_key:{Fore.GREEN} {race_energy_number}{Style.RESET_ALL}")
+    #             print(f"{Fore.RED}energy_count:{Fore.GREEN} {race_energy_count}{Style.RESET_ALL}")
+    #
+    #             self.__opponent_field_unit_repository.attach_race_energy(int(unit_index), EnergyType.Undead,
+    #                                                                      race_energy_count)
+    #
+    #             opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
+    #                 int(unit_index))
+    #
+    #             opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+    #             opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+    #
+    #             total_energy_count = unit_value['total_energy_count']
+    #             print(f"{Fore.RED}total_energy_count:{Fore.GREEN} {total_energy_count}{Style.RESET_ALL}")
+    #
+    #             for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+    #                 if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
+    #                     if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+    #                         opponent_fixed_card_attached_shape.set_number(total_energy_count)
+    #                         opponent_fixed_card_attached_shape.set_image_data(
+    #                             self.__pre_drawed_image_instance.get_pre_draw_unit_energy(
+    #                                 total_energy_count))
 
     def apply_notify_data_of_field_unit_hp(self, player_field_unit_health_point_data):
         data = {
@@ -920,29 +976,25 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             print('no Opponent field unit data!! : ', e)
 
     def apply_notify_data_of_dead_unit(self, player_field_unit_death_data):
-        data = {
-            "player_field_unit_death_map": {"You": {"dead_field_unit_index_list": [0]},
-                                            "Opponent": {"dead_field_unit_index_list": []}}}
 
-        try:
-            for your_unit_index in player_field_unit_death_data['You']['dead_field_unit_index_list']:
-                card_id = self.__your_field_unit_repository.get_card_id_by_index(your_unit_index)
-                self.__your_tomb_repository.create_tomb_card(card_id)
-                self.__your_field_unit_repository.remove_card_by_index(your_unit_index)
+        for player, dead_field_unit_index_list_map in player_field_unit_death_data.items():
+            dead_field_unit_index_list = dead_field_unit_index_list_map.get('dead_field_unit_index_list', [])
+            if player == 'You':
+                for unit_index in dead_field_unit_index_list:
+                    card_id = self.__your_field_unit_repository.get_card_id_by_index(unit_index)
+                    self.__your_tomb_repository.create_tomb_card(card_id)
+                    self.__your_field_unit_repository.remove_card_by_index(unit_index)
+                self.__your_field_unit_repository.replace_field_card_position()
+            elif player == 'Opponent':
+                for unit_index in dead_field_unit_index_list:
+                    card_id = self.__opponent_field_unit_repository.get_opponent_card_id_by_index(unit_index)
+                    self.__opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                    self.__opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
 
-            self.__your_field_unit_repository.replace_field_card_position()
-        except Exception as e:
-            print('no Your dead unit data!! ', e)
+                self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
-        try:
-            for opponent_unit_index in player_field_unit_death_data['Opponent']['dead_field_unit_index_list']:
-                card_id = self.__opponent_field_unit_repository.get_opponent_card_id_by_index(opponent_unit_index)
-                self.__opponent_tomb_repository.create_opponent_tomb_card(opponent_unit_index)
-                self.__opponent_field_unit_repository.remove_current_field_unit_card(opponent_unit_index)
-
-            self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-        except Exception as e:
-            print('no Opponent dead unit data!! ', e)
+            else:
+                print(f'apply_notify_data_of_dead_unit error : unknown player {player}')
 
     def apply_notify_data_of_harmful_status(self, player_field_unit_harmful_effect_data):
 
@@ -986,17 +1038,14 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
 
     def apply_notify_data_of_field_energy(self, player_field_energy_data):
-        try:
-            your_energy_count =  player_field_energy_data['You']
-            self.__your_field_energy_repository.set_your_field_energy(your_energy_count)
-        except Exception as e:
-            print('no your field energy data!! ', e)
 
-        try:
-            opponent_energy_count = player_field_energy_data['Opponent']
-            self.__opponent_field_energy_repository.set_opponent_field_energy(opponent_energy_count)
-        except Exception as e:
-            print('no opponent field energy data!! ', e)
+        for player, field_energy_count in player_field_energy_data.items():
+            if player == 'You':
+                self.__your_field_energy_repository.set_your_field_energy(field_energy_count)
+            elif player == 'Opponent':
+                self.__opponent_field_energy_repository.set_opponent_field_energy(field_energy_count)
+            else:
+                print('apply_notify_data_of_field_energy error! : unknown player ->', player)
 
     def notify_use_draw_support_card(self, notice_dictionary):
 
@@ -1042,6 +1091,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         if is_opponent_mulligan is True:
             self.__mulligan_repository.set_is_opponent_mulligan(True)
+        else:
+            self.__mulligan_repository.set_is_opponent_mulligan(False)
 
     def notify_use_catastrophic_damage_item_card(self, notice_dictionary):
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
@@ -1456,3 +1507,96 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         self.__your_hp_repository.change_hp(int(your_main_character_health_point))
         print(f"{Fore.RED}current_main_character_health:{Fore.GREEN} "
               f"{self.__your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
+
+    def notify_use_instant_unit_death_item_card(self, notice_dictionary):
+        # 1006 = {"NOTIFY_USE_INSTANT_UNIT_DEATH_ITEM_CARD":
+        #     {"player_hand_use_map":
+        #          {"Opponent": {"card_id": 8, "card_kind": 2}},
+        #     "player_field_unit_health_point_map":
+        #         {"You": {"field_unit_health_point_map": {"0": 0}}},
+        #     "player_field_unit_death_map":
+        #          {"You": {"dead_field_unit_index_list": [0]}}}}
+
+        # 수신된 정보를 대입
+        data = notice_dictionary['NOTIFY_USE_INSTANT_UNIT_DEATH_ITEM_CARD']
+
+        # 유저 관련 키값 대입
+        player_who_use_card = None
+        player_who_targeted = None
+        player_who_dead_unit = None
+        for player_who_use_card_index in data['player_hand_use_map'].keys():
+            player_who_use_card = player_who_use_card_index
+            used_card_id = data['player_hand_use_map'][player_who_use_card]['card_id']
+
+            # 카드를 사용 하고, 묘지로 보냄
+            if player_who_use_card == "Opponent":
+                self.__opponent_tomb_repository.create_opponent_tomb_card(used_card_id)
+            elif player_who_use_card == "You":
+                self.__your_tomb_repository.create_tomb_card(used_card_id)
+
+            self.__battle_field_repository.set_current_use_card_id(used_card_id)
+
+        for player_who_targeted_index in data['player_field_unit_health_point_map'].keys():
+            player_who_targeted = player_who_targeted_index
+
+            for player_who_dead_unit_index in data['player_field_unit_death_map'].keys():
+                player_who_dead_unit = player_who_dead_unit_index
+
+                field_unit_health_point_map = (
+                    data)['player_field_unit_health_point_map'][player_who_targeted]
+                dead_field_unit_index_list_map = (
+                    data)['player_field_unit_death_map'][player_who_dead_unit]
+
+                # 필드 유닛 체력 맵 갱신
+                if player_who_dead_unit == "Opponent":
+                    for unit_index, remaining_health_point in field_unit_health_point_map["field_unit_health_point_map"].items():
+                        opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index()(int(unit_index))
+                        opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                        opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+
+                        if remaining_health_point <= 0:
+                            continue
+
+                        for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                            if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
+                                if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                    opponent_fixed_card_attached_shape.set_number(int(remaining_health_point))
+
+                                    opponent_fixed_card_attached_shape.set_image_data(
+                                        self.__pre_drawed_image_instance.get_pre_draw_unit_hp(int(remaining_health_point)))
+
+                elif player_who_dead_unit == "You":
+                    for unit_index, remaining_health_point in field_unit_health_point_map["field_unit_health_point_map"].items():
+                        your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(int(unit_index))
+                        your_fixed_card_base = your_field_unit.get_fixed_card_base()
+                        your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+
+                        if remaining_health_point <= 0:
+                            continue
+
+                        for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+                            if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                                if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                    your_fixed_card_attached_shape.set_number(int(remaining_health_point))
+
+                                    your_fixed_card_attached_shape.set_image_data(
+                                        self.__pre_drawed_image_instance.get_pre_draw_unit_hp(int(remaining_health_point)))
+
+                # 타겟 유닛을(사망 시) 묘지로 보냄 (값이 없을 때 예외 처리 필요)
+                dead_card_index_list = dead_field_unit_index_list_map["dead_field_unit_index_list"]
+                print(f"{Fore.RED}dead_card_index_list:{Fore.GREEN} {dead_card_index_list}{Style.RESET_ALL}")
+                if player_who_dead_unit == "Opponent":
+                    for dead_unit_index in dead_card_index_list:
+                        field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
+                        self.__opponent_tomb_repository.create_opponent_tomb_card(field_unit_id)
+                        self.__opponent_field_unit_repository.remove_current_field_unit_card(int(dead_unit_index))
+
+                    self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                elif player_who_dead_unit == "You":
+                    for dead_unit_index in dead_card_index_list:
+                        field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
+                        self.__your_tomb_repository.create_tomb_card(field_unit_id)
+                        self.__your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
+
+                    self.__your_field_unit_repository.replace_field_card_position()

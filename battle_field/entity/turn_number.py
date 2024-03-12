@@ -1,5 +1,6 @@
 import math
 
+from battle_field.infra.round_repository import RoundRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from image_shape.circle_image import CircleImage
 from image_shape.non_background_image import NonBackgroundImage
@@ -9,9 +10,9 @@ from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
 
-class CurrentFieldEnergyRace:
+class CurrentFieldTurnNumber:
     __pre_drawed_image = PreDrawedImage.getInstance()
-    __your_field_energy_repository = YourFieldEnergyRepository.getInstance()
+    __round_repository = RoundRepository().getInstance()
 
     def __init__(self):
         self.current_field_turn_number_panel = None
@@ -44,16 +45,21 @@ class CurrentFieldEnergyRace:
     def get_current_field_turn_number_panel(self):
         return self.current_field_turn_number_panel
 
+    def get_turn_count(self):
+        return self.turn_count
+
+    def set_turn_count(self, turn_count):
+        self.turn_count = turn_count
+
     def create_current_field_turn_number_panel(self):
 
-        left_x_point = self.total_width * 0.93
-        right_x_point = self.total_width * 0.97
-        top_y_point = self.total_height * 0.717
-        bottom_y_point = self.total_height * 0.757
+        left_x_point = self.total_width * 0.865
+        right_x_point = self.total_width
+        top_y_point = self.total_height * 0.317
+        bottom_y_point = self.total_height * 0.385
 
-        self.current_field_energy_race_panel = NonBackgroundImage(
-            image_data=self.__pre_drawed_image.get_pre_draw_energy_race_with_race_number(
-                self.__your_field_energy_repository.get_current_field_energy_race().value),
+        self.current_field_turn_number_panel = NonBackgroundImage(
+            image_data=self.__pre_drawed_image.get_pre_draw_turn_number(self.__round_repository.get_current_round_number()),
             vertices=[
                 (left_x_point, top_y_point),
                 (right_x_point, top_y_point),
@@ -65,7 +71,5 @@ class CurrentFieldEnergyRace:
         )
 
     def update_current_field_turn_number_panel(self):
-        self.current_field_energy_race_panel.set_image_data(
-            self.__pre_drawed_image.get_pre_draw_energy_race_with_race_number(
-                self.__your_field_energy_repository.get_current_field_energy_race().value)
-        )
+        self.current_field_turn_number_panel.set_image_data(
+            self.__pre_drawed_image.get_pre_draw_turn_number(self.__round_repository.get_current_round_number()))

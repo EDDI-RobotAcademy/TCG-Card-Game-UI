@@ -247,10 +247,16 @@ class AttackAnimation:
 
     def get_opponent_lost_card_id(self):
         return self.opponent_lost_card_id
-
+      
     def set_opponent_main_character(self, opponent_main_character):
         self.opponent_main_character = opponent_main_character
 
     def get_opponent_main_character(self):
         return self.opponent_main_character
+
+    def set_extra_ability(self, extra_ability):
+        self.extra_ability = extra_ability
+
+    def get_extra_ability(self):
+        return self.extra_ability
 

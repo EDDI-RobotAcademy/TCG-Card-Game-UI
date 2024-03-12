@@ -27,6 +27,8 @@ class PreDrawedImage:
     __pre_drawed_dark_flame = None
     __pre_drawed_freezing = None
 
+    __pre_drawed_card_type_mark = {}
+
     __pre_drawed_gif = None
 
     __pre_drawed_opponent_tomb = None
@@ -597,6 +599,17 @@ class PreDrawedImage:
             self.__pre_drawed_turn_number[turn_number] = ImageDataLoader.load_rectangle_image_data(
                 turn_number_image_path)
 
+    def pre_draw_card_type_mark(self):
+        card_type_mark_image_path = os.path.join(self.__project_root, "local_storage", "card_type_mark")
+        card_type_mark_image_file_list = os.listdir(card_type_mark_image_path)
+        png_files = [file for file in card_type_mark_image_file_list if file.lower().endswith('.png')]
+
+        for png_file in png_files:
+            card_type_mark = int(png_file[:-4])
+            print(f"pre_draw_unit_race() -> race_number: {card_type_mark}")
+            card_type_mark_image_path = os.path.join(self.__project_root, "local_storage", "card_type_mark", f"{png_file}")
+            self.__pre_drawed_card_type_mark[card_type_mark] = ImageDataLoader.load_rectangle_image_data(card_type_mark_image_path)
+
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
         self.pre_draw_opponent_lost_zone()
@@ -675,6 +688,7 @@ class PreDrawedImage:
         self.pre_draw_number_of_details_energy()
 
         self.pre_draw_waiting_message()
+        self.pre_draw_card_type_mark()
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
@@ -866,3 +880,6 @@ class PreDrawedImage:
 
     def get_pre_draw_turn_number(self, number):
         return self.__pre_drawed_turn_number[number]
+
+    def get_pre_draw_card_type_mark(self, type_number):
+        return self.__pre_drawed_card_type_mark[type_number]
