@@ -32,6 +32,7 @@ from battle_field.entity.option import Option
 from battle_field.entity.prev_field_energy_race import PrevFieldEnergyRace
 from battle_field.entity.surrender_confirm import SurrenderConfirm
 from battle_field.entity.turn_end import TurnEnd
+from battle_field.entity.turn_number import CurrentFieldTurnNumber
 from battle_field.entity.your_active_panel import YourActivePanel
 from battle_field.entity.your_deck import YourDeck
 from battle_field.entity.your_field_energy import YourFieldEnergy
@@ -252,6 +253,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.turn_end_button = None
         self.turn_end_button_selected = False
 
+        self.current_field_turn_number_panel = None
+        self.turn_number = CurrentFieldTurnNumber()
+
         self.your_field_unit_action_repository = YourFieldUnitActionRepository.getInstance()
 
         self.option = Option()
@@ -469,6 +473,12 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.option_button = self.option.get_option_button()
         self.option.create_option_button_popup_list()
         self.option_popup_panel_list = self.option.get_option_button_popup_list()
+
+        self.turn_number.set_total_window_size(self.width, self.height)
+        self.turn_number.create_current_field_turn_number_panel()
+        self.current_field_turn_number_panel = (
+            self.turn_number.get_current_field_turn_number_panel()
+        )
 
         self.surrender_confirm.set_total_window_size(self.width, self.height)
         self.surrender_confirm.create_surrender_confirm_panel_list()
@@ -924,6 +934,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.turn_end_button.set_height_ratio(self.height_ratio)
         self.turn_end_button.draw()
 
+        self.current_to_use_field_energy_count.set_width_ratio(self.width_ratio)
+        self.current_to_use_field_energy_count.set_height_ratio(self.height_ratio)
+        self.current_to_use_field_energy_count.update_current_to_use_field_energy_count_panel()
+        self.current_to_use_field_energy_count_panel.set_width_ratio(self.width_ratio)
+        self.current_to_use_field_energy_count_panel.set_height_ratio(self.height_ratio)
+        self.current_to_use_field_energy_count_panel.draw()
+
         self.your_hp.set_width_ratio(self.width_ratio)
         self.your_hp.set_height_ratio(self.height_ratio)
         self.your_hp.update_current_your_hp_panel()
@@ -985,6 +1002,13 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         self.current_to_use_field_energy_count_panel.set_width_ratio(self.width_ratio)
         self.current_to_use_field_energy_count_panel.set_height_ratio(self.height_ratio)
         self.current_to_use_field_energy_count_panel.draw()
+
+        self.turn_number.set_width_ratio(self.width_ratio)
+        self.turn_number.set_height_ratio(self.height_ratio)
+        self.turn_number.update_current_field_turn_number_panel()
+        self.current_field_turn_number_panel.set_width_ratio(self.width_ratio)
+        self.current_field_turn_number_panel.set_height_ratio(self.height_ratio)
+        self.current_field_turn_number_panel.draw()
 
         self.muligun_reset_button.set_width_ratio(self.width_ratio)
         self.muligun_reset_button.set_height_ratio(self.height_ratio)
