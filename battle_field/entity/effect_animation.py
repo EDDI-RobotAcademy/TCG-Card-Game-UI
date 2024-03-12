@@ -2,7 +2,7 @@ import os
 
 from image_shape.non_background_image import NonBackgroundImage
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
-
+from common.utility import get_project_root
 
 class EffectAnimation:
     __pre_drawed_image = PreDrawedImage.getInstance()
@@ -12,6 +12,7 @@ class EffectAnimation:
 
 
     def __init__(self):
+        self.root_window = None
         self.animation_panel = None
 
         self.total_width = None
@@ -27,13 +28,16 @@ class EffectAnimation:
 
     def set_animation_name(self, animation_name):
         self.animation_name = animation_name
-        image_dir = os.path.join(self.__project_root, "local_storage", "animation", self.animation_name)
+        image_dir = os.path.join(get_project_root(), "local_storage", "animation", self.animation_name)
         # image_dir = os.path.join(self.__project_root, "local_storage", "animation_for_test")
         file_list = os.listdir(image_dir)
         self.total_animation_count = len(file_list)
 
     def get_animation_name(self):
         return self.animation_name
+
+    def set_root_window(self, root_window):
+        self.root_window = root_window
 
     def set_total_window_size(self, width, height):
         self.total_width = width
@@ -100,8 +104,30 @@ class EffectAnimation:
             # image_count = self.__current_animation_count % 16
             image_count = self.__current_animation_count
             self.animation_panel.set_image_data(
-                self.__pre_drawed_image.get_pre_draw_animation(image_count))
+                self.__pre_drawed_image.get_pre_draw_effect_animation(self.animation_name, image_count))
         except:
             self.is_finished = True
 
+
+    def animate(self):
+        def animate():
+            finish_list = []
+            is_all_finished = False
+            for _animation_test_image in self.animation_test_image_list:
+                _animation_test_image.update_animation_panel()
+                finish_list.append(_animation_test_image.is_finished)
+
+            for finish in finish_list:
+                if finish == False:
+                    is_all_finished = False
+                    break
+                else:
+                    is_all_finished = True
+
+            if not is_all_finished:
+                self.master.after(17, animate)
+            else:
+                self.animation_test_image_list = []
+                self.animation_test_image_panel_list = []
+                print("finish animation")
 
