@@ -1507,3 +1507,96 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         self.__your_hp_repository.change_hp(int(your_main_character_health_point))
         print(f"{Fore.RED}current_main_character_health:{Fore.GREEN} "
               f"{self.__your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
+
+    def notify_use_instant_unit_death_item_card(self, notice_dictionary):
+        # 1006 = {"NOTIFY_USE_INSTANT_UNIT_DEATH_ITEM_CARD":
+        #     {"player_hand_use_map":
+        #          {"Opponent": {"card_id": 8, "card_kind": 2}},
+        #     "player_field_unit_health_point_map":
+        #         {"You": {"field_unit_health_point_map": {"0": 0}}},
+        #     "player_field_unit_death_map":
+        #          {"You": {"dead_field_unit_index_list": [0]}}}}
+
+        # 수신된 정보를 대입
+        data = notice_dictionary['NOTIFY_USE_INSTANT_UNIT_DEATH_ITEM_CARD']
+
+        # 유저 관련 키값 대입
+        player_who_use_card = None
+        player_who_targeted = None
+        player_who_dead_unit = None
+        for player_who_use_card_index in data['player_hand_use_map'].keys():
+            player_who_use_card = player_who_use_card_index
+            used_card_id = data['player_hand_use_map'][player_who_use_card]['card_id']
+
+            # 카드를 사용 하고, 묘지로 보냄
+            if player_who_use_card == "Opponent":
+                self.__opponent_tomb_repository.create_opponent_tomb_card(used_card_id)
+            elif player_who_use_card == "You":
+                self.__your_tomb_repository.create_tomb_card(used_card_id)
+
+            self.__battle_field_repository.set_current_use_card_id(used_card_id)
+
+        for player_who_targeted_index in data['player_field_unit_health_point_map'].keys():
+            player_who_targeted = player_who_targeted_index
+
+            for player_who_dead_unit_index in data['player_field_unit_death_map'].keys():
+                player_who_dead_unit = player_who_dead_unit_index
+
+                field_unit_health_point_map = (
+                    data)['player_field_unit_health_point_map'][player_who_targeted]
+                dead_field_unit_index_list_map = (
+                    data)['player_field_unit_death_map'][player_who_dead_unit]
+
+                # 필드 유닛 체력 맵 갱신
+                if player_who_dead_unit == "Opponent":
+                    for unit_index, remaining_health_point in field_unit_health_point_map["field_unit_health_point_map"].items():
+                        opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index()(int(unit_index))
+                        opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                        opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+
+                        if remaining_health_point <= 0:
+                            continue
+
+                        for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                            if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
+                                if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                    opponent_fixed_card_attached_shape.set_number(int(remaining_health_point))
+
+                                    opponent_fixed_card_attached_shape.set_image_data(
+                                        self.__pre_drawed_image_instance.get_pre_draw_unit_hp(int(remaining_health_point)))
+
+                elif player_who_dead_unit == "You":
+                    for unit_index, remaining_health_point in field_unit_health_point_map["field_unit_health_point_map"].items():
+                        your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(int(unit_index))
+                        your_fixed_card_base = your_field_unit.get_fixed_card_base()
+                        your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+
+                        if remaining_health_point <= 0:
+                            continue
+
+                        for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+                            if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                                if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                    your_fixed_card_attached_shape.set_number(int(remaining_health_point))
+
+                                    your_fixed_card_attached_shape.set_image_data(
+                                        self.__pre_drawed_image_instance.get_pre_draw_unit_hp(int(remaining_health_point)))
+
+                # 타겟 유닛을(사망 시) 묘지로 보냄 (값이 없을 때 예외 처리 필요)
+                dead_card_index_list = dead_field_unit_index_list_map["dead_field_unit_index_list"]
+                print(f"{Fore.RED}dead_card_index_list:{Fore.GREEN} {dead_card_index_list}{Style.RESET_ALL}")
+                if player_who_dead_unit == "Opponent":
+                    for dead_unit_index in dead_card_index_list:
+                        field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
+                        self.__opponent_tomb_repository.create_opponent_tomb_card(field_unit_id)
+                        self.__opponent_field_unit_repository.remove_current_field_unit_card(int(dead_unit_index))
+
+                    self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                elif player_who_dead_unit == "You":
+                    for dead_unit_index in dead_card_index_list:
+                        field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
+                        self.__your_tomb_repository.create_tomb_card(field_unit_id)
+                        self.__your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
+
+                    self.__your_field_unit_repository.replace_field_card_position()
