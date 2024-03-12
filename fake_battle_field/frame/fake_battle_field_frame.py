@@ -1430,8 +1430,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.master.after(2000, self.your_contract_of_doom_attack_animation)
             self.attack_animation_object.set_animation_action(AnimationAction.DUMMY)
 
-        if self.attack_animation_object.get_animation_action() is AnimationAction.CONTRACT_OF_DOOM:
-            print(f"{Fore.RED}파멸의 계약 animation 재생{Style.RESET_ALL}")
+        if self.field_area_inside_handler.get_field_area_action() is FieldAreaAction.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS:
+            print(f"{Fore.RED}패시브 처리가 필요합니다!{Style.RESET_ALL}")
+
+            # {"protocolNumber":2002, "unitCardIndex": "0", "usageSkillIndex": "1", "sessionInfo":""}
+            session = self.__session_repository.get_session_info()
+            recently_added_card_index = self.field_area_inside_handler.get_recently_added_card_index()
+            self.__fake_battle_field_frame_repository.request_to_process_first_passive_skill(
+                WideAreaPassiveSkillFromDeployRequest(session, placed_card_id))
 
             self.master.after(2000, self.your_contract_of_doom_attack_animation)
             self.attack_animation_object.set_animation_action(AnimationAction.DUMMY)

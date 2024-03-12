@@ -25,6 +25,7 @@ class FieldAreaInsideHandler:
     __field_area_action = None
     __lightning_border_list = []
     __action_set_card_id = 0
+    __recently_added_card_index = None
     # __action_set_card_index = 0
 
     __your_hand_repository = YourHandRepository.getInstance()
@@ -86,6 +87,9 @@ class FieldAreaInsideHandler:
     def set_height_ratio(self, height_ratio):
         self.__height_ratio = height_ratio
 
+    def get_recently_added_card_index(self):
+        return self.__recently_added_card_index
+
     def handle_card_drop(self, x, y, selected_object, your_battle_field_panel):
         print("handle_card_drop()")
         if not self.is_drop_location_valid_your_unit_field(x, y, your_battle_field_panel) or not selected_object:
@@ -111,13 +115,15 @@ class FieldAreaInsideHandler:
         return FieldAreaAction.Dummy
 
     def handle_unit_card(self, placed_card_id, placed_card_index):
+        # 통신 없는 테스트의 경우 바로 제낌
+        deploy_your_unit_request = None
 
         if self.__detector_about_test.get_is_it_test() is False:
             session = self.__session_info_repository.get_session_info()
             deploy_your_unit_request = self.__your_field_unit_repository.request_to_deploy_your_unit(
                 DeployUnitCardRequest(session, placed_card_id))
 
-            print(f"deploy_your_unit_request: {deploy_your_unit_request}")
+            print(f"{Fore.RED}deploy_your_unit_request:{Fore.GREEN} {deploy_your_unit_request}{Style.RESET_ALL}")
             deploy_is_success = deploy_your_unit_request['is_success']
             if deploy_is_success is False:
                 return FieldAreaAction.Dummy
@@ -128,6 +134,7 @@ class FieldAreaInsideHandler:
 
         self.__your_field_unit_repository.create_field_unit_card(placed_card_id)
         self.__your_field_unit_repository.save_current_field_unit_state(placed_card_id)
+        self.__recently_added_card_index = self.__your_field_unit_repository.get_recently_added_field_unit_index()
 
         # your_hand_page = self.__your_hand_repository.get_current_your_hand_page()
         # your_hand_page_card_list = self.__your_hand_repository.your_hand_page_list[your_hand_page].get_your_hand_page_card_list()
@@ -137,13 +144,23 @@ class FieldAreaInsideHandler:
         self.__your_hand_repository.update_your_hand()
         self.__your_field_unit_repository.replace_field_card_position()
 
+        print(f"{Fore.RED}deploy_your_unit_request -> number_of_passive_skill_to_handle:{Fore.GREEN} {deploy_your_unit_request['number_of_passive_skill_to_handle']}{Style.RESET_ALL}")
+
+        self.__your_field_unit_action_repository.create_field_unit_action_count(0)
+
         passive_skill_type = self.__card_info_repository.getCardPassiveFirstForCardNumber(placed_card_id)
         if passive_skill_type == 2:
             print("광역기")
+
+            self.__field_area_action = FieldAreaAction.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS
+            return self.__field_area_action
+
+
         elif passive_skill_type == 1:
             print("단일기")
 
-        self.__your_field_unit_action_repository.create_field_unit_action_count(0)
+            self.__field_area_action = FieldAreaAction.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS
+            return self.__field_area_action
 
         self.__field_area_action = FieldAreaAction.PLACE_UNIT
         return self.__field_area_action
