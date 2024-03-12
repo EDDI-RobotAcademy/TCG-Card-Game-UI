@@ -3285,10 +3285,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         return
 
                     self.attack_animation_object.set_opponent_main_character(self.opponent_main_character_panel)
-                    # self.attack_animation_object.set_animation_actor(self.selected_object)
-
-                    self.master.after(0, self.you_attack_main_character_animation)
-
                     self.your_field_unit_action_repository.use_field_unit_action_count_by_index(your_field_card_index)
 
                     your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
@@ -3297,7 +3293,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     your_damage = self.card_info_repository.getCardAttackForCardNumber(your_field_card_id)
                     print(f"your_damage: {your_damage}")
 
-                    self.opponent_hp_repository.take_damage(your_damage)
+                    self.attack_animation_object.set_animation_actor_damage(your_damage)
+
+                    self.master.after(0, self.you_attack_main_character_animation)
+
+                    # self.opponent_hp_repository.take_damage(your_damage)
 
                     self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
                     self.targeting_enemy_select_using_your_field_card_index = None
@@ -6033,6 +6033,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 self.is_attack_motion_finished = True
                 attack_animation_object.set_is_finished(True)
+
+                your_damage = attack_animation_object.get_animation_actor_damage()
+                self.opponent_hp_repository.take_damage(your_damage)
                 # attack_animation_object.set_need_post_process(True)
                 #
                 # if self.attack_animation_object.get_your_field_unit_death():
