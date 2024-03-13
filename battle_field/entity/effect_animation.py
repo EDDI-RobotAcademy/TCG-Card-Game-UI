@@ -58,7 +58,7 @@ class EffectAnimation:
         self.height_ratio = height_ratio
 
     def change_local_translation(self, _translation):
-        print("changed_local_translation: ", _translation)
+        # print("changed_local_translation: ", _translation)
         self.local_translation = _translation
 
     def get_animation_panel(self):

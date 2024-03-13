@@ -4359,6 +4359,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     # self.opponent_hp_repository.change_opponent_hp(remain_character_hp)
 
 
+                    #### 모션 프레임
+                    your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(your_field_card_index)
+                    self.attack_animation_object.set_animation_actor(your_field_unit)
+                    self.field_area_inside_handler.set_field_area_action(FieldAreaAction.PLAY_ANIMATION)
+                    self.master.after(0, self.valrn_ready_to_use_shadow_ball_animation)
+
+                    #### 애니메이션 프레임
 
                     effect_animation = EffectAnimation()
                     effect_animation.set_animation_name('burst_shadow_ball')
@@ -4375,8 +4382,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     self.targeting_enemy_select_support_lightning_border_list = []
                     self.opponent_you_selected_lightning_border_list = []
-
-
 
                     def calculate_shadow_ball_to_main_character():
                         your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
@@ -7265,6 +7270,90 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
 
         move_to_origin_location(1)
+
+    def valrn_ready_to_use_shadow_ball_animation(self):
+        steps = 10
+        attack_animation_object = AttackAnimation.getInstance()
+        animation_actor = attack_animation_object.get_animation_actor()
+
+        your_fixed_card_base = animation_actor.get_fixed_card_base()
+        current_your_attacker_unit_vertices = your_fixed_card_base.get_vertices()
+        current_your_attacker_unit_local_translation = your_fixed_card_base.get_local_translation()
+
+        new_y_value = current_your_attacker_unit_local_translation[1] - 270
+        new_x_value = attack_animation_object.get_total_width() / 2 - 52.5
+        # your_attacker_unit_destination_local_translation = (current_your_attacker_unit_local_translation[0], new_y_value)
+        your_attacker_unit_destination_local_translation = (new_x_value, new_y_value)
+
+        attack_animation_object.set_your_attacker_unit_moving_x(your_attacker_unit_destination_local_translation[0] - current_your_attacker_unit_local_translation[0])
+
+        step_x = (your_attacker_unit_destination_local_translation[0] - current_your_attacker_unit_local_translation[0]) / steps
+        step_y = (your_attacker_unit_destination_local_translation[1] - current_your_attacker_unit_local_translation[1]) / steps
+        step_y *= -1
+
+        # S = 0.5 * a * t^2
+        # S = 0.5 * 100 * a
+        # S = 50 * a
+        staff_accel_x = 1
+
+        # S = 0.5 * a * 100
+        # S = 50 * a = -150=
+        staff_accel_y = -3
+
+        def update_position(step_count):
+            print(f"{Fore.RED}step_count: {Fore.GREEN}{step_count}{Style.RESET_ALL}")
+
+            new_vertices = [
+                (vx + step_x * step_count, vy + step_y * step_count) for vx, vy in current_your_attacker_unit_vertices
+            ]
+            your_fixed_card_base.update_vertices(new_vertices)
+
+            # tool_card = self.selected_object.get_tool_card()
+            # if tool_card is not None:
+            #     new_tool_card_vertices = [
+            #         (vx + new_x, vy + new_y) for vx, vy in tool_card.vertices
+            #     ]
+            #     tool_card.update_vertices(new_tool_card_vertices)
+
+            for attached_shape in your_fixed_card_base.get_attached_shapes():
+                # theta = w0 * t + 0.5 * alpha * t^2
+                # theta = 0.5 * alpha * t^2 => step_count = 10
+                # theta = 0.5 * alpha * 100 = 10 / 50 = 0.2
+                omega_accel_alpha = -0.2
+
+                if isinstance(attached_shape, NonBackgroundNumberImage):
+                    if attached_shape.get_circle_kinds() is CircleKinds.ATTACK:
+                        accel_x_dist = staff_accel_x * step_count
+                        accel_y_dist = staff_accel_y * step_count
+                        # x: 236 / 1920, y: -367 / 1043
+                        new_attached_shape_vertices = [
+                            (vx + accel_x_dist, vy + accel_y_dist) for vx, vy in attached_shape.vertices
+                        ]
+                        attached_shape.update_vertices(new_attached_shape_vertices)
+                        attached_shape.update_rotation_angle(omega_accel_alpha * step_count * step_count)
+                        # print(f"{Fore.RED}sword new_attached_shape_vertices{Fore.GREEN} {new_attached_shape_vertices}{Style.RESET_ALL}")
+
+                        if step_count == 10:
+                            attack_animation_object.set_your_weapon_shape(attached_shape)
+
+                new_attached_shape_vertices = [
+                    (vx + step_x, vy + step_y) for vx, vy in attached_shape.vertices
+                ]
+                attached_shape.update_vertices(new_attached_shape_vertices)
+                print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+
+            if step_count < steps:
+                self.master.after(20, update_position, step_count + 1)
+            else:
+                self.valrn_shoot_shadow_ball_animation(self.attack_animation_object)
+                # self.is_attack_motion_finished = True
+                # attack_animation_object.set_is_finished(True)
+                # attack_animation_object.set_need_post_process(True)
+
+        update_position(1)
+
+    def valrn_shoot_shadow_ball_animation(self, attack_animation_object):
+        pass
 
     def apply_response_data_of_field_unit_hp(self, player_field_unit_health_point_data):
         print('apply notify data of field unit hp!! : ', player_field_unit_health_point_data)
