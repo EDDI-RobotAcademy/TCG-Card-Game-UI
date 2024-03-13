@@ -18,14 +18,14 @@ class MusicPlayerControllerImpl(MusicPlayerController):
         return cls.__instance
 
     def loadAllMusicFiles(self):
-        print("MusicPlayerController - loadAllMusicFiles")
+        print("MusicPlayerControllerImpl : loadAllMusicFiles")
         self.__musicPlayerService.loadBackgroundMusics()
-        # self.__musicPlayerService.loadEffectSounds()
+        self.__musicPlayerService.loadSoundEffects()
 
     def playBackgroundMusic(self):
-        print("MusicPlayerController - playMusic")
+        print("MusicPlayerControllerImpl : playBackgroundMusic")
         self.__musicPlayerService.playBackgroundMusic()
 
     def requestToInjectUiIpcChannel(self, uiIpcChannel):
-        print("MusicPlayerController - requestToInjectUiIpcChannel")
+        print("MusicPlayerControllerImpl : requestToInjectUiIpcChannel")
         self.__musicPlayerService.injectUiIpcChannel(uiIpcChannel)
