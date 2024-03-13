@@ -100,10 +100,10 @@ class UnitCard:
         self.add_shape(unit_attack_image)
 
     def create_non_background_unit_attack_wizard(self, image_data, attack_number, center, radius):
-        start_x = center[0] - 5 - radius * 2.0 + 10
-        end_x = center[0] - 5 + radius * 2.0 + 10
-        start_y = center[1] - 7 - radius * 1.651 * 2.0 - 24
-        end_y = center[1] - 7 + radius * 1.651 * 2.0 - 24
+        start_x = center[0] - 5 - radius * 2.0 + 9
+        end_x = center[0] - 5 + radius * 2.0 + 9
+        start_y = center[1] - 7 - radius * 1.9353 * 2.0 - 32
+        end_y = center[1] - 7 + radius * 1.9353 * 2.0 - 32
 
         # x: 376, y: 447
         # x: 371, y: 440
