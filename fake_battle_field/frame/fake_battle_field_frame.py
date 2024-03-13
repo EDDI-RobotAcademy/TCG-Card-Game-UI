@@ -4331,23 +4331,47 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     #
                     # self.opponent_hp_repository.change_opponent_hp(remain_character_hp)
 
-                    your_damage = self.card_info_repository.getCardSkillFirstDamageForCardNumber(your_field_card_id)
-                    print(f"your_damage: {your_damage}")
 
-                    self.opponent_hp_repository.take_damage(your_damage)
 
-                    self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
-                    self.targeting_enemy_select_using_your_field_card_index = None
-                    self.targeting_enemy_select_using_your_field_card_id = None
+                    effect_animation = EffectAnimation()
+                    effect_animation.set_animation_name('burst_shadow_ball')
+                    effect_animation.set_total_window_size(self.width, self.height)
+                    vertices = self.opponent_main_character_panel.get_vertices()
+                    effect_animation.draw_animation_panel_with_vertices(vertices)
+                    effect_animation_panel = effect_animation.get_animation_panel()
+
+                    self.effect_animation_repository.save_effect_animation_at_dictionary_with_index(
+                        your_field_card_index, effect_animation)
+
+                    self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                        your_field_card_index, effect_animation_panel)
+
                     self.targeting_enemy_select_support_lightning_border_list = []
                     self.opponent_you_selected_lightning_border_list = []
 
-                    self.selected_object = None
-                    self.active_panel_rectangle = None
-                    self.current_fixed_details_card = None
-                    self.your_active_panel.clear_all_your_active_panel()
 
-                    return
+
+                    def calculate_shadow_ball_to_main_character():
+                        your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
+                        your_damage = self.card_info_repository.getCardSkillFirstDamageForCardNumber(your_field_card_id)
+                        print(f"your_damage: {your_damage}")
+                        self.opponent_hp_repository.take_damage(your_damage)
+
+                        self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+                        self.targeting_enemy_select_using_your_field_card_index = None
+                        self.targeting_enemy_select_using_your_field_card_id = None
+                        self.targeting_enemy_select_support_lightning_border_list = []
+                        self.opponent_you_selected_lightning_border_list = []
+
+                        self.selected_object = None
+                        self.active_panel_rectangle = None
+                        self.current_fixed_details_card = None
+                        self.your_active_panel.clear_all_your_active_panel()
+
+                        return
+
+                    self.play_effect_animation_by_index_and_call_function(your_field_card_index,
+                                                                          calculate_shadow_ball_to_main_character)
 
                 opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
                 for opponent_field_unit_object in opponent_field_unit_object_list:
@@ -4386,106 +4410,130 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                         self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
 
-                        # dead_field_unit_index_list = response['player_field_unit_death_map']['Opponent']['dead_field_unit_index_list']
-                        #
-                        # for opponent_field_unit_index, opponent_field_unit_remain_hp in response['player_field_unit_health_point_map']['Opponent'][
-                        #     'field_unit_health_point_map'].items():
-                        #
-                        #     if opponent_field_unit_remain_hp == 0:
-                        #         break
-                        #
-                        #     opponent_field_unit = (
-                        #         self.opponent_field_unit_repository.find_opponent_field_unit_by_index(int(opponent_field_unit_index)))
-                        #     opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
-                        #     opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
-                        #     for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
-                        #         if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
-                        #             if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
-                        #                 opponent_fixed_card_attached_shape.set_number(opponent_field_unit_remain_hp)
-                        #
-                        #                 opponent_fixed_card_attached_shape.set_image_data(
-                        #                     self.pre_drawed_image_instance.get_pre_draw_unit_hp(opponent_field_unit_remain_hp))
-                        #
-                        # for dead_field_unit_index in dead_field_unit_index_list:
-                        #     card_id = self.opponent_field_unit_repository.get_opponent_card_id_by_index(dead_field_unit_index)
-                        #     self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
-                        #     self.opponent_field_unit_repository.remove_current_field_unit_card(dead_field_unit_index)
-                        #     self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                        opponent_unit_index = opponent_field_unit_object.get_index()
+                        effect_animation = EffectAnimation()
+                        effect_animation.set_animation_name('burst_shadow_ball')
+                        effect_animation.set_total_window_size(self.width, self.height)
+                        effect_animation.change_local_translation(opponent_fixed_card_base.get_local_translation())
+                        effect_animation.draw_animation_panel()
+                        effect_animation_panel = effect_animation.get_animation_panel()
+                        print(effect_animation_panel)
+                        self.effect_animation_repository.save_effect_animation_at_dictionary_with_index(
+                            your_field_card_index,effect_animation)
 
-                        opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+                        self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                            your_field_card_index, effect_animation_panel)
 
-                        are_opponent_field_unit_death = False
-                        opponent_field_card_index = None
-                        opponent_field_card_id = None
-
-                        your_extra_ability = self.your_field_unit_repository.get_your_unit_extra_ability_at_index(your_field_card_index)
-
-                        for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
-                            if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
-                                if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
-                                    print("지정한 상대방 유닛 HP Circle 찾기")
-
-                                    your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
-                                    print(f"your_field_card_id: {your_field_card_id}")
-                                    your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
-                                    print(f"your_field_card_index: {your_field_card_index}")
-                                    # your_skill_damage = self.card_info_repository.getCardAttackForCardNumber(your_field_card_id)
-                                    # your_skill_damage = self.card_info_repository.getCardAttackForCardNumber(your_field_card_id)
-                                    # your_skill_damage = 20
-                                    your_skill_damage = self.card_info_repository.getCardSkillFirstDamageForCardNumber(
-                                        your_field_card_id)
-                                    print(f"your_skill_damage: {your_skill_damage}")
-
-                                    opponent_field_card_id = opponent_field_unit_object.get_card_number()
-                                    opponent_field_card_index = opponent_field_unit_object.get_index()
-
-                                    opponent_hp_number = opponent_fixed_card_attached_shape.get_number()
-                                    opponent_hp_number -= your_skill_damage
-
-                                    print(f"opponent_hp_number: {opponent_hp_number}")
-
-                                    # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
-                                    # (지금 당장 불사가 존재하지 않음)
-                                    if opponent_hp_number <= 0:
-                                        are_opponent_field_unit_death = True
-
-                                        break
-
-                                    print(f"공격 후 opponent unit 체력 -> hp_number: {opponent_hp_number}")
-                                    opponent_fixed_card_attached_shape.set_number(opponent_hp_number)
-
-                                    # opponent_fixed_card_attached_shape.set_image_data(
-                                    #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
-                                    #     self.pre_drawed_image_instance.get_pre_draw_number_image(opponent_hp_number))
-
-                                    opponent_fixed_card_attached_shape.set_image_data(
-                                        self.pre_drawed_image_instance.get_pre_draw_unit_hp(opponent_hp_number))
-
-                                    if your_extra_ability:
-                                        self.opponent_field_unit_repository.apply_harmful_status(opponent_field_card_index, your_extra_ability)
-
-                        print(f"opponent_field_card_index: {opponent_field_card_index}")
-
-                        if are_opponent_field_unit_death is True:
-                            self.opponent_field_unit_repository.remove_card_by_multiple_index(
-                                [opponent_field_card_index])
-                            self.opponent_tomb_repository.create_opponent_tomb_card(
-                                opponent_field_card_id)
-
-                            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-
-                        self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
-                        self.targeting_enemy_select_using_your_field_card_index = None
-                        self.targeting_enemy_select_using_your_field_card_id = None
                         self.targeting_enemy_select_support_lightning_border_list = []
                         self.opponent_you_selected_lightning_border_list = []
 
-                        self.selected_object = None
-                        self.active_panel_rectangle = None
-                        self.current_fixed_details_card = None
-                        self.your_active_panel.clear_all_your_active_panel()
+                        def calculate_shadow_ball():
 
-                        return
+
+                            # dead_field_unit_index_list = response['player_field_unit_death_map']['Opponent']['dead_field_unit_index_list']
+                            #
+                            # for opponent_field_unit_index, opponent_field_unit_remain_hp in response['player_field_unit_health_point_map']['Opponent'][
+                            #     'field_unit_health_point_map'].items():
+                            #
+                            #     if opponent_field_unit_remain_hp == 0:
+                            #         break
+                            #
+                            #     opponent_field_unit = (
+                            #         self.opponent_field_unit_repository.find_opponent_field_unit_by_index(int(opponent_field_unit_index)))
+                            #     opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                            #     opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+                            #     for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                            #         if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
+                            #             if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                            #                 opponent_fixed_card_attached_shape.set_number(opponent_field_unit_remain_hp)
+                            #
+                            #                 opponent_fixed_card_attached_shape.set_image_data(
+                            #                     self.pre_drawed_image_instance.get_pre_draw_unit_hp(opponent_field_unit_remain_hp))
+                            #
+                            # for dead_field_unit_index in dead_field_unit_index_list:
+                            #     card_id = self.opponent_field_unit_repository.get_opponent_card_id_by_index(dead_field_unit_index)
+                            #     self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                            #     self.opponent_field_unit_repository.remove_current_field_unit_card(dead_field_unit_index)
+                            #     self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                            opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+
+                            are_opponent_field_unit_death = False
+                            opponent_field_card_index = None
+                            opponent_field_card_id = None
+                            your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
+                            your_extra_ability = self.your_field_unit_repository.get_your_unit_extra_ability_at_index(your_field_card_index)
+
+                            for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                                if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
+                                    if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                        print("지정한 상대방 유닛 HP Circle 찾기")
+
+                                        your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
+                                        print(f"your_field_card_id: {your_field_card_id}")
+                                        your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
+                                        print(f"your_field_card_index: {your_field_card_index}")
+                                        # your_skill_damage = self.card_info_repository.getCardAttackForCardNumber(your_field_card_id)
+                                        # your_skill_damage = self.card_info_repository.getCardAttackForCardNumber(your_field_card_id)
+                                        # your_skill_damage = 20
+                                        your_skill_damage = self.card_info_repository.getCardSkillFirstDamageForCardNumber(
+                                            your_field_card_id)
+                                        print(f"your_skill_damage: {your_skill_damage}")
+
+                                        opponent_field_card_id = opponent_field_unit_object.get_card_number()
+                                        opponent_field_card_index = opponent_field_unit_object.get_index()
+
+                                        opponent_hp_number = opponent_fixed_card_attached_shape.get_number()
+                                        opponent_hp_number -= your_skill_damage
+
+                                        print(f"opponent_hp_number: {opponent_hp_number}")
+
+                                        # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
+                                        # (지금 당장 불사가 존재하지 않음)
+                                        if opponent_hp_number <= 0:
+                                            are_opponent_field_unit_death = True
+
+                                            break
+
+                                        print(f"공격 후 opponent unit 체력 -> hp_number: {opponent_hp_number}")
+                                        opponent_fixed_card_attached_shape.set_number(opponent_hp_number)
+
+                                        # opponent_fixed_card_attached_shape.set_image_data(
+                                        #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+                                        #     self.pre_drawed_image_instance.get_pre_draw_number_image(opponent_hp_number))
+
+                                        opponent_fixed_card_attached_shape.set_image_data(
+                                            self.pre_drawed_image_instance.get_pre_draw_unit_hp(opponent_hp_number))
+
+                                        if your_extra_ability:
+                                            self.opponent_field_unit_repository.apply_harmful_status(opponent_field_card_index, your_extra_ability)
+
+
+                            print(f"opponent_field_card_index: {opponent_field_card_index}")
+
+                            if are_opponent_field_unit_death is True:
+                                self.opponent_field_unit_repository.remove_card_by_multiple_index(
+                                    [opponent_field_card_index])
+                                self.opponent_tomb_repository.create_opponent_tomb_card(
+                                    opponent_field_card_id)
+
+                                self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                            self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+                            self.targeting_enemy_select_using_your_field_card_index = None
+                            self.targeting_enemy_select_using_your_field_card_id = None
+                            self.targeting_enemy_select_support_lightning_border_list = []
+                            self.opponent_you_selected_lightning_border_list = []
+
+                            self.selected_object = None
+                            self.active_panel_rectangle = None
+                            self.current_fixed_details_card = None
+                            self.your_active_panel.clear_all_your_active_panel()
+
+                            return
+
+                        self.play_effect_animation_by_index_and_call_function(
+                            your_field_card_index, calculate_shadow_ball)
 
             your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
             for your_field_unit in your_field_unit_list:
