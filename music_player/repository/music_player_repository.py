@@ -3,16 +3,24 @@ import abc
 
 class MusicPlayerRepository(abc.ABC):
     @abc.abstractmethod
-    def loadBackgroundMp3(self, frameName: str):
+    def loadBackgroundMusicPath(self, frame_name: str):
         pass
 
     @abc.abstractmethod
     def playBackgroundMusic(self):
         pass
 
-    @abc.abstractmethod
-    def getBackgroundMusicFilePath(self):
-        pass
+    # @abc.abstractmethod
+    # def changeBackgroundMusic(self):
+    #     pass
+    #
+    # @abc.abstractmethod
+    # def getBackgroundMusicFilePath(self, frameName):
+    #     pass
+    #
+    # @abc.abstractmethod
+    # def detectFrameChange(self):
+    #     pass
 
     @abc.abstractmethod
     def saveUiIpcChannel(self, uiIpcChannel):

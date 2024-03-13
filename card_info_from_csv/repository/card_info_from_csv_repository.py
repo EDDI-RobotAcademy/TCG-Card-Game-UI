@@ -28,6 +28,10 @@ class CardInfoFromCsvRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def getCardJobForCardNumber(self, cardNumber):
+        pass
+
+    @abc.abstractmethod
     def getCardEnergyForCardNumber(self, cardNumber):
         pass
 
