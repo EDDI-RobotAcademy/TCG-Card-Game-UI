@@ -1,6 +1,7 @@
 from colorama import Fore, Style
 
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
+from battle_field.components.field_area_inside.unit_action import UnitAction
 from battle_field.infra.request.deploy_unit_card_request import DeployUnitCardRequest
 from battle_field.infra.request.drawCardByUseSupportCardRequest import DrawCardByUseSupportCardRequest
 from battle_field.infra.your_deck_repository import YourDeckRepository
@@ -26,6 +27,8 @@ class FieldAreaInsideHandler:
     __lightning_border_list = []
     __action_set_card_id = 0
     __recently_added_card_index = None
+
+    __unit_action = None
     # __action_set_card_index = 0
 
     __your_hand_repository = YourHandRepository.getInstance()
@@ -80,6 +83,15 @@ class FieldAreaInsideHandler:
 
     def clear_field_area_action(self):
         self.__field_area_action = None
+
+    def set_field_area_action(self, field_area_action):
+        self.__field_area_action = field_area_action
+
+    def set_unit_action(self, unit_action):
+        self.__unit_action = unit_action
+
+    def get_unit_action(self):
+        return self.__unit_action
 
     def set_width_ratio(self, width_ratio):
         self.__width_ratio = width_ratio
@@ -153,6 +165,9 @@ class FieldAreaInsideHandler:
             print("광역기")
 
             self.__field_area_action = FieldAreaAction.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS
+            if placed_card_id == 19:
+                self.set_unit_action(UnitAction.NETHER_BLADE_FIRST_WIDE_AREA_PASSIVE_SKILL)
+
             return self.__field_area_action
 
 
