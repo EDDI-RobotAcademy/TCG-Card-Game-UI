@@ -1,5 +1,6 @@
 from colorama import Fore, Style
 
+from battle_field.components.opponent_fixed_unit_card_inside.ActionToApplyOpponent import ActionToApplyOpponent
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
 from battle_field.infra.request.request_use_death_sice_to_unit import RequestUseDeathSiceToUnit
@@ -28,6 +29,8 @@ class OpponentFixedUnitCardInsideHandler:
     __opponent_unit_id = -1
     __action_set_card_index = -1
     __your_hand_card_id = -1
+
+    __action_to_apply_opponent = ActionToApplyOpponent.Dummy
 
     __your_hand_repository = YourHandRepository.getInstance()
     __your_tomb_repository = YourTombRepository.getInstance()
@@ -65,6 +68,12 @@ class OpponentFixedUnitCardInsideHandler:
         if cls.__instance is None:
             cls.__instance = cls()
         return cls.__instance
+
+    def set_action_to_apply_opponent(self, action_to_apply_opponent):
+        self.__action_to_apply_opponent = action_to_apply_opponent
+
+    def get_action_to_apply_opponent(self):
+        return self.__action_to_apply_opponent
 
     def get_required_energy(self):
         return self.__required_energy
