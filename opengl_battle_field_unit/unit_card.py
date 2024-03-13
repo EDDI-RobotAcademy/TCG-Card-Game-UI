@@ -175,7 +175,7 @@ class UnitCard:
                 radius=circle_radius)
         else:
             self.create_non_background_unit_attack_wizard(
-                image_data=self.__pre_drawed_image_instance.get_pre_draw_unit_card_attack_wizard(),
+                image_data=self.__pre_drawed_image_instance.get_pre_draw_wizard_card_attack_power(card_number),
                 attack_number=self.__card_info_from_csv_repository.getCardAttackForCardNumber(card_number),
                 center=(rectangle_width, rectangle_height),
                 radius=circle_radius)
