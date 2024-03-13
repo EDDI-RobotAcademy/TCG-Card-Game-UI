@@ -7,6 +7,10 @@ class MusicPlayerService(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def loadSoundEffects(self):
+        pass
+
+    @abc.abstractmethod
     def playBackgroundMusic(self):
         pass
 

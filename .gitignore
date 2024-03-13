@@ -17,6 +17,9 @@ second_fake_session_info.txt
 # exclude .env
 .env
 
+# exclude *.mp3
+*.mp3
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
