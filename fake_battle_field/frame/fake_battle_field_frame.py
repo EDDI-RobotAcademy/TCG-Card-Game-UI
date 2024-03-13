@@ -25,6 +25,7 @@ from battle_field.entity.battle_result import BattleResult
 from battle_field.entity.current_field_energy_race import CurrentFieldEnergyRace
 from battle_field.entity.current_to_use_field_energy_count import CurrentToUseFieldEnergyCount
 from battle_field.entity.decrease_to_use_field_energy_count import DecreaseToUseFieldEnergyCount
+from battle_field.entity.effect_animation import EffectAnimation
 from battle_field.entity.increase_to_use_field_energy_count import IncreaseToUseFieldEnergyCount
 from battle_field.entity.next_field_energy_race import NextFieldEnergyRace
 from battle_field.entity.opponent_field_energy import OpponentFieldEnergy
@@ -50,6 +51,7 @@ from battle_field.entity.your_tomb import YourTomb
 from battle_field.entity.battle_field_timer import BattleFieldTimer
 from battle_field.handler.support_card_handler import SupportCardHandler
 from battle_field.infra.battle_field_repository import BattleFieldRepository
+from battle_field.infra.effect_animation_repository import EffectAnimationRepository
 
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
@@ -97,6 +99,7 @@ from battle_field_function.service.request.turn_end_request import TurnEndReques
 from battle_field_muligun.service.request.muligun_request import MuligunRequest
 
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
+from common.attack_type import AttackType
 from common.card_grade import CardGrade
 from common.card_race import CardRace
 from common.card_type import CardType
@@ -328,6 +331,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.animation_test_image = AnimationTestImage()
         self.animation_test_image_list = []
         self.animation_test_image_panel_list = []
+
+
+        self.effect_animation_panel = None
+        self.effect_animation = EffectAnimation()
+        self.effect_animation_repository = EffectAnimationRepository.getInstance()
+        self.effect_animation_list = []
+        self.effect_animation_panel_list = []
+        self.is_effect_animation_playing = False
 
         self.battle_field_repository = BattleFieldRepository.getInstance()
         self.battle_result = BattleResult()
@@ -744,6 +755,124 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             self.animation_test_image.reset_animation_count()
             self.master.after(0, animate)
+
+        if key.lower() == 'kp_end':
+            self.effect_animation_panel = None
+            effect_animation = EffectAnimation()
+            effect_animation.set_animation_name('sword_attack')
+            effect_animation.set_total_window_size(self.width, self.height)
+            effect_animation.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(0).get_local_translation()
+            )
+            effect_animation.draw_animation_panel()
+            effect_animation_panel = effect_animation.get_animation_panel()
+
+            self.effect_animation_list.append(effect_animation)
+            self.effect_animation_panel_list.append(effect_animation_panel)
+
+        if key.lower() == 'kp_down':
+            self.effect_animation_panel = None
+            effect_animation = EffectAnimation()
+            effect_animation.set_animation_name('magic_attack')
+            effect_animation.set_total_window_size(self.width, self.height)
+            effect_animation.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(1).get_local_translation()
+            )
+            effect_animation.draw_animation_panel()
+            effect_animation_panel = effect_animation.get_animation_panel()
+
+            self.effect_animation_list.append(effect_animation)
+            self.effect_animation_panel_list.append(effect_animation_panel)
+
+        if key.lower() == 'kp_next':
+            self.effect_animation_panel = None
+            effect_animation = EffectAnimation()
+            effect_animation.set_animation_name('dark_blast')
+            effect_animation.set_total_window_size(self.width, self.height)
+            effect_animation.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(2).get_local_translation()
+            )
+            effect_animation.draw_animation_panel()
+            effect_animation_panel = effect_animation.get_animation_panel()
+
+            self.effect_animation_list.append(effect_animation)
+            self.effect_animation_panel_list.append(effect_animation_panel)
+
+        if key.lower() == 'kp_left':
+            self.effect_animation_panel = None
+            effect_animation = EffectAnimation()
+            effect_animation.set_animation_name('death_scythe')
+            effect_animation.set_total_window_size(self.width, self.height)
+            effect_animation.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(3).get_local_translation()
+            )
+            effect_animation.draw_animation_panel()
+            effect_animation_panel = effect_animation.get_animation_panel()
+
+            self.effect_animation_list.append(effect_animation)
+            self.effect_animation_panel_list.append(effect_animation_panel)
+
+        if key.lower() == 'kp_begin':
+            self.effect_animation_panel = None
+            effect_animation = EffectAnimation()
+            effect_animation.set_animation_name('burst_shadow_ball')
+            effect_animation.set_total_window_size(self.width, self.height)
+            effect_animation.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(4).get_local_translation()
+            )
+            effect_animation.draw_animation_panel()
+            effect_animation_panel = effect_animation.get_animation_panel()
+
+            self.effect_animation_list.append(effect_animation)
+            self.effect_animation_panel_list.append(effect_animation_panel)
+
+        if key.lower() == 'kp_right':
+            self.effect_animation_panel = None
+            effect_animation = EffectAnimation()
+            effect_animation.set_animation_name('moving_shadow_ball')
+            effect_animation.set_total_window_size(self.width, self.height)
+            effect_animation.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(5).get_local_translation()
+            )
+            effect_animation.draw_animation_panel()
+            effect_animation_panel = effect_animation.get_animation_panel()
+
+            self.effect_animation_list.append(effect_animation)
+            self.effect_animation_panel_list.append(effect_animation_panel)
+
+        if key.lower() == 'kp_insert':
+            if self.is_effect_animation_playing:
+                return
+            def animate():
+                self.is_effect_animation_playing = True
+                finish_list = []
+                is_all_finished = False
+                for effect_animation in self.effect_animation_list:
+                    effect_animation.update_effect_animation_panel()
+                    finish_list.append(effect_animation.is_finished)
+
+                for finish in finish_list:
+                    if finish == False:
+                        is_all_finished = False
+                        break
+                    else:
+                        is_all_finished = True
+
+                if not is_all_finished:
+                    self.master.after(17, animate)
+                else:
+                    self.animation_test_image_list = []
+                    self.animation_test_image_panel_list = []
+                    self.is_effect_animation_playing = False
+                    print("finish animation")
+
+
+            for effect_animation in self.effect_animation_list:
+                print(f"animation count: {effect_animation}")
+                effect_animation.reset_animation_count()
+
+            self.master.after(0, animate)
+
 
         if key.lower() == 'kp_1':
             self.animation_test_image_panel = None
@@ -1387,6 +1516,39 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 animation_test_image.set_width_ratio(self.width_ratio)
                 animation_test_image.set_height_ratio(self.height_ratio)
                 animation_test_image_panel.draw()
+
+
+
+        if self.effect_animation_list is not [] and self.effect_animation_panel_list is not []:
+            for effect_animation, effect_animation_panel in zip(self.effect_animation_list,
+                                                                        self.effect_animation_panel_list):
+                if effect_animation.is_finished:
+                    continue
+                effect_animation.set_width_ratio(self.width_ratio)
+                effect_animation.set_height_ratio(self.height_ratio)
+                effect_animation_panel.draw()
+
+        if self.effect_animation_repository.get_effect_animation_list() is not [] and self.effect_animation_repository.get_effect_animation_panel_list() is not []:
+            for effect_animation, effect_animation_panel in zip(self.effect_animation_repository.get_effect_animation_list(),
+                                                                self.effect_animation_repository.get_effect_animation_panel_list()):
+                if effect_animation.is_finished:
+                    continue
+                effect_animation.set_width_ratio(self.width_ratio)
+                effect_animation.set_height_ratio(self.height_ratio)
+                effect_animation_panel.draw()
+
+
+        if self.effect_animation_repository.get_effect_animation_dictionary() is not {} and self.effect_animation_repository.get_effect_animation_panel_dictionary() is not {}:
+
+            for effect_animation, effect_animation_panel in zip(self.effect_animation_repository.get_effect_animation_dictionary().values(),
+                                                                self.effect_animation_repository.get_effect_animation_panel_dictionary().values()):
+                if effect_animation.is_finished:
+                    continue
+                effect_animation.set_width_ratio(self.width_ratio)
+                effect_animation.set_height_ratio(self.height_ratio)
+                effect_animation_panel.draw()
+
+           # self.play_effect_animation()
 
         # glDisable(GL_BLEND)
 
@@ -3415,6 +3577,33 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if opponent_fixed_card_base.is_point_inside((x, y)):
                         your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
+                        your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
+                        your_unit_job_number = self.card_info_repository.getCardJobForCardNumber(your_field_card_id)
+                        your_effect_animation_name = ''
+                        for attack_type in AttackType:
+                            if attack_type.value == your_unit_job_number:
+                                your_effect_animation_name = attack_type.name
+                                print('your effect animation name: ', your_effect_animation_name)
+                                break
+
+                        effect_animation = EffectAnimation()
+                        effect_animation.set_animation_name(your_effect_animation_name)
+                        effect_animation.set_total_window_size(self.width, self.height)
+                        effect_animation.change_local_translation(
+                            self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                                opponent_field_card_index).get_fixed_card_base().get_local_translation()
+                        )
+                        effect_animation.draw_animation_panel()
+                        effect_animation_panel = effect_animation.get_animation_panel()
+                        print(effect_animation_panel)
+                        self.effect_animation_repository.save_effect_animation_at_dictionary_with_index(
+                            your_field_card_index, effect_animation)
+                        self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                            your_field_card_index, effect_animation_panel)
+
+                        print(f'save effect animation: {self.effect_animation_repository.get_effect_animation_by_index(your_field_card_index)}')
+                        print(f'save effect animation panel: {self.effect_animation_repository.get_effect_animation_panel_by_index(your_field_card_index)}')
+
                         self.your_field_unit_action_repository.use_field_unit_action_count_by_index(
                             your_field_card_index)
 
@@ -5251,6 +5440,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         update_position(1)
 
+
     def start_post_animation(self, attack_animation_object):
         sword_shape = attack_animation_object.get_your_weapon_shape()
 
@@ -5327,7 +5517,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
             else:
                 self.finish_post_animation(attack_animation_object)
 
+        self.play_effect_animation_by_index(attack_animation_object.get_animation_actor().get_index())
         slash_with_sword(1)
+
+
 
     def finish_post_animation(self, attack_animation_object):
         sword_shape = attack_animation_object.get_your_weapon_shape()
@@ -6687,6 +6880,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 self.master.after(20, move_to_origin_location, step_count + 1)
             else:
+                targeting_damage = 20
                 if is_attack_main_character is False:
                     print(f"{Fore.RED}필드 유닛 공격 -> is_attack_main_character(False): {Fore.GREEN}{is_attack_main_character}{Style.RESET_ALL}")
 
@@ -6694,7 +6888,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     tool_card = opponent_field_unit.get_tool_card()
                     attached_shape_list = fixed_card_base.get_attached_shapes()
 
-                    targeting_damage = 20
+
 
                     remove_from_field = False
                     for attached_shape in attached_shape_list:
@@ -6878,3 +7072,54 @@ class FakeBattleFieldFrame(OpenGLFrame):
         except Exception as e:
             print('An error occurred while applying harmful status data:', e)
 
+
+    def play_effect_animation(self):
+        if self.is_effect_animation_playing:
+            return
+
+        def animate():
+            self.is_effect_animation_playing = True
+            finish_list = []
+            is_all_finished = False
+            for effect_animation in self.effect_animation_repository.get_effect_animation_list():
+                effect_animation.update_effect_animation_panel()
+                finish_list.append(effect_animation.is_finished)
+
+            for finish in finish_list:
+                if finish == False:
+                    is_all_finished = False
+                    break
+                else:
+                    is_all_finished = True
+
+            if not is_all_finished:
+                self.master.after(17, animate)
+            else:
+                self.effect_animation_repository.reset_all_effect_animation()
+                self.is_effect_animation_playing = False
+                print("finish animation")
+
+        for effect_animation in self.effect_animation_repository.get_effect_animation_list():
+            print(f"animation count: {effect_animation}")
+            effect_animation.reset_animation_count()
+
+        self.master.after(0, animate)
+
+    def play_effect_animation_by_index(self, index):
+
+        def animate():
+            effect_animation = self.effect_animation_repository.get_effect_animation_by_index(index)
+            effect_animation.update_effect_animation_panel()
+            print('is finished?? ',effect_animation.is_finished)
+            if not effect_animation.is_finished:
+                self.master.after(100, animate)
+            else:
+                self.effect_animation_repository.remove_effect_animation_by_index(index)
+                print("finish animation")
+
+        print(f"animation playing at index : {index}")
+        effect_animation = self.effect_animation_repository.get_effect_animation_by_index(index)
+        print(f"effect_animation : {effect_animation}")
+        effect_animation.reset_animation_count()
+
+        self.master.after(0, animate)
