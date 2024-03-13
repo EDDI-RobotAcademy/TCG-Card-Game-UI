@@ -101,6 +101,7 @@ class PreDrawedImage:
     __pre_drawed_number_of_details_energy = {}
 
     __pre_drawed_waiting_message = None
+    __pre_drawed_message_on_the_battle_screen = {}
 
     def __new__(cls):
         if cls.__instance is None:
@@ -696,6 +697,13 @@ class PreDrawedImage:
         unit_attack_wizard_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_attack_wizard", "10.png")
         self.__pre_drawed_unit_attack_wizard = ImageDataLoader.load_rectangle_image_data(unit_attack_wizard_image_path)
 
+    def pre_draw_message_on_the_battle_screen(self):
+
+        for number in range(1, 5):
+            text_image_data = os.path.join(self.__project_root, "local_storage", "message_on_the_battle_screen",
+                                           f"{number}.png")
+            self.__pre_drawed_message_on_the_battle_screen[number] = ImageDataLoader.load_rectangle_image_data(text_image_data)
+
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
         self.pre_draw_opponent_lost_zone()
@@ -778,6 +786,7 @@ class PreDrawedImage:
         self.pre_draw_card_type_mark()
 
         self.pre_draw_unit_attack_wizard()
+        self.pre_draw_message_on_the_battle_screen()
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
@@ -978,4 +987,7 @@ class PreDrawedImage:
 
     def get_pre_draw_unit_card_attack_wizard(self):
         return self.__pre_drawed_unit_attack_wizard
+
+    def get_pre_draw_message_on_the_battle_screen(self, number):
+        return self.__pre_drawed_message_on_the_battle_screen[number]
 
