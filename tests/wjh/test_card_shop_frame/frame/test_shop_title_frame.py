@@ -1,6 +1,7 @@
 import tkinter as tk
 import unittest
 from PIL import ImageTk, Image
+from card_shop_frame.frame.shop_title_frame.service.shop_title_frame_service_impl import ShopTitleFrameServiceImpl
 
 
 
@@ -8,9 +9,12 @@ from PIL import ImageTk, Image
 class TestCardShopFrame(unittest.TestCase):
 
     def createtitleUiFrame(self, root):
+        def switchmenu():
+            print("swichtmenu대체")
 
-        shop_label = tk.Label(root, text="상점", font=("Helvetica", 16), bg="#BCA9F5")
-        shop_label.place(x=10, y=10)
+        shopTitleFrame = ShopTitleFrameServiceImpl.getInstance()
+        shopTitleFrame.createShopTitleUiFrame(root, switchmenu)
+
 
 
 

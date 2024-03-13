@@ -5,7 +5,9 @@ from card_shop_frame.repository.card_shop_repository_impl import CardShopMenuFra
 from card_shop_frame.service.card_shop_service import CardShopMenuFrameService
 from card_shop_frame.frame.buy_check_frame.service.buy_check_service_impl import BuyCheckServiceImpl
 from card_shop_frame.frame.buy_check_frame.repository.buy_check_repository_impl import BuyCheckRepositoryImpl
-from card_shop_frame.frame.my_game_money_frame.service.my_game_money_frame_service_impl import MyGameMoneyFrameServiceImpl
+from card_shop_frame.frame.shop_title_frame.service.shop_title_frame_service_impl import ShopTitleFrameServiceImpl
+from card_shop_frame.frame.shop_button_frame.service.shop_button_frame_service_impl import ShopButtonFrameServiceImpl
+from card_shop_frame.frame.select_race_ui_frame.service.select_race_ui_frame_service_impl import SelectRaceUiFrameServiceImpl
 from lobby_frame.repository.lobby_menu_frame_repository_impl import LobbyMenuFrameRepositoryImpl
 from session.service.session_service_impl import SessionServiceImpl
 
@@ -16,11 +18,13 @@ class CardShopMenuFrameServiceImpl(CardShopMenuFrameService):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
             cls.__instance.__cardShopMenuFrameRepository = CardShopMenuFrameRepositoryImpl.getInstance()
-            cls.__instance.__myGameMoneyFrameService = MyGameMoneyFrameServiceImpl.getInstance()
             cls.__instance.__buyCheckService = BuyCheckServiceImpl.getInstance()
             cls.__instance.__buyCheckRepository = BuyCheckRepositoryImpl.getInstance()
             cls.__instance.__sessionService = SessionServiceImpl.getInstance()
             cls.__instance.__lobbyMenuFrameRepository = LobbyMenuFrameRepositoryImpl.getInstance()
+            cls.__instance.__shopTitleFrameService = ShopTitleFrameServiceImpl.getInstance()
+            cls.__instance.__shopButtonFrameService = ShopButtonFrameServiceImpl.getInstance()
+            cls.__instance.__selectRaceFrameService = SelectRaceUiFrameServiceImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -56,16 +60,16 @@ class CardShopMenuFrameServiceImpl(CardShopMenuFrameService):
             self.DisabledCardShopUiButton()
 
 
+        shopTitleFrame = self.__shopTitleFrameService.createShopTitleUiFrame(cardShopMenuFrame, switchFrameWithMenuName)
+        shopTitleFrame.pack(side=tkinter.TOP)
 
-        label_text = "상점"
-        label = tkinter.Label(cardShopMenuFrame, text=label_text, font=("Helvetica", 64), fg="black",
-                              anchor="center", justify="center")
+        shopButtonFrame = self.__shopButtonFrameService.createShopButtonUiFrame(cardShopMenuFrame, switchFrameWithMenuName)
+        shopButtonFrame.pack(side=tkinter.LEFT, anchor=tkinter.S)
 
-        label.place(relx=0.5, rely=0.1, anchor="center", bordermode="outside")  # 가운데 정렬
+        selectRaceUiFrame = self.__selectRaceFrameService.createSelectRaceUiFrame(cardShopMenuFrame, switchFrameWithMenuName)
+        selectRaceUiFrame.pack(side=tkinter.RIGHT, anchor=tkinter.S)
 
 
-        my_money_frame = self.__myGameMoneyFrameService.createMyGameMoneyUiFrame(cardShopMenuFrame)
-        my_money_frame.place(relx=0.91, rely=0.06, relwidth=0.09, relheight=0.02, anchor="center")
 
         self.get_new_all_cards_button = tkinter.Button(cardShopMenuFrame, text="전체 카드 뽑기", bg="#2E2BE2", fg="white",
                                                        command=lambda: buy_check_button_click("전체"), width=25,height=30)

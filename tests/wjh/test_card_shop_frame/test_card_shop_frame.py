@@ -26,9 +26,12 @@ class TestCardShopFrame(unittest.TestCase):
         bottom_frame = tk.Frame(root, width=1720, height=980, bg="blue")  # 오른쪽 프레임
 
         # 프레임을 배치합니다.
-        top_frame.place(x=0, y=0)
-        middle_frame.place(x=0, y=60)
-        bottom_frame.place(x=200, y=60)
+        # top_frame.place(x=0, y=0)
+        # middle_frame.place(x=0, y=60)
+        # bottom_frame.place(x=200, y=60)
+        top_frame.pack(side=tk.TOP)
+        middle_frame.pack(side=tk.LEFT)
+        bottom_frame.pack(side=tk.RIGHT)
 
         # 상점 레이블 생성 및 배치
         shop_label = tk.Label(top_frame, text="상점", font=("Helvetica", 16))
