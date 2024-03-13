@@ -7280,6 +7280,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
         move_to_origin_location(1)
 
     def valrn_ready_to_use_shadow_ball_to_opponent_main_character_animation(self):
+        self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+        self.targeting_enemy_select_using_your_field_card_index = None
+        self.targeting_enemy_select_support_lightning_border_list = []
+        self.opponent_you_selected_lightning_border_list = []
+
+        self.selected_object = None
+        self.active_panel_rectangle = None
+        self.current_fixed_details_card = None
+        self.your_active_panel.clear_all_your_active_panel()
+
         steps = 10
         attack_animation_object = AttackAnimation.getInstance()
         animation_actor = attack_animation_object.get_animation_actor()
@@ -7448,41 +7458,21 @@ class FakeBattleFieldFrame(OpenGLFrame):
         def burst_shadow_ball_animation():
             step_count[0] += 1
             print(f"{Fore.RED}burst_shadow_ball_animation() -> step_count: {step_count}{Style.RESET_ALL}")
-            # your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
-            # your_damage = self.card_info_repository.getCardSkillFirstDamageForCardNumber(your_field_card_id)
-            # print(f"your_damage: {your_damage}")
-            # self.opponent_hp_repository.take_damage(your_damage)
-            #
-            # self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
-            # self.targeting_enemy_select_using_your_field_card_index = None
-            # self.targeting_enemy_select_using_your_field_card_id = None
-            # self.targeting_enemy_select_support_lightning_border_list = []
-            # self.opponent_you_selected_lightning_border_list = []
-            #
-            # self.selected_object = None
-            # self.active_panel_rectangle = None
-            # self.current_fixed_details_card = None
-            # self.your_active_panel.clear_all_your_active_panel()
 
-            # effect_animation_panel.local_translate((x_accel * steps * steps, y_accel * steps * steps))
-            # new_vertices = [
-            #     (vx + x_accel * step_count[0] * step_count[0], vy + y_accel * step_count[0] * step_count[0]) for vx, vy in effect_animation_panel_vertices
-            # ]
-            # effect_animation_panel.update_vertices(new_vertices)
+            effect_animation.set_animation_name('burst_shadow_ball')
+            effect_animation.set_total_window_size(self.width, self.height)
+            vertices = self.opponent_main_character_panel.get_vertices()
+            effect_animation.draw_animation_panel_with_vertices(vertices)
+            effect_animation_panel = effect_animation.get_animation_panel()
 
-            effect_animation.set_animation_name('moving_shadow_ball')
             self.effect_animation_repository.save_effect_animation_at_dictionary_with_index(
                 your_field_card_index, effect_animation)
 
             self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
                 your_field_card_index, effect_animation_panel)
 
-            # self.play_effect_animation_by_index_and_call_function(your_field_card_index,
-            #                                                       burst_shadow_ball_animation)
-            # self.play_effect_animation_with_acceleration_by_index_and_call_function(
-            #     your_field_card_index,
-            #     burst_shadow_ball_animation,
-            #     (170, 490))
+            self.play_effect_animation_by_index_and_call_function(your_field_card_index,
+                                                                  self.calculate_shadow_ball_to_main_character)
 
         # self.play_effect_animation_by_index_and_call_function(your_field_card_index,
         #                                                       burst_shadow_ball_animation)
@@ -7490,6 +7480,128 @@ class FakeBattleFieldFrame(OpenGLFrame):
             your_field_card_index,
             burst_shadow_ball_animation,
             (170, 490))
+
+    def calculate_shadow_ball_to_main_character(self):
+        self.shadow_ball_explosion_opponent_main_character_post_animation(self.attack_animation_object)
+
+    def shadow_ball_explosion_opponent_main_character_post_animation(self, attack_animation_object):
+        steps = 30
+
+        def vibration(step_count):
+            if step_count % 2 == 1:
+                vibration_factor = 10
+                random_translation = (random.uniform(-vibration_factor, vibration_factor),
+                                      random.uniform(-vibration_factor, vibration_factor))
+
+                for battle_field_background_shape in self.battle_field_background_shape_list:
+                    battle_field_background_shape.global_translate((random_translation[0], random_translation[1]))
+
+            else:
+                for battle_field_background_shape in self.battle_field_background_shape_list:
+                    battle_field_background_shape.global_translate((0, 0))
+
+            if step_count < steps:
+                self.master.after(20, vibration, step_count + 1)
+            else:
+                self.finish_shadow_ball_explosion_opponent_main_character_animation(attack_animation_object)
+                pass
+
+        vibration(1)
+        
+    def finish_shadow_ball_explosion_opponent_main_character_animation(self, attack_animation_object):
+        animation_actor = attack_animation_object.get_animation_actor()
+        your_fixed_card_base = animation_actor.get_fixed_card_base()
+        tool_card = animation_actor.get_tool_card()
+        attached_shape_list = your_fixed_card_base.get_attached_shapes()
+
+        current_your_attacker_unit_vertices = your_fixed_card_base.get_vertices()
+        current_your_attacker_unit_local_translation = your_fixed_card_base.get_local_translation()
+
+        your_attacker_unit_moving_x = attack_animation_object.get_your_attacker_unit_moving_x()
+
+        new_y_value = current_your_attacker_unit_local_translation[1] + 270
+        your_attacker_unit_destination_local_translation = (0, new_y_value)
+        print(f"{Fore.RED}your_attacker_unit_destination_local_translation{Fore.GREEN} {your_attacker_unit_destination_local_translation}{Style.RESET_ALL}")
+
+        steps = 15
+        step_x = your_attacker_unit_moving_x / steps
+        step_y = (your_attacker_unit_destination_local_translation[1] - current_your_attacker_unit_local_translation[1]) / steps
+
+        staff_shape = attack_animation_object.get_your_weapon_shape()
+
+        # S = 0.5 * a * t^2
+        # S = 0.5 * 225 * a
+        # S = 112.5 * a = -50
+        # a =
+        staff_accel_x = -0.44444
+
+        # S = 0.5 * a * 225
+        # S = 112.5 * a = 150
+        staff_accel_y = 1.33333
+
+        def move_to_origin_location(step_count):
+            new_y = current_your_attacker_unit_local_translation[1] + step_y * step_count
+
+            new_vertices = [
+                (vx - step_x * step_count, vy - step_y * step_count) for vx, vy in current_your_attacker_unit_vertices
+            ]
+            your_fixed_card_base.update_vertices(new_vertices)
+
+            # tool_card = self.selected_object.get_tool_card()
+            # if tool_card is not None:
+            #     new_tool_card_vertices = [
+            #         (vx + new_x, vy + new_y) for vx, vy in tool_card.vertices
+            #     ]
+            #     tool_card.update_vertices(new_tool_card_vertices)
+
+            for attached_shape in your_fixed_card_base.get_attached_shapes():
+                # theta = w0 * t + 0.5 * alpha * t^2
+                # theta = 0.5 * alpha * t^2 => step_count = 15
+                # theta = 0.5 * alpha * 225 = 10 / 112.5 = 0.2
+                omega_accel_alpha = 0.08888
+
+                if isinstance(attached_shape, NonBackgroundNumberImage):
+                    if attached_shape.get_circle_kinds() is CircleKinds.ATTACK:
+                        accel_x_dist = staff_accel_x * step_count
+                        accel_y_dist = staff_accel_y * step_count
+
+                        new_attached_shape_vertices = [
+                            (vx + accel_x_dist, vy + accel_y_dist) for vx, vy in attached_shape.vertices
+                        ]
+                        attached_shape.update_vertices(new_attached_shape_vertices)
+                        current_rotation_angle = attached_shape.get_rotation_angle()
+                        attached_shape.update_rotation_angle(current_rotation_angle + omega_accel_alpha * step_count)
+
+            for attached_shape in your_fixed_card_base.get_attached_shapes():
+                new_attached_shape_vertices = [
+                    (vx - step_x, vy - step_y) for vx, vy in attached_shape.vertices
+                ]
+                attached_shape.update_vertices(new_attached_shape_vertices)
+
+            if step_count < steps:
+
+                self.master.after(20, move_to_origin_location, step_count + 1)
+            else:
+                your_fixed_card_base.update_vertices(your_fixed_card_base.get_initial_vertices())
+                if tool_card is not None:
+                    tool_card.update_vertices(tool_card.get_initial_vertices())
+                for attached_shape in attached_shape_list:
+                    if isinstance(attached_shape, NonBackgroundNumberImage):
+                        if attached_shape.get_circle_kinds() is CircleKinds.ATTACK:
+                            attached_shape.update_rotation_angle(0)
+
+                    attached_shape.update_vertices(attached_shape.get_initial_vertices())
+
+                your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
+                your_damage = self.card_info_repository.getCardSkillFirstDamageForCardNumber(your_field_card_id)
+                print(f"your_damage: {your_damage}")
+                self.opponent_hp_repository.take_damage(your_damage)
+
+                self.targeting_enemy_select_using_your_field_card_id = None
+
+                self.field_area_inside_handler.clear_field_area_action()
+
+        move_to_origin_location(1)
 
     def apply_response_data_of_field_unit_hp(self, player_field_unit_health_point_data):
         print('apply notify data of field unit hp!! : ', player_field_unit_health_point_data)
