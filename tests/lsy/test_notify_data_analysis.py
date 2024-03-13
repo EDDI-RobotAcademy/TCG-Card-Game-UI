@@ -3,6 +3,7 @@ import unittest
 from colorama import Fore, Style
 
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
+from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.opponent_hand_repository import OpponentHandRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
@@ -81,6 +82,31 @@ class TestNotifyDataAnalysis(unittest.TestCase):
         notify_reader_service.notify_use_instant_unit_death_item_card(notice_dictionary)
 
         print(f"current_hand_list_after_test: {your_field_unit_repository.current_field_unit_list}")
+
+    def test_notify_use_field_energy_remove_support_card(self):
+        # notice_type : NOTIFY_USE_FIELD_ENERGY_REMOVE_SUPPORT_CARD
+        card_date_csv_controller = CardInfoFromCsvControllerImpl.getInstance()
+        card_date_csv_controller.requestToCardInfoSettingInMemory()
+
+        pre_draw = PreDrawedImage.getInstance()
+        pre_draw.pre_draw_every_image()
+
+        your_field_energy_repository = YourFieldEnergyRepository.getInstance()
+        your_field_energy_repository.set_your_field_energy(10)
+
+        notify_reader_service = NotifyReaderServiceImpl.getInstance()
+        notice_dictionary = {"NOTIFY_USE_FIELD_ENERGY_REMOVE_SUPPORT_CARD":
+                    {"player_hand_use_map":
+                         {"Opponent":
+                              {"card_id":36,"card_kind":4}},
+                     "player_field_energy_map":
+                         {"You":2}}}
+
+        print(f"{Fore.RED}your_field_energy_list_before_test: {Fore.GREEN}{your_field_energy_repository.get_your_field_energy()}{Style.RESET_ALL}")
+
+        notify_reader_service.notify_use_field_energy_remove_support_card(notice_dictionary)
+
+        print(f"{Fore.RED}your_field_energy_list_after_test: {Fore.GREEN}{your_field_energy_repository.get_your_field_energy()}{Style.RESET_ALL}")
 
 
 if __name__ == "__main__":

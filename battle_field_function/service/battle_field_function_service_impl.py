@@ -239,7 +239,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
                                       .get(None))
 
     # protocolNumber: 1008번(상대 필드 에너지 제거 서포트 사용 - 죽음의 대지)
-    def use_field_energy_support_card(self, notify_dict_data):
+    def use_field_energy_remove_support_card(self, notify_dict_data):
         #     1008 = {"NOTIFY_USE_FIELD_ENERGY_REMOVE_SUPPORT_CARD":
         #         {"player_hand_use_map":
         #         {"Opponent": {"card_id": 36, "card_kind": 4}},
