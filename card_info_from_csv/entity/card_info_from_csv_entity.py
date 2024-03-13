@@ -5,6 +5,7 @@ class CardInfoFromCsv:
     __cardRace = None
     __cardGrade = None
     __cardType = None
+    __cardJob = None
     __cardEnergy = None
     __cardAttack = None
     __cardPassive = None
@@ -32,6 +33,7 @@ class CardInfoFromCsv:
         self.__cardRace = record[2]
         self.__cardGrade = record[3]
         self.__cardType = record[4]
+        self.__cardJob = record[5]
         self.__cardEnergy = record[6]
         self.__cardAttack = record[7]
         self.__cardPassive = record[8]
@@ -66,6 +68,9 @@ class CardInfoFromCsv:
 
     def getCardType(self):
         return self.__cardType
+
+    def getCardJob(self):
+        return self.__cardJob
 
     def getCardEnergy(self):
         return self.__cardEnergy
