@@ -704,6 +704,11 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
     def notify_targeting_attack_active_skill_to_main_character(self, notice_dictionary):
 
+        is_my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        print(f"is my turn: {is_my_turn}")
+        if is_my_turn is True:
+            return
+
         your_character_survival_state = \
         notice_dictionary['NOTIFY_TARGETING_ATTACK_ACTIVE_SKILL_TO_GAME_MAIN_CHARACTER'][
             'player_main_character_survival_map']['You']
