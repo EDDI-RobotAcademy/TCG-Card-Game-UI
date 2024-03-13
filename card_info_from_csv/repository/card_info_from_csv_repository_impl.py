@@ -11,6 +11,7 @@ class CardInfoFromCsvRepositoryImpl(CardInfoFromCsvRepository):
     __cardRaceDictionary = {}
     __cardGradeDictionary = {}
     __cardTypeDictionary = {}
+    __cardJobDictionary = {}
     __cardEnergyDictionary = {}
     __cardAttackDictionary = {}
     __cardPassiveDictionary = {}
@@ -62,6 +63,7 @@ class CardInfoFromCsvRepositoryImpl(CardInfoFromCsvRepository):
                 self.__cardRaceDictionary[cardInfo.getCardNumber()] = cardInfo.getCardRace()
                 self.__cardGradeDictionary[cardInfo.getCardNumber()] = cardInfo.getCardGrade()
                 self.__cardTypeDictionary[cardInfo.getCardNumber()] = cardInfo.getCardType()
+                self.__cardJobDictionary[cardInfo.getCardNumber()] = cardInfo.getCardJob()
                 self.__cardEnergyDictionary[cardInfo.getCardNumber()] = cardInfo.getCardEnergy()
                 self.__cardAttackDictionary[cardInfo.getCardNumber()] = cardInfo.getCardAttack()
                 self.__cardPassiveDictionary[cardInfo.getCardNumber()] = cardInfo.getCardPassive()
@@ -100,6 +102,9 @@ class CardInfoFromCsvRepositoryImpl(CardInfoFromCsvRepository):
 
     def getCardTypeForCardNumber(self, cardNumber):
         return self.__cardTypeDictionary[cardNumber]
+
+    def getCardJobForCardNumber(self, cardNumber):
+        return self.__cardJobDictionary[cardNumber]
 
     def getCardEnergyForCardNumber(self, cardNumber):
         return self.__cardEnergyDictionary[cardNumber]
