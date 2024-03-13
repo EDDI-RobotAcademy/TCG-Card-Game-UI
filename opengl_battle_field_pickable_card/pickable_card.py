@@ -53,21 +53,21 @@ class PickableCard:
         return self.tool_card
 
 
-    def create_attached_tool_card_rectangle(self, color, vertices, local_translation):
-        attached_tool_card = Rectangle(color=color,
-                                       local_translation=local_translation,
-                                       vertices=vertices)
-        attached_tool_card.set_draw_gradient(True)
-        attached_tool_card.set_visible(False)
-        attached_tool_card.set_initial_vertices(vertices)
-        return attached_tool_card
-
-    def create_card_background_rectangle(self, image_path, vertices, local_translation):
-        card_background_illustration = ImageRectangleElement(image_path=image_path,
-                                                             local_translation=local_translation,
-                                                             vertices=vertices)
-        card_background_illustration.set_visible(False)
-        return card_background_illustration
+    # def create_attached_tool_card_rectangle(self, color, vertices, local_translation):
+    #     attached_tool_card = Rectangle(color=color,
+    #                                    local_translation=local_translation,
+    #                                    vertices=vertices)
+    #     attached_tool_card.set_draw_gradient(True)
+    #     attached_tool_card.set_visible(False)
+    #     attached_tool_card.set_initial_vertices(vertices)
+    #     return attached_tool_card
+    #
+    # def create_card_background_rectangle(self, image_path, vertices, local_translation):
+    #     card_background_illustration = ImageRectangleElement(image_path=image_path,
+    #                                                          local_translation=local_translation,
+    #                                                          vertices=vertices)
+    #     card_background_illustration.set_visible(False)
+    #     return card_background_illustration
 
     def create_card_base_pickable_rectangle(self, color, vertices, local_translation):
         pickable_card_base = PickableRectangle(color=color,
@@ -96,12 +96,12 @@ class PickableCard:
         card_frame.set_initial_vertices(vertices)
         return card_frame
 
-    def create_equipped_mark(self, image_path, vertices, local_translation):
-        card_equipped_mark = ImageRectangleElement(image_path=image_path,
-                                                   local_translation=local_translation,
-                                                   vertices=vertices)
-        card_equipped_mark.set_visible(False)
-        return card_equipped_mark
+    # def create_equipped_mark(self, image_path, vertices, local_translation):
+    #     card_equipped_mark = ImageRectangleElement(image_path=image_path,
+    #                                                local_translation=local_translation,
+    #                                                vertices=vertices)
+    #     card_equipped_mark.set_visible(False)
+    #     return card_equipped_mark
 
 
     def init_card(self, card_number):
@@ -109,10 +109,10 @@ class PickableCard:
         rectangle_height = 170
         rectangle_width = 105
 
-        self.tool_card = self.create_attached_tool_card_rectangle(
-            color=(0.6, 0.4, 0.6, 1.0),
-            local_translation=self.local_translation,
-            vertices=[(15, 15), (120, 15), (120, 185), (15, 185)])
+        # self.tool_card = self.create_attached_tool_card_rectangle(
+        #     color=(0.6, 0.4, 0.6, 1.0),
+        #     local_translation=self.local_translation,
+        #     vertices=[(15, 15), (120, 15), (120, 185), (15, 185)])
 
         basic_pickable_card_base_vertices = [(0, 0), (105, 0), (105, 170), (0, 170)]
 
@@ -126,7 +126,7 @@ class PickableCard:
 
         self.pickable_card_base.set_attached_shapes(
             self.create_card_frame(
-                image_data=self.__pre_drawed_image_instance.get_pre_draw_card_frame_for_card_number(card_number),
+                image_data=self.__pre_drawed_image_instance.get_pre_draw_battle_field_card_frame_for_card_number(card_number),
                 local_translation=self.local_translation,
                 vertices=basic_pickable_card_base_vertices
             )
@@ -136,7 +136,7 @@ class PickableCard:
             self.create_illustration(
                 image_data=self.__pre_drawed_image_instance.get_pre_draw_card_illustration_for_card_number(card_number),
                 local_translation=self.local_translation,
-                vertices=[(10, 25), (95, 25), (95, 100), (10, 100)]
+                vertices=[(8, 12), (97, 12), (97, 126), (8, 126)]
             )
         )
 
@@ -163,11 +163,11 @@ class PickableCard:
         print(f"rectangle_width: {rectangle_width}")
         print(f"rectangle_height: {rectangle_height}")
 
-        self.tool_card = self.create_attached_tool_card_rectangle(
-            color=(0.6, 0.4, 0.6, 1.0),
-            local_translation=self.local_translation,
-            vertices=[(15, 15), (rectangle_width + 15, 15), (rectangle_width + 15, rectangle_height + 15),
-                      (15, rectangle_height + 15)])
+        # self.tool_card = self.create_attached_tool_card_rectangle(
+        #     color=(0.6, 0.4, 0.6, 1.0),
+        #     local_translation=self.local_translation,
+        #     vertices=[(15, 15), (rectangle_width + 15, 15), (rectangle_width + 15, rectangle_height + 15),
+        #               (15, rectangle_height + 15)])
 
         basic_pickable_card_base_vertices = [(0, 0), (rectangle_width, 0), (rectangle_width, rectangle_height),
                                              (0, rectangle_height)]
@@ -214,11 +214,11 @@ class PickableCard:
         print(f"rectangle_width: {rectangle_width}")
         print(f"rectangle_height: {rectangle_height}")
 
-        self.tool_card = self.create_attached_tool_card_rectangle(
-            color=(0.6, 0.4, 0.6, 1.0),
-            local_translation=self.local_translation,
-            vertices=[(15, 15), (rectangle_width + 15, 15), (rectangle_width + 15, rectangle_height + 15),
-                      (15, rectangle_height + 15)])
+        # self.tool_card = self.create_attached_tool_card_rectangle(
+        #     color=(0.6, 0.4, 0.6, 1.0),
+        #     local_translation=self.local_translation,
+        #     vertices=[(15, 15), (rectangle_width + 15, 15), (rectangle_width + 15, rectangle_height + 15),
+        #               (15, rectangle_height + 15)])
 
         basic_pickable_card_base_vertices = [(0, 0), (rectangle_width, 0), (rectangle_width, rectangle_height),
                                              (0, rectangle_height)]
