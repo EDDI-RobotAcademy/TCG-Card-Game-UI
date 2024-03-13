@@ -1740,6 +1740,190 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     attached_shape.set_height_ratio(self.height_ratio)
                     attached_shape.draw()
 
+        if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() == OpponentFieldAreaAction.ENERGY_BURN:
+
+            print('create energy burn animation')
+            target_index = self.opponent_fixed_unit_card_inside_handler.get_target_index_to_action()
+            effect_animation = EffectAnimation()
+            effect_animation.set_animation_name('dark_blast')
+            effect_animation.set_total_window_size(self.width, self.height)
+            effect_animation.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                    target_index).get_fixed_card_base().get_local_translation()
+            )
+            effect_animation.draw_animation_panel()
+            effect_animation_panel = effect_animation.get_animation_panel()
+            print(effect_animation_panel)
+            animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+                effect_animation)
+            self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                animation_index, effect_animation_panel)
+
+            self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+            self.opponent_fixed_unit_card_inside_handler.clear_target_index_to_action()
+
+            def calculate_energy_burn():
+                unit_index = target_index
+                print('target_index : ', target_index)
+                opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                    unit_index)
+                print(f"opponent_field_unit: {opponent_field_unit}")
+                card_id = opponent_field_unit.get_card_number()
+                detach_count = 2
+                total_attached_energy_count = self.opponent_field_unit_repository.get_total_energy_at_index(
+                    unit_index)
+                print(f"opponent_field_unit_attached_undead_energy_count: {total_attached_energy_count}")
+
+                # attached_energy = self.__opponent_field_unit_repository.attached_energy_info.get(unit_index, [])
+
+                if total_attached_energy_count == 0:
+                    print("데미지를 입힙니다.")
+                    remove_from_field = False
+                    opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                    opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+                    for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                        if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
+                            if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                hp = opponent_fixed_card_attached_shape.get_number()
+                                hp -= 10
+                                print(f"hp : {hp}")
+
+                                if hp <= 0:
+                                    remove_from_field = True
+                                    break
+
+                                opponent_fixed_card_attached_shape.set_image_data(
+                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(hp))
+
+                    if remove_from_field:
+                        self.opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
+                        self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+
+                        self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                else:
+                    print("에너지를 태웁니다.")
+                    if total_attached_energy_count == 1:
+                        detach_count = 1
+
+                    attached_energy_after_energy_burn = total_attached_energy_count - detach_count
+                    if attached_energy_after_energy_burn < 0:
+                        attached_energy_after_energy_burn = 0
+
+                    opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                    opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+
+                    energy_circle_list = []
+                    energy_circle_index_list = []
+                    count = 0
+
+                    for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                        if isinstance(opponent_fixed_card_attached_shape, CircleNumberImage):
+                            if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+                                opponent_fixed_card_attached_shape.set_image_data(
+                                    self.pre_drawed_image_instance.get_pre_draw_number_image(
+                                        attached_energy_after_energy_burn))
+
+                        if isinstance(opponent_fixed_card_attached_shape, Circle):
+                            energy_circle_index_list.append(count)
+                            print(
+                                f"Energy burn opponent unit vertices: {opponent_fixed_card_attached_shape.get_vertices()}")
+                            energy_circle_list.append(opponent_fixed_card_attached_shape)
+
+                            del opponent_fixed_card_attached_shape
+
+                        count += 1
+
+                    energy_circle_index_list.reverse()
+                    for index in energy_circle_index_list:
+                        if 0 <= index < len(opponent_fixed_card_attached_shape_list):
+                            if detach_count == 0:
+                                break
+
+                            del opponent_fixed_card_attached_shape_list[index]
+                            detach_count -= 1
+
+            self.play_effect_animation_by_index_and_call_function(animation_index, calculate_energy_burn)
+
+
+
+        if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() == OpponentFieldAreaAction.DEATH_SCYTHE:
+            print('create death scythe animation')
+
+            target_index = self.opponent_fixed_unit_card_inside_handler.get_target_index_to_action()
+            effect_animation = EffectAnimation()
+            effect_animation.set_animation_name('death_scythe')
+            effect_animation.set_total_window_size(self.width, self.height)
+            effect_animation.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                    target_index).get_fixed_card_base().get_local_translation()
+            )
+            effect_animation.draw_animation_panel()
+            effect_animation_panel = effect_animation.get_animation_panel()
+            print(effect_animation_panel)
+            animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+                effect_animation)
+            self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                animation_index, effect_animation_panel)
+
+            self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+            self.opponent_fixed_unit_card_inside_handler.clear_target_index_to_action()
+
+            def calculate_death_scythe():
+                DEATH_SCYTHE_FIXED_DAMAGE = 30
+                unit_index = target_index
+                opponent_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(unit_index)
+                opponent_unit_card_id = opponent_unit.get_card_number()
+
+                is_opponent_unit_death = True
+                opponent_unit_hp = 0
+
+                opponent_fixed_card_base = None
+                opponent_attached_shape_list = None
+
+                if self.card_info_repository.getCardGradeForCardNumber(
+                        opponent_unit_card_id) > CardGrade.LEGEND.value:
+                    # opponent_unit_hp = self.__card_info_repository.getCardHpForCardNumber(opponent_unit_card_id)
+                    opponent_fixed_card_base = opponent_unit.get_fixed_card_base()
+                    opponent_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+
+                    for opponent_attached_shape in opponent_attached_shape_list:
+                        if isinstance(opponent_attached_shape, NonBackgroundNumberImage):
+                            if opponent_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                opponent_unit_hp = opponent_attached_shape.get_number()
+                                opponent_unit_hp -= DEATH_SCYTHE_FIXED_DAMAGE
+                                opponent_attached_shape.set_number(opponent_unit_hp)
+
+                                if opponent_unit_hp <= 0:
+                                    break
+
+                                # opponent_attached_shape.set_image_data(
+                                #     self.__pre_drawed_image_instance.get_pre_draw_number_image(
+                                #         opponent_unit_hp))
+
+                                opponent_attached_shape.set_image_data(
+                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(
+                                        opponent_unit_hp))
+                                is_opponent_unit_death = False
+
+                                print(f"opponent_unit_hp: {opponent_unit_hp}")
+                    # if opponent_unit_hp > 0:
+                    #     is_opponent_unit_death = False
+                else:
+                    pass
+                    # self.__opponent_tomb_repository.create_opponent_tomb_card(opponent_unit_card_id)
+
+                # self.__your_hand_repository.replace_hand_card_position()
+
+                if is_opponent_unit_death:
+                    print(f"is it death ? {opponent_unit_hp}")
+                    self.opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
+                    self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                    self.opponent_tomb_repository.create_opponent_tomb_card(opponent_unit_card_id)
+
+            self.play_effect_animation_by_index_and_call_function(animation_index, calculate_death_scythe)
+
         if self.field_area_inside_handler.get_field_area_action() is FieldAreaAction.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS:
             print(f"{Fore.RED}패시브 처리가 필요합니다!{Style.RESET_ALL}")
 
@@ -2386,6 +2570,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 is_pickable_card_inside_unit = self.opponent_fixed_unit_card_inside_handler.handle_pickable_card_inside_unit(
                     self.selected_object, x, y)
+
+
 
                 if is_pickable_card_inside_unit:
                     self.selected_object = None
@@ -7112,9 +7298,30 @@ class FakeBattleFieldFrame(OpenGLFrame):
             effect_animation.update_effect_animation_panel()
             print('is finished?? ',effect_animation.is_finished)
             if not effect_animation.is_finished:
-                self.master.after(100, animate)
+                self.master.after(17, animate)
             else:
                 self.effect_animation_repository.remove_effect_animation_by_index(index)
+                print("finish animation")
+
+
+
+        print(f"animation playing at index : {index}")
+        effect_animation = self.effect_animation_repository.get_effect_animation_by_index(index)
+        print(f"effect_animation : {effect_animation}")
+        effect_animation.reset_animation_count()
+
+        self.master.after(0, animate)
+
+    def play_effect_animation_by_index_and_call_function(self, index, function):
+
+        def animate():
+            effect_animation = self.effect_animation_repository.get_effect_animation_by_index(index)
+            effect_animation.update_effect_animation_panel()
+            if not effect_animation.is_finished:
+                self.master.after(17, animate)
+            else:
+                self.effect_animation_repository.remove_effect_animation_by_index(index)
+                function()
                 print("finish animation")
 
         print(f"animation playing at index : {index}")
