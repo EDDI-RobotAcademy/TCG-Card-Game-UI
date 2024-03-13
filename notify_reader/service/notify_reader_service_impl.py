@@ -704,6 +704,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
     def notify_targeting_attack_active_skill_to_main_character(self, notice_dictionary):
 
+
         is_my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
         print(f"is my turn: {is_my_turn}")
         if is_my_turn is True:

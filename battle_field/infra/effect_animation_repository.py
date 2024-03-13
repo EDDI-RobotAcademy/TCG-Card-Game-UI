@@ -31,6 +31,17 @@ class EffectAnimationRepository:
         print(effect_animation)
         self.__effect_animation_dictionary[index] = effect_animation
 
+    def save_effect_animation_at_dictionary_without_index_and_return_index(self, effect_animation):
+        index = 1000
+        while True:
+            if index in self.__effect_animation_dictionary.keys():
+                index += 1
+            else:
+                self.__effect_animation_dictionary[index] = effect_animation
+                return index
+
+
+
     def get_effect_animation_by_index(self, index):
         return self.__effect_animation_dictionary[index]
 
@@ -38,6 +49,7 @@ class EffectAnimationRepository:
         print(index)
         print(effect_animation_panel)
         self.__effect_animation_panel_dictionary[index] = effect_animation_panel
+
 
     def get_effect_animation_panel_by_index(self, index):
         return self.__effect_animation_panel_dictionary[index]

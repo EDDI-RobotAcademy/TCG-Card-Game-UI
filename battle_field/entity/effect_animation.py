@@ -68,6 +68,20 @@ class EffectAnimation:
         self.__current_animation_count = 0
         self.is_finished = False
 
+    def draw_animation_panel_with_vertices(self, vertices):
+        self.animation_panel = NonBackgroundImage(
+            image_data=self.__pre_drawed_image.get_pre_draw_effect_animation(self.animation_name),
+            # vertices=[
+            #     (left_x_point, top_y_point),
+            #     (right_x_point, top_y_point),
+            #     (right_x_point, bottom_y_point),
+            #     (left_x_point, bottom_y_point)
+            # ],
+            vertices=vertices,
+            local_translation=self.local_translation
+
+        )
+
     def draw_animation_panel(self):
 
         basic_fixed_card_base_vertices = [(-32.5, 0), (137.5, 0), (137.5, 170), (-32.5, 170)]
@@ -85,8 +99,6 @@ class EffectAnimation:
 
         )
 
-        print(self.animation_panel)
-
         # self.animation_panel = RectangleImage(
         #     image_data=self.__pre_drawed_image.get_pre_draw_animation(),
         #     vertices=basic_fixed_card_base_vertices,
@@ -102,7 +114,6 @@ class EffectAnimation:
             self.__current_animation_count += 1
             # image_count = self.__current_animation_count % 16
             image_count = self.__current_animation_count
-            print(f"image data : {self.__pre_drawed_image.get_pre_draw_effect_animation(self.animation_name, image_count)}")
             self.animation_panel.set_image_data(
                 self.__pre_drawed_image.get_pre_draw_effect_animation(self.animation_name, image_count))
         except:
