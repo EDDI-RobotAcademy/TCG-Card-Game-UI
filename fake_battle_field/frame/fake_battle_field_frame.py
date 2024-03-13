@@ -1708,7 +1708,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     attached_shape.draw()
 
                 for selected_search_unit in self.selected_search_unit_lightning_border:
-                    if selected_search_unit == fixed_card_base:
+                    if selected_search_unit == pickable_card_base:
                         selected_search_unit.set_width_ratio(self.width_ratio)
                         selected_search_unit.set_height_ratio(self.height_ratio)
 
