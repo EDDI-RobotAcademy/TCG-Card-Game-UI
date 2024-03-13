@@ -3721,6 +3721,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if opponent_fixed_card_base.is_point_inside((x, y)):
                         self.attack_animation_object.set_opponent_field_unit(opponent_field_unit_object)
+                        # self.attack_animation_object.set_animation_actor_damage(20)
                         self.master.after(0, self.start_nether_blade_second_passive_targeting_motion_animation)
                         self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
 
@@ -6655,7 +6656,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         is_attack_main_character = False
         opponent_field_unit = None
-        targeting_damage = self.attack_animation_object.get_animation_actor_damage()
+        # targeting_damage = self.attack_animation_object.get_animation_actor_damage()
         opponent_main_character = self.attack_animation_object.get_opponent_main_character()
         if opponent_main_character is not None:
             is_attack_main_character = True
@@ -6693,13 +6694,18 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     tool_card = opponent_field_unit.get_tool_card()
                     attached_shape_list = fixed_card_base.get_attached_shapes()
 
+                    targeting_damage = 20
+
                     remove_from_field = False
                     for attached_shape in attached_shape_list:
                         if isinstance(attached_shape, NonBackgroundNumberImage):
                             if attached_shape.get_circle_kinds() is CircleKinds.HP:
                                 hp_number = attached_shape.get_number()
+                                print(f"{Fore.RED}current hp_number: {Fore.GREEN}{hp_number}{Style.RESET_ALL}")
+
                                 hp_number -= targeting_damage
                                 print(f"{Fore.RED}hp_number: {Fore.GREEN}{hp_number}{Style.RESET_ALL}")
+
 
                                 # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
                                 if hp_number <= 0:
