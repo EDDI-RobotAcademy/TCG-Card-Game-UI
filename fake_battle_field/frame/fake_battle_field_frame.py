@@ -2988,6 +2988,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         extra_ability = self.your_field_unit_repository.get_your_unit_extra_ability_at_index(your_field_unit_index)
                         self.attack_animation_object.set_extra_ability(extra_ability)
 
+                        self.field_area_inside_handler.set_field_area_action(FieldAreaAction.PLAY_ANIMATION)
+
                         self.master.after(0, self.wide_area_attack_animation)
 
                         # try:
@@ -5925,6 +5927,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
 
                 self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                self.field_area_inside_handler.clear_field_area_action()
 
                 pass
 
