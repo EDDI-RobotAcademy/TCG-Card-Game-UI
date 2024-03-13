@@ -3723,6 +3723,31 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     self.attack_animation_object.set_animation_actor_damage(your_damage)
 
+
+                    your_unit_job_number = self.card_info_repository.getCardJobForCardNumber(your_field_card_id)
+                    your_effect_animation_name = ''
+                    for attack_type in AttackType:
+                        if attack_type.value == your_unit_job_number:
+                            your_effect_animation_name = attack_type.name
+                            print('your effect animation name: ', your_effect_animation_name)
+                            break
+
+                    effect_animation = EffectAnimation()
+                    effect_animation.set_animation_name(your_effect_animation_name)
+                    effect_animation.set_total_window_size(self.width, self.height)
+                    vertices = self.opponent_main_character_panel.get_vertices()
+                    effect_animation.draw_animation_panel_with_vertices(vertices)
+                    effect_animation_panel = effect_animation.get_animation_panel()
+
+                    self.effect_animation_repository.save_effect_animation_at_dictionary_with_index(
+                        your_field_card_index, effect_animation)
+
+                    self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                        your_field_card_index, effect_animation_panel)
+
+                    self.targeting_enemy_select_support_lightning_border_list = []
+                    self.opponent_you_selected_lightning_border_list = []
+
                     self.master.after(0, self.you_attack_main_character_animation)
 
                     # self.opponent_hp_repository.take_damage(your_damage)
@@ -6567,6 +6592,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             else:
                 self.finish_you_attack_main_character_post_animation(attack_animation_object)
 
+        self.play_effect_animation_by_index(attack_animation_object.get_animation_actor().get_index())
         slash_with_sword(1)
 
     def finish_you_attack_main_character_post_animation(self, attack_animation_object):
