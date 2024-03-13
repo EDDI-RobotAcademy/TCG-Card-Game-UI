@@ -53,5 +53,5 @@ if __name__ == "__main__":
 
     # uiFrameController.register_fake_battle_field_frame_which_one_has_socket_communication()
 
-    # taskWorkerService.createTaskWorker("MusicPlayer", musicPlayerController.playBackgroundMusic)
-    # taskWorkerService.executeTaskWorker("MusicPlayer")
+    taskWorkerService.createTaskWorker("MusicPlayer", musicPlayerController.playBackgroundMusic)
+    taskWorkerService.executeTaskWorker("MusicPlayer")
