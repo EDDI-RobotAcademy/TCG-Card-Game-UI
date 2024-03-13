@@ -1,5 +1,7 @@
 import os
 
+from colorama import Fore, Style
+
 from image_shape.non_background_image import NonBackgroundImage
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from common.utility import get_project_root
@@ -105,12 +107,54 @@ class EffectAnimation:
         # #    local_translation=self.local_translation
         #     )
 
+    # S = 0.5 * a * 64 * 64 -> 2번 루프 (32번 쉐도우 볼)
+    # S = 0.5 * a * 4096
+    # S = a * 2048
+    # a = need_to_move_acceleration_distance / 2048
+
+    # source -> point_x: 1078, point_y: 628
+    # target -> point_x: 921, point_y: 143
+
+    # 속도 조절은 step_count로 64는 좀 느림 -> 영상으로 치면 Fourth Shadow Ball 속도에 대응함
+    # 48 * 48 / 2 = 1152
+    # 40 * 40 / 2 = 800
+
+    def update_effect_animation_panel_with_acceleration(self, need_to_move_acceleration_distance, step_count):
+        try:
+            print(f"{Fore.RED}update_effect_animation_panel_with_acceleration -> {Fore.GREEN}step_count: {step_count}, total_animation_count: {self.total_animation_count}{Style.RESET_ALL}")
+            if step_count == 40:
+                self.is_finished = True
+                return
+
+            if self.__current_animation_count == 32:
+                self.__current_animation_count = 1
+
+            accel_dist_x, accel_dist_y = need_to_move_acceleration_distance
+            accel_x = accel_dist_x / 800.0
+            accel_y = accel_dist_y / 800.0
+
+            # print(f"{Fore.RED}update_effect_animation_panel() -> self.__current_animation_count: {Fore.GREEN}{self.__current_animation_count}{Style.RESET_ALL}")
+            self.__current_animation_count += 1
+            # image_count = self.__current_animation_count % 16
+            image_count = self.__current_animation_count
+            self.animation_panel.set_image_data(
+                self.__pre_drawed_image.get_pre_draw_effect_animation(self.animation_name, image_count))
+
+            new_vertices = [
+                (vx - accel_x * step_count, vy - accel_y * step_count) for vx, vy in self.animation_panel.vertices
+            ]
+            self.animation_panel.update_vertices(new_vertices)
+            print(f"{Fore.RED}self.animation_panel.vertices: {Fore.GREEN}{self.animation_panel.get_vertices()}{Style.RESET_ALL}")
+        except:
+            self.is_finished = True
+
     def update_effect_animation_panel(self):
         try:
             if self.__current_animation_count == self.total_animation_count:
                 self.is_finished = True
                 return
 
+            # print(f"{Fore.RED}update_effect_animation_panel() -> self.__current_animation_count: {Fore.GREEN}{self.__current_animation_count}{Style.RESET_ALL}")
             self.__current_animation_count += 1
             # image_count = self.__current_animation_count % 16
             image_count = self.__current_animation_count

@@ -4361,11 +4361,19 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     #### 모션 프레임
                     your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(your_field_card_index)
+                    print(f"{Fore.RED}valrn ready to use shadow ball -> your_field_unit: {Fore.GREEN}{your_field_unit}{Style.RESET_ALL}")
                     self.attack_animation_object.set_animation_actor(your_field_unit)
                     self.field_area_inside_handler.set_field_area_action(FieldAreaAction.PLAY_ANIMATION)
-                    self.master.after(0, self.valrn_ready_to_use_shadow_ball_animation)
+                    self.master.after(0, self.valrn_ready_to_use_shadow_ball_to_opponent_main_character_animation)
 
                     #### 애니메이션 프레임
+                    return
+
+                    # self.__effect_animation_dictionary[index] = effect_animation
+                    # self.__effect_animation_panel_dictionary[index] = effect_animation_panel
+
+                    # def get_effect_animation_by_index(self, index):
+                    #     return self.__effect_animation_dictionary[index]
 
                     effect_animation = EffectAnimation()
                     effect_animation.set_animation_name('burst_shadow_ball')
@@ -7271,7 +7279,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         move_to_origin_location(1)
 
-    def valrn_ready_to_use_shadow_ball_animation(self):
+    def valrn_ready_to_use_shadow_ball_to_opponent_main_character_animation(self):
         steps = 10
         attack_animation_object = AttackAnimation.getInstance()
         animation_actor = attack_animation_object.get_animation_actor()
@@ -7345,15 +7353,143 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
             else:
-                self.valrn_shoot_shadow_ball_animation(self.attack_animation_object)
+                self.valrn_shoot_shadow_ball_to_opponent_main_character_animation(attack_animation_object)
                 # self.is_attack_motion_finished = True
                 # attack_animation_object.set_is_finished(True)
                 # attack_animation_object.set_need_post_process(True)
 
         update_position(1)
 
-    def valrn_shoot_shadow_ball_animation(self, attack_animation_object):
-        pass
+    def valrn_shoot_shadow_ball_to_opponent_main_character_animation(self, attack_animation_object):
+        # effect_animation = EffectAnimation()
+        # effect_animation.set_animation_name('moving_shadow_ball')
+        # effect_animation.set_total_window_size(self.width, self.height)
+        #
+        # opponent_main_character_panel_vertices = self.opponent_main_character_panel.get_vertices()
+        #
+        # valrn_staff = attack_animation_object.get_your_weapon_shape()
+        # valrn_staff_vertices = valrn_staff.get_vertices()
+        # moving_shadow_ball_vertices = [
+        #     (vx, vy - 100) for vx, vy in valrn_staff_vertices
+        # ]
+        #
+        # print(f"{Fore.RED}valrn_shoot_shadow_ball_animation() -> moving_shadow_ball_vertices: {Fore.GREEN}{moving_shadow_ball_vertices}{Style.RESET_ALL}")
+        # effect_animation.draw_animation_panel_with_vertices(moving_shadow_ball_vertices)
+        # effect_animation_panel = effect_animation.get_animation_panel()
+        #
+        # def animate():
+        #     effect_animation.update_effect_animation_panel()
+        #     if not effect_animation.is_finished:
+        #         self.master.after(17, animate)
+        #     else:
+        #         effect_animation.set_animation_name('moving_shadow_ball')
+        #         effect_animation.reset_animation_count()
+        #         self.master.after(0, animate)
+        #         print("finish animation")
+        #
+        # effect_animation.reset_animation_count()
+        #
+        # self.master.after(0, animate)
+
+        steps = 10
+
+        effect_animation = EffectAnimation()
+        effect_animation.set_animation_name('moving_shadow_ball')
+        effect_animation.set_total_window_size(self.width, self.height)
+
+        opponent_main_character_panel_vertices = self.opponent_main_character_panel.get_vertices()
+        valrn_staff = attack_animation_object.get_your_weapon_shape()
+        valrn_staff_local_translation = valrn_staff.get_local_translation()
+        valrn_staff_vertices = valrn_staff.get_vertices()
+        moving_shadow_ball_vertices = [
+            (vx, vy - 100) for vx, vy in valrn_staff_vertices
+        ]
+        print(f"{Fore.RED}valrn_shoot_shadow_ball_animation() -> valrn_staff_local_translation: {Fore.GREEN}{valrn_staff_local_translation}{Style.RESET_ALL}")
+        print(f"{Fore.RED}valrn_shoot_shadow_ball_animation() -> valrn_staff_vertices: {Fore.GREEN}{valrn_staff_vertices}{Style.RESET_ALL}")
+        print(f"{Fore.RED}valrn_shoot_shadow_ball_animation() -> moving_shadow_ball_vertices: {Fore.GREEN}{moving_shadow_ball_vertices}{Style.RESET_ALL}")
+
+        effect_animation.draw_animation_panel_with_vertices(opponent_main_character_panel_vertices)
+        effect_animation_panel = effect_animation.get_animation_panel()
+
+        your_field_actor_card = attack_animation_object.get_animation_actor()
+        your_field_card_index = your_field_actor_card.get_index()
+
+        self.effect_animation_repository.save_effect_animation_at_dictionary_with_index(
+            your_field_card_index, effect_animation)
+
+        self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+            your_field_card_index, effect_animation_panel)
+
+        self.targeting_enemy_select_support_lightning_border_list = []
+        self.opponent_you_selected_lightning_border_list = []
+
+        effect_animation_panel_local_translation = effect_animation_panel.get_local_translation()
+        print(f"{Fore.RED}valrn_shoot_shadow_ball_animation() -> effect_animation_panel_local_translation: {Fore.GREEN}{effect_animation_panel_local_translation}{Style.RESET_ALL}")
+
+        # 지팡이 자리 대략적인 좌표 (x: 1069, y: -647)
+        effect_animation_panel.local_translate((170, 490))
+        effect_animation_panel_local_translation = effect_animation_panel.get_local_translation()
+        print(f"{Fore.RED}valrn_shoot_shadow_ball_animation() -> after change effect_animation_panel_local_translation: {Fore.GREEN}{effect_animation_panel_local_translation}{Style.RESET_ALL}")
+
+        # moving_shadow_ball_vertices: [(730.4999999999999, 58.587999999999994), (810.4999999999999, 58.587999999999994),
+        #                               (810.4999999999999, 213.41200000000003), (730.4999999999999, 213.41200000000003)]
+        # effect_animation_panel_vertices: [(844.9055999999999, 44.9072), (1007.1600000000001, 44.9072), (1007.1600000000001, 216.5096), (844.9055999999999, 216.5096)]
+        effect_animation_panel_vertices = effect_animation_panel.get_vertices()
+        print(f"{Fore.RED}valrn_shoot_shadow_ball_animation() -> effect_animation_panel_vertices: {Fore.GREEN}{effect_animation_panel_vertices}{Style.RESET_ALL}")
+
+        # 50 * a = 170
+        x_accel = -3.4
+        # 50 * a = -490
+        y_accel = -9.8
+
+        need_to_move_with_acceleration = (x_accel, y_accel)
+        step_count = [0]
+
+        def burst_shadow_ball_animation():
+            step_count[0] += 1
+            print(f"{Fore.RED}burst_shadow_ball_animation() -> step_count: {step_count}{Style.RESET_ALL}")
+            # your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
+            # your_damage = self.card_info_repository.getCardSkillFirstDamageForCardNumber(your_field_card_id)
+            # print(f"your_damage: {your_damage}")
+            # self.opponent_hp_repository.take_damage(your_damage)
+            #
+            # self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+            # self.targeting_enemy_select_using_your_field_card_index = None
+            # self.targeting_enemy_select_using_your_field_card_id = None
+            # self.targeting_enemy_select_support_lightning_border_list = []
+            # self.opponent_you_selected_lightning_border_list = []
+            #
+            # self.selected_object = None
+            # self.active_panel_rectangle = None
+            # self.current_fixed_details_card = None
+            # self.your_active_panel.clear_all_your_active_panel()
+
+            # effect_animation_panel.local_translate((x_accel * steps * steps, y_accel * steps * steps))
+            # new_vertices = [
+            #     (vx + x_accel * step_count[0] * step_count[0], vy + y_accel * step_count[0] * step_count[0]) for vx, vy in effect_animation_panel_vertices
+            # ]
+            # effect_animation_panel.update_vertices(new_vertices)
+
+            effect_animation.set_animation_name('moving_shadow_ball')
+            self.effect_animation_repository.save_effect_animation_at_dictionary_with_index(
+                your_field_card_index, effect_animation)
+
+            self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                your_field_card_index, effect_animation_panel)
+
+            # self.play_effect_animation_by_index_and_call_function(your_field_card_index,
+            #                                                       burst_shadow_ball_animation)
+            # self.play_effect_animation_with_acceleration_by_index_and_call_function(
+            #     your_field_card_index,
+            #     burst_shadow_ball_animation,
+            #     (170, 490))
+
+        # self.play_effect_animation_by_index_and_call_function(your_field_card_index,
+        #                                                       burst_shadow_ball_animation)
+        self.play_effect_animation_with_acceleration_by_index_and_call_function(
+            your_field_card_index,
+            burst_shadow_ball_animation,
+            (170, 490))
 
     def apply_response_data_of_field_unit_hp(self, player_field_unit_health_point_data):
         print('apply notify data of field unit hp!! : ', player_field_unit_health_point_data)
@@ -7477,6 +7613,28 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 print("finish animation")
 
 
+
+        print(f"animation playing at index : {index}")
+        effect_animation = self.effect_animation_repository.get_effect_animation_by_index(index)
+        print(f"effect_animation : {effect_animation}")
+        effect_animation.reset_animation_count()
+
+        self.master.after(0, animate)
+
+    def play_effect_animation_with_acceleration_by_index_and_call_function(self, index, function, need_to_move_acceleration_distance):
+        step_count = [0]
+
+        def animate():
+            effect_animation = self.effect_animation_repository.get_effect_animation_by_index(index)
+            effect_animation.update_effect_animation_panel_with_acceleration(need_to_move_acceleration_distance, step_count[0])
+
+            if not effect_animation.is_finished:
+                step_count[0] += 1
+                self.master.after(17, animate)
+            else:
+                self.effect_animation_repository.remove_effect_animation_by_index(index)
+                function()
+                print("finish animation")
 
         print(f"animation playing at index : {index}")
         effect_animation = self.effect_animation_repository.get_effect_animation_by_index(index)
