@@ -1695,3 +1695,56 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                         self.__your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
 
                     self.__your_field_unit_repository.replace_field_card_position()
+
+    def notify_use_field_energy_remove_support_card(self, notice_dictionary):
+        # 1006 = {"NOTIFY_USE_FIELD_ENERGY_REMOVE_SUPPORT_CARD":
+        #             {"player_hand_use_map":
+        #                  {"Opponent":
+        #                       {"card_id":36,"card_kind":4}},
+        #              "player_field_energy_map":
+        #                  {"You":2}}}
+
+        # 수신된 정보를 대입
+        data = notice_dictionary['NOTIFY_USE_FIELD_ENERGY_REMOVE_SUPPORT_CARD']
+
+        # 유저 관련 키값 변수 선언
+        player_who_use_card = None
+        player_who_targeted = None
+
+        # 카드 번호 추출
+        for player_who_use_card_index in data['player_hand_use_map'].keys():
+            player_who_use_card = player_who_use_card_index
+            used_card_id = data['player_hand_use_map'][player_who_use_card]['card_id']
+
+            # 카드를 사용 하고, 묘지로 보냄
+            if player_who_use_card == "Opponent":
+                self.__opponent_tomb_repository.create_opponent_tomb_card(used_card_id)
+            elif player_who_use_card == "You":
+                self.__your_tomb_repository.create_tomb_card(used_card_id)
+
+            self.__battle_field_repository.set_current_use_card_id(used_card_id)
+
+
+        for player_who_targeted_index in data['player_field_energy_map'].keys():
+            player_who_targeted = player_who_targeted_index
+
+            # 필드 에너지 제거
+            if player_who_targeted == "Opponent":
+                remove_field_energy_point = data["player_field_energy_map"][player_who_targeted]
+                opponent_energy_count = self.__opponent_field_energy_repository.get_opponent_field_energy() - remove_field_energy_point
+                if opponent_energy_count <= 0:
+                    result_opponent_energy_count = 0
+                else:
+                    result_opponent_energy_count = opponent_energy_count
+
+                self.__opponent_field_energy_repository.set_opponent_field_energy(result_opponent_energy_count)
+
+            elif player_who_targeted == "You":
+                remove_field_energy_point = data["player_field_energy_map"][player_who_targeted]
+                your_energy_count = self.__your_field_energy_repository.get_your_field_energy() - remove_field_energy_point
+                if your_energy_count <= 0:
+                    result_your_energy_count = 0
+                else:
+                    result_your_energy_count = your_energy_count
+
+                self.__your_field_energy_repository.set_your_field_energy(result_your_energy_count)

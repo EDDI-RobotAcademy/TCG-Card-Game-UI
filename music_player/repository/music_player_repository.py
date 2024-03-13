@@ -3,7 +3,7 @@ import abc
 
 class MusicPlayerRepository(abc.ABC):
     @abc.abstractmethod
-    def loadBackgroundMusic(self, frameName: str):
+    def loadBackgroundMusicPath(self, frame_name: str):
         pass
 
     @abc.abstractmethod
