@@ -19,11 +19,11 @@ class MusicPlayerServiceImpl(MusicPlayerService):
         return cls.__instance
 
     def loadBackgroundMusics(self):
-        self.__musicPlayerRepository.loadBackgroundMusic("main-menu")
-        self.__musicPlayerRepository.loadBackgroundMusic("lobby-menu")
-        self.__musicPlayerRepository.loadBackgroundMusic("battle-lobby")
-        self.__musicPlayerRepository.loadBackgroundMusic("my-card-main")
-        self.__musicPlayerRepository.loadBackgroundMusic("card-shop-menu")
+        self.__musicPlayerRepository.loadBackgroundMusicPath("main-menu")
+        self.__musicPlayerRepository.loadBackgroundMusicPath("lobby-menu")
+        self.__musicPlayerRepository.loadBackgroundMusicPath("battle-lobby")
+        self.__musicPlayerRepository.loadBackgroundMusicPath("my-card-main")
+        self.__musicPlayerRepository.loadBackgroundMusicPath("card-shop-menu")
 
     def playBackgroundMusic(self):
         print("MusicPlayerServiceImpl : playBackgroundMusic")
