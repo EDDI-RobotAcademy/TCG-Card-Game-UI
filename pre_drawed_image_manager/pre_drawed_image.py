@@ -90,6 +90,7 @@ class PreDrawedImage:
     __pre_drawed_unit_hp = {}
     __pre_drawed_unit_attack = {}
     __pre_drawed_unit_race = {}
+    __pre_drawed_unit_attack_wizard = None
 
     __pre_drawed_paper = None
     __pre_drawed_scissor = None
@@ -688,6 +689,10 @@ class PreDrawedImage:
             card_type_mark_image_path = os.path.join(self.__project_root, "local_storage", "card_type_mark", f"{png_file}")
             self.__pre_drawed_card_type_mark[card_type_mark] = ImageDataLoader.load_rectangle_image_data(card_type_mark_image_path)
 
+    def pre_draw_unit_attack_wizard(self):
+        unit_attack_wizard_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_attack_wizard", "10.png")
+        self.__pre_drawed_unit_attack_wizard = ImageDataLoader.load_rectangle_image_data(unit_attack_wizard_image_path)
+
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
         self.pre_draw_opponent_lost_zone()
@@ -768,6 +773,8 @@ class PreDrawedImage:
 
         self.pre_draw_waiting_message()
         self.pre_draw_card_type_mark()
+
+        self.pre_draw_unit_attack_wizard()
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
@@ -963,5 +970,10 @@ class PreDrawedImage:
     def get_pre_draw_card_type_mark(self, type_number):
         return self.__pre_drawed_card_type_mark[type_number]
 
+
     def get_pre_draw_effect_animation(self, effect_name, index):
         return self.__pre_drawed_effect_animation[effect_name][index]
+
+    def get_pre_draw_unit_card_attack_wizard(self):
+        return self.__pre_drawed_unit_attack_wizard
+
