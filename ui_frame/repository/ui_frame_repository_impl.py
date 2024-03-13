@@ -50,7 +50,7 @@ class UiFrameRepositoryImpl(UiFrameRepository):
         foundUiFrame.pack(expand=True, fill="both")
         self.__currentFrame = foundUiFrame
 
-        # self.__musicPlayIpcChannel.put(name)
+        self.__musicPlayIpcChannel.put(name)
 
         if isinstance(foundUiFrame, OpenGLFrame):
             # foundUiFrame.start_redraw_loop()
