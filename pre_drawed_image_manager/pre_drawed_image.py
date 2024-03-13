@@ -90,7 +90,7 @@ class PreDrawedImage:
     __pre_drawed_unit_hp = {}
     __pre_drawed_unit_attack = {}
     __pre_drawed_unit_race = {}
-    __pre_drawed_unit_attack_wizard = None
+    __pre_drawed_wizard_card_attack_power = {}
 
     __pre_drawed_paper = None
     __pre_drawed_scissor = None
@@ -693,9 +693,25 @@ class PreDrawedImage:
             card_type_mark_image_path = os.path.join(self.__project_root, "local_storage", "card_type_mark", f"{png_file}")
             self.__pre_drawed_card_type_mark[card_type_mark] = ImageDataLoader.load_rectangle_image_data(card_type_mark_image_path)
 
-    def pre_draw_unit_attack_wizard(self):
-        unit_attack_wizard_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_attack_wizard", "10.png")
-        self.__pre_drawed_unit_attack_wizard = ImageDataLoader.load_rectangle_image_data(unit_attack_wizard_image_path)
+    def pre_draw_wizard_card_attack_power(self):
+        wizard_card_attack_image_path = os.path.join(self.__project_root, "local_storage", "wizard_card_attack_power")
+        wizard_card_attack_image_file_list = os.listdir(wizard_card_attack_image_path)
+        png_files = [file for file in wizard_card_attack_image_file_list if file.lower().endswith('.png')]
+
+        wizard_card_attack_image_data_list = {}
+
+        for png_file in png_files:
+            attack_number = int(png_file[:-4])
+            print(f"number images: {attack_number}")
+            wizard_card_attack_image_data = os.path.join(self.__project_root, "local_storage", "wizard_card_attack_power",
+                                                  f"{png_file}")
+            wizard_card_attack_image_data_list[attack_number] = ImageDataLoader.load_rectangle_origin_image_data(
+                wizard_card_attack_image_data)
+
+        for card_number in self.__card_info_from_csv_repository.getCardNumber():
+            attack_number = self.__card_info_from_csv_repository.getCardAttackForCardNumber(card_number)
+            print(f"attack_number: {attack_number}, card_number: {card_number}")
+            self.__pre_drawed_wizard_card_attack_power[card_number] = wizard_card_attack_image_data_list[attack_number]
 
     def pre_draw_message_on_the_battle_screen(self):
 
@@ -785,7 +801,7 @@ class PreDrawedImage:
         self.pre_draw_waiting_message()
         self.pre_draw_card_type_mark()
 
-        self.pre_draw_unit_attack_wizard()
+        self.pre_draw_wizard_card_attack_power()
         self.pre_draw_message_on_the_battle_screen()
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
@@ -985,8 +1001,8 @@ class PreDrawedImage:
     def get_pre_draw_effect_animation(self, effect_name, index=0):
         return self.__pre_drawed_effect_animation[effect_name][index]
 
-    def get_pre_draw_unit_card_attack_wizard(self):
-        return self.__pre_drawed_unit_attack_wizard
+    def get_pre_draw_wizard_card_attack_power(self, card_number):
+        return self.__pre_drawed_wizard_card_attack_power[card_number]
 
     def get_pre_draw_message_on_the_battle_screen(self, number):
         return self.__pre_drawed_message_on_the_battle_screen[number]

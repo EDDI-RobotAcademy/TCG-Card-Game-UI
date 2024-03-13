@@ -118,6 +118,7 @@ from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
 from image_shape.non_background_number_image import NonBackgroundNumberImage
 from image_shape.rectangle_kinds import RectangleKinds
+from music_player.repository.music_player_repository_impl import MusicPlayerRepositoryImpl
 
 from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
@@ -137,6 +138,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
     __fake_opponent_hand_repository = FakeOpponentHandRepositoryImpl.getInstance()
     __session_repository = SessionRepositoryImpl.getInstance()
     __notify_reader_repository = NotifyReaderRepositoryImpl.getInstance()
+    __music_player_repository = MusicPlayerRepositoryImpl.getInstance()
 
     attack_animation_object = AttackAnimation.getInstance()
 
@@ -1706,7 +1708,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     attached_shape.draw()
 
                 for selected_search_unit in self.selected_search_unit_lightning_border:
-                    if selected_search_unit == fixed_card_base:
+                    if selected_search_unit == pickable_card_base:
                         selected_search_unit.set_width_ratio(self.width_ratio)
                         selected_search_unit.set_height_ratio(self.height_ratio)
 
@@ -5653,6 +5655,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         opponent_field_unit = self.attack_animation_object.get_opponent_field_unit()
 
         def slash_with_sword(step_count):
+            if step_count == 1:
+                self.__music_player_repository.play_sound_effect_with_event_name('basic_attack')
             if step_count < 11:
                 sword_accel_x_dist = sword_accel_x * step_count
 
@@ -6484,6 +6488,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         opponent_field_unit = self.attack_animation_object.get_opponent_field_unit()
 
         def slash_with_sword(step_count):
+            if step_count == 1:
+                self.__music_player_repository.play_sound_effect_with_event_name('basic_attack')
             if step_count < 11:
                 sword_accel_x_dist = sword_accel_x * step_count
 
