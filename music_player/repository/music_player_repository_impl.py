@@ -68,6 +68,7 @@ class MusicPlayerRepositoryImpl(MusicPlayerRepository):
 
     def play_sound_effect_with_event_name(self, event_name: str):
         print("MusicPlayerRepositoryImpl : play_sound_effect_with_event_name - " + event_name)
+        pygame.mixer.init()
         sound = pygame.mixer.Sound(self.__soundPathDict[event_name])
         sound.play()
 
