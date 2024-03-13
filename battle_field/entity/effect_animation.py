@@ -27,11 +27,13 @@ class EffectAnimation:
         self.total_animation_count = 0
 
     def set_animation_name(self, animation_name):
+        print(animation_name)
         self.animation_name = animation_name
         image_dir = os.path.join(get_project_root(), "local_storage", "animation", self.animation_name)
         # image_dir = os.path.join(self.__project_root, "local_storage", "animation_for_test")
         file_list = os.listdir(image_dir)
         self.total_animation_count = len(file_list)
+        print(self.total_animation_count)
 
     def get_animation_name(self):
         return self.animation_name
@@ -68,15 +70,10 @@ class EffectAnimation:
 
     def draw_animation_panel(self):
 
-        left_x_point = self.total_width * 0.4
-        right_x_point = self.total_width * 0.6
-        top_y_point = self.total_height * 0.65
-        bottom_y_point = self.total_height * 0.35
-
-        basic_fixed_card_base_vertices = [(-20, -25), (125, -25), (125, 195), (-20, 195)]
-
+        basic_fixed_card_base_vertices = [(-32.5, 0), (137.5, 0), (137.5, 170), (-32.5, 170)]
+        print(self.__pre_drawed_image.get_pre_draw_effect_animation(self.animation_name))
         self.animation_panel = NonBackgroundImage(
-            image_data=self.__pre_drawed_image.get_pre_draw_animation(),
+            image_data=self.__pre_drawed_image.get_pre_draw_effect_animation(self.animation_name),
             # vertices=[
             #     (left_x_point, top_y_point),
             #     (right_x_point, top_y_point),
@@ -88,13 +85,15 @@ class EffectAnimation:
 
         )
 
+        print(self.animation_panel)
+
         # self.animation_panel = RectangleImage(
         #     image_data=self.__pre_drawed_image.get_pre_draw_animation(),
         #     vertices=basic_fixed_card_base_vertices,
         # #    local_translation=self.local_translation
         #     )
 
-    def update_animation_panel(self):
+    def update_effect_animation_panel(self):
         try:
             if self.__current_animation_count == self.total_animation_count:
                 self.is_finished = True
@@ -103,6 +102,7 @@ class EffectAnimation:
             self.__current_animation_count += 1
             # image_count = self.__current_animation_count % 16
             image_count = self.__current_animation_count
+            print(f"image data : {self.__pre_drawed_image.get_pre_draw_effect_animation(self.animation_name, image_count)}")
             self.animation_panel.set_image_data(
                 self.__pre_drawed_image.get_pre_draw_effect_animation(self.animation_name, image_count))
         except:

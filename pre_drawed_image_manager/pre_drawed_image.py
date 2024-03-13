@@ -428,6 +428,7 @@ class PreDrawedImage:
 
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'burst_shadow_ball',f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
             burst_shadow_ball_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['burst_shadow_ball'] = burst_shadow_ball_animation
@@ -439,6 +440,7 @@ class PreDrawedImage:
 
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'moving_shadow_ball',f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
             moving_shadow_ball_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['moving_shadow_ball'] = moving_shadow_ball_animation
@@ -449,6 +451,7 @@ class PreDrawedImage:
 
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'dark_blast', f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
             dark_blast_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['dark_blast'] = dark_blast_animation
@@ -459,8 +462,8 @@ class PreDrawedImage:
         file_list = os.listdir(image_dir)
 
         for number in range(0, len(file_list)):
-            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'magic_attack',
-                                                f"{number}.png")
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'magic_attack', f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
             magic_attack_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['magic_attack'] = magic_attack_animation
@@ -470,8 +473,8 @@ class PreDrawedImage:
         file_list = os.listdir(image_dir)
 
         for number in range(0, len(file_list)):
-            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'sword_attack',
-                                                f"{number}.png")
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'sword_attack', f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
             sword_attack_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['sword_attack'] = sword_attack_animation
@@ -482,8 +485,8 @@ class PreDrawedImage:
         file_list = os.listdir(image_dir)
 
         for number in range(0, len(file_list)):
-            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'death_scythe',
-                                                f"{number}.png")
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'death_scythe', f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
             death_scythe_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['death_scythe'] = death_scythe_animation
@@ -970,8 +973,7 @@ class PreDrawedImage:
     def get_pre_draw_card_type_mark(self, type_number):
         return self.__pre_drawed_card_type_mark[type_number]
 
-
-    def get_pre_draw_effect_animation(self, effect_name, index):
+    def get_pre_draw_effect_animation(self, effect_name, index=0):
         return self.__pre_drawed_effect_animation[effect_name][index]
 
     def get_pre_draw_unit_card_attack_wizard(self):
