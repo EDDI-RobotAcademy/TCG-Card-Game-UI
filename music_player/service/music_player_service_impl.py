@@ -19,9 +19,15 @@ class MusicPlayerServiceImpl(MusicPlayerService):
         return cls.__instance
 
     def loadBackgroundMusics(self):
-        self.__musicPlayerRepository.loadBackgroundMp3("main-menu")
+        self.__musicPlayerRepository.loadBackgroundMusic("main-menu")
+        self.__musicPlayerRepository.loadBackgroundMusic("lobby-menu")
+        self.__musicPlayerRepository.loadBackgroundMusic("battle-lobby")
+        self.__musicPlayerRepository.loadBackgroundMusic("my-card-main")
+        self.__musicPlayerRepository.loadBackgroundMusic("card-shop-menu")
 
     def playBackgroundMusic(self):
+        print("MusicPlayerServiceImpl : playBackgroundMusic")
+        # self.__musicPlayerRepository.detectFrameChange()
         self.__musicPlayerRepository.playBackgroundMusic()
 
     def injectUiIpcChannel(self, uiIpcChannel):

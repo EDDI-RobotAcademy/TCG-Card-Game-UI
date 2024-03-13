@@ -70,6 +70,7 @@ class DomainInitializer:
     def initMusicPlayerDomain(uiMusicPlayIpcChannel):
         musicPlayerController = MusicPlayerControllerImpl.getInstance()
         musicPlayerController.requestToInjectUiIpcChannel(uiMusicPlayIpcChannel)
+        # musicPlayerController.loadAllMusicFiles()
 
     # Task Worker Domain
     @staticmethod
