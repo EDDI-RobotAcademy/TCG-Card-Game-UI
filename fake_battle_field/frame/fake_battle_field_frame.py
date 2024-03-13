@@ -6880,6 +6880,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 self.master.after(20, move_to_origin_location, step_count + 1)
             else:
+                targeting_damage = 20
                 if is_attack_main_character is False:
                     print(f"{Fore.RED}필드 유닛 공격 -> is_attack_main_character(False): {Fore.GREEN}{is_attack_main_character}{Style.RESET_ALL}")
 
@@ -6887,7 +6888,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     tool_card = opponent_field_unit.get_tool_card()
                     attached_shape_list = fixed_card_base.get_attached_shapes()
 
-                    targeting_damage = 20
+
 
                     remove_from_field = False
                     for attached_shape in attached_shape_list:
