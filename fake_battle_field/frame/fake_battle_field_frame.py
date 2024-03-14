@@ -617,6 +617,29 @@ class FakeBattleFieldFrame(OpenGLFrame):
         key = event.keysym
         print(f"Key pressed: {key}")
 
+        if key.lower() == 'w':
+            opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
+            for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
+                if opponent_hand == 9:
+                    print("에너지번 사용!! ")
+
+                    result = self.__fake_opponent_hand_repository.request_use_energy_card_to_unit(
+                        RequestUseDeathSiceToUnit(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _itemCardId=8,
+                            _opponentTargetUnitIndex=0
+                        ))
+
+                    print(f"fake death scythe result: {result}")
+                    is_success_value = result.get('is_success', False)
+
+                    if is_success_value == False:
+                        return
+
+                    self.__fake_opponent_hand_repository.remove_card_by_index(opponent_hand_index)
+
+                    break
+
         if key.lower() == 's':
             opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
             for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
@@ -1291,17 +1314,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     local_translation=opponent_fixed_card_base.get_local_translation())
                 opponent_fixed_card_base.set_attached_shapes(card_race_circle)
 
-        if key.lower() == 'h':
-            self.your_field_energy_repository.to_next_field_energy_race()
 
-        if key.lower() == 'u':
-            self.your_field_energy_repository.increase_your_field_energy()
-
-        if key.lower() == 'i':
-            self.opponent_field_energy_repository.increase_opponent_field_energy()
-
-        if key.lower() == 'y':
-            self.opponent_field_energy_repository.decrease_opponent_field_energy()
 
         if key.lower() == 'd':
             opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
@@ -1359,31 +1372,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
         if key.lower() == 'p':
             self.your_field_unit_repository.create_field_unit_card(17)
 
-        if key.lower() == 'w':
-            notify_raw_data = '''{
-                       "NOTIFY_UNIT_SPAWN":
-                           {"player_spawn_unit_map":
-                               {"Opponent" : "26"}
-                           }
-                   }'''
-            NotifyReaderRepositoryImpl.getInstance().getNoWaitIpcChannel().put(notify_raw_data)
-            # self.opponent_field_unit_repository.create_field_unit_card(26)
 
-        if key.lower() == 's':
-            print("attach undead energy")
-            notify_raw_data = '''{
-                       "NOTIFY_FIELD_UNIT_ENERGY":
-                           {"player_field_unit_energy_map":
-                                {"Opponent":
-                                     {"0":
-                                          {"attached_energy_map":
-                                               {"2": 2}, "total_energy_count": 2}}}}}'''
-            notify_dict = {"player_field_unit_energy_map":
-                               {"Opponent":
-                                    {"0":
-                                         {"attached_energy_map": {"2": 2}, "total_energy_count": 2}}}}
 
-            NotifyReaderRepositoryImpl.getInstance().getNoWaitIpcChannel().put(notify_raw_data)
+
 
         if key.lower() == 'c':
             print("파멸의 계약 사용!")
