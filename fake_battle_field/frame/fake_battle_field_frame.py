@@ -21,6 +21,7 @@ from battle_field.components.opponent_field_area_inside.opponent_field_area_acti
     OpponentFieldAreaActionProcess
 from battle_field.components.opponent_field_area_inside.opponent_field_area_inside_handler import \
     OpponentFieldAreaInsideHandler
+from battle_field.components.opponent_field_area_inside.opponent_unit_action import OpponentUnitAction
 from battle_field.components.opponent_fixed_unit_card_inside.ActionToApplyOpponent import ActionToApplyOpponent
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area_action import OpponentFieldAreaAction
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
@@ -1590,27 +1591,28 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.draw_base()
 
-        for opponent_field_unit in self.opponent_field_unit_repository.get_current_field_unit_card_object_list():
-            if opponent_field_unit is None:
-                continue
+        if self.opponent_field_area_inside_handler.get_active_field_area_action() is not OpponentFieldAreaActionProcess.PLAY_ANIMATION:
+            for opponent_field_unit in self.opponent_field_unit_repository.get_current_field_unit_card_object_list():
+                if opponent_field_unit is None:
+                    continue
 
-            attached_tool_card = opponent_field_unit.get_tool_card()
-            if attached_tool_card is not None:
-                attached_tool_card.set_width_ratio(self.width_ratio)
-                attached_tool_card.set_height_ratio(self.height_ratio)
-                attached_tool_card.draw()
+                attached_tool_card = opponent_field_unit.get_tool_card()
+                if attached_tool_card is not None:
+                    attached_tool_card.set_width_ratio(self.width_ratio)
+                    attached_tool_card.set_height_ratio(self.height_ratio)
+                    attached_tool_card.draw()
 
-            fixed_card_base = opponent_field_unit.get_fixed_card_base()
-            fixed_card_base.set_width_ratio(self.width_ratio)
-            fixed_card_base.set_height_ratio(self.height_ratio)
-            fixed_card_base.draw()
+                fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                fixed_card_base.set_width_ratio(self.width_ratio)
+                fixed_card_base.set_height_ratio(self.height_ratio)
+                fixed_card_base.draw()
 
-            attached_shape_list = fixed_card_base.get_attached_shapes()
+                attached_shape_list = fixed_card_base.get_attached_shapes()
 
-            for attached_shape in attached_shape_list:
-                attached_shape.set_width_ratio(self.width_ratio)
-                attached_shape.set_height_ratio(self.height_ratio)
-                attached_shape.draw()
+                for attached_shape in attached_shape_list:
+                    attached_shape.set_width_ratio(self.width_ratio)
+                    attached_shape.set_height_ratio(self.height_ratio)
+                    attached_shape.draw()
 
         if self.battle_field_repository.get_current_use_card_id():
             card_id = self.battle_field_repository.get_current_use_card_id()
@@ -1756,6 +1758,29 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     attached_tool_card.draw()
 
                 fixed_card_base = field_unit.get_fixed_card_base()
+                fixed_card_base.set_width_ratio(self.width_ratio)
+                fixed_card_base.set_height_ratio(self.height_ratio)
+                fixed_card_base.draw()
+
+                attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                for attached_shape in attached_shape_list:
+                    attached_shape.set_width_ratio(self.width_ratio)
+                    attached_shape.set_height_ratio(self.height_ratio)
+                    attached_shape.draw()
+
+        if self.opponent_field_area_inside_handler.get_active_field_area_action() is OpponentFieldAreaActionProcess.PLAY_ANIMATION:
+            for opponent_field_unit in self.opponent_field_unit_repository.get_current_field_unit_card_object_list():
+                if opponent_field_unit is None:
+                    continue
+
+                attached_tool_card = opponent_field_unit.get_tool_card()
+                if attached_tool_card is not None:
+                    attached_tool_card.set_width_ratio(self.width_ratio)
+                    attached_tool_card.set_height_ratio(self.height_ratio)
+                    attached_tool_card.draw()
+
+                fixed_card_base = opponent_field_unit.get_fixed_card_base()
                 fixed_card_base.set_width_ratio(self.width_ratio)
                 fixed_card_base.set_height_ratio(self.height_ratio)
                 fixed_card_base.draw()
@@ -2010,8 +2035,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.attack_animation_object.set_animation_action(AnimationAction.DUMMY)
             # self.field_area_inside_handler.clear_field_area_action()
 
-        if self.opponent_field_area_inside_handler.get_field_area_action() is OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS:
+        if self.opponent_field_area_inside_handler.get_field_area_action() is OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_PASSIVE_SKILL_PROCESS:
             print(f"{Fore.RED}Opponent Unit 패시브 처리가 필요합니다!{Style.RESET_ALL}")
+
+            if self.opponent_field_area_inside_handler.get_unit_action() is OpponentUnitAction.NETHER_BLADE_FIRST_WIDE_AREA_PASSIVE_SKILL:
+                self.master.after(0, self.opponent_nether_blade_first_passive_skill_animation)
 
             self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
 
@@ -6888,6 +6916,60 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.opponent_hp_repository.take_damage(your_damage)
 
         move_to_origin_location(1)
+
+    def opponent_nether_blade_first_passive_skill_animation(self):
+        steps = 10
+        attack_animation_object = AttackAnimation.getInstance()
+        opponent_animation_actor = attack_animation_object.get_opponent_animation_actor()
+
+        your_fixed_card_base = opponent_animation_actor.get_fixed_card_base()
+        current_your_attacker_unit_vertices = your_fixed_card_base.get_vertices()
+        current_your_attacker_unit_local_translation = your_fixed_card_base.get_local_translation()
+
+        # x: 608, y: -199 <- top
+        # x: 603, y: -437 <- bottom
+
+        new_y_value = current_your_attacker_unit_local_translation[1] + 240
+        new_x_value = attack_animation_object.get_total_width() / 2 - 52.5
+        # your_attacker_unit_destination_local_translation = (current_your_attacker_unit_local_translation[0], new_y_value)
+        your_attacker_unit_destination_local_translation = (new_x_value, new_y_value)
+
+        attack_animation_object.set_your_attacker_unit_moving_x(
+            your_attacker_unit_destination_local_translation[0] - current_your_attacker_unit_local_translation[0])
+
+        step_x = (your_attacker_unit_destination_local_translation[0] - current_your_attacker_unit_local_translation[0]) / steps
+        step_y = (your_attacker_unit_destination_local_translation[1] - current_your_attacker_unit_local_translation[1]) / steps
+        step_y *= -1
+
+        def update_position(step_count):
+            print(f"{Fore.RED}step_count: {Fore.GREEN}{step_count}{Style.RESET_ALL}")
+
+            new_vertices = [
+                (vx + step_x * step_count, vy + step_y * step_count) for vx, vy in current_your_attacker_unit_vertices
+            ]
+            your_fixed_card_base.update_vertices(new_vertices)
+
+            # tool_card = self.selected_object.get_tool_card()
+            # if tool_card is not None:
+            #     new_tool_card_vertices = [
+            #         (vx + new_x, vy + new_y) for vx, vy in tool_card.vertices
+            #     ]
+            #     tool_card.update_vertices(new_tool_card_vertices)
+
+            for attached_shape in your_fixed_card_base.get_attached_shapes():
+                new_attached_shape_vertices = [
+                    (vx + step_x, vy + step_y) for vx, vy in attached_shape.vertices
+                ]
+                attached_shape.update_vertices(new_attached_shape_vertices)
+                # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+
+            if step_count < steps:
+                self.master.after(20, update_position, step_count + 1)
+            else:
+                # self.start_nether_blade_first_passive_wide_area_motion_animation(attack_animation_object)
+                pass
+
+        update_position(1)
 
     def nether_blade_first_passive_skill_animation(self):
         steps = 10

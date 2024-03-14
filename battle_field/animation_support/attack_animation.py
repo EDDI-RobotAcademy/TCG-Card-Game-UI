@@ -40,6 +40,9 @@ class AttackAnimation:
 
     animation_action = None
 
+    opponent_animation_actor = None
+    opponent_animation_actor_damage = 0
+
 
     def __new__(cls):
         if cls.__instance is None:
@@ -79,6 +82,12 @@ class AttackAnimation:
 
     def get_animation_actor(self):
         return self.selected_object
+
+    def set_opponent_animation_actor(self, opponent_animation_actor):
+        self.opponent_animation_actor = opponent_animation_actor
+
+    def get_opponent_animation_actor(self):
+        return self.opponent_animation_actor
 
     def set_is_finished(self, is_finished):
         self.is_finished = is_finished
@@ -169,6 +178,12 @@ class AttackAnimation:
 
     def get_animation_actor_damage(self):
         return self.animation_actor_damage
+
+    def set_opponent_animation_actor_damage(self, opponent_damage):
+        self.opponent_animation_actor_damage = opponent_damage
+
+    def get_opponent_animation_actor_damage(self):
+        return self.opponent_animation_actor_damage
 
     def add_your_field_unit_hp_shape_list(self, your_field_unit_hp_shape):
         self.your_field_unit_hp_shape_list.append(your_field_unit_hp_shape)

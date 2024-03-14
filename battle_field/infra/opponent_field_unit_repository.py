@@ -154,3 +154,9 @@ class OpponentFieldUnitRepository:
 
     def update_opponent_unit_extra_effect_at_index(self, unit_index, extra_effect_list):
         self.extra_effect_info.update_extra_effect_of_unit(unit_index, extra_effect_list)
+
+    # def update_your_unit_extra_effect_at_index(self, unit_index, extra_effect_list):
+    #     self.extra_effect_info.update_extra_effect_of_unit(unit_index, extra_effect_list)
+
+    def get_opponent_unit_extra_ability_at_index(self, unit_index):
+        return self.extra_effect_info.get_extra_effect_of_index(unit_index)
