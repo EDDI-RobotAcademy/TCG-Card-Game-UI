@@ -3,6 +3,8 @@ import json
 from colorama import Fore, Style
 
 from battle_field.animation_support.animation_action import AnimationAction
+from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
+from battle_field.components.field_area_inside.field_area_inside_handler import FieldAreaInsideHandler
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
@@ -57,6 +59,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.__mulligan_repository = MuligunYourHandRepository.getInstance()
             cls.__instance.__your_deck_repository = YourDeckRepository.getInstance()
             cls.__instance.__your_lost_zone_repository = YourLostZoneRepository.getInstance()
+
+            cls.__instance.__field_area_inside_handler = FieldAreaInsideHandler.getInstance()
 
             cls.__instance.notify_callback_table['NOTIFY_DEPLOY_UNIT'] = cls.__instance.notify_deploy_unit
             cls.__instance.notify_callback_table['NOTIFY_TURN_END'] = cls.__instance.notify_turn_end
@@ -258,6 +262,22 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             opponent_field_energy_count = self.__opponent_field_energy_repository.get_opponent_field_energy()
             print(f"{Fore.RED}opponent_field_energy_count:{Fore.GREEN} {opponent_field_energy_count}{Style.RESET_ALL}")
 
+            # notify_turn_end() -> notice_dictionary: {
+            #     'NOTIFY_TURN_END': {'player_drawn_card_list_map': {'You': [33]}, 'player_field_energy_map': {'You': 1},
+            #                         'player_field_unit_health_point_map': {
+            #                             'Opponent': {'field_unit_health_point_map': {'8': 20}}},
+            #                         'player_field_unit_harmful_effect_map': {'Opponent': {
+            #                             'field_unit_harmful_status_map': {'8': {'harmful_status_list': []}}}},
+            #                         'player_field_unit_death_map': {'Opponent': {'dead_field_unit_index_list': []}},
+            #                         'player_main_character_survival_map': {},
+            #                         'unit_index_turn_start_passive_list_map': {'3': [], '5': [], '6': [1, 2], '2': [],
+            #                                                                    '1': [], '0': [], '4': []}}}
+            opponent_which_one_has_passive_skill_to_turn_start_lists = {unit_index: passive_list for unit_index, passive_list in
+                               notice_dictionary['NOTIFY_TURN_END']['unit_index_turn_start_passive_list_map'].items() if
+                               passive_list}
+
+            print(f"{Fore.RED}opponent_which_one_has_passive_skill_to_turn_start_lists:{Fore.GREEN} {opponent_which_one_has_passive_skill_to_turn_start_lists}{Style.RESET_ALL}")
+
 
 
             for player, field_data in notice_dictionary['NOTIFY_TURN_END']['player_field_unit_harmful_effect_map'].items():
@@ -358,6 +378,24 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             notice_dictionary['NOTIFY_TURN_END']['player_field_unit_health_point_map'])
 
         self.apply_notify_data_of_dead_unit(notice_dictionary['NOTIFY_TURN_END']['player_field_unit_death_map'])
+
+        # notify_turn_end() -> notice_dictionary: {
+        #     'NOTIFY_TURN_END': {'player_drawn_card_list_map': {'You': [33]}, 'player_field_energy_map': {'You': 1},
+        #                         'player_field_unit_health_point_map': {
+        #                             'Opponent': {'field_unit_health_point_map': {'8': 20}}},
+        #                         'player_field_unit_harmful_effect_map': {'Opponent': {
+        #                             'field_unit_harmful_status_map': {'8': {'harmful_status_list': []}}}},
+        #                         'player_field_unit_death_map': {'Opponent': {'dead_field_unit_index_list': []}},
+        #                         'player_main_character_survival_map': {},
+        #                         'unit_index_turn_start_passive_list_map': {'3': [], '5': [], '6': [1, 2], '2': [],
+        #                                                                    '1': [], '0': [], '4': []}}}
+        your_which_one_has_passive_skill_to_turn_start_lists = {unit_index: passive_list for unit_index, passive_list in
+                                                           notice_dictionary['NOTIFY_TURN_END'][
+                                                               'unit_index_turn_start_passive_list_map'].items() if
+                                                           passive_list}
+        print(f"{Fore.RED}your_which_one_has_passive_skill_to_turn_start_lists:{Fore.GREEN} {your_which_one_has_passive_skill_to_turn_start_lists}{Style.RESET_ALL}")
+        self.__field_area_inside_handler.set_field_area_action(FieldAreaAction.CHECK_MULTIPLE_UNIT_REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
+        self.__field_area_inside_handler.set_required_to_process_passive_skill_multiple_unit_list(your_which_one_has_passive_skill_to_turn_start_lists)
 
     def notify_attach_general_energy_card(self, notice_dictionary):
 

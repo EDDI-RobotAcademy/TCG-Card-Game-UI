@@ -1926,6 +1926,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             self.play_effect_animation_by_index_and_call_function(animation_index, calculate_death_scythe)
 
+        if self.field_area_inside_handler.get_field_area_action() is FieldAreaAction.CHECK_MULTIPLE_UNIT_REQUIRED_FIRST_PASSIVE_SKILL_PROCESS:
+            required_to_process_passive_skill_multiple_unit_list = self.field_area_inside_handler.get_required_to_process_passive_skill_multiple_unit_list()
+            print(f"{Fore.RED}required_to_process_passive_skill_multiple_unit_list: {Fore.GREEN}{required_to_process_passive_skill_multiple_unit_list}{Style.RESET_ALL}")
+
+            # for key, value in required_to_process_passive_skill_multiple_unit_list.items():
+            #     if
+
+
+
         if self.field_area_inside_handler.get_field_area_action() is FieldAreaAction.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS:
             print(f"{Fore.RED}패시브 처리가 필요합니다!{Style.RESET_ALL}")
 
