@@ -82,6 +82,10 @@ from battle_field.infra.request.request_use_energy_card_to_unit import RequestUs
 from battle_field.infra.request.request_use_field_of_death import RequestUseFieldOfDeath
 from battle_field.infra.request.request_use_morale_conversion import RequestUseMoraleConversion
 from battle_field.infra.request.request_use_overflow_of_energy import RequestUseOverflowOfEnergy
+from battle_field.infra.request.target_passive_skill_to_main_character_from_deploy_request import \
+    TargetingPassiveSkillToMainCharacterFromDeployRequest
+from battle_field.infra.request.targeting_passive_skill_to_your_field_unit_from_deploy_request import \
+    TargetingPassiveSkillToYourFieldUnitFromDeployRequest
 
 from battle_field.infra.request.wide_area_passive_skill_from_deploy_request import WideAreaPassiveSkillFromDeployRequest
 from battle_field.infra.request.request_use_special_energy_card_to_unit import RequestUseSpecialEnergyCardToUnit
@@ -788,6 +792,102 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if is_success is False:
                 return FieldAreaAction.Dummy
 
+        if key.lower() == 'm':
+            print("상대방이 네더 출격 이후 본체 타겟팅 사용 요청")
+
+            # your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
+            # print(f"your_field_card_id: {your_field_card_id}")
+            #
+            # your_damage = self.card_info_repository.getCardPassiveSecondDamageForCardNumber(your_field_card_id)
+            # print(f"your_damage: {your_damage}")
+            #
+            # self.attack_animation_object.set_animation_actor_damage(your_damage)
+            # self.attack_animation_object.set_opponent_main_character(self.opponent_main_character_panel)
+            # # self.opponent_hp_repository.take_damage(your_damage)
+            #
+            # self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(ActionToApplyOpponent.Dummy)
+            # self.targeting_enemy_select_using_your_field_card_index = None
+            # self.targeting_enemy_select_using_your_field_card_id = None
+            # self.targeting_enemy_select_support_lightning_border_list = []
+            # self.opponent_you_selected_lightning_border_list = []
+            #
+            # self.selected_object = None
+            # self.active_panel_rectangle = None
+            # self.current_fixed_details_card = None
+            # self.your_active_panel.clear_all_your_active_panel()
+            #
+            # self.master.after(0, self.start_nether_blade_second_passive_targeting_motion_animation)
+
+            recently_added_card_index = self.opponent_field_unit_repository.get_field_unit_max_index()
+            opponent_animation_actor = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(recently_added_card_index)
+            self.attack_animation_object.set_opponent_animation_actor(opponent_animation_actor)
+
+            damage = self.card_info_repository.getCardPassiveSecondDamageForCardNumber(opponent_animation_actor.get_card_number())
+            self.attack_animation_object.set_opponent_animation_actor_damage(damage)
+
+            self.opponent_field_area_inside_handler.set_unit_action(OpponentUnitAction.NETHER_BLADE_SECOND_TARGETING_PASSIVE_SKILL)
+
+            extra_ability = self.opponent_field_unit_repository.get_opponent_unit_extra_ability_at_index(recently_added_card_index)
+            self.attack_animation_object.set_extra_ability(extra_ability)
+
+            self.opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.PLAY_ANIMATION)
+
+            # {"protocolNumber":2001, "unitCardIndex": "0", "targetGameMainCharacterIndex": "0", "usageSkillIndex": "2", "sessionInfo":""}
+            process_second_passive_skill_response = self.__fake_battle_field_frame_repository.request_to_process_second_passive_skill_to_main_character(
+                TargetingPassiveSkillToMainCharacterFromDeployRequest(
+                    _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                    _unitCardIndex=str(recently_added_card_index),
+                    _targetGameMainCharacterIndex="0",
+                    _usageSkillIndex="2"))
+
+            print(f"{Fore.RED}opponent process_second_passive_skill_response:{Fore.GREEN} {process_second_passive_skill_response}{Style.RESET_ALL}")
+
+            is_success = process_second_passive_skill_response['is_success']
+            if is_success is False:
+                return FieldAreaAction.Dummy
+
+        if key.lower() == 'n':
+            print("상대방이 네더 출격 이후 Your 유닛에 타겟팅 사용 요청")
+
+            recently_added_card_index = self.opponent_field_unit_repository.get_field_unit_max_index()
+            opponent_animation_actor = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                recently_added_card_index)
+            self.attack_animation_object.set_opponent_animation_actor(opponent_animation_actor)
+
+            damage = self.card_info_repository.getCardPassiveSecondDamageForCardNumber(
+                opponent_animation_actor.get_card_number())
+            self.attack_animation_object.set_opponent_animation_actor_damage(damage)
+
+            self.opponent_field_area_inside_handler.set_unit_action(
+                OpponentUnitAction.NETHER_BLADE_SECOND_TARGETING_PASSIVE_SKILL)
+
+            extra_ability = self.opponent_field_unit_repository.get_opponent_unit_extra_ability_at_index(
+                recently_added_card_index)
+            self.attack_animation_object.set_extra_ability(extra_ability)
+
+            self.opponent_field_area_inside_handler.set_active_field_area_action(
+                OpponentFieldAreaActionProcess.PLAY_ANIMATION)
+
+            your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
+            # first_non_none_value = next((item for item in your_field_unit_list if item is not None), None)
+            first_non_none_index = next((index for index, item in enumerate(your_field_unit_list) if item is not None), None)
+
+            print(f"{Fore.RED}first_non_none_value:{Fore.GREEN} {first_non_none_index}{Style.RESET_ALL}")
+
+            # {"protocolNumber":2000, "unitCardIndex": "0", "opponentTargetCardIndex": "0", "usageSkillIndex": "2", "sessionInfo":""}
+            process_second_passive_skill_response = self.__fake_battle_field_frame_repository.request_to_process_second_passive_skill_to_your_field_unit(
+                TargetingPassiveSkillToYourFieldUnitFromDeployRequest(
+                    _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                    _unitCardIndex=str(recently_added_card_index),
+                    _opponentTargetCardIndex=str(first_non_none_index),
+                    _usageSkillIndex="2"))
+
+            print(f"{Fore.RED}opponent process_second_passive_skill_response:{Fore.GREEN} {process_second_passive_skill_response}{Style.RESET_ALL}")
+
+            is_success = process_second_passive_skill_response['is_success']
+            if is_success is False:
+                return FieldAreaAction.Dummy
+
         if key.lower() == 'x':
             print("Opponent Turn을 종료합니다")
 
@@ -1150,9 +1250,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.opponent_field_unit_repository.create_field_unit_card(31)
             self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
-        if key.lower() == 'n':
-            self.opponent_field_unit_repository.create_field_unit_card(19)
-            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+        # if key.lower() == 'n':
+        #     self.opponent_field_unit_repository.create_field_unit_card(19)
+        #     self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
         if key.lower() == 'b':
             self.your_field_unit_repository.create_field_unit_card(19)
@@ -2131,6 +2231,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             if self.opponent_field_area_inside_handler.get_unit_action() is OpponentUnitAction.NETHER_BLADE_FIRST_WIDE_AREA_PASSIVE_SKILL:
                 self.master.after(2000, self.opponent_nether_blade_first_passive_skill_animation)
+
+            if self.opponent_field_area_inside_handler.get_unit_action() is OpponentUnitAction.NETHER_BLADE_SECOND_TARGETING_PASSIVE_SKILL:
+                self.master.after(2000, self.opponent_nether_blade_second_passive_skill_animation)
 
             self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
 
@@ -7150,32 +7253,32 @@ class FakeBattleFieldFrame(OpenGLFrame):
         attack_animation_object = AttackAnimation.getInstance()
         opponent_animation_actor = attack_animation_object.get_opponent_animation_actor()
 
-        your_fixed_card_base = opponent_animation_actor.get_fixed_card_base()
-        current_your_attacker_unit_vertices = your_fixed_card_base.get_vertices()
-        current_your_attacker_unit_local_translation = your_fixed_card_base.get_local_translation()
+        opponent_fixed_card_base = opponent_animation_actor.get_fixed_card_base()
+        current_opponent_attacker_unit_vertices = opponent_fixed_card_base.get_vertices()
+        current_opponent_attacker_unit_local_translation = opponent_fixed_card_base.get_local_translation()
 
         # x: 608, y: -199 <- top
         # x: 603, y: -437 <- bottom
 
-        new_y_value = current_your_attacker_unit_local_translation[1] + 240
+        new_y_value = current_opponent_attacker_unit_local_translation[1] + 240
         new_x_value = attack_animation_object.get_total_width() / 2 - 52.5
         # your_attacker_unit_destination_local_translation = (current_your_attacker_unit_local_translation[0], new_y_value)
-        your_attacker_unit_destination_local_translation = (new_x_value, new_y_value)
+        opponent_attacker_unit_destination_local_translation = (new_x_value, new_y_value)
 
-        attack_animation_object.set_your_attacker_unit_moving_x(
-            your_attacker_unit_destination_local_translation[0] - current_your_attacker_unit_local_translation[0])
+        attack_animation_object.set_opponent_attacker_unit_moving_x(
+            opponent_attacker_unit_destination_local_translation[0] - current_opponent_attacker_unit_local_translation[0])
 
-        step_x = (your_attacker_unit_destination_local_translation[0] - current_your_attacker_unit_local_translation[0]) / steps
-        step_y = (your_attacker_unit_destination_local_translation[1] - current_your_attacker_unit_local_translation[1]) / steps
+        step_x = (opponent_attacker_unit_destination_local_translation[0] - current_opponent_attacker_unit_local_translation[0]) / steps
+        step_y = (opponent_attacker_unit_destination_local_translation[1] - current_opponent_attacker_unit_local_translation[1]) / steps
         step_y *= -1
 
         def update_position(step_count):
             print(f"{Fore.RED}step_count: {Fore.GREEN}{step_count}{Style.RESET_ALL}")
 
             new_vertices = [
-                (vx + step_x * step_count, vy + step_y * step_count) for vx, vy in current_your_attacker_unit_vertices
+                (vx + step_x * step_count, vy + step_y * step_count) for vx, vy in current_opponent_attacker_unit_vertices
             ]
-            your_fixed_card_base.update_vertices(new_vertices)
+            opponent_fixed_card_base.update_vertices(new_vertices)
 
             # tool_card = self.selected_object.get_tool_card()
             # if tool_card is not None:
@@ -7184,7 +7287,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             #     ]
             #     tool_card.update_vertices(new_tool_card_vertices)
 
-            for attached_shape in your_fixed_card_base.get_attached_shapes():
+            for attached_shape in opponent_fixed_card_base.get_attached_shapes():
                 new_attached_shape_vertices = [
                     (vx + step_x, vy + step_y) for vx, vy in attached_shape.vertices
                 ]
@@ -7264,13 +7367,362 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if step_count < steps:
                 self.master.after(20, wide_area_attack, step_count + 1)
             else:
-                # self.finish_nether_blade_first_passive_wide_area_motion_animation(attack_animation_object)
-                pass
+                self.finish_opponent_nether_blade_first_passive_wide_area_motion_animation(attack_animation_object)
+                # pass
                 # self.is_attack_motion_finished = True
                 # attack_animation_object.set_is_finished(True)
                 # attack_animation_object.set_need_post_process(True)
 
         wide_area_attack(1)
+
+    def finish_opponent_nether_blade_first_passive_wide_area_motion_animation(self, attack_animation_object):
+        opponent_animation_actor = attack_animation_object.get_opponent_animation_actor()
+        opponent_fixed_card_base = opponent_animation_actor.get_fixed_card_base()
+        tool_card = opponent_animation_actor.get_tool_card()
+        attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+
+        # your_fixed_card_base_initial_vertices = your_fixed_card_base.get_initial_vertices()
+        # print(f"{Fore.RED}your_fixed_card_base_initial_vertices{Fore.GREEN} {your_fixed_card_base_initial_vertices}{Style.RESET_ALL}")
+
+        current_opponent_attacker_unit_vertices = opponent_fixed_card_base.get_vertices()
+        current_opponent_attacker_unit_local_translation = opponent_fixed_card_base.get_local_translation()
+
+        opponent_attacker_unit_moving_x = attack_animation_object.get_opponent_attacker_unit_moving_x()
+
+        new_y_value = current_opponent_attacker_unit_local_translation[1] - 240
+        opponent_attacker_unit_destination_local_translation = (0, new_y_value)
+        print(
+            f"{Fore.RED}opponent_attacker_unit_destination_local_translation{Fore.GREEN} {opponent_attacker_unit_destination_local_translation}{Style.RESET_ALL}")
+
+        steps = 15
+        step_x = opponent_attacker_unit_moving_x / steps
+        step_y = (opponent_attacker_unit_destination_local_translation[1] -
+                  current_opponent_attacker_unit_local_translation[1]) / steps
+
+        # step_y *= -1
+
+        def move_to_origin_location(step_count):
+            new_y = current_opponent_attacker_unit_local_translation[1] + step_y * step_count
+            print(f"{Fore.RED}step ->{Fore.GREEN}new_y: {new_y}{Style.RESET_ALL}")
+
+            new_vertices = [
+                (vx - step_x * step_count, vy - step_y * step_count) for vx, vy in
+                current_opponent_attacker_unit_vertices
+            ]
+            opponent_fixed_card_base.update_vertices(new_vertices)
+            print(f"{Fore.RED}new_vertices{Fore.GREEN} {new_vertices}{Style.RESET_ALL}")
+
+            # tool_card = self.selected_object.get_tool_card()
+            # if tool_card is not None:
+            #     new_tool_card_vertices = [
+            #         (vx + new_x, vy + new_y) for vx, vy in tool_card.vertices
+            #     ]
+            #     tool_card.update_vertices(new_tool_card_vertices)
+
+            for attached_shape in opponent_fixed_card_base.get_attached_shapes():
+                new_attached_shape_vertices = [
+                    (vx - step_x, vy - step_y) for vx, vy in attached_shape.vertices
+                ]
+                attached_shape.update_vertices(new_attached_shape_vertices)
+                print(
+                    f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+
+            if step_count < steps:
+
+                self.master.after(20, move_to_origin_location, step_count + 1)
+            else:
+                notify_data = attack_animation_object.get_notify_data()
+                your_field_unit_health_point_map = (
+                    notify_data)['player_field_unit_health_point_map']['You']['field_unit_health_point_map']
+                your_field_unit_harmful_effect_list = (
+                    notify_data)['player_field_unit_harmful_effect_map']['You']['field_unit_harmful_status_map']
+                your_dead_field_unit_index_list = (
+                    notify_data)['player_field_unit_death_map']['You']['dead_field_unit_index_list']
+
+                for unit_index, remaining_health_point in your_field_unit_health_point_map.items():
+                    your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(int(unit_index))
+                    your_fixed_card_base = your_field_unit.get_fixed_card_base()
+                    your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+
+                    if remaining_health_point <= 0:
+                        continue
+
+                    for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+                        if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                            if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                your_fixed_card_attached_shape.set_number(int(remaining_health_point))
+
+                                your_fixed_card_attached_shape.set_image_data(
+                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(int(remaining_health_point)))
+
+                for unit_index, harmful_effect_info in your_field_unit_harmful_effect_list.items():
+                    harmful_effect_list = harmful_effect_info['harmful_status_list']
+                    self.your_field_unit_repository.apply_harmful_status(int(unit_index), harmful_effect_list)
+
+                # 죽은 유닛들 묘지에 배치 및 Replacing
+                for dead_unit_index in your_dead_field_unit_index_list:
+                    field_unit_id = self.your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
+                    self.your_tomb_repository.create_tomb_card(field_unit_id)
+                    self.your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
+
+                self.your_field_unit_repository.replace_field_card_position()
+
+                self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                self.opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.Dummy)
+                # self.opponent_nether_blade_second_passive_skill_animation()
+
+        move_to_origin_location(1)
+
+    def opponent_nether_blade_second_passive_skill_animation(self):
+        steps = 10
+        attack_animation_object = AttackAnimation.getInstance()
+        opponent_animation_actor = attack_animation_object.get_opponent_animation_actor()
+
+        opponent_fixed_card_base = opponent_animation_actor.get_fixed_card_base()
+        current_opponent_attacker_unit_vertices = opponent_fixed_card_base.get_vertices()
+        current_opponent_attacker_unit_local_translation = opponent_fixed_card_base.get_local_translation()
+
+        new_y_value = current_opponent_attacker_unit_local_translation[1] + 240
+        new_x_value = attack_animation_object.get_total_width() / 2 - 52.5
+        # your_attacker_unit_destination_local_translation = (current_your_attacker_unit_local_translation[0], new_y_value)
+        opponent_attacker_unit_destination_local_translation = (new_x_value, new_y_value)
+
+        attack_animation_object.set_opponent_attacker_unit_moving_x(
+            opponent_attacker_unit_destination_local_translation[0] - current_opponent_attacker_unit_local_translation[0])
+
+        step_x = (opponent_attacker_unit_destination_local_translation[0] - current_opponent_attacker_unit_local_translation[0]) / steps
+        step_y = (opponent_attacker_unit_destination_local_translation[1] - current_opponent_attacker_unit_local_translation[1]) / steps
+        step_y *= -1
+
+        def update_position(step_count):
+            print(f"{Fore.RED}step_count: {Fore.GREEN}{step_count}{Style.RESET_ALL}")
+
+            new_vertices = [
+                (vx + step_x * step_count, vy + step_y * step_count) for vx, vy in current_opponent_attacker_unit_vertices
+            ]
+            opponent_fixed_card_base.update_vertices(new_vertices)
+
+            # tool_card = self.selected_object.get_tool_card()
+            # if tool_card is not None:
+            #     new_tool_card_vertices = [
+            #         (vx + new_x, vy + new_y) for vx, vy in tool_card.vertices
+            #     ]
+            #     tool_card.update_vertices(new_tool_card_vertices)
+
+            for attached_shape in opponent_fixed_card_base.get_attached_shapes():
+                new_attached_shape_vertices = [
+                    (vx + step_x, vy + step_y) for vx, vy in attached_shape.vertices
+                ]
+                attached_shape.update_vertices(new_attached_shape_vertices)
+                # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+
+            if step_count < steps:
+                self.master.after(20, update_position, step_count + 1)
+            else:
+                # self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_PASSIVE_SKILL_PROCESS)
+                self.start_opponent_nether_blade_second_passive_targeting_motion_animation(self.attack_animation_object)
+
+
+        update_position(1)
+
+    ### Opponent Second Passive
+    def start_opponent_nether_blade_second_passive_targeting_motion_animation(self, attack_animation_object):
+        steps = 50
+
+        is_attack_main_character = False
+        opponent_field_unit = None
+        # targeting_damage = self.attack_animation_object.get_animation_actor_damage()
+        is_opponent_attack_main_character = self.attack_animation_object.get_is_opponent_attack_main_character()
+        if is_opponent_attack_main_character is not False:
+            is_attack_main_character = True
+        else:
+            opponent_field_unit = self.attack_animation_object.get_opponent_field_unit()
+
+        def targeting_attack(step_count):
+            vibration_factor = 10
+            random_translation = (random.uniform(-vibration_factor, vibration_factor),
+                                  random.uniform(-vibration_factor, vibration_factor))
+
+            if is_attack_main_character is False:
+                # print(f"{Fore.RED}필드 유닛 공격 -> is_attack_main_character(False): {Fore.GREEN}{is_attack_main_character}{Style.RESET_ALL}")
+                fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                tool_card = opponent_field_unit.get_tool_card()
+                attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                if step_count % 2 == 1:
+                    new_fixed_card_base_vertices = [
+                        (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                        fixed_card_base.get_vertices()
+                    ]
+                    fixed_card_base.update_vertices(new_fixed_card_base_vertices)
+
+                    if tool_card is not None:
+                        new_tool_card_vertices = [
+                            (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                            tool_card.get_vertices()
+                        ]
+                        tool_card.update_vertices(new_tool_card_vertices)
+
+                    for attached_shape in attached_shape_list:
+                        # Apply random translation
+                        new_attached_shape_vertices = [
+                            (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                            attached_shape.get_vertices()
+                        ]
+                        attached_shape.update_vertices(new_attached_shape_vertices)
+
+                else:
+                    fixed_card_base.update_vertices(fixed_card_base.get_initial_vertices())
+                    if tool_card is not None:
+                        tool_card.update_vertices(tool_card.get_initial_vertices())
+                    for attached_shape in attached_shape_list:
+                        attached_shape.update_vertices(attached_shape.get_initial_vertices())
+
+            else:
+                # print(f"{Fore.RED}메인 캐릭터 공격 -> is_attack_main_character(True): {Fore.GREEN}{is_attack_main_character}{Style.RESET_ALL}")
+                if step_count % 2 == 1:
+                    for battle_field_background_shape in self.battle_field_background_shape_list:
+                        battle_field_background_shape.global_translate((random_translation[0], random_translation[1]))
+
+                else:
+                    for battle_field_background_shape in self.battle_field_background_shape_list:
+                        battle_field_background_shape.global_translate((0, 0))
+
+            if step_count < steps:
+                self.master.after(20, targeting_attack, step_count + 1)
+            else:
+                self.finish_opponent_nether_blade_second_passive_targeting_animation(self.attack_animation_object)
+                # self.is_attack_motion_finished = True
+                # attack_animation_object.set_is_finished(True)
+                # attack_animation_object.set_need_post_process(True)
+
+        targeting_attack(1)
+
+    def finish_opponent_nether_blade_second_passive_targeting_animation(self, attack_animation_object):
+        opponent_animation_actor = attack_animation_object.get_opponent_animation_actor()
+        opponent_fixed_card_base = opponent_animation_actor.get_fixed_card_base()
+        opponent_actor_extra_ability = attack_animation_object.get_extra_ability()
+
+        current_opponent_attacker_unit_vertices = opponent_fixed_card_base.get_vertices()
+        current_opponent_attacker_unit_local_translation = opponent_fixed_card_base.get_local_translation()
+
+        opponent_attacker_unit_moving_x = attack_animation_object.get_opponent_attacker_unit_moving_x()
+
+        new_y_value = current_opponent_attacker_unit_local_translation[1] - 240
+        opponent_attacker_unit_destination_local_translation = (0, new_y_value)
+
+        steps = 15
+        step_x = opponent_attacker_unit_moving_x / steps
+        step_y = (opponent_attacker_unit_destination_local_translation[1] - current_opponent_attacker_unit_local_translation[1]) / steps
+        # step_y *= -1
+
+        is_attack_main_character = False
+        your_field_unit = None
+        is_opponent_attack_main_character = self.attack_animation_object.get_is_opponent_attack_main_character()
+        if is_opponent_attack_main_character is not False:
+            is_attack_main_character = True
+        else:
+            your_field_unit = self.attack_animation_object.get_your_field_unit()
+
+        def move_to_origin_location(step_count):
+            new_vertices = [
+                (vx  - step_x * step_count, vy - step_y * step_count) for vx, vy in current_opponent_attacker_unit_vertices
+            ]
+            opponent_fixed_card_base.update_vertices(new_vertices)
+
+            # tool_card = self.selected_object.get_tool_card()
+            # if tool_card is not None:
+            #     new_tool_card_vertices = [
+            #         (vx + new_x, vy + new_y) for vx, vy in tool_card.vertices
+            #     ]
+            #     tool_card.update_vertices(new_tool_card_vertices)
+
+            for attached_shape in opponent_fixed_card_base.get_attached_shapes():
+                new_attached_shape_vertices = [
+                    (vx - step_x, vy - step_y) for vx, vy in attached_shape.vertices
+                ]
+                attached_shape.update_vertices(new_attached_shape_vertices)
+                # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+
+            if step_count < steps:
+
+                self.master.after(20, move_to_origin_location, step_count + 1)
+            else:
+                self.is_playing_action_animation = False
+                targeting_damage = 20
+                if is_attack_main_character is False:
+                    print(f"{Fore.RED}필드 유닛 공격 -> is_attack_main_character(False): {Fore.GREEN}{is_attack_main_character}{Style.RESET_ALL}")
+
+                    fixed_card_base = your_field_unit.get_fixed_card_base()
+                    tool_card = your_field_unit.get_tool_card()
+                    attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                    remove_from_field = False
+                    for attached_shape in attached_shape_list:
+                        if isinstance(attached_shape, NonBackgroundNumberImage):
+                            if attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                hp_number = attached_shape.get_number()
+                                print(f"{Fore.RED}current hp_number: {Fore.GREEN}{hp_number}{Style.RESET_ALL}")
+
+                                hp_number -= targeting_damage
+                                print(f"{Fore.RED}hp_number: {Fore.GREEN}{hp_number}{Style.RESET_ALL}")
+
+                                # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
+                                if hp_number <= 0:
+                                    remove_from_field = True
+                                    break
+
+                                attached_shape.set_number(hp_number)
+
+                                # attached_shape.set_image_data(
+                                #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+                                #     self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
+
+                                attached_shape.set_image_data(
+                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(hp_number))
+
+                                if opponent_actor_extra_ability:
+                                    self.your_field_unit_repository.apply_harmful_status(your_field_unit.get_index(), opponent_actor_extra_ability)
+
+                    if remove_from_field:
+                        card_id = your_field_unit.get_card_number()
+                        card_index = your_field_unit.get_index()
+
+                        self.your_field_unit_repository.remove_current_field_unit_card(card_index)
+
+                        self.your_field_unit_repository.remove_harmful_status_by_index(card_index)
+                        self.your_tomb_repository.create_opponent_tomb_card(card_id)
+
+                else:
+                    print(f"{Fore.RED}메인 캐릭터 공격 -> is_attack_main_character(True): {Fore.GREEN}{is_attack_main_character}{Style.RESET_ALL}")
+
+                    notify_data = attack_animation_object.get_notify_data()
+
+                    your_main_character_health_point = (
+                        notify_data)['player_main_character_health_point_map']['You']
+                    your_main_character_survival_state = (
+                        notify_data)['player_main_character_survival_map']['You']
+
+                    if your_main_character_survival_state != 'Survival':
+                        print('Your main character is dead!')
+                        return
+
+                    self.your_hp_repository.change_hp(int(your_main_character_health_point))
+                    print(f"{Fore.RED}current_main_character_health:{Fore.GREEN} "
+                          f"{self.your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
+
+                    # self.your_hp_repository.take_damage(targeting_damage)
+                    self.attack_animation_object.set_is_opponent_attack_main_character(False)
+
+                self.your_field_unit_repository.replace_field_card_position()
+                self.opponent_field_area_inside_handler.clear_field_area_action()
+                self.opponent_field_area_inside_handler.clear_active_field_area_action()
+                # self.opponent_field_area_inside_handler.clear_field_turn_start_action()
+                self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+
+        move_to_origin_location(1)
+
+    ### Your Nether Blade
 
     def nether_blade_first_passive_skill_animation(self):
         self.is_playing_action_animation = True

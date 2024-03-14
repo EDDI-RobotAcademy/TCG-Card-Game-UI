@@ -42,8 +42,11 @@ class AttackAnimation:
 
     opponent_animation_actor = None
     opponent_animation_actor_damage = 0
+    opponent_attacker_unit_moving_x = 0
 
     notify_data = None
+
+    is_opponent_attack_main_character = False
 
     def __new__(cls):
         if cls.__instance is None:
@@ -76,6 +79,12 @@ class AttackAnimation:
 
     def get_total_height(self):
         return self.total_height
+
+    def set_is_opponent_attack_main_character(self, is_opponent_attack_main_character):
+        self.is_opponent_attack_main_character = is_opponent_attack_main_character
+
+    def get_is_opponent_attack_main_character(self):
+        return self.is_opponent_attack_main_character
 
     def set_animation_actor(self, selected_object):
         print(f"{Fore.RED}selected_object{Fore.GREEN} {selected_object}{Style.RESET_ALL}")
@@ -173,6 +182,12 @@ class AttackAnimation:
 
     def clear_wide_attack_opponent_field_hp_list(self):
         self.wide_attack_opponent_field_hp_list = []
+
+    def set_opponent_attacker_unit_moving_x(self, opponent_attacker_unit_moving_x):
+        self.opponent_attacker_unit_moving_x = opponent_attacker_unit_moving_x
+
+    def get_opponent_attacker_unit_moving_x(self):
+        return self.opponent_attacker_unit_moving_x
 
     def set_your_attacker_unit_moving_x(self, your_attacker_unit_moving_x):
         self.your_attacker_unit_moving_x = your_attacker_unit_moving_x
