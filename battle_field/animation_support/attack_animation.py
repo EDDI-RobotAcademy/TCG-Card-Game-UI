@@ -43,6 +43,7 @@ class AttackAnimation:
     opponent_animation_actor = None
     opponent_animation_actor_damage = 0
 
+    notify_data = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -94,6 +95,12 @@ class AttackAnimation:
 
     def get_is_finished(self):
         return self.is_finished
+
+    def set_notify_data(self, notify_data):
+        self.notify_data = notify_data
+
+    def get_notify_data(self):
+        return self.notify_data
 
     def set_your_field_hp_shape(self, your_field_hp_shape):
         self.your_field_hp_shape = your_field_hp_shape
