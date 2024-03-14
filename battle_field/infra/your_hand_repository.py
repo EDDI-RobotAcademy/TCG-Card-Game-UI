@@ -364,3 +364,12 @@ class YourHandRepository:
     def request_use_corpse_explosion(self, use_corpse_explosion_request):
         self.__transmitIpcChannel.put(use_corpse_explosion_request)
         return self.__receiveIpcChannel.get()
+
+    def request_use_morale_conversion(self, use_morale_conversion_request):
+        self.__transmitIpcChannel.put(use_morale_conversion_request)
+        return self.__receiveIpcChannel.get()
+
+    def request_use_field_of_death(self, use_field_of_death_request):
+        self.__transmitIpcChannel.put(use_field_of_death_request)
+        return self.__receiveIpcChannel.get()
+
