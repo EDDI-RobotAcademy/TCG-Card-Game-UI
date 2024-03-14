@@ -1421,12 +1421,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.turn_end_button.set_height_ratio(self.height_ratio)
         self.turn_end_button.draw()
 
-        self.your_hp.set_width_ratio(self.width_ratio)
-        self.your_hp.set_height_ratio(self.height_ratio)
-        self.your_hp.update_current_your_hp_panel()
-        self.your_hp_panel.set_width_ratio(self.width_ratio)
-        self.your_hp_panel.set_height_ratio(self.height_ratio)
-        self.your_hp_panel.draw()
+        self.timer.set_width_ratio(self.width_ratio)
+        self.timer.set_height_ratio(self.height_ratio)
+        self.timer.update_current_timer_panel()
+        self.timer_panel.set_width_ratio(self.width_ratio)
+        self.timer_panel.set_height_ratio(self.height_ratio)
+        self.timer_panel.draw()
 
         self.opponent_hp.set_width_ratio(self.width_ratio)
         self.opponent_hp.set_height_ratio(self.height_ratio)
@@ -1435,12 +1435,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.opponent_hp_panel.set_height_ratio(self.height_ratio)
         self.opponent_hp_panel.draw()
 
-        self.timer.set_width_ratio(self.width_ratio)
-        self.timer.set_height_ratio(self.height_ratio)
-        self.timer.update_current_timer_panel()
-        self.timer_panel.set_width_ratio(self.width_ratio)
-        self.timer_panel.set_height_ratio(self.height_ratio)
-        self.timer_panel.draw()
+        self.your_hp.set_width_ratio(self.width_ratio)
+        self.your_hp.set_height_ratio(self.height_ratio)
+        self.your_hp.update_current_your_hp_panel()
+        self.your_hp_panel.set_width_ratio(self.width_ratio)
+        self.your_hp_panel.set_height_ratio(self.height_ratio)
+        self.your_hp_panel.draw()
+
 
         self.option.set_width_ratio(self.width_ratio)
         self.option.set_height_ratio(self.height_ratio)
