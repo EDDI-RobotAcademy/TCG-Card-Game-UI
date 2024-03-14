@@ -88,7 +88,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.notify_callback_table['NOTIFY_USE_SPECIAL_ENERGY_CARD_TO_UNIT'] = (
                 cls.__instance.notify_use_special_energy_card_to_unit)
             cls.__instance.notify_callback_table['NOTIFY_USE_UNIT_ENERGY_REMOVE_ITEM_CARD'] = (
-                cls.__instance.__battle_field_function_service.useUnitEnergyRemoveItemCard)
+               # cls.__instance.__battle_field_function_service.useUnitEnergyRemoveItemCard)
+                cls.__instance.notify_use_unit_energy_remove_item_card)
             cls.__instance.notify_callback_table[
                 'NOTIFY_BASIC_ATTACK_TO_MAIN_CHARACTER'] = cls.__instance.damage_to_main_character
 
@@ -2039,7 +2040,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             unit_index = field_unit_index
 
             effect_animation = EffectAnimation()
-            effect_animation.set_animation_name('death_scythe')
+            effect_animation.set_animation_name('dark_blast')
             effect_animation.change_local_translation(
                 self.__your_field_unit_repository.find_field_unit_by_index(
                     int(unit_index)).get_fixed_card_base().get_local_translation()
@@ -2111,7 +2112,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             unit_index = field_unit_index
 
             effect_animation = EffectAnimation()
-            effect_animation.set_animation_name('death_scythe')
+            effect_animation.set_animation_name('dark_blast')
             effect_animation.change_local_translation(
                 self.__your_field_unit_repository.find_field_unit_by_index(
                     int(unit_index)).get_fixed_card_base().get_local_translation()
