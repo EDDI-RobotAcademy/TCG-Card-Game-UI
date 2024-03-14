@@ -1734,19 +1734,27 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             return
 
         data = notice_dictionary['NOTIFY_DEPLOY_TARGETING_ATTACK_TO_GAME_MAIN_CHARACTER']
+        print(f"{Fore.RED}notify_deploy_non_targeting_attack_passive_skill:{Fore.GREEN} {data}{Style.RESET_ALL}")
 
-        your_main_character_health_point = (
-            data)['player_main_character_health_point_map']['You']
-        your_main_character_survival_state = (
-            data)['player_main_character_survival_map']['You']
+        self.__attack_animation_object.set_notify_data(data)
 
-        if your_main_character_survival_state != 'Survival':
-            print('Your main character is dead!')
-            return
+        # your_main_character_health_point = (
+        #     data)['player_main_character_health_point_map']['You']
+        # your_main_character_survival_state = (
+        #     data)['player_main_character_survival_map']['You']
+        #
+        # if your_main_character_survival_state != 'Survival':
+        #     print('Your main character is dead!')
+        #     return
+        #
+        # self.__your_hp_repository.change_hp(int(your_main_character_health_point))
+        # print(f"{Fore.RED}current_main_character_health:{Fore.GREEN} "
+        #       f"{self.__your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
 
-        self.__your_hp_repository.change_hp(int(your_main_character_health_point))
-        print(f"{Fore.RED}current_main_character_health:{Fore.GREEN} "
-              f"{self.__your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
+        self.__attack_animation_object.set_is_opponent_attack_main_character(True)
+
+        self.__opponent_field_area_inside_handler.set_field_area_action(
+            OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_PASSIVE_SKILL_PROCESS)
 
     def notify_use_instant_unit_death_item_card(self, notice_dictionary):
 

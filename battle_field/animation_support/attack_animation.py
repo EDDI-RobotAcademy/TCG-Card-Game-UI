@@ -46,6 +46,8 @@ class AttackAnimation:
 
     notify_data = None
 
+    is_opponent_attack_main_character = False
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -77,6 +79,12 @@ class AttackAnimation:
 
     def get_total_height(self):
         return self.total_height
+
+    def set_is_opponent_attack_main_character(self, is_opponent_attack_main_character):
+        self.is_opponent_attack_main_character = is_opponent_attack_main_character
+
+    def get_is_opponent_attack_main_character(self):
+        return self.is_opponent_attack_main_character
 
     def set_animation_actor(self, selected_object):
         print(f"{Fore.RED}selected_object{Fore.GREEN} {selected_object}{Style.RESET_ALL}")
