@@ -82,6 +82,8 @@ from battle_field.infra.request.request_use_energy_card_to_unit import RequestUs
 from battle_field.infra.request.request_use_field_of_death import RequestUseFieldOfDeath
 from battle_field.infra.request.request_use_morale_conversion import RequestUseMoraleConversion
 from battle_field.infra.request.request_use_overflow_of_energy import RequestUseOverflowOfEnergy
+from battle_field.infra.request.target_passive_skill_to_main_character_from_deploy_request import \
+    TargetingPassiveSkillToMainCharacterFromDeployRequest
 
 from battle_field.infra.request.wide_area_passive_skill_from_deploy_request import WideAreaPassiveSkillFromDeployRequest
 from battle_field.infra.request.request_use_special_energy_card_to_unit import RequestUseSpecialEnergyCardToUnit
@@ -785,6 +787,60 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     _usageSkillIndex="1"))
 
             is_success = process_first_passive_skill_response['is_success']
+            if is_success is False:
+                return FieldAreaAction.Dummy
+
+        if key.lower() == 'm':
+            print("상대방이 네더 출격 이후 본체 타겟팅 사용 요청")
+
+            # your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
+            # print(f"your_field_card_id: {your_field_card_id}")
+            #
+            # your_damage = self.card_info_repository.getCardPassiveSecondDamageForCardNumber(your_field_card_id)
+            # print(f"your_damage: {your_damage}")
+            #
+            # self.attack_animation_object.set_animation_actor_damage(your_damage)
+            # self.attack_animation_object.set_opponent_main_character(self.opponent_main_character_panel)
+            # # self.opponent_hp_repository.take_damage(your_damage)
+            #
+            # self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(ActionToApplyOpponent.Dummy)
+            # self.targeting_enemy_select_using_your_field_card_index = None
+            # self.targeting_enemy_select_using_your_field_card_id = None
+            # self.targeting_enemy_select_support_lightning_border_list = []
+            # self.opponent_you_selected_lightning_border_list = []
+            #
+            # self.selected_object = None
+            # self.active_panel_rectangle = None
+            # self.current_fixed_details_card = None
+            # self.your_active_panel.clear_all_your_active_panel()
+            #
+            # self.master.after(0, self.start_nether_blade_second_passive_targeting_motion_animation)
+
+            recently_added_card_index = self.opponent_field_unit_repository.get_field_unit_max_index()
+            opponent_animation_actor = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(recently_added_card_index)
+            self.attack_animation_object.set_opponent_animation_actor(opponent_animation_actor)
+
+            damage = self.card_info_repository.getCardPassiveSecondDamageForCardNumber(opponent_animation_actor.get_card_number())
+            self.attack_animation_object.set_opponent_animation_actor_damage(damage)
+
+            self.opponent_field_area_inside_handler.set_unit_action(OpponentUnitAction.NETHER_BLADE_SECOND_TARGETING_PASSIVE_SKILL)
+
+            extra_ability = self.opponent_field_unit_repository.get_opponent_unit_extra_ability_at_index(recently_added_card_index)
+            self.attack_animation_object.set_extra_ability(extra_ability)
+
+            self.opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.PLAY_ANIMATION)
+
+            # {"protocolNumber":2001, "unitCardIndex": "0", "targetGameMainCharacterIndex": "0", "usageSkillIndex": "2", "sessionInfo":""}
+            process_second_passive_skill_response = self.__fake_battle_field_frame_repository.request_to_process_second_passive_skill_to_main_character(
+                TargetingPassiveSkillToMainCharacterFromDeployRequest(
+                    _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                    _unitCardIndex=str(recently_added_card_index),
+                    _targetGameMainCharacterIndex="0",
+                    _usageSkillIndex="2"))
+
+            print(f"{Fore.RED}opponent process_second_passive_skill_response:{Fore.GREEN} {process_second_passive_skill_response}{Style.RESET_ALL}")
+
+            is_success = process_second_passive_skill_response['is_success']
             if is_success is False:
                 return FieldAreaAction.Dummy
 
@@ -2113,6 +2169,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             if self.opponent_field_area_inside_handler.get_unit_action() is OpponentUnitAction.NETHER_BLADE_FIRST_WIDE_AREA_PASSIVE_SKILL:
                 self.master.after(2000, self.opponent_nether_blade_first_passive_skill_animation)
+
+            if self.opponent_field_area_inside_handler.get_unit_action() is OpponentUnitAction.NETHER_BLADE_SECOND_TARGETING_PASSIVE_SKILL:
+                self.master.after(2000, self.opponent_nether_blade_second_passive_skill_animation)
 
             self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
 
@@ -7274,7 +7333,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.your_field_unit_repository.replace_field_card_position()
 
                 self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-                self.opponent_nether_blade_second_passive_skill_animation()
+                self.opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.Dummy)
+                # self.opponent_nether_blade_second_passive_skill_animation()
 
         move_to_origin_location(1)
 
@@ -7324,7 +7384,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
             else:
-                pass
+                self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_PASSIVE_SKILL_PROCESS)
 
                 #### 두 번째 패시브 단일기
                 # second_passive_skill_type = self.card_info_repository.getCardPassiveSecondForCardNumber(19)
