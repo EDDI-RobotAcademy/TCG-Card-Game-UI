@@ -1,4 +1,6 @@
+from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.your_hp_repository import YourHpRepository
+from common.survival_type import SurvivalType
 from image_shape.rectangle_image import RectangleImage
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
@@ -7,7 +9,7 @@ from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 class YourHp:
     __pre_drawed_image = PreDrawedImage.getInstance()
     __your_hp_repository = YourHpRepository.getInstance()
-
+    __battle_field_repository = BattleFieldRepository().getInstance()
     def __init__(self):
         self.your_hp_panel = None
         self.current_your_hp_state = self.__your_hp_repository.get_current_your_hp_state()
@@ -68,3 +70,6 @@ class YourHp:
     def update_current_your_hp_panel(self):
         self.your_hp_panel.set_image_data(self.__pre_drawed_image.get_pre_draw_character_hp_image(self.current_your_hp_state.get_current_health()))
 
+    def check_you_are_survival(self):
+        if self.__your_hp_repository.get_your_character_survival_info() == SurvivalType.DEATH:
+            self.__battle_field_repository.lose()

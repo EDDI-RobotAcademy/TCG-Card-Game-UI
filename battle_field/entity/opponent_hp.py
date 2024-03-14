@@ -1,4 +1,6 @@
+from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.opponent_hp_repository import OpponentHpRepository
+from common.survival_type import SurvivalType
 from image_shape.rectangle_image import RectangleImage
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
@@ -7,7 +9,7 @@ from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 class OpponentHp:
     __pre_drawed_image = PreDrawedImage.getInstance()
     __opponent_hp_repository = OpponentHpRepository.getInstance()
-
+    __battle_field_repository = BattleFieldRepository.getInstance()
     def __init__(self):
         self.opponent_hp_panel = None
         self.current_opponent_hp_state = self.__opponent_hp_repository.get_current_opponent_hp_state()
@@ -66,5 +68,9 @@ class OpponentHp:
 
     def update_current_opponent_hp_panel(self):
         self.opponent_hp_panel.set_image_data(self.__pre_drawed_image.get_pre_draw_character_hp_image(self.current_opponent_hp_state.get_current_health()))
+
+    def check_opponent_is_survival(self):
+        if self.__opponent_hp_repository.get_opponent_character_survival_info() == SurvivalType.DEATH:
+            self.__battle_field_repository.win()
 
 
