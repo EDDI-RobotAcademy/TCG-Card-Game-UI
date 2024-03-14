@@ -6,6 +6,10 @@ from battle_field.animation_support.animation_action import AnimationAction
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
 from battle_field.components.field_area_inside.field_area_inside_handler import FieldAreaInsideHandler
 from battle_field.components.field_area_inside.turn_start_action import TurnStartAction
+from battle_field.components.opponent_field_area_inside.opponent_field_area_action_process import OpponentFieldAreaActionProcess
+from battle_field.components.opponent_field_area_inside.opponent_field_area_inside_handler import \
+    OpponentFieldAreaInsideHandler
+from battle_field.components.opponent_field_area_inside.opponent_unit_action import OpponentUnitAction
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
@@ -21,6 +25,7 @@ from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field.state.energy_type import EnergyType
 from battle_field_function.service.battle_field_function_service_impl import BattleFieldFunctionServiceImpl
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
+from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from fake_battle_field.infra.fake_opponent_hand_repository import FakeOpponentHandRepositoryImpl
 from image_shape.circle_kinds import CircleKinds
 from image_shape.non_background_number_image import NonBackgroundNumberImage
@@ -45,6 +50,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.__notify_reader_repository = NotifyReaderRepositoryImpl.getInstance()
             cls.__instance.__battle_field_function_service = BattleFieldFunctionServiceImpl.getInstance()
 
+            cls.__instance.__card_info_repository = CardInfoFromCsvRepositoryImpl.getInstance()
+
             cls.__instance.__opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
             cls.__instance.__opponent_field_energy_repository = OpponentFieldEnergyRepository.getInstance()
             cls.__instance.__your_field_energy_repository = YourFieldEnergyRepository.getInstance()
@@ -62,6 +69,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.__your_lost_zone_repository = YourLostZoneRepository.getInstance()
 
             cls.__instance.__field_area_inside_handler = FieldAreaInsideHandler.getInstance()
+            cls.__instance.__opponent_field_area_inside_handler = OpponentFieldAreaInsideHandler.getInstance()
 
             cls.__instance.notify_callback_table['NOTIFY_DEPLOY_UNIT'] = cls.__instance.notify_deploy_unit
             cls.__instance.notify_callback_table['NOTIFY_TURN_END'] = cls.__instance.notify_turn_end
@@ -236,8 +244,30 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         self.__battle_field_repository.set_current_use_card_id(card_id)
         self.__opponent_field_unit_repository.create_field_unit_card(card_id)
+        # self.__opponent_field_unit_repository.place_field_unit(card_id)
 
         self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+        recently_added_card_index = self.__opponent_field_unit_repository.get_field_unit_max_index()
+
+        passive_skill_type = self.__card_info_repository.getCardPassiveFirstForCardNumber(card_id)
+        if passive_skill_type == 2:
+            print("광역기")
+
+            self.__opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
+            # self.__opponent_field_area_action = OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS
+            if card_id == 19:
+                self.__opponent_field_area_inside_handler.set_unit_action(OpponentUnitAction.NETHER_BLADE_FIRST_WIDE_AREA_PASSIVE_SKILL)
+
+            return
+
+
+        elif passive_skill_type == 1:
+            print("단일기")
+
+            self.__opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
+            return
+
+        return
 
     def notify_turn_end(self, notice_dictionary):
         print(f"{Fore.RED}notify_turn_end() -> notice_dictionary:{Fore.GREEN} {notice_dictionary}{Style.RESET_ALL}")
@@ -1241,7 +1271,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
     def notify_use_catastrophic_damage_item_card(self, notice_dictionary):
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
-        print(f"{Fore.RED}notify_deploy_unit() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
+        print(f"{Fore.RED}notify_use_catastrophic_damage_item_card() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
 
         if whose_turn is True:
             return

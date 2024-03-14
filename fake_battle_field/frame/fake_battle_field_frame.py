@@ -17,6 +17,10 @@ from battle_field.components.field_area_inside.turn_start_action import TurnStar
 from battle_field.components.field_area_inside.unit_action import UnitAction
 from battle_field.components.fixed_unit_card_inside.fixed_unit_card_inside_action import FixedUnitCardInsideAction
 from battle_field.components.mouse_left_click.left_click_detector import LeftClickDetector
+from battle_field.components.opponent_field_area_inside.opponent_field_area_action_process import \
+    OpponentFieldAreaActionProcess
+from battle_field.components.opponent_field_area_inside.opponent_field_area_inside_handler import \
+    OpponentFieldAreaInsideHandler
 from battle_field.components.opponent_fixed_unit_card_inside.ActionToApplyOpponent import ActionToApplyOpponent
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area_action import OpponentFieldAreaAction
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
@@ -226,6 +230,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
         # self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance()
         self.field_area_inside_handler = FieldAreaInsideHandler.getInstance()
+        self.opponent_field_area_inside_handler = OpponentFieldAreaInsideHandler.getInstance()
         # TODO: Your 카드에 집어넣는 경우도 이것으로 감지하는 것이 더 좋을 것임
         self.your_fixed_unit_card_inside_handler = None
         self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance()
@@ -2013,6 +2018,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.attack_animation_object.set_animation_action(AnimationAction.DUMMY)
             # self.field_area_inside_handler.clear_field_area_action()
 
+        if self.opponent_field_area_inside_handler.get_field_area_action() is OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS:
+            print(f"{Fore.RED}Opponent Unit 패시브 처리가 필요합니다!{Style.RESET_ALL}")
+
+            self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
+
         self.post_draw()
 
         if self.selected_object:
@@ -3033,6 +3043,30 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         return
 
                     print("일반 공격 클릭")
+
+                    your_field_unit_id = self.selected_object.get_card_number()
+                    your_field_unit_index = self.selected_object.get_index()
+                    your_field_unit_attached_energy = self.your_field_unit_repository.get_attached_energy_info()
+
+                    your_field_unit_total_energy = your_field_unit_attached_energy.get_total_energy_at_index(
+                        your_field_unit_index)
+                    print(f"your_field_unit_total_energy: {your_field_unit_total_energy}")
+
+                    your_field_unit_attached_undead_energy = your_field_unit_attached_energy.get_race_energy_at_index(
+                        your_field_unit_index, EnergyType.Undead)
+
+                    your_field_unit_required_undead_energy = self.card_info_repository.getCardEnergyForCardNumber(
+                        your_field_unit_id)
+
+                    if your_field_unit_required_undead_energy > your_field_unit_attached_undead_energy:
+                        print("에너지 부족으로 인한 공격 불가")
+                        self.selected_object = None
+                        self.active_panel_rectangle = None
+                        self.current_fixed_details_card = None
+                        self.your_active_panel.clear_all_your_active_panel()
+                        self.message_on_the_screen.create_message_on_the_battle_screen(2)
+                        return
+
 
                     opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
                     for opponent_field_unit_object in opponent_field_unit_object_list:
