@@ -61,7 +61,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             print(f"항복 요청함!!! 응답: {surrender_response}")
             # self.gameEndReward()
             self.__battle_field_repository.lose()
-            self.preDrawedBattleFieldFrame.battle_finish()
+            #self.preDrawedBattleFieldFrame.battle_finish()
             # from ui_frame.controller.ui_frame_controller_impl import UiFrameControllerImpl
             # UiFrameControllerImpl.getInstance().switchFrameWithMenuName("battle-result")
 
@@ -70,7 +70,7 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             turnEndResponse = self.__battleFieldFunctionRepository.requestTurnEnd(
                 TurnEndRequest(
                     # _sessionInfo=self.__sessionService.getSessionInfo())
-                    _sessionInfo=self.__sessionRepository.get_session_info())
+                    sessionInfo=self.__sessionRepository.get_session_info())
             )
 
         except Exception as e:

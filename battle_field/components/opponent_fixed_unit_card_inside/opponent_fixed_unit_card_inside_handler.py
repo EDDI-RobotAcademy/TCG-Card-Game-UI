@@ -2,7 +2,6 @@ from colorama import Fore, Style
 
 from battle_field.components.opponent_fixed_unit_card_inside.ActionToApplyOpponent import ActionToApplyOpponent
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area_action import OpponentFieldAreaAction
-from battle_field.entity.effect_animation import EffectAnimation
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
 from battle_field.infra.request.request_use_death_sice_to_unit import RequestUseDeathSiceToUnit
