@@ -8,6 +8,8 @@ class CurrentYourHpState:
 
     def damage_to_hp(self, damage):
         self.health -= damage
+        if self.health <= 0:
+            self.health = 0
 
     def reset_health(self):
         self.health = 100
