@@ -13,6 +13,7 @@ from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
 from battle_field.components.field_area_inside.field_area_inside_handler import FieldAreaInsideHandler
+from battle_field.components.field_area_inside.turn_start_action import TurnStartAction
 from battle_field.components.field_area_inside.unit_action import UnitAction
 from battle_field.components.fixed_unit_card_inside.fixed_unit_card_inside_action import FixedUnitCardInsideAction
 from battle_field.components.mouse_left_click.left_click_detector import LeftClickDetector
@@ -1945,12 +1946,25 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             self.play_effect_animation_by_index_and_call_function(animation_index, calculate_death_scythe)
 
-        if self.field_area_inside_handler.get_field_area_action() is FieldAreaAction.CHECK_MULTIPLE_UNIT_REQUIRED_FIRST_PASSIVE_SKILL_PROCESS:
+        if self.field_area_inside_handler.get_required_to_process_passive_skill_multiple_unit_list():
+            self.field_area_inside_handler.set_field_turn_start_action(TurnStartAction.CHECK_MULTIPLE_UNIT_REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
+
+        if self.field_area_inside_handler.get_field_turn_start_action() is TurnStartAction.CHECK_MULTIPLE_UNIT_REQUIRED_FIRST_PASSIVE_SKILL_PROCESS:
             required_to_process_passive_skill_multiple_unit_list = self.field_area_inside_handler.get_required_to_process_passive_skill_multiple_unit_list()
             print(f"{Fore.RED}required_to_process_passive_skill_multiple_unit_list: {Fore.GREEN}{required_to_process_passive_skill_multiple_unit_list}{Style.RESET_ALL}")
 
-            # for key, value in required_to_process_passive_skill_multiple_unit_list.items():
-            #     if
+            if len(required_to_process_passive_skill_multiple_unit_list) == 0:
+                self.field_area_inside_handler.set_field_turn_start_action(TurnStartAction.Dummy)
+                return
+
+            passive_unit_index = int(required_to_process_passive_skill_multiple_unit_list.pop(0))
+            self.field_area_inside_handler.set_field_turn_start_action(TurnStartAction.Dummy)
+
+            your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(passive_unit_index)
+            self.field_area_inside_handler.set_field_area_action(FieldAreaAction.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
+
+            # TODO: 임시 방편으로 recently_added에 강제 배치 아래의 패시브를 구동하기 위함
+            self.field_area_inside_handler.set_recently_added_card_index(passive_unit_index)
 
 
 

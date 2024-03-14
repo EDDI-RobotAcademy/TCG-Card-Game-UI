@@ -5,6 +5,7 @@ from colorama import Fore, Style
 from battle_field.animation_support.animation_action import AnimationAction
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
 from battle_field.components.field_area_inside.field_area_inside_handler import FieldAreaInsideHandler
+from battle_field.components.field_area_inside.turn_start_action import TurnStartAction
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
@@ -394,8 +395,13 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                                                                'unit_index_turn_start_passive_list_map'].items() if
                                                            passive_list}
         print(f"{Fore.RED}your_which_one_has_passive_skill_to_turn_start_lists:{Fore.GREEN} {your_which_one_has_passive_skill_to_turn_start_lists}{Style.RESET_ALL}")
-        self.__field_area_inside_handler.set_field_area_action(FieldAreaAction.CHECK_MULTIPLE_UNIT_REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
-        self.__field_area_inside_handler.set_required_to_process_passive_skill_multiple_unit_list(your_which_one_has_passive_skill_to_turn_start_lists)
+
+        required_to_process_passive_skill_multiple_unit_list = []
+        for key, value in your_which_one_has_passive_skill_to_turn_start_lists.items():
+            required_to_process_passive_skill_multiple_unit_list.append(key)
+
+        self.__field_area_inside_handler.set_field_turn_start_action(TurnStartAction.CHECK_MULTIPLE_UNIT_REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
+        self.__field_area_inside_handler.set_required_to_process_passive_skill_multiple_unit_list(required_to_process_passive_skill_multiple_unit_list)
 
     def notify_attach_general_energy_card(self, notice_dictionary):
 
