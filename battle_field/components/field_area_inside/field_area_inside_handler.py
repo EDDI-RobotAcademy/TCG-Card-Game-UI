@@ -4,6 +4,7 @@ from battle_field.components.field_area_inside.field_area_action import FieldAre
 from battle_field.components.field_area_inside.unit_action import UnitAction
 from battle_field.infra.request.deploy_unit_card_request import DeployUnitCardRequest
 from battle_field.infra.request.drawCardByUseSupportCardRequest import DrawCardByUseSupportCardRequest
+from battle_field.infra.request.request_use_overflow_of_energy import RequestUseOverflowOfEnergy
 from battle_field.infra.your_deck_repository import YourDeckRepository
 
 from battle_field.infra.your_field_unit_action_repository import YourFieldUnitActionRepository
@@ -49,6 +50,9 @@ class FieldAreaInsideHandler:
     __width_ratio = 1
     __height_ratio = 1
 
+    __placed_card_page = None
+    __placed_card_index = None
+
     def __new__(cls):
 
         if cls.__instance is None:
@@ -67,6 +71,24 @@ class FieldAreaInsideHandler:
         if cls.__instance is None:
             cls.__instance = cls()
         return cls.__instance
+
+    def set_placed_card_index(self, index):
+        self.__placed_card_index = index
+
+    def get_placed_card_index(self):
+        return self.__placed_card_index
+
+    def set_placed_card_page(self, page):
+        self.__placed_card_page = page
+
+    def get_placed_card_page(self):
+        return self.__placed_card_page
+
+    def reset_placed_card_index(self):
+        self.__placed_card_index = None
+
+    def reset_placed_card_page(self):
+        self.__placed_card_page = None
 
     def get_lightning_border_list(self):
         return self.__lightning_border_list
@@ -138,6 +160,7 @@ class FieldAreaInsideHandler:
         # print(f"my card type is {card_type}")
 
         # placed_card_index = self.__your_hand_repository.find_index_by_selected_object(selected_object)
+        placed_card_page = self.__your_hand_repository.get_current_your_hand_page()
         placed_card_index = self.__your_hand_repository.find_index_by_selected_object_with_page(selected_object)
 
         if card_type == CardType.UNIT.value:
@@ -215,7 +238,8 @@ class FieldAreaInsideHandler:
 
         self.__action_set_card_id = placed_card_id
         # self.__your_hand_repository.remove_card_by_index(placed_card_index)
-        self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)
+        # self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)
+        self.set_placed_card_index(placed_card_index)
 
         self.__field_area_action = FieldAreaAction.ENERGY_BOOST
         return self.__field_area_action
