@@ -2039,7 +2039,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             print(f"{Fore.RED}Opponent Unit 패시브 처리가 필요합니다!{Style.RESET_ALL}")
 
             if self.opponent_field_area_inside_handler.get_unit_action() is OpponentUnitAction.NETHER_BLADE_FIRST_WIDE_AREA_PASSIVE_SKILL:
-                self.master.after(0, self.opponent_nether_blade_first_passive_skill_animation)
+                self.master.after(2000, self.opponent_nether_blade_first_passive_skill_animation)
 
             self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
 
@@ -6966,10 +6966,83 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
             else:
-                # self.start_nether_blade_first_passive_wide_area_motion_animation(attack_animation_object)
-                pass
+                self.start_opponent_nether_blade_first_passive_wide_area_motion_animation(attack_animation_object)
 
         update_position(1)
+
+    def start_opponent_nether_blade_first_passive_wide_area_motion_animation(self, attack_animation_object):
+        steps = 50
+
+        your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
+        your_field_unit_list_length = len(
+            self.your_field_unit_repository.get_current_field_unit_list())
+
+        def wide_area_attack(step_count):
+            for index in range(
+                    your_field_unit_list_length - 1,
+                    -1,
+                    -1):
+                your_field_unit = your_field_unit_list[index]
+
+                if your_field_unit is None:
+                    continue
+
+                fixed_card_base = your_field_unit.get_fixed_card_base()
+                tool_card = your_field_unit.get_tool_card()
+                attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                if step_count % 2 == 1:
+                    vibration_factor = 10
+                    random_translation = (random.uniform(-vibration_factor, vibration_factor),
+                                          random.uniform(-vibration_factor, vibration_factor))
+
+                    new_fixed_card_base_vertices = [
+                        (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                        fixed_card_base.get_vertices()
+                    ]
+                    fixed_card_base.update_vertices(new_fixed_card_base_vertices)
+
+                    if tool_card is not None:
+                        new_tool_card_vertices = [
+                            (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                            tool_card.get_vertices()
+                        ]
+                        tool_card.update_vertices(new_tool_card_vertices)
+
+                    for attached_shape in attached_shape_list:
+                        # Apply random translation
+                        new_attached_shape_vertices = [
+                            (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                            attached_shape.get_vertices()
+                        ]
+                        attached_shape.update_vertices(new_attached_shape_vertices)
+
+                else:
+                    # Return to the original position
+                    # fixed_card_base.update_vertices(fixed_card_base.get_vertices())
+                    # if tool_card is not None:
+                    #     tool_card.update_vertices(tool_card.get_vertices())
+                    # for attached_shape in attached_shape_list:
+                    #     attached_shape.update_vertices(attached_shape.get_vertices())
+
+                    # self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                    fixed_card_base.update_vertices(fixed_card_base.get_initial_vertices())
+                    if tool_card is not None:
+                        tool_card.update_vertices(tool_card.get_initial_vertices())
+                    for attached_shape in attached_shape_list:
+                        attached_shape.update_vertices(attached_shape.get_initial_vertices())
+
+            if step_count < steps:
+                self.master.after(20, wide_area_attack, step_count + 1)
+            else:
+                # self.finish_nether_blade_first_passive_wide_area_motion_animation(attack_animation_object)
+                pass
+                # self.is_attack_motion_finished = True
+                # attack_animation_object.set_is_finished(True)
+                # attack_animation_object.set_need_post_process(True)
+
+        wide_area_attack(1)
 
     def nether_blade_first_passive_skill_animation(self):
         steps = 10
