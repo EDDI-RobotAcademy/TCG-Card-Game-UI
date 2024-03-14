@@ -27,6 +27,7 @@ from battle_field.entity.current_to_use_field_energy_count import CurrentToUseFi
 from battle_field.entity.decrease_to_use_field_energy_count import DecreaseToUseFieldEnergyCount
 from battle_field.entity.effect_animation import EffectAnimation
 from battle_field.entity.increase_to_use_field_energy_count import IncreaseToUseFieldEnergyCount
+from battle_field.entity.message_on_the_battle_screen import MessageOnTheBattleScreen
 from battle_field.entity.next_field_energy_race import NextFieldEnergyRace
 from battle_field.entity.opponent_field_energy import OpponentFieldEnergy
 from battle_field.entity.opponent_field_panel import OpponentFieldPanel
@@ -305,6 +306,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.current_field_turn_number_panel = None
         self.turn_number = CurrentFieldTurnNumber()
 
+        self.current_field_message_on_the_battle_screen_panel = None
+        self.message_on_the_screen = MessageOnTheBattleScreen()
+
         self.your_field_unit_action_repository = YourFieldUnitActionRepository.getInstance()
 
         self.option = Option()
@@ -531,6 +535,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.turn_number.create_current_field_turn_number_panel()
         self.current_field_turn_number_panel = (
             self.turn_number.get_current_field_turn_number_panel()
+        )
+
+        self.message_on_the_screen.set_total_window_size(self.width, self.height)
+        self.current_field_message_on_the_battle_screen_panel = (
+            self.message_on_the_screen.get_current_message_on_the_battle_screen()
         )
 
         self.option.set_total_window_size(self.width, self.height)
@@ -1504,6 +1513,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.multi_draw_button.set_width_ratio(self.width_ratio)
         self.multi_draw_button.set_height_ratio(self.height_ratio)
         self.multi_draw_button.draw()
+
+        if self.message_on_the_screen.get_current_message_on_the_battle_screen():
+            self.message_on_the_screen.set_width_ratio(self.width_ratio)
+            self.message_on_the_screen.set_height_ratio(self.height_ratio)
+            self.current_field_message_on_the_battle_screen_panel = (
+                self.message_on_the_screen.get_current_message_on_the_battle_screen()
+            )
+            self.current_field_message_on_the_battle_screen_panel.draw()
 
         if self.animation_test_image_panel is not None:
             self.animation_test_image.set_width_ratio(self.width_ratio)
@@ -2918,6 +2935,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.battle_field_function_controller.callGameEndReward()
                 self.battle_result_panel_list = []
                 return
+            if self.current_field_message_on_the_battle_screen_panel is not None:
+                self.message_on_the_screen.clear_current_message_on_the_battle_screen()
+
+            if self.current_fixed_details_card is not None:
+                self.current_fixed_details_card = None
 
             if self.your_active_panel.get_your_active_panel_attack_button() is not None:
                 if self.your_active_panel.is_point_inside_attack_button((x, y)):
@@ -2931,6 +2953,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.active_panel_rectangle = None
                         self.current_fixed_details_card = None
                         self.your_active_panel.clear_all_your_active_panel()
+                        self.message_on_the_screen.create_message_on_the_battle_screen(3)
                         return
 
                     your_selected_unit_action_status = self.your_field_unit_action_repository.get_current_field_unit_action_status(
@@ -2943,6 +2966,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.active_panel_rectangle = None
                         self.current_fixed_details_card = None
                         self.your_active_panel.clear_all_your_active_panel()
+                        self.message_on_the_screen.create_message_on_the_battle_screen(1)
                         return
 
                     elif your_selected_unit_action_status == FieldUnitActionStatus.Dummy:
@@ -2984,6 +3008,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if your_selected_unit_action_count <= 0:
                         print("행동을 마친 유닛은 더 이상 공격 할 수 없습니다")
+                        self.selected_object = None
+                        self.active_panel_rectangle = None
+                        self.current_fixed_details_card = None
+                        self.your_active_panel.clear_all_your_active_panel()
+                        self.message_on_the_screen.create_message_on_the_battle_screen(3)
                         return
 
                     your_selected_unit_action_status = self.your_field_unit_action_repository.get_current_field_unit_action_status(
@@ -2991,6 +3020,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if your_selected_unit_action_status == FieldUnitActionStatus.WAIT:
                         print(f"처음 필드에 출격한 유닛은 공격 할 수 없습니다")
+                        self.selected_object = None
+                        self.current_fixed_details_card = None
+                        self.active_panel_rectangle = None
+                        self.current_fixed_details_card = None
+                        self.your_active_panel.clear_all_your_active_panel()
+                        self.message_on_the_screen.create_message_on_the_battle_screen(1)
                         return
 
                     elif your_selected_unit_action_status == FieldUnitActionStatus.Dummy:
@@ -3034,12 +3069,27 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     # print(f"your_field_unit_required_trent_energy: {your_field_unit_required_trent_energy}")
 
                     if your_field_unit_required_undead_energy > your_field_unit_attached_undead_energy:
+                        self.selected_object = None
+                        self.active_panel_rectangle = None
+                        self.current_fixed_details_card = None
+                        self.your_active_panel.clear_all_your_active_panel()
+                        self.message_on_the_screen.create_message_on_the_battle_screen(2)
                         return
 
                     if your_field_unit_required_human_energy > your_field_unit_attached_human_energy:
+                        self.selected_object = None
+                        self.active_panel_rectangle = None
+                        self.current_fixed_details_card = None
+                        self.your_active_panel.clear_all_your_active_panel()
+                        self.message_on_the_screen.create_message_on_the_battle_screen(2)
                         return
 
                     if your_field_unit_required_trent_energy > your_field_unit_attached_trent_energy:
+                        self.selected_object = None
+                        self.active_panel_rectangle = None
+                        self.current_fixed_details_card = None
+                        self.your_active_panel.clear_all_your_active_panel()
+                        self.message_on_the_screen.create_message_on_the_battle_screen(2)
                         return
 
                     skill_type = self.card_info_repository.getCardSkillFirstForCardNumber(your_field_unit_id)
@@ -3084,6 +3134,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if your_selected_unit_action_count <= 0:
                         print("행동을 마친 유닛은 더 이상 공격 할 수 없습니다")
+                        self.selected_object = None
+                        self.active_panel_rectangle = None
+                        self.current_fixed_details_card = None
+                        self.your_active_panel.clear_all_your_active_panel()
+                        self.message_on_the_screen.create_message_on_the_battle_screen(3)
                         return
 
                     your_selected_unit_action_status = self.your_field_unit_action_repository.get_current_field_unit_action_status(
@@ -3091,6 +3146,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if your_selected_unit_action_status == FieldUnitActionStatus.WAIT:
                         print(f"처음 필드에 출격한 유닛은 공격 할 수 없습니다")
+                        self.selected_object = None
+                        self.current_fixed_details_card = None
+                        self.active_panel_rectangle = None
+                        self.current_fixed_details_card = None
+                        self.your_active_panel.clear_all_your_active_panel()
+                        self.message_on_the_screen.create_message_on_the_battle_screen(1)
                         return
 
                     elif your_selected_unit_action_status == FieldUnitActionStatus.Dummy:
@@ -3135,12 +3196,27 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         your_field_unit_id)
 
                     if your_field_unit_required_undead_energy > your_field_unit_attached_undead_energy:
+                        self.selected_object = None
+                        self.active_panel_rectangle = None
+                        self.current_fixed_details_card = None
+                        self.your_active_panel.clear_all_your_active_panel()
+                        self.message_on_the_screen.create_message_on_the_battle_screen(2)
                         return
 
                     if your_field_unit_required_human_energy > your_field_unit_attached_human_energy:
+                        self.selected_object = None
+                        self.active_panel_rectangle = None
+                        self.current_fixed_details_card = None
+                        self.your_active_panel.clear_all_your_active_panel()
+                        self.message_on_the_screen.create_message_on_the_battle_screen(2)
                         return
 
                     if your_field_unit_required_trent_energy > your_field_unit_attached_trent_energy:
+                        self.selected_object = None
+                        self.active_panel_rectangle = None
+                        self.current_fixed_details_card = None
+                        self.your_active_panel.clear_all_your_active_panel()
+                        self.message_on_the_screen.create_message_on_the_battle_screen(2)
                         return
 
                     skill_type = self.card_info_repository.getCardSkillSecondForCardNumber(your_field_unit_id)
@@ -3279,6 +3355,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if self.your_active_panel.get_your_active_panel_details_button() is not None:
                 if self.your_active_panel.is_point_inside_details_button((x, y)):
                     print("상세 보기 클릭")
+                    self.active_panel_rectangle = None
+                    self.your_active_panel.clear_all_your_active_panel()
 
                     # your_field_unit_id = self.selected_object.get_card_number()
                     # skill_type = self.card_info_repository.getCardSkillSecondForCardNumber(your_field_unit_id)
