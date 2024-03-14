@@ -154,3 +154,20 @@ class ImageDataLoader:
         except Exception as e:
             print(f"Error loading image data: {e}")
             return None
+
+    @staticmethod
+    def load_shop_card_lanczos_resized_image_data(path):
+        try:
+            image = Image.open(path)
+            resized_image = image.resize((800, 400), Image.LANCZOS)
+
+            # rgba_image = resized_image.convert("RGBA")
+            # img_data = np.array(rgba_image)
+            # resized_image.close()
+            # image.close()
+
+            return resized_image
+
+        except Exception as e:
+            print(f"Error loading image data: {e}")
+            return None

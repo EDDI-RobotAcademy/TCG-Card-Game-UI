@@ -6,7 +6,4 @@ class ShopButtonFrameService(abc.ABC):
     def createShopButtonUiFrame(self, rootWindow, switchFrameWithMenuName):
         pass
 
-    @abc.abstractmethod
-    def findRace(self):
-        pass
 

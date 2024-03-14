@@ -21,37 +21,23 @@ class ShopButtonFrameServiceImpl(ShopButtonFrameService):
             cls.__instance = cls()
         return cls.__instance
 
-    def __init__(self):
-        self.legend_stack_count = 10
 
-
-    def findRace(self):
-        race_mapping = {
-            "전체": "Chaos",
-            "언데드": "Undead",
-            "트랜트": "Trent",
-            "휴먼": "Human"
-        }
-        Race = self.__cardShopMenuFrameRepository.getRace()
-        Eg_Race = race_mapping.get(Race, "Unknown")
-        print(f"Eg_Race: {Eg_Race}")
-        return Eg_Race
 
 
     def createShopButtonUiFrame(self, rootWindow, switchFrameWithMenuName):
         shopButtonFrame = self.__shopButtonFrameRepository.createShopButtonFrame(rootWindow)
 
         def chaos_button_click():
-            print("chaos_button_click")
+            self.__cardShopMenuFrameRepository.setRace("전체")
 
         def undead_button_click():
-            print("undead_button_click")
+            self.__cardShopMenuFrameRepository.setRace("언데드")
 
         def trent_button_click():
-            print("trent_button_click")
+            self.__cardShopMenuFrameRepository.setRace("트랜트")
 
         def human_button_click():
-            print("human_button_click")
+            self.__cardShopMenuFrameRepository.setRace("휴먼")
 
         chaos_button = tkinter.Button(shopButtonFrame, text="chaos", command=chaos_button_click)
         undead_button = tkinter.Button(shopButtonFrame, text="Undead", command=undead_button_click)
@@ -59,9 +45,9 @@ class ShopButtonFrameServiceImpl(ShopButtonFrameService):
         human_button = tkinter.Button(shopButtonFrame, text="human", command=human_button_click)
 
         chaos_button.place(relx=0, rely=0.0, relwidth=1, relheight=0.1)
-        undead_button.place(relx=0, rely=0.2, relwidth=1, relheight=0.1)
-        trent_button.place(relx=0, rely=0.3, relwidth=1, relheight=0.1)
-        human_button.place(relx=0, rely=0.4, relwidth=1, relheight=0.1)
+        undead_button.place(relx=0, rely=0.1, relwidth=1, relheight=0.1)
+        trent_button.place(relx=0, rely=0.2, relwidth=1, relheight=0.1)
+        human_button.place(relx=0, rely=0.3, relwidth=1, relheight=0.1)
 
 
 

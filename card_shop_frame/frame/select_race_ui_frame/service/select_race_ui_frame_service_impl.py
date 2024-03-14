@@ -12,7 +12,8 @@ from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 class SelectRaceUiFrameServiceImpl(SelectRaceUiFrameService):
     __instance = None
-    __undead_illustration = None
+    __neder_image = None
+    undead_mythical_cards = [19, 45, 134, 176]
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -30,18 +31,6 @@ class SelectRaceUiFrameServiceImpl(SelectRaceUiFrameService):
         return cls.__instance
 
 
-    def findRace(self):
-        race_mapping = {
-            "전체": "Chaos",
-            "언데드": "Undead",
-            "트랜트": "Trent",
-            "휴먼": "Human"
-        }
-        Race = self.__cardShopMenuFrameRepository.getRace()
-        Eg_Race = race_mapping.get(Race, "Unknown")
-        print(f"Eg_Race: {Eg_Race}")
-        return Eg_Race
-
 
     def createSelectRaceUiFrame(self, rootWindow, switchFrameWithMenuName):
         selectRaceUiFrame = self.__selectRaceUiFrameRepository.createSelectRaceUiFrame(rootWindow)
@@ -53,12 +42,24 @@ class SelectRaceUiFrameServiceImpl(SelectRaceUiFrameService):
             self.__cardShopMenuFrameRepository.setRace(race)
             self.__buyCheckService.createBuyCheckUiFrame(rootWindow, switchFrameWithMenuName)
 
+        def undead_mythical_cards():
+            for number in self.undead_mythical_cards:
+                resized_undead_image = self.__preDrawedImageInstance.get_pre_draw_shop_mythical_card_illustration(19)
+                if resized_undead_image is not None:
+                    self.__neder_image = ImageTk.PhotoImage(resized_undead_image)
+                    neder_label.config(image=self.__neder_image)
+            #selectRaceUiFrame.
+
+
+        neder_label = tkinter.Label(selectRaceUiFrame, image=self.__neder_image)
+        neder_label.place(relx=0.1, rely=0.1, anchor=tkinter.NW)
+
 
         card_probability_info_button = tkinter.Button(selectRaceUiFrame, command=cardProbabilityInfoButtonClick, text="확률 정보")
-        card_probability_info_button.place(relx=0.9, rely=0.6, relwidth=0.1, relheight=0.1)
+        card_probability_info_button.place(relx=0.8, rely=0.6, relwidth=0.1, relheight=0.1)
 
-        buy_select_race_card_button = tkinter.Button(selectRaceUiFrame, text="1 팩 구매", command=lambda:buy_check_button_click("undead"))
-        buy_select_race_card_button.place(relx=0.9, rely=0.8, relwidth=0.1, relheight=0.1)
+        buy_select_race_card_button = tkinter.Button(selectRaceUiFrame, text="1 팩 구매", command=lambda:buy_check_button_click("언데드"))
+        buy_select_race_card_button.place(relx=0.8, rely=0.8, relwidth=0.1, relheight=0.1)
 
         return selectRaceUiFrame
 
