@@ -71,6 +71,8 @@ from battle_field.infra.request.request_attack_with_non_targeting_active_skill i
 from battle_field.infra.request.request_use_corpse_explosion import RequestUseCorpseExplosion
 from battle_field.infra.request.request_use_energy_burn_to_unit import RequestUseEnergyBurnToUnit
 from battle_field.infra.request.request_use_energy_card_to_unit import RequestUseEnergyCardToUnit
+from battle_field.infra.request.request_use_field_of_death import RequestUseFieldOfDeath
+from battle_field.infra.request.request_use_morale_conversion import RequestUseMoraleConversion
 
 from battle_field.infra.request.wide_area_passive_skill_from_deploy_request import WideAreaPassiveSkillFromDeployRequest
 from battle_field.infra.request.request_use_special_energy_card_to_unit import RequestUseSpecialEnergyCardToUnit
@@ -2534,6 +2536,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     if self.is_point_inside_opponent_field_area((x, y), self.opponent_field_panel):
                         print("죽음의 대지 사용")
 
+                        response = self.your_hand_repository.request_use_field_of_death(
+                            RequestUseFieldOfDeath(
+                                _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                                _supportCardId=your_card_id)
+                        )
+
+                        if not response.get('is_success'):
+                            return
+
                         opponent_field_energy = self.opponent_field_energy_repository.get_opponent_field_energy()
                         print(f"before land of death -> opponent_field_energy: {opponent_field_energy}")
 
@@ -2625,6 +2636,18 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                             if placed_card_id == 35:
                                 print(f"사기 전환(35) -> placed_card_id: {placed_card_id}")
+
+                                response = self.your_hand_repository.request_use_morale_conversion(
+                                    RequestUseMoraleConversion(
+                                        _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                                        _unitIndex=unit_index,
+                                        _itemCardId=placed_card_id)
+                                )
+
+                                print(f"response: {response}")
+                                if not response.get('is_success'):
+                                    return
+
                                 card_id = current_field_unit.get_card_number()
                                 fixed_field_unit_hp = self.card_info_repository.getCardHpForCardNumber(card_id)
                                 acquire_energy = round(fixed_field_unit_hp / 5)
