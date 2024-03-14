@@ -16,6 +16,7 @@ from battle_field.infra.opponent_field_energy_repository import OpponentFieldEne
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from battle_field.infra.opponent_hand_repository import OpponentHandRepository
 from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
+from battle_field.infra.request.wide_area_passive_skill_from_deploy_request import WideAreaPassiveSkillFromDeployRequest
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
@@ -28,6 +29,7 @@ from battle_field_function.service.battle_field_function_service_impl import Bat
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.target_type import TargetType
+from fake_battle_field.infra.fake_battle_field_frame_repository_impl import FakeBattleFieldFrameRepositoryImpl
 from fake_battle_field.infra.fake_opponent_hand_repository import FakeOpponentHandRepositoryImpl
 from image_shape.circle_kinds import CircleKinds
 from image_shape.non_background_number_image import NonBackgroundNumberImage
@@ -37,6 +39,7 @@ from notify_reader.service.notify_reader_service import NotifyReaderService
 from notify_reader.service.request.effect_animation_request import EffectAnimationRequest
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from battle_field.animation_support.attack_animation import AttackAnimation
+from session.repository.session_repository_impl import SessionRepositoryImpl
 
 
 class NotifyReaderServiceImpl(NotifyReaderService):
@@ -54,6 +57,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.__battle_field_function_service = BattleFieldFunctionServiceImpl.getInstance()
 
             cls.__instance.__card_info_repository = CardInfoFromCsvRepositoryImpl.getInstance()
+            cls.__instance.__session_repository = SessionRepositoryImpl.getInstance()
+            cls.__instance.__fake_battle_field_frame_repository = FakeBattleFieldFrameRepositoryImpl.getInstance()
 
             cls.__instance.__opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
             cls.__instance.__opponent_field_energy_repository = OpponentFieldEnergyRepository.getInstance()
@@ -154,6 +159,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.notify_callback_table['NOTIFY_TURN_START_NON_TARGETING_ATTACK_PASSIVE_SKILL'] = (
                 cls.__instance.notify_turn_start_non_targeting_attack_passive_skill
             )
+            cls.__instance.notify_callback_table['NOTIFY_DEPLOY_NON_TARGETING_ATTACK_PASSIVE_SKILL'] = cls.__instance.notify_deploy_non_targeting_passive_skill_attack
 
         return cls.__instance
 
@@ -262,10 +268,32 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         if passive_skill_type == 2:
             print("광역기")
 
-            self.__opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
             # self.__opponent_field_area_action = OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS
             if card_id == 19:
+                opponent_animation_actor = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(recently_added_card_index)
+                self.__attack_animation_object.set_opponent_animation_actor(opponent_animation_actor)
+                # self.__opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.PLAY_ANIMATION)
+                # self.__opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
+
+                damage = self.__card_info_repository.getCardPassiveFirstDamageForCardNumber(opponent_animation_actor.get_card_number())
+                self.__attack_animation_object.set_opponent_animation_actor_damage(damage)
+
                 self.__opponent_field_area_inside_handler.set_unit_action(OpponentUnitAction.NETHER_BLADE_FIRST_WIDE_AREA_PASSIVE_SKILL)
+
+                extra_ability = self.__opponent_field_unit_repository.get_opponent_unit_extra_ability_at_index(recently_added_card_index)
+                self.__attack_animation_object.set_extra_ability(extra_ability)
+
+                self.__opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.PLAY_ANIMATION)
+
+                process_first_passive_skill_response = self.__fake_battle_field_frame_repository.request_to_process_first_passive_skill(
+                    WideAreaPassiveSkillFromDeployRequest(
+                        _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                        _unitCardIndex=str(recently_added_card_index),
+                        _usageSkillIndex="1"))
+
+                is_success = process_first_passive_skill_response['is_success']
+                if is_success is False:
+                    return FieldAreaAction.Dummy
 
             return
 
@@ -277,6 +305,24 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             return
 
         return
+
+    # {"NOTIFY_DEPLOY_NON_TARGETING_ATTACK_PASSIVE_SKILL": {"player_field_unit_health_point_map": {
+    #     "You": {"field_unit_health_point_map": {"1": 0, "3": 10, "4": 5, "5": 10, "0": 0, "2": 10}}},
+    #                                                       "player_field_unit_harmful_effect_map": {"You": {
+    #                                                           "field_unit_harmful_status_map": {
+    #                                                               "2": {"harmful_status_list": []},
+    #                                                               "0": {"harmful_status_list": []},
+    #                                                               "4": {"harmful_status_list": []},
+    #                                                               "1": {"harmful_status_list": []},
+    #                                                               "3": {"harmful_status_list": []},
+    #                                                               "5": {"harmful_status_list": []}}}},
+    #                                                       "player_field_unit_death_map": {
+    #                                                           "You": {"dead_field_unit_index_list": [0, 1]}}}}
+    def notify_deploy_non_targeting_passive_skill_attack(self, notice_dictionary):
+        print(f"{Fore.RED}notify_deploy_non_targeting_passive_skill_attack() -> notice_dictionary:{Fore.GREEN} {notice_dictionary}{Style.RESET_ALL}")
+
+        # self.__opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.PLAY_ANIMATION)
+        self.__opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_PASSIVE_SKILL_PROCESS)
 
     def notify_turn_end(self, notice_dictionary):
         print(f"{Fore.RED}notify_turn_end() -> notice_dictionary:{Fore.GREEN} {notice_dictionary}{Style.RESET_ALL}")
