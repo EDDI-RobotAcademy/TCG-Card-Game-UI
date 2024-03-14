@@ -735,6 +735,36 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     break
 
+        if key.lower() == 'v':
+            print("상대방이 네더 출격 이후 광역기 사용 요청")
+
+            recently_added_card_index = self.opponent_field_unit_repository.get_field_unit_max_index()
+
+            opponent_animation_actor = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(recently_added_card_index)
+            self.attack_animation_object.set_opponent_animation_actor(opponent_animation_actor)
+            # self.__opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.PLAY_ANIMATION)
+            # self.__opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
+
+            damage = self.card_info_repository.getCardPassiveFirstDamageForCardNumber(opponent_animation_actor.get_card_number())
+            self.attack_animation_object.set_opponent_animation_actor_damage(damage)
+
+            self.opponent_field_area_inside_handler.set_unit_action(OpponentUnitAction.NETHER_BLADE_FIRST_WIDE_AREA_PASSIVE_SKILL)
+
+            extra_ability = self.opponent_field_unit_repository.get_opponent_unit_extra_ability_at_index(recently_added_card_index)
+            self.attack_animation_object.set_extra_ability(extra_ability)
+
+            self.opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.PLAY_ANIMATION)
+
+            process_first_passive_skill_response = self.__fake_battle_field_frame_repository.request_to_process_first_passive_skill(
+                WideAreaPassiveSkillFromDeployRequest(
+                    _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                    _unitCardIndex=str(recently_added_card_index),
+                    _usageSkillIndex="1"))
+
+            is_success = process_first_passive_skill_response['is_success']
+            if is_success is False:
+                return FieldAreaAction.Dummy
+
         if key.lower() == 'x':
             print("Opponent Turn을 종료합니다")
 
