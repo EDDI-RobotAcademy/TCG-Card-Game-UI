@@ -3,6 +3,13 @@ import json
 from colorama import Fore, Style
 
 from battle_field.animation_support.animation_action import AnimationAction
+from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
+from battle_field.components.field_area_inside.field_area_inside_handler import FieldAreaInsideHandler
+from battle_field.components.field_area_inside.turn_start_action import TurnStartAction
+from battle_field.components.opponent_field_area_inside.opponent_field_area_action_process import OpponentFieldAreaActionProcess
+from battle_field.components.opponent_field_area_inside.opponent_field_area_inside_handler import \
+    OpponentFieldAreaInsideHandler
+from battle_field.components.opponent_field_area_inside.opponent_unit_action import OpponentUnitAction
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
@@ -18,6 +25,7 @@ from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field.state.energy_type import EnergyType
 from battle_field_function.service.battle_field_function_service_impl import BattleFieldFunctionServiceImpl
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
+from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from fake_battle_field.infra.fake_opponent_hand_repository import FakeOpponentHandRepositoryImpl
 from image_shape.circle_kinds import CircleKinds
 from image_shape.non_background_number_image import NonBackgroundNumberImage
@@ -42,6 +50,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.__notify_reader_repository = NotifyReaderRepositoryImpl.getInstance()
             cls.__instance.__battle_field_function_service = BattleFieldFunctionServiceImpl.getInstance()
 
+            cls.__instance.__card_info_repository = CardInfoFromCsvRepositoryImpl.getInstance()
+
             cls.__instance.__opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
             cls.__instance.__opponent_field_energy_repository = OpponentFieldEnergyRepository.getInstance()
             cls.__instance.__your_field_energy_repository = YourFieldEnergyRepository.getInstance()
@@ -57,6 +67,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.__mulligan_repository = MuligunYourHandRepository.getInstance()
             cls.__instance.__your_deck_repository = YourDeckRepository.getInstance()
             cls.__instance.__your_lost_zone_repository = YourLostZoneRepository.getInstance()
+
+            cls.__instance.__field_area_inside_handler = FieldAreaInsideHandler.getInstance()
+            cls.__instance.__opponent_field_area_inside_handler = OpponentFieldAreaInsideHandler.getInstance()
 
             cls.__instance.notify_callback_table['NOTIFY_DEPLOY_UNIT'] = cls.__instance.notify_deploy_unit
             cls.__instance.notify_callback_table['NOTIFY_TURN_END'] = cls.__instance.notify_turn_end
@@ -231,8 +244,30 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         self.__battle_field_repository.set_current_use_card_id(card_id)
         self.__opponent_field_unit_repository.create_field_unit_card(card_id)
+        # self.__opponent_field_unit_repository.place_field_unit(card_id)
 
         self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+        recently_added_card_index = self.__opponent_field_unit_repository.get_field_unit_max_index()
+
+        passive_skill_type = self.__card_info_repository.getCardPassiveFirstForCardNumber(card_id)
+        if passive_skill_type == 2:
+            print("광역기")
+
+            self.__opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
+            # self.__opponent_field_area_action = OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS
+            if card_id == 19:
+                self.__opponent_field_area_inside_handler.set_unit_action(OpponentUnitAction.NETHER_BLADE_FIRST_WIDE_AREA_PASSIVE_SKILL)
+
+            return
+
+
+        elif passive_skill_type == 1:
+            print("단일기")
+
+            self.__opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
+            return
+
+        return
 
     def notify_turn_end(self, notice_dictionary):
         print(f"{Fore.RED}notify_turn_end() -> notice_dictionary:{Fore.GREEN} {notice_dictionary}{Style.RESET_ALL}")
@@ -257,6 +292,22 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
             opponent_field_energy_count = self.__opponent_field_energy_repository.get_opponent_field_energy()
             print(f"{Fore.RED}opponent_field_energy_count:{Fore.GREEN} {opponent_field_energy_count}{Style.RESET_ALL}")
+
+            # notify_turn_end() -> notice_dictionary: {
+            #     'NOTIFY_TURN_END': {'player_drawn_card_list_map': {'You': [33]}, 'player_field_energy_map': {'You': 1},
+            #                         'player_field_unit_health_point_map': {
+            #                             'Opponent': {'field_unit_health_point_map': {'8': 20}}},
+            #                         'player_field_unit_harmful_effect_map': {'Opponent': {
+            #                             'field_unit_harmful_status_map': {'8': {'harmful_status_list': []}}}},
+            #                         'player_field_unit_death_map': {'Opponent': {'dead_field_unit_index_list': []}},
+            #                         'player_main_character_survival_map': {},
+            #                         'unit_index_turn_start_passive_list_map': {'3': [], '5': [], '6': [1, 2], '2': [],
+            #                                                                    '1': [], '0': [], '4': []}}}
+            opponent_which_one_has_passive_skill_to_turn_start_lists = {unit_index: passive_list for unit_index, passive_list in
+                               notice_dictionary['NOTIFY_TURN_END']['unit_index_turn_start_passive_list_map'].items() if
+                               passive_list}
+
+            print(f"{Fore.RED}opponent_which_one_has_passive_skill_to_turn_start_lists:{Fore.GREEN} {opponent_which_one_has_passive_skill_to_turn_start_lists}{Style.RESET_ALL}")
 
 
 
@@ -358,6 +409,29 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             notice_dictionary['NOTIFY_TURN_END']['player_field_unit_health_point_map'])
 
         self.apply_notify_data_of_dead_unit(notice_dictionary['NOTIFY_TURN_END']['player_field_unit_death_map'])
+
+        # notify_turn_end() -> notice_dictionary: {
+        #     'NOTIFY_TURN_END': {'player_drawn_card_list_map': {'You': [33]}, 'player_field_energy_map': {'You': 1},
+        #                         'player_field_unit_health_point_map': {
+        #                             'Opponent': {'field_unit_health_point_map': {'8': 20}}},
+        #                         'player_field_unit_harmful_effect_map': {'Opponent': {
+        #                             'field_unit_harmful_status_map': {'8': {'harmful_status_list': []}}}},
+        #                         'player_field_unit_death_map': {'Opponent': {'dead_field_unit_index_list': []}},
+        #                         'player_main_character_survival_map': {},
+        #                         'unit_index_turn_start_passive_list_map': {'3': [], '5': [], '6': [1, 2], '2': [],
+        #                                                                    '1': [], '0': [], '4': []}}}
+        your_which_one_has_passive_skill_to_turn_start_lists = {unit_index: passive_list for unit_index, passive_list in
+                                                           notice_dictionary['NOTIFY_TURN_END'][
+                                                               'unit_index_turn_start_passive_list_map'].items() if
+                                                           passive_list}
+        print(f"{Fore.RED}your_which_one_has_passive_skill_to_turn_start_lists:{Fore.GREEN} {your_which_one_has_passive_skill_to_turn_start_lists}{Style.RESET_ALL}")
+
+        required_to_process_passive_skill_multiple_unit_list = []
+        for key, value in your_which_one_has_passive_skill_to_turn_start_lists.items():
+            required_to_process_passive_skill_multiple_unit_list.append(key)
+
+        self.__field_area_inside_handler.set_field_turn_start_action(TurnStartAction.CHECK_MULTIPLE_UNIT_REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
+        self.__field_area_inside_handler.set_required_to_process_passive_skill_multiple_unit_list(required_to_process_passive_skill_multiple_unit_list)
 
     def notify_attach_general_energy_card(self, notice_dictionary):
 
@@ -1197,7 +1271,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
     def notify_use_catastrophic_damage_item_card(self, notice_dictionary):
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
-        print(f"{Fore.RED}notify_deploy_unit() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
+        print(f"{Fore.RED}notify_use_catastrophic_damage_item_card() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
 
         if whose_turn is True:
             return

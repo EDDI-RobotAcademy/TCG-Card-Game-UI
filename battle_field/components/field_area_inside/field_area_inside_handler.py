@@ -28,7 +28,10 @@ class FieldAreaInsideHandler:
     __action_set_card_id = 0
     __recently_added_card_index = None
 
+    __required_to_process_passive_skill_multiple_unit_list = []
+
     __unit_action = None
+    __turn_start_action = None
     # __action_set_card_index = 0
 
     __your_hand_repository = YourHandRepository.getInstance()
@@ -84,6 +87,24 @@ class FieldAreaInsideHandler:
     def clear_field_area_action(self):
         self.__field_area_action = None
 
+    def set_field_turn_start_action(self, turn_start_action):
+        self.__turn_start_action = turn_start_action
+
+    def get_field_turn_start_action(self):
+        return self.__turn_start_action
+
+    def clear_field_turn_start_action(self):
+        self.__turn_start_action = None
+
+    def set_required_to_process_passive_skill_multiple_unit_list(self, required_to_process_passive_skill_multiple_unit_list):
+        self.__required_to_process_passive_skill_multiple_unit_list = required_to_process_passive_skill_multiple_unit_list
+
+    def get_required_to_process_passive_skill_multiple_unit_list(self):
+        return self.__required_to_process_passive_skill_multiple_unit_list
+
+    def clear_required_to_process_passive_skill_multiple_unit_list(self):
+        self.__required_to_process_passive_skill_multiple_unit_list = []
+
     def set_field_area_action(self, field_area_action):
         self.__field_area_action = field_area_action
 
@@ -98,6 +119,9 @@ class FieldAreaInsideHandler:
 
     def set_height_ratio(self, height_ratio):
         self.__height_ratio = height_ratio
+
+    def set_recently_added_card_index(self, card_index):
+        self.__recently_added_card_index = card_index
 
     def get_recently_added_card_index(self):
         return self.__recently_added_card_index
