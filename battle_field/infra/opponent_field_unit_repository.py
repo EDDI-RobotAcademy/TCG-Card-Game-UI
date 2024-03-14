@@ -33,6 +33,9 @@ class OpponentFieldUnitRepository:
         self.current_field_unit_state.place_unit_to_field(field_unit_id)
         # print(f"Saved current field_unit state: {field_unit_id}")
 
+    def get_field_unit_max_index(self):
+        return len(self.current_field_unit_card_object_list) - 1
+
     def create_field_unit_card(self, field_unit_id):
         # valid_opponent_field_unit_list = [unit for unit in self.current_field_unit_card_object_list if unit is not None]
         # index = len(valid_opponent_field_unit_list)

@@ -721,7 +721,7 @@ class PreDrawedImage:
         for number in range(1, 5):
             text_image_data = os.path.join(self.__project_root, "local_storage", "message_on_the_battle_screen",
                                            f"{number}.png")
-            self.__pre_drawed_message_on_the_battle_screen[number] = ImageDataLoader.load_rectangle_image_data(text_image_data)
+            self.__pre_drawed_message_on_the_battle_screen[number] = ImageDataLoader.load_message_on_the_battle_screen_image_data(text_image_data)
 
     # def pre_draw_shop_mythical_card_illustration(self):
     #     target_number = {19, 45, 134, 176, 22, 128, 23, 108, 133}

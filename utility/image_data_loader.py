@@ -90,6 +90,24 @@ class ImageDataLoader:
             return None
 
     @staticmethod
+    def load_message_on_the_battle_screen_image_data(path):
+        try:
+            image = Image.open(path)
+            resized_image = image.resize((2278, 231))
+
+            rgba_image = resized_image.convert("RGBA")
+            img_data = np.array(rgba_image)
+
+            resized_image.close()
+            image.close()
+
+            return img_data
+
+        except Exception as e:
+            print(f"Error loading image data: {e}")
+            return None
+
+    @staticmethod
     def load_rectangle_image_data(path):
         try:
             image = Image.open(path)
