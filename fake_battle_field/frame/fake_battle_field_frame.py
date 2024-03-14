@@ -3067,7 +3067,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.field_area_inside_handler.set_placed_card_page(self.your_hand_repository.get_current_your_hand_page())
             else:
                 print("self.field_area_inside_handler.get_field_area_action() = Some Action")
-                self.selected_object = None
+                # self.selected_object = None
+                self.return_to_initial_location()
+                self.field_area_inside_handler.set_placed_card_page(
+                    self.your_hand_repository.get_current_your_hand_page())
                 # 서포트 관련하여 시작 포인트
                 # handler에서 id 와 index를 받아서 저장 해놓고
                 # false가 떳을 경우의 함수를 추가하여 return값으로 selection_object를 주는 함수를 만든다.
@@ -5066,10 +5069,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     is_success_value = response.get('is_success', False)
 
                     if is_success_value == False:
+                        self.selected_object = None
                         self.your_deck_search_panel = None
                         self.field_area_inside_handler.set_field_area_action(FieldAreaAction.Dummy)
                         print(f"self.field_area_inside_handler.get - > {self.field_area_inside_handler.get_field_area_action()}")
                         return
+                    # 서포트
 
                     # 실제로 지울 때 몇 개 지우는지만 알면 된다.
                     # 어차피 셔플 받아서 이미지만 갈아 끼워넣을 것이기 때문
@@ -5156,6 +5161,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             pass
 
                         if len(self.selected_search_unit_index_list) == 2:
+                            self.field_area_inside_handler.set_field_area_action(FieldAreaAction.Dummy)
                             return
 
                         else:
@@ -5214,7 +5220,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             is_success_value = corpse_explosion_response.get('is_success', False)
 
                             if is_success_value == False:
-
                                 return
 
                             remove_from_field_index_list = []
