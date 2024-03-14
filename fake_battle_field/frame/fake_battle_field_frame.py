@@ -3022,6 +3022,30 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     print("일반 공격 클릭")
 
+                    your_field_unit_id = self.selected_object.get_card_number()
+                    your_field_unit_index = self.selected_object.get_index()
+                    your_field_unit_attached_energy = self.your_field_unit_repository.get_attached_energy_info()
+
+                    your_field_unit_total_energy = your_field_unit_attached_energy.get_total_energy_at_index(
+                        your_field_unit_index)
+                    print(f"your_field_unit_total_energy: {your_field_unit_total_energy}")
+
+                    your_field_unit_attached_undead_energy = your_field_unit_attached_energy.get_race_energy_at_index(
+                        your_field_unit_index, EnergyType.Undead)
+
+                    your_field_unit_required_undead_energy = self.card_info_repository.getCardEnergyForCardNumber(
+                        your_field_unit_id)
+
+                    if your_field_unit_required_undead_energy > your_field_unit_attached_undead_energy:
+                        print("에너지 부족으로 인한 공격 불가")
+                        self.selected_object = None
+                        self.active_panel_rectangle = None
+                        self.current_fixed_details_card = None
+                        self.your_active_panel.clear_all_your_active_panel()
+                        self.message_on_the_screen.create_message_on_the_battle_screen(2)
+                        return
+
+
                     opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
                     for opponent_field_unit_object in opponent_field_unit_object_list:
                         if opponent_field_unit_object is None:
