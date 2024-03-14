@@ -10,6 +10,7 @@ class OpponentFieldAreaInsideHandler:
 
     __unit_action = None
     __turn_start_action = None
+    __active_field_area_action = None
 
     # __your_hand_repository = YourHandRepository.getInstance()
     # __your_field_unit_repository = YourFieldUnitRepository.getInstance()
@@ -55,6 +56,15 @@ class OpponentFieldAreaInsideHandler:
     def clear_field_area_action(self):
         self.__field_area_action = None
 
+    def get_active_field_area_action(self):
+        return self.__active_field_area_action
+
+    def set_active_field_area_action(self, active_field_area_action):
+        self.__active_field_area_action = active_field_area_action
+
+    def clear_active_field_area_action(self):
+        self.__active_field_area_action = None
+
     def set_field_turn_start_action(self, turn_start_action):
         self.__turn_start_action = turn_start_action
 
@@ -63,4 +73,10 @@ class OpponentFieldAreaInsideHandler:
 
     def clear_field_turn_start_action(self):
         self.__turn_start_action = None
+
+    def set_unit_action(self, unit_action):
+        self.__unit_action = unit_action
+
+    def get_unit_action(self):
+        return self.__unit_action
 

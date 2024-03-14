@@ -45,7 +45,7 @@ class SupportCardHandler:
         else:
             print(f"이 카드 타입({card_id}) 를 처리 할 수 있는 함수가 없습니다.")
 
-    def energy_boost_from_deck_as_possible(self, target_unit_index):
+    def energy_boost_from_deck_as_possible(self, target_unit_index, after_boost_deck_list):
         print("에너지 부스팅")
 
         print(f"deck state: {self.__yourDeckRepository.get_current_deck_state_object().get_current_deck()}")
@@ -71,14 +71,14 @@ class SupportCardHandler:
         #     EnergyType.Undead,
         #     1)
 
-        after_boost_deck_list = self.__yourDeckRepository.get_current_deck_state_object().get_current_deck()
+        # after_boost_deck_list = self.__yourDeckRepository.get_current_deck_state_object().get_current_deck()
 
-        print(f"energy_boost_from_deck_as_possible() -> attached energy info: {self.__yourFieldUnitRepository.get_attached_energy_info().get_energy_at_index(target_unit_index)}")
-        print(f"energy_boost_from_deck_as_possible() -> deck state: {after_boost_deck_list}")
-        # print(f"get_total_energy_at_index: {self.__yourFieldUnitRepository.get_attached_energy_info().get_total_energy_at_index(target_unit_index)}")
-
-        random.shuffle(after_boost_deck_list)
-        print(f"after shuffle: energy_boost_from_deck_as_possible() -> deck state: {after_boost_deck_list}")
+        # print(f"energy_boost_from_deck_as_possible() -> attached energy info: {self.__yourFieldUnitRepository.get_attached_energy_info().get_energy_at_index(target_unit_index)}")
+        # print(f"energy_boost_from_deck_as_possible() -> deck state: {after_boost_deck_list}")
+        # # print(f"get_total_energy_at_index: {self.__yourFieldUnitRepository.get_attached_energy_info().get_total_energy_at_index(target_unit_index)}")
+        #
+        # random.shuffle(after_boost_deck_list)
+        # print(f"after shuffle: energy_boost_from_deck_as_possible() -> deck state: {after_boost_deck_list}")
 
         self.__yourDeckRepository.update_deck(after_boost_deck_list)
 
@@ -108,12 +108,12 @@ class SupportCardHandler:
 
                         # print(f"changed energy: {fixed_card_attached_shape.get_circle_kinds()}")
 
-            for index in range(total_attached_energy_info_at_index):
-                card_race_circle = fixed_target_unit.creat_fixed_card_energy_race_circle(
-                    color=(0, 0, 0, 1),
-                    vertices=(0, ((index + 1) * 10) + 20),
-                    local_translation=fixed_card_base.get_local_translation())
-                fixed_card_base.set_attached_shapes(card_race_circle)
+            # for index in range(total_attached_energy_info_at_index):
+            #     card_race_circle = fixed_target_unit.creat_fixed_card_energy_race_circle(
+            #         color=(0, 0, 0, 1),
+            #         vertices=(0, ((index + 1) * 10) + 20),
+            #         local_translation=fixed_card_base.get_local_translation())
+            #     fixed_card_base.set_attached_shapes(card_race_circle)
 
     def draw_card_from_deck(self):
         print("덱에서 드로우")
