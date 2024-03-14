@@ -28,7 +28,7 @@ def play_music_with_menu_name(path):
 def play_sample_sound_to_mix():
     current_location = os.getcwd()
     background_music_path = (
-        os.path.join(current_location, '../../', 'local_storage', 'background_music', 'basic_attack4.mp3'))
+        os.path.join(current_location, '../../', 'local_storage', 'background_music', 'basic_attack.mp3'))
     sound = pygame.mixer.Sound(background_music_path)
     sound.play(100)
 

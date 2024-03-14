@@ -25,6 +25,7 @@ from battle_field.entity.battle_result import BattleResult
 from battle_field.entity.current_field_energy_race import CurrentFieldEnergyRace
 from battle_field.entity.current_to_use_field_energy_count import CurrentToUseFieldEnergyCount
 from battle_field.entity.decrease_to_use_field_energy_count import DecreaseToUseFieldEnergyCount
+from battle_field.entity.effect_animation import EffectAnimation
 from battle_field.entity.increase_to_use_field_energy_count import IncreaseToUseFieldEnergyCount
 from battle_field.entity.next_field_energy_race import NextFieldEnergyRace
 from battle_field.entity.opponent_field_energy import OpponentFieldEnergy
@@ -50,6 +51,7 @@ from battle_field.entity.your_tomb import YourTomb
 from battle_field.entity.battle_field_timer import BattleFieldTimer
 from battle_field.handler.support_card_handler import SupportCardHandler
 from battle_field.infra.battle_field_repository import BattleFieldRepository
+from battle_field.infra.effect_animation_repository import EffectAnimationRepository
 
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
@@ -97,6 +99,7 @@ from battle_field_function.service.request.turn_end_request import TurnEndReques
 from battle_field_muligun.service.request.muligun_request import MuligunRequest
 
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
+from common.attack_type import AttackType
 from common.card_grade import CardGrade
 from common.card_race import CardRace
 from common.card_type import CardType
@@ -115,6 +118,7 @@ from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
 from image_shape.non_background_number_image import NonBackgroundNumberImage
 from image_shape.rectangle_kinds import RectangleKinds
+from music_player.repository.music_player_repository_impl import MusicPlayerRepositoryImpl
 
 from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
@@ -134,6 +138,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
     __fake_opponent_hand_repository = FakeOpponentHandRepositoryImpl.getInstance()
     __session_repository = SessionRepositoryImpl.getInstance()
     __notify_reader_repository = NotifyReaderRepositoryImpl.getInstance()
+    __music_player_repository = MusicPlayerRepositoryImpl.getInstance()
 
     attack_animation_object = AttackAnimation.getInstance()
 
@@ -328,6 +333,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.animation_test_image = AnimationTestImage()
         self.animation_test_image_list = []
         self.animation_test_image_panel_list = []
+
+
+        self.effect_animation_panel = None
+        self.effect_animation = EffectAnimation()
+        self.effect_animation_repository = EffectAnimationRepository.getInstance()
+        self.effect_animation_list = []
+        self.effect_animation_panel_list = []
+        self.is_effect_animation_playing = False
 
         self.battle_field_repository = BattleFieldRepository.getInstance()
         self.battle_result = BattleResult()
@@ -744,6 +757,124 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             self.animation_test_image.reset_animation_count()
             self.master.after(0, animate)
+
+        if key.lower() == 'kp_end':
+            self.effect_animation_panel = None
+            effect_animation = EffectAnimation()
+            effect_animation.set_animation_name('sword_attack')
+            effect_animation.set_total_window_size(self.width, self.height)
+            effect_animation.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(0).get_local_translation()
+            )
+            effect_animation.draw_animation_panel()
+            effect_animation_panel = effect_animation.get_animation_panel()
+
+            self.effect_animation_list.append(effect_animation)
+            self.effect_animation_panel_list.append(effect_animation_panel)
+
+        if key.lower() == 'kp_down':
+            self.effect_animation_panel = None
+            effect_animation = EffectAnimation()
+            effect_animation.set_animation_name('magic_attack')
+            effect_animation.set_total_window_size(self.width, self.height)
+            effect_animation.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(1).get_local_translation()
+            )
+            effect_animation.draw_animation_panel()
+            effect_animation_panel = effect_animation.get_animation_panel()
+
+            self.effect_animation_list.append(effect_animation)
+            self.effect_animation_panel_list.append(effect_animation_panel)
+
+        if key.lower() == 'kp_next':
+            self.effect_animation_panel = None
+            effect_animation = EffectAnimation()
+            effect_animation.set_animation_name('dark_blast')
+            effect_animation.set_total_window_size(self.width, self.height)
+            effect_animation.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(2).get_local_translation()
+            )
+            effect_animation.draw_animation_panel()
+            effect_animation_panel = effect_animation.get_animation_panel()
+
+            self.effect_animation_list.append(effect_animation)
+            self.effect_animation_panel_list.append(effect_animation_panel)
+
+        if key.lower() == 'kp_left':
+            self.effect_animation_panel = None
+            effect_animation = EffectAnimation()
+            effect_animation.set_animation_name('death_scythe')
+            effect_animation.set_total_window_size(self.width, self.height)
+            effect_animation.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(3).get_local_translation()
+            )
+            effect_animation.draw_animation_panel()
+            effect_animation_panel = effect_animation.get_animation_panel()
+
+            self.effect_animation_list.append(effect_animation)
+            self.effect_animation_panel_list.append(effect_animation_panel)
+
+        if key.lower() == 'kp_begin':
+            self.effect_animation_panel = None
+            effect_animation = EffectAnimation()
+            effect_animation.set_animation_name('burst_shadow_ball')
+            effect_animation.set_total_window_size(self.width, self.height)
+            effect_animation.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(4).get_local_translation()
+            )
+            effect_animation.draw_animation_panel()
+            effect_animation_panel = effect_animation.get_animation_panel()
+
+            self.effect_animation_list.append(effect_animation)
+            self.effect_animation_panel_list.append(effect_animation_panel)
+
+        if key.lower() == 'kp_right':
+            self.effect_animation_panel = None
+            effect_animation = EffectAnimation()
+            effect_animation.set_animation_name('moving_shadow_ball')
+            effect_animation.set_total_window_size(self.width, self.height)
+            effect_animation.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(5).get_local_translation()
+            )
+            effect_animation.draw_animation_panel()
+            effect_animation_panel = effect_animation.get_animation_panel()
+
+            self.effect_animation_list.append(effect_animation)
+            self.effect_animation_panel_list.append(effect_animation_panel)
+
+        if key.lower() == 'kp_insert':
+            if self.is_effect_animation_playing:
+                return
+            def animate():
+                self.is_effect_animation_playing = True
+                finish_list = []
+                is_all_finished = False
+                for effect_animation in self.effect_animation_list:
+                    effect_animation.update_effect_animation_panel()
+                    finish_list.append(effect_animation.is_finished)
+
+                for finish in finish_list:
+                    if finish == False:
+                        is_all_finished = False
+                        break
+                    else:
+                        is_all_finished = True
+
+                if not is_all_finished:
+                    self.master.after(17, animate)
+                else:
+                    self.animation_test_image_list = []
+                    self.animation_test_image_panel_list = []
+                    self.is_effect_animation_playing = False
+                    print("finish animation")
+
+
+            for effect_animation in self.effect_animation_list:
+                print(f"animation count: {effect_animation}")
+                effect_animation.reset_animation_count()
+
+            self.master.after(0, animate)
+
 
         if key.lower() == 'kp_1':
             self.animation_test_image_panel = None
@@ -1388,6 +1519,39 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 animation_test_image.set_height_ratio(self.height_ratio)
                 animation_test_image_panel.draw()
 
+
+
+        if self.effect_animation_list is not [] and self.effect_animation_panel_list is not []:
+            for effect_animation, effect_animation_panel in zip(self.effect_animation_list,
+                                                                        self.effect_animation_panel_list):
+                if effect_animation.is_finished:
+                    continue
+                effect_animation.set_width_ratio(self.width_ratio)
+                effect_animation.set_height_ratio(self.height_ratio)
+                effect_animation_panel.draw()
+
+        if self.effect_animation_repository.get_effect_animation_list() is not [] and self.effect_animation_repository.get_effect_animation_panel_list() is not []:
+            for effect_animation, effect_animation_panel in zip(self.effect_animation_repository.get_effect_animation_list(),
+                                                                self.effect_animation_repository.get_effect_animation_panel_list()):
+                if effect_animation.is_finished:
+                    continue
+                effect_animation.set_width_ratio(self.width_ratio)
+                effect_animation.set_height_ratio(self.height_ratio)
+                effect_animation_panel.draw()
+
+
+        if self.effect_animation_repository.get_effect_animation_dictionary() is not {} and self.effect_animation_repository.get_effect_animation_panel_dictionary() is not {}:
+
+            for effect_animation, effect_animation_panel in zip(self.effect_animation_repository.get_effect_animation_dictionary().values(),
+                                                                self.effect_animation_repository.get_effect_animation_panel_dictionary().values()):
+                if effect_animation.is_finished:
+                    continue
+                effect_animation.set_width_ratio(self.width_ratio)
+                effect_animation.set_height_ratio(self.height_ratio)
+                effect_animation_panel.draw()
+
+           # self.play_effect_animation()
+
         # glDisable(GL_BLEND)
 
     def redraw(self):
@@ -1544,7 +1708,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     attached_shape.draw()
 
                 for selected_search_unit in self.selected_search_unit_lightning_border:
-                    if selected_search_unit == fixed_card_base:
+                    if selected_search_unit == pickable_card_base:
                         selected_search_unit.set_width_ratio(self.width_ratio)
                         selected_search_unit.set_height_ratio(self.height_ratio)
 
@@ -1577,6 +1741,190 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     attached_shape.set_width_ratio(self.width_ratio)
                     attached_shape.set_height_ratio(self.height_ratio)
                     attached_shape.draw()
+
+        if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() == OpponentFieldAreaAction.ENERGY_BURN:
+
+            print('create energy burn animation')
+            target_index = self.opponent_fixed_unit_card_inside_handler.get_target_index_to_action()
+            effect_animation = EffectAnimation()
+            effect_animation.set_animation_name('dark_blast')
+            effect_animation.set_total_window_size(self.width, self.height)
+            effect_animation.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                    target_index).get_fixed_card_base().get_local_translation()
+            )
+            effect_animation.draw_animation_panel()
+            effect_animation_panel = effect_animation.get_animation_panel()
+            print(effect_animation_panel)
+            animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+                effect_animation)
+            self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                animation_index, effect_animation_panel)
+
+            self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+            self.opponent_fixed_unit_card_inside_handler.clear_target_index_to_action()
+
+            def calculate_energy_burn():
+                unit_index = target_index
+                print('target_index : ', target_index)
+                opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                    unit_index)
+                print(f"opponent_field_unit: {opponent_field_unit}")
+                card_id = opponent_field_unit.get_card_number()
+                detach_count = 2
+                total_attached_energy_count = self.opponent_field_unit_repository.get_total_energy_at_index(
+                    unit_index)
+                print(f"opponent_field_unit_attached_undead_energy_count: {total_attached_energy_count}")
+
+                # attached_energy = self.__opponent_field_unit_repository.attached_energy_info.get(unit_index, [])
+
+                if total_attached_energy_count == 0:
+                    print("데미지를 입힙니다.")
+                    remove_from_field = False
+                    opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                    opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+                    for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                        if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
+                            if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                hp = opponent_fixed_card_attached_shape.get_number()
+                                hp -= 10
+                                print(f"hp : {hp}")
+
+                                if hp <= 0:
+                                    remove_from_field = True
+                                    break
+
+                                opponent_fixed_card_attached_shape.set_image_data(
+                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(hp))
+
+                    if remove_from_field:
+                        self.opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
+                        self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+
+                        self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                else:
+                    print("에너지를 태웁니다.")
+                    if total_attached_energy_count == 1:
+                        detach_count = 1
+
+                    attached_energy_after_energy_burn = total_attached_energy_count - detach_count
+                    if attached_energy_after_energy_burn < 0:
+                        attached_energy_after_energy_burn = 0
+
+                    opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                    opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+
+                    energy_circle_list = []
+                    energy_circle_index_list = []
+                    count = 0
+
+                    for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                        if isinstance(opponent_fixed_card_attached_shape, CircleNumberImage):
+                            if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+                                opponent_fixed_card_attached_shape.set_image_data(
+                                    self.pre_drawed_image_instance.get_pre_draw_number_image(
+                                        attached_energy_after_energy_burn))
+
+                        if isinstance(opponent_fixed_card_attached_shape, Circle):
+                            energy_circle_index_list.append(count)
+                            print(
+                                f"Energy burn opponent unit vertices: {opponent_fixed_card_attached_shape.get_vertices()}")
+                            energy_circle_list.append(opponent_fixed_card_attached_shape)
+
+                            del opponent_fixed_card_attached_shape
+
+                        count += 1
+
+                    energy_circle_index_list.reverse()
+                    for index in energy_circle_index_list:
+                        if 0 <= index < len(opponent_fixed_card_attached_shape_list):
+                            if detach_count == 0:
+                                break
+
+                            del opponent_fixed_card_attached_shape_list[index]
+                            detach_count -= 1
+
+            self.play_effect_animation_by_index_and_call_function(animation_index, calculate_energy_burn)
+
+
+
+        if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() == OpponentFieldAreaAction.DEATH_SCYTHE:
+            print('create death scythe animation')
+
+            target_index = self.opponent_fixed_unit_card_inside_handler.get_target_index_to_action()
+            effect_animation = EffectAnimation()
+            effect_animation.set_animation_name('death_scythe')
+            effect_animation.set_total_window_size(self.width, self.height)
+            effect_animation.change_local_translation(
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                    target_index).get_fixed_card_base().get_local_translation()
+            )
+            effect_animation.draw_animation_panel()
+            effect_animation_panel = effect_animation.get_animation_panel()
+            print(effect_animation_panel)
+            animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+                effect_animation)
+            self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                animation_index, effect_animation_panel)
+
+            self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+            self.opponent_fixed_unit_card_inside_handler.clear_target_index_to_action()
+
+            def calculate_death_scythe():
+                DEATH_SCYTHE_FIXED_DAMAGE = 30
+                unit_index = target_index
+                opponent_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(unit_index)
+                opponent_unit_card_id = opponent_unit.get_card_number()
+
+                is_opponent_unit_death = True
+                opponent_unit_hp = 0
+
+                opponent_fixed_card_base = None
+                opponent_attached_shape_list = None
+
+                if self.card_info_repository.getCardGradeForCardNumber(
+                        opponent_unit_card_id) > CardGrade.LEGEND.value:
+                    # opponent_unit_hp = self.__card_info_repository.getCardHpForCardNumber(opponent_unit_card_id)
+                    opponent_fixed_card_base = opponent_unit.get_fixed_card_base()
+                    opponent_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+
+                    for opponent_attached_shape in opponent_attached_shape_list:
+                        if isinstance(opponent_attached_shape, NonBackgroundNumberImage):
+                            if opponent_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                opponent_unit_hp = opponent_attached_shape.get_number()
+                                opponent_unit_hp -= DEATH_SCYTHE_FIXED_DAMAGE
+                                opponent_attached_shape.set_number(opponent_unit_hp)
+
+                                if opponent_unit_hp <= 0:
+                                    break
+
+                                # opponent_attached_shape.set_image_data(
+                                #     self.__pre_drawed_image_instance.get_pre_draw_number_image(
+                                #         opponent_unit_hp))
+
+                                opponent_attached_shape.set_image_data(
+                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(
+                                        opponent_unit_hp))
+                                is_opponent_unit_death = False
+
+                                print(f"opponent_unit_hp: {opponent_unit_hp}")
+                    # if opponent_unit_hp > 0:
+                    #     is_opponent_unit_death = False
+                else:
+                    pass
+                    # self.__opponent_tomb_repository.create_opponent_tomb_card(opponent_unit_card_id)
+
+                # self.__your_hand_repository.replace_hand_card_position()
+
+                if is_opponent_unit_death:
+                    print(f"is it death ? {opponent_unit_hp}")
+                    self.opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
+                    self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                    self.opponent_tomb_repository.create_opponent_tomb_card(opponent_unit_card_id)
+
+            self.play_effect_animation_by_index_and_call_function(animation_index, calculate_death_scythe)
 
         if self.field_area_inside_handler.get_field_area_action() is FieldAreaAction.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS:
             print(f"{Fore.RED}패시브 처리가 필요합니다!{Style.RESET_ALL}")
@@ -2225,6 +2573,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 is_pickable_card_inside_unit = self.opponent_fixed_unit_card_inside_handler.handle_pickable_card_inside_unit(
                     self.selected_object, x, y)
 
+
+
                 if is_pickable_card_inside_unit:
                     self.selected_object = None
                     # self.return_to_initial_location()
@@ -2826,6 +3176,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         extra_ability = self.your_field_unit_repository.get_your_unit_extra_ability_at_index(your_field_unit_index)
                         self.attack_animation_object.set_extra_ability(extra_ability)
 
+                        self.field_area_inside_handler.set_field_area_action(FieldAreaAction.PLAY_ANIMATION)
+
                         self.master.after(0, self.wide_area_attack_animation)
 
                         # try:
@@ -3371,6 +3723,31 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     self.attack_animation_object.set_animation_actor_damage(your_damage)
 
+
+                    your_unit_job_number = self.card_info_repository.getCardJobForCardNumber(your_field_card_id)
+                    your_effect_animation_name = ''
+                    for attack_type in AttackType:
+                        if attack_type.value == your_unit_job_number:
+                            your_effect_animation_name = attack_type.name
+                            print('your effect animation name: ', your_effect_animation_name)
+                            break
+
+                    effect_animation = EffectAnimation()
+                    effect_animation.set_animation_name(your_effect_animation_name)
+                    effect_animation.set_total_window_size(self.width, self.height)
+                    vertices = self.opponent_main_character_panel.get_vertices()
+                    effect_animation.draw_animation_panel_with_vertices(vertices)
+                    effect_animation_panel = effect_animation.get_animation_panel()
+
+                    self.effect_animation_repository.save_effect_animation_at_dictionary_with_index(
+                        your_field_card_index, effect_animation)
+
+                    self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                        your_field_card_index, effect_animation_panel)
+
+                    self.targeting_enemy_select_support_lightning_border_list = []
+                    self.opponent_you_selected_lightning_border_list = []
+
                     self.master.after(0, self.you_attack_main_character_animation)
 
                     # self.opponent_hp_repository.take_damage(your_damage)
@@ -3415,6 +3792,33 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if opponent_fixed_card_base.is_point_inside((x, y)):
                         your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
+                        your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
+                        your_unit_job_number = self.card_info_repository.getCardJobForCardNumber(your_field_card_id)
+                        your_effect_animation_name = ''
+                        for attack_type in AttackType:
+                            if attack_type.value == your_unit_job_number:
+                                your_effect_animation_name = attack_type.name
+                                print('your effect animation name: ', your_effect_animation_name)
+                                break
+
+                        effect_animation = EffectAnimation()
+                        effect_animation.set_animation_name(your_effect_animation_name)
+                        effect_animation.set_total_window_size(self.width, self.height)
+                        effect_animation.change_local_translation(
+                            self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                                opponent_field_card_index).get_fixed_card_base().get_local_translation()
+                        )
+                        effect_animation.draw_animation_panel()
+                        effect_animation_panel = effect_animation.get_animation_panel()
+                        print(effect_animation_panel)
+                        self.effect_animation_repository.save_effect_animation_at_dictionary_with_index(
+                            your_field_card_index, effect_animation)
+                        self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                            your_field_card_index, effect_animation_panel)
+
+                        print(f'save effect animation: {self.effect_animation_repository.get_effect_animation_by_index(your_field_card_index)}')
+                        print(f'save effect animation panel: {self.effect_animation_repository.get_effect_animation_panel_by_index(your_field_card_index)}')
+
                         self.your_field_unit_action_repository.use_field_unit_action_count_by_index(
                             your_field_card_index)
 
@@ -3954,23 +4358,60 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     #
                     # self.opponent_hp_repository.change_opponent_hp(remain_character_hp)
 
-                    your_damage = self.card_info_repository.getCardSkillFirstDamageForCardNumber(your_field_card_id)
-                    print(f"your_damage: {your_damage}")
 
-                    self.opponent_hp_repository.take_damage(your_damage)
+                    #### 모션 프레임
+                    your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(your_field_card_index)
+                    print(f"{Fore.RED}valrn ready to use shadow ball -> your_field_unit: {Fore.GREEN}{your_field_unit}{Style.RESET_ALL}")
+                    self.attack_animation_object.set_animation_actor(your_field_unit)
+                    self.field_area_inside_handler.set_field_area_action(FieldAreaAction.PLAY_ANIMATION)
+                    self.master.after(0, self.valrn_ready_to_use_shadow_ball_to_opponent_main_character_animation)
 
-                    self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
-                    self.targeting_enemy_select_using_your_field_card_index = None
-                    self.targeting_enemy_select_using_your_field_card_id = None
+                    #### 애니메이션 프레임
+                    return
+
+                    # self.__effect_animation_dictionary[index] = effect_animation
+                    # self.__effect_animation_panel_dictionary[index] = effect_animation_panel
+
+                    # def get_effect_animation_by_index(self, index):
+                    #     return self.__effect_animation_dictionary[index]
+
+                    effect_animation = EffectAnimation()
+                    effect_animation.set_animation_name('burst_shadow_ball')
+                    effect_animation.set_total_window_size(self.width, self.height)
+                    vertices = self.opponent_main_character_panel.get_vertices()
+                    effect_animation.draw_animation_panel_with_vertices(vertices)
+                    effect_animation_panel = effect_animation.get_animation_panel()
+
+                    self.effect_animation_repository.save_effect_animation_at_dictionary_with_index(
+                        your_field_card_index, effect_animation)
+
+                    self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                        your_field_card_index, effect_animation_panel)
+
                     self.targeting_enemy_select_support_lightning_border_list = []
                     self.opponent_you_selected_lightning_border_list = []
 
-                    self.selected_object = None
-                    self.active_panel_rectangle = None
-                    self.current_fixed_details_card = None
-                    self.your_active_panel.clear_all_your_active_panel()
+                    def calculate_shadow_ball_to_main_character():
+                        your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
+                        your_damage = self.card_info_repository.getCardSkillFirstDamageForCardNumber(your_field_card_id)
+                        print(f"your_damage: {your_damage}")
+                        self.opponent_hp_repository.take_damage(your_damage)
 
-                    return
+                        self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+                        self.targeting_enemy_select_using_your_field_card_index = None
+                        self.targeting_enemy_select_using_your_field_card_id = None
+                        self.targeting_enemy_select_support_lightning_border_list = []
+                        self.opponent_you_selected_lightning_border_list = []
+
+                        self.selected_object = None
+                        self.active_panel_rectangle = None
+                        self.current_fixed_details_card = None
+                        self.your_active_panel.clear_all_your_active_panel()
+
+                        return
+
+                    self.play_effect_animation_by_index_and_call_function(your_field_card_index,
+                                                                          calculate_shadow_ball_to_main_character)
 
                 opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
                 for opponent_field_unit_object in opponent_field_unit_object_list:
@@ -4009,106 +4450,130 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                         self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
 
-                        # dead_field_unit_index_list = response['player_field_unit_death_map']['Opponent']['dead_field_unit_index_list']
-                        #
-                        # for opponent_field_unit_index, opponent_field_unit_remain_hp in response['player_field_unit_health_point_map']['Opponent'][
-                        #     'field_unit_health_point_map'].items():
-                        #
-                        #     if opponent_field_unit_remain_hp == 0:
-                        #         break
-                        #
-                        #     opponent_field_unit = (
-                        #         self.opponent_field_unit_repository.find_opponent_field_unit_by_index(int(opponent_field_unit_index)))
-                        #     opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
-                        #     opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
-                        #     for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
-                        #         if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
-                        #             if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
-                        #                 opponent_fixed_card_attached_shape.set_number(opponent_field_unit_remain_hp)
-                        #
-                        #                 opponent_fixed_card_attached_shape.set_image_data(
-                        #                     self.pre_drawed_image_instance.get_pre_draw_unit_hp(opponent_field_unit_remain_hp))
-                        #
-                        # for dead_field_unit_index in dead_field_unit_index_list:
-                        #     card_id = self.opponent_field_unit_repository.get_opponent_card_id_by_index(dead_field_unit_index)
-                        #     self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
-                        #     self.opponent_field_unit_repository.remove_current_field_unit_card(dead_field_unit_index)
-                        #     self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                        opponent_unit_index = opponent_field_unit_object.get_index()
+                        effect_animation = EffectAnimation()
+                        effect_animation.set_animation_name('burst_shadow_ball')
+                        effect_animation.set_total_window_size(self.width, self.height)
+                        effect_animation.change_local_translation(opponent_fixed_card_base.get_local_translation())
+                        effect_animation.draw_animation_panel()
+                        effect_animation_panel = effect_animation.get_animation_panel()
+                        print(effect_animation_panel)
+                        self.effect_animation_repository.save_effect_animation_at_dictionary_with_index(
+                            your_field_card_index,effect_animation)
 
-                        opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+                        self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                            your_field_card_index, effect_animation_panel)
 
-                        are_opponent_field_unit_death = False
-                        opponent_field_card_index = None
-                        opponent_field_card_id = None
-
-                        your_extra_ability = self.your_field_unit_repository.get_your_unit_extra_ability_at_index(your_field_card_index)
-
-                        for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
-                            if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
-                                if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
-                                    print("지정한 상대방 유닛 HP Circle 찾기")
-
-                                    your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
-                                    print(f"your_field_card_id: {your_field_card_id}")
-                                    your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
-                                    print(f"your_field_card_index: {your_field_card_index}")
-                                    # your_skill_damage = self.card_info_repository.getCardAttackForCardNumber(your_field_card_id)
-                                    # your_skill_damage = self.card_info_repository.getCardAttackForCardNumber(your_field_card_id)
-                                    # your_skill_damage = 20
-                                    your_skill_damage = self.card_info_repository.getCardSkillFirstDamageForCardNumber(
-                                        your_field_card_id)
-                                    print(f"your_skill_damage: {your_skill_damage}")
-
-                                    opponent_field_card_id = opponent_field_unit_object.get_card_number()
-                                    opponent_field_card_index = opponent_field_unit_object.get_index()
-
-                                    opponent_hp_number = opponent_fixed_card_attached_shape.get_number()
-                                    opponent_hp_number -= your_skill_damage
-
-                                    print(f"opponent_hp_number: {opponent_hp_number}")
-
-                                    # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
-                                    # (지금 당장 불사가 존재하지 않음)
-                                    if opponent_hp_number <= 0:
-                                        are_opponent_field_unit_death = True
-
-                                        break
-
-                                    print(f"공격 후 opponent unit 체력 -> hp_number: {opponent_hp_number}")
-                                    opponent_fixed_card_attached_shape.set_number(opponent_hp_number)
-
-                                    # opponent_fixed_card_attached_shape.set_image_data(
-                                    #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
-                                    #     self.pre_drawed_image_instance.get_pre_draw_number_image(opponent_hp_number))
-
-                                    opponent_fixed_card_attached_shape.set_image_data(
-                                        self.pre_drawed_image_instance.get_pre_draw_unit_hp(opponent_hp_number))
-
-                                    if your_extra_ability:
-                                        self.opponent_field_unit_repository.apply_harmful_status(opponent_field_card_index, your_extra_ability)
-
-                        print(f"opponent_field_card_index: {opponent_field_card_index}")
-
-                        if are_opponent_field_unit_death is True:
-                            self.opponent_field_unit_repository.remove_card_by_multiple_index(
-                                [opponent_field_card_index])
-                            self.opponent_tomb_repository.create_opponent_tomb_card(
-                                opponent_field_card_id)
-
-                            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-
-                        self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
-                        self.targeting_enemy_select_using_your_field_card_index = None
-                        self.targeting_enemy_select_using_your_field_card_id = None
                         self.targeting_enemy_select_support_lightning_border_list = []
                         self.opponent_you_selected_lightning_border_list = []
 
-                        self.selected_object = None
-                        self.active_panel_rectangle = None
-                        self.current_fixed_details_card = None
-                        self.your_active_panel.clear_all_your_active_panel()
+                        def calculate_shadow_ball():
 
-                        return
+
+                            # dead_field_unit_index_list = response['player_field_unit_death_map']['Opponent']['dead_field_unit_index_list']
+                            #
+                            # for opponent_field_unit_index, opponent_field_unit_remain_hp in response['player_field_unit_health_point_map']['Opponent'][
+                            #     'field_unit_health_point_map'].items():
+                            #
+                            #     if opponent_field_unit_remain_hp == 0:
+                            #         break
+                            #
+                            #     opponent_field_unit = (
+                            #         self.opponent_field_unit_repository.find_opponent_field_unit_by_index(int(opponent_field_unit_index)))
+                            #     opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                            #     opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+                            #     for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                            #         if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
+                            #             if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                            #                 opponent_fixed_card_attached_shape.set_number(opponent_field_unit_remain_hp)
+                            #
+                            #                 opponent_fixed_card_attached_shape.set_image_data(
+                            #                     self.pre_drawed_image_instance.get_pre_draw_unit_hp(opponent_field_unit_remain_hp))
+                            #
+                            # for dead_field_unit_index in dead_field_unit_index_list:
+                            #     card_id = self.opponent_field_unit_repository.get_opponent_card_id_by_index(dead_field_unit_index)
+                            #     self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                            #     self.opponent_field_unit_repository.remove_current_field_unit_card(dead_field_unit_index)
+                            #     self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                            opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+
+                            are_opponent_field_unit_death = False
+                            opponent_field_card_index = None
+                            opponent_field_card_id = None
+                            your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
+                            your_extra_ability = self.your_field_unit_repository.get_your_unit_extra_ability_at_index(your_field_card_index)
+
+                            for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                                if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
+                                    if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                        print("지정한 상대방 유닛 HP Circle 찾기")
+
+                                        your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
+                                        print(f"your_field_card_id: {your_field_card_id}")
+                                        your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
+                                        print(f"your_field_card_index: {your_field_card_index}")
+                                        # your_skill_damage = self.card_info_repository.getCardAttackForCardNumber(your_field_card_id)
+                                        # your_skill_damage = self.card_info_repository.getCardAttackForCardNumber(your_field_card_id)
+                                        # your_skill_damage = 20
+                                        your_skill_damage = self.card_info_repository.getCardSkillFirstDamageForCardNumber(
+                                            your_field_card_id)
+                                        print(f"your_skill_damage: {your_skill_damage}")
+
+                                        opponent_field_card_id = opponent_field_unit_object.get_card_number()
+                                        opponent_field_card_index = opponent_field_unit_object.get_index()
+
+                                        opponent_hp_number = opponent_fixed_card_attached_shape.get_number()
+                                        opponent_hp_number -= your_skill_damage
+
+                                        print(f"opponent_hp_number: {opponent_hp_number}")
+
+                                        # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
+                                        # (지금 당장 불사가 존재하지 않음)
+                                        if opponent_hp_number <= 0:
+                                            are_opponent_field_unit_death = True
+
+                                            break
+
+                                        print(f"공격 후 opponent unit 체력 -> hp_number: {opponent_hp_number}")
+                                        opponent_fixed_card_attached_shape.set_number(opponent_hp_number)
+
+                                        # opponent_fixed_card_attached_shape.set_image_data(
+                                        #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+                                        #     self.pre_drawed_image_instance.get_pre_draw_number_image(opponent_hp_number))
+
+                                        opponent_fixed_card_attached_shape.set_image_data(
+                                            self.pre_drawed_image_instance.get_pre_draw_unit_hp(opponent_hp_number))
+
+                                        if your_extra_ability:
+                                            self.opponent_field_unit_repository.apply_harmful_status(opponent_field_card_index, your_extra_ability)
+
+
+                            print(f"opponent_field_card_index: {opponent_field_card_index}")
+
+                            if are_opponent_field_unit_death is True:
+                                self.opponent_field_unit_repository.remove_card_by_multiple_index(
+                                    [opponent_field_card_index])
+                                self.opponent_tomb_repository.create_opponent_tomb_card(
+                                    opponent_field_card_id)
+
+                                self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                            self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+                            self.targeting_enemy_select_using_your_field_card_index = None
+                            self.targeting_enemy_select_using_your_field_card_id = None
+                            self.targeting_enemy_select_support_lightning_border_list = []
+                            self.opponent_you_selected_lightning_border_list = []
+
+                            self.selected_object = None
+                            self.active_panel_rectangle = None
+                            self.current_fixed_details_card = None
+                            self.your_active_panel.clear_all_your_active_panel()
+
+                            return
+
+                        self.play_effect_animation_by_index_and_call_function(
+                            your_field_card_index, calculate_shadow_ball)
 
             your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
             for your_field_unit in your_field_unit_list:
@@ -5251,6 +5716,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         update_position(1)
 
+
     def start_post_animation(self, attack_animation_object):
         sword_shape = attack_animation_object.get_your_weapon_shape()
 
@@ -5275,6 +5741,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         opponent_field_unit = self.attack_animation_object.get_opponent_field_unit()
 
         def slash_with_sword(step_count):
+            if step_count == 1:
+                self.__music_player_repository.play_sound_effect_with_event_name('basic_attack')
             if step_count < 11:
                 sword_accel_x_dist = sword_accel_x * step_count
 
@@ -5327,7 +5795,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
             else:
                 self.finish_post_animation(attack_animation_object)
 
+        self.play_effect_animation_by_index(attack_animation_object.get_animation_actor().get_index())
         slash_with_sword(1)
+
+
 
     def finish_post_animation(self, attack_animation_object):
         sword_shape = attack_animation_object.get_your_weapon_shape()
@@ -5733,6 +6204,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
+                self.field_area_inside_handler.clear_field_area_action()
+
                 pass
 
         move_to_origin_location(1)
@@ -6101,6 +6574,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         opponent_field_unit = self.attack_animation_object.get_opponent_field_unit()
 
         def slash_with_sword(step_count):
+            if step_count == 1:
+                self.__music_player_repository.play_sound_effect_with_event_name('basic_attack')
             if step_count < 11:
                 sword_accel_x_dist = sword_accel_x * step_count
 
@@ -6130,6 +6605,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             else:
                 self.finish_you_attack_main_character_post_animation(attack_animation_object)
 
+        self.play_effect_animation_by_index(attack_animation_object.get_animation_actor().get_index())
         slash_with_sword(1)
 
     def finish_you_attack_main_character_post_animation(self, attack_animation_object):
@@ -6687,6 +7163,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 self.master.after(20, move_to_origin_location, step_count + 1)
             else:
+                targeting_damage = 20
                 if is_attack_main_character is False:
                     print(f"{Fore.RED}필드 유닛 공격 -> is_attack_main_character(False): {Fore.GREEN}{is_attack_main_character}{Style.RESET_ALL}")
 
@@ -6694,7 +7171,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     tool_card = opponent_field_unit.get_tool_card()
                     attached_shape_list = fixed_card_base.get_attached_shapes()
 
-                    targeting_damage = 20
+
 
                     remove_from_field = False
                     for attached_shape in attached_shape_list:
@@ -6802,6 +7279,330 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         move_to_origin_location(1)
 
+    def valrn_ready_to_use_shadow_ball_to_opponent_main_character_animation(self):
+        self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+        self.targeting_enemy_select_using_your_field_card_index = None
+        self.targeting_enemy_select_support_lightning_border_list = []
+        self.opponent_you_selected_lightning_border_list = []
+
+        self.selected_object = None
+        self.active_panel_rectangle = None
+        self.current_fixed_details_card = None
+        self.your_active_panel.clear_all_your_active_panel()
+
+        steps = 10
+        attack_animation_object = AttackAnimation.getInstance()
+        animation_actor = attack_animation_object.get_animation_actor()
+
+        your_fixed_card_base = animation_actor.get_fixed_card_base()
+        current_your_attacker_unit_vertices = your_fixed_card_base.get_vertices()
+        current_your_attacker_unit_local_translation = your_fixed_card_base.get_local_translation()
+
+        new_y_value = current_your_attacker_unit_local_translation[1] - 270
+        new_x_value = attack_animation_object.get_total_width() / 2 - 52.5
+        # your_attacker_unit_destination_local_translation = (current_your_attacker_unit_local_translation[0], new_y_value)
+        your_attacker_unit_destination_local_translation = (new_x_value, new_y_value)
+
+        attack_animation_object.set_your_attacker_unit_moving_x(your_attacker_unit_destination_local_translation[0] - current_your_attacker_unit_local_translation[0])
+
+        step_x = (your_attacker_unit_destination_local_translation[0] - current_your_attacker_unit_local_translation[0]) / steps
+        step_y = (your_attacker_unit_destination_local_translation[1] - current_your_attacker_unit_local_translation[1]) / steps
+        step_y *= -1
+
+        # S = 0.5 * a * t^2
+        # S = 0.5 * 100 * a
+        # S = 50 * a
+        staff_accel_x = 1
+
+        # S = 0.5 * a * 100
+        # S = 50 * a = -150=
+        staff_accel_y = -3
+
+        def update_position(step_count):
+            print(f"{Fore.RED}step_count: {Fore.GREEN}{step_count}{Style.RESET_ALL}")
+
+            new_vertices = [
+                (vx + step_x * step_count, vy + step_y * step_count) for vx, vy in current_your_attacker_unit_vertices
+            ]
+            your_fixed_card_base.update_vertices(new_vertices)
+
+            # tool_card = self.selected_object.get_tool_card()
+            # if tool_card is not None:
+            #     new_tool_card_vertices = [
+            #         (vx + new_x, vy + new_y) for vx, vy in tool_card.vertices
+            #     ]
+            #     tool_card.update_vertices(new_tool_card_vertices)
+
+            for attached_shape in your_fixed_card_base.get_attached_shapes():
+                # theta = w0 * t + 0.5 * alpha * t^2
+                # theta = 0.5 * alpha * t^2 => step_count = 10
+                # theta = 0.5 * alpha * 100 = 10 / 50 = 0.2
+                omega_accel_alpha = -0.2
+
+                if isinstance(attached_shape, NonBackgroundNumberImage):
+                    if attached_shape.get_circle_kinds() is CircleKinds.ATTACK:
+                        accel_x_dist = staff_accel_x * step_count
+                        accel_y_dist = staff_accel_y * step_count
+                        # x: 236 / 1920, y: -367 / 1043
+                        new_attached_shape_vertices = [
+                            (vx + accel_x_dist, vy + accel_y_dist) for vx, vy in attached_shape.vertices
+                        ]
+                        attached_shape.update_vertices(new_attached_shape_vertices)
+                        attached_shape.update_rotation_angle(omega_accel_alpha * step_count * step_count)
+                        # print(f"{Fore.RED}sword new_attached_shape_vertices{Fore.GREEN} {new_attached_shape_vertices}{Style.RESET_ALL}")
+
+                        if step_count == 10:
+                            attack_animation_object.set_your_weapon_shape(attached_shape)
+
+                new_attached_shape_vertices = [
+                    (vx + step_x, vy + step_y) for vx, vy in attached_shape.vertices
+                ]
+                attached_shape.update_vertices(new_attached_shape_vertices)
+                print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+
+            if step_count < steps:
+                self.master.after(20, update_position, step_count + 1)
+            else:
+                self.valrn_shoot_shadow_ball_to_opponent_main_character_animation(attack_animation_object)
+                # self.is_attack_motion_finished = True
+                # attack_animation_object.set_is_finished(True)
+                # attack_animation_object.set_need_post_process(True)
+
+        update_position(1)
+
+    def valrn_shoot_shadow_ball_to_opponent_main_character_animation(self, attack_animation_object):
+        # effect_animation = EffectAnimation()
+        # effect_animation.set_animation_name('moving_shadow_ball')
+        # effect_animation.set_total_window_size(self.width, self.height)
+        #
+        # opponent_main_character_panel_vertices = self.opponent_main_character_panel.get_vertices()
+        #
+        # valrn_staff = attack_animation_object.get_your_weapon_shape()
+        # valrn_staff_vertices = valrn_staff.get_vertices()
+        # moving_shadow_ball_vertices = [
+        #     (vx, vy - 100) for vx, vy in valrn_staff_vertices
+        # ]
+        #
+        # print(f"{Fore.RED}valrn_shoot_shadow_ball_animation() -> moving_shadow_ball_vertices: {Fore.GREEN}{moving_shadow_ball_vertices}{Style.RESET_ALL}")
+        # effect_animation.draw_animation_panel_with_vertices(moving_shadow_ball_vertices)
+        # effect_animation_panel = effect_animation.get_animation_panel()
+        #
+        # def animate():
+        #     effect_animation.update_effect_animation_panel()
+        #     if not effect_animation.is_finished:
+        #         self.master.after(17, animate)
+        #     else:
+        #         effect_animation.set_animation_name('moving_shadow_ball')
+        #         effect_animation.reset_animation_count()
+        #         self.master.after(0, animate)
+        #         print("finish animation")
+        #
+        # effect_animation.reset_animation_count()
+        #
+        # self.master.after(0, animate)
+
+        steps = 10
+
+        effect_animation = EffectAnimation()
+        effect_animation.set_animation_name('moving_shadow_ball')
+        effect_animation.set_total_window_size(self.width, self.height)
+
+        opponent_main_character_panel_vertices = self.opponent_main_character_panel.get_vertices()
+        valrn_staff = attack_animation_object.get_your_weapon_shape()
+        valrn_staff_local_translation = valrn_staff.get_local_translation()
+        valrn_staff_vertices = valrn_staff.get_vertices()
+        moving_shadow_ball_vertices = [
+            (vx, vy - 100) for vx, vy in valrn_staff_vertices
+        ]
+        print(f"{Fore.RED}valrn_shoot_shadow_ball_animation() -> valrn_staff_local_translation: {Fore.GREEN}{valrn_staff_local_translation}{Style.RESET_ALL}")
+        print(f"{Fore.RED}valrn_shoot_shadow_ball_animation() -> valrn_staff_vertices: {Fore.GREEN}{valrn_staff_vertices}{Style.RESET_ALL}")
+        print(f"{Fore.RED}valrn_shoot_shadow_ball_animation() -> moving_shadow_ball_vertices: {Fore.GREEN}{moving_shadow_ball_vertices}{Style.RESET_ALL}")
+
+        effect_animation.draw_animation_panel_with_vertices(opponent_main_character_panel_vertices)
+        effect_animation_panel = effect_animation.get_animation_panel()
+
+        your_field_actor_card = attack_animation_object.get_animation_actor()
+        your_field_card_index = your_field_actor_card.get_index()
+
+        self.effect_animation_repository.save_effect_animation_at_dictionary_with_index(
+            your_field_card_index, effect_animation)
+
+        self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+            your_field_card_index, effect_animation_panel)
+
+        self.targeting_enemy_select_support_lightning_border_list = []
+        self.opponent_you_selected_lightning_border_list = []
+
+        effect_animation_panel_local_translation = effect_animation_panel.get_local_translation()
+        print(f"{Fore.RED}valrn_shoot_shadow_ball_animation() -> effect_animation_panel_local_translation: {Fore.GREEN}{effect_animation_panel_local_translation}{Style.RESET_ALL}")
+
+        # 지팡이 자리 대략적인 좌표 (x: 1069, y: -647)
+        effect_animation_panel.local_translate((170, 490))
+        effect_animation_panel_local_translation = effect_animation_panel.get_local_translation()
+        print(f"{Fore.RED}valrn_shoot_shadow_ball_animation() -> after change effect_animation_panel_local_translation: {Fore.GREEN}{effect_animation_panel_local_translation}{Style.RESET_ALL}")
+
+        # moving_shadow_ball_vertices: [(730.4999999999999, 58.587999999999994), (810.4999999999999, 58.587999999999994),
+        #                               (810.4999999999999, 213.41200000000003), (730.4999999999999, 213.41200000000003)]
+        # effect_animation_panel_vertices: [(844.9055999999999, 44.9072), (1007.1600000000001, 44.9072), (1007.1600000000001, 216.5096), (844.9055999999999, 216.5096)]
+        effect_animation_panel_vertices = effect_animation_panel.get_vertices()
+        print(f"{Fore.RED}valrn_shoot_shadow_ball_animation() -> effect_animation_panel_vertices: {Fore.GREEN}{effect_animation_panel_vertices}{Style.RESET_ALL}")
+
+        # 50 * a = 170
+        x_accel = -3.4
+        # 50 * a = -490
+        y_accel = -9.8
+
+        need_to_move_with_acceleration = (x_accel, y_accel)
+        step_count = [0]
+
+        def burst_shadow_ball_animation():
+            step_count[0] += 1
+            print(f"{Fore.RED}burst_shadow_ball_animation() -> step_count: {step_count}{Style.RESET_ALL}")
+
+            effect_animation.set_animation_name('burst_shadow_ball')
+            effect_animation.set_total_window_size(self.width, self.height)
+            vertices = self.opponent_main_character_panel.get_vertices()
+            effect_animation.draw_animation_panel_with_vertices(vertices)
+            effect_animation_panel = effect_animation.get_animation_panel()
+
+            self.effect_animation_repository.save_effect_animation_at_dictionary_with_index(
+                your_field_card_index, effect_animation)
+
+            self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                your_field_card_index, effect_animation_panel)
+
+            self.play_effect_animation_by_index_and_call_function(your_field_card_index,
+                                                                  self.calculate_shadow_ball_to_main_character)
+
+        # self.play_effect_animation_by_index_and_call_function(your_field_card_index,
+        #                                                       burst_shadow_ball_animation)
+        self.play_effect_animation_with_acceleration_by_index_and_call_function(
+            your_field_card_index,
+            burst_shadow_ball_animation,
+            (170, 490))
+
+    def calculate_shadow_ball_to_main_character(self):
+        self.shadow_ball_explosion_opponent_main_character_post_animation(self.attack_animation_object)
+
+    def shadow_ball_explosion_opponent_main_character_post_animation(self, attack_animation_object):
+        steps = 30
+
+        def vibration(step_count):
+            if step_count % 2 == 1:
+                vibration_factor = 10
+                random_translation = (random.uniform(-vibration_factor, vibration_factor),
+                                      random.uniform(-vibration_factor, vibration_factor))
+
+                for battle_field_background_shape in self.battle_field_background_shape_list:
+                    battle_field_background_shape.global_translate((random_translation[0], random_translation[1]))
+
+            else:
+                for battle_field_background_shape in self.battle_field_background_shape_list:
+                    battle_field_background_shape.global_translate((0, 0))
+
+            if step_count < steps:
+                self.master.after(20, vibration, step_count + 1)
+            else:
+                self.finish_shadow_ball_explosion_opponent_main_character_animation(attack_animation_object)
+                pass
+
+        vibration(1)
+        
+    def finish_shadow_ball_explosion_opponent_main_character_animation(self, attack_animation_object):
+        animation_actor = attack_animation_object.get_animation_actor()
+        your_fixed_card_base = animation_actor.get_fixed_card_base()
+        tool_card = animation_actor.get_tool_card()
+        attached_shape_list = your_fixed_card_base.get_attached_shapes()
+
+        current_your_attacker_unit_vertices = your_fixed_card_base.get_vertices()
+        current_your_attacker_unit_local_translation = your_fixed_card_base.get_local_translation()
+
+        your_attacker_unit_moving_x = attack_animation_object.get_your_attacker_unit_moving_x()
+
+        new_y_value = current_your_attacker_unit_local_translation[1] + 270
+        your_attacker_unit_destination_local_translation = (0, new_y_value)
+        print(f"{Fore.RED}your_attacker_unit_destination_local_translation{Fore.GREEN} {your_attacker_unit_destination_local_translation}{Style.RESET_ALL}")
+
+        steps = 15
+        step_x = your_attacker_unit_moving_x / steps
+        step_y = (your_attacker_unit_destination_local_translation[1] - current_your_attacker_unit_local_translation[1]) / steps
+
+        staff_shape = attack_animation_object.get_your_weapon_shape()
+
+        # S = 0.5 * a * t^2
+        # S = 0.5 * 225 * a
+        # S = 112.5 * a = -50
+        # a =
+        staff_accel_x = -0.44444
+
+        # S = 0.5 * a * 225
+        # S = 112.5 * a = 150
+        staff_accel_y = 1.33333
+
+        def move_to_origin_location(step_count):
+            new_y = current_your_attacker_unit_local_translation[1] + step_y * step_count
+
+            new_vertices = [
+                (vx - step_x * step_count, vy - step_y * step_count) for vx, vy in current_your_attacker_unit_vertices
+            ]
+            your_fixed_card_base.update_vertices(new_vertices)
+
+            # tool_card = self.selected_object.get_tool_card()
+            # if tool_card is not None:
+            #     new_tool_card_vertices = [
+            #         (vx + new_x, vy + new_y) for vx, vy in tool_card.vertices
+            #     ]
+            #     tool_card.update_vertices(new_tool_card_vertices)
+
+            for attached_shape in your_fixed_card_base.get_attached_shapes():
+                # theta = w0 * t + 0.5 * alpha * t^2
+                # theta = 0.5 * alpha * t^2 => step_count = 15
+                # theta = 0.5 * alpha * 225 = 10 / 112.5 = 0.2
+                omega_accel_alpha = 0.08888
+
+                if isinstance(attached_shape, NonBackgroundNumberImage):
+                    if attached_shape.get_circle_kinds() is CircleKinds.ATTACK:
+                        accel_x_dist = staff_accel_x * step_count
+                        accel_y_dist = staff_accel_y * step_count
+
+                        new_attached_shape_vertices = [
+                            (vx + accel_x_dist, vy + accel_y_dist) for vx, vy in attached_shape.vertices
+                        ]
+                        attached_shape.update_vertices(new_attached_shape_vertices)
+                        current_rotation_angle = attached_shape.get_rotation_angle()
+                        attached_shape.update_rotation_angle(current_rotation_angle + omega_accel_alpha * step_count)
+
+            for attached_shape in your_fixed_card_base.get_attached_shapes():
+                new_attached_shape_vertices = [
+                    (vx - step_x, vy - step_y) for vx, vy in attached_shape.vertices
+                ]
+                attached_shape.update_vertices(new_attached_shape_vertices)
+
+            if step_count < steps:
+
+                self.master.after(20, move_to_origin_location, step_count + 1)
+            else:
+                your_fixed_card_base.update_vertices(your_fixed_card_base.get_initial_vertices())
+                if tool_card is not None:
+                    tool_card.update_vertices(tool_card.get_initial_vertices())
+                for attached_shape in attached_shape_list:
+                    if isinstance(attached_shape, NonBackgroundNumberImage):
+                        if attached_shape.get_circle_kinds() is CircleKinds.ATTACK:
+                            attached_shape.update_rotation_angle(0)
+
+                    attached_shape.update_vertices(attached_shape.get_initial_vertices())
+
+                your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
+                your_damage = self.card_info_repository.getCardSkillFirstDamageForCardNumber(your_field_card_id)
+                print(f"your_damage: {your_damage}")
+                self.opponent_hp_repository.take_damage(your_damage)
+
+                self.targeting_enemy_select_using_your_field_card_id = None
+
+                self.field_area_inside_handler.clear_field_area_action()
+
+        move_to_origin_location(1)
+
     def apply_response_data_of_field_unit_hp(self, player_field_unit_health_point_data):
         print('apply notify data of field unit hp!! : ', player_field_unit_health_point_data)
 
@@ -6878,3 +7679,97 @@ class FakeBattleFieldFrame(OpenGLFrame):
         except Exception as e:
             print('An error occurred while applying harmful status data:', e)
 
+
+    def play_effect_animation(self):
+        if self.is_effect_animation_playing:
+            return
+
+        def animate():
+            self.is_effect_animation_playing = True
+            finish_list = []
+            is_all_finished = False
+            for effect_animation in self.effect_animation_repository.get_effect_animation_list():
+                effect_animation.update_effect_animation_panel()
+                finish_list.append(effect_animation.is_finished)
+
+            for finish in finish_list:
+                if finish == False:
+                    is_all_finished = False
+                    break
+                else:
+                    is_all_finished = True
+
+            if not is_all_finished:
+                self.master.after(17, animate)
+            else:
+                self.effect_animation_repository.reset_all_effect_animation()
+                self.is_effect_animation_playing = False
+                print("finish animation")
+
+        for effect_animation in self.effect_animation_repository.get_effect_animation_list():
+            print(f"animation count: {effect_animation}")
+            effect_animation.reset_animation_count()
+
+        self.master.after(0, animate)
+
+    def play_effect_animation_by_index(self, index):
+
+        def animate():
+            effect_animation = self.effect_animation_repository.get_effect_animation_by_index(index)
+            effect_animation.update_effect_animation_panel()
+            print('is finished?? ',effect_animation.is_finished)
+            if not effect_animation.is_finished:
+                self.master.after(17, animate)
+            else:
+                self.effect_animation_repository.remove_effect_animation_by_index(index)
+                print("finish animation")
+
+
+
+        print(f"animation playing at index : {index}")
+        effect_animation = self.effect_animation_repository.get_effect_animation_by_index(index)
+        print(f"effect_animation : {effect_animation}")
+        effect_animation.reset_animation_count()
+
+        self.master.after(0, animate)
+
+    def play_effect_animation_with_acceleration_by_index_and_call_function(self, index, function, need_to_move_acceleration_distance):
+        step_count = [0]
+
+        def animate():
+            effect_animation = self.effect_animation_repository.get_effect_animation_by_index(index)
+            effect_animation.update_effect_animation_panel_with_acceleration(need_to_move_acceleration_distance, step_count[0])
+
+            if not effect_animation.is_finished:
+                step_count[0] += 1
+                self.master.after(17, animate)
+            else:
+                self.effect_animation_repository.remove_effect_animation_by_index(index)
+                function()
+                print("finish animation")
+
+        print(f"animation playing at index : {index}")
+        effect_animation = self.effect_animation_repository.get_effect_animation_by_index(index)
+        print(f"effect_animation : {effect_animation}")
+        effect_animation.reset_animation_count()
+
+        self.master.after(0, animate)
+
+    def play_effect_animation_by_index_and_call_function(self, index, function):
+
+        def animate():
+            effect_animation = self.effect_animation_repository.get_effect_animation_by_index(index)
+            effect_animation.update_effect_animation_panel()
+            if not effect_animation.is_finished:
+                self.master.after(17, animate)
+            else:
+                self.effect_animation_repository.remove_effect_animation_by_index(index)
+                function()
+                print("finish animation")
+
+        print(f"animation playing at index : {index}")
+        effect_animation = self.effect_animation_repository.get_effect_animation_by_index(index)
+        print(f"effect_animation : {effect_animation}")
+        effect_animation.reset_animation_count()
+
+        self.master.after(0, animate)

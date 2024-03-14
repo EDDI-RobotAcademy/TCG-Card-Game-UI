@@ -90,7 +90,7 @@ class PreDrawedImage:
     __pre_drawed_unit_hp = {}
     __pre_drawed_unit_attack = {}
     __pre_drawed_unit_race = {}
-    __pre_drawed_unit_attack_wizard = None
+    __pre_drawed_wizard_card_attack_power = {}
 
     __pre_drawed_paper = None
     __pre_drawed_scissor = None
@@ -101,6 +101,7 @@ class PreDrawedImage:
     __pre_drawed_number_of_details_energy = {}
 
     __pre_drawed_waiting_message = None
+    __pre_drawed_message_on_the_battle_screen = {}
 
     def __new__(cls):
         if cls.__instance is None:
@@ -428,6 +429,7 @@ class PreDrawedImage:
 
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'burst_shadow_ball',f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
             burst_shadow_ball_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['burst_shadow_ball'] = burst_shadow_ball_animation
@@ -439,6 +441,7 @@ class PreDrawedImage:
 
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'moving_shadow_ball',f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
             moving_shadow_ball_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['moving_shadow_ball'] = moving_shadow_ball_animation
@@ -449,6 +452,7 @@ class PreDrawedImage:
 
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'dark_blast', f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
             dark_blast_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['dark_blast'] = dark_blast_animation
@@ -459,8 +463,8 @@ class PreDrawedImage:
         file_list = os.listdir(image_dir)
 
         for number in range(0, len(file_list)):
-            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'magic_attack',
-                                                f"{number}.png")
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'magic_attack', f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
             magic_attack_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['magic_attack'] = magic_attack_animation
@@ -470,8 +474,8 @@ class PreDrawedImage:
         file_list = os.listdir(image_dir)
 
         for number in range(0, len(file_list)):
-            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'sword_attack',
-                                                f"{number}.png")
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'sword_attack', f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
             sword_attack_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['sword_attack'] = sword_attack_animation
@@ -482,8 +486,8 @@ class PreDrawedImage:
         file_list = os.listdir(image_dir)
 
         for number in range(0, len(file_list)):
-            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'death_scythe',
-                                                f"{number}.png")
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'death_scythe', f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
             death_scythe_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['death_scythe'] = death_scythe_animation
@@ -689,9 +693,32 @@ class PreDrawedImage:
             card_type_mark_image_path = os.path.join(self.__project_root, "local_storage", "card_type_mark", f"{png_file}")
             self.__pre_drawed_card_type_mark[card_type_mark] = ImageDataLoader.load_rectangle_image_data(card_type_mark_image_path)
 
-    def pre_draw_unit_attack_wizard(self):
-        unit_attack_wizard_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_attack_wizard", "10.png")
-        self.__pre_drawed_unit_attack_wizard = ImageDataLoader.load_rectangle_image_data(unit_attack_wizard_image_path)
+    def pre_draw_wizard_card_attack_power(self):
+        wizard_card_attack_image_path = os.path.join(self.__project_root, "local_storage", "wizard_card_attack_power")
+        wizard_card_attack_image_file_list = os.listdir(wizard_card_attack_image_path)
+        png_files = [file for file in wizard_card_attack_image_file_list if file.lower().endswith('.png')]
+
+        wizard_card_attack_image_data_list = {}
+
+        for png_file in png_files:
+            attack_number = int(png_file[:-4])
+            print(f"number images: {attack_number}")
+            wizard_card_attack_image_data = os.path.join(self.__project_root, "local_storage", "wizard_card_attack_power",
+                                                  f"{png_file}")
+            wizard_card_attack_image_data_list[attack_number] = ImageDataLoader.load_rectangle_origin_image_data(
+                wizard_card_attack_image_data)
+
+        for card_number in self.__card_info_from_csv_repository.getCardNumber():
+            attack_number = self.__card_info_from_csv_repository.getCardAttackForCardNumber(card_number)
+            print(f"attack_number: {attack_number}, card_number: {card_number}")
+            self.__pre_drawed_wizard_card_attack_power[card_number] = wizard_card_attack_image_data_list[attack_number]
+
+    def pre_draw_message_on_the_battle_screen(self):
+
+        for number in range(1, 5):
+            text_image_data = os.path.join(self.__project_root, "local_storage", "message_on_the_battle_screen",
+                                           f"{number}.png")
+            self.__pre_drawed_message_on_the_battle_screen[number] = ImageDataLoader.load_rectangle_image_data(text_image_data)
 
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
@@ -774,7 +801,8 @@ class PreDrawedImage:
         self.pre_draw_waiting_message()
         self.pre_draw_card_type_mark()
 
-        self.pre_draw_unit_attack_wizard()
+        self.pre_draw_wizard_card_attack_power()
+        self.pre_draw_message_on_the_battle_screen()
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
@@ -970,10 +998,12 @@ class PreDrawedImage:
     def get_pre_draw_card_type_mark(self, type_number):
         return self.__pre_drawed_card_type_mark[type_number]
 
-
-    def get_pre_draw_effect_animation(self, effect_name, index):
+    def get_pre_draw_effect_animation(self, effect_name, index=0):
         return self.__pre_drawed_effect_animation[effect_name][index]
 
-    def get_pre_draw_unit_card_attack_wizard(self):
-        return self.__pre_drawed_unit_attack_wizard
+    def get_pre_draw_wizard_card_attack_power(self, card_number):
+        return self.__pre_drawed_wizard_card_attack_power[card_number]
+
+    def get_pre_draw_message_on_the_battle_screen(self, number):
+        return self.__pre_drawed_message_on_the_battle_screen[number]
 

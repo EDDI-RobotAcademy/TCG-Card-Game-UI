@@ -1,6 +1,8 @@
 from colorama import Fore, Style
 
 from battle_field.components.opponent_fixed_unit_card_inside.ActionToApplyOpponent import ActionToApplyOpponent
+from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area_action import OpponentFieldAreaAction
+from battle_field.entity.effect_animation import EffectAnimation
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
 from battle_field.infra.request.request_use_death_sice_to_unit import RequestUseDeathSiceToUnit
@@ -8,6 +10,7 @@ from battle_field.infra.request.request_use_energy_burn_to_unit import RequestUs
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
+from common.attack_type import AttackType
 from common.card_grade import CardGrade
 from common.card_race import CardRace
 from common.card_type import CardType
@@ -24,7 +27,7 @@ class OpponentFixedUnitCardInsideHandler:
 
     __required_energy = -1
     __required_energy_race = CardRace.DUMMY
-    __opponent_field_area_action = None
+    __opponent_field_area_action = OpponentFieldAreaAction.Dummy
     __opponent_unit_index = -1
     __opponent_unit_id = -1
     __action_set_card_index = -1
@@ -44,6 +47,8 @@ class OpponentFixedUnitCardInsideHandler:
     __lightning_border_list = []
 
     __opponent_fixed_unit_card_inside_handler_table = {}
+
+    __target_index_to_action = None
 
     def __new__(cls):
 
@@ -71,6 +76,15 @@ class OpponentFixedUnitCardInsideHandler:
 
     def set_action_to_apply_opponent(self, action_to_apply_opponent):
         self.__action_to_apply_opponent = action_to_apply_opponent
+
+    def get_target_index_to_action(self):
+        return self.__target_index_to_action
+
+    def set_target_index_to_action(self, target_index):
+        self.__target_index_to_action = target_index
+
+    def clear_target_index_to_action(self):
+        self.__target_index_to_action = None
 
     def get_action_to_apply_opponent(self):
         return self.__action_to_apply_opponent
@@ -147,6 +161,7 @@ class OpponentFixedUnitCardInsideHandler:
                 continue
 
             if opponent_field_unit.get_fixed_card_base().is_point_inside((x, y)):
+
                 self.handle_inside_field_unit(selected_object, opponent_unit_index)
                 self.__opponent_unit_id = opponent_field_unit.get_card_number()
                 print("handle_pickable_card_inside_unit -> True")
@@ -191,83 +206,93 @@ class OpponentFixedUnitCardInsideHandler:
 
                 print("energy_burn")
 
-                opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
-                    unit_index)
-                print(f"opponent_field_unit: {opponent_field_unit}")
+                self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)
+                self.__your_tomb_repository.create_tomb_card(placed_card_id)
+                # self.__your_hand_repository.replace_hand_card_position()
+                self.__your_hand_repository.update_your_hand()
 
-                detach_count = 2
-                total_attached_energy_count = self.__opponent_field_unit_repository.get_total_energy_at_index(
-                    unit_index)
-                print(f"opponent_field_unit_attached_undead_energy_count: {total_attached_energy_count}")
+                self.__target_index_to_action = unit_index
+                self.__opponent_field_area_action = OpponentFieldAreaAction.ENERGY_BURN
 
-                # attached_energy = self.__opponent_field_unit_repository.attached_energy_info.get(unit_index, [])
 
-                if total_attached_energy_count == 0:
-                    print("데미지를 입힙니다.")
-                    remove_from_field = False
-                    opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
-                    opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
-                    for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
-                        if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
-                            if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
-                                hp = opponent_fixed_card_attached_shape.get_number()
-                                hp -= 10
-                                print(f"hp : {hp}")
 
-                                if hp <= 0:
-                                    remove_from_field = True
-                                    break
-
-                                opponent_fixed_card_attached_shape.set_image_data(
-                                    self.__pre_drawed_image_instance.get_pre_draw_unit_hp(hp))
-
-                    if remove_from_field:
-                        self.__opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
-                        self.__opponent_tomb_repository.create_opponent_tomb_card(placed_card_id)
-
-                        self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-
-                else:
-                    print("에너지를 태웁니다.")
-                    if total_attached_energy_count == 1:
-                        detach_count = 1
-
-                    attached_energy_after_energy_burn = total_attached_energy_count - detach_count
-                    if attached_energy_after_energy_burn < 0:
-                        attached_energy_after_energy_burn = 0
-
-                    opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
-                    opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
-
-                    energy_circle_list = []
-                    energy_circle_index_list = []
-                    count = 0
-
-                    for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
-                        if isinstance(opponent_fixed_card_attached_shape, CircleNumberImage):
-                            if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
-                                opponent_fixed_card_attached_shape.set_image_data(
-                                    self.__pre_drawed_image_instance.get_pre_draw_number_image(
-                                        attached_energy_after_energy_burn))
-
-                        if isinstance(opponent_fixed_card_attached_shape, Circle):
-                            energy_circle_index_list.append(count)
-                            print(
-                                f"Energy burn opponent unit vertices: {opponent_fixed_card_attached_shape.get_vertices()}")
-                            energy_circle_list.append(opponent_fixed_card_attached_shape)
-
-                            del opponent_fixed_card_attached_shape
-
-                        count += 1
-
-                    energy_circle_index_list.reverse()
-                    for index in energy_circle_index_list:
-                        if 0 <= index < len(opponent_fixed_card_attached_shape_list):
-                            if detach_count == 0:
-                                break
-
-                            del opponent_fixed_card_attached_shape_list[index]
-                            detach_count -= 1
+                # opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                #     unit_index)
+                # print(f"opponent_field_unit: {opponent_field_unit}")
+                #
+                # detach_count = 2
+                # total_attached_energy_count = self.__opponent_field_unit_repository.get_total_energy_at_index(
+                #     unit_index)
+                # print(f"opponent_field_unit_attached_undead_energy_count: {total_attached_energy_count}")
+                #
+                # # attached_energy = self.__opponent_field_unit_repository.attached_energy_info.get(unit_index, [])
+                #
+                # if total_attached_energy_count == 0:
+                #     print("데미지를 입힙니다.")
+                #     remove_from_field = False
+                #     opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                #     opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+                #     for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                #         if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
+                #             if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                #                 hp = opponent_fixed_card_attached_shape.get_number()
+                #                 hp -= 10
+                #                 print(f"hp : {hp}")
+                #
+                #                 if hp <= 0:
+                #                     remove_from_field = True
+                #                     break
+                #
+                #                 opponent_fixed_card_attached_shape.set_image_data(
+                #                     self.__pre_drawed_image_instance.get_pre_draw_unit_hp(hp))
+                #
+                #     if remove_from_field:
+                #         self.__opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
+                #         self.__opponent_tomb_repository.create_opponent_tomb_card(placed_card_id)
+                #
+                #         self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                #
+                # else:
+                #     print("에너지를 태웁니다.")
+                #     if total_attached_energy_count == 1:
+                #         detach_count = 1
+                #
+                #     attached_energy_after_energy_burn = total_attached_energy_count - detach_count
+                #     if attached_energy_after_energy_burn < 0:
+                #         attached_energy_after_energy_burn = 0
+                #
+                #     opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                #     opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+                #
+                #     energy_circle_list = []
+                #     energy_circle_index_list = []
+                #     count = 0
+                #
+                #     for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                #         if isinstance(opponent_fixed_card_attached_shape, CircleNumberImage):
+                #             if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+                #                 opponent_fixed_card_attached_shape.set_image_data(
+                #                     self.__pre_drawed_image_instance.get_pre_draw_number_image(
+                #                         attached_energy_after_energy_burn))
+                #
+                #         if isinstance(opponent_fixed_card_attached_shape, Circle):
+                #             energy_circle_index_list.append(count)
+                #             print(
+                #                 f"Energy burn opponent unit vertices: {opponent_fixed_card_attached_shape.get_vertices()}")
+                #             energy_circle_list.append(opponent_fixed_card_attached_shape)
+                #
+                #             del opponent_fixed_card_attached_shape
+                #
+                #         count += 1
+                #
+                #     energy_circle_index_list.reverse()
+                #     for index in energy_circle_index_list:
+                #         if 0 <= index < len(opponent_fixed_card_attached_shape_list):
+                #             if detach_count == 0:
+                #                 break
+                #
+                #             del opponent_fixed_card_attached_shape_list[index]
+                #             detach_count -= 1
 
                     # energy_circle_list.reverse()
                     # extract_energy_circle = energy_circle_list[:2]
@@ -280,10 +305,7 @@ class OpponentFixedUnitCardInsideHandler:
                 # self.__your_tomb_repository.create_tomb_card(placed_card_id)
                 # self.__your_hand_repository.replace_hand_card_position()
 
-                self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)
-                self.__your_tomb_repository.create_tomb_card(placed_card_id)
-                # self.__your_hand_repository.replace_hand_card_position()
-                self.__your_hand_repository.update_your_hand()
+
 
             else:
                 print(f"use energy burn false!! ")
@@ -372,54 +394,58 @@ class OpponentFixedUnitCardInsideHandler:
         # self.__your_hand_repository.remove_card_by_index(placed_card_index)
         self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)
         self.__your_tomb_repository.create_tomb_card(placed_card_id)
+        self.__your_hand_repository.update_your_hand()
 
-        opponent_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(unit_index)
-        opponent_unit_card_id = opponent_unit.get_card_number()
+        self.__opponent_field_area_action = OpponentFieldAreaAction.DEATH_SCYTHE
+        self.__target_index_to_action = unit_index
 
-        is_opponent_unit_death = True
-        opponent_unit_hp = 0
-
-        opponent_fixed_card_base = None
-        opponent_attached_shape_list = None
-
-        if self.__card_info_repository.getCardGradeForCardNumber(opponent_unit_card_id) > CardGrade.LEGEND.value:
-            # opponent_unit_hp = self.__card_info_repository.getCardHpForCardNumber(opponent_unit_card_id)
-            opponent_fixed_card_base = opponent_unit.get_fixed_card_base()
-            opponent_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
-
-            for opponent_attached_shape in opponent_attached_shape_list:
-                if isinstance(opponent_attached_shape, NonBackgroundNumberImage):
-                    if opponent_attached_shape.get_circle_kinds() is CircleKinds.HP:
-                        opponent_unit_hp = opponent_attached_shape.get_number()
-                        opponent_unit_hp -= DEATH_SICE_FIXED_DAMAGE
-                        opponent_attached_shape.set_number(opponent_unit_hp)
-
-                        if opponent_unit_hp <= 0:
-                            break
-
-                        # opponent_attached_shape.set_image_data(
-                        #     self.__pre_drawed_image_instance.get_pre_draw_number_image(
-                        #         opponent_unit_hp))
-
-                        opponent_attached_shape.set_image_data(
-                            self.__pre_drawed_image_instance.get_pre_draw_unit_hp(
-                                opponent_unit_hp))
-
-            print(f"opponent_unit_hp: {opponent_unit_hp}")
-            if opponent_unit_hp > 0:
-                is_opponent_unit_death = False
-        else:
-            pass
-            # self.__opponent_tomb_repository.create_opponent_tomb_card(opponent_unit_card_id)
-
-        # self.__your_hand_repository.replace_hand_card_position()
-
-        if is_opponent_unit_death:
-            print(f"is it death ? {opponent_unit_hp}")
-            self.__opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
-            self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-
-            self.__opponent_tomb_repository.create_opponent_tomb_card(opponent_unit_card_id)
+        # opponent_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(unit_index)
+        # opponent_unit_card_id = opponent_unit.get_card_number()
+        #
+        # is_opponent_unit_death = True
+        # opponent_unit_hp = 0
+        #
+        # opponent_fixed_card_base = None
+        # opponent_attached_shape_list = None
+        #
+        # if self.__card_info_repository.getCardGradeForCardNumber(opponent_unit_card_id) > CardGrade.LEGEND.value:
+        #     # opponent_unit_hp = self.__card_info_repository.getCardHpForCardNumber(opponent_unit_card_id)
+        #     opponent_fixed_card_base = opponent_unit.get_fixed_card_base()
+        #     opponent_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+        #
+        #     for opponent_attached_shape in opponent_attached_shape_list:
+        #         if isinstance(opponent_attached_shape, NonBackgroundNumberImage):
+        #             if opponent_attached_shape.get_circle_kinds() is CircleKinds.HP:
+        #                 opponent_unit_hp = opponent_attached_shape.get_number()
+        #                 opponent_unit_hp -= DEATH_SICE_FIXED_DAMAGE
+        #                 opponent_attached_shape.set_number(opponent_unit_hp)
+        #
+        #                 if opponent_unit_hp <= 0:
+        #                     break
+        #
+        #                 # opponent_attached_shape.set_image_data(
+        #                 #     self.__pre_drawed_image_instance.get_pre_draw_number_image(
+        #                 #         opponent_unit_hp))
+        #
+        #                 opponent_attached_shape.set_image_data(
+        #                     self.__pre_drawed_image_instance.get_pre_draw_unit_hp(
+        #                         opponent_unit_hp))
+        #
+        #     print(f"opponent_unit_hp: {opponent_unit_hp}")
+        #     if opponent_unit_hp > 0:
+        #         is_opponent_unit_death = False
+        # else:
+        #     pass
+        #     # self.__opponent_tomb_repository.create_opponent_tomb_card(opponent_unit_card_id)
+        #
+        # # self.__your_hand_repository.replace_hand_card_position()
+        #
+        # if is_opponent_unit_death:
+        #     print(f"is it death ? {opponent_unit_hp}")
+        #     self.__opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
+        #     self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+        #
+        #     self.__opponent_tomb_repository.create_opponent_tomb_card(opponent_unit_card_id)
 
         # else:
         #     opponent_fixed_card_base = opponent_unit.get_fixed_card_base()
@@ -432,7 +458,7 @@ class OpponentFixedUnitCardInsideHandler:
         #                     self.__pre_drawed_image_instance.get_pre_draw_number_image(
         #                         opponent_unit_hp))
 
-        self.__your_hand_repository.update_your_hand()
+
 
     # def death_sice_need_two_undead_energy(self, placed_card_index, unit_index, placed_card_id):
     #     print("death_sice operates")

@@ -156,7 +156,7 @@ class FieldAreaInsideHandler:
         self.__your_hand_repository.update_your_hand()
         self.__your_field_unit_repository.replace_field_card_position()
 
-        print(f"{Fore.RED}deploy_your_unit_request -> number_of_passive_skill_to_handle:{Fore.GREEN} {deploy_your_unit_request['number_of_passive_skill_to_handle']}{Style.RESET_ALL}")
+#        print(f"{Fore.RED}deploy_your_unit_request -> number_of_passive_skill_to_handle:{Fore.GREEN} {deploy_your_unit_request['number_of_passive_skill_to_handle']}{Style.RESET_ALL}")
 
         self.__your_field_unit_action_repository.create_field_unit_action_count(0)
 
