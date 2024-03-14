@@ -84,6 +84,8 @@ from battle_field.infra.request.request_use_morale_conversion import RequestUseM
 from battle_field.infra.request.request_use_overflow_of_energy import RequestUseOverflowOfEnergy
 from battle_field.infra.request.target_passive_skill_to_main_character_from_deploy_request import \
     TargetingPassiveSkillToMainCharacterFromDeployRequest
+from battle_field.infra.request.targeting_passive_skill_to_your_field_unit_from_deploy_request import \
+    TargetingPassiveSkillToYourFieldUnitFromDeployRequest
 
 from battle_field.infra.request.wide_area_passive_skill_from_deploy_request import WideAreaPassiveSkillFromDeployRequest
 from battle_field.infra.request.request_use_special_energy_card_to_unit import RequestUseSpecialEnergyCardToUnit
@@ -844,6 +846,48 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if is_success is False:
                 return FieldAreaAction.Dummy
 
+        if key.lower() == 'n':
+            print("상대방이 네더 출격 이후 Your 유닛에 타겟팅 사용 요청")
+
+            recently_added_card_index = self.opponent_field_unit_repository.get_field_unit_max_index()
+            opponent_animation_actor = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                recently_added_card_index)
+            self.attack_animation_object.set_opponent_animation_actor(opponent_animation_actor)
+
+            damage = self.card_info_repository.getCardPassiveSecondDamageForCardNumber(
+                opponent_animation_actor.get_card_number())
+            self.attack_animation_object.set_opponent_animation_actor_damage(damage)
+
+            self.opponent_field_area_inside_handler.set_unit_action(
+                OpponentUnitAction.NETHER_BLADE_SECOND_TARGETING_PASSIVE_SKILL)
+
+            extra_ability = self.opponent_field_unit_repository.get_opponent_unit_extra_ability_at_index(
+                recently_added_card_index)
+            self.attack_animation_object.set_extra_ability(extra_ability)
+
+            self.opponent_field_area_inside_handler.set_active_field_area_action(
+                OpponentFieldAreaActionProcess.PLAY_ANIMATION)
+
+            your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
+            # first_non_none_value = next((item for item in your_field_unit_list if item is not None), None)
+            first_non_none_index = next((index for index, item in enumerate(your_field_unit_list) if item is not None), None)
+
+            print(f"{Fore.RED}first_non_none_value:{Fore.GREEN} {first_non_none_index}{Style.RESET_ALL}")
+
+            # {"protocolNumber":2000, "unitCardIndex": "0", "opponentTargetCardIndex": "0", "usageSkillIndex": "2", "sessionInfo":""}
+            process_second_passive_skill_response = self.__fake_battle_field_frame_repository.request_to_process_second_passive_skill_to_your_field_unit(
+                TargetingPassiveSkillToYourFieldUnitFromDeployRequest(
+                    _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                    _unitCardIndex=str(recently_added_card_index),
+                    _opponentTargetCardIndex=str(first_non_none_index),
+                    _usageSkillIndex="2"))
+
+            print(f"{Fore.RED}opponent process_second_passive_skill_response:{Fore.GREEN} {process_second_passive_skill_response}{Style.RESET_ALL}")
+
+            is_success = process_second_passive_skill_response['is_success']
+            if is_success is False:
+                return FieldAreaAction.Dummy
+
         if key.lower() == 'x':
             print("Opponent Turn을 종료합니다")
 
@@ -1206,9 +1250,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.opponent_field_unit_repository.create_field_unit_card(31)
             self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
-        if key.lower() == 'n':
-            self.opponent_field_unit_repository.create_field_unit_card(19)
-            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+        # if key.lower() == 'n':
+        #     self.opponent_field_unit_repository.create_field_unit_card(19)
+        #     self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
         if key.lower() == 'b':
             self.your_field_unit_repository.create_field_unit_card(19)
@@ -7561,7 +7605,22 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 else:
                     print(f"{Fore.RED}메인 캐릭터 공격 -> is_attack_main_character(True): {Fore.GREEN}{is_attack_main_character}{Style.RESET_ALL}")
 
-                    self.your_hp_repository.take_damage(targeting_damage)
+                    notify_data = attack_animation_object.get_notify_data()
+
+                    your_main_character_health_point = (
+                        notify_data)['player_main_character_health_point_map']['You']
+                    your_main_character_survival_state = (
+                        notify_data)['player_main_character_survival_map']['You']
+
+                    if your_main_character_survival_state != 'Survival':
+                        print('Your main character is dead!')
+                        return
+
+                    self.your_hp_repository.change_hp(int(your_main_character_health_point))
+                    print(f"{Fore.RED}current_main_character_health:{Fore.GREEN} "
+                          f"{self.your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
+
+                    # self.your_hp_repository.take_damage(targeting_damage)
                     self.attack_animation_object.set_is_opponent_attack_main_character(False)
 
                 self.your_field_unit_repository.replace_field_card_position()
