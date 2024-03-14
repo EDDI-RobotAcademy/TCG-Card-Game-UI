@@ -3070,8 +3070,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             y = self.winfo_reqheight() - y
             print(f"x: {x}, y: {y}")
 
-            if self.is_playing_action_animation:
-                return
+            # if self.is_playing_action_animation:
+            #     return
 
             # if len(self.battle_result_panel_list) != 0:
             if self.battle_field_repository.get_is_game_end():
