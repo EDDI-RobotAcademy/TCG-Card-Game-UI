@@ -3355,8 +3355,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if self.your_active_panel.get_your_active_panel_details_button() is not None:
                 if self.your_active_panel.is_point_inside_details_button((x, y)):
                     print("상세 보기 클릭")
-                    self.active_panel_rectangle = None
-                    self.your_active_panel.clear_all_your_active_panel()
 
                     # your_field_unit_id = self.selected_object.get_card_number()
                     # skill_type = self.card_info_repository.getCardSkillSecondForCardNumber(your_field_unit_id)
@@ -3493,7 +3491,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 )
 
                     self.current_fixed_details_card = select_details_card_base
-
+                    self.active_panel_rectangle = None
+                    self.your_active_panel.clear_all_your_active_panel()
+                    self.selected_object = None
                     return
 
             if self.tomb_panel_selected:
