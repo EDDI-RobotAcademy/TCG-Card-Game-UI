@@ -2099,41 +2099,41 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         if self.field_area_inside_handler.get_field_area_action() is FieldAreaAction.SEARCH_UNIT_CARD:
             # print(f"검색하기 위한 덱 화면 띄우기")
+            if self.your_deck_search_panel is not None:
+                glEnable(GL_BLEND)
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-            glEnable(GL_BLEND)
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+                self.your_deck_search_panel.set_width_ratio(self.width_ratio)
+                self.your_deck_search_panel.set_height_ratio(self.height_ratio)
+                self.your_deck_search_panel.draw()
 
-            self.your_deck_search_panel.set_width_ratio(self.width_ratio)
-            self.your_deck_search_panel.set_height_ratio(self.height_ratio)
-            self.your_deck_search_panel.draw()
+                for get_current_page_deck_card in self.your_deck_repository.get_current_page_deck_list():
+                    fixed_card_base = get_current_page_deck_card.get_fixed_card_base()
+                    fixed_card_base.set_width_ratio(self.width_ratio)
+                    fixed_card_base.set_height_ratio(self.height_ratio)
+                    fixed_card_base.draw()
 
-            for get_current_page_deck_card in self.your_deck_repository.get_current_page_deck_list():
-                fixed_card_base = get_current_page_deck_card.get_fixed_card_base()
-                fixed_card_base.set_width_ratio(self.width_ratio)
-                fixed_card_base.set_height_ratio(self.height_ratio)
-                fixed_card_base.draw()
+                    attached_shape_list = fixed_card_base.get_attached_shapes()
 
-                attached_shape_list = fixed_card_base.get_attached_shapes()
+                    for attached_shape in attached_shape_list:
+                        attached_shape.set_width_ratio(self.width_ratio)
+                        attached_shape.set_height_ratio(self.height_ratio)
+                        attached_shape.draw()
 
-                for attached_shape in attached_shape_list:
-                    attached_shape.set_width_ratio(self.width_ratio)
-                    attached_shape.set_height_ratio(self.height_ratio)
-                    attached_shape.draw()
+                    for selected_search_unit in self.selected_search_unit_lightning_border:
+                        if selected_search_unit == fixed_card_base:
+                            selected_search_unit.set_width_ratio(self.width_ratio)
+                            selected_search_unit.set_height_ratio(self.height_ratio)
 
-                for selected_search_unit in self.selected_search_unit_lightning_border:
-                    if selected_search_unit == fixed_card_base:
-                        selected_search_unit.set_width_ratio(self.width_ratio)
-                        selected_search_unit.set_height_ratio(self.height_ratio)
+                            self.lightning_border.set_padding(20)
+                            self.lightning_border.update_shape(selected_search_unit)
+                            self.lightning_border.draw_lightning_border()
 
-                        self.lightning_border.set_padding(20)
-                        self.lightning_border.update_shape(selected_search_unit)
-                        self.lightning_border.draw_lightning_border()
+                self.your_deck_prev_button.draw()
+                self.your_deck_ok_button.draw()
+                self.your_deck_next_button.draw()
 
-            self.your_deck_prev_button.draw()
-            self.your_deck_ok_button.draw()
-            self.your_deck_next_button.draw()
-
-            glDisable(GL_BLEND)
+                glDisable(GL_BLEND)
 
         if self.tomb_panel_selected:
             # if self.selected_tomb is TombType.Your:
@@ -2905,6 +2905,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
             else:
                 print("self.field_area_inside_handler.get_field_area_action() = Some Action")
                 self.selected_object = None
+                # 서포트 관련하여 시작 포인트
+                # handler에서 id 와 index를 받아서 저장 해놓고
+                # false가 떳을 경우의 함수를 추가하여 return값으로 selection_object를 주는 함수를 만든다.
 
         # if self.your_tomb_panel.
 
@@ -4855,6 +4858,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     is_success_value = response.get('is_success', False)
 
                     if is_success_value == False:
+                        self.your_deck_search_panel = None
+                        self.field_area_inside_handler.set_field_area_action(FieldAreaAction.Dummy)
+                        print(f"self.field_area_inside_handler.get - > {self.field_area_inside_handler.get_field_area_action()}")
                         return
 
                     # 실제로 지울 때 몇 개 지우는지만 알면 된다.
