@@ -1961,3 +1961,122 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                     result_your_energy_count = your_energy_count
 
                 self.__your_field_energy_repository.set_your_field_energy(result_your_energy_count)
+
+    def notify_use_unit_energy_remove_item_card(self, notice_dictionary):
+
+        is_my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        print(f"is my turn: {is_my_turn}")
+        if is_my_turn is True:
+            return
+
+        notify_dict_data = notice_dictionary['NOTIFY_USE_UNIT_ENERGY_REMOVE_ITEM_CARD']
+
+        hand_use_card_id = int(notify_dict_data.get("player_hand_use_map", {})
+                               .get("Opponent", {})
+                               .get("card_id", None))
+        if notify_dict_data.get("player_field_unit_energy_map") != {}:
+            field_unit_index = list(notify_dict_data.get("player_field_unit_energy_map", {})
+                                    .get("You", {})
+                                    .get("field_unit_energy_map", {}).keys())[0]
+
+            attach_total_energy_count = int(notify_dict_data.get("player_field_unit_energy_map", {})
+                                            .get("You", {})
+                                            .get("field_unit_energy_map", {})[field_unit_index]
+                                            .get("total_energy_count", None))
+
+            if attach_total_energy_count != 0:
+                attach_energy_race_type = list(notify_dict_data.get("player_field_unit_energy_map", {})
+                                               .get("You", {})
+                                               .get("field_unit_energy_map", {})[field_unit_index]
+                                               .get("attached_energy_map", {}).keys())[0]
+                attach_race_energy_count = (notify_dict_data.get("player_field_unit_energy_map", {})
+                .get("You", {})
+                .get("field_unit_energy_map", {})[field_unit_index]
+                .get("attached_energy_map", {})[attach_energy_race_type])
+
+                print(attach_race_energy_count)
+                attach_energy_race_type = int(attach_energy_race_type)
+                attach_race_energy_count = int(attach_race_energy_count)
+            else:
+                attach_energy_race_type = None
+                attach_race_energy_count = 0
+
+            field_unit_index = int(field_unit_index)
+
+
+            self.__battle_field_repository.set_current_use_card_id(hand_use_card_id)
+            print("detach undead energy")
+
+            before_attach_energy_count = self.__your_field_unit_repository.get_your_field_unit_race_energy(
+                field_unit_index, EnergyType.Undead)
+
+            difference_energy_count = before_attach_energy_count - attach_race_energy_count
+
+            self.__your_field_unit_repository.detach_race_energy(
+                field_unit_index,
+                EnergyType.Undead,
+                difference_energy_count)
+            your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(field_unit_index)
+
+            total_attached_energy_count = self.__your_field_unit_repository.get_total_energy_at_index(field_unit_index)
+
+            your_fixed_card_base = your_field_unit.get_fixed_card_base()
+            your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+
+            for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+                if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                    if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+
+
+                        your_fixed_card_attached_shape.set_image_data(
+                            self.__pre_drawed_image_instance.get_pre_draw_unit_energy(
+                                total_attached_energy_count))
+
+        else:
+            field_unit_index = int(list(notify_dict_data.get("player_field_unit_health_point_map", {})
+                                        .get("You", {})
+                                        .get("field_unit_health_point_map", {}).keys())[0])
+
+            field_unit_hp = int(list(notify_dict_data.get("player_field_unit_health_point_map", {})
+                                     .get("You", {})
+                                     .get("field_unit_health_point_map", {}).values())[0])
+
+            dead_field_unit_index_list = list(notify_dict_data.get("player_field_unit_death_map", {})
+                                              .get("You", {})
+                                              .get("dead_field_unit_index_list", []))
+
+
+            self.__battle_field_repository.set_current_use_card_id(hand_use_card_id)
+
+
+            for dead_field_unit_index in dead_field_unit_index_list:
+                self.__your_tomb_repository.create_tomb_card(
+                    self.__your_field_unit_repository.find_field_unit_by_index(dead_field_unit_index).get_card_number())
+                self.__your_field_unit_repository.remove_card_by_index(dead_field_unit_index)
+                self.__your_field_unit_repository.replace_field_card_position()
+
+            try:
+                your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(field_unit_index)
+
+                your_fixed_card_base = your_field_unit.get_fixed_card_base()
+                your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+
+                for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+                    if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                        if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                            hp_number = your_fixed_card_attached_shape.get_number()
+                            hp_number -= 10
+
+                            if hp_number <= 0:
+                                break
+
+                            your_fixed_card_attached_shape.set_number(hp_number)
+
+                            your_fixed_card_attached_shape.set_image_data(
+                                self.__pre_drawed_image_instance.get_pre_draw_unit_hp(
+                                    hp_number))
+
+                            print(f"changed hp: {your_fixed_card_attached_shape.get_circle_kinds()}")
+            except Exception as e:
+                print(f"error occured!! : {e}")
+
