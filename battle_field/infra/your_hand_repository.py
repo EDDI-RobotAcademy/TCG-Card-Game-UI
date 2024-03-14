@@ -96,6 +96,10 @@ class YourHandRepository:
         self.your_hand_page_list[current_page].remove_card_by_index(card_placed_index)
         self.current_hand_state.remove_hand_by_index(card_placed_index + (current_page * 5))
 
+    def remove_card_by_index_and_page_number(self, page_number, card_placed_index):
+        self.your_hand_page_list[page_number].remove_card_by_index(card_placed_index)
+        self.current_hand_state.remove_hand_by_index(card_placed_index + (page_number * 5))
+
     def remove_card_by_index(self, card_placed_index):
         print(f"remove_card_by_index -> self.current_hand_card_list: {self.current_hand_card_list}, card_placed_index: {card_placed_index}")
 
@@ -373,3 +377,6 @@ class YourHandRepository:
         self.__transmitIpcChannel.put(use_field_of_death_request)
         return self.__receiveIpcChannel.get()
 
+    def request_use_overflow_of_energy(self, use_overflow_of_energy_request):
+        self.__transmitIpcChannel.put(use_overflow_of_energy_request)
+        return self.__receiveIpcChannel.get()

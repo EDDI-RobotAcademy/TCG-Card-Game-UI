@@ -80,6 +80,7 @@ from battle_field.infra.request.request_use_energy_burn_to_unit import RequestUs
 from battle_field.infra.request.request_use_energy_card_to_unit import RequestUseEnergyCardToUnit
 from battle_field.infra.request.request_use_field_of_death import RequestUseFieldOfDeath
 from battle_field.infra.request.request_use_morale_conversion import RequestUseMoraleConversion
+from battle_field.infra.request.request_use_overflow_of_energy import RequestUseOverflowOfEnergy
 
 from battle_field.infra.request.wide_area_passive_skill_from_deploy_request import WideAreaPassiveSkillFromDeployRequest
 from battle_field.infra.request.request_use_special_energy_card_to_unit import RequestUseSpecialEnergyCardToUnit
@@ -2724,6 +2725,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                                 print(f"response: {response}")
                                 if not response.get('is_success'):
+                                    self.return_to_initial_location()
                                     return
 
                                 card_id = current_field_unit.get_card_number()
@@ -2929,7 +2931,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.return_to_initial_location()
             elif drop_action_result is FieldAreaAction.ENERGY_BOOST:
                 print("self.field_area_inside_handler.get_field_area_action() = EnergyBoost")
-                self.selected_object = None
+                self.return_to_initial_location()
+                self.field_area_inside_handler.set_placed_card_page(self.your_hand_repository.get_current_your_hand_page())
             else:
                 print("self.field_area_inside_handler.get_field_area_action() = Some Action")
                 self.selected_object = None
@@ -4789,7 +4792,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 print(f"your field unit (field_unit) = {type(your_field_unit)}")
                 fixed_card_base = your_field_unit.get_fixed_card_base()
+                # page_selected_card = self.your_hand_repository.get_current_your_hand_page()
                 print(f"your field unit type (fixed_card_base) = {type(fixed_card_base)}")
+                # print(f"page_selected_card = {page_selected_card}")
 
                 if fixed_card_base.is_point_inside((x, y)):
                     # if self.your_field_unit_action_repository.get_current_field_unit_action_status(your_field_unit.get_index()) == FieldUnitActionStatus.WAIT:
@@ -4799,9 +4804,24 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.field_area_inside_handler.clear_lightning_border_list()
                         self.field_area_inside_handler.clear_field_area_action()
                         self.your_field_unit_lightning_border_list = []
+
+                        your_unit_index = your_field_unit.get_index()
+
+                        response = self.your_hand_repository.request_use_overflow_of_energy(
+                            RequestUseOverflowOfEnergy(
+                                _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                                _unitIndex=your_unit_index,
+                                _supportCardId="2")
+                        )
+
+                        if not response.get('is_success'):
+                            self.selected_object = None
+                            return
+
                         print("덱에서 에너지 검색해서 부스팅 진행")
 
                         current_process_card_id = self.field_area_inside_handler.get_action_set_card_id()
+
                         proper_handler = self.support_card_handler.getSupportCardHandler(current_process_card_id)
                         # proper_handler(your_field_unit.get_index())
 
@@ -4811,10 +4831,29 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # real_field_unit_index = self.your_field_unit_repository.find_field_unit_by_index(your_field_unit.get_index())
                         # print(f"real_field_unit_index: {real_field_unit_index}")
 
-                        proper_handler(your_field_unit_index)
+                        updated_deck_card_list = response.get('updated_deck_card_list')
+                        print(f"updated_deck_card_list: {updated_deck_card_list}")
 
+                        proper_handler(your_field_unit_index, updated_deck_card_list)
+
+                        used_energy_card_list_from_deck = response['player_deck_card_use_list_map']['You']
+                        print(f"used_energy_card_list_from_deck: {used_energy_card_list_from_deck}")
+                        for used_energy_card in used_energy_card_list_from_deck:
+                            self.your_tomb_repository.create_tomb_card(used_energy_card)
+
+                        self.selected_object = None
                         self.your_tomb_repository.create_tomb_card(current_process_card_id)
+
+                        current_hand_list = self.your_hand_repository.get_current_hand_state()
+                        print(f"get_current_hand_state: {current_hand_list}")
+
+                        placed_card_page = self.field_area_inside_handler.get_placed_card_page()
+                        placed_card_index = self.field_area_inside_handler.get_placed_card_index()
+                        self.your_hand_repository.remove_card_by_index_and_page_number(placed_card_page, placed_card_index)
                         self.your_hand_repository.update_your_hand()
+
+                        updated_hand_list = self.your_hand_repository.get_current_hand_state()
+                        print(f"updated_hand_list: {updated_hand_list}")
 
                         # self.boost_selection = False
                         break
@@ -5128,12 +5167,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 print("Your Hand Next Button Clicked!")
 
                 self.your_hand_repository.next_your_hand_page()
+                self.selected_object = None
 
             your_hand_prev_button_clicked = self.your_hand.is_point_inside_prev_button_hand((x, y))
             if your_hand_prev_button_clicked:
                 print("Your Hand Prev Button Clicked!")
 
                 self.your_hand_repository.prev_your_hand_page()
+                self.selected_object = None
 
             self.tomb_panel_selected = self.left_click_detector.which_one_select_is_in_your_tomb_area(
                 (x, y),
