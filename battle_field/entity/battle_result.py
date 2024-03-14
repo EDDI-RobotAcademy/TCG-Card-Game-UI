@@ -51,8 +51,8 @@ class BattleResult:
         top_y_point = self.total_height * 0.3
         bottom_y_point = self.total_height * 0.7
 
-        print(f"게임 끝~~ {self.__battle_field_repository.get_is_game_end()}")
-        print(f"이겼냐 {self.__battle_field_repository.get_is_win()}")
+        # print(f"게임 끝~~ {self.__battle_field_repository.get_is_game_end()}")
+        # print(f"이겼냐 {self.__battle_field_repository.get_is_win()}")
 
         battle_result_panel = Rectangle(
             (0, 0, 0, 0.5),

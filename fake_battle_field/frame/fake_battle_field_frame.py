@@ -75,6 +75,7 @@ from battle_field.infra.request.request_attack_to_opponent_field_unit_with_activ
 from battle_field.infra.request.request_attack_with_non_targeting_active_skill import \
     RequestAttackWithNonTargetingActiveSkill
 from battle_field.infra.request.request_use_corpse_explosion import RequestUseCorpseExplosion
+from battle_field.infra.request.request_use_death_sice_to_unit import RequestUseDeathSiceToUnit
 from battle_field.infra.request.request_use_energy_burn_to_unit import RequestUseEnergyBurnToUnit
 from battle_field.infra.request.request_use_energy_card_to_unit import RequestUseEnergyCardToUnit
 from battle_field.infra.request.request_use_field_of_death import RequestUseFieldOfDeath
@@ -614,9 +615,35 @@ class FakeBattleFieldFrame(OpenGLFrame):
         key = event.keysym
         print(f"Key pressed: {key}")
 
+        if key.lower() == 's':
+            opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
+            for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
+                if opponent_hand == 8:
+                    print("죽음의 낫 사용!! ")
+
+                    result = self.__fake_opponent_hand_repository.request_use_energy_card_to_unit(
+                        RequestUseDeathSiceToUnit(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _itemCardId=8,
+                            _opponentTargetUnitIndex=0
+                            ))
+
+                    print(f"fake death scythe result: {result}")
+                    is_success_value = result.get('is_success', False)
+
+                    if is_success_value == False:
+                        return
+
+                    self.__fake_opponent_hand_repository.remove_card_by_index(opponent_hand_index)
+
+                    break
+
         if key.lower() == 'kp_0':
             opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
             for opponent_unit_index, opponent_unit in enumerate(opponent_field_unit_list):
+                if opponent_unit == None:
+                    continue
+
                 if opponent_unit.get_card_number() == 27:
                     self.your_field_energy_repository.request_to_attach_energy_to_unit(
                         RequestAttachFieldEnergyToUnit(
@@ -1581,6 +1608,22 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         if self.battle_field_repository.get_is_game_end():
             self.battle_finish()
+
+
+        if len(self.__notify_reader_repository.get_notify_effect_animation_request_list()) != 0:
+            for _ in range(0,len(self.__notify_reader_repository.get_notify_effect_animation_request_list())):
+                effect_animation_request = self.__notify_reader_repository.get_notify_effect_animation_request_list().pop()
+
+                effect_animation = effect_animation_request.get_effect_animation()
+                effect_animation.set_total_window_size(self.width, self.height)
+                effect_animation.draw_animation_panel()
+                effect_animation_panel = effect_animation.get_animation_panel()
+                animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+                    effect_animation)
+                self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                    animation_index, effect_animation_panel)
+
+                self.play_effect_animation_by_index_and_call_function(animation_index, effect_animation_request.get_call_function())
 
            # self.play_effect_animation()
 
