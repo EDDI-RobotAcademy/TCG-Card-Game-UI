@@ -17,6 +17,10 @@ from battle_field.components.field_area_inside.turn_start_action import TurnStar
 from battle_field.components.field_area_inside.unit_action import UnitAction
 from battle_field.components.fixed_unit_card_inside.fixed_unit_card_inside_action import FixedUnitCardInsideAction
 from battle_field.components.mouse_left_click.left_click_detector import LeftClickDetector
+from battle_field.components.opponent_field_area_inside.opponent_field_area_action_process import \
+    OpponentFieldAreaActionProcess
+from battle_field.components.opponent_field_area_inside.opponent_field_area_inside_handler import \
+    OpponentFieldAreaInsideHandler
 from battle_field.components.opponent_fixed_unit_card_inside.ActionToApplyOpponent import ActionToApplyOpponent
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_field_area_action import OpponentFieldAreaAction
 from battle_field.components.opponent_fixed_unit_card_inside.opponent_fixed_unit_card_inside_handler import \
@@ -224,6 +228,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
         # self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance()
         self.field_area_inside_handler = FieldAreaInsideHandler.getInstance()
+        self.opponent_field_area_inside_handler = OpponentFieldAreaInsideHandler.getInstance()
         # TODO: Your 카드에 집어넣는 경우도 이것으로 감지하는 것이 더 좋을 것임
         self.your_fixed_unit_card_inside_handler = None
         self.opponent_fixed_unit_card_inside_handler = OpponentFixedUnitCardInsideHandler.getInstance()
@@ -2004,6 +2009,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             self.attack_animation_object.set_animation_action(AnimationAction.DUMMY)
             # self.field_area_inside_handler.clear_field_area_action()
+
+        if self.opponent_field_area_inside_handler.get_field_area_action() is OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS:
+            print(f"{Fore.RED}Opponent Unit 패시브 처리가 필요합니다!{Style.RESET_ALL}")
+
+            self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
 
         self.post_draw()
 
