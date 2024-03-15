@@ -1305,10 +1305,28 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     if remove_from_field:
                         card_id = opponent_field_unit.get_card_number()
 
-                        self.opponent_field_unit_repository.remove_current_field_unit_card(index)
-                        self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                        effect_animation = EffectAnimation()
+                        effect_animation.set_animation_name('death')
+                        effect_animation.set_total_window_size(self.width, self.height)
+                        effect_animation.change_local_translation(self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                            index).get_fixed_card_base().get_local_translation())
+                        effect_animation.draw_animation_panel()
+                        effect_animation_panel = effect_animation.get_animation_panel()
 
-                self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                        animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+                            effect_animation)
+
+                        self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                            animation_index, effect_animation_panel)
+                        
+                        def remove_opponent_unit():
+                            
+                            self.opponent_field_unit_repository.remove_current_field_unit_card(index)
+                            self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                            self.opponent_field_unit_repository.remove_harmful_status_by_index(index)
+                            
+                        self.play_effect_animation_by_index_and_call_function(animation_index, remove_opponent_unit)
 
             second_passive_skill_type = self.card_info_repository.getCardPassiveSecondForCardNumber(19)
             if second_passive_skill_type == 1:
@@ -4678,12 +4696,27 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         print(f"opponent_field_card_index: {opponent_field_card_index}")
 
                         if are_opponent_field_unit_death is True:
-                            self.opponent_field_unit_repository.remove_card_by_multiple_index(
-                                [opponent_field_card_index])
-                            self.opponent_tomb_repository.create_opponent_tomb_card(
-                                opponent_field_card_id)
+                            effect_animation = EffectAnimation()
+                            effect_animation.set_animation_name('death')
+                            effect_animation.set_total_window_size(self.width, self.height)
+                            effect_animation.change_local_translation(self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                                opponent_field_card_index).get_fixed_card_base().get_local_translation())
+                            effect_animation.draw_animation_panel()
+                            effect_animation_panel = effect_animation.get_animation_panel()
 
-                            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                            animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+                                effect_animation)
+
+                            self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                                animation_index, effect_animation_panel)
+
+                            def remove_opponent_unit():
+                                self.opponent_field_unit_repository.remove_current_field_unit_card(index)
+                                self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                                self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                                self.opponent_field_unit_repository.remove_harmful_status_by_index(index)
+
+                            self.play_effect_animation_by_index_and_call_function(animation_index, remove_opponent_unit)
 
                         self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
                         self.targeting_enemy_select_using_your_field_card_index = None
@@ -5320,12 +5353,31 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             self.your_tomb_repository.create_tomb_card(
                                 self.targeting_ememy_select_using_hand_card_id)
 
-                            self.opponent_field_unit_repository.remove_card_by_multiple_index(
-                                remove_from_field_index_list)
 
-                            for remove_from_field_id in remove_from_field_id_list:
-                                self.opponent_tomb_repository.create_opponent_tomb_card(
-                                    remove_from_field_id)
+                            for index in remove_from_field_index_list:
+                                effect_animation = EffectAnimation()
+                                effect_animation.set_animation_name('death')
+                                effect_animation.set_total_window_size(self.width, self.height)
+                                effect_animation.change_local_translation(self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                                    index).get_fixed_card_base().get_local_translation())
+                                effect_animation.draw_animation_panel()
+                                effect_animation_panel = effect_animation.get_animation_panel()
+    
+                                animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+                                    effect_animation)
+    
+                                self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                                    animation_index, effect_animation_panel)
+    
+                                def remove_opponent_unit():
+                                    self.opponent_field_unit_repository.remove_current_field_unit_card(index)
+                                    self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                                    self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                                    self.opponent_field_unit_repository.remove_harmful_status_by_index(index)
+    
+                                self.play_effect_animation_by_index_and_call_function(animation_index, remove_opponent_unit)
+
+                            
 
                             print(
                                 f"corpse explosion your field index: {self.targeting_enemy_select_using_your_field_card_index}")
@@ -6361,9 +6413,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 if self.attack_animation_object.get_opponent_field_unit_death():
                     opponent_field_unit = self.attack_animation_object.get_opponent_field_unit()
                     opponent_field_unit_index = opponent_field_unit.get_index()
-                    self.opponent_field_unit_repository.remove_card_by_multiple_index([opponent_field_unit_index])
-                    self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-                    self.opponent_field_unit_repository.remove_harmful_status_by_index(opponent_field_unit_index)
+                    
+                    def remove_field_unit_by_index():
+                        self.opponent_field_unit_repository.remove_card_by_multiple_index([opponent_field_unit_index])
+                        self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                        self.opponent_field_unit_repository.remove_harmful_status_by_index(opponent_field_unit_index)
+                        self.opponent_tomb_repository.create_opponent_tomb_card(opponent_field_unit.get_card_number())
+                        
+                    self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function('death', opponent_field_unit_index, remove_field_unit_by_index)
                 else:
                     opponent_field_hp_shape = self.attack_animation_object.get_opponent_field_hp_shape()
                     if opponent_field_hp_shape:
@@ -6632,12 +6689,27 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     if remove_from_field:
                         card_id = opponent_field_unit.get_card_number()
 
-                        self.opponent_field_unit_repository.remove_current_field_unit_card(index)
+                        effect_animation = EffectAnimation()
+                        effect_animation.set_animation_name('death')
+                        effect_animation.set_total_window_size(self.width, self.height)
+                        effect_animation.change_local_translation(self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                            index).get_fixed_card_base().get_local_translation())
+                        effect_animation.draw_animation_panel()
+                        effect_animation_panel = effect_animation.get_animation_panel()
 
-                        self.opponent_field_unit_repository.remove_harmful_status_by_index(index)
-                        self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                        animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+                            effect_animation)
 
-                self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                        self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                            animation_index, effect_animation_panel)
+
+                        def remove_opponent_unit():
+                            self.opponent_field_unit_repository.remove_current_field_unit_card(index)
+                            self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                            self.opponent_field_unit_repository.remove_harmful_status_by_index(index)
+
+                        self.play_effect_animation_by_index_and_call_function(animation_index, remove_opponent_unit)
 
                 self.field_area_inside_handler.clear_field_area_action()
 
@@ -6864,8 +6936,27 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     if remove_from_field:
                         card_id = opponent_field_unit.get_card_number()
 
-                        self.opponent_field_unit_repository.remove_current_field_unit_card(index)
-                        self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                        effect_animation = EffectAnimation()
+                        effect_animation.set_animation_name('death')
+                        effect_animation.set_total_window_size(self.width, self.height)
+                        effect_animation.change_local_translation(self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                            index).get_fixed_card_base().get_local_translation())
+                        effect_animation.draw_animation_panel()
+                        effect_animation_panel = effect_animation.get_animation_panel()
+
+                        animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+                            effect_animation)
+
+                        self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                            animation_index, effect_animation_panel)
+
+                        def remove_opponent_unit():
+                            self.opponent_field_unit_repository.remove_current_field_unit_card(index)
+                            self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                            self.opponent_field_unit_repository.remove_harmful_status_by_index(index)
+
+                        self.play_effect_animation_by_index_and_call_function(animation_index, remove_opponent_unit)
 
                 # your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
                 # self.your_hand_repository.remove_card_by_index(your_card_index)
@@ -7867,12 +7958,28 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     if remove_from_field:
                         card_id = opponent_field_unit.get_card_number()
 
-                        self.opponent_field_unit_repository.remove_current_field_unit_card(index)
+                        effect_animation = EffectAnimation()
+                        effect_animation.set_animation_name('death')
+                        effect_animation.set_total_window_size(self.width, self.height)
+                        effect_animation.change_local_translation(self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                            index).get_fixed_card_base().get_local_translation())
+                        effect_animation.draw_animation_panel()
+                        effect_animation_panel = effect_animation.get_animation_panel()
 
-                        self.opponent_field_unit_repository.remove_harmful_status_by_index(index)
-                        self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                        animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+                            effect_animation)
 
-                self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                        self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                            animation_index, effect_animation_panel)
+
+                        def remove_opponent_unit():
+                            self.opponent_field_unit_repository.remove_current_field_unit_card(index)
+                            self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                            self.opponent_field_unit_repository.remove_harmful_status_by_index(index)
+
+                        self.play_effect_animation_by_index_and_call_function(animation_index, remove_opponent_unit)
+                        
                 self.nether_blade_second_passive_skill_animation()
 
         move_to_origin_location(1)
@@ -8579,12 +8686,18 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 print(f"opponent_field_card_index: {opponent_field_card_index}")
 
                 if are_opponent_field_unit_death is True:
-                    self.opponent_field_unit_repository.remove_card_by_multiple_index(
-                        [opponent_field_card_index])
-                    self.opponent_tomb_repository.create_opponent_tomb_card(
-                        opponent_field_card_id)
-
-                    self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                    
+                    def remove_field_unit_by_index():
+                    
+                        self.opponent_field_unit_repository.remove_card_by_multiple_index(
+                            [opponent_field_card_index])
+                        self.opponent_tomb_repository.create_opponent_tomb_card(
+                            opponent_field_card_id)
+                        self.opponent_field_unit_repository.remove_harmful_status_by_index(opponent_field_card_index)
+    
+                        self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                        
+                    self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function('death', opponent_field_card_index, remove_field_unit_by_index)
 
                 self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
                 self.targeting_enemy_select_using_your_field_card_index = None
@@ -9103,3 +9216,22 @@ class FakeBattleFieldFrame(OpenGLFrame):
         effect_animation.reset_animation_count()
 
         self.master.after(0, animate)
+        
+        
+    def create_effect_animation_to_opponent_unit_and_play_animation_and_call_function(self, effect_name, index, function):
+        effect_animation = EffectAnimation()
+        effect_animation.set_animation_name(effect_name)
+        effect_animation.set_total_window_size(self.width, self.height)
+        effect_animation.change_local_translation(self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+            index).get_fixed_card_base().get_local_translation())
+        effect_animation.draw_animation_panel()
+        effect_animation_panel = effect_animation.get_animation_panel()
+
+        animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+            effect_animation)
+
+        self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+            animation_index, effect_animation_panel)
+
+
+        self.play_effect_animation_by_index_and_call_function(animation_index, function)
