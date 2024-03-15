@@ -86,6 +86,7 @@ from battle_field.infra.request.target_passive_skill_to_main_character_from_depl
     TargetingPassiveSkillToMainCharacterFromDeployRequest
 from battle_field.infra.request.targeting_passive_skill_to_your_field_unit_from_deploy_request import \
     TargetingPassiveSkillToYourFieldUnitFromDeployRequest
+from battle_field.infra.request.turn_start_first_passive_skill_request import TurnStartFirstPassiveSkillRequest
 
 from battle_field.infra.request.wide_area_passive_skill_from_deploy_request import WideAreaPassiveSkillFromDeployRequest
 from battle_field.infra.request.request_use_special_energy_card_to_unit import RequestUseSpecialEnergyCardToUnit
@@ -889,6 +890,47 @@ class FakeBattleFieldFrame(OpenGLFrame):
             is_success = process_second_passive_skill_response['is_success']
             if is_success is False:
                 return FieldAreaAction.Dummy
+
+        if key.lower() == 'f':
+            print(f"{Fore.RED}상대방 네더 블레이드 매 턴 시작 시 광역기 발동!{Style.RESET_ALL}")
+
+            need_to_process_opponent_unit_list = self.opponent_field_area_inside_handler.get_required_to_process_opponent_passive_skill_multiple_unit_list()
+            print(f"{Fore.RED}need_to_process_opponent_unit_list: {Fore.GREEN}{need_to_process_opponent_unit_list}{Style.RESET_ALL}")
+
+            if len(need_to_process_opponent_unit_list) == 0:
+                self.opponent_field_area_inside_handler.set_field_turn_start_action(TurnStartAction.Dummy)
+                return
+
+            passive_opponent_unit_index = int(need_to_process_opponent_unit_list.pop(0))
+            self.opponent_field_area_inside_handler.set_field_turn_start_action(TurnStartAction.Dummy)
+
+            opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(passive_opponent_unit_index)
+            self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
+            self.attack_animation_object.set_opponent_animation_actor(opponent_field_unit)
+
+            #### add
+            damage = self.card_info_repository.getCardPassiveFirstDamageForCardNumber(opponent_field_unit.get_card_number())
+            self.attack_animation_object.set_opponent_animation_actor_damage(damage)
+
+            self.opponent_field_area_inside_handler.set_unit_action(OpponentUnitAction.NETHER_BLADE_FIRST_WIDE_AREA_PASSIVE_SKILL)
+
+            extra_ability = self.opponent_field_unit_repository.get_opponent_unit_extra_ability_at_index(passive_opponent_unit_index)
+            self.attack_animation_object.set_extra_ability(extra_ability)
+
+            self.opponent_field_area_inside_handler.set_active_field_area_action(
+                OpponentFieldAreaActionProcess.PLAY_ANIMATION)
+
+            #### add finish
+
+            # {"protocolNumber":2012, "unitCardIndex": "0", "usageSkillIndex": "1", "sessionInfo":""}
+            turn_start_first_passive_skill_response = self.__fake_battle_field_frame_repository.request_to_process_turn_start_first_passive_skill_to_your_field_unit(
+                TurnStartFirstPassiveSkillRequest(
+                    _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                    _unitCardIndex=str(passive_opponent_unit_index),
+                    _usageSkillIndex="1"))
+
+            print(f"{Fore.RED}opponent turn_start_first_passive_skill_response:{Fore.GREEN} {turn_start_first_passive_skill_response}{Style.RESET_ALL}")
+
 
         if key.lower() == 'x':
             print("Opponent Turn을 종료합니다")
