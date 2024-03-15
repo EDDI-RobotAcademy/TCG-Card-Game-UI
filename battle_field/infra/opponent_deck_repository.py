@@ -18,3 +18,6 @@ class OpponentDeckRepository:
 
     def saveTransmitIpcChannel(self, transmitIpcChannel):
         self.__transmitIpcChannel = transmitIpcChannel
+
+    def clear_every_resource(self):
+        pass

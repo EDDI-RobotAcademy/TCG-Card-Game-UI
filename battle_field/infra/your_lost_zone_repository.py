@@ -70,3 +70,9 @@ class YourLostZoneRepository:
 
     def saveTransmitIpcChannel(self, transmitIpcChannel):
         self.__transmitIpcChannel = transmitIpcChannel
+
+    def clear_every_resource(self):
+        self.your_lost_zone_state = CurrentLostZoneState()
+
+        self.your_lost_zone_card_list = []
+        self.your_lost_zone_card_x_position = []

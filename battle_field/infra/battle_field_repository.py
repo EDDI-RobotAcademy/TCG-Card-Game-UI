@@ -63,3 +63,8 @@ class BattleFieldRepository:
     def reset_current_use_card_id(self):
         self.__current_use_card_id = None
 
+    def clear_every_resource(self):
+        self.battle_field_button_list = []
+        self.__game_end_state = GameEndState()
+        self.__current_use_card_id = None
+

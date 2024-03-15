@@ -201,3 +201,13 @@ class YourFieldUnitRepository:
 
     def saveTransmitIpcChannel(self, transmitIpcChannel):
         self.__transmitIpcChannel = transmitIpcChannel
+
+    def clear_every_resource(self):
+        self.attached_energy_info = AttachedEnergyInfoState()
+        self.harmful_status_info = HarmfulStatusInfo()
+        self.extra_effect_info = ExtraEffectInfo()
+
+        self.current_field_unit_state = CurrentFieldUnitState()
+        self.current_field_unit_list = []
+        self.current_field_unit_x_position = []
+

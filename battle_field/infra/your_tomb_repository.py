@@ -69,3 +69,9 @@ class YourTombRepository:
 
     def saveTransmitIpcChannel(self, transmitIpcChannel):
         self.__transmitIpcChannel = transmitIpcChannel
+
+    def clear_every_resource(self):
+        self.current_tomb_state = CurrentTombState()
+
+        self.current_tomb_unit_list = []
+        self.current_tomb_unit_x_position = []
