@@ -814,11 +814,11 @@ class PreDrawedImage:
 
 
     def pre_draw_battle_field_timer(self):
-        image_dir = os.path.join(self.__project_root, "local_storage", "timer_image", "battle_field")
+        image_dir = os.path.join(self.__project_root, "local_storage", "battle_field_timer")
         file_list = os.listdir(image_dir)
 
         for number in range(0, len(file_list)):
-            number_image_data = os.path.join(self.__project_root, "local_storage", "timer_image", "battle_field",
+            number_image_data = os.path.join(self.__project_root, "local_storage", "battle_field_timer",
                                              f"{number}.png")
             print(f"image data = {number_image_data}")
             self.__pre_drawed_battle_field_timer[number] = ImageDataLoader.load_rectangle_image_data(number_image_data)

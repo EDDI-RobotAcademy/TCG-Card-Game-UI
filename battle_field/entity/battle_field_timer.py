@@ -53,19 +53,23 @@ class BattleFieldTimer(OpenGLFrame):
 
     def draw_current_timer_panel(self):
 
-        left_x_point = self.total_width * 0.05
-        right_x_point = self.total_width * 0.12
-        top_y_point = self.total_height * 0.60
-        bottom_y_point = self.total_height * 0.70
+        left_x_point = self.total_width * 0.865
+        right_x_point = self.total_width
+        top_y_point = self.total_height * 0.249
+        bottom_y_point = self.total_height * 0.317
 
-        self.timer_panel = RectangleImage(
+        self.timer_panel = NonBackgroundImage(
             image_data=self.__pre_drawed_image.get_pre_draw_battle_field_timer(self.timer),
             vertices=[
                 (left_x_point, top_y_point),
                 (right_x_point, top_y_point),
                 (right_x_point, bottom_y_point),
                 (left_x_point, bottom_y_point)
-            ])
+            ],
+            global_translation=(0, 0),
+            local_translation=(0, 0)
+
+        )
 
 
     def update_current_timer_panel(self):
