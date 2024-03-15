@@ -9,6 +9,7 @@ from battle_field.components.field_area_inside.turn_start_action import TurnStar
 from battle_field.components.opponent_field_area_inside.opponent_field_area_action_process import OpponentFieldAreaActionProcess
 from battle_field.components.opponent_field_area_inside.opponent_field_area_inside_handler import \
     OpponentFieldAreaInsideHandler
+from battle_field.components.opponent_field_area_inside.opponent_turn_start_action import OpponentTurnStartAction
 from battle_field.components.opponent_field_area_inside.opponent_unit_action import OpponentUnitAction
 from battle_field.entity.effect_animation import EffectAnimation
 from battle_field.infra.battle_field_repository import BattleFieldRepository
@@ -338,34 +339,14 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             opponent_drawn_card_list = notice_dictionary['NOTIFY_TURN_END']['player_drawn_card_list_map'].get('You', [])
             self.__fake_opponent_hand_repository.save_fake_opponent_hand_list(opponent_drawn_card_list)
             fake_opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
-            print(
-                f"{Fore.RED}notify_turn_end() -> fake opponent hand list:{Fore.GREEN} {fake_opponent_hand_list}{Style.RESET_ALL}")
+            print(f"{Fore.RED}notify_turn_end() -> fake opponent hand list:{Fore.GREEN} {fake_opponent_hand_list}{Style.RESET_ALL}")
 
             fake_opponent_field_energy = notice_dictionary['NOTIFY_TURN_END']['player_field_energy_map'].get('You', [])
             self.__opponent_field_energy_repository.set_opponent_field_energy(fake_opponent_field_energy)
-            print(
-                f"{Fore.RED}notify_turn_end() -> fake opponent_field_energy:{Fore.GREEN} {fake_opponent_field_energy}{Style.RESET_ALL}")
+            print(f"{Fore.RED}notify_turn_end() -> fake opponent_field_energy:{Fore.GREEN} {fake_opponent_field_energy}{Style.RESET_ALL}")
 
             opponent_field_energy_count = self.__opponent_field_energy_repository.get_opponent_field_energy()
             print(f"{Fore.RED}opponent_field_energy_count:{Fore.GREEN} {opponent_field_energy_count}{Style.RESET_ALL}")
-
-            # notify_turn_end() -> notice_dictionary: {
-            #     'NOTIFY_TURN_END': {'player_drawn_card_list_map': {'You': [33]}, 'player_field_energy_map': {'You': 1},
-            #                         'player_field_unit_health_point_map': {
-            #                             'Opponent': {'field_unit_health_point_map': {'8': 20}}},
-            #                         'player_field_unit_harmful_effect_map': {'Opponent': {
-            #                             'field_unit_harmful_status_map': {'8': {'harmful_status_list': []}}}},
-            #                         'player_field_unit_death_map': {'Opponent': {'dead_field_unit_index_list': []}},
-            #                         'player_main_character_survival_map': {},
-            #                         'unit_index_turn_start_passive_list_map': {'3': [], '5': [], '6': [1, 2], '2': [],
-            #                                                                    '1': [], '0': [], '4': []}}}
-            opponent_which_one_has_passive_skill_to_turn_start_lists = {unit_index: passive_list for unit_index, passive_list in
-                               notice_dictionary['NOTIFY_TURN_END']['unit_index_turn_start_passive_list_map'].items() if
-                               passive_list}
-
-            print(f"{Fore.RED}opponent_which_one_has_passive_skill_to_turn_start_lists:{Fore.GREEN} {opponent_which_one_has_passive_skill_to_turn_start_lists}{Style.RESET_ALL}")
-
-
 
             for player, field_data in notice_dictionary['NOTIFY_TURN_END']['player_field_unit_harmful_effect_map'].items():
                 if player == 'You':
@@ -444,6 +425,34 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
                 else:
                     print(f'apply_notify_data_of_dead_unit error : unknown player {player}')
+
+            # notify_turn_end() -> notice_dictionary: {
+            #     'NOTIFY_TURN_END': {'player_drawn_card_list_map': {'You': [33]}, 'player_field_energy_map': {'You': 1},
+            #                         'player_field_unit_health_point_map': {
+            #                             'Opponent': {'field_unit_health_point_map': {'8': 20}}},
+            #                         'player_field_unit_harmful_effect_map': {'Opponent': {
+            #                             'field_unit_harmful_status_map': {'8': {'harmful_status_list': []}}}},
+            #                         'player_field_unit_death_map': {'Opponent': {'dead_field_unit_index_list': []}},
+            #                         'player_main_character_survival_map': {},
+            #                         'unit_index_turn_start_passive_list_map': {'3': [], '5': [], '6': [1, 2], '2': [],
+            #                                                                    '1': [], '0': [], '4': []}}}
+            opponent_which_one_has_passive_skill_to_turn_start_lists = {unit_index: passive_list for
+                                                                        unit_index, passive_list in
+                                                                        notice_dictionary['NOTIFY_TURN_END'][
+                                                                            'unit_index_turn_start_passive_list_map'].items()
+                                                                        if
+                                                                        passive_list}
+
+            print(f"{Fore.RED}opponent_which_one_has_passive_skill_to_turn_start_lists:{Fore.GREEN} {opponent_which_one_has_passive_skill_to_turn_start_lists}{Style.RESET_ALL}")
+
+            required_to_process_opponent_passive_skill_multiple_unit_list = []
+            for key, value in opponent_which_one_has_passive_skill_to_turn_start_lists.items():
+                required_to_process_opponent_passive_skill_multiple_unit_list.append(key)
+
+            self.__opponent_field_area_inside_handler.set_field_turn_start_action(
+                OpponentTurnStartAction.CHECK_MULTIPLE_UNIT_REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
+            self.__opponent_field_area_inside_handler.set_required_to_process_opponent_passive_skill_multiple_unit_list(
+                required_to_process_opponent_passive_skill_multiple_unit_list)
 
             return
 

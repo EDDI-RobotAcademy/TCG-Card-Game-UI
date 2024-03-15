@@ -80,3 +80,9 @@ class OpponentFieldAreaInsideHandler:
     def get_unit_action(self):
         return self.__unit_action
 
+    def set_required_to_process_opponent_passive_skill_multiple_unit_list(self, required_to_process_passive_skill_multiple_unit_list):
+        self.__required_to_process_passive_skill_multiple_unit_list = required_to_process_passive_skill_multiple_unit_list
+
+    def get_required_to_process_opponent_passive_skill_multiple_unit_list(self):
+        return self.__required_to_process_passive_skill_multiple_unit_list
+
