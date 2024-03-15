@@ -5315,8 +5315,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 return
 
-
-                # print(f"page_selected_card = {page_selected_card}")
             if self.fixed_unit_card_inside_action is FixedUnitCardInsideAction.TARGETING_TWO_ENEMY_AS_POSSIBLE:
                 print("적 유닛 2체까지 선택 가능")
 
@@ -5375,7 +5373,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 self.opponent_you_selected_lightning_border_list = []
                                 self.opponent_you_selected_object_list = []
 
-                                self.selected_object = None
                                 self.selected_object = None
                                 self.return_to_initial_location()
                                 return
