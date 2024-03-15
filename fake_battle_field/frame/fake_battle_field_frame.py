@@ -121,6 +121,7 @@ from common.attack_type import AttackType
 from common.card_grade import CardGrade
 from common.card_race import CardRace
 from common.card_type import CardType
+from common.survival_type import SurvivalType
 from fake_battle_field.entity.animation_test_image import AnimationTestImage
 from fake_battle_field.entity.muligun_reset_button import MuligunResetButton
 from fake_battle_field.entity.multi_draw_button import MultiDrawButton
@@ -1947,6 +1948,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         # if len(self.battle_result_panel_list) == 2:
         if len(self.battle_result_panel_list) != 0:
+            print(self.is_playing_action_animation)
+            print(self.field_area_inside_handler.get_field_area_action())
             if self.is_playing_action_animation == False and self.field_area_inside_handler.get_field_area_action() == None:
                 glEnable(GL_BLEND)
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -2751,7 +2754,25 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                             self.attack_animation_object.set_opponent_lost_card_id(lost_card_id)
 
-                            self.master.after(2000, self.opponent_contract_of_doom_attack_animation)
+                            field_vertices = self.opponent_field_panel.get_vertices()
+                            main_character_vertices = self.opponent_main_character_panel.get_vertices()
+
+                            vertices = [(field_vertices[0][0], main_character_vertices[0][1]), (field_vertices[2][0], main_character_vertices[1][1]),
+                                        field_vertices[3], field_vertices[0]]
+
+                            # vertices = [field_vertices[0], (field_vertices[1][0], main_character_vertices[1][1]),
+                            #             (field_vertices[2][0], main_character_vertices[2][1]), field_vertices[3]]
+
+                            self.create_effect_animation_with_vertices_and_play_animation_and_call_function(
+                                'contract_of_doom', vertices, self.opponent_contract_of_doom_attack_animation
+                            )
+
+                            if response.get('player_main_character_survival_map', {}).get('Opponent', None) == 'Death':
+                                self.opponent_hp_repository.opponent_character_die()
+                                self.is_playing_action_animation = True
+
+
+
 
                             # # TODO: 즉발이므로 대기 액션이 필요없음 (서버와의 통신을 위해 대기가 발생 할 수 있긴함) 그 때 가서 추가
                             # for index in range(
@@ -3954,6 +3975,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     if self.surrender_confirm_ok_button_selected:
                         print(f"행복해용~~~")
                         self.battle_field_function_controller.callSurrender()
+                        self.is_playing_action_animation = False
+                        self.field_area_inside_handler.clear_field_area_action()
                         #self.call_surrender()
 
                     self.surrender_confirm_close_button_selected = (
@@ -7060,6 +7083,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         opponent_field_unit_list_length = len(
             self.opponent_field_unit_repository.get_current_field_unit_card_object_list())
 
+
+        
         def opponent_wide_area_attack(step_count):
             for index in range(
                     opponent_field_unit_list_length - 1,
@@ -7111,6 +7136,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.master.after(20, opponent_wide_area_attack, step_count + 1)
             else:
                 contract_of_doom_damage = 15
+
+                self.opponent_hp_repository.take_damage(contract_of_doom_damage)
+                if self.opponent_hp_repository.get_opponent_character_survival_info() == SurvivalType.DEATH:
+                    self.is_playing_action_animation = False
+                    self.field_area_inside_handler.clear_field_area_action()
 
                 for index in range(
                         len(self.opponent_field_unit_repository.get_current_field_unit_card_object_list()) - 1,
@@ -7171,6 +7201,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
                             self.opponent_field_unit_repository.remove_harmful_status_by_index(dead_unit_index)
 
+
+
                         self.play_effect_animation_by_index_and_call_function_with_param(animation_index, remove_opponent_unit, index)
 
                 # your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
@@ -7184,6 +7216,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # self.your_hand_repository.replace_hand_card_position()
                 self.your_hand_repository.update_your_hand()
                 self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
 
                 # 로스트 존 배치의 경우 서버로부터 응답을 받아야만 배치 할 수 있음
                 # Eventually Consistency 상황이라면 여기서 상대 어떤 것이 Lost Zone으로 들어가야 하는지 확인
@@ -9505,5 +9538,20 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
             animation_index, effect_animation_panel)
 
+
+        self.play_effect_animation_by_index_and_call_function(animation_index, function)
+
+    def create_effect_animation_with_vertices_and_play_animation_and_call_function(self, effect_name, vertices, function):
+        effect_animation = EffectAnimation()
+        effect_animation.set_animation_name(effect_name)
+        effect_animation.set_total_window_size(self.width, self.height)
+        effect_animation.draw_animation_panel_with_vertices(vertices)
+        effect_animation_panel = effect_animation.get_animation_panel()
+
+        animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+            effect_animation)
+
+        self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+            animation_index, effect_animation_panel)
 
         self.play_effect_animation_by_index_and_call_function(animation_index, function)
