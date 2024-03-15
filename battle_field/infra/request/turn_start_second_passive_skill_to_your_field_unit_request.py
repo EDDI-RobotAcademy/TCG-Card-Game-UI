@@ -1,12 +1,12 @@
 from common.protocol import CustomProtocol
 
 
-# {"protocolNumber":2011, "unitCardIndex": "0", "targetGameMainCharacterIndex": "0", "usageSkillIndex": "2", "sessionInfo":""}
-class TurnStartSecondPassiveSkillToMainCharacterRequest:
-    def __init__(self, _sessionInfo, _unitCardIndex, _targetGameMainCharacterIndex, _usageSkillIndex):
-        self.__protocolNumber = CustomProtocol.TURN_START_SECOND_PASSIVE_SKILL_TO_MAIN_CHARACTER.value
+# {"protocolNumber":2010, "unitCardIndex": "0", "opponentTargetCardIndex": "0", "usageSkillIndex": "2", "sessionInfo":""}
+class TurnStartSecondPassiveSkillToYourFieldUnitRequest:
+    def __init__(self, _sessionInfo, _unitCardIndex, _opponentTargetCardIndex, _usageSkillIndex):
+        self.__protocolNumber = CustomProtocol.TURN_START_SECOND_PASSIVE_SKILL_TO_YOUR_FIELD_UNIT.value
         self.__unitCardIndex = _unitCardIndex
-        self.__targetGameMainCharacterIndex = _targetGameMainCharacterIndex
+        self.__opponentTargetCardIndex = _opponentTargetCardIndex
         self.__usageSkillIndex = _usageSkillIndex
         self.__sessionInfo = _sessionInfo
 
@@ -14,7 +14,7 @@ class TurnStartSecondPassiveSkillToMainCharacterRequest:
         return {
             "protocolNumber": self.__protocolNumber,
             "unitCardIndex": self.__unitCardIndex,
-            "targetGameMainCharacterIndex": self.__targetGameMainCharacterIndex,
+            "opponentTargetCardIndex": self.__opponentTargetCardIndex,
             "usageSkillIndex": self.__usageSkillIndex,
             "sessionInfo": self.__sessionInfo
         }
