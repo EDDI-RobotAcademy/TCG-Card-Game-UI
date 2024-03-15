@@ -35,7 +35,6 @@ class EffectAnimation:
         # image_dir = os.path.join(self.__project_root, "local_storage", "animation_for_test")
         file_list = os.listdir(image_dir)
         self.total_animation_count = len(file_list)
-        print(self.total_animation_count)
 
     def get_animation_name(self):
         return self.animation_name
