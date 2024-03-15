@@ -626,7 +626,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
     def on_key_press(self, event):
         key = event.keysym
+        if key == "Alt_L":
+            # ALT_L이 눌렸을 때는 아무 작업도 하지 않음
+            # 탭 전환
+            return
+        
         print(f"Key pressed: {key}")
+        print(f"Key pressed lower(): {key.lower()}")
+        print(f"Key pressed type: {type(key)}")
 
         if key.lower() == 'w':
             opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
@@ -699,19 +706,28 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     )
 
                     print("test dark ball : ", response)
-        if key.lower() == 'kp_decimal':
+
+        # if key.lower() == 'kp_decimal':
+        if key.lower() == 'period':
+            your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
+            first_non_none_index = next((index for index, item in enumerate(your_field_unit_list) if item is not None), None)
+            your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(first_non_none_index)
+            self.attack_animation_object.set_your_field_unit(your_field_unit)
 
             opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
             for opponent_unit_index, opponent_unit in enumerate(opponent_field_unit_list):
+                if opponent_unit == None:
+                    continue
+
                 if opponent_unit.get_card_number() == 27:
-                    self.your_field_energy_repository.request_to_attach_energy_to_unit(
-                        RequestAttachFieldEnergyToUnit(
-                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
-                            _unitIndex=opponent_unit.get_index(),
-                            _energyRace=CardRace.UNDEAD,
-                            _energyCount=2
-                        )
-                    )
+                    # self.your_field_energy_repository.request_to_attach_energy_to_unit(
+                    #     RequestAttachFieldEnergyToUnit(
+                    #         _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                    #         _unitIndex=opponent_unit.get_index(),
+                    #         _energyRace=CardRace.UNDEAD,
+                    #         _energyCount=2
+                    #     )
+                    # )
 
                     response = self.__fake_battle_field_frame_repository.request_attack_main_character_with_active_skill(
                         RequestAttackToOpponentFieldUnitWithActiveSkill(
@@ -721,20 +737,25 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         )
                     )
 
-                    print("test dark ball : ", response)
+                    print("test 쉐도우 볼: ", response)
+                    return
 
-        if key.lower() == 'kp_add':
+        # if key.lower() == 'kp_add':
+        if key.lower() == 'equal':
             opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
             for opponent_unit_index, opponent_unit in enumerate(opponent_field_unit_list):
+                if opponent_unit == None:
+                    continue
+
                 if opponent_unit.get_card_number() == 27:
-                    self.your_field_energy_repository.request_to_attach_energy_to_unit(
-                        RequestAttachFieldEnergyToUnit(
-                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
-                            _unitIndex=opponent_unit.get_index(),
-                            _energyRace=CardRace.UNDEAD,
-                            _energyCount=3
-                        )
-                    )
+                    # self.your_field_energy_repository.request_to_attach_energy_to_unit(
+                    #     RequestAttachFieldEnergyToUnit(
+                    #         _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                    #         _unitIndex=opponent_unit.get_index(),
+                    #         _energyRace=CardRace.UNDEAD,
+                    #         _energyCount=3
+                    #     )
+                    # )
 
                     response = self.__fake_battle_field_frame_repository.request_attack_with_non_targeting_active_skill(
                         RequestAttackWithNonTargetingActiveSkill(
@@ -743,7 +764,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         )
                     )
 
-                    print("test dark ball : ", response)
+                    print("test 망령의 바다: ", response)
+                    return
 
         if key.lower() == 'kp_home':
             print("만약 Opponent Hand에 출격시킬 유닛이 있다면 내보낸다.")
@@ -1051,7 +1073,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.__fake_opponent_hand_repository.save_fake_opponent_hand_list(opponent_multi_draw_hand_list)
             print(f"{Fore.RED}current opponent_multi_draw_hand_list:{Fore.GREEN} {self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()}{Style.RESET_ALL}")
 
-        if key.lower() == '1':
+        if key.lower() == 'kp_1':
             if self.animation_test_image_panel:
                 self.animation_test_image_panel = None
 
@@ -1063,7 +1085,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.animation_test_image_panel = self.animation_test_image.get_animation_panel()
             print("created animation panel")
 
-        if key.lower() == '2':
+        if key.lower() == 'kp_2':
             if self.animation_test_image_panel:
                 self.animation_test_image_panel = None
 
@@ -1075,7 +1097,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.animation_test_image_panel = self.animation_test_image.get_animation_panel()
             print("created animation panel")
 
-        if key.lower() == '3':
+        if key.lower() == 'kp_3':
             if self.animation_test_image_panel:
                 self.animation_test_image_panel = None
 
@@ -1247,13 +1269,30 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.animation_test_image_list.append(animation_test_image)
             self.animation_test_image_panel_list.append(animation_test_image_panel)
 
-        if key.lower() == '4':
+        if key.lower() == '3':
+            print("밸른 필드 에너지 부착")
+            opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+            for opponent_unit_index, opponent_unit in enumerate(opponent_field_unit_list):
+                if opponent_unit == None:
+                    continue
+
+                if opponent_unit.get_card_number() == 27:
+                    self.your_field_energy_repository.request_to_attach_energy_to_unit(
+                        RequestAttachFieldEnergyToUnit(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _unitIndex=opponent_unit.get_index(),
+                            _energyRace=CardRace.UNDEAD,
+                            _energyCount=3
+                        )
+                    )
+
+        if key == '4':
             opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
             print(f"opponent hand list : {opponent_hand_list}")
             for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
                 opponent_hand_card_type = self.card_info_repository.getCardTypeForCardNumber(opponent_hand)
                 if opponent_hand_card_type == CardType.ENERGY.value:
-                    print("상대방 에너지 부착 ")
+                    print("상대방 에너지 카드 부착 ")
 
                     response = self.__fake_opponent_hand_repository.request_use_energy_card_to_unit(
                         RequestUseEnergyCardToUnit(
@@ -1272,6 +1311,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     break
 
         if key.lower() == '5':
+            your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
+            first_non_none_index = next((index for index, item in enumerate(your_field_unit_list) if item is not None), None)
+            your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(first_non_none_index)
+            self.attack_animation_object.set_your_field_unit(your_field_unit)
+
             opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
             print(f"opponent hand list : {opponent_hand_list}")
             for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
@@ -1281,8 +1325,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     response = self.your_hand_repository.request_use_energy_burn_to_unit(
                         RequestUseEnergyBurnToUnit(
                             _sessionInfo=self.__session_repository.get_second_fake_session_info(),
-                            _itemCardId = 9,
-                            _opponentTargetUnitIndex = 0
+                            _itemCardId=9,
+                            _opponentTargetUnitIndex=first_non_none_index
                         )
 
                     )
@@ -1598,7 +1642,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     if is_success_value == False:
                         return
 
-                    break
+            return
 
         if key.lower() == 'o':
             opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
@@ -4112,7 +4156,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             # TODO: Your Hand List in Page
             if current_page_your_hand_list is not None:
                 for hand_card in reversed(current_page_your_hand_list):
-                    print(f"hand_card: {hand_card}")
+                    # print(f"hand_card: {hand_card}")
                     # for hand_card in reversed(self.your_hand_repository.get_current_page_your_hand_list()):
                     pickable_card_base = hand_card.get_pickable_card_base()
                     pickable_card_base.set_width_ratio(self.width_ratio)
@@ -5243,10 +5287,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # if self.selected_object.get_card_number() == 9:
                 #     self.return_to_initial_location()
 
-                print(f"your field unit (field_unit) = {type(your_field_unit)}")
+                # print(f"your field unit (field_unit) = {type(your_field_unit)}")
                 fixed_card_base = your_field_unit.get_fixed_card_base()
                 # page_selected_card = self.your_hand_repository.get_current_your_hand_page()
-                print(f"your field unit type (fixed_card_base) = {type(fixed_card_base)}")
+                # print(f"your field unit type (fixed_card_base) = {type(fixed_card_base)}")
                 # print(f"page_selected_card = {page_selected_card}")
 
                 if fixed_card_base.is_point_inside((x, y)):
@@ -9403,7 +9447,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     attached_shape.update_vertices(attached_shape.get_initial_vertices())
 
-                your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
+                # self.targeting_enemy_select_using_your_field_card_id
+                your_field_card_id = animation_actor.get_card_number()
                 your_damage = self.card_info_repository.getCardSkillFirstDamageForCardNumber(your_field_card_id)
                 print(f"your_damage: {your_damage}")
                 self.opponent_hp_repository.take_damage(your_damage)
