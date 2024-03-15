@@ -104,8 +104,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.notify_callback_table['NOTIFY_USE_INSTANT_UNIT_DEATH_ITEM_CARD'] = (
                 cls.__instance.notify_use_instant_unit_death_item_card)
 
-            cls.__instance.notify_callback_table['NOTIFY_USE_MULTIPLE_UNIT_DAMAGE_ITEM_CARD'] = (
-                cls.__instance.__battle_field_function_service.useMultipleUnitDamageItemCard)
+            # cls.__instance.notify_callback_table['NOTIFY_USE_MULTIPLE_UNIT_DAMAGE_ITEM_CARD'] = (
+            #     # cls.__instance.__battle_field_function_service.useMultipleUnitDamageItemCard)
+            #     cls.__instance.notify_use_multiple_unit_damage_item_card)
 
             cls.__instance.notify_callback_table[
                 'NOTIFY_BASIC_ATTACK_TO_UNIT'] = cls.__instance.damage_to_each_unit_by_basic_attack
@@ -598,39 +599,124 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         self.__opponent_tomb_repository.create_opponent_tomb_card(used_card_id)
         self.__battle_field_repository.set_current_use_card_id(used_card_id)
 
-        # 체력 정보 Update
-        for unit_index, remaining_health_point in your_field_unit_health_point_map.items():
-            your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(int(unit_index))
-            your_fixed_card_base = your_field_unit.get_fixed_card_base()
-            your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+        def calculate_your_field_unit_hp():
+            print('calculate your field unit hp!!')
+            # 체력 정보 Update
+            for unit_index, remaining_health_point in your_field_unit_health_point_map.items():
+                your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(int(unit_index))
+                your_fixed_card_base = your_field_unit.get_fixed_card_base()
+                your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
 
-            if remaining_health_point <= 0:
-                continue
+                if remaining_health_point <= 0:
+                    continue
 
-            for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
-                if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
-                    if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
-                        your_fixed_card_attached_shape.set_number(int(remaining_health_point))
+                for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+                    if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                        if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
 
-                        your_fixed_card_attached_shape.set_image_data(
-                            self.__pre_drawed_image_instance.get_pre_draw_unit_hp(int(remaining_health_point)))
+                            def set_hp(param):
+                                _your_fixed_card_attached_shape = param[0]
+                                _remaining_health_point = param[1]
+                                _your_fixed_card_attached_shape.set_number(int(_remaining_health_point))
+                                _your_fixed_card_attached_shape.set_image_data(
+                                    self.__pre_drawed_image_instance.get_pre_draw_unit_hp(int(_remaining_health_point)))
 
-        # 죽은 유닛들 묘지에 배치 및 Replacing
-        if your_dead_field_unit_index_list:
-            for dead_unit_index in your_dead_field_unit_index_list:
-                field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
-                self.__your_tomb_repository.create_tomb_card(field_unit_id)
-                self.__your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
+                            effect_animation = EffectAnimation()
+                            effect_animation.set_animation_name('dark_blast')
+                            effect_animation.change_local_translation(
+                                self.__your_field_unit_repository.find_field_unit_by_index(int(unit_index))
+                            .get_fixed_card_base().get_local_translation())
+                            effect_animation.draw_animation_panel()
 
-            self.__your_field_unit_repository.replace_field_card_position()
+                            self.__notify_reader_repository.save_notify_effect_animation_request(
+                                EffectAnimationRequest(
+                                    effect_animation=effect_animation,
+                                    target_player='You',
+                                    target_index=int(unit_index),
+                                    target_type=TargetType.UNIT,
+                                    call_function=set_hp,
+                                    function_need_param=True,
+                                    param = (your_fixed_card_attached_shape, remaining_health_point)
 
-        if opponent_sacrificed_field_unit_index_list:
-            for dead_unit_index in opponent_sacrificed_field_unit_index_list:
-                field_unit_id = self.__opponent_field_unit_repository.get_opponent_card_id_by_index(int(dead_unit_index))
-                self.__opponent_tomb_repository.create_opponent_tomb_card(field_unit_id)
-                self.__opponent_field_unit_repository.remove_current_field_unit_card(int(dead_unit_index))
+                                )
+                            )
 
-            self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+            # 죽은 유닛들 묘지에 배치 및 Replacing
+            if your_dead_field_unit_index_list:
+                for dead_unit_index in your_dead_field_unit_index_list:
+                    unit_index = dead_unit_index
+                    def remove_your_unit(unit_index):
+                        # unit_index = dead_unit_index
+                        print('index??? : ',unit_index)
+                        field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(unit_index)
+                        self.__your_tomb_repository.create_tomb_card(field_unit_id)
+                        self.__your_field_unit_repository.remove_card_by_index(unit_index)
+
+                        self.__your_field_unit_repository.replace_field_card_position()
+
+                    effect_animation = EffectAnimation()
+                    effect_animation.set_unit_index(dead_unit_index)
+                    effect_animation.set_animation_name('death')
+                    effect_animation.change_local_translation(
+                        self.__your_field_unit_repository.find_field_unit_by_index(int(dead_unit_index))
+                                                                                   .get_fixed_card_base().get_local_translation())
+                    effect_animation.draw_animation_panel()
+
+                    self.__notify_reader_repository.save_notify_effect_animation_request(
+                        EffectAnimationRequest(
+                            effect_animation=effect_animation,
+                            target_player='You',
+                            target_index=dead_unit_index,
+                            target_type=TargetType.UNIT,
+                            call_function=remove_your_unit,
+                            function_need_param=True,
+                            param = dead_unit_index
+                        )
+                    )
+
+            if opponent_sacrificed_field_unit_index_list:
+                for dead_unit_index in opponent_sacrificed_field_unit_index_list:
+
+                    def remove_field_unit():
+                        field_unit_id = self.__opponent_field_unit_repository.get_opponent_card_id_by_index(int(dead_unit_index))
+                        self.__opponent_tomb_repository.create_opponent_tomb_card(field_unit_id)
+                        self.__opponent_field_unit_repository.remove_current_field_unit_card(int(dead_unit_index))
+
+                        self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                    effect_animation = EffectAnimation()
+                    effect_animation.set_animation_name('death')
+                    effect_animation.change_local_translation(
+                        self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(int(dead_unit_index))
+                    .get_fixed_card_base().get_local_translation())
+                    effect_animation.draw_animation_panel()
+
+                    self.__notify_reader_repository.save_notify_effect_animation_request(
+                        EffectAnimationRequest(
+                            effect_animation=effect_animation,
+                            target_player='Opponent',
+                            target_index=dead_unit_index,
+                            target_type=TargetType.UNIT,
+                            call_function=remove_field_unit
+                        )
+                    )
+
+
+
+        effect_animation = EffectAnimation()
+        effect_animation.set_animation_name('corpse_explosion')
+
+
+        self.__notify_reader_repository.save_notify_effect_animation_request(
+            EffectAnimationRequest(
+                effect_animation=effect_animation,
+                target_player='You',
+                target_index=1000,
+                target_type=TargetType.AREA,
+                call_function=calculate_your_field_unit_hp
+            )
+        )
 
     def search_card(self, notice_dictionary):
         notify_dict_data = notice_dictionary['NOTIFY_USE_SEARCH_DECK_SUPPORT_CARD']
@@ -2235,3 +2321,5 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                     call_function=calculate_unit_energy_remove_item_card
                 )
             )
+
+

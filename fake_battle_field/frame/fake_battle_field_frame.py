@@ -124,6 +124,7 @@ from common.card_grade import CardGrade
 from common.card_race import CardRace
 from common.card_type import CardType
 from common.survival_type import SurvivalType
+from common.target_type import TargetType
 from fake_battle_field.entity.animation_test_image import AnimationTestImage
 from fake_battle_field.entity.muligun_reset_button import MuligunResetButton
 from fake_battle_field.entity.multi_draw_button import MultiDrawButton
@@ -743,6 +744,29 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     )
 
                     print("test dark ball : ", response)
+
+        if key.lower() == 'kp_home':
+            print("만약 Opponent Hand에 출격시킬 유닛이 있다면 내보낸다.")
+
+            opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
+            for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
+                if opponent_hand == 31 or opponent_hand == 32 :
+                    print("상대방 유닛 출격")
+
+                    result = self.__fake_opponent_hand_repository.request_deploy_fake_opponent_unit(
+                        FakeOpponentDeployUnitRequest(
+                            self.__session_repository.get_second_fake_session_info(),
+                            opponent_hand))
+
+                    print(f"fake opponent deploy unit result: {result}")
+                    is_success_value = result.get('is_success', False)
+
+                    if is_success_value == False:
+                        return
+
+                    self.__fake_opponent_hand_repository.remove_card_by_index(opponent_hand_index)
+
+                    break
 
         if key.lower() == 'z':
             print("만약 Opponent Hand에 출격시킬 유닛이 있다면 내보낸다.")
@@ -1873,17 +1897,49 @@ class FakeBattleFieldFrame(OpenGLFrame):
         if len(self.__notify_reader_repository.get_notify_effect_animation_request_list()) != 0:
             for _ in range(0,len(self.__notify_reader_repository.get_notify_effect_animation_request_list())):
                 effect_animation_request = self.__notify_reader_repository.get_notify_effect_animation_request_list().pop()
-
                 effect_animation = effect_animation_request.get_effect_animation()
                 effect_animation.set_total_window_size(self.width, self.height)
-                effect_animation.draw_animation_panel()
-                effect_animation_panel = effect_animation.get_animation_panel()
-                animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
-                    effect_animation)
-                self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
-                    animation_index, effect_animation_panel)
 
-                self.play_effect_animation_by_index_and_call_function(animation_index, effect_animation_request.get_call_function())
+
+                if effect_animation_request.get_target_type() == TargetType.AREA:
+                    print('광역 공격 실행중')
+
+                    field_vertices = self.your_field_panel.get_vertices()
+
+
+                    vertices = [field_vertices[1], field_vertices[2], field_vertices[3], field_vertices[0]]
+                    #
+                    # vertices = [(field_vertices[0][0], main_character_vertices[0][1]),
+                    #             (field_vertices[2][0], main_character_vertices[1][1]),
+                    #             field_vertices[3], field_vertices[0]]
+                    effect_animation.draw_animation_panel_with_vertices(vertices)
+                    effect_animation_panel = effect_animation.get_animation_panel()
+                    animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+                        effect_animation)
+                    self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                        animation_index, effect_animation_panel)
+
+                    self.play_effect_animation_by_index_and_call_function(animation_index,
+                                                                          effect_animation_request.get_call_function())
+
+                elif effect_animation_request.get_target_type() == TargetType.UNIT:
+                    effect_animation.draw_animation_panel()
+                    print(effect_animation_request.get_target_index())
+
+                    effect_animation_panel = effect_animation.get_animation_panel()
+                    animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+                        effect_animation)
+                    self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                        animation_index, effect_animation_panel)
+
+                    if effect_animation_request.get_function_need_param():
+                        self.play_effect_animation_by_index_and_call_function_with_param(animation_index, effect_animation_request.get_call_function(
+                            ),effect_animation_request.get_param())
+                    else:
+                        self.play_effect_animation_by_index_and_call_function(animation_index,
+                                                                              effect_animation_request.get_call_function())
+                    # self.play_effect_animation_by_index_and_call_function(animation_index,
+                    #                                                            effect_animation_request.get_call_function())
 
            # self.play_effect_animation()
 
@@ -9519,7 +9575,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.master.after(17, animate)
             else:
                 self.effect_animation_repository.remove_effect_animation_by_index(index)
-                function()
+                if function:
+                    function()
                 print("finish animation")
 
         print(f"animation playing at index : {index}")

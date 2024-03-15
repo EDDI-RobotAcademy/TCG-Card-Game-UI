@@ -27,6 +27,15 @@ class EffectAnimation:
         self.animation_name = None
         self.animation_image_path = None
         self.total_animation_count = 0
+        self.unit_index = None
+
+    def set_unit_index(self, index):
+        print('set index: ', index)
+        self.unit_index = index
+
+    def get_unit_index(self):
+        print('index return~~~ ,', self.unit_index)
+        return self.unit_index
 
     def set_animation_name(self, animation_name):
         print(animation_name)
@@ -86,7 +95,6 @@ class EffectAnimation:
     def draw_animation_panel(self):
 
         basic_fixed_card_base_vertices = [(-32.5, 0), (137.5, 0), (137.5, 170), (-32.5, 170)]
-        print(self.__pre_drawed_image.get_pre_draw_effect_animation(self.animation_name))
         self.animation_panel = NonBackgroundImage(
             image_data=self.__pre_drawed_image.get_pre_draw_effect_animation(self.animation_name),
             # vertices=[
