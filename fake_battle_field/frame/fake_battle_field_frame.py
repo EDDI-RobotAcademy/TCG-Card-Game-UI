@@ -86,6 +86,7 @@ from battle_field.infra.request.target_passive_skill_to_main_character_from_depl
     TargetingPassiveSkillToMainCharacterFromDeployRequest
 from battle_field.infra.request.targeting_passive_skill_to_your_field_unit_from_deploy_request import \
     TargetingPassiveSkillToYourFieldUnitFromDeployRequest
+from battle_field.infra.request.turn_start_first_passive_skill_request import TurnStartFirstPassiveSkillRequest
 
 from battle_field.infra.request.wide_area_passive_skill_from_deploy_request import WideAreaPassiveSkillFromDeployRequest
 from battle_field.infra.request.request_use_special_energy_card_to_unit import RequestUseSpecialEnergyCardToUnit
@@ -889,6 +890,47 @@ class FakeBattleFieldFrame(OpenGLFrame):
             is_success = process_second_passive_skill_response['is_success']
             if is_success is False:
                 return FieldAreaAction.Dummy
+
+        if key.lower() == 'f':
+            print(f"{Fore.RED}상대방 네더 블레이드 매 턴 시작 시 광역기 발동!{Style.RESET_ALL}")
+
+            need_to_process_opponent_unit_list = self.opponent_field_area_inside_handler.get_required_to_process_opponent_passive_skill_multiple_unit_list()
+            print(f"{Fore.RED}need_to_process_opponent_unit_list: {Fore.GREEN}{need_to_process_opponent_unit_list}{Style.RESET_ALL}")
+
+            if len(need_to_process_opponent_unit_list) == 0:
+                self.opponent_field_area_inside_handler.set_field_turn_start_action(TurnStartAction.Dummy)
+                return
+
+            passive_opponent_unit_index = int(need_to_process_opponent_unit_list.pop(0))
+            self.opponent_field_area_inside_handler.set_field_turn_start_action(TurnStartAction.Dummy)
+
+            opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(passive_opponent_unit_index)
+            self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
+            self.attack_animation_object.set_opponent_animation_actor(opponent_field_unit)
+
+            #### add
+            damage = self.card_info_repository.getCardPassiveFirstDamageForCardNumber(opponent_field_unit.get_card_number())
+            self.attack_animation_object.set_opponent_animation_actor_damage(damage)
+
+            self.opponent_field_area_inside_handler.set_unit_action(OpponentUnitAction.NETHER_BLADE_FIRST_WIDE_AREA_PASSIVE_SKILL)
+
+            extra_ability = self.opponent_field_unit_repository.get_opponent_unit_extra_ability_at_index(passive_opponent_unit_index)
+            self.attack_animation_object.set_extra_ability(extra_ability)
+
+            self.opponent_field_area_inside_handler.set_active_field_area_action(
+                OpponentFieldAreaActionProcess.PLAY_ANIMATION)
+
+            #### add finish
+
+            # {"protocolNumber":2012, "unitCardIndex": "0", "usageSkillIndex": "1", "sessionInfo":""}
+            turn_start_first_passive_skill_response = self.__fake_battle_field_frame_repository.request_to_process_turn_start_first_passive_skill_to_your_field_unit(
+                TurnStartFirstPassiveSkillRequest(
+                    _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                    _unitCardIndex=str(passive_opponent_unit_index),
+                    _usageSkillIndex="1"))
+
+            print(f"{Fore.RED}opponent turn_start_first_passive_skill_response:{Fore.GREEN} {turn_start_first_passive_skill_response}{Style.RESET_ALL}")
+
 
         if key.lower() == 'x':
             print("Opponent Turn을 종료합니다")
@@ -6962,13 +7004,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
                             animation_index, effect_animation_panel)
 
-                        def remove_opponent_unit():
-                            self.opponent_field_unit_repository.remove_current_field_unit_card(index)
-                            self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
-                            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-                            self.opponent_field_unit_repository.remove_harmful_status_by_index(index)
+                        def remove_opponent_unit(dead_unit_index):
 
-                        self.play_effect_animation_by_index_and_call_function(animation_index, remove_opponent_unit)
+                            print(dead_unit_index)
+                            dead_unit_card_id = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(dead_unit_index).get_card_number()
+                            self.opponent_field_unit_repository.remove_current_field_unit_card(dead_unit_index)
+                            self.opponent_tomb_repository.create_opponent_tomb_card(dead_unit_card_id)
+                            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                            self.opponent_field_unit_repository.remove_harmful_status_by_index(dead_unit_index)
+
+                        self.play_effect_animation_by_index_and_call_function_with_param(animation_index, remove_opponent_unit, index)
 
                 # your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
                 # self.your_hand_repository.remove_card_by_index(your_card_index)
@@ -9266,6 +9311,25 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.master.after(0, animate)
 
+
+    def play_effect_animation_by_index_and_call_function_with_param(self, index, function, param):
+
+        def animate():
+            effect_animation = self.effect_animation_repository.get_effect_animation_by_index(index)
+            effect_animation.update_effect_animation_panel()
+            if not effect_animation.is_finished:
+                self.master.after(17, animate)
+            else:
+                self.effect_animation_repository.remove_effect_animation_by_index(index)
+                function(param)
+                print("finish animation")
+
+        print(f"animation playing at index : {index}")
+        effect_animation = self.effect_animation_repository.get_effect_animation_by_index(index)
+        print(f"effect_animation : {effect_animation}")
+        effect_animation.reset_animation_count()
+
+        self.master.after(0, animate)
         
         
     def create_effect_animation_to_opponent_unit_and_play_animation_and_call_function(self, effect_name, index, function):
