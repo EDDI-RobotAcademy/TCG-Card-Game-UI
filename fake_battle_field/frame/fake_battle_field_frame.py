@@ -1366,6 +1366,31 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     break
 
+        if key.lower() == '7':
+            print('에너지를 부착하지 않은 Opponent 유닛에 필드 에너지 1개 부착')
+
+            opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+            for opponent_unit_index, opponent_unit in enumerate(opponent_field_unit_list):
+                if opponent_unit == None:
+                    continue
+
+                total_energy = self.opponent_field_unit_repository.get_total_energy_at_index(opponent_unit_index)
+                print(f"total_energy: {total_energy}")
+
+                if total_energy > 0:
+                    continue
+
+                self.__fake_battle_field_frame_repository.request_to_attach_energy_to_unit(
+                    RequestAttachFieldEnergyToUnit(
+                        _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                        _unitIndex=opponent_unit_index,
+                        _energyRace=CardRace.UNDEAD,
+                        _energyCount=1
+                    )
+                )
+
+                return
+
         if key.lower() == 'kp_7':
             opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
             print(f"opponent hand list : {opponent_hand_list}")
@@ -1619,17 +1644,20 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
 
         if key.lower() == 'd':
+            print("상대방 메인 캐릭터 일반 공격")
+
             opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
             print(f"opponent_field_unit_list : {opponent_field_unit_list}")
             for opponent_field_index, opponent_unit in enumerate(opponent_field_unit_list):
+                if opponent_unit == None:
+                    continue
+
                 total_energy = self.opponent_field_unit_repository.get_total_energy_at_index(opponent_field_index)
                 print(total_energy)
                 race_energy = self.opponent_field_unit_repository.get_energy_info_at_index(opponent_field_index)
                 print(race_energy)
 
                 if total_energy >= 1:
-                    print("상대방 평타공격~ ")
-
                     response = self.__fake_battle_field_frame_repository.request_attack_main_character(
                         RequestAttackMainCharacter(
                             _sessionInfo=self.__session_repository.get_second_fake_session_info(),
@@ -1640,7 +1668,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     is_success_value = response.get('is_success', False)
 
                     if is_success_value == False:
-                        return
+                        continue
+
+                    return
 
             return
 

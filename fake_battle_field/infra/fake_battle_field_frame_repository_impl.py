@@ -91,3 +91,7 @@ class FakeBattleFieldFrameRepositoryImpl(FakeBattleFieldFrameRepository):
     def request_to_process_turn_start_second_passive_skill_to_your_field_unit(self, turnStartSecondPassiveSkillToYourFieldUnitRequest):
         self.__transmitIpcChannel.put(turnStartSecondPassiveSkillToYourFieldUnitRequest)
         return self.__receiveIpcChannel.get()
+
+    def request_to_attach_energy_to_unit(self, requestToAttachEnergyUnit):
+        self.__transmitIpcChannel.put(requestToAttachEnergyUnit)
+        return self.__receiveIpcChannel.get()
