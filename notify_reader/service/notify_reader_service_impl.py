@@ -1842,11 +1842,33 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                                                 remaining_health_point))
 
                         for dead_unit_index in dead_card_index_list:
-                            field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
-                            self.__opponent_tomb_repository.create_opponent_tomb_card(field_unit_id)
-                            self.__opponent_field_unit_repository.remove_current_field_unit_card(int(dead_unit_index))
 
-                        self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                            def remove_field_unit_by_index():
+
+
+                                field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
+                                self.__opponent_tomb_repository.create_opponent_tomb_card(field_unit_id)
+                                self.__opponent_field_unit_repository.remove_current_field_unit_card(int(dead_unit_index))
+
+                                self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                            effect_animation = EffectAnimation()
+                            effect_animation.set_animation_name('death')
+                            effect_animation.change_local_translation(
+                                self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                                    dead_unit_index).get_fixed_card_base().get_local_translation()
+                            )
+                            effect_animation.draw_animation_panel()
+
+                            self.__notify_reader_repository.save_notify_effect_animation_request(
+                                EffectAnimationRequest(
+                                    effect_animation=effect_animation,
+                                    target_player=player_who_dead_unit,
+                                    target_index=dead_unit_index,
+                                    target_type=TargetType.UNIT,
+                                    call_function=remove_field_unit_by_index
+                                )
+                            )
 
 
                     unit_index = list(field_unit_health_point_map["field_unit_health_point_map"].keys())[0]
@@ -1891,11 +1913,32 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                                             self.__pre_drawed_image_instance.get_pre_draw_unit_hp(remaining_health_point))
 
                         for dead_unit_index in dead_card_index_list:
-                            field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
-                            self.__your_tomb_repository.create_tomb_card(field_unit_id)
-                            self.__your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
+                            def remove_field_unit_by_index():
+                                field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(
+                                    int(dead_unit_index))
+                                self.__opponent_tomb_repository.create_opponent_tomb_card(field_unit_id)
+                                self.__opponent_field_unit_repository.remove_current_field_unit_card(
+                                    int(dead_unit_index))
 
-                        self.__your_field_unit_repository.replace_field_card_position()
+                                self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                            effect_animation = EffectAnimation()
+                            effect_animation.set_animation_name('death')
+                            effect_animation.change_local_translation(
+                                self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                                    dead_unit_index).get_fixed_card_base().get_local_translation()
+                            )
+                            effect_animation.draw_animation_panel()
+
+                            self.__notify_reader_repository.save_notify_effect_animation_request(
+                                EffectAnimationRequest(
+                                    effect_animation=effect_animation,
+                                    target_player=player_who_dead_unit,
+                                    target_index=dead_unit_index,
+                                    target_type=TargetType.UNIT,
+                                    call_function=remove_field_unit_by_index
+                                )
+                            )
 
                     unit_index = list(field_unit_health_point_map["field_unit_health_point_map"].keys())[0]
 
@@ -2108,10 +2151,31 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             def calculate_unit_energy_remove_item_card():
 
                 for dead_field_unit_index in dead_field_unit_index_list:
-                    self.__your_tomb_repository.create_tomb_card(
-                        self.__your_field_unit_repository.find_field_unit_by_index(dead_field_unit_index).get_card_number())
-                    self.__your_field_unit_repository.remove_card_by_index(dead_field_unit_index)
-                    self.__your_field_unit_repository.replace_field_card_position()
+                    def remove_field_unit_by_index():
+                        self.__your_tomb_repository.create_tomb_card(
+                            self.__your_field_unit_repository.find_field_unit_by_index(dead_field_unit_index).get_card_number())
+                        self.__your_field_unit_repository.remove_card_by_index(dead_field_unit_index)
+                        self.__your_field_unit_repository.remove_harmful_status_by_index(dead_field_unit_index)
+                        self.__your_field_unit_repository.replace_field_card_position()
+
+
+                    effect_animation = EffectAnimation()
+                    effect_animation.set_animation_name('death')
+                    effect_animation.change_local_translation(
+                        self.__your_field_unit_repository.find_field_unit_by_index(
+                            dead_field_unit_index).get_fixed_card_base().get_local_translation()
+                    )
+                    effect_animation.draw_animation_panel()
+
+                    self.__notify_reader_repository.save_notify_effect_animation_request(
+                        EffectAnimationRequest(
+                            effect_animation=effect_animation,
+                            target_player='You',
+                            target_index=dead_field_unit_index,
+                            target_type=TargetType.UNIT,
+                            call_function=remove_field_unit_by_index
+                        )
+                    )
 
                 try:
                     your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(field_unit_index)
