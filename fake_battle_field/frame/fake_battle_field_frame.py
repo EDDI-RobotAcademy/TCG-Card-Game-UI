@@ -3135,6 +3135,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.return_to_initial_location()
                 self.field_area_inside_handler.set_placed_card_page(
                     self.your_hand_repository.get_current_your_hand_page())
+                print(f"추정된 필드 액션 : {self.field_area_inside_handler.get_field_area_action()}")
                 # 서포트 관련하여 시작 포인트
                 # handler에서 id 와 index를 받아서 저장 해놓고
                 # false가 떳을 경우의 함수를 추가하여 return값으로 selection_object를 주는 함수를 만든다.
@@ -5149,8 +5150,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if is_success_value == False:
                         self.selected_object = None
-                        self.your_deck_search_panel = None
-                        self.field_area_inside_handler.set_field_area_action(FieldAreaAction.Dummy)
+                        #self.your_deck_search_panel = None
+                        self.field_area_inside_handler.clear_field_area_action()
+
+                        self.selected_search_unit_lightning_border = []
+                        self.selected_search_unit_index_list = []
+                        self.selected_search_unit_id_list = []
+                        self.selected_search_unit_page_number_list = []
                         print(f"self.field_area_inside_handler.get - > {self.field_area_inside_handler.get_field_area_action()}")
                         return
                     # 서포트
@@ -5159,6 +5165,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     # 어차피 셔플 받아서 이미지만 갈아 끼워넣을 것이기 때문
                     processing_length = len(self.selected_search_unit_index_list)
                     self.your_deck_repository.remove_card_object_list_with_count(processing_length)
+
+                    self.your_hand_repository.remove_card_by_index_with_page(
+                        self.field_area_inside_handler.get_placed_card_index())
+                    self.your_tomb_repository.create_tomb_card(self.field_area_inside_handler.get_action_set_card_id())
 
                     # self.your_hand_repository.create_additional_hand_card_list(self.selected_search_unit_id_list)
                     self.your_hand_repository.save_current_hand_state(self.selected_search_unit_id_list)
@@ -5240,7 +5250,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             pass
 
                         if len(self.selected_search_unit_index_list) == 2:
-                            self.field_area_inside_handler.set_field_area_action(FieldAreaAction.Dummy)
                             return
 
                         else:
