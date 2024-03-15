@@ -34,5 +34,5 @@ class OpponentFieldEnergyRepository:
         self.field_energy_state.set_opponent_field_energy(field_energy_count)
 
     def clear_every_resource(self):
-        self.field_energy_state = None
+        self.field_energy_state = FieldEnergyState()
 

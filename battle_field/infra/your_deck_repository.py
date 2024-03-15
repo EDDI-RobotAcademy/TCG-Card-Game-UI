@@ -232,3 +232,16 @@ class YourDeckRepository:
 
     def saveTransmitIpcChannel(self, transmitIpcChannel):
         self.__transmitIpcChannel = transmitIpcChannel
+
+    def clear_every_resource(self):
+        self.preDrawedImageInstance = PreDrawedImage.getInstance()
+
+        self.total_width = None
+        self.total_height = None
+
+        self.current_deck_state = CurrentDeckState()
+        self.deck_page_list = []
+
+        self.current_deck_card_object_list = []
+
+        self.current_page = 0

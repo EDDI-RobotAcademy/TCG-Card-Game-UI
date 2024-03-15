@@ -5,6 +5,20 @@ from battle_field.infra.legacy.circle_image_legacy_opponent_field_unit_repositor
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
 from battle_field.infra.opponent_deck_repository import OpponentDeckRepository
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
+from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
+from battle_field.infra.opponent_hand_repository import OpponentHandRepository
+from battle_field.infra.opponent_hp_repository import OpponentHpRepository
+from battle_field.infra.opponent_lost_zone_repository import OpponentLostZoneRepository
+from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
+from battle_field.infra.round_repository import RoundRepository
+from battle_field.infra.your_deck_repository import YourDeckRepository
+from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
+from battle_field.infra.your_field_unit_action_repository import YourFieldUnitActionRepository
+from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
+from battle_field.infra.your_hand_repository import YourHandRepository
+from battle_field.infra.your_hp_repository import YourHpRepository
+from battle_field.infra.your_lost_zone_repository import YourLostZoneRepository
+from battle_field.infra.your_tomb_repository import YourTombRepository
 from battle_field_function.repository.battle_field_function_repository_impl import BattleFieldFunctionRepositoryImpl
 from battle_field_function.service.battle_field_function_service import BattleFieldFunctionService
 from battle_field_function.service.request.game_end_reward_request import GameEndRewardRequest
@@ -26,16 +40,31 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
             cls.__instance.__battleFieldFunctionRepository = BattleFieldFunctionRepositoryImpl.getInstance()
+
             cls.__instance.__sessionRepository = SessionRepositoryImpl.getInstance()
             cls.__instance.__sessionService = SessionServiceImpl.getInstance()
-            cls.__instance.__yourHandRepository = CircleImageLegacyYourHandRepository.getInstance()
+
             cls.__instance.__battle_field_repository = BattleFieldRepository.getInstance()
             cls.__instance.__notify_reader_repository = NotifyReaderRepositoryImpl.getInstance()
-            # cls.__instance.__opponentHandRepository = OpponentHandRepository.getInstance()
 
+            cls.__instance.__opponentHandRepository = OpponentHandRepository.getInstance()
             cls.__instance.__effectAnimationRepository = EffectAnimationRepository.getInstance()
             cls.__instance.__opponentDeckRepository = OpponentDeckRepository.getInstance()
             cls.__instance.__opponentFieldEnergyRepository = OpponentFieldEnergyRepository.getInstance()
+            cls.__instance.__opponentFieldUnitRepository = OpponentFieldUnitRepository.getInstance()
+            cls.__instance.__opponentHpRepository = OpponentHpRepository.getInstance()
+            cls.__instance.__opponentLostZoneRepository = OpponentLostZoneRepository.getInstance()
+            cls.__instance.__opponentTombRepository = OpponentTombRepository.getInstance()
+            cls.__instance.__roundRepository = RoundRepository.getInstance()
+
+            cls.__instance.__yourHandRepository = YourHandRepository.getInstance()
+            cls.__instance.__yourDeckRepository = YourDeckRepository.getInstance()
+            cls.__instance.__yourFieldEnergyRepository = YourFieldEnergyRepository.getInstance()
+            cls.__instance.__yourFieldUnitRepository = YourFieldUnitRepository.getInstance()
+            cls.__instance.__yourFieldUnitActionRepository = YourFieldUnitActionRepository.getInstance()
+            cls.__instance.__yourHpRepository = YourHpRepository.getInstance()
+            cls.__instance.__yourLostZoneRepository = YourLostZoneRepository.getInstance()
+            cls.__instance.__yourTombRepository = YourTombRepository.getInstance()
         return cls.__instance
 
     @classmethod
@@ -88,6 +117,21 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
         self.__effectAnimationRepository.clear_every_resource()
         self.__opponentDeckRepository.clear_every_resource()
         self.__opponentFieldEnergyRepository.clear_every_resource()
+        self.__opponentFieldUnitRepository.clear_every_resource()
+        self.__opponentHandRepository.clear_every_resource()
+        self.__opponentHpRepository.clear_every_resource()
+        self.__opponentLostZoneRepository.clear_every_resource()
+        self.__opponentTombRepository.clear_every_resource()
+        self.__roundRepository.clear_every_resource()
+
+        self.__yourHandRepository.clear_every_resource()
+        self.__yourDeckRepository.clear_every_resource()
+        self.__yourFieldEnergyRepository.clear_every_resource()
+        self.__yourFieldUnitRepository.clear_every_resource()
+        self.__yourFieldUnitActionRepository.clear_every_resource()
+        self.__yourHpRepository.clear_every_resource()
+        self.__yourLostZoneRepository.clear_every_resource()
+        self.__yourTombRepository.clear_every_resource()
 
     def gameEndReward(self):
         try:

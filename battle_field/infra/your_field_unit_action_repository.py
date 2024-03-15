@@ -45,5 +45,7 @@ class YourFieldUnitActionRepository:
     def get_every_field_unit_action_count(self):
         return self.current_field_unit_action_count.get_your_field_unit_action_count()
 
-
+    def clear_every_resource(self):
+        self.current_field_unit_action_count = CurrentFieldUnitActionCountState()
+        self.current_field_unit_action_status = CurrentFieldUnitActionStatus()
 
