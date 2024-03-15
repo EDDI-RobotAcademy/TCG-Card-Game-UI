@@ -8500,15 +8500,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
     def valrn_ready_to_use_shadow_ball_to_opponent_unit_animation(self):
         self.is_playing_action_animation = True
-        self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
-        self.targeting_enemy_select_using_your_field_card_index = None
-        self.targeting_enemy_select_support_lightning_border_list = []
-        self.opponent_you_selected_lightning_border_list = []
-
-        self.selected_object = None
-        self.active_panel_rectangle = None
-        self.current_fixed_details_card = None
-        self.your_active_panel.clear_all_your_active_panel()
+        self.reset_every_selected_action()
+        # self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+        # self.targeting_enemy_select_using_your_field_card_index = None
+        # self.targeting_enemy_select_support_lightning_border_list = []
+        # self.opponent_you_selected_lightning_border_list = []
+        #
+        # self.selected_object = None
+        # self.active_panel_rectangle = None
+        # self.current_fixed_details_card = None
+        # self.your_active_panel.clear_all_your_active_panel()
 
         steps = 10
         attack_animation_object = AttackAnimation.getInstance()
@@ -8892,17 +8893,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         
                     self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function('death', opponent_field_card_index, remove_field_unit_by_index)
 
-                self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
-                self.targeting_enemy_select_using_your_field_card_index = None
-                self.targeting_enemy_select_using_your_field_card_id = None
-                self.targeting_enemy_select_support_lightning_border_list = []
-                self.opponent_you_selected_lightning_border_list = []
-
-                self.selected_object = None
-                self.active_panel_rectangle = None
-                self.current_fixed_details_card = None
-                self.your_active_panel.clear_all_your_active_panel()
-
+                # self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+                # self.targeting_enemy_select_using_your_field_card_index = None
+                # self.targeting_enemy_select_using_your_field_card_id = None
+                # self.targeting_enemy_select_support_lightning_border_list = []
+                # self.opponent_you_selected_lightning_border_list = []
+                #
+                # self.selected_object = None
+                # self.active_panel_rectangle = None
+                # self.current_fixed_details_card = None
+                # self.your_active_panel.clear_all_your_active_panel()
+                self.reset_every_selected_action()
                 self.targeting_enemy_select_using_your_field_card_id = None
 
                 self.field_area_inside_handler.clear_field_area_action()
@@ -8911,15 +8912,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
     def valrn_ready_to_use_shadow_ball_to_opponent_main_character_animation(self):
         self.is_playing_action_animation = True
-        self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
-        self.targeting_enemy_select_using_your_field_card_index = None
-        self.targeting_enemy_select_support_lightning_border_list = []
-        self.opponent_you_selected_lightning_border_list = []
-
-        self.selected_object = None
-        self.active_panel_rectangle = None
-        self.current_fixed_details_card = None
-        self.your_active_panel.clear_all_your_active_panel()
+        self.reset_every_selected_action()
+        # self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+        # self.targeting_enemy_select_using_your_field_card_index = None
+        # self.targeting_enemy_select_support_lightning_border_list = []
+        # self.opponent_you_selected_lightning_border_list = []
+        #
+        # self.selected_object = None
+        # self.active_panel_rectangle = None
+        # self.current_fixed_details_card = None
+        # self.your_active_panel.clear_all_your_active_panel()
 
         steps = 10
         attack_animation_object = AttackAnimation.getInstance()
@@ -9448,3 +9450,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
 
         self.play_effect_animation_by_index_and_call_function(animation_index, function)
+
+    def reset_every_selected_action(self):
+        self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+        self.targeting_enemy_select_using_your_field_card_index = None
+        self.targeting_enemy_select_using_your_field_card_id = None
+        self.targeting_enemy_select_support_lightning_border_list = []
+        self.opponent_you_selected_lightning_border_list = []
+
+        self.selected_object = None
+        self.active_panel_rectangle = None
+        self.current_fixed_details_card = None
+        self.your_active_panel.clear_all_your_active_panel()
