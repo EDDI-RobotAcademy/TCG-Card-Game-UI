@@ -8,3 +8,4 @@ class TargetType(Enum):
     DECK = 3
     TOMB = 4
     LOST_ZONE = 5
+    AREA = 6
