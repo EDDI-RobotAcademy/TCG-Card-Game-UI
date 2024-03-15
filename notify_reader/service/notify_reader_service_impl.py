@@ -1831,10 +1831,10 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                             def remove_field_unit_by_index():
 
 
-                                field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
+                                field_unit_id = self.__opponent_field_unit_repository.get_opponent_card_id_by_index(dead_unit_index)
                                 self.__opponent_tomb_repository.create_opponent_tomb_card(field_unit_id)
-                                self.__opponent_field_unit_repository.remove_current_field_unit_card(int(dead_unit_index))
-
+                                self.__opponent_field_unit_repository.remove_current_field_unit_card(dead_unit_index)
+                                self.__opponent_field_unit_repository.remove_harmful_status_by_index(dead_unit_index)
                                 self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
                             effect_animation = EffectAnimation()
@@ -1899,18 +1899,16 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
                         for dead_unit_index in dead_card_index_list:
                             def remove_field_unit_by_index():
-                                field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(
-                                    int(dead_unit_index))
-                                self.__opponent_tomb_repository.create_opponent_tomb_card(field_unit_id)
-                                self.__opponent_field_unit_repository.remove_current_field_unit_card(
-                                    int(dead_unit_index))
-
-                                self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                                field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(dead_unit_index)
+                                self.__your_tomb_repository.create_tomb_card(field_unit_id)
+                                self.__your_field_unit_repository.remove_card_by_index(dead_unit_index)
+                                self.__your_field_unit_repository.remove_harmful_status_by_index(dead_unit_index)
+                                self.__your_field_unit_repository.replace_field_card_position()
 
                             effect_animation = EffectAnimation()
                             effect_animation.set_animation_name('death')
                             effect_animation.change_local_translation(
-                                self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                                self.__your_field_unit_repository.find_field_unit_by_index(
                                     dead_unit_index).get_fixed_card_base().get_local_translation()
                             )
                             effect_animation.draw_animation_panel()
