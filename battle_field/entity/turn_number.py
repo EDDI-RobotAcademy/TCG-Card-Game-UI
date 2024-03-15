@@ -55,8 +55,8 @@ class CurrentFieldTurnNumber:
 
         left_x_point = self.total_width * 0.865
         right_x_point = self.total_width
-        top_y_point = self.total_height * 0.317
-        bottom_y_point = self.total_height * 0.385
+        top_y_point = self.total_height * 0.332
+        bottom_y_point = self.total_height * 0.4
 
         self.current_field_turn_number_panel = NonBackgroundImage(
             image_data=self.__pre_drawed_image.get_pre_draw_turn_number(self.__round_repository.get_current_round_number()),

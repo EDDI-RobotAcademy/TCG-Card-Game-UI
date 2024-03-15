@@ -2,6 +2,7 @@ from battle_field.infra.opponent_hp_repository import OpponentHpRepository
 from image_shape.rectangle_image import RectangleImage
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
+from image_shape.non_background_image import NonBackgroundImage
 from pyopengltk import OpenGLFrame
 
 class BattleFieldTimer(OpenGLFrame):
@@ -52,26 +53,28 @@ class BattleFieldTimer(OpenGLFrame):
 
     def draw_current_timer_panel(self):
 
-        left_x_point = self.total_width * 0.05
-        right_x_point = self.total_width * 0.12
-        top_y_point = self.total_height * 0.44
-        bottom_y_point = self.total_height * 0.55
+        left_x_point = self.total_width * 0.865
+        right_x_point = self.total_width
+        top_y_point = self.total_height * 0.249
+        bottom_y_point = self.total_height * 0.317
 
-        self.timer_panel = RectangleImage(
-            image_data=self.__pre_drawed_image.get_pre_draw_character_hp_image(self.timer),
-            #image_data=self.__pre_drawed_image.get_pre_draw_number_image(self.current_your_hp_state.get_current_health()),
+        self.timer_panel = NonBackgroundImage(
+            image_data=self.__pre_drawed_image.get_pre_draw_battle_field_timer(self.timer),
             vertices=[
                 (left_x_point, top_y_point),
                 (right_x_point, top_y_point),
                 (right_x_point, bottom_y_point),
                 (left_x_point, bottom_y_point)
-            ])
+            ],
+            global_translation=(0, 0),
+            local_translation=(0, 0)
 
-        #self.opponent_hp_panel.draw()
+        )
+
 
     def update_current_timer_panel(self):
         if self.timer >= 0:
-            self.timer_panel.set_image_data(self.__pre_drawed_image.get_pre_draw_character_hp_image(self.timer))
+            self.timer_panel.set_image_data(self.__pre_drawed_image.get_pre_draw_battle_field_timer(self.timer))
 
     def start_timer(self):
         if self.timer >= -1:
