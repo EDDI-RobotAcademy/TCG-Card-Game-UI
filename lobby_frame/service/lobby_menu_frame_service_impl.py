@@ -1,8 +1,10 @@
 import sys
 import time
 import tkinter
+from PIL import ImageTk, Image
 
 from decouple import config
+from screeninfo import get_monitors
 
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
@@ -91,18 +93,42 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
         self.__switchFrameWithMenuName = switchFrameWithMenuName
         self.__rootWindow = rootWindow
 
+        # 이미지 버튼의 크기에 맞게 resize
+        self.button_image_ent_game_origin = Image.open("local_storage/image/battle_lobby/entrance_game_button.png")
+        ent_game_button = self.button_image_ent_game_origin.resize((850, 99))
+        self.button_image_ent_game = ImageTk.PhotoImage(ent_game_button)
+
+        self.button_image_my_card_origin = Image.open("local_storage/image/battle_lobby/my_card_button.png")
+        my_card_button = self.button_image_my_card_origin.resize((850, 99))
+        self.button_image_my_card = ImageTk.PhotoImage(my_card_button)
+
+        self.button_image_shop_origin = Image.open("local_storage/image/battle_lobby/shop_button.png")
+        shop_button = self.button_image_shop_origin.resize((850, 99))
+        self.button_image_shop = ImageTk.PhotoImage(shop_button)
+
+        self.button_image_exit_origin = Image.open("local_storage/image/battle_lobby/exit_button.png")
+        exit_button = self.button_image_exit_origin.resize((850, 99))
+        self.button_image_exit = ImageTk.PhotoImage(exit_button)
+
+        self.button_image_test_game_origin = Image.open("local_storage/image/battle_lobby/test_button.png")
+        test_button = self.button_image_test_game_origin.resize((850, 99))
+        self.button_image_test_game = ImageTk.PhotoImage(test_button)
+
+
         lobbyMenuFrame = self.__lobbyMenuFrameRepository.createLobbyMenuFrame(rootWindow)
 
 
-        label_text = "EDDI TCG Card Battle"
-        label = tkinter.Label(lobbyMenuFrame, text=label_text, font=("Helvetica", 72), bg="black", fg="white",
-                              anchor="center", justify="center", pady=50)
+        # label_text = "EDDI TCG Card Battle"
+        # label = tkinter.Label(lobbyMenuFrame, text=label_text, font=("Helvetica", 72), bg="black", fg="white",
+        #                       anchor="center", justify="center", pady=50)
+        #
+        # label.place(relx=0.5, rely=0.2, anchor="center", bordermode="outside")  # 가운데 정렬
 
-        label.place(relx=0.5, rely=0.2, anchor="center", bordermode="outside")  # 가운데 정렬
-
-        battle_entrance_button = tkinter.Button(lobbyMenuFrame, text="대전 입장", bg="#2E2BE2", fg="white",
-                                                width=36, height=2)
-        battle_entrance_button.place(relx=0.5, rely=0.35, anchor="center")
+        # 대전 입장 버튼
+        battle_entrance_button = tkinter.Button(lobbyMenuFrame,
+                                                image=self.button_image_ent_game, bd=0, highlightthickness=0,
+                                                width=850, height=99)
+        battle_entrance_button.place(relx=0.32, rely=0.355, anchor="center")
 
         def onClickEntrance(event):
             #rootWindow.after(3000, self.__waitForPrepareBattle)
@@ -110,19 +136,27 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             self.__matchingWindowController.matching(rootWindow)
 
 
-
         battle_entrance_button.bind("<Button-1>", onClickEntrance)
 
-        my_card_button = tkinter.Button(lobbyMenuFrame, text="내 카드", bg="#2E2BE2", fg="white", width=36,
-                                        height=2)
-        my_card_button.place(relx=0.5, rely=0.5, anchor="center")
 
-        card_shop_button = tkinter.Button(lobbyMenuFrame, text="상점", bg="#2E2BE2", fg="white",
-                                          width=36, height=2)
-        card_shop_button.place(relx=0.5, rely=0.65, anchor="center")
+        # 내 카드 버튼
+        my_card_button = tkinter.Button(lobbyMenuFrame,
+                                        image=self.button_image_my_card, bd=0, highlightthickness=0,
+                                        width=850, height=99)
+        my_card_button.place(relx=0.32, rely=0.495, anchor="center")
 
-        exit_button = tkinter.Button(lobbyMenuFrame, text="종료", bg="#C62828", fg="white", width=36, height=2)
-        exit_button.place(relx=0.5, rely=0.8, anchor="center")
+
+        # 상점 버튼
+        card_shop_button = tkinter.Button(lobbyMenuFrame,
+                                          image=self.button_image_shop, bd=0, highlightthickness=0,
+                                          width=850, height=99)
+        card_shop_button.place(relx=0.32, rely=0.64, anchor="center")
+
+        # 종료 버튼
+        exit_button = tkinter.Button(lobbyMenuFrame,
+                                     image=self.button_image_exit, bd=0, highlightthickness=0,
+                                     width=850, height=99)
+        exit_button.place(relx=0.32, rely=0.783, anchor="center")
 
         def on_fake_battle_field_button_click():
             print("Fake Battle Field Frame Start!")
@@ -358,7 +392,6 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
         card_shop_button.bind("<Button-1>", onClickCardShop)
 
         return lobbyMenuFrame
-
 
     def get_card_data_list(self):
         return self.card_data_list
