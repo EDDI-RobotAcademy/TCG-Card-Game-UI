@@ -5,6 +5,7 @@ class EffectAnimationRepository:
     __effect_animation_dictionary = {}
     __effect_animation_panel_dictionary = {}
     __is_animation_playing = False
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -40,8 +41,6 @@ class EffectAnimationRepository:
                 self.__effect_animation_dictionary[index] = effect_animation
                 return index
 
-
-
     def get_effect_animation_by_index(self, index):
         return self.__effect_animation_dictionary[index]
 
@@ -64,3 +63,9 @@ class EffectAnimationRepository:
     def get_effect_animation_panel_dictionary(self):
         return self.__effect_animation_panel_dictionary
 
+    def clear_every_resource(self):
+        self.__effect_animation_list = []
+        self.__effect_animation_panel_list = []
+        self.__effect_animation_dictionary = {}
+        self.__effect_animation_panel_dictionary = {}
+        self.__is_animation_playing = False

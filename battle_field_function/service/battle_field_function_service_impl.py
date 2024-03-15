@@ -1,7 +1,10 @@
 from battle_field.infra.battle_field_repository import BattleFieldRepository
+from battle_field.infra.effect_animation_repository import EffectAnimationRepository
 from battle_field.infra.legacy.circle_image_legacy_opponent_field_unit_repository import \
     CircleImageLegacyOpponentFieldUnitRepository
 from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import CircleImageLegacyYourHandRepository
+from battle_field.infra.opponent_deck_repository import OpponentDeckRepository
+from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field_function.repository.battle_field_function_repository_impl import BattleFieldFunctionRepositoryImpl
 from battle_field_function.service.battle_field_function_service import BattleFieldFunctionService
 from battle_field_function.service.request.game_end_reward_request import GameEndRewardRequest
@@ -29,6 +32,10 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
             cls.__instance.__battle_field_repository = BattleFieldRepository.getInstance()
             cls.__instance.__notify_reader_repository = NotifyReaderRepositoryImpl.getInstance()
             # cls.__instance.__opponentHandRepository = OpponentHandRepository.getInstance()
+
+            cls.__instance.__effectAnimationRepository = EffectAnimationRepository.getInstance()
+            cls.__instance.__opponentDeckRepository = OpponentDeckRepository.getInstance()
+            cls.__instance.__opponentFieldEnergyRepository = OpponentFieldEnergyRepository.getInstance()
         return cls.__instance
 
     @classmethod
@@ -76,13 +83,19 @@ class BattleFieldFunctionServiceImpl(BattleFieldFunctionService):
         except Exception as e:
             print(f"turnEnd Error: {e}")
 
+    def clear_every_repository(self):
+        self.__battleFieldFunctionRepository.clear_every_resource()
+        self.__effectAnimationRepository.clear_every_resource()
+        self.__opponentDeckRepository.clear_every_resource()
+        self.__opponentFieldEnergyRepository.clear_every_resource()
+
     def gameEndReward(self):
         try:
             gameEndRewardResponse = self.__battleFieldFunctionRepository.requestGameEnd(
                 GameEndRewardRequest(
                     # _sessionInfo=self.__sessionService.getSessionInfo())
-                    # _sessionInfo=self.__sessionRepository.get_session_info())
-                    _sessionInfo=self.__sessionRepository.get_first_fake_session_info())
+                    _sessionInfo=self.__sessionRepository.get_session_info())
+                    # _sessionInfo=self.__sessionRepository.get_first_fake_session_info())
             )
             print(f"게임 끝! 응답: {gameEndRewardResponse}")
             if gameEndRewardResponse:
