@@ -963,6 +963,35 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             print(f"{Fore.RED}opponent turn_start_second_passive_skill_to_main_character_response:{Fore.GREEN} {turn_start_second_passive_skill_to_main_character_response}{Style.RESET_ALL}")
 
+        if key.lower() == 'h':
+            print(f"{Fore.RED}상대방 네더 블레이드 매 턴 시작 시 타겟팅으로 유닛 때리기!{Style.RESET_ALL}")
+
+            opponent_field_unit = self.attack_animation_object.get_opponent_animation_actor()
+            opponent_field_unit_index = opponent_field_unit.get_index()
+
+            #### add
+            damage = self.card_info_repository.getCardPassiveSecondDamageForCardNumber(opponent_field_unit.get_card_number())
+            self.attack_animation_object.set_opponent_animation_actor_damage(damage)
+
+            self.opponent_field_area_inside_handler.set_unit_action(
+                OpponentUnitAction.NETHER_BLADE_SECOND_TARGETING_PASSIVE_SKILL)
+
+            extra_ability = self.opponent_field_unit_repository.get_opponent_unit_extra_ability_at_index(opponent_field_unit_index)
+            self.attack_animation_object.set_extra_ability(extra_ability)
+
+            self.opponent_field_area_inside_handler.set_active_field_area_action(
+                OpponentFieldAreaActionProcess.PLAY_ANIMATION)
+
+            # {"protocolNumber":2010, "unitCardIndex": "0", "opponentTargetCardIndex": "0", "usageSkillIndex": "2", "sessionInfo":""}
+            turn_start_second_passive_skill_to_main_character_response = self.__fake_battle_field_frame_repository.request_to_process_turn_start_second_passive_skill_to_your_field_unit(
+                TurnStartSecondPassiveSkillToYourFieldUnitRequest(
+                    _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                    _unitCardIndex=str(opponent_field_unit_index),
+                    _targetGameMainCharacterIndex="0",
+                    _usageSkillIndex="2"))
+
+            print(f"{Fore.RED}opponent turn_start_second_passive_skill_to_main_character_response:{Fore.GREEN} {turn_start_second_passive_skill_to_main_character_response}{Style.RESET_ALL}")
+
         if key.lower() == 'x':
             print("Opponent Turn을 종료합니다")
 
@@ -8590,15 +8619,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
     def valrn_ready_to_use_shadow_ball_to_opponent_unit_animation(self):
         self.is_playing_action_animation = True
-        self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
-        self.targeting_enemy_select_using_your_field_card_index = None
-        self.targeting_enemy_select_support_lightning_border_list = []
-        self.opponent_you_selected_lightning_border_list = []
-
-        self.selected_object = None
-        self.active_panel_rectangle = None
-        self.current_fixed_details_card = None
-        self.your_active_panel.clear_all_your_active_panel()
+        self.reset_every_selected_action()
+        # self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+        # self.targeting_enemy_select_using_your_field_card_index = None
+        # self.targeting_enemy_select_support_lightning_border_list = []
+        # self.opponent_you_selected_lightning_border_list = []
+        #
+        # self.selected_object = None
+        # self.active_panel_rectangle = None
+        # self.current_fixed_details_card = None
+        # self.your_active_panel.clear_all_your_active_panel()
 
         steps = 10
         attack_animation_object = AttackAnimation.getInstance()
@@ -8982,17 +9012,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         
                     self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function('death', opponent_field_card_index, remove_field_unit_by_index)
 
-                self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
-                self.targeting_enemy_select_using_your_field_card_index = None
-                self.targeting_enemy_select_using_your_field_card_id = None
-                self.targeting_enemy_select_support_lightning_border_list = []
-                self.opponent_you_selected_lightning_border_list = []
-
-                self.selected_object = None
-                self.active_panel_rectangle = None
-                self.current_fixed_details_card = None
-                self.your_active_panel.clear_all_your_active_panel()
-
+                # self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+                # self.targeting_enemy_select_using_your_field_card_index = None
+                # self.targeting_enemy_select_using_your_field_card_id = None
+                # self.targeting_enemy_select_support_lightning_border_list = []
+                # self.opponent_you_selected_lightning_border_list = []
+                #
+                # self.selected_object = None
+                # self.active_panel_rectangle = None
+                # self.current_fixed_details_card = None
+                # self.your_active_panel.clear_all_your_active_panel()
+                self.reset_every_selected_action()
                 self.targeting_enemy_select_using_your_field_card_id = None
 
                 self.field_area_inside_handler.clear_field_area_action()
@@ -9001,15 +9031,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
     def valrn_ready_to_use_shadow_ball_to_opponent_main_character_animation(self):
         self.is_playing_action_animation = True
-        self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
-        self.targeting_enemy_select_using_your_field_card_index = None
-        self.targeting_enemy_select_support_lightning_border_list = []
-        self.opponent_you_selected_lightning_border_list = []
-
-        self.selected_object = None
-        self.active_panel_rectangle = None
-        self.current_fixed_details_card = None
-        self.your_active_panel.clear_all_your_active_panel()
+        self.reset_every_selected_action()
+        # self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+        # self.targeting_enemy_select_using_your_field_card_index = None
+        # self.targeting_enemy_select_support_lightning_border_list = []
+        # self.opponent_you_selected_lightning_border_list = []
+        #
+        # self.selected_object = None
+        # self.active_panel_rectangle = None
+        # self.current_fixed_details_card = None
+        # self.your_active_panel.clear_all_your_active_panel()
 
         steps = 10
         attack_animation_object = AttackAnimation.getInstance()
@@ -9539,6 +9570,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.play_effect_animation_by_index_and_call_function(animation_index, function)
 
+
     def create_effect_animation_to_opponent_unit_and_play_animation_and_call_function_with_param(self, effect_name, index, function, param):
         effect_animation = EffectAnimation()
         effect_animation.set_animation_name(effect_name)
@@ -9557,6 +9589,19 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.play_effect_animation_by_index_and_call_function_with_param(animation_index, function, param)
 
+    def reset_every_selected_action(self):
+        self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+        self.targeting_enemy_select_using_your_field_card_index = None
+        self.targeting_enemy_select_using_your_field_card_id = None
+        self.targeting_enemy_select_support_lightning_border_list = []
+        self.opponent_you_selected_lightning_border_list = []
+
+        self.selected_object = None
+        self.active_panel_rectangle = None
+        self.current_fixed_details_card = None
+        self.your_active_panel.clear_all_your_active_panel()
+
+
     def create_effect_animation_with_vertices_and_play_animation_and_call_function(self, effect_name, vertices, function):
         effect_animation = EffectAnimation()
         effect_animation.set_animation_name(effect_name)
@@ -9571,6 +9616,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             animation_index, effect_animation_panel)
 
         self.play_effect_animation_by_index_and_call_function(animation_index, function)
+
 
 
     def create_effect_animation_to_your_unit_and_play_animation_and_call_function(self, effect_name, index, function):
@@ -9590,3 +9636,4 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
 
         self.play_effect_animation_by_index_and_call_function(animation_index, function)
+
