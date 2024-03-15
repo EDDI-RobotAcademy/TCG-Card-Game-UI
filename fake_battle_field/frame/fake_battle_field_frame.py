@@ -2754,8 +2754,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             is_success_value = response.get('is_success', False)
 
                             if is_success_value == False:
-                                self.selected_object = None
+                                # self.selected_object = None
                                 self.return_to_initial_location()
+                                self.reset_every_selected_action()
                                 return
 
                             self.attack_animation_object.set_your_usage_card_id(your_card_id)
@@ -2957,8 +2958,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         )
 
                         if not response.get('is_success'):
-                            self.selected_object = None
+                            # self.selected_object = None
                             self.return_to_initial_location()
+                            self.reset_every_selected_action()
                             return
 
                         opponent_field_energy = self.opponent_field_energy_repository.get_opponent_field_energy()
@@ -3048,8 +3050,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             print("아군에게 아이템 사용")
 
                             if self.selected_object.get_card_number() == 8:
-                                self.selected_object = None
+                                # self.selected_object = None
                                 self.return_to_initial_location()
+                                self.reset_every_selected_action()
                                 return
 
                             if placed_card_id == 35:
@@ -3064,8 +3067,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                                 print(f"response: {response}")
                                 if not response.get('is_success'):
-                                    self.selected_object = None
+                                    # self.selected_object = None
                                     self.return_to_initial_location()
+                                    self.reset_every_selected_action()
                                     return
 
                                 card_id = current_field_unit.get_card_number()
@@ -3387,11 +3391,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if your_selected_unit_action_status == FieldUnitActionStatus.WAIT:
                         print(f"처음 필드에 출격한 유닛은 공격 할 수 없습니다")
-                        self.selected_object = None
-                        self.current_fixed_details_card = None
-                        self.active_panel_rectangle = None
-                        self.current_fixed_details_card = None
-                        self.your_active_panel.clear_all_your_active_panel()
+                        # self.selected_object = None
+                        # self.current_fixed_details_card = None
+                        # self.active_panel_rectangle = None
+                        # self.current_fixed_details_card = None
+                        # self.your_active_panel.clear_all_your_active_panel()
+                        self.reset_every_selected_action()
                         self.message_on_the_screen.create_message_on_the_battle_screen(1)
                         return
 
@@ -3404,10 +3409,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if your_selected_unit_action_count <= 0:
                         print("행동을 마친 유닛은 더 이상 공격 할 수 없습니다")
-                        self.selected_object = None
-                        self.active_panel_rectangle = None
-                        self.current_fixed_details_card = None
-                        self.your_active_panel.clear_all_your_active_panel()
+                        # self.selected_object = None
+                        # self.active_panel_rectangle = None
+                        # self.current_fixed_details_card = None
+                        # self.your_active_panel.clear_all_your_active_panel()
+                        self.reset_every_selected_action()
                         self.message_on_the_screen.create_message_on_the_battle_screen(3)
                         return
 
@@ -3429,10 +3435,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if your_field_unit_required_undead_energy > your_field_unit_attached_undead_energy:
                         print("에너지 부족으로 인한 공격 불가")
-                        self.selected_object = None
-                        self.active_panel_rectangle = None
-                        self.current_fixed_details_card = None
-                        self.your_active_panel.clear_all_your_active_panel()
+                        # self.selected_object = None
+                        # self.active_panel_rectangle = None
+                        # self.current_fixed_details_card = None
+                        # self.your_active_panel.clear_all_your_active_panel()
+                        self.reset_every_selected_action()
                         self.message_on_the_screen.create_message_on_the_battle_screen(2)
                         return
 
@@ -3473,10 +3480,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if your_selected_unit_action_status == FieldUnitActionStatus.WAIT:
                         print(f"처음 필드에 출격한 유닛은 공격 할 수 없습니다")
-                        self.selected_object = None
-                        self.current_fixed_details_card = None
-                        self.active_panel_rectangle = None
-                        self.your_active_panel.clear_all_your_active_panel()
+                        # self.selected_object = None
+                        # self.current_fixed_details_card = None
+                        # self.active_panel_rectangle = None
+                        # self.your_active_panel.clear_all_your_active_panel()
+                        self.reset_every_selected_action()
                         self.message_on_the_screen.create_message_on_the_battle_screen(1)
                         return
 
@@ -3522,26 +3530,29 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if your_field_unit_required_undead_energy > your_field_unit_attached_undead_energy:
                         print("에너지 부족으로 인한 스킬 사용 불가")
-                        self.selected_object = None
-                        self.active_panel_rectangle = None
-                        self.current_fixed_details_card = None
-                        self.your_active_panel.clear_all_your_active_panel()
+                        # self.selected_object = None
+                        # self.active_panel_rectangle = None
+                        # self.current_fixed_details_card = None
+                        # self.your_active_panel.clear_all_your_active_panel()
+                        self.reset_every_selected_action()
                         self.message_on_the_screen.create_message_on_the_battle_screen(2)
                         return
 
                     if your_field_unit_required_human_energy > your_field_unit_attached_human_energy:
-                        self.selected_object = None
-                        self.active_panel_rectangle = None
-                        self.current_fixed_details_card = None
-                        self.your_active_panel.clear_all_your_active_panel()
+                        # self.selected_object = None
+                        # self.active_panel_rectangle = None
+                        # self.current_fixed_details_card = None
+                        # self.your_active_panel.clear_all_your_active_panel()
+                        self.reset_every_selected_action()
                         self.message_on_the_screen.create_message_on_the_battle_screen(2)
                         return
 
                     if your_field_unit_required_trent_energy > your_field_unit_attached_trent_energy:
-                        self.selected_object = None
-                        self.active_panel_rectangle = None
-                        self.current_fixed_details_card = None
-                        self.your_active_panel.clear_all_your_active_panel()
+                        # self.selected_object = None
+                        # self.active_panel_rectangle = None
+                        # self.current_fixed_details_card = None
+                        # self.your_active_panel.clear_all_your_active_panel()
+                        self.reset_every_selected_action()
                         self.message_on_the_screen.create_message_on_the_battle_screen(2)
                         return
 
@@ -3550,10 +3561,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if your_selected_unit_action_count <= 0:
                         print("행동을 마친 유닛은 더 이상 공격 할 수 없습니다")
-                        self.selected_object = None
-                        self.active_panel_rectangle = None
-                        self.current_fixed_details_card = None
-                        self.your_active_panel.clear_all_your_active_panel()
+                        # self.selected_object = None
+                        # self.active_panel_rectangle = None
+                        # self.current_fixed_details_card = None
+                        # self.your_active_panel.clear_all_your_active_panel()
+                        self.reset_every_selected_action()
                         self.message_on_the_screen.create_message_on_the_battle_screen(3)
                         return
 
@@ -3599,11 +3611,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if your_selected_unit_action_status == FieldUnitActionStatus.WAIT:
                         print(f"처음 필드에 출격한 유닛은 공격 할 수 없습니다")
-                        self.selected_object = None
-                        self.current_fixed_details_card = None
-                        self.active_panel_rectangle = None
-                        self.current_fixed_details_card = None
-                        self.your_active_panel.clear_all_your_active_panel()
+                        self.reset_every_selected_action()
+                        # self.selected_object = None
+                        # self.current_fixed_details_card = None
+                        # self.active_panel_rectangle = None
+                        # self.current_fixed_details_card = None
+                        # self.your_active_panel.clear_all_your_active_panel()
                         self.message_on_the_screen.create_message_on_the_battle_screen(1)
                         return
                     elif your_selected_unit_action_status == FieldUnitActionStatus.Dummy:
@@ -3648,35 +3661,39 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         your_field_unit_id)
 
                     if your_field_unit_required_undead_energy > your_field_unit_attached_undead_energy:
-                        self.selected_object = None
-                        self.active_panel_rectangle = None
-                        self.current_fixed_details_card = None
-                        self.your_active_panel.clear_all_your_active_panel()
+                        # self.selected_object = None
+                        # self.active_panel_rectangle = None
+                        # self.current_fixed_details_card = None
+                        # self.your_active_panel.clear_all_your_active_panel()
+                        self.reset_every_selected_action()
                         self.message_on_the_screen.create_message_on_the_battle_screen(2)
                         return
 
                     if your_field_unit_required_human_energy > your_field_unit_attached_human_energy:
-                        self.selected_object = None
-                        self.active_panel_rectangle = None
-                        self.current_fixed_details_card = None
-                        self.your_active_panel.clear_all_your_active_panel()
+                        self.reset_every_selected_action()
+                        # self.selected_object = None
+                        # self.active_panel_rectangle = None
+                        # self.current_fixed_details_card = None
+                        # self.your_active_panel.clear_all_your_active_panel()
                         self.message_on_the_screen.create_message_on_the_battle_screen(2)
                         return
 
                     if your_field_unit_required_trent_energy > your_field_unit_attached_trent_energy:
-                        self.selected_object = None
-                        self.active_panel_rectangle = None
-                        self.current_fixed_details_card = None
-                        self.your_active_panel.clear_all_your_active_panel()
+                        self.reset_every_selected_action()
+                        # self.selected_object = None
+                        # self.active_panel_rectangle = None
+                        # self.current_fixed_details_card = None
+                        # self.your_active_panel.clear_all_your_active_panel()
                         self.message_on_the_screen.create_message_on_the_battle_screen(2)
                         return
 
                     if your_selected_unit_action_count <= 0:
                         print("행동을 마친 유닛은 더 이상 공격 할 수 없습니다")
-                        self.selected_object = None
-                        self.active_panel_rectangle = None
-                        self.current_fixed_details_card = None
-                        self.your_active_panel.clear_all_your_active_panel()
+                        self.reset_every_selected_action()
+                        # self.selected_object = None
+                        # self.active_panel_rectangle = None
+                        # self.current_fixed_details_card = None
+                        # self.your_active_panel.clear_all_your_active_panel()
                         self.message_on_the_screen.create_message_on_the_battle_screen(3)
                         return
 
@@ -4090,6 +4107,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         )
                         print(f"after energy attach server communication: {response}")
 
+                        # 내 턴 아닐 때 붙이면 안됨
+
                         # response = self.__field_energy_application.send_request_to_attach_field_energy_to_unit(
                         #     unitIndex=unit_index, energyRace = energy_race, energyCount=energy_count
                         # )
@@ -4251,16 +4270,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     is_success_value = response.get('is_success', False)
 
                     if is_success_value == False:
-                        self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
-                        self.targeting_enemy_select_using_your_field_card_index = None
-                        self.targeting_enemy_select_using_your_field_card_id = None
-                        self.targeting_enemy_select_support_lightning_border_list = []
-                        self.opponent_you_selected_lightning_border_list = []
-
-                        self.selected_object = None
-                        self.active_panel_rectangle = None
-                        self.current_fixed_details_card = None
-                        self.your_active_panel.clear_all_your_active_panel()
+                        self.reset_every_selected_action()
                         return
 
                     self.attack_animation_object.set_opponent_main_character(self.opponent_main_character_panel)
@@ -4305,16 +4315,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.opponent_hp_repository.opponent_character_die()
                     # self.opponent_hp_repository.take_damage(your_damage)
 
-                    self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
-                    self.targeting_enemy_select_using_your_field_card_index = None
-                    self.targeting_enemy_select_using_your_field_card_id = None
-                    self.targeting_enemy_select_support_lightning_border_list = []
-                    self.opponent_you_selected_lightning_border_list = []
-
-                    self.selected_object = None
-                    self.active_panel_rectangle = None
-                    self.current_fixed_details_card = None
-                    self.your_active_panel.clear_all_your_active_panel()
+                    # self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+                    # self.targeting_enemy_select_using_your_field_card_index = None
+                    # self.targeting_enemy_select_using_your_field_card_id = None
+                    # self.targeting_enemy_select_support_lightning_border_list = []
+                    # self.opponent_you_selected_lightning_border_list = []
+                    #
+                    # self.selected_object = None
+                    # self.active_panel_rectangle = None
+                    # self.current_fixed_details_card = None
+                    # self.your_active_panel.clear_all_your_active_panel()
+                    self.reset_every_selected_action()
 
                     return
 
@@ -4387,16 +4398,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                         if attack_opponent_unit_response.get('is_success', False) == False:
                             print("attack unit failed!! ")
-                            self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
-                            self.targeting_enemy_select_using_your_field_card_index = None
-                            self.targeting_enemy_select_using_your_field_card_id = None
-                            self.targeting_enemy_select_support_lightning_border_list = []
-                            self.opponent_you_selected_lightning_border_list = []
-
-                            self.selected_object = None
-                            self.active_panel_rectangle = None
-                            self.current_fixed_details_card = None
-                            self.your_active_panel.clear_all_your_active_panel()
+                            self.reset_every_selected_action()
                             return
 
                         # self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
@@ -4626,17 +4628,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         #
                         #     self.your_field_unit_repository.replace_field_card_position()
 
-                        self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
-                        self.targeting_enemy_select_using_your_field_card_index = None
-                        self.targeting_enemy_select_using_your_field_card_id = None
-                        self.targeting_enemy_select_support_lightning_border_list = []
-                        self.opponent_you_selected_lightning_border_list = []
-
-                        self.selected_object = None
-                        self.active_panel_rectangle = None
-                        self.current_fixed_details_card = None
-                        self.your_active_panel.clear_all_your_active_panel()
-
+                        # self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+                        # self.targeting_enemy_select_using_your_field_card_index = None
+                        # self.targeting_enemy_select_using_your_field_card_id = None
+                        # self.targeting_enemy_select_support_lightning_border_list = []
+                        # self.opponent_you_selected_lightning_border_list = []
+                        #
+                        # self.selected_object = None
+                        # self.active_panel_rectangle = None
+                        # self.current_fixed_details_card = None
+                        # self.your_active_panel.clear_all_your_active_panel()
+                        self.reset_every_selected_action()
 
                         return
 
@@ -4656,16 +4658,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     self.attack_animation_object.set_opponent_main_character(self.opponent_main_character_panel)
                     # self.opponent_hp_repository.take_damage(your_damage)
 
-                    self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(ActionToApplyOpponent.Dummy)
-                    self.targeting_enemy_select_using_your_field_card_index = None
-                    self.targeting_enemy_select_using_your_field_card_id = None
-                    self.targeting_enemy_select_support_lightning_border_list = []
-                    self.opponent_you_selected_lightning_border_list = []
-
-                    self.selected_object = None
-                    self.active_panel_rectangle = None
-                    self.current_fixed_details_card = None
-                    self.your_active_panel.clear_all_your_active_panel()
+                    # self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(ActionToApplyOpponent.Dummy)
+                    # self.targeting_enemy_select_using_your_field_card_index = None
+                    # self.targeting_enemy_select_using_your_field_card_id = None
+                    # self.targeting_enemy_select_support_lightning_border_list = []
+                    # self.opponent_you_selected_lightning_border_list = []
+                    #
+                    # self.selected_object = None
+                    # self.active_panel_rectangle = None
+                    # self.current_fixed_details_card = None
+                    # self.your_active_panel.clear_all_your_active_panel()
+                    self.reset_every_selected_action()
 
                     self.master.after(0, self.start_nether_blade_second_passive_targeting_motion_animation)
 
@@ -4748,17 +4751,18 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         #
                         #     self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
-                        self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(ActionToApplyOpponent.Dummy)
-                        self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
-                        self.targeting_enemy_select_using_your_field_card_index = None
-                        self.targeting_enemy_select_using_your_field_card_id = None
-                        self.targeting_enemy_select_support_lightning_border_list = []
-                        self.opponent_you_selected_lightning_border_list = []
-
-                        self.selected_object = None
-                        self.active_panel_rectangle = None
-                        self.current_fixed_details_card = None
-                        self.your_active_panel.clear_all_your_active_panel()
+                        # self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(ActionToApplyOpponent.Dummy)
+                        # self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+                        # self.targeting_enemy_select_using_your_field_card_index = None
+                        # self.targeting_enemy_select_using_your_field_card_id = None
+                        # self.targeting_enemy_select_support_lightning_border_list = []
+                        # self.opponent_you_selected_lightning_border_list = []
+                        #
+                        # self.selected_object = None
+                        # self.active_panel_rectangle = None
+                        # self.current_fixed_details_card = None
+                        # self.your_active_panel.clear_all_your_active_panel()
+                        self.reset_every_selected_action()
 
                         return
 
@@ -4779,16 +4783,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     self.opponent_hp_repository.take_damage(your_damage)
 
-                    self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
-                    self.targeting_enemy_select_using_your_field_card_index = None
-                    self.targeting_enemy_select_using_your_field_card_id = None
-                    self.targeting_enemy_select_support_lightning_border_list = []
-                    self.opponent_you_selected_lightning_border_list = []
-
-                    self.selected_object = None
-                    self.active_panel_rectangle = None
-                    self.current_fixed_details_card = None
-                    self.your_active_panel.clear_all_your_active_panel()
+                    # self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+                    # self.targeting_enemy_select_using_your_field_card_index = None
+                    # self.targeting_enemy_select_using_your_field_card_id = None
+                    # self.targeting_enemy_select_support_lightning_border_list = []
+                    # self.opponent_you_selected_lightning_border_list = []
+                    #
+                    # self.selected_object = None
+                    # self.active_panel_rectangle = None
+                    # self.current_fixed_details_card = None
+                    # self.your_active_panel.clear_all_your_active_panel()
+                    self.reset_every_selected_action()
 
                     return
 
@@ -4887,17 +4892,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                             self.play_effect_animation_by_index_and_call_function(animation_index, remove_opponent_unit)
 
-                        self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
-                        self.targeting_enemy_select_using_your_field_card_index = None
-                        self.targeting_enemy_select_using_your_field_card_id = None
-                        self.targeting_enemy_select_support_lightning_border_list = []
-                        self.opponent_you_selected_lightning_border_list = []
-
-                        self.selected_object = None
-                        self.active_panel_rectangle = None
-                        self.current_fixed_details_card = None
-                        self.your_active_panel.clear_all_your_active_panel()
-
+                        # self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+                        # self.targeting_enemy_select_using_your_field_card_index = None
+                        # self.targeting_enemy_select_using_your_field_card_id = None
+                        # self.targeting_enemy_select_support_lightning_border_list = []
+                        # self.opponent_you_selected_lightning_border_list = []
+                        #
+                        # self.selected_object = None
+                        # self.active_panel_rectangle = None
+                        # self.current_fixed_details_card = None
+                        # self.your_active_panel.clear_all_your_active_panel()
+                        self.reset_every_selected_action()
                         return
 
             if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() is OpponentFieldAreaAction.SKILL_TARGETING_ENEMY:
@@ -4925,16 +4930,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if response.get('is_success', False) == False:
                         print('active skill target one error : ', response)
-                        self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
-                        self.targeting_enemy_select_using_your_field_card_index = None
-                        self.targeting_enemy_select_using_your_field_card_id = None
-                        self.targeting_enemy_select_support_lightning_border_list = []
-                        self.opponent_you_selected_lightning_border_list = []
-
-                        self.selected_object = None
-                        self.active_panel_rectangle = None
-                        self.current_fixed_details_card = None
-                        self.your_active_panel.clear_all_your_active_panel()
+                        self.reset_every_selected_action()
                         return
 
 
@@ -5037,16 +5033,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                         if response.get('is_success', False) == False:
                             print('active skill error occured!! ')
-                            self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
-                            self.targeting_enemy_select_using_your_field_card_index = None
-                            self.targeting_enemy_select_using_your_field_card_id = None
-                            self.targeting_enemy_select_support_lightning_border_list = []
-                            self.opponent_you_selected_lightning_border_list = []
-
-                            self.selected_object = None
-                            self.active_panel_rectangle = None
-                            self.current_fixed_details_card = None
-                            self.your_active_panel.clear_all_your_active_panel()
+                            self.reset_every_selected_action()
                             return
 
                         self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
@@ -5225,7 +5212,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         )
 
                         if not response.get('is_success'):
-                            self.selected_object = None
+                            # self.selected_object = None
+                            self.reset_every_selected_action()
                             return
 
                         print("덱에서 에너지 검색해서 부스팅 진행")
@@ -5335,8 +5323,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     is_success_value = response.get('is_success', False)
 
                     if is_success_value == False:
-                        self.selected_object = None
-                        #self.your_deck_search_panel = None
+                        self.reset_every_selected_action()
                         self.field_area_inside_handler.clear_field_area_action()
 
                         self.selected_search_unit_lightning_border = []
@@ -5508,7 +5495,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 self.opponent_you_selected_object_list = []
 
                                 self.selected_object = None
-                                self.return_to_initial_location()
                                 return
 
                             def calculate_corpse_explosion():
