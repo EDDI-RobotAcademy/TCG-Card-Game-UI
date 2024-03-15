@@ -6950,13 +6950,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
                             animation_index, effect_animation_panel)
 
-                        def remove_opponent_unit():
-                            self.opponent_field_unit_repository.remove_current_field_unit_card(index)
-                            self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
-                            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-                            self.opponent_field_unit_repository.remove_harmful_status_by_index(index)
+                        def remove_opponent_unit(dead_unit_index):
 
-                        self.play_effect_animation_by_index_and_call_function(animation_index, remove_opponent_unit)
+                            print(dead_unit_index)
+                            dead_unit_card_id = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(dead_unit_index).get_card_number()
+                            self.opponent_field_unit_repository.remove_current_field_unit_card(dead_unit_index)
+                            self.opponent_tomb_repository.create_opponent_tomb_card(dead_unit_card_id)
+                            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                            self.opponent_field_unit_repository.remove_harmful_status_by_index(dead_unit_index)
+
+                        self.play_effect_animation_by_index_and_call_function_with_param(animation_index, remove_opponent_unit, index)
 
                 # your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
                 # self.your_hand_repository.remove_card_by_index(your_card_index)
@@ -9208,6 +9211,25 @@ class FakeBattleFieldFrame(OpenGLFrame):
             else:
                 self.effect_animation_repository.remove_effect_animation_by_index(index)
                 function()
+                print("finish animation")
+
+        print(f"animation playing at index : {index}")
+        effect_animation = self.effect_animation_repository.get_effect_animation_by_index(index)
+        print(f"effect_animation : {effect_animation}")
+        effect_animation.reset_animation_count()
+
+        self.master.after(0, animate)
+
+    def play_effect_animation_by_index_and_call_function_with_param(self, index, function, param):
+
+        def animate():
+            effect_animation = self.effect_animation_repository.get_effect_animation_by_index(index)
+            effect_animation.update_effect_animation_panel()
+            if not effect_animation.is_finished:
+                self.master.after(17, animate)
+            else:
+                self.effect_animation_repository.remove_effect_animation_by_index(index)
+                function(param)
                 print("finish animation")
 
         print(f"animation playing at index : {index}")
