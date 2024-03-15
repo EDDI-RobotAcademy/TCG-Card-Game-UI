@@ -871,6 +871,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
             # first_non_none_value = next((item for item in your_field_unit_list if item is not None), None)
             first_non_none_index = next((index for index, item in enumerate(your_field_unit_list) if item is not None), None)
+            your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(first_non_none_index)
+            self.attack_animation_object.set_your_field_unit(your_field_unit)
 
             print(f"{Fore.RED}first_non_none_value:{Fore.GREEN} {first_non_none_index}{Style.RESET_ALL}")
 
@@ -7538,13 +7540,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
         steps = 50
 
         is_attack_main_character = False
-        opponent_field_unit = None
+        your_field_unit = None
         # targeting_damage = self.attack_animation_object.get_animation_actor_damage()
         is_opponent_attack_main_character = self.attack_animation_object.get_is_opponent_attack_main_character()
         if is_opponent_attack_main_character is not False:
             is_attack_main_character = True
         else:
-            opponent_field_unit = self.attack_animation_object.get_opponent_field_unit()
+            your_field_unit = self.attack_animation_object.get_your_field_unit()
 
         def targeting_attack(step_count):
             vibration_factor = 10
@@ -7552,9 +7554,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                   random.uniform(-vibration_factor, vibration_factor))
 
             if is_attack_main_character is False:
-                # print(f"{Fore.RED}필드 유닛 공격 -> is_attack_main_character(False): {Fore.GREEN}{is_attack_main_character}{Style.RESET_ALL}")
-                fixed_card_base = opponent_field_unit.get_fixed_card_base()
-                tool_card = opponent_field_unit.get_tool_card()
+                print(f"{Fore.RED}필드 유닛 공격 -> is_attack_main_character(False): {Fore.GREEN}{is_attack_main_character}{Style.RESET_ALL}")
+                fixed_card_base = your_field_unit.get_fixed_card_base()
+                tool_card = your_field_unit.get_tool_card()
                 attached_shape_list = fixed_card_base.get_attached_shapes()
 
                 if step_count % 2 == 1:
@@ -7661,45 +7663,82 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 if is_attack_main_character is False:
                     print(f"{Fore.RED}필드 유닛 공격 -> is_attack_main_character(False): {Fore.GREEN}{is_attack_main_character}{Style.RESET_ALL}")
 
-                    fixed_card_base = your_field_unit.get_fixed_card_base()
-                    tool_card = your_field_unit.get_tool_card()
-                    attached_shape_list = fixed_card_base.get_attached_shapes()
+                    # fixed_card_base = your_field_unit.get_fixed_card_base()
+                    # tool_card = your_field_unit.get_tool_card()
+                    # attached_shape_list = fixed_card_base.get_attached_shapes()
+                    #
+                    # remove_from_field = False
+                    # for attached_shape in attached_shape_list:
+                    #     if isinstance(attached_shape, NonBackgroundNumberImage):
+                    #         if attached_shape.get_circle_kinds() is CircleKinds.HP:
+                    #             hp_number = attached_shape.get_number()
+                    #             print(f"{Fore.RED}current hp_number: {Fore.GREEN}{hp_number}{Style.RESET_ALL}")
+                    #
+                    #             hp_number -= targeting_damage
+                    #             print(f"{Fore.RED}hp_number: {Fore.GREEN}{hp_number}{Style.RESET_ALL}")
+                    #
+                    #             # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
+                    #             if hp_number <= 0:
+                    #                 remove_from_field = True
+                    #                 break
+                    #
+                    #             attached_shape.set_number(hp_number)
+                    #
+                    #             # attached_shape.set_image_data(
+                    #             #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+                    #             #     self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
+                    #
+                    #             attached_shape.set_image_data(
+                    #                 self.pre_drawed_image_instance.get_pre_draw_unit_hp(hp_number))
+                    #
+                    #             if opponent_actor_extra_ability:
+                    #                 self.your_field_unit_repository.apply_harmful_status(your_field_unit.get_index(), opponent_actor_extra_ability)
+                    #
+                    # if remove_from_field:
+                    #     card_id = your_field_unit.get_card_number()
+                    #     card_index = your_field_unit.get_index()
+                    #
+                    #     self.your_field_unit_repository.remove_card_by_index(card_index)
+                    #
+                    #     self.your_field_unit_repository.remove_harmful_status_by_index(card_index)
+                    #     self.your_tomb_repository.create_opponent_tomb_card(card_id)
 
-                    remove_from_field = False
-                    for attached_shape in attached_shape_list:
-                        if isinstance(attached_shape, NonBackgroundNumberImage):
-                            if attached_shape.get_circle_kinds() is CircleKinds.HP:
-                                hp_number = attached_shape.get_number()
-                                print(f"{Fore.RED}current hp_number: {Fore.GREEN}{hp_number}{Style.RESET_ALL}")
+                    notify_data = attack_animation_object.get_notify_data()
 
-                                hp_number -= targeting_damage
-                                print(f"{Fore.RED}hp_number: {Fore.GREEN}{hp_number}{Style.RESET_ALL}")
+                    your_field_unit_health_point_map = (
+                        notify_data)['player_field_unit_health_point_map']['You']['field_unit_health_point_map']
+                    your_field_unit_harmful_effect_list = (
+                        notify_data)['player_field_unit_harmful_effect_map']['You']['field_unit_harmful_status_map']
+                    your_dead_field_unit_index_list = (
+                        notify_data)['player_field_unit_death_map']['You']['dead_field_unit_index_list']
 
-                                # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
-                                if hp_number <= 0:
-                                    remove_from_field = True
-                                    break
+                    for unit_index, remaining_health_point in your_field_unit_health_point_map.items():
+                        your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(int(unit_index))
+                        your_fixed_card_base = your_field_unit.get_fixed_card_base()
+                        your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
 
-                                attached_shape.set_number(hp_number)
+                        if remaining_health_point <= 0:
+                            continue
 
-                                # attached_shape.set_image_data(
-                                #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
-                                #     self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
+                        for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+                            if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                                if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                    your_fixed_card_attached_shape.set_number(int(remaining_health_point))
 
-                                attached_shape.set_image_data(
-                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(hp_number))
+                                    your_fixed_card_attached_shape.set_image_data(
+                                        self.pre_drawed_image_instance.get_pre_draw_unit_hp(int(remaining_health_point)))
 
-                                if opponent_actor_extra_ability:
-                                    self.your_field_unit_repository.apply_harmful_status(your_field_unit.get_index(), opponent_actor_extra_ability)
+                    for unit_index, harmful_effect_info in your_field_unit_harmful_effect_list.items():
+                        harmful_effect_list = harmful_effect_info['harmful_status_list']
+                        self.your_field_unit_repository.apply_harmful_status(int(unit_index), harmful_effect_list)
 
-                    if remove_from_field:
-                        card_id = your_field_unit.get_card_number()
-                        card_index = your_field_unit.get_index()
+                    # 죽은 유닛들 묘지에 배치 및 Replacing
+                    for dead_unit_index in your_dead_field_unit_index_list:
+                        field_unit_id = self.your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
+                        self.your_tomb_repository.create_tomb_card(field_unit_id)
+                        self.your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
 
-                        self.your_field_unit_repository.remove_current_field_unit_card(card_index)
-
-                        self.your_field_unit_repository.remove_harmful_status_by_index(card_index)
-                        self.your_tomb_repository.create_opponent_tomb_card(card_id)
+                    self.your_field_unit_repository.replace_field_card_position()
 
                 else:
                     print(f"{Fore.RED}메인 캐릭터 공격 -> is_attack_main_character(True): {Fore.GREEN}{is_attack_main_character}{Style.RESET_ALL}")
