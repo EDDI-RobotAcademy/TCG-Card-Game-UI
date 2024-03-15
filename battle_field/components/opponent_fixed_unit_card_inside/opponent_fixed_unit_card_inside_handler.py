@@ -110,7 +110,7 @@ class OpponentFixedUnitCardInsideHandler:
         return self.__opponent_field_area_action
 
     def clear_opponent_field_area_action(self):
-        self.__opponent_field_area_action = None
+        self.__opponent_field_area_action = ActionToApplyOpponent.Dummy
 
     def get_opponent_unit_index(self):
         return self.__opponent_unit_index
