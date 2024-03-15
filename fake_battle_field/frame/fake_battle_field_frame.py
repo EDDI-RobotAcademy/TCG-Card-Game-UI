@@ -595,6 +595,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.focus_set()
 
+        self.start_first_turn()
 
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
@@ -1001,6 +1002,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             print(f"turn_end_request_result: {turn_end_request_result}")
 
             self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(True)
+            self.timer.set_timer(30)
+            self.timer.start_timer()
 
         # ` (숫자 1 옆에 있는 것)
         if key.lower() == 'grave':
@@ -1613,10 +1616,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if is_success_value == False:
                 return
 
-        if key.lower() == '0':
-            self.timer.set_function(self.call_turn_end)
-            self.timer.set_timer(30)
-            self.timer.start_timer()
+
+
 
 
     def on_resize(self, event):
@@ -9636,4 +9637,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
 
         self.play_effect_animation_by_index_and_call_function(animation_index, function)
+
+    def start_first_turn(self):
+        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        if whose_turn is True:
+            self.timer.set_function(self.call_turn_end)
+            self.timer.set_timer(30)
+            self.timer.start_timer()
 
