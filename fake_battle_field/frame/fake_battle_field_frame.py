@@ -4150,6 +4150,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     is_success_value = response.get('is_success', False)
 
                     if is_success_value == False:
+                        self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+                        self.targeting_enemy_select_using_your_field_card_index = None
+                        self.targeting_enemy_select_using_your_field_card_id = None
+                        self.targeting_enemy_select_support_lightning_border_list = []
+                        self.opponent_you_selected_lightning_border_list = []
+
+                        self.selected_object = None
+                        self.active_panel_rectangle = None
+                        self.current_fixed_details_card = None
+                        self.your_active_panel.clear_all_your_active_panel()
                         return
 
                     self.attack_animation_object.set_opponent_main_character(self.opponent_main_character_panel)
@@ -4276,6 +4286,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                         if attack_opponent_unit_response.get('is_success', False) == False:
                             print("attack unit failed!! ")
+                            self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+                            self.targeting_enemy_select_using_your_field_card_index = None
+                            self.targeting_enemy_select_using_your_field_card_id = None
+                            self.targeting_enemy_select_support_lightning_border_list = []
+                            self.opponent_you_selected_lightning_border_list = []
+
+                            self.selected_object = None
+                            self.active_panel_rectangle = None
+                            self.current_fixed_details_card = None
+                            self.your_active_panel.clear_all_your_active_panel()
                             return
 
                         # self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
@@ -4804,6 +4824,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if response.get('is_success', False) == False:
                         print('active skill target one error : ', response)
+                        self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+                        self.targeting_enemy_select_using_your_field_card_index = None
+                        self.targeting_enemy_select_using_your_field_card_id = None
+                        self.targeting_enemy_select_support_lightning_border_list = []
+                        self.opponent_you_selected_lightning_border_list = []
+
+                        self.selected_object = None
+                        self.active_panel_rectangle = None
+                        self.current_fixed_details_card = None
+                        self.your_active_panel.clear_all_your_active_panel()
                         return
 
 
@@ -4906,6 +4936,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                         if response.get('is_success', False) == False:
                             print('active skill error occured!! ')
+                            self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+                            self.targeting_enemy_select_using_your_field_card_index = None
+                            self.targeting_enemy_select_using_your_field_card_id = None
+                            self.targeting_enemy_select_support_lightning_border_list = []
+                            self.opponent_you_selected_lightning_border_list = []
+
+                            self.selected_object = None
+                            self.active_panel_rectangle = None
+                            self.current_fixed_details_card = None
+                            self.your_active_panel.clear_all_your_active_panel()
                             return
 
                         self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
