@@ -4,12 +4,14 @@ from common.survival_type import SurvivalType
 from image_shape.rectangle_image import RectangleImage
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
+from image_shape.non_background_image import NonBackgroundImage
 
 
 class YourHp:
     __pre_drawed_image = PreDrawedImage.getInstance()
     __your_hp_repository = YourHpRepository.getInstance()
     __battle_field_repository = BattleFieldRepository().getInstance()
+
     def __init__(self):
         self.your_hp_panel = None
         self.current_your_hp_state = self.__your_hp_repository.get_current_your_hp_state()
@@ -48,12 +50,12 @@ class YourHp:
 
     def draw_current_your_hp_panel(self):
 
-        left_x_point = self.total_width * 0.58
-        right_x_point = self.total_width * 0.67
-        top_y_point = self.total_height * 0.689
-        bottom_y_point = self.total_height * 0.76
+        left_x_point = self.total_width * 0.51
+        right_x_point = self.total_width * 0.58
+        top_y_point = self.total_height * 0.66
+        bottom_y_point = self.total_height * 0.74
 
-        self.your_hp_panel = RectangleImage(
+        self.your_hp_panel = NonBackgroundImage(
             image_data=self.__pre_drawed_image.get_pre_draw_character_hp_image(self.current_your_hp_state.get_current_health()),
             #image_data=self.__pre_drawed_image.get_pre_draw_number_image(self.current_your_hp_state.get_current_health()),
             vertices=[
@@ -61,7 +63,8 @@ class YourHp:
                 (right_x_point, top_y_point),
                 (right_x_point, bottom_y_point),
                 (left_x_point, bottom_y_point)
-            ])
+            ]
+        )
 
 
 

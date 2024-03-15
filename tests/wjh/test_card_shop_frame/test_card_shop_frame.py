@@ -21,14 +21,17 @@ class TestCardShopFrame(unittest.TestCase):
             pass
 
         # 각 프레임을 생성합니다.
-        top_frame = tk.Frame(root, width=1920, height=50, bg="red")  # 상단 프레임
-        middle_frame = tk.Frame(root, width=200, height=1030, bg="green")  # 왼쪽 프레임
-        bottom_frame = tk.Frame(root, width=1720, height=1030, bg="blue")  # 오른쪽 프레임
+        top_frame = tk.Frame(root, width=1920, height=100, bg="red")  # 상단 프레임
+        middle_frame = tk.Frame(root, width=200, height=980, bg="green")  # 왼쪽 프레임
+        bottom_frame = tk.Frame(root, width=1720, height=980, bg="blue")  # 오른쪽 프레임
 
         # 프레임을 배치합니다.
-        top_frame.place(x=0, y=0)
-        middle_frame.place(x=0, y=70)
-        bottom_frame.place(x=200, y=70)
+        # top_frame.place(x=0, y=0)
+        # middle_frame.place(x=0, y=60)
+        # bottom_frame.place(x=200, y=60)
+        top_frame.pack(side=tk.TOP)
+        middle_frame.pack(side=tk.LEFT)
+        bottom_frame.pack(side=tk.RIGHT)
 
         # 상점 레이블 생성 및 배치
         shop_label = tk.Label(top_frame, text="상점", font=("Helvetica", 16))

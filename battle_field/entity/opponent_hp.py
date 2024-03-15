@@ -4,6 +4,7 @@ from common.survival_type import SurvivalType
 from image_shape.rectangle_image import RectangleImage
 from opengl_shape.rectangle import Rectangle
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
+from image_shape.non_background_image import NonBackgroundImage
 
 
 class OpponentHp:
@@ -47,14 +48,12 @@ class OpponentHp:
         self.current_opponent_hp_state = current_opponent_hp_state
 
     def draw_current_opponent_hp_panel(self):
+        left_x_point = self.total_width * 0.51
+        right_x_point = self.total_width * 0.58
+        top_y_point = self.total_height * 0.15
+        bottom_y_point = self.total_height * 0.23
 
-
-        left_x_point = self.total_width * 0.33
-        right_x_point = self.total_width * 0.42
-        top_y_point = self.total_height * 0.135
-        bottom_y_point = self.total_height * 0.206
-
-        self.opponent_hp_panel = RectangleImage(
+        self.opponent_hp_panel = NonBackgroundImage(
             image_data=self.__pre_drawed_image.get_pre_draw_character_hp_image(self.current_opponent_hp_state.get_current_health()),
             #image_data=self.__pre_drawed_image.get_pre_draw_number_image(self.current_your_hp_state.get_current_health()),
             vertices=[
@@ -62,7 +61,8 @@ class OpponentHp:
                 (right_x_point, top_y_point),
                 (right_x_point, bottom_y_point),
                 (left_x_point, bottom_y_point)
-            ])
+            ]
+        )
 
         #self.opponent_hp_panel.draw()
 
