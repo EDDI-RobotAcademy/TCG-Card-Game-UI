@@ -940,6 +940,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         if is_my_turn is True:
             return
 
+        data = notice_dictionary['NOTIFY_NON_TARGETING_ACTIVE_SKILL']
+        self.__attack_animation_object.set_notify_data(data)
+
         self.apply_notify_data_of_harmful_status(notice_dictionary['NOTIFY_NON_TARGETING_ACTIVE_SKILL']['player_field_unit_harmful_effect_map'])
 
         for unit_index, remain_hp in \
@@ -976,6 +979,11 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             self.__your_field_unit_repository.remove_harmful_status_by_index(dead_unit_index)
 
         self.__your_field_unit_repository.replace_field_card_position()
+
+        # self.__attack_animation_object.set_is_opponent_attack_main_character(False)
+        #
+        # self.__opponent_field_area_inside_handler.set_field_area_action(
+        #     OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_PASSIVE_SKILL_PROCESS)
 
     def notify_use_special_energy_card_to_unit(self, notice_dictionary):
 
