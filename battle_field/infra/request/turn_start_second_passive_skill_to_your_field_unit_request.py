@@ -23,6 +23,6 @@ class TurnStartSecondPassiveSkillToYourFieldUnitRequest:
         return (f"WideAreaPassiveSkillFromDeployRequest("
                 f"protocolNumber={self.__protocolNumber}, "
                 f"unitCardIndex={self.__unitCardIndex}, "
-                f"targetGameMainCharacterIndex={self.__targetGameMainCharacterIndex}, "
+                f"opponentTargetCardIndex={self.__opponentTargetCardIndex}, "
                 f"usageSkillIndex={self.__usageSkillIndex}, "
                 f"sessionInfo={self.__sessionInfo})")
