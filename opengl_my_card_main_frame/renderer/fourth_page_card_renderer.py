@@ -23,8 +23,8 @@ class FourthPageCardRenderer:
             self._render_shape(button)
 
         for card in self.scene.card_list[24:32]:
-            attached_tool_card = card.get_tool_card()
-            attached_tool_card.draw()
+            # attached_tool_card = card.get_tool_card()
+            # attached_tool_card.draw()
 
             pickable_card_base = card.get_pickable_card_base()
             pickable_card_base.draw()
