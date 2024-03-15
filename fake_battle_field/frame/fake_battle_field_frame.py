@@ -1308,8 +1308,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         effect_animation = EffectAnimation()
                         effect_animation.set_animation_name('death')
                         effect_animation.set_total_window_size(self.width, self.height)
-                        self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
-                            index).get_fixed_card_base().get_local_translation()
+                        effect_animation.change_local_translation(self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                            index).get_fixed_card_base().get_local_translation())
                         effect_animation.draw_animation_panel()
                         effect_animation_panel = effect_animation.get_animation_panel()
 
@@ -4696,8 +4696,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             effect_animation = EffectAnimation()
                             effect_animation.set_animation_name('death')
                             effect_animation.set_total_window_size(self.width, self.height)
-                            self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
-                                opponent_field_card_index).get_fixed_card_base().get_local_translation()
+                            effect_animation.change_local_translation(self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                                opponent_field_card_index).get_fixed_card_base().get_local_translation())
                             effect_animation.draw_animation_panel()
                             effect_animation_panel = effect_animation.get_animation_panel()
 
@@ -5353,8 +5353,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 effect_animation = EffectAnimation()
                                 effect_animation.set_animation_name('death')
                                 effect_animation.set_total_window_size(self.width, self.height)
-                                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
-                                    index).get_fixed_card_base().get_local_translation()
+                                effect_animation.change_local_translation(self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                                    index).get_fixed_card_base().get_local_translation())
                                 effect_animation.draw_animation_panel()
                                 effect_animation_panel = effect_animation.get_animation_panel()
     
@@ -6687,8 +6687,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         effect_animation = EffectAnimation()
                         effect_animation.set_animation_name('death')
                         effect_animation.set_total_window_size(self.width, self.height)
-                        self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
-                            index).get_fixed_card_base().get_local_translation()
+                        effect_animation.change_local_translation(self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                            index).get_fixed_card_base().get_local_translation())
                         effect_animation.draw_animation_panel()
                         effect_animation_panel = effect_animation.get_animation_panel()
 
@@ -6934,8 +6934,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         effect_animation = EffectAnimation()
                         effect_animation.set_animation_name('death')
                         effect_animation.set_total_window_size(self.width, self.height)
-                        self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
-                            index).get_fixed_card_base().get_local_translation()
+                        effect_animation.change_local_translation(self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                            index).get_fixed_card_base().get_local_translation())
                         effect_animation.draw_animation_panel()
                         effect_animation_panel = effect_animation.get_animation_panel()
 
@@ -7956,8 +7956,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         effect_animation = EffectAnimation()
                         effect_animation.set_animation_name('death')
                         effect_animation.set_total_window_size(self.width, self.height)
-                        self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
-                            index).get_fixed_card_base().get_local_translation()
+                        effect_animation.change_local_translation(self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                            index).get_fixed_card_base().get_local_translation())
                         effect_animation.draw_animation_panel()
                         effect_animation_panel = effect_animation.get_animation_panel()
 
@@ -9217,8 +9217,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         effect_animation = EffectAnimation()
         effect_animation.set_animation_name(effect_name)
         effect_animation.set_total_window_size(self.width, self.height)
-        self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
-            index).get_fixed_card_base().get_local_translation()
+        effect_animation.change_local_translation(self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+            index).get_fixed_card_base().get_local_translation())
         effect_animation.draw_animation_panel()
         effect_animation_panel = effect_animation.get_animation_panel()
 
