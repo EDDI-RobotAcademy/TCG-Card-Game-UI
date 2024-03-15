@@ -103,8 +103,7 @@ class PreDrawedImage:
     __pre_drawed_waiting_message = None
     __pre_drawed_message_on_the_battle_screen = {}
 
-    #__pre_drawed_shop_mythical_card_illustration = {}
-    #__pre_drawed_battle_field_timer = {}
+    __pre_drawed_battle_field_timer = {}
 
     def __new__(cls):
         if cls.__instance is None:
@@ -723,22 +722,16 @@ class PreDrawedImage:
                                            f"{number}.png")
             self.__pre_drawed_message_on_the_battle_screen[number] = ImageDataLoader.load_message_on_the_battle_screen_image_data(text_image_data)
 
-    # def pre_draw_shop_mythical_card_illustration(self):
-    #     target_number = {19, 45, 134, 176, 22, 128, 23, 108, 133}
-    #     for card_number in target_number:
-    #         card_illustration_image_data = os.path.join(self.__project_root, "local_storage", "card_images",
-    #                                                     f"{card_number}.png")
-    #         self.__pre_drawed_shop_mythical_card_illustration[card_number] = ImageDataLoader.load_shop_card_lanczos_resized_image_data(card_illustration_image_data)
 
-    # def pre_draw_battle_field_timer(self):
-    #     image_dir = os.path.join(self.__project_root, "local_storage", "timer_image", "battle_field")
-    #     file_list = os.listdir(image_dir)
-    #
-    #     for number in range(0, len(file_list)):
-    #         number_image_data = os.path.join(self.__project_root, "local_storage", "timer_image", "battle_field",
-    #                                          f"{number}.png")
-    #         print(f"image data = {number_image_data}")
-    #         self.__pre_drawed_battle_field_timer[number] = ImageDataLoader.load_rectangle_image_data(number_image_data)
+    def pre_draw_battle_field_timer(self):
+        image_dir = os.path.join(self.__project_root, "local_storage", "timer_image", "battle_field")
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            number_image_data = os.path.join(self.__project_root, "local_storage", "timer_image", "battle_field",
+                                             f"{number}.png")
+            print(f"image data = {number_image_data}")
+            self.__pre_drawed_battle_field_timer[number] = ImageDataLoader.load_rectangle_image_data(number_image_data)
 
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
@@ -824,8 +817,7 @@ class PreDrawedImage:
         self.pre_draw_wizard_card_attack_power()
         self.pre_draw_message_on_the_battle_screen()
 
-        #self.pre_draw_shop_mythical_card_illustration()
-        #self.pre_draw_battle_field_timer()
+        self.pre_draw_battle_field_timer()
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
@@ -1030,8 +1022,5 @@ class PreDrawedImage:
     def get_pre_draw_message_on_the_battle_screen(self, number):
         return self.__pre_drawed_message_on_the_battle_screen[number]
 
-    # def get_pre_draw_shop_mythical_card_illustration(self, card_number):
-    #     return self.__pre_drawed_shop_mythical_card_illustration[card_number]
-
-    # def get_pre_draw_battle_field_timer(self, number):
-    #     return self.__pre_drawed_battle_field_timer[number]
+    def get_pre_draw_battle_field_timer(self, number):
+        return self.__pre_drawed_battle_field_timer[number]
