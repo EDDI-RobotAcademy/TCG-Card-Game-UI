@@ -40,6 +40,13 @@ class AttackAnimation:
 
     animation_action = None
 
+    opponent_animation_actor = None
+    opponent_animation_actor_damage = 0
+    opponent_attacker_unit_moving_x = 0
+
+    notify_data = None
+
+    is_opponent_attack_main_character = False
 
     def __new__(cls):
         if cls.__instance is None:
@@ -73,6 +80,12 @@ class AttackAnimation:
     def get_total_height(self):
         return self.total_height
 
+    def set_is_opponent_attack_main_character(self, is_opponent_attack_main_character):
+        self.is_opponent_attack_main_character = is_opponent_attack_main_character
+
+    def get_is_opponent_attack_main_character(self):
+        return self.is_opponent_attack_main_character
+
     def set_animation_actor(self, selected_object):
         print(f"{Fore.RED}selected_object{Fore.GREEN} {selected_object}{Style.RESET_ALL}")
         self.selected_object = selected_object
@@ -80,11 +93,23 @@ class AttackAnimation:
     def get_animation_actor(self):
         return self.selected_object
 
+    def set_opponent_animation_actor(self, opponent_animation_actor):
+        self.opponent_animation_actor = opponent_animation_actor
+
+    def get_opponent_animation_actor(self):
+        return self.opponent_animation_actor
+
     def set_is_finished(self, is_finished):
         self.is_finished = is_finished
 
     def get_is_finished(self):
         return self.is_finished
+
+    def set_notify_data(self, notify_data):
+        self.notify_data = notify_data
+
+    def get_notify_data(self):
+        return self.notify_data
 
     def set_your_field_hp_shape(self, your_field_hp_shape):
         self.your_field_hp_shape = your_field_hp_shape
@@ -158,6 +183,12 @@ class AttackAnimation:
     def clear_wide_attack_opponent_field_hp_list(self):
         self.wide_attack_opponent_field_hp_list = []
 
+    def set_opponent_attacker_unit_moving_x(self, opponent_attacker_unit_moving_x):
+        self.opponent_attacker_unit_moving_x = opponent_attacker_unit_moving_x
+
+    def get_opponent_attacker_unit_moving_x(self):
+        return self.opponent_attacker_unit_moving_x
+
     def set_your_attacker_unit_moving_x(self, your_attacker_unit_moving_x):
         self.your_attacker_unit_moving_x = your_attacker_unit_moving_x
 
@@ -169,6 +200,12 @@ class AttackAnimation:
 
     def get_animation_actor_damage(self):
         return self.animation_actor_damage
+
+    def set_opponent_animation_actor_damage(self, opponent_damage):
+        self.opponent_animation_actor_damage = opponent_damage
+
+    def get_opponent_animation_actor_damage(self):
+        return self.opponent_animation_actor_damage
 
     def add_your_field_unit_hp_shape_list(self, your_field_unit_hp_shape):
         self.your_field_unit_hp_shape_list.append(your_field_unit_hp_shape)

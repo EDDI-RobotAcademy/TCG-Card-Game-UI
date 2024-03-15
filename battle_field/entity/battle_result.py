@@ -51,8 +51,8 @@ class BattleResult:
         top_y_point = self.total_height * 0.3
         bottom_y_point = self.total_height * 0.7
 
-        print(f"게임 끝~~ {self.__battle_field_repository.get_is_game_end()}")
-        print(f"이겼냐 {self.__battle_field_repository.get_is_win()}")
+        # print(f"게임 끝~~ {self.__battle_field_repository.get_is_game_end()}")
+        # print(f"이겼냐 {self.__battle_field_repository.get_is_win()}")
 
         battle_result_panel = Rectangle(
             (0, 0, 0, 0.5),
@@ -69,10 +69,14 @@ class BattleResult:
         self.battle_result_panel_list.append(battle_result_panel)
 
     def create_battle_result_text(self):
-        if self.__battle_field_repository.get_is_win():
+        if self.__battle_field_repository.get_is_win().name == 'Winner':
             image_data = self.__pre_drawed_image.get_pre_draw_win_text()
-        else:
+        elif self.__battle_field_repository.get_is_win().name == 'Loser':
             image_data = self.__pre_drawed_image.get_pre_draw_lose_text()
+        else:
+            #todo : 무승부일 때 이미지가 필요함.
+            image_data = self.__pre_drawed_image.get_pre_draw_lose_text()
+
 
         left_x_point = self.total_width * 0.35
         right_x_point = self.total_width * 0.65

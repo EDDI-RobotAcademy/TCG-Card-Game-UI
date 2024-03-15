@@ -15,4 +15,4 @@ class RequestUseFieldOfDeath:
         }
 
     def __str__(self):
-        return f"RequestUseMoraleConversion(protocolNumber={self.__protocolNumber}, sessionInfo={self.__sessionInfo}, supportCardId={self.__supportCardId})"
+        return f"RequestUseFieldOfDeath(protocolNumber={self.__protocolNumber}, sessionInfo={self.__sessionInfo}, supportCardId={self.__supportCardId})"

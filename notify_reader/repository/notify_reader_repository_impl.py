@@ -5,7 +5,7 @@ class NotifyReaderRepositoryImpl(NotifyReaderRepository):
     __instance = None
     __noWaitIpcChannel = None
     __functions_called_by_notice_table = {}
-
+    __notify_effect_animation_request_list = []
     __is_your_turn_for_check_fake_process = False
 
     def __new__(cls):
@@ -46,3 +46,9 @@ class NotifyReaderRepositoryImpl(NotifyReaderRepository):
 
     def getFunctionByNoticeName(self, noticeName):
         return self.__functions_called_by_notice_table[noticeName]
+
+    def get_notify_effect_animation_request_list(self):
+        return self.__notify_effect_animation_request_list
+
+    def save_notify_effect_animation_request(self, effect_animation_request):
+        self.__notify_effect_animation_request_list.append(effect_animation_request)

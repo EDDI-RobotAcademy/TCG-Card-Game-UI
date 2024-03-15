@@ -54,3 +54,4 @@ class FakeOpponentHandRepositoryImpl():
     def request_use_energy_card_to_unit(self, attach_energy_card_request):
         self.__transmitIpcChannel.put(attach_energy_card_request)
         return self.__receiveIpcChannel.get()
+

@@ -10,11 +10,13 @@ from battle_field.components.opponent_field_area_inside.opponent_field_area_acti
 from battle_field.components.opponent_field_area_inside.opponent_field_area_inside_handler import \
     OpponentFieldAreaInsideHandler
 from battle_field.components.opponent_field_area_inside.opponent_unit_action import OpponentUnitAction
+from battle_field.entity.effect_animation import EffectAnimation
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from battle_field.infra.opponent_hand_repository import OpponentHandRepository
 from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
+from battle_field.infra.request.wide_area_passive_skill_from_deploy_request import WideAreaPassiveSkillFromDeployRequest
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
@@ -26,14 +28,18 @@ from battle_field.state.energy_type import EnergyType
 from battle_field_function.service.battle_field_function_service_impl import BattleFieldFunctionServiceImpl
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
+from common.target_type import TargetType
+from fake_battle_field.infra.fake_battle_field_frame_repository_impl import FakeBattleFieldFrameRepositoryImpl
 from fake_battle_field.infra.fake_opponent_hand_repository import FakeOpponentHandRepositoryImpl
 from image_shape.circle_kinds import CircleKinds
 from image_shape.non_background_number_image import NonBackgroundNumberImage
 from notify_reader.entity.notice_type import NoticeType
 from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
 from notify_reader.service.notify_reader_service import NotifyReaderService
+from notify_reader.service.request.effect_animation_request import EffectAnimationRequest
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from battle_field.animation_support.attack_animation import AttackAnimation
+from session.repository.session_repository_impl import SessionRepositoryImpl
 
 
 class NotifyReaderServiceImpl(NotifyReaderService):
@@ -51,6 +57,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.__battle_field_function_service = BattleFieldFunctionServiceImpl.getInstance()
 
             cls.__instance.__card_info_repository = CardInfoFromCsvRepositoryImpl.getInstance()
+            cls.__instance.__session_repository = SessionRepositoryImpl.getInstance()
+            cls.__instance.__fake_battle_field_frame_repository = FakeBattleFieldFrameRepositoryImpl.getInstance()
 
             cls.__instance.__opponent_field_unit_repository = OpponentFieldUnitRepository.getInstance()
             cls.__instance.__opponent_field_energy_repository = OpponentFieldEnergyRepository.getInstance()
@@ -80,13 +88,20 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.notify_callback_table['NOTIFY_USE_SPECIAL_ENERGY_CARD_TO_UNIT'] = (
                 cls.__instance.notify_use_special_energy_card_to_unit)
             cls.__instance.notify_callback_table['NOTIFY_USE_UNIT_ENERGY_REMOVE_ITEM_CARD'] = (
-                cls.__instance.__battle_field_function_service.useUnitEnergyRemoveItemCard)
+               # cls.__instance.__battle_field_function_service.useUnitEnergyRemoveItemCard)
+                cls.__instance.notify_use_unit_energy_remove_item_card)
             cls.__instance.notify_callback_table[
                 'NOTIFY_BASIC_ATTACK_TO_MAIN_CHARACTER'] = cls.__instance.damage_to_main_character
 
             cls.__instance.notify_callback_table['NOTIFY_USE_MULTIPLE_UNIT_DAMAGE_ITEM_CARD'] = (
                 cls.__instance.notify_use_multiple_unit_damage_item_card
             )
+
+            cls.__instance.notify_callback_table['NOTIFY_USE_FIELD_ENERGY_REMOVE_SUPPORT_CARD'] = (
+                cls.__instance.notify_use_field_energy_remove_support_card)
+
+            cls.__instance.notify_callback_table['NOTIFY_USE_INSTANT_UNIT_DEATH_ITEM_CARD'] = (
+                cls.__instance.notify_use_instant_unit_death_item_card)
 
             cls.__instance.notify_callback_table['NOTIFY_USE_MULTIPLE_UNIT_DAMAGE_ITEM_CARD'] = (
                 cls.__instance.__battle_field_function_service.useMultipleUnitDamageItemCard)
@@ -145,6 +160,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.notify_callback_table['NOTIFY_TURN_START_NON_TARGETING_ATTACK_PASSIVE_SKILL'] = (
                 cls.__instance.notify_turn_start_non_targeting_attack_passive_skill
             )
+            # cls.__instance.notify_callback_table['NOTIFY_DEPLOY_NON_TARGETING_ATTACK_PASSIVE_SKILL'] = cls.__instance.notify_deploy_non_targeting_passive_skill_attack
 
         return cls.__instance
 
@@ -253,10 +269,32 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         if passive_skill_type == 2:
             print("광역기")
 
-            self.__opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
-            # self.__opponent_field_area_action = OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS
-            if card_id == 19:
-                self.__opponent_field_area_inside_handler.set_unit_action(OpponentUnitAction.NETHER_BLADE_FIRST_WIDE_AREA_PASSIVE_SKILL)
+            # # self.__opponent_field_area_action = OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS
+            # if card_id == 19:
+            #     opponent_animation_actor = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(recently_added_card_index)
+            #     self.__attack_animation_object.set_opponent_animation_actor(opponent_animation_actor)
+            #     # self.__opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.PLAY_ANIMATION)
+            #     # self.__opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
+            #
+            #     damage = self.__card_info_repository.getCardPassiveFirstDamageForCardNumber(opponent_animation_actor.get_card_number())
+            #     self.__attack_animation_object.set_opponent_animation_actor_damage(damage)
+            #
+            #     self.__opponent_field_area_inside_handler.set_unit_action(OpponentUnitAction.NETHER_BLADE_FIRST_WIDE_AREA_PASSIVE_SKILL)
+            #
+            #     extra_ability = self.__opponent_field_unit_repository.get_opponent_unit_extra_ability_at_index(recently_added_card_index)
+            #     self.__attack_animation_object.set_extra_ability(extra_ability)
+            #
+            #     self.__opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.PLAY_ANIMATION)
+            #
+            #     process_first_passive_skill_response = self.__fake_battle_field_frame_repository.request_to_process_first_passive_skill(
+            #         WideAreaPassiveSkillFromDeployRequest(
+            #             _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+            #             _unitCardIndex=str(recently_added_card_index),
+            #             _usageSkillIndex="1"))
+            #
+            #     is_success = process_first_passive_skill_response['is_success']
+            #     if is_success is False:
+            #         return FieldAreaAction.Dummy
 
             return
 
@@ -268,6 +306,24 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             return
 
         return
+
+    # {"NOTIFY_DEPLOY_NON_TARGETING_ATTACK_PASSIVE_SKILL": {"player_field_unit_health_point_map": {
+    #     "You": {"field_unit_health_point_map": {"1": 0, "3": 10, "4": 5, "5": 10, "0": 0, "2": 10}}},
+    #                                                       "player_field_unit_harmful_effect_map": {"You": {
+    #                                                           "field_unit_harmful_status_map": {
+    #                                                               "2": {"harmful_status_list": []},
+    #                                                               "0": {"harmful_status_list": []},
+    #                                                               "4": {"harmful_status_list": []},
+    #                                                               "1": {"harmful_status_list": []},
+    #                                                               "3": {"harmful_status_list": []},
+    #                                                               "5": {"harmful_status_list": []}}}},
+    #                                                       "player_field_unit_death_map": {
+    #                                                           "You": {"dead_field_unit_index_list": [0, 1]}}}}
+    def notify_deploy_non_targeting_passive_skill_attack(self, notice_dictionary):
+        print(f"{Fore.RED}notify_deploy_non_targeting_passive_skill_attack() -> notice_dictionary:{Fore.GREEN} {notice_dictionary}{Style.RESET_ALL}")
+
+        # self.__opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.PLAY_ANIMATION)
+        self.__opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_PASSIVE_SKILL_PROCESS)
 
     def notify_turn_end(self, notice_dictionary):
         print(f"{Fore.RED}notify_turn_end() -> notice_dictionary:{Fore.GREEN} {notice_dictionary}{Style.RESET_ALL}")
@@ -507,6 +563,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             self.__your_hp_repository.change_hp(character_hp)
 
         else:
+            self.__battle_field_repository.lose()
             print("나죽어~~~ ")
 
     def notify_use_multiple_unit_damage_item_card(self, notice_dictionary):
@@ -788,14 +845,17 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         notice_dictionary['NOTIFY_TARGETING_ATTACK_ACTIVE_SKILL_TO_GAME_MAIN_CHARACTER'][
             'player_main_character_survival_map']['You']
 
-        if your_character_survival_state != 'Survival':
-            print('죽었습니다!!')
-            return
+
 
         remain_hp = notice_dictionary['NOTIFY_TARGETING_ATTACK_ACTIVE_SKILL_TO_GAME_MAIN_CHARACTER'][
             'player_main_character_health_point_map']['You']
 
         self.__your_hp_repository.change_hp(remain_hp)
+
+        if your_character_survival_state != 'Survival':
+            print('죽었습니다!!')
+            self.__battle_field_repository.lose()
+            return
 
     def notify_targeting_attack_active_skill_to_your_unit(self, notice_dictionary):
 
@@ -1599,41 +1659,47 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             return
 
         data = notice_dictionary['NOTIFY_DEPLOY_NON_TARGETING_ATTACK_PASSIVE_SKILL']
+        print(f"{Fore.RED}notify_deploy_non_targeting_attack_passive_skill:{Fore.GREEN} {data}{Style.RESET_ALL}")
 
-        your_field_unit_health_point_map = (
-            data)['player_field_unit_health_point_map']['You']['field_unit_health_point_map']
-        your_field_unit_harmful_effect_list = (
-            data)['player_field_unit_harmful_effect_map']['You']['field_unit_harmful_status_map']
-        your_dead_field_unit_index_list = (
-            data)['player_field_unit_death_map']['You']['dead_field_unit_index_list']
+        self.__attack_animation_object.set_notify_data(data)
 
-        for unit_index, remaining_health_point in your_field_unit_health_point_map.items():
-            your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(int(unit_index))
-            your_fixed_card_base = your_field_unit.get_fixed_card_base()
-            your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+        # your_field_unit_health_point_map = (
+        #     data)['player_field_unit_health_point_map']['You']['field_unit_health_point_map']
+        # your_field_unit_harmful_effect_list = (
+        #     data)['player_field_unit_harmful_effect_map']['You']['field_unit_harmful_status_map']
+        # your_dead_field_unit_index_list = (
+        #     data)['player_field_unit_death_map']['You']['dead_field_unit_index_list']
+        #
+        # for unit_index, remaining_health_point in your_field_unit_health_point_map.items():
+        #     your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(int(unit_index))
+        #     your_fixed_card_base = your_field_unit.get_fixed_card_base()
+        #     your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+        #
+        #     if remaining_health_point <= 0:
+        #         continue
+        #
+        #     for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+        #         if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+        #             if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+        #                 your_fixed_card_attached_shape.set_number(int(remaining_health_point))
+        #
+        #                 your_fixed_card_attached_shape.set_image_data(
+        #                     self.__pre_drawed_image_instance.get_pre_draw_unit_hp(int(remaining_health_point)))
+        #
+        # for unit_index, harmful_effect_info in your_field_unit_harmful_effect_list.items():
+        #     harmful_effect_list = harmful_effect_info['harmful_status_list']
+        #     self.__your_field_unit_repository.apply_harmful_status(int(unit_index), harmful_effect_list)
+        #
+        # # 죽은 유닛들 묘지에 배치 및 Replacing
+        # for dead_unit_index in your_dead_field_unit_index_list:
+        #     field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
+        #     self.__your_tomb_repository.create_tomb_card(field_unit_id)
+        #     self.__your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
+        #
+        # self.__your_field_unit_repository.replace_field_card_position()
 
-            if remaining_health_point <= 0:
-                continue
-
-            for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
-                if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
-                    if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
-                        your_fixed_card_attached_shape.set_number(int(remaining_health_point))
-
-                        your_fixed_card_attached_shape.set_image_data(
-                            self.__pre_drawed_image_instance.get_pre_draw_unit_hp(int(remaining_health_point)))
-
-        for unit_index, harmful_effect_info in your_field_unit_harmful_effect_list.items():
-            harmful_effect_list = harmful_effect_info['harmful_status_list']
-            self.__your_field_unit_repository.apply_harmful_status(int(unit_index), harmful_effect_list)
-
-        # 죽은 유닛들 묘지에 배치 및 Replacing
-        for dead_unit_index in your_dead_field_unit_index_list:
-            field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
-            self.__your_tomb_repository.create_tomb_card(field_unit_id)
-            self.__your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
-
-        self.__your_field_unit_repository.replace_field_card_position()
+        self.__opponent_field_area_inside_handler.set_field_area_action(
+            OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_PASSIVE_SKILL_PROCESS)
 
     def notify_turn_start_targeting_attack_to_game_main_character(self, notice_dictionary):
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
@@ -1669,21 +1735,34 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             return
 
         data = notice_dictionary['NOTIFY_DEPLOY_TARGETING_ATTACK_TO_GAME_MAIN_CHARACTER']
+        print(f"{Fore.RED}notify_deploy_non_targeting_attack_passive_skill:{Fore.GREEN} {data}{Style.RESET_ALL}")
 
-        your_main_character_health_point = (
-            data)['player_main_character_health_point_map']['You']
-        your_main_character_survival_state = (
-            data)['player_main_character_survival_map']['You']
+        self.__attack_animation_object.set_notify_data(data)
 
-        if your_main_character_survival_state != 'Survival':
-            print('Your main character is dead!')
-            return
+        # your_main_character_health_point = (
+        #     data)['player_main_character_health_point_map']['You']
+        # your_main_character_survival_state = (
+        #     data)['player_main_character_survival_map']['You']
+        #
+        # if your_main_character_survival_state != 'Survival':
+        #     print('Your main character is dead!')
+        #     return
+        #
+        # self.__your_hp_repository.change_hp(int(your_main_character_health_point))
+        # print(f"{Fore.RED}current_main_character_health:{Fore.GREEN} "
+        #       f"{self.__your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
 
-        self.__your_hp_repository.change_hp(int(your_main_character_health_point))
-        print(f"{Fore.RED}current_main_character_health:{Fore.GREEN} "
-              f"{self.__your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
+        self.__attack_animation_object.set_is_opponent_attack_main_character(True)
+
+        self.__opponent_field_area_inside_handler.set_field_area_action(
+            OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_PASSIVE_SKILL_PROCESS)
 
     def notify_use_instant_unit_death_item_card(self, notice_dictionary):
+
+        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+
+        if whose_turn is True:
+            return
         # 1006 = {"NOTIFY_USE_INSTANT_UNIT_DEATH_ITEM_CARD":
         #     {"player_hand_use_map":
         #          {"Opponent": {"card_id": 8, "card_kind": 2}},
@@ -1721,62 +1800,131 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                     data)['player_field_unit_health_point_map'][player_who_targeted]
                 dead_field_unit_index_list_map = (
                     data)['player_field_unit_death_map'][player_who_dead_unit]
+                dead_card_index_list = dead_field_unit_index_list_map["dead_field_unit_index_list"]
 
                 # 필드 유닛 체력 맵 갱신
                 if player_who_dead_unit == "Opponent":
-                    for unit_index, remaining_health_point in field_unit_health_point_map["field_unit_health_point_map"].items():
-                        opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index()(int(unit_index))
-                        opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
-                        opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+                    def calculate_death_scythe_notify_data():
 
-                        if remaining_health_point <= 0:
-                            continue
+                        for unit_index, remaining_health_point in field_unit_health_point_map[
+                            "field_unit_health_point_map"].items():
 
-                        for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
-                            if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
-                                if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
-                                    opponent_fixed_card_attached_shape.set_number(int(remaining_health_point))
+                            opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                                int(unit_index))
+                            opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                            opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
 
-                                    opponent_fixed_card_attached_shape.set_image_data(
-                                        self.__pre_drawed_image_instance.get_pre_draw_unit_hp(int(remaining_health_point)))
+                            if remaining_health_point <= 0:
+                                continue
+
+                            for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                                if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
+                                    if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                        opponent_fixed_card_attached_shape.set_number(remaining_health_point)
+
+                                        opponent_fixed_card_attached_shape.set_image_data(
+                                            self.__pre_drawed_image_instance.get_pre_draw_unit_hp(
+                                                remaining_health_point))
+
+                        for dead_unit_index in dead_card_index_list:
+                            field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
+                            self.__opponent_tomb_repository.create_opponent_tomb_card(field_unit_id)
+                            self.__opponent_field_unit_repository.remove_current_field_unit_card(int(dead_unit_index))
+
+                        self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+
+                    unit_index = list(field_unit_health_point_map["field_unit_health_point_map"].keys())[0]
+
+                    effect_animation = EffectAnimation()
+                    effect_animation.set_animation_name('death_scythe')
+                    effect_animation.change_local_translation(
+                        self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                            int(unit_index)).get_fixed_card_base().get_local_translation()
+                    )
+                    effect_animation.draw_animation_panel()
+
+                    self.__notify_reader_repository.save_notify_effect_animation_request(
+                        EffectAnimationRequest(
+                            effect_animation=effect_animation,
+                            target_player=player_who_dead_unit,
+                            target_index=int(unit_index),
+                            target_type=TargetType.UNIT,
+                            call_function=calculate_death_scythe_notify_data
+                        )
+                    )
+
+
 
                 elif player_who_dead_unit == "You":
-                    for unit_index, remaining_health_point in field_unit_health_point_map["field_unit_health_point_map"].items():
-                        your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(int(unit_index))
-                        your_fixed_card_base = your_field_unit.get_fixed_card_base()
-                        your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+                    def calculate_death_scythe_notify_data():
+                        print('calculate_death_scythe_notify_data called!!')
+                        for unit_index, remaining_health_point in field_unit_health_point_map["field_unit_health_point_map"].items():
+                            your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(int(unit_index))
+                            your_fixed_card_base = your_field_unit.get_fixed_card_base()
+                            your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
 
-                        if remaining_health_point <= 0:
-                            continue
+                            if remaining_health_point <= 0:
+                                continue
 
-                        for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
-                            if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
-                                if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
-                                    your_fixed_card_attached_shape.set_number(int(remaining_health_point))
+                            for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+                                if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                                    if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                        your_fixed_card_attached_shape.set_number(remaining_health_point)
 
-                                    your_fixed_card_attached_shape.set_image_data(
-                                        self.__pre_drawed_image_instance.get_pre_draw_unit_hp(int(remaining_health_point)))
+                                        your_fixed_card_attached_shape.set_image_data(
+                                            self.__pre_drawed_image_instance.get_pre_draw_unit_hp(remaining_health_point))
 
+                        for dead_unit_index in dead_card_index_list:
+                            field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
+                            self.__your_tomb_repository.create_tomb_card(field_unit_id)
+                            self.__your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
+
+                        self.__your_field_unit_repository.replace_field_card_position()
+
+                    unit_index = list(field_unit_health_point_map["field_unit_health_point_map"].keys())[0]
+
+                    effect_animation = EffectAnimation()
+                    effect_animation.set_animation_name('death_scythe')
+                    effect_animation.change_local_translation(
+                        self.__your_field_unit_repository.find_field_unit_by_index(
+                            int(unit_index)).get_fixed_card_base().get_local_translation()
+                    )
+                    effect_animation.draw_animation_panel()
+
+                    self.__notify_reader_repository.save_notify_effect_animation_request(
+                        EffectAnimationRequest(
+                            effect_animation=effect_animation,
+                            target_player=player_who_dead_unit,
+                            target_index=int(unit_index),
+                            target_type=TargetType.UNIT,
+                            call_function=calculate_death_scythe_notify_data
+                        )
+                    )
                 # 타겟 유닛을(사망 시) 묘지로 보냄 (값이 없을 때 예외 처리 필요)
-                dead_card_index_list = dead_field_unit_index_list_map["dead_field_unit_index_list"]
-                print(f"{Fore.RED}dead_card_index_list:{Fore.GREEN} {dead_card_index_list}{Style.RESET_ALL}")
-                if player_who_dead_unit == "Opponent":
-                    for dead_unit_index in dead_card_index_list:
-                        field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
-                        self.__opponent_tomb_repository.create_opponent_tomb_card(field_unit_id)
-                        self.__opponent_field_unit_repository.remove_current_field_unit_card(int(dead_unit_index))
-
-                    self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-
-                elif player_who_dead_unit == "You":
-                    for dead_unit_index in dead_card_index_list:
-                        field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
-                        self.__your_tomb_repository.create_tomb_card(field_unit_id)
-                        self.__your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
-
-                    self.__your_field_unit_repository.replace_field_card_position()
+                # dead_card_index_list = dead_field_unit_index_list_map["dead_field_unit_index_list"]
+                # print(f"{Fore.RED}dead_card_index_list:{Fore.GREEN} {dead_card_index_list}{Style.RESET_ALL}")
+                # if player_who_dead_unit == "Opponent":
+                #     for dead_unit_index in dead_card_index_list:
+                #         field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
+                #         self.__opponent_tomb_repository.create_opponent_tomb_card(field_unit_id)
+                #         self.__opponent_field_unit_repository.remove_current_field_unit_card(int(dead_unit_index))
+                #
+                #     self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                #
+                # elif player_who_dead_unit == "You":
+                #     for dead_unit_index in dead_card_index_list:
+                #         field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
+                #         self.__your_tomb_repository.create_tomb_card(field_unit_id)
+                #         self.__your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
+                #
+                #     self.__your_field_unit_repository.replace_field_card_position()
 
     def notify_use_field_energy_remove_support_card(self, notice_dictionary):
+
+        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        if whose_turn is True:
+            return
         # 1006 = {"NOTIFY_USE_FIELD_ENERGY_REMOVE_SUPPORT_CARD":
         #             {"player_hand_use_map":
         #                  {"Opponent":
@@ -1828,3 +1976,169 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                     result_your_energy_count = your_energy_count
 
                 self.__your_field_energy_repository.set_your_field_energy(result_your_energy_count)
+
+    def notify_use_unit_energy_remove_item_card(self, notice_dictionary):
+
+        is_my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        print(f"is my turn: {is_my_turn}")
+        if is_my_turn is True:
+            return
+
+
+
+        notify_dict_data = notice_dictionary['NOTIFY_USE_UNIT_ENERGY_REMOVE_ITEM_CARD']
+
+        hand_use_card_id = int(notify_dict_data.get("player_hand_use_map", {})
+                               .get("Opponent", {})
+                               .get("card_id", None))
+        if notify_dict_data.get("player_field_unit_energy_map") != {}:
+            field_unit_index = list(notify_dict_data.get("player_field_unit_energy_map", {})
+                                    .get("You", {})
+                                    .get("field_unit_energy_map", {}).keys())[0]
+
+            attach_total_energy_count = int(notify_dict_data.get("player_field_unit_energy_map", {})
+                                            .get("You", {})
+                                            .get("field_unit_energy_map", {})[field_unit_index]
+                                            .get("total_energy_count", None))
+
+            if attach_total_energy_count != 0:
+                attach_energy_race_type = list(notify_dict_data.get("player_field_unit_energy_map", {})
+                                               .get("You", {})
+                                               .get("field_unit_energy_map", {})[field_unit_index]
+                                               .get("attached_energy_map", {}).keys())[0]
+                attach_race_energy_count = (notify_dict_data.get("player_field_unit_energy_map", {})
+                .get("You", {})
+                .get("field_unit_energy_map", {})[field_unit_index]
+                .get("attached_energy_map", {})[attach_energy_race_type])
+
+                print(attach_race_energy_count)
+                attach_energy_race_type = int(attach_energy_race_type)
+                attach_race_energy_count = int(attach_race_energy_count)
+            else:
+                attach_energy_race_type = None
+                attach_race_energy_count = 0
+
+            field_unit_index = int(field_unit_index)
+
+
+            self.__battle_field_repository.set_current_use_card_id(hand_use_card_id)
+            print("detach undead energy")
+
+            def calculate_unit_energy_remove_item_card():
+
+                before_attach_energy_count = self.__your_field_unit_repository.get_your_field_unit_race_energy(
+                    field_unit_index, EnergyType.Undead)
+
+                difference_energy_count = before_attach_energy_count - attach_race_energy_count
+
+                self.__your_field_unit_repository.detach_race_energy(
+                    field_unit_index,
+                    EnergyType.Undead,
+                    difference_energy_count)
+                your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(field_unit_index)
+
+                total_attached_energy_count = self.__your_field_unit_repository.get_total_energy_at_index(field_unit_index)
+
+                your_fixed_card_base = your_field_unit.get_fixed_card_base()
+                your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+
+                for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+                    if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                        if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+
+
+                            your_fixed_card_attached_shape.set_image_data(
+                                self.__pre_drawed_image_instance.get_pre_draw_unit_energy(
+                                    total_attached_energy_count))
+
+            unit_index = field_unit_index
+
+            effect_animation = EffectAnimation()
+            effect_animation.set_animation_name('dark_blast')
+            effect_animation.change_local_translation(
+                self.__your_field_unit_repository.find_field_unit_by_index(
+                    int(unit_index)).get_fixed_card_base().get_local_translation()
+            )
+            effect_animation.draw_animation_panel()
+
+            self.__notify_reader_repository.save_notify_effect_animation_request(
+                EffectAnimationRequest(
+                    effect_animation=effect_animation,
+                    target_player='You',
+                    target_index=int(unit_index),
+                    target_type=TargetType.UNIT,
+                    call_function=calculate_unit_energy_remove_item_card
+                )
+            )
+
+
+        else:
+            field_unit_index = int(list(notify_dict_data.get("player_field_unit_health_point_map", {})
+                                        .get("You", {})
+                                        .get("field_unit_health_point_map", {}).keys())[0])
+
+            field_unit_hp = int(list(notify_dict_data.get("player_field_unit_health_point_map", {})
+                                     .get("You", {})
+                                     .get("field_unit_health_point_map", {}).values())[0])
+
+            dead_field_unit_index_list = list(notify_dict_data.get("player_field_unit_death_map", {})
+                                              .get("You", {})
+                                              .get("dead_field_unit_index_list", []))
+
+
+            self.__battle_field_repository.set_current_use_card_id(hand_use_card_id)
+
+
+
+            def calculate_unit_energy_remove_item_card():
+
+                for dead_field_unit_index in dead_field_unit_index_list:
+                    self.__your_tomb_repository.create_tomb_card(
+                        self.__your_field_unit_repository.find_field_unit_by_index(dead_field_unit_index).get_card_number())
+                    self.__your_field_unit_repository.remove_card_by_index(dead_field_unit_index)
+                    self.__your_field_unit_repository.replace_field_card_position()
+
+                try:
+                    your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(field_unit_index)
+
+                    your_fixed_card_base = your_field_unit.get_fixed_card_base()
+                    your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+
+                    for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+                        if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                            if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                hp_number = your_fixed_card_attached_shape.get_number()
+                                hp_number -= 10
+
+                                if hp_number <= 0:
+                                    break
+
+                                your_fixed_card_attached_shape.set_number(hp_number)
+
+                                your_fixed_card_attached_shape.set_image_data(
+                                    self.__pre_drawed_image_instance.get_pre_draw_unit_hp(
+                                        hp_number))
+
+                                print(f"changed hp: {your_fixed_card_attached_shape.get_circle_kinds()}")
+                except Exception as e:
+                    print(f"error occured!! : {e}")
+
+            unit_index = field_unit_index
+
+            effect_animation = EffectAnimation()
+            effect_animation.set_animation_name('dark_blast')
+            effect_animation.change_local_translation(
+                self.__your_field_unit_repository.find_field_unit_by_index(
+                    int(unit_index)).get_fixed_card_base().get_local_translation()
+            )
+            effect_animation.draw_animation_panel()
+
+            self.__notify_reader_repository.save_notify_effect_animation_request(
+                EffectAnimationRequest(
+                    effect_animation=effect_animation,
+                    target_player='You',
+                    target_index=int(unit_index),
+                    target_type=TargetType.UNIT,
+                    call_function=calculate_unit_energy_remove_item_card
+                )
+            )
