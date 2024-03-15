@@ -422,6 +422,96 @@ class PreDrawedImage:
         self.pre_draw_death_scythe()
         self.pre_draw_magic_attack()
         self.pre_draw_sword_attack()
+        self.pre_draw_contract_of_doom()
+        self.pre_draw_sea_of_wraith()
+        self.pre_draw_corpse_explosion()
+        self.pre_draw_nether_blade_area_skill()
+        self.pre_draw_nether_blade_targeting_skill()
+        self.pre_draw_death()
+
+    def pre_draw_nether_blade_area_skill(self):
+        nether_blade_area_skill_animation = {}
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation",
+                                 'nether_blade_area_skill')
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'nether_blade_area_skill',
+                                                f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
+            nether_blade_area_skill_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
+
+        self.__pre_drawed_effect_animation['nether_blade_area_skill'] = nether_blade_area_skill_animation
+
+    def pre_draw_nether_blade_targeting_skill(self):
+        nether_blade_targeting_skill_animation = {}
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation",
+                                 'nether_blade_targeting_skill')
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'nether_blade_targeting_skill',
+                                                f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
+            nether_blade_targeting_skill_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
+
+        self.__pre_drawed_effect_animation['nether_blade_targeting_skill'] = nether_blade_targeting_skill_animation
+
+    def pre_draw_death(self):
+        death_animation = {}
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation",
+                                 'death')
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'death',
+                                                f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
+            death_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
+
+        self.__pre_drawed_effect_animation['death'] = death_animation
+
+    def pre_draw_corpse_explosion(self):
+        corpse_explosion_animation = {}
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation",
+                                 'corpse_explosion')
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'corpse_explosion',
+                                                f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
+            corpse_explosion_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
+
+        self.__pre_drawed_effect_animation['corpse_explosion'] = corpse_explosion_animation
+
+    def pre_draw_sea_of_wraith(self):
+        sea_of_wraith_animation = {}
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation",
+                                 'sea_of_wraith')
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'sea_of_wraith',
+                                                f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
+            sea_of_wraith_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
+
+        self.__pre_drawed_effect_animation['sea_of_wraith'] = sea_of_wraith_animation
+
+    def pre_draw_contract_of_doom(self):
+        contract_of_doom_animation = {}
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation",
+                                 'contract_of_doom')
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'contract_of_doom',
+                                                f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
+            contract_of_doom_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
+
+        self.__pre_drawed_effect_animation['contract_of_doom'] = contract_of_doom_animation
 
     def pre_draw_burst_shadow_ball(self):
         burst_shadow_ball_animation = {}

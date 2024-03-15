@@ -305,8 +305,11 @@ class FieldAreaInsideHandler:
 
         # self.__action_set_card_id = placed_card_id
         # self.__your_hand_repository.remove_card_by_index(placed_card_index)
-        self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)
-        self.__your_tomb_repository.create_tomb_card(placed_card_id)
+        # self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)
+        # self.__your_tomb_repository.create_tomb_card(placed_card_id)
+
+        self.__action_set_card_id = placed_card_id
+        self.set_placed_card_index(placed_card_index)
 
         self.__field_area_action = FieldAreaAction.SEARCH_UNIT_CARD
         return self.__field_area_action
