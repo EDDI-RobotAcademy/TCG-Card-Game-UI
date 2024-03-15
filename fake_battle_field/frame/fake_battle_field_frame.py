@@ -2635,6 +2635,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             is_success_value = response.get('is_success', False)
 
                             if is_success_value == False:
+                                self.selected_object = None
+                                self.return_to_initial_location()
                                 return
 
                             self.attack_animation_object.set_your_usage_card_id(your_card_id)
@@ -2818,6 +2820,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         )
 
                         if not response.get('is_success'):
+                            self.selected_object = None
+                            self.return_to_initial_location()
                             return
 
                         opponent_field_energy = self.opponent_field_energy_repository.get_opponent_field_energy()
@@ -2907,7 +2911,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             print("아군에게 아이템 사용")
 
                             if self.selected_object.get_card_number() == 8:
-                                return self.return_to_initial_location()
+                                self.selected_object = None
+                                self.return_to_initial_location()
+                                return
 
                             if placed_card_id == 35:
                                 print(f"사기 전환(35) -> placed_card_id: {placed_card_id}")
@@ -2921,6 +2927,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                                 print(f"response: {response}")
                                 if not response.get('is_success'):
+                                    self.selected_object = None
                                     self.return_to_initial_location()
                                     return
 
@@ -5263,10 +5270,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 return
 
+
+                # print(f"page_selected_card = {page_selected_card}")
             if self.fixed_unit_card_inside_action is FixedUnitCardInsideAction.TARGETING_TWO_ENEMY_AS_POSSIBLE:
                 print("적 유닛 2체까지 선택 가능")
 
-                opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+                opponent_field_unit_object_list = (
+                    self.opponent_field_unit_repository.get_current_field_unit_card_object_list())
+
                 for opponent_field_unit_object in opponent_field_unit_object_list:
                     if opponent_field_unit_object is None:
                         continue
@@ -5292,7 +5303,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                         if self.targeting_enemy_select_count == 0:
                             opponent_you_selected_object_index_list = []
-                            for selected_object in  self.opponent_you_selected_object_list:
+                            for selected_object in self.opponent_you_selected_object_list:
                                 opponent_you_selected_object_index_list.append(selected_object.get_index())
 
                             corpse_explosion_response = self.your_hand_repository.request_use_corpse_explosion(
@@ -5308,10 +5319,54 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             is_success_value = corpse_explosion_response.get('is_success', False)
 
                             if is_success_value == False:
+                                self.fixed_unit_card_inside_action = FixedUnitCardInsideAction.Dummy
+
+                                self.targeting_ememy_select_using_hand_card_id = -1
+                                self.targeting_ememy_select_using_hand_card_index = -1
+                                self.targeting_enemy_select_using_your_field_card_index = -1
+                                self.targeting_enemy_for_sacrifice_unit_id = -1
+
+                                self.targeting_enemy_select_support_lightning_border_list = []
+                                self.opponent_you_selected_lightning_border_list = []
+                                self.opponent_you_selected_object_list = []
+
+                                self.selected_object = None
+                                self.selected_object = None
+                                self.return_to_initial_location()
                                 return
 
                             remove_from_field_index_list = []
                             remove_from_field_id_list = []
+
+                            sacrificed_unit_hp = 0
+
+                            your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
+                            for your_field_unit in your_field_unit_list:
+                                if your_field_unit is None:
+                                    continue
+
+                                if isinstance(your_field_unit, FixedFieldCard):
+                                    your_field_unit.selected = False
+
+                            for your_field_unit in self.your_field_unit_repository.get_current_field_unit_list():
+                                if your_field_unit is None:
+                                    continue
+
+                                # if self.selected_object.get_card_number() == 9:
+                                #     self.return_to_initial_location()
+
+                                print(f"your field unit (field_unit) = {type(your_field_unit)}")
+                                fixed_card_base = your_field_unit.get_fixed_card_base()
+                                # page_selected_card = self.your_hand_repository.get_current_your_hand_page()
+                                print(f"your field unit type (fixed_card_base) = {type(fixed_card_base)}")
+
+                                for fixed_card_base_attached_shape in fixed_card_base.get_attached_shapes():
+                                    if isinstance(fixed_card_base_attached_shape, NonBackgroundNumberImage):
+                                        if fixed_card_base_attached_shape.get_circle_kinds() is CircleKinds.HP:
+
+                                            sacrificed_unit_hp_number = fixed_card_base_attached_shape.get_number()
+                                            sacrificed_unit_hp = sacrificed_unit_hp_number
+                                            break
 
                             for opponent_you_selected_object in self.opponent_you_selected_object_list:
                                 opponent_fixed_card_base = opponent_you_selected_object.get_fixed_card_base()
@@ -5324,7 +5379,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                         if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
 
                                             hp_number = opponent_fixed_card_attached_shape.get_number()
-                                            hp_number -= 10
+                                            hp_number -= sacrificed_unit_hp
+
 
                                             # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
                                             # (지금 당장 불사가 존재하지 않음)
@@ -5364,31 +5420,35 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             self.your_tomb_repository.create_tomb_card(
                                 self.targeting_ememy_select_using_hand_card_id)
 
+                            for card_id in remove_from_field_id_list:
+                                self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
 
                             for index in remove_from_field_index_list:
                                 effect_animation = EffectAnimation()
                                 effect_animation.set_animation_name('death')
                                 effect_animation.set_total_window_size(self.width, self.height)
-                                effect_animation.change_local_translation(self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                                effect_animation.change_local_translation(
+                                    self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
                                     index).get_fixed_card_base().get_local_translation())
                                 effect_animation.draw_animation_panel()
                                 effect_animation_panel = effect_animation.get_animation_panel()
-    
+
                                 animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
                                     effect_animation)
-    
+
                                 self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
                                     animation_index, effect_animation_panel)
-    
+
                                 def remove_opponent_unit():
                                     self.opponent_field_unit_repository.remove_current_field_unit_card(index)
-                                    self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                                    # TODO: ID 와 index 로 처리하는 것은 명확히 구분될 필요가 있음
+                                    # self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
                                     self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
                                     self.opponent_field_unit_repository.remove_harmful_status_by_index(index)
-    
+
                                 self.play_effect_animation_by_index_and_call_function(animation_index, remove_opponent_unit)
 
-                            
+
 
                             print(
                                 f"corpse explosion your field index: {self.targeting_enemy_select_using_your_field_card_index}")
