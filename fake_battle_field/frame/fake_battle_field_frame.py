@@ -2512,12 +2512,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
             print(f"{Fore.RED}Opponent Unit이 Your 메인 캐릭터를 공격합니다!{Style.RESET_ALL}")
 
             self.attack_animation_object.set_your_main_character(self.your_main_character_panel)
-            # self.master.after(2000, self.opponent_attack_main_character_animation)
+            self.master.after(2000, self.opponent_attack_main_character_animation)
 
             self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
 
         if self.opponent_field_area_inside_handler.get_field_area_action() is OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_GENERAL_ATTACK_TO_YOUR_UNIT_PROCESS:
             print(f"{Fore.RED}Opponent Unit이 Your 유닛을 공격합니다!{Style.RESET_ALL}")
+
+            self.master.after(2000, self.opponent_attack_your_unit_animation)
+            # self.opponent_attack_animation
 
             self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
 
@@ -6852,6 +6855,403 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         opponent_field_hp_shape.set_image_data(
                             self.pre_drawed_image_instance.get_pre_draw_unit_hp(
                                 opponent_hp_number))
+
+        move_to_origin_location(1)
+
+    def opponent_attack_your_unit_animation(self):
+        self.is_playing_action_animation = True
+        attack_animation_object = AttackAnimation.getInstance()
+
+        notify_data = self.attack_animation_object.get_notify_data()
+
+        opponent_animation_actor_index = int(next(iter(notify_data['player_field_unit_attack_map']['Opponent']['field_unit_attack_map'])))
+
+        # opponent_animation_actor_index = next(iter(notify_data['player_field_unit_attack_map']['Opponent']['field_unit_attack_map'].values()))
+        opponent_animation_actor = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(opponent_animation_actor_index)
+        attack_animation_object.set_opponent_animation_actor(opponent_animation_actor)
+
+        opponent_fixed_card_base = opponent_animation_actor.get_fixed_card_base()
+        current_opponent_attacker_unit_vertices = opponent_fixed_card_base.get_vertices()
+        # print(f"{Fore.RED}current_your_attacker_unit_vertices{Fore.GREEN} {current_your_attacker_unit_vertices}{Style.RESET_ALL}")
+        current_opponent_attacker_unit_local_translation = opponent_fixed_card_base.get_local_translation()
+        print(f"{Fore.RED}current_your_attacker_unit_local_translation{Fore.GREEN} {current_opponent_attacker_unit_local_translation}{Style.RESET_ALL}")
+
+        new_y_value = current_opponent_attacker_unit_local_translation[1] + 30
+        opponent_attacker_unit_destination_local_translation = (current_opponent_attacker_unit_local_translation[0], new_y_value)
+        # print(f"{Fore.RED}your_attacker_unit_destination_local_translation{Fore.GREEN} {your_attacker_unit_destination_local_translation}{Style.RESET_ALL}")
+
+        steps = 20
+        step_x = (opponent_attacker_unit_destination_local_translation[0] - current_opponent_attacker_unit_local_translation[0]) / steps
+        step_y = (opponent_attacker_unit_destination_local_translation[1] - current_opponent_attacker_unit_local_translation[1]) / steps
+        step_y *= -1
+
+        target_index = notify_data['player_field_unit_attack_map']['Opponent']['field_unit_attack_map'][str(opponent_animation_actor_index)]['target_unit_index']
+        your_unit = self.your_field_unit_repository.find_field_unit_by_index(target_index)
+        attack_animation_object.set_your_field_unit(your_unit)
+        # your_unit = attack_animation_object.get_your_field_unit()
+        your_fixed_base = your_unit.get_fixed_card_base()
+        your_fixed_base_vertices = your_fixed_base.get_vertices()
+        your_unit_local_translation = your_fixed_base.get_local_translation()
+        print(f"{Fore.RED}your_unit_local_translation: {Fore.GREEN}{your_unit_local_translation}{Style.RESET_ALL}")
+        # opponent_unit_destination_x = opponent_unit_local_translation[0] - 125
+        your_unit_destination_y = your_unit_local_translation[1] + 130
+        # print(f"{Fore.RED}opponent_unit_destination -> {Fore.GREEN}x: {opponent_unit_destination_x}, y: {opponent_unit_destination_y}{Style.RESET_ALL}")
+        your_biased_local_translation = 0
+
+        epsilon = 1e-6
+        if (abs(current_opponent_attacker_unit_local_translation[0] - your_unit_local_translation[0]) < epsilon or
+                current_opponent_attacker_unit_local_translation[0] - your_unit_local_translation[0] > 0):
+            # 이 경우 칼은 왼쪽으로 카드 width 만큼 추가 이동이 필요함
+            angle_radians = math.radians(-65)
+            bias_result = 170 * math.cos(angle_radians)
+            # print(f"200 * cos(x): {bias_result}")
+            opponent_biased_local_translation = current_opponent_attacker_unit_local_translation[0] - bias_result
+            # your_biased_local_translation = current_your_attacker_unit_local_translation[0]
+            your_unit_destination_x = your_unit_local_translation[0] - 145
+            print("자신을 기준으로 같은 위치 혹은 좌측 공격 -> x 보정 진행")
+        else:
+            # opponent_unit_destination_x = opponent_unit_local_translation[0] - 145
+            angle_radians = math.radians(-65)
+            bias_result = 170 * math.cos(angle_radians)
+            # print(f"200 * cos(x): {bias_result}")
+            # your_biased_local_translation = current_your_attacker_unit_local_translation[0] - bias_result
+            opponent_biased_local_translation = current_opponent_attacker_unit_local_translation[0]
+            your_unit_destination_x = your_unit_local_translation[0] - 145
+
+            print("자신을 기준으로 우측 공격 -> 보정 없음")
+
+        # S = v0 * t + 0.5 * a * t^2
+        # S = 0.5 * a * t^2 => step = 15
+        # S = 0.5 * a * 225 = 580 / 225 = 2.57777
+
+        # 670 -> 450 = 220 -> 440 / 225 = 1.9555
+        # 670 -> 420 = 250 -> 500 / 225 = 2.2222
+        # 670 -> 400 = 270 -> 540 / 225 = 2.4
+        sword_accel_y = (current_opponent_attacker_unit_local_translation[1] - your_unit_destination_y) / 400
+        print(f"{Fore.RED}sword_accel_y: {Fore.GREEN}{sword_accel_y}{Style.RESET_ALL}")
+        # sword_accel_y *= -1
+        # sword_accel_y = 2.4
+
+        # 370 - 215 = 155 -> 310 / 225
+        # sword_accel_x = (opponent_unit_destination_x - current_your_attacker_unit_local_translation[0]) / 400
+
+        sword_accel_x = (your_unit_destination_x - opponent_biased_local_translation) / 200
+        # sword_accel_x = opponent_unit_destination_x / 400
+        print(f"{Fore.RED}sword_accel_x: {Fore.GREEN}{sword_accel_x}{Style.RESET_ALL}")
+
+        # sword_accel_x = 1.3777
+
+        def update_position(step_count):
+            # print(f"{Fore.RED}step_count: {Fore.GREEN}{step_count}{Style.RESET_ALL}")
+
+            new_x = current_opponent_attacker_unit_local_translation[0] + step_x * step_count
+            new_y = current_opponent_attacker_unit_local_translation[1] + step_y * step_count
+
+            new_vertices = [
+                (vx + step_x * step_count, vy + step_y * step_count) for vx, vy in current_opponent_attacker_unit_vertices
+            ]
+            opponent_fixed_card_base.update_vertices(new_vertices)
+
+            # tool_card = self.selected_object.get_tool_card()
+            # if tool_card is not None:
+            #     new_tool_card_vertices = [
+            #         (vx + new_x, vy + new_y) for vx, vy in tool_card.vertices
+            #     ]
+            #     tool_card.update_vertices(new_tool_card_vertices)
+
+            for attached_shape in opponent_fixed_card_base.get_attached_shapes():
+                # theta = w0 * t + 0.5 * alpha * t^2
+                # theta = 0.5 * alpha * t^2 => step_count = 15
+                # theta = 0.5 * alpha * 225 = 65 / 225 = 0.28888
+                # theta = 0.5 * alpha * 400 = 65 / 400 = 0.1625
+                omega_accel_alpha = -0.1625
+
+                if isinstance(attached_shape, NonBackgroundNumberImage):
+                    if attached_shape.get_circle_kinds() is CircleKinds.ATTACK:
+                        accel_y_dist = sword_accel_y * step_count
+                        accel_y_dist *= -1
+
+                        accel_x_dist = sword_accel_x * step_count
+                        # x: 236 / 1920, y: -367 / 1043
+                        new_attached_shape_vertices = [
+                            (vx + accel_x_dist, vy + accel_y_dist) for vx, vy in attached_shape.vertices
+                        ]
+                        attached_shape.update_vertices(new_attached_shape_vertices)
+                        attached_shape.update_rotation_angle(omega_accel_alpha * step_count * step_count)
+                        print(
+                            f"{Fore.RED}sword new_attached_shape_vertices{Fore.GREEN} {new_attached_shape_vertices}{Style.RESET_ALL}")
+
+                        if step_count == 20:
+                            attack_animation_object.set_opponent_weapon_shape(attached_shape)
+
+                        continue
+
+                new_attached_shape_vertices = [
+                    (vx + step_x, vy + step_y) for vx, vy in attached_shape.vertices
+                ]
+                attached_shape.update_vertices(new_attached_shape_vertices)
+                print(
+                    f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+
+            if step_count < steps:
+
+                self.master.after(20, update_position, step_count + 1)
+            else:
+                self.start_opponent_attack_your_unit_post_animation(attack_animation_object)
+                self.is_attack_motion_finished = True
+                attack_animation_object.set_is_finished(True)
+                attack_animation_object.set_need_post_process(True)
+
+        update_position(1)
+
+    def start_opponent_attack_your_unit_post_animation(self, attack_animation_object):
+        sword_shape = attack_animation_object.get_opponent_weapon_shape()
+
+        steps = 30
+        # (390 - 153) / 1848 = 0.1282
+        sword_target_x = 0.1282 * attack_animation_object.get_total_width()
+        print(f"{Fore.RED}sword_target_x{Fore.GREEN} {sword_target_x}{Style.RESET_ALL}")
+
+        # S = v0 * t + 0.5 * a * t^2
+        # S = 0.5 * a * t^2 => step = 10
+        # S = 0.5 * a * 225 = sword_target_x / 100 = 2
+        # 100 = (steps * steps)
+
+        sword_accel_x = sword_target_x / 100
+        print(f"{Fore.RED}sword_accel_x{Fore.GREEN} {sword_accel_x}{Style.RESET_ALL}")
+
+        # theta = w0 * t + 0.5 * alpha * t^2
+        # theta = 0.5 * alpha * t^2 => step_count = 10
+        # theta = 0.5 * alpha * 100 = 30 / 100 = 0.3
+        omega_accel_alpha = 0.3
+
+        your_field_unit = self.attack_animation_object.get_your_field_unit()
+
+        def slash_with_sword(step_count):
+            if step_count == 1:
+                self.__music_player_repository.play_sound_effect_with_event_name('basic_attack')
+            if step_count < 11:
+                sword_accel_x_dist = sword_accel_x * step_count
+
+                new_attached_shape_vertices = [
+                    (vx + sword_accel_x_dist, vy) for vx, vy in sword_shape.vertices
+                ]
+                sword_shape.update_vertices(new_attached_shape_vertices)
+
+                current_angle = sword_shape.get_rotation_angle()
+                sword_shape.update_rotation_angle(current_angle + omega_accel_alpha * step_count * step_count)
+
+            if step_count > 2:
+                fixed_card_base = your_field_unit.get_fixed_card_base()
+                tool_card = your_field_unit.get_tool_card()
+                attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                if step_count % 2 == 1:
+                    vibration_factor = 10
+                    random_translation = (random.uniform(-vibration_factor, vibration_factor),
+                                          random.uniform(-vibration_factor, vibration_factor))
+
+                    new_fixed_card_base_vertices = [
+                        (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                        fixed_card_base.get_vertices()
+                    ]
+                    fixed_card_base.update_vertices(new_fixed_card_base_vertices)
+
+                    if tool_card is not None:
+                        new_tool_card_vertices = [
+                            (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                            tool_card.get_vertices()
+                        ]
+                        tool_card.update_vertices(new_tool_card_vertices)
+
+                    for attached_shape in attached_shape_list:
+                        new_attached_shape_vertices = [
+                            (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                            attached_shape.get_vertices()
+                        ]
+                        attached_shape.update_vertices(new_attached_shape_vertices)
+
+                else:
+                    fixed_card_base.update_vertices(fixed_card_base.get_initial_vertices())
+                    if tool_card is not None:
+                        tool_card.update_vertices(tool_card.get_initial_vertices())
+                    for attached_shape in attached_shape_list:
+                        attached_shape.update_vertices(attached_shape.get_initial_vertices())
+
+            if step_count < steps:
+                self.master.after(20, slash_with_sword, step_count + 1)
+            else:
+                self.finish_opponent_attack_your_unit_post_animation(attack_animation_object)
+
+        # self.play_effect_animation_by_index(attack_animation_object.get_animation_actor().get_index())
+        slash_with_sword(1)
+
+    def finish_opponent_attack_your_unit_post_animation(self, attack_animation_object):
+        sword_shape = attack_animation_object.get_opponent_weapon_shape()
+
+        opponent_animation_actor = attack_animation_object.get_opponent_animation_actor()
+        opponent_fixed_card_base = opponent_animation_actor.get_fixed_card_base()
+        tool_card = opponent_animation_actor.get_tool_card()
+        attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+
+        current_opponent_attacker_unit_vertices = opponent_fixed_card_base.get_vertices()
+        current_opponent_attacker_unit_local_translation = opponent_fixed_card_base.get_local_translation()
+
+        new_y_value = current_opponent_attacker_unit_local_translation[1] + 30
+        opponent_attacker_unit_destination_local_translation = (current_opponent_attacker_unit_local_translation[0], new_y_value)
+
+        steps = 15
+        step_y = (opponent_attacker_unit_destination_local_translation[1] - current_opponent_attacker_unit_local_translation[1]) / steps
+        step_y *= -1
+
+        # (390 - 153) / 1848 = 0.1282
+        current_sword_shape = attack_animation_object.get_opponent_weapon_shape()
+        current_sword_shape_target = current_sword_shape.get_initial_vertices()
+
+        current_sword_shape_target_x = current_sword_shape_target[0][0]
+        current_sword_shape_target_y = current_sword_shape_target[0][1]
+
+        # theta = w0 * t + 0.5 * alpha * t^2
+        # theta = 0.5 * alpha * t^2 => step_count = 15
+        # theta = 0.5 * alpha * 225 = angle / 112.5
+        target_rotation_angle = sword_shape.get_rotation_angle()
+        return_omega_accel_alpha = target_rotation_angle / 112.5
+
+        current_sword_shape_vertices = current_sword_shape.get_vertices()
+
+        current_sword_shape_x_vertex = current_sword_shape_vertices[0][0]
+        current_sword_shape_y_vertex = current_sword_shape_vertices[0][1]
+        print(f"{Fore.RED}current_sword_shape_y_vertex: {Fore.GREEN}{current_sword_shape_y_vertex}{Style.RESET_ALL}")
+        print(f"{Fore.RED}current_sword_shape_target_y: {Fore.GREEN}{current_sword_shape_target_y}{Style.RESET_ALL}")
+
+        # S = v0 * t + 0.5 * a * t^2
+        # S = 0.5 * a * t^2 => step = 15
+        # S = 0.5 * a * 225 = distance / 112.5
+        # 225 = (steps * steps)
+
+        # difference_x: 11.434448575145638, difference_y: 94.0313609929536
+
+        sword_accel_x = (current_sword_shape_target_x - current_sword_shape_x_vertex + 15.1677706645) / 112.5
+        sword_accel_y = (current_sword_shape_target_y - current_sword_shape_y_vertex) / 112.5
+
+        def move_to_origin_location(step_count):
+            new_y = current_opponent_attacker_unit_local_translation[1] + step_y * step_count
+            print(f"{Fore.RED}step ->{Fore.GREEN}new_y: {new_y}{Style.RESET_ALL}")
+
+            new_vertices = [
+                (vx, vy - step_y * step_count) for vx, vy in current_opponent_attacker_unit_vertices
+            ]
+            opponent_fixed_card_base.update_vertices(new_vertices)
+            # print(f"{Fore.RED}new_vertices{Fore.GREEN} {new_vertices}{Style.RESET_ALL}")
+
+            # tool_card = self.selected_object.get_tool_card()
+            # if tool_card is not None:
+            #     new_tool_card_vertices = [
+            #         (vx + new_x, vy + new_y) for vx, vy in tool_card.vertices
+            #     ]
+            #     tool_card.update_vertices(new_tool_card_vertices)
+
+            for attached_shape in opponent_fixed_card_base.get_attached_shapes():
+                # theta = w0 * t + 0.5 * alpha * t^2
+                # theta = 0.5 * alpha * t^2 => step_count = 15
+                # theta = 0.5 * alpha * 225 = 65 / 225 = 0.28888
+                omega_accel_alpha = -0.28888
+
+                if isinstance(attached_shape, NonBackgroundNumberImage):
+                    if attached_shape.get_circle_kinds() is CircleKinds.ATTACK:
+                        # current_sword_shape_vertices = current_sword_shape.get_vertices()
+                        #
+                        # current_sword_shape_x_vertex = current_sword_shape_vertices[0][0]
+                        # current_sword_shape_y_vertex = current_sword_shape_vertices[0][1]
+                        # print(f"{Fore.RED}current_sword_shape_y_vertex: {Fore.GREEN}{current_sword_shape_y_vertex}{Style.RESET_ALL}")
+                        # print(f"{Fore.RED}current_sword_shape_target_y: {Fore.GREEN}{current_sword_shape_target_y}{Style.RESET_ALL}")
+                        #
+                        # # S = v0 * t + 0.5 * a * t^2
+                        # # S = 0.5 * a * t^2 => step = 15
+                        # # S = 0.5 * a * 225 = distance / 112.5
+                        # # 225 = (steps * steps)
+                        #
+                        # # difference_x: 11.434448575145638, difference_y: 94.0313609929536
+                        #
+                        # sword_accel_x = (
+                        #                             current_sword_shape_target_x - current_sword_shape_x_vertex + 15.1677706645) / 112.5
+                        # sword_accel_y = (
+                        #                             current_sword_shape_target_y - current_sword_shape_target_y) / 112.5
+                                            # 124.732391723) / 112.5
+
+                        sword_accel_x_dist = sword_accel_x * step_count
+                        sword_accel_y_dist = sword_accel_y * step_count
+                        print(f"sword_accel_x_dist: {sword_accel_x_dist}, sword_accel_y_dist: {sword_accel_y_dist}")
+
+                        new_attached_shape_vertices = [
+                            (vx + sword_accel_x_dist, vy + sword_accel_y_dist) for vx, vy in sword_shape.vertices
+                        ]
+                        sword_shape.update_vertices(new_attached_shape_vertices)
+                        print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+
+                        current_angle = sword_shape.get_rotation_angle()
+                        sword_shape.update_rotation_angle(current_angle - return_omega_accel_alpha * step_count)
+
+                        continue
+
+                # print(f"{Fore.RED}attached_shape.vertices: {Fore.GREEN}{attached_shape.vertices}{Style.RESET_ALL}")
+
+                new_attached_shape_vertices = [
+                    (vx, vy - step_y) for vx, vy in attached_shape.vertices
+                ]
+                attached_shape.update_vertices(new_attached_shape_vertices)
+                # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+
+            if step_count < steps:
+                self.master.after(20, move_to_origin_location, step_count + 1)
+            else:
+                is_playing_action_animation = False
+                opponent_fixed_card_base.update_vertices(opponent_fixed_card_base.get_initial_vertices())
+                if tool_card is not None:
+                    tool_card.update_vertices(tool_card.get_initial_vertices())
+                for attached_shape in attached_shape_list:
+                    attached_shape.update_vertices(attached_shape.get_initial_vertices())
+
+                self.is_attack_motion_finished = True
+                attack_animation_object.set_is_finished(True)
+                attack_animation_object.set_need_post_process(True)
+
+                # if self.attack_animation_object.get_your_field_unit_death():
+                #     your_field_death_unit_index = self.attack_animation_object.get_your_field_death_unit_index()
+                #     self.your_field_unit_repository.remove_card_by_index(your_field_death_unit_index)
+                #     self.your_field_unit_repository.replace_field_card_position()
+                #     self.your_field_unit_repository.remove_harmful_status_by_index(your_field_death_unit_index)
+                # else:
+                #
+                #     your_field_hp_shape = self.attack_animation_object.get_your_field_hp_shape()
+                #     if your_field_hp_shape:
+                #         your_hp_number = your_field_hp_shape.get_number()
+                #
+                #         your_field_hp_shape.set_image_data(
+                #             self.pre_drawed_image_instance.get_pre_draw_unit_hp(
+                #                 your_hp_number))
+                #
+                # if self.attack_animation_object.get_opponent_field_unit_death():
+                #     opponent_field_unit = self.attack_animation_object.get_opponent_field_unit()
+                #     opponent_field_unit_index = opponent_field_unit.get_index()
+                #
+                #     def remove_field_unit_by_index():
+                #         self.opponent_field_unit_repository.remove_card_by_multiple_index([opponent_field_unit_index])
+                #         self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                #         self.opponent_field_unit_repository.remove_harmful_status_by_index(opponent_field_unit_index)
+                #         self.opponent_tomb_repository.create_opponent_tomb_card(opponent_field_unit.get_card_number())
+                #
+                #     self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function('death',
+                #                                                                                        opponent_field_unit_index,
+                #                                                                                        remove_field_unit_by_index)
+                # else:
+                #     opponent_field_hp_shape = self.attack_animation_object.get_opponent_field_hp_shape()
+                #     if opponent_field_hp_shape:
+                #         opponent_hp_number = opponent_field_hp_shape.get_number()
+                #
+                #         opponent_field_hp_shape.set_image_data(
+                #             self.pre_drawed_image_instance.get_pre_draw_unit_hp(
+                #                 opponent_hp_number))
 
         move_to_origin_location(1)
 
