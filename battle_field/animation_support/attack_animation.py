@@ -48,6 +48,9 @@ class AttackAnimation:
 
     is_opponent_attack_main_character = False
 
+    opponent_weapon_shape = None
+    your_main_character = None
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -143,6 +146,12 @@ class AttackAnimation:
 
     def get_your_weapon_shape(self):
         return self.your_weapon_shape
+
+    def set_opponent_weapon_shape(self, opponent_weapon_shape):
+        self.opponent_weapon_shape = opponent_weapon_shape
+
+    def get_opponent_weapon_shape(self):
+        return self.opponent_weapon_shape
 
     def set_opponent_field_unit(self, opponent_field_unit):
         self.opponent_field_unit = opponent_field_unit
@@ -290,6 +299,12 @@ class AttackAnimation:
 
     def get_opponent_main_character(self):
         return self.opponent_main_character
+
+    def set_your_main_character(self, your_main_character):
+        self.your_main_character = your_main_character
+
+    def get_your_main_character(self):
+        return self.your_main_character
 
     def set_extra_ability(self, extra_ability):
         self.extra_ability = extra_ability

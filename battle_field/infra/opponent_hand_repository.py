@@ -72,3 +72,14 @@ class OpponentHandRepository:
         self.x_base = start
         next_x = self.x_base + x_increment * place_index
         return (next_x, current_y)
+
+    def clear_every_resource(self):
+        self.preDrawedImageInstance = PreDrawedImage.getInstance()
+
+        self.total_width = None
+        self.total_height = None
+
+        self.current_opponent_hand_state = CurrentOpponentHandState()
+        self.current_opponent_hand_card_list = []
+        self.current_opponent_hand_card_x_position = []
+

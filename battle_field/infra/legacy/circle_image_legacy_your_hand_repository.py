@@ -344,3 +344,16 @@ class CircleImageLegacyYourHandRepository:
     def request_fake_muligun(self, muligun_request):
         self.__transmitIpcChannel.put(muligun_request)
         return self.__receiveIpcChannel.get()
+
+    def clear_every_resource(self):
+        self.preDrawedImageInstance = PreDrawedImage.getInstance()
+
+        self.total_width = None
+        self.total_height = None
+
+        self.current_hand_state = CurrentHandState()
+        self.current_hand_card_list = []
+        self.current_hand_card_x_position = []
+        self.your_hand_page_list = []
+
+        self.current_page = 0

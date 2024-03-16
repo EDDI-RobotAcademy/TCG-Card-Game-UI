@@ -104,3 +104,10 @@ class YourFieldEnergyRepository:
     def request_to_attach_energy_to_unit(self, requestToAttachEnergyUnit):
         self.__transmitIpcChannel.put(requestToAttachEnergyUnit)
         return self.__receiveIpcChannel.get()
+
+    def clear_every_resource(self):
+        self.field_energy_state = FieldEnergyState()
+        self.__current_field_energy_race = CardRace.DUMMY
+
+        self.__to_use_field_energy_count = 1
+

@@ -70,3 +70,9 @@ class OpponentTombRepository:
 
     def saveTransmitIpcChannel(self, transmitIpcChannel):
         self.__transmitIpcChannel = transmitIpcChannel
+
+    def clear_every_resource(self):
+        self.opponent_tomb_state = CurrentTombState()
+
+        self.opponent_tomb_unit_list = []
+        self.opponent_tomb_unit_x_position = []

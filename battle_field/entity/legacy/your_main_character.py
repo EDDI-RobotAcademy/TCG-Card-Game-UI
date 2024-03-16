@@ -4,7 +4,7 @@ from image_shape.oval_image import OvalImage
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
-class YourMainCharacter:
+class LegacyYourMainCharacter:
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
 
     def __init__(self, local_translation=(0, 0), scale=1):

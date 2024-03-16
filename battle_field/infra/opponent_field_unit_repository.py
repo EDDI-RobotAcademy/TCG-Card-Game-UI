@@ -160,3 +160,13 @@ class OpponentFieldUnitRepository:
 
     def get_opponent_unit_extra_ability_at_index(self, unit_index):
         return self.extra_effect_info.get_extra_effect_of_index(unit_index)
+
+    def clear_every_resource(self):
+        self.attached_energy_info = AttachedEnergyInfoState()
+        self.extra_effect_info = ExtraEffectInfo()
+        self.harmful_status_info = HarmfulStatusInfo()
+
+        self.current_field_unit_state = CurrentFieldUnitState()
+        self.current_field_unit_card_object_list = []
+        self.current_field_unit_x_position = []
+

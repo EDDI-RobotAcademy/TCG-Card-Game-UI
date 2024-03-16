@@ -70,3 +70,10 @@ class OpponentLostZoneRepository:
 
     def saveTransmitIpcChannel(self, transmitIpcChannel):
         self.__transmitIpcChannel = transmitIpcChannel
+
+    def clear_every_resource(self):
+        self.opponent_lost_zone_state = CurrentLostZoneState()
+
+        self.opponent_lost_zone_card_list = []
+        self.opponent_lost_zone_card_x_position = []
+

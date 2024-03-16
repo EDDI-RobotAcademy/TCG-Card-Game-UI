@@ -110,7 +110,7 @@ class OpponentFixedUnitCardInsideHandler:
         return self.__opponent_field_area_action
 
     def clear_opponent_field_area_action(self):
-        self.__opponent_field_area_action = None
+        self.__opponent_field_area_action = ActionToApplyOpponent.Dummy
 
     def get_opponent_unit_index(self):
         return self.__opponent_unit_index
@@ -213,8 +213,12 @@ class OpponentFixedUnitCardInsideHandler:
                 self.__target_index_to_action = unit_index
                 self.__opponent_field_area_action = OpponentFieldAreaAction.ENERGY_BURN
 
-
-
+            else:
+                print(f"use energy burn false!! ")
+                return False
+        except Exception as e:
+            print(f"energy burn error : {e}")
+            return
                 # opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
                 #     unit_index)
                 # print(f"opponent_field_unit: {opponent_field_unit}")
@@ -306,12 +310,7 @@ class OpponentFixedUnitCardInsideHandler:
 
 
 
-            else:
-                print(f"use energy burn false!! ")
-                return
-        except Exception as e:
-            print(f"energy burn error : {e}")
-            return
+
 
         # opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(unit_index)
         #
@@ -390,13 +389,16 @@ class OpponentFixedUnitCardInsideHandler:
         )
         print(f"{Fore.RED}death_sice() -> death_sice_usage_response:{Fore.GREEN} {death_sice_usage_response}{Style.RESET_ALL}")
 
-        # self.__your_hand_repository.remove_card_by_index(placed_card_index)
-        self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)
-        self.__your_tomb_repository.create_tomb_card(placed_card_id)
-        self.__your_hand_repository.update_your_hand()
+        if death_sice_usage_response.get('is_success', False) is True:
+            # self.__your_hand_repository.remove_card_by_index(placed_card_index)
+            self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)
+            self.__your_tomb_repository.create_tomb_card(placed_card_id)
+            self.__your_hand_repository.update_your_hand()
 
-        self.__opponent_field_area_action = OpponentFieldAreaAction.DEATH_SCYTHE
-        self.__target_index_to_action = unit_index
+            self.__opponent_field_area_action = OpponentFieldAreaAction.DEATH_SCYTHE
+            self.__target_index_to_action = unit_index
+        else:
+            return False
 
         # opponent_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(unit_index)
         # opponent_unit_card_id = opponent_unit.get_card_number()

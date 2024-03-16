@@ -121,11 +121,12 @@ class YourFieldUnitRepository:
     def get_card_id_by_index(self, index):
         card_list = self.get_current_field_unit_list()
 
-        if index < len(card_list):
-            return card_list[index].get_card_number()
-        # for card in card_list:
-        #     if card.get_index() == index:
-        #         return card.get_card_number()
+        # if index < len(card_list):
+        #     return card_list[index].get_card_number()
+        for card in card_list:
+            if card:
+                if card.get_index() == index:
+                    return card.get_card_number()
 
         return -1
 
@@ -200,3 +201,13 @@ class YourFieldUnitRepository:
 
     def saveTransmitIpcChannel(self, transmitIpcChannel):
         self.__transmitIpcChannel = transmitIpcChannel
+
+    def clear_every_resource(self):
+        self.attached_energy_info = AttachedEnergyInfoState()
+        self.harmful_status_info = HarmfulStatusInfo()
+        self.extra_effect_info = ExtraEffectInfo()
+
+        self.current_field_unit_state = CurrentFieldUnitState()
+        self.current_field_unit_list = []
+        self.current_field_unit_x_position = []
+

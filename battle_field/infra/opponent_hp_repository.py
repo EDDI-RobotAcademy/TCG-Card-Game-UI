@@ -43,3 +43,6 @@ class OpponentHpRepository:
     def opponent_character_die(self):
         self.survival_state.character_die()
 
+    def clear_every_resource(self):
+        self.current_hp_state = CurrentOpponentHpState()
+        self.survival_state = OpponentMainCharacterSurvivalState()

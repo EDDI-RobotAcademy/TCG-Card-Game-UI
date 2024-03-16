@@ -40,3 +40,6 @@ class RoundRepository:
         #         # _sessionInfo=self.__sessionService.getSessionInfo())
         #         _sessionInfo=self.__sessionRepository.get_session_info())
         # )
+
+    def clear_every_resource(self):
+        self.current_round_number = 1

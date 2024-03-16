@@ -42,3 +42,7 @@ class YourHpRepository:
 
     def your_character_die(self):
         self.survival_state.character_die()
+
+    def clear_every_resource(self):
+        self.current_hp_state = CurrentYourHpState()
+        self.survival_state = YourMainCharacterSurvivalState()

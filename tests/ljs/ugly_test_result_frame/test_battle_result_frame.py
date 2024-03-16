@@ -2379,9 +2379,9 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
                 # if self.selected_object.get_card_number() == 9:
                 #     self.return_to_initial_location()
 
-                print(f"your field unit (field_unit) = {type(your_field_unit)}")
+                # print(f"your field unit (field_unit) = {type(your_field_unit)}")
                 fixed_card_base = your_field_unit.get_fixed_card_base()
-                print(f"your field unit type (fixed_card_base) = {type(fixed_card_base)}")
+                # print(f"your field unit type (fixed_card_base) = {type(fixed_card_base)}")
 
                 if fixed_card_base.is_point_inside((x, y)):
                     if self.field_area_inside_handler.get_field_area_action() is FieldAreaAction.ENERGY_BOOST:
