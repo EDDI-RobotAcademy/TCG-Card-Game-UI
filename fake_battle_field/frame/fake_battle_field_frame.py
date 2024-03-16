@@ -9531,6 +9531,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         # opponent_animation_actor_index = next(iter(notify_data['player_field_unit_attack_map']['Opponent']['field_unit_attack_map'].values()))
         opponent_animation_actor = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(opponent_animation_actor_index)
+        attack_animation_object.set_opponent_animation_actor(opponent_animation_actor)
 
         # opponent_animation_actor = attack_animation_object.get_opponent_animation_actor()
 
@@ -9622,8 +9623,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
             else:
-                # self.start_opponent_attack_main_character_post_animation(attack_animation_object)
-                pass
+                self.start_opponent_attack_main_character_post_animation(attack_animation_object)
 
         update_position(1)
 
@@ -9684,30 +9684,30 @@ class FakeBattleFieldFrame(OpenGLFrame):
             else:
                 self.finish_opponent_attack_main_character_post_animation(attack_animation_object)
 
-        self.play_effect_animation_by_index(attack_animation_object.get_animation_actor().get_index())
+        # self.play_effect_animation_by_index(attack_animation_object.get_opponent_animation_actor().get_index())
         moving_action(1)
 
     def finish_opponent_attack_main_character_post_animation(self, attack_animation_object):
-        sword_shape = attack_animation_object.get_your_weapon_shape()
+        sword_shape = attack_animation_object.get_opponent_weapon_shape()
 
-        animation_actor = attack_animation_object.get_animation_actor()
-        your_fixed_card_base = animation_actor.get_fixed_card_base()
+        animation_actor = attack_animation_object.get_opponent_animation_actor()
+        opponent_fixed_card_base = animation_actor.get_fixed_card_base()
         tool_card = animation_actor.get_tool_card()
-        attached_shape_list = your_fixed_card_base.get_attached_shapes()
+        attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
 
-        current_your_attacker_unit_vertices = your_fixed_card_base.get_vertices()
-        current_your_attacker_unit_local_translation = your_fixed_card_base.get_local_translation()
+        current_opponent_attacker_unit_vertices = opponent_fixed_card_base.get_vertices()
+        current_opponent_attacker_unit_local_translation = opponent_fixed_card_base.get_local_translation()
 
-        new_y_value = current_your_attacker_unit_local_translation[1] + 30
-        your_attacker_unit_destination_local_translation = (
-        current_your_attacker_unit_local_translation[0], new_y_value)
+        new_y_value = current_opponent_attacker_unit_local_translation[1] + 30
+        opponent_attacker_unit_destination_local_translation = (
+        current_opponent_attacker_unit_local_translation[0], new_y_value)
 
         steps = 15
-        step_y = (your_attacker_unit_destination_local_translation[1] - current_your_attacker_unit_local_translation[1]) / steps
+        step_y = (opponent_attacker_unit_destination_local_translation[1] - current_opponent_attacker_unit_local_translation[1]) / steps
         step_y *= -1
 
         # (390 - 153) / 1848 = 0.1282
-        current_sword_shape = attack_animation_object.get_your_weapon_shape()
+        current_sword_shape = attack_animation_object.get_opponent_weapon_shape()
         current_sword_shape_target = current_sword_shape.get_initial_vertices()
 
         current_sword_shape_target_x = current_sword_shape_target[0][0]
@@ -9727,13 +9727,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
         sword_accel_y = (current_sword_shape_y_vertex - current_sword_shape_target_y + 85 - 60) / 112.5
 
         def move_to_origin_location(step_count):
-            new_y = current_your_attacker_unit_local_translation[1] + step_y * step_count
+            new_y = current_opponent_attacker_unit_local_translation[1] + step_y * step_count
             print(f"{Fore.RED}step ->{Fore.GREEN}new_y: {new_y}{Style.RESET_ALL}")
 
             new_vertices = [
-                (vx, vy - step_y * step_count) for vx, vy in current_your_attacker_unit_vertices
+                (vx, vy - step_y * step_count) for vx, vy in current_opponent_attacker_unit_vertices
             ]
-            your_fixed_card_base.update_vertices(new_vertices)
+            opponent_fixed_card_base.update_vertices(new_vertices)
             print(f"{Fore.RED}new_vertices{Fore.GREEN} {new_vertices}{Style.RESET_ALL}")
 
             # tool_card = self.selected_object.get_tool_card()
@@ -9743,7 +9743,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             #     ]
             #     tool_card.update_vertices(new_tool_card_vertices)
 
-            for attached_shape in your_fixed_card_base.get_attached_shapes():
+            for attached_shape in opponent_fixed_card_base.get_attached_shapes():
                 # theta = w0 * t + 0.5 * alpha * t^2
                 # theta = 0.5 * alpha * t^2 => step_count = 15
                 # theta = 0.5 * alpha * 225 = 65 / 225 = 0.28888
@@ -9791,7 +9791,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.master.after(20, move_to_origin_location, step_count + 1)
             else:
                 self.is_playing_action_animation = False
-                your_fixed_card_base.update_vertices(your_fixed_card_base.get_initial_vertices())
+                opponent_fixed_card_base.update_vertices(opponent_fixed_card_base.get_initial_vertices())
                 if tool_card is not None:
                     tool_card.update_vertices(tool_card.get_initial_vertices())
                 for attached_shape in attached_shape_list:
@@ -9799,9 +9799,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 self.is_attack_motion_finished = True
                 attack_animation_object.set_is_finished(True)
+                self.opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.Dummy)
 
-                your_damage = attack_animation_object.get_animation_actor_damage()
-                self.opponent_hp_repository.take_damage(your_damage)
+                notify_data = attack_animation_object.get_notify_data()
+
+                # opponent_damage = attack_animation_object.get_opponent_animation_actor_damage()
+                health_point = notify_data['player_main_character_health_point_map']['You']
+                self.your_hp_repository.change_hp(int(health_point))
 
         move_to_origin_location(1)
 
