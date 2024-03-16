@@ -9799,9 +9799,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 self.is_attack_motion_finished = True
                 attack_animation_object.set_is_finished(True)
+                self.opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.Dummy)
 
-                opponent_damage = attack_animation_object.get_opponent_animation_actor_damage()
-                self.your_hp_repository.take_damage(opponent_damage)
+                notify_data = attack_animation_object.get_notify_data()
+
+                # opponent_damage = attack_animation_object.get_opponent_animation_actor_damage()
+                health_point = notify_data['player_main_character_health_point_map']['You']
+                self.your_hp_repository.change_hp(int(health_point))
 
         move_to_origin_location(1)
 
