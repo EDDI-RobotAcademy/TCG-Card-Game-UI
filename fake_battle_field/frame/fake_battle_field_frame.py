@@ -1693,8 +1693,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             for opponent_field_index, opponent_unit in enumerate(opponent_field_unit_list):
                 total_energy = self.opponent_field_unit_repository.get_total_energy_at_index(opponent_field_index)
                 print(total_energy)
-                race_energy = self.opponent_field_unit_repository.get_energy_info_at_index(opponent_field_index)
-                print(race_energy)
+                # race_energy = self.opponent_field_unit_repository.get_energy_info_at_index(opponent_field_index)
+                # print(race_energy)
 
                 if total_energy >= 1:
                     print("상대방 평타공격 to unit~ ")
@@ -2508,11 +2508,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
 
-        if self.opponent_field_area_inside_handler.get_field_area_action() is OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_GENERAL_ATTACK_PROCESS:
+        if self.opponent_field_area_inside_handler.get_field_area_action() is OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_GENERAL_ATTACK_TO_MAIN_CHARACTER_PROCESS:
             print(f"{Fore.RED}Opponent Unit이 Your 메인 캐릭터를 공격합니다!{Style.RESET_ALL}")
 
             self.attack_animation_object.set_your_main_character(self.your_main_character_panel)
-            self.master.after(2000, self.opponent_attack_main_character_animation)
+            # self.master.after(2000, self.opponent_attack_main_character_animation)
+
+            self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
+
+        if self.opponent_field_area_inside_handler.get_field_area_action() is OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_GENERAL_ATTACK_TO_YOUR_UNIT_PROCESS:
+            print(f"{Fore.RED}Opponent Unit이 Your 유닛을 공격합니다!{Style.RESET_ALL}")
 
             self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
 

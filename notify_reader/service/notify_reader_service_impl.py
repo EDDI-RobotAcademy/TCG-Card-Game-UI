@@ -587,7 +587,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         self.__attack_animation_object.set_is_opponent_attack_main_character(True)
 
         self.__opponent_field_area_inside_handler.set_field_area_action(
-            OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_GENERAL_ATTACK_PROCESS)
+            OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_GENERAL_ATTACK_TO_MAIN_CHARACTER_PROCESS)
 
     def notify_use_multiple_unit_damage_item_card(self, notice_dictionary):
 
@@ -762,131 +762,151 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         if is_my_turn is True:
             return
 
+        # {"NOTIFY_BASIC_ATTACK_TO_UNIT": {"player_field_unit_attack_map": {"Opponent": {"field_unit_attack_map": {
+        #     "2": {"target_player_index": "You", "target_unit_index": 3, "active_skill_index": -1,
+        #           "passive_skill_index": -1}}}}, "player_field_unit_health_point_map": {
+        #     "You": {"field_unit_health_point_map": {"3": 0}}, "Opponent": {"field_unit_health_point_map": {"2": 0}}},
+        #                                  "player_field_unit_harmful_effect_map": {"Opponent": {
+        #                                      "field_unit_harmful_status_map": {"2": {"harmful_status_list": []}}},
+        #                                                                           "You": {
+        #                                                                               "field_unit_harmful_status_map": {
+        #                                                                                   "3": {
+        #                                                                                       "harmful_status_list": []}}}},
+        #                                  "player_field_unit_death_map": {
+        #                                      "Opponent": {"dead_field_unit_index_list": [2]},
+        #                                      "You": {"dead_field_unit_index_list": [3]}}}}
+
+        self.__opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.PLAY_ANIMATION)
+
         data = notice_dictionary['NOTIFY_BASIC_ATTACK_TO_UNIT']
+        self.__attack_animation_object.set_notify_data(data)
 
         is_opponent_data_in_data = False
         is_your_data_in_data = False
 
-
         self.apply_notify_data_of_harmful_status(data['player_field_unit_harmful_effect_map'])
 
+        # try:
+        #     dead_opponent_unit_index_list = (
+        #         data.get('player_field_unit_death_map', {})
+        #         .get('Opponent', {})['dead_field_unit_index_list'])
+        #
+        #     opponent_unit_index = int(list(
+        #         data.get('player_field_unit_health_point_map', {})
+        #         .get('Opponent', {}).get('field_unit_health_point_map', {}).keys())[0])
+        #
+        #     remain_opponent_unit_hp = (
+        #         data.get('player_field_unit_health_point_map', {})
+        #         .get('Opponent', {}).get('field_unit_health_point_map', {})
+        #         .get(str(opponent_unit_index), None))
+        #
+        #     is_opponent_data_in_data = True
+        # except:
+        #     print("opponent data is not in data")
+        #
+        # if is_opponent_data_in_data:
+        #
+        #     opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
+        #         opponent_unit_index)
+        #     opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+        #     opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+        #
+        #     for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+        #         if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
+        #             if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+        #                 print("지정한 상대방 유닛 HP Circle 찾기")
+        #
+        #                 if remain_opponent_unit_hp <= 0:
+        #                     break
+        #
+        #                 opponent_field_card_id = opponent_field_unit.get_card_number()
+        #                 opponent_field_card_index = opponent_field_unit.get_index()
+        #
+        #                 print(f"opponent_hp_number: {remain_opponent_unit_hp}")
+        #
+        #                 # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
+        #                 # (지금 당장 불사가 존재하지 않음)
+        #
+        #                 print(f"공격 후 opponent unit 체력 -> hp_number: {remain_opponent_unit_hp}")
+        #                 opponent_fixed_card_attached_shape.set_number(remain_opponent_unit_hp)
+        #
+        #                 # opponent_fixed_card_attached_shape.set_image_data(
+        #                 #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+        #                 #     self.pre_drawed_image_instance.get_pre_draw_number_image(opponent_hp_number))
+        #
+        #                 opponent_fixed_card_attached_shape.set_image_data(
+        #                     self.__pre_drawed_image_instance.get_pre_draw_unit_hp(remain_opponent_unit_hp))
+        #
+        #
+        #
+        #     for dead_opponent_unit_index in dead_opponent_unit_index_list:
+        #         opponent_field_card_id = self.__opponent_field_unit_repository.get_opponent_card_id_by_index(
+        #             dead_opponent_unit_index)
+        #
+        #         self.__opponent_field_unit_repository.remove_current_field_unit_card(dead_opponent_unit_index)
+        #         self.__opponent_tomb_repository.create_opponent_tomb_card(opponent_field_card_id)
+        #         self.__opponent_field_unit_repository.remove_harmful_status_by_index(dead_opponent_unit_index)
+        #
+        #     self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+        #
+        # try:
+        #     dead_your_unit_index_list = (
+        #         data.get('player_field_unit_death_map', {})
+        #         .get('You', {})['dead_field_unit_index_list'])
+        #
+        #     your_unit_index = int(list(
+        #         data.get('player_field_unit_health_point_map', {})
+        #         .get('You', {}).get('field_unit_health_point_map', {}).keys())[0])
+        #
+        #     remain_your_unit_hp = (
+        #         data.get('player_field_unit_health_point_map', {})
+        #         .get('You', {}).get('field_unit_health_point_map', {})
+        #         .get(str(your_unit_index), None))
+        #     is_your_data_in_data = True
+        # except:
+        #     print("your data is not in data")
+        #
+        # if is_your_data_in_data:
+        #
+        #     your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(
+        #         your_unit_index)
+        #     your_fixed_card_base = your_field_unit.get_fixed_card_base()
+        #     your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+        #
+        #     for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+        #         if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+        #             if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+        #
+        #                 if remain_your_unit_hp <= 0:
+        #                     break
+        #
+        #                 print(f"공격 후 your unit 체력 -> hp_number: {remain_your_unit_hp}")
+        #                 your_fixed_card_attached_shape.set_number(remain_your_unit_hp)
+        #
+        #                 # your_fixed_card_attached_shape.set_image_data(
+        #                 #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+        #                 #     self.pre_drawed_image_instance.get_pre_draw_number_image(
+        #                 #         your_hp_number))
+        #
+        #                 your_fixed_card_attached_shape.set_image_data(
+        #                     self.__pre_drawed_image_instance.get_pre_draw_unit_hp(
+        #                         remain_your_unit_hp))
+        #
+        #     print("your 유닛 hp 갱신 완료")
+        #
+        #     for dead_your_unit_index in dead_your_unit_index_list:
+        #         your_field_card_id = self.__your_field_unit_repository.get_card_id_by_index(
+        #             dead_your_unit_index)
+        #         self.__your_tomb_repository.create_tomb_card(your_field_card_id)
+        #         self.__your_field_unit_repository.remove_card_by_index(dead_your_unit_index)
+        #         self.__your_field_unit_repository.remove_harmful_status_by_index(dead_your_unit_index)
+        #
+        #     self.__your_field_unit_repository.replace_field_card_position()
 
-        try:
-            dead_opponent_unit_index_list = (
-                data.get('player_field_unit_death_map', {})
-                .get('Opponent', {})['dead_field_unit_index_list'])
+        self.__attack_animation_object.set_is_opponent_attack_main_character(False)
 
-            opponent_unit_index = int(list(
-                data.get('player_field_unit_health_point_map', {})
-                .get('Opponent', {}).get('field_unit_health_point_map', {}).keys())[0])
-
-            remain_opponent_unit_hp = (
-                data.get('player_field_unit_health_point_map', {})
-                .get('Opponent', {}).get('field_unit_health_point_map', {})
-                .get(str(opponent_unit_index), None))
-
-            is_opponent_data_in_data = True
-        except:
-            print("opponent data is not in data")
-
-        if is_opponent_data_in_data:
-
-            opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
-                opponent_unit_index)
-            opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
-            opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
-
-            for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
-                if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
-                    if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
-                        print("지정한 상대방 유닛 HP Circle 찾기")
-
-                        if remain_opponent_unit_hp <= 0:
-                            break
-
-                        opponent_field_card_id = opponent_field_unit.get_card_number()
-                        opponent_field_card_index = opponent_field_unit.get_index()
-
-                        print(f"opponent_hp_number: {remain_opponent_unit_hp}")
-
-                        # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
-                        # (지금 당장 불사가 존재하지 않음)
-
-                        print(f"공격 후 opponent unit 체력 -> hp_number: {remain_opponent_unit_hp}")
-                        opponent_fixed_card_attached_shape.set_number(remain_opponent_unit_hp)
-
-                        # opponent_fixed_card_attached_shape.set_image_data(
-                        #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
-                        #     self.pre_drawed_image_instance.get_pre_draw_number_image(opponent_hp_number))
-
-                        opponent_fixed_card_attached_shape.set_image_data(
-                            self.__pre_drawed_image_instance.get_pre_draw_unit_hp(remain_opponent_unit_hp))
-
-
-
-            for dead_opponent_unit_index in dead_opponent_unit_index_list:
-                opponent_field_card_id = self.__opponent_field_unit_repository.get_opponent_card_id_by_index(
-                    dead_opponent_unit_index)
-
-                self.__opponent_field_unit_repository.remove_current_field_unit_card(dead_opponent_unit_index)
-                self.__opponent_tomb_repository.create_opponent_tomb_card(opponent_field_card_id)
-                self.__opponent_field_unit_repository.remove_harmful_status_by_index(dead_opponent_unit_index)
-
-            self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-
-        try:
-            dead_your_unit_index_list = (
-                data.get('player_field_unit_death_map', {})
-                .get('You', {})['dead_field_unit_index_list'])
-
-            your_unit_index = int(list(
-                data.get('player_field_unit_health_point_map', {})
-                .get('You', {}).get('field_unit_health_point_map', {}).keys())[0])
-
-            remain_your_unit_hp = (
-                data.get('player_field_unit_health_point_map', {})
-                .get('You', {}).get('field_unit_health_point_map', {})
-                .get(str(your_unit_index), None))
-            is_your_data_in_data = True
-        except:
-            print("your data is not in data")
-
-        if is_your_data_in_data:
-
-            your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(
-                your_unit_index)
-            your_fixed_card_base = your_field_unit.get_fixed_card_base()
-            your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
-
-            for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
-                if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
-                    if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
-
-                        if remain_your_unit_hp <= 0:
-                            break
-
-                        print(f"공격 후 your unit 체력 -> hp_number: {remain_your_unit_hp}")
-                        your_fixed_card_attached_shape.set_number(remain_your_unit_hp)
-
-                        # your_fixed_card_attached_shape.set_image_data(
-                        #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
-                        #     self.pre_drawed_image_instance.get_pre_draw_number_image(
-                        #         your_hp_number))
-
-                        your_fixed_card_attached_shape.set_image_data(
-                            self.__pre_drawed_image_instance.get_pre_draw_unit_hp(
-                                remain_your_unit_hp))
-
-            print("your 유닛 hp 갱신 완료")
-
-            for dead_your_unit_index in dead_your_unit_index_list:
-                your_field_card_id = self.__your_field_unit_repository.get_card_id_by_index(
-                    dead_your_unit_index)
-                self.__your_tomb_repository.create_tomb_card(your_field_card_id)
-                self.__your_field_unit_repository.remove_card_by_index(dead_your_unit_index)
-                self.__your_field_unit_repository.remove_harmful_status_by_index(dead_your_unit_index)
-
-            self.__your_field_unit_repository.replace_field_card_position()
+        self.__opponent_field_area_inside_handler.set_field_area_action(
+            OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_GENERAL_ATTACK_TO_YOUR_UNIT_PROCESS)
 
     def notify_attach_field_energy_card(self, notice_dictionary):
 
