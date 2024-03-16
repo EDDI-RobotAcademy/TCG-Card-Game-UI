@@ -556,25 +556,38 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         if is_my_turn is True:
             return
 
-        target_character = list(notify_dict_data.get("player_main_character_health_point_map", {}).keys())[0]
+        # {"NOTIFY_BASIC_ATTACK_TO_MAIN_CHARACTER": {"player_field_unit_attack_map": {"Opponent": {
+        #     "field_unit_attack_map": {
+        #         "1": {"target_player_index": "You", "target_unit_index": -1, "active_skill_index": -1,
+        #               "passive_skill_index": -1}}}}, "player_main_character_health_point_map": {"You": 95},
+        #                                            "player_main_character_survival_map": {"You": "Survival"}}}
 
-        if target_character != "You":
-            print("error : is not You")
-            return
+        self.__opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.PLAY_ANIMATION)
+        self.__attack_animation_object.set_notify_data(notify_dict_data)
 
-        character_hp = int(notify_dict_data.get("player_main_character_health_point_map", {})[target_character])
+        # target_character = list(notify_dict_data.get("player_main_character_health_point_map", {}).keys())[0]
+        #
+        # # if target_character != "You":
+        # #     print("error : is not You")
+        # #     return
+        #
+        # character_hp = int(notify_dict_data.get("player_main_character_health_point_map", {})[target_character])
+        #
+        # if notify_dict_data.get("player_main_character_survival_map", {})[target_character] == "Survival":
+        #     character_survival = True
+        # else:
+        #     character_survival = False
+        #
+        # if character_survival:
+        #     self.__your_hp_repository.change_hp(character_hp)
+        #
+        # else:
+        #     self.__battle_field_repository.lose()
 
-        if notify_dict_data.get("player_main_character_survival_map", {})[target_character] == "Survival":
-            character_survival = True
-        else:
-            character_survival = False
+        self.__attack_animation_object.set_is_opponent_attack_main_character(True)
 
-        if character_survival:
-            self.__your_hp_repository.change_hp(character_hp)
-
-        else:
-            self.__battle_field_repository.lose()
-            print("나죽어~~~ ")
+        self.__opponent_field_area_inside_handler.set_field_area_action(
+            OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_GENERAL_ATTACK_PROCESS)
 
     def notify_use_multiple_unit_damage_item_card(self, notice_dictionary):
 

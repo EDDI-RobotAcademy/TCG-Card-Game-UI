@@ -11,7 +11,7 @@ from battle_field.entity.legacy.turn_end_button import TurnEndButton
 from battle_field.entity.legacy.your_deck import YourDeck
 from battle_field.entity.legacy.your_hand_panel import YourHandPanel
 from battle_field.entity.legacy.your_lost_zone import YourLostZone
-from battle_field.entity.legacy.your_main_character import YourMainCharacter
+from battle_field.entity.legacy.your_main_character import LegacyYourMainCharacter
 from battle_field.entity.legacy.your_tomb import YourTomb
 from battle_field.entity.legacy.your_trap import YourTrap
 from battle_field.entity.legacy.your_unit_field import YourUnitField
@@ -104,7 +104,7 @@ class BattleFieldSceneLegacy:
         self.your_deck.init_shapes()
 
     def create_your_main_character(self):
-        self.your_main_character = YourMainCharacter()
+        self.your_main_character = LegacyYourMainCharacter()
         self.your_main_character.init_your_main_character_shapes()
 
     def create_your_hand_panel(self):
