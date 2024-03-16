@@ -150,7 +150,7 @@ class AttackAnimation:
     def set_opponent_weapon_shape(self, opponent_weapon_shape):
         self.opponent_weapon_shape = opponent_weapon_shape
 
-    def get_opponent_weopon_shape(self):
+    def get_opponent_weapon_shape(self):
         return self.opponent_weapon_shape
 
     def set_opponent_field_unit(self, opponent_field_unit):
