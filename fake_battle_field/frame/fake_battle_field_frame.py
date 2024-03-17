@@ -2524,6 +2524,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
 
+        if self.opponent_field_area_inside_handler.get_field_area_action() is OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_VALRN_ACTIVE_TARGETING_SKILL_TO_YOUR_UNIT:
+            print(f"{Fore.RED}Opponent valrn이 Your 유닛에 쉐도우 볼을 사용합니다!{Style.RESET_ALL}")
+
+            self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
+
         self.post_draw()
 
         if self.selected_object:
