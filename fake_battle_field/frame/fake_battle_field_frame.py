@@ -1936,13 +1936,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.opponent_hp_panel.set_height_ratio(self.height_ratio)
         self.opponent_hp_panel.draw()
 
-        if self.message_on_the_screen.get_current_message_on_the_battle_screen():
-            self.message_on_the_screen.set_width_ratio(self.width_ratio)
-            self.message_on_the_screen.set_height_ratio(self.height_ratio)
-            self.current_field_message_on_the_battle_screen_panel = (
-                self.message_on_the_screen.get_current_message_on_the_battle_screen()
-            )
-            self.current_field_message_on_the_battle_screen_panel.draw()
+        # if self.message_on_the_screen.get_current_message_on_the_battle_screen():
+        #     self.message_on_the_screen.set_width_ratio(self.width_ratio)
+        #     self.message_on_the_screen.set_height_ratio(self.height_ratio)
+        #     self.current_field_message_on_the_battle_screen_panel = (
+        #         self.message_on_the_screen.get_current_message_on_the_battle_screen()
+        #     )
+        #     self.current_field_message_on_the_battle_screen_panel.draw()
 
         if self.animation_test_image_panel is not None:
             self.animation_test_image.set_width_ratio(self.width_ratio)
@@ -2805,6 +2805,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape.set_width_ratio(self.width_ratio)
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
+
+        # 글쓰기
+        if self.message_on_the_screen.get_current_message_on_the_battle_screen():
+            self.message_on_the_screen.set_width_ratio(self.width_ratio)
+            self.message_on_the_screen.set_height_ratio(self.height_ratio)
+            self.current_field_message_on_the_battle_screen_panel = (
+                self.message_on_the_screen.get_current_message_on_the_battle_screen()
+            )
+            self.current_field_message_on_the_battle_screen_panel.draw()
+
+
 
         # self.post_draw()
         if len(self.battle_result_panel_list) != 0:
@@ -6012,6 +6023,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if self.tomb_panel_selected:
                 print(
                     f"on_canvas_left_click() -> current_tomb_unit_list: {self.your_tomb_repository.get_current_tomb_state()}")
+                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.YOUR_TOMB.value)
                 self.your_tomb.create_tomb_panel_popup_rectangle()
                 self.tomb_panel_popup_rectangle = self.your_tomb.get_tomb_panel_popup_rectangle()
 
@@ -6030,6 +6042,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if self.opponent_tomb_panel_selected:
                 print(
                     f"on_canvas_left_click() -> current_tomb_unit_list: {self.opponent_tomb_repository.get_opponent_tomb_state()}")
+                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.OPPONENT_TOMB.value)
                 self.opponent_tomb.create_opponent_tomb_panel_popup_rectangle()
                 self.opponent_tomb_popup_rectangle_panel = self.opponent_tomb.get_opponent_tomb_panel_popup_rectangle()
 
@@ -6048,6 +6061,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if self.your_lost_zone_panel_selected:
                 print(
                     f"on_canvas_left_click() -> current_lost_zone_card_list: {self.your_lost_zone_repository.get_your_lost_zone_card_list()}")
+                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.YOUR_LOST_ZONE.value)
                 self.your_lost_zone.create_your_lost_zone_popup_panel()
                 self.your_lost_zone_popup_panel = self.your_lost_zone.get_your_lost_zone_popup_panel()
 
@@ -6066,6 +6080,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if self.opponent_lost_zone_panel_selected:
                 print(
                     f"on_canvas_left_click() -> current_lost_zone_card_list: {self.opponent_lost_zone_repository.get_opponent_lost_zone_card_list()}")
+                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.OPPONENT_LOST_ZONE.value)
                 self.opponent_lost_zone.create_opponent_lost_zone_popup_panel()
                 self.opponent_lost_zone_popup_panel = self.opponent_lost_zone.get_opponent_lost_zone_popup_panel()
 
