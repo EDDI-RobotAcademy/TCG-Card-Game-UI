@@ -744,7 +744,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     #     )
                     # )
 
-                    response = self.__fake_battle_field_frame_repository.request_attack_main_character_with_active_skill(
+                    response = self.__fake_battle_field_frame_repository.request_attack_your_unit_with_active_skill(
                         RequestAttackToYourFieldUnitWithActiveSkill(
                             _sessionInfo=self.__session_repository.get_second_fake_session_info(),
                             _unitCardIndex=opponent_unit.get_index(),
@@ -752,7 +752,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         )
                     )
 
-                    print("test 쉐도우 볼: ", response)
+                    print("test 쉐도우 볼 to unit: ", response)
                     return
 
         # if key.lower() == 'kp_add':
@@ -783,7 +783,22 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     return
 
         if key.lower() == 'comma':
-            print("Opponent 쉐도우 볼 to 메인 캐릭터: ", response)
+            opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+            for opponent_unit_index, opponent_unit in enumerate(opponent_field_unit_list):
+                if opponent_unit == None:
+                    continue
+
+                if opponent_unit.get_card_number() == 27:
+                    response = self.__fake_battle_field_frame_repository.request_attack_main_character_with_active_skill(
+                        RequestAttackMainCharacterWithActiveSkill(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _unitCardIndex=opponent_unit.get_index(),
+                            _targetGameMainCharacterIndex="0"
+                        )
+                    )
+                    
+                    print("Opponent 쉐도우 볼 to 메인 캐릭터: ", response)
+                    return
 
         if key.lower() == 'kp_home':
             print("만약 Opponent Hand에 출격시킬 유닛이 있다면 내보낸다.")
@@ -2515,6 +2530,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
             print(f"{Fore.RED}Opponent valrn이 Your 유닛에 쉐도우 볼을 사용합니다!{Style.RESET_ALL}")
 
             self.master.after(2000, self.opponent_valrn_shadow_ball_to_your_unit_animation)
+
+            self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
+
+        if self.opponent_field_area_inside_handler.get_field_area_action() is OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_VALRN_ACTIVE_TARGETING_SKILL_TO_YOUR_MAIN_CHARACTER:
+            print(f"{Fore.RED}Opponent valrn이 Your 메인 캐릭터에 쉐도우 볼을 사용합니다!{Style.RESET_ALL}")
+
+            # self.master.after(2000, self.opponent_valrn_shadow_ball_to_your_main_character_animation)
 
             self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
 
