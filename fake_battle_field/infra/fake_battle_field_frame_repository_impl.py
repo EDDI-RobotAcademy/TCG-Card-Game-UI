@@ -95,3 +95,7 @@ class FakeBattleFieldFrameRepositoryImpl(FakeBattleFieldFrameRepository):
     def request_to_attach_energy_to_unit(self, requestToAttachEnergyUnit):
         self.__transmitIpcChannel.put(requestToAttachEnergyUnit)
         return self.__receiveIpcChannel.get()
+
+    def request_attack_your_unit_with_active_skill(self, requestAttackToYourFieldUnitWithActiveSkill):
+        self.__transmitIpcChannel.put(requestAttackToYourFieldUnitWithActiveSkill)
+        return self.__receiveIpcChannel.get()

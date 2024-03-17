@@ -983,21 +983,40 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         if is_my_turn is True:
             return
 
-        your_character_survival_state = \
-        notice_dictionary['NOTIFY_TARGETING_ATTACK_ACTIVE_SKILL_TO_GAME_MAIN_CHARACTER'][
-            'player_main_character_survival_map']['You']
+        self.__opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.PLAY_ANIMATION)
 
+        notify_data = notice_dictionary['NOTIFY_TARGETING_ATTACK_ACTIVE_SKILL_TO_GAME_MAIN_CHARACTER']
+        self.__attack_animation_object.set_notify_data(notify_data)
 
+        # your_character_survival_state = \
+        # notice_dictionary['NOTIFY_TARGETING_ATTACK_ACTIVE_SKILL_TO_GAME_MAIN_CHARACTER'][
+        #     'player_main_character_survival_map']['You']
+        #
+        # remain_hp = notice_dictionary['NOTIFY_TARGETING_ATTACK_ACTIVE_SKILL_TO_GAME_MAIN_CHARACTER'][
+        #     'player_main_character_health_point_map']['You']
+        #
+        # self.__your_hp_repository.change_hp(remain_hp)
+        #
+        # if your_character_survival_state != 'Survival':
+        #     print('죽었습니다!!')
+        #     self.__battle_field_repository.lose()
+        #     return
 
-        remain_hp = notice_dictionary['NOTIFY_TARGETING_ATTACK_ACTIVE_SKILL_TO_GAME_MAIN_CHARACTER'][
-            'player_main_character_health_point_map']['You']
+        self.__attack_animation_object.set_is_opponent_attack_main_character(True)
 
-        self.__your_hp_repository.change_hp(remain_hp)
+        opponent_attacker_unit_info = next(
+            iter(notify_data["player_field_unit_attack_map"]["Opponent"]["field_unit_attack_map"]))
+        opponent_attacker_unit_index = int(opponent_attacker_unit_info)
+        print(f"{Fore.RED}opponent_attacker_unit_index: {Fore.GREEN}{opponent_attacker_unit_index}{Style.RESET_ALL}")
 
-        if your_character_survival_state != 'Survival':
-            print('죽었습니다!!')
-            self.__battle_field_repository.lose()
-            return
+        # target_unit_index = data["player_field_unit_attack_map"]["Opponent"]["field_unit_attack_map"][opponent_attacker_unit_index]["target_unit_index"]
+
+        opponent_attacker_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(opponent_attacker_unit_index)
+        self.__attack_animation_object.set_opponent_animation_actor(opponent_attacker_unit)
+
+        if opponent_attacker_unit.get_card_number() == 27:
+            self.__opponent_field_area_inside_handler.set_field_area_action(
+                OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_VALRN_ACTIVE_TARGETING_SKILL_TO_YOUR_MAIN_CHARACTER)
 
     def notify_targeting_attack_active_skill_to_your_unit(self, notice_dictionary):
 
@@ -1006,65 +1025,93 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         if is_my_turn is True:
             return
 
+        self.__opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.PLAY_ANIMATION)
         data = notice_dictionary['NOTIFY_TARGETING_ATTACK_ACTIVE_SKILL_TO_UNIT']
 
-        self.apply_notify_data_of_harmful_status(data['player_field_unit_harmful_effect_map'])
+        # self.apply_notify_data_of_harmful_status(data['player_field_unit_harmful_effect_map'])
+        #
+        # is_your_data_in_data = False
+        #
+        # try:
+        #     dead_your_unit_index_list = (
+        #         data.get('player_field_unit_death_map', {})
+        #         .get('You', {})['dead_field_unit_index_list'])
+        #
+        #     your_unit_index = int(list(
+        #         data.get('player_field_unit_health_point_map', {})
+        #         .get('You', {}).get('field_unit_health_point_map', {}).keys())[0])
+        #
+        #     remain_your_unit_hp = (
+        #         data.get('player_field_unit_health_point_map', {})
+        #         .get('You', {}).get('field_unit_health_point_map', {})
+        #         .get(str(your_unit_index), None))
+        #     is_your_data_in_data = True
+        # except:
+        #     print("your data is not in data")
+        #
+        # if is_your_data_in_data:
+        #
+        #     your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(
+        #         your_unit_index)
+        #     your_fixed_card_base = your_field_unit.get_fixed_card_base()
+        #     your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+        #
+        #     for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+        #         if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+        #             if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+        #
+        #                 if remain_your_unit_hp <= 0:
+        #                     break
+        #
+        #                 print(f"공격 후 your unit 체력 -> hp_number: {remain_your_unit_hp}")
+        #                 your_fixed_card_attached_shape.set_number(remain_your_unit_hp)
+        #
+        #                 # your_fixed_card_attached_shape.set_image_data(
+        #                 #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+        #                 #     self.pre_drawed_image_instance.get_pre_draw_number_image(
+        #                 #         your_hp_number))
+        #
+        #                 your_fixed_card_attached_shape.set_image_data(
+        #                     self.__pre_drawed_image_instance.get_pre_draw_unit_hp(
+        #                         remain_your_unit_hp))
+        #
+        #     print("your 유닛 hp 갱신 완료")
+        #
+        #     for dead_your_unit_index in dead_your_unit_index_list:
+        #         your_field_card_id = self.__your_field_unit_repository.get_card_id_by_index(
+        #             dead_your_unit_index)
+        #         self.__your_tomb_repository.create_tomb_card(your_field_card_id)
+        #         self.__your_field_unit_repository.remove_card_by_index(dead_your_unit_index)
+        #         self.__your_field_unit_repository.remove_harmful_status_by_index(dead_your_unit_index)
+        #
+        #     self.__your_field_unit_repository.replace_field_card_position()
 
-        is_your_data_in_data = False
+        # {"NOTIFY_TARGETING_ATTACK_ACTIVE_SKILL_TO_UNIT": {"player_field_unit_attack_map": {"Opponent": {
+        #     "field_unit_attack_map": {
+        #         "2": {"target_player_index": "You", "target_unit_index": 0, "active_skill_index": 1,
+        #               "passive_skill_index": -1}}}}, "player_field_unit_health_point_map": {
+        #     "You": {"field_unit_health_point_map": {"0": 0}}}, "player_field_unit_harmful_effect_map": {
+        #     "You": {"field_unit_harmful_status_map": {"0": {"harmful_status_list": []}}}},
+        #                                                   "player_field_unit_death_map": {
+        #                                                       "You": {"dead_field_unit_index_list": [0]}}}}
 
-        try:
-            dead_your_unit_index_list = (
-                data.get('player_field_unit_death_map', {})
-                .get('You', {})['dead_field_unit_index_list'])
+        self.__attack_animation_object.set_notify_data(data)
 
-            your_unit_index = int(list(
-                data.get('player_field_unit_health_point_map', {})
-                .get('You', {}).get('field_unit_health_point_map', {}).keys())[0])
+        self.__attack_animation_object.set_is_opponent_attack_main_character(False)
 
-            remain_your_unit_hp = (
-                data.get('player_field_unit_health_point_map', {})
-                .get('You', {}).get('field_unit_health_point_map', {})
-                .get(str(your_unit_index), None))
-            is_your_data_in_data = True
-        except:
-            print("your data is not in data")
+        opponent_attacker_unit_info = next(iter(data["player_field_unit_attack_map"]["Opponent"]["field_unit_attack_map"]))
+        opponent_attacker_unit_index = int(opponent_attacker_unit_info)
+        print(f"{Fore.RED}opponent_attacker_unit_index: {Fore.GREEN}{opponent_attacker_unit_index}{Style.RESET_ALL}")
 
-        if is_your_data_in_data:
+        # target_unit_index = data["player_field_unit_attack_map"]["Opponent"]["field_unit_attack_map"][opponent_attacker_unit_index]["target_unit_index"]
 
-            your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(
-                your_unit_index)
-            your_fixed_card_base = your_field_unit.get_fixed_card_base()
-            your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+        opponent_attacker_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(opponent_attacker_unit_index)
+        self.__attack_animation_object.set_opponent_animation_actor(opponent_attacker_unit)
 
-            for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
-                if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
-                    if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+        if opponent_attacker_unit.get_card_number() == 27:
+            self.__opponent_field_area_inside_handler.set_field_area_action(
+                OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_VALRN_ACTIVE_TARGETING_SKILL_TO_YOUR_UNIT)
 
-                        if remain_your_unit_hp <= 0:
-                            break
-
-                        print(f"공격 후 your unit 체력 -> hp_number: {remain_your_unit_hp}")
-                        your_fixed_card_attached_shape.set_number(remain_your_unit_hp)
-
-                        # your_fixed_card_attached_shape.set_image_data(
-                        #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
-                        #     self.pre_drawed_image_instance.get_pre_draw_number_image(
-                        #         your_hp_number))
-
-                        your_fixed_card_attached_shape.set_image_data(
-                            self.__pre_drawed_image_instance.get_pre_draw_unit_hp(
-                                remain_your_unit_hp))
-
-            print("your 유닛 hp 갱신 완료")
-
-            for dead_your_unit_index in dead_your_unit_index_list:
-                your_field_card_id = self.__your_field_unit_repository.get_card_id_by_index(
-                    dead_your_unit_index)
-                self.__your_tomb_repository.create_tomb_card(your_field_card_id)
-                self.__your_field_unit_repository.remove_card_by_index(dead_your_unit_index)
-                self.__your_field_unit_repository.remove_harmful_status_by_index(dead_your_unit_index)
-
-            self.__your_field_unit_repository.replace_field_card_position()
 
     def notify_non_targeting_active_skill(self, notice_dictionary):
 

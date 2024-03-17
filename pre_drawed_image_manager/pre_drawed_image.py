@@ -102,6 +102,7 @@ class PreDrawedImage:
 
     __pre_drawed_waiting_message = None
     __pre_drawed_message_on_the_battle_screen = {}
+    __pre_draw_use_energy_opponent_unit = {}
 
     __pre_drawed_battle_field_timer = {}
 
@@ -227,7 +228,7 @@ class PreDrawedImage:
 
         for number in range(0, len(file_list)):
             number_image_data = os.path.join(self.__project_root, "local_storage", "unit_card_hp", f"{number}.png")
-            print(f"image data = {number_image_data}")
+            # print(f"image data = {number_image_data}")
             self.__pre_drawed_character_hp[number] = ImageDataLoader.load_rectangle_image_data(number_image_data)
 
     def pre_draw_rectangle_number_image(self):
@@ -236,7 +237,7 @@ class PreDrawedImage:
 
         for number in range(0, len(file_list)):
             number_image_data = os.path.join(self.__project_root, "local_storage", "card_number_image", f"{number}.png")
-            print(f"image data = {number_image_data}")
+            # print(f"image data = {number_image_data}")
             self.__pre_drawed_rectangle_number[number] = ImageDataLoader.load_rectangle_image_data(number_image_data)
 
     def pre_draw_confirm_button(self):
@@ -253,13 +254,13 @@ class PreDrawedImage:
 
         for png_file in png_files:
             race_number = int(png_file[:-4])
-            print(f"race_number: {race_number}")
+            # print(f"race_number: {race_number}")
             card_race_image_data = os.path.join(self.__project_root, "local_storage", "card_race_image", f"{png_file}")
             card_race_image_data_list[race_number] = ImageDataLoader.load_circle_image_data(card_race_image_data)
 
         for card_number in self.__card_info_from_csv_repository.getCardNumber():
             race_number = self.__card_info_from_csv_repository.getCardRaceForCardNumber(card_number)
-            print(f"race_number: {race_number}, card_number: {card_number}")
+            # print(f"race_number: {race_number}, card_number: {card_number}")
             self.__pre_drawed_card_race[card_number] = card_race_image_data_list[race_number]
 
     def pre_draw_energy_race(self):
@@ -269,7 +270,7 @@ class PreDrawedImage:
 
         for png_file in png_files:
             race_number = int(png_file[:-4])
-            print(f"race_number: {race_number}")
+            # print(f"race_number: {race_number}")
             card_race_image_data = os.path.join(self.__project_root, "local_storage", "card_race_image", f"{png_file}")
             self.__pre_drawed_energy_race[race_number] = ImageDataLoader.load_circle_image_data(card_race_image_data)
 
@@ -282,13 +283,13 @@ class PreDrawedImage:
 
         for png_file in png_files:
             type_number = int(png_file[:-4])
-            print(f"type_number: {type_number}")
+            # print(f"type_number: {type_number}")
             card_type_image_data = os.path.join(self.__project_root, "local_storage", "card_type_image", f"{png_file}")
             card_type_image_data_list[type_number] = ImageDataLoader.load_circle_image_data(card_type_image_data)
 
         for card_number in self.__card_info_from_csv_repository.getCardNumber():
             type_number = self.__card_info_from_csv_repository.getCardTypeForCardNumber(card_number)
-            print(f"type_number: {type_number}, card_number: {card_number}")
+            # print(f"type_number: {type_number}, card_number: {card_number}")
             self.__pre_drawed_card_type[card_number] = card_type_image_data_list[type_number]
 
     def pre_draw_card_attack(self):
@@ -300,14 +301,14 @@ class PreDrawedImage:
 
         for png_file in png_files:
             attack_number = int(png_file[:-4])
-            print(f"number images: {attack_number}")
+            # print(f"number images: {attack_number}")
             card_attack_image_data = os.path.join(self.__project_root, "local_storage", "card_number_image",
                                                   f"{png_file}")
             card_attack_image_data_list[attack_number] = ImageDataLoader.load_circle_image_data(card_attack_image_data)
 
         for card_number in self.__card_info_from_csv_repository.getCardNumber():
             attack_number = self.__card_info_from_csv_repository.getCardAttackForCardNumber(card_number)
-            print(f"attack_number: {attack_number}, card_number: {card_number}")
+            # print(f"attack_number: {attack_number}, card_number: {card_number}")
             self.__pre_drawed_card_attack[card_number] = card_attack_image_data_list[attack_number]
 
     def pre_draw_card_hp(self):
@@ -319,13 +320,13 @@ class PreDrawedImage:
 
         for png_file in png_files:
             hp_number = int(png_file[:-4])
-            print(f"number images: {hp_number}")
+            # print(f"number images: {hp_number}")
             card_hp_image_data = os.path.join(self.__project_root, "local_storage", "card_number_image", f"{png_file}")
             card_hp_image_data_list[hp_number] = ImageDataLoader.load_circle_image_data(card_hp_image_data)
 
         for card_number in self.__card_info_from_csv_repository.getCardNumber():
             hp_number = self.__card_info_from_csv_repository.getCardHpForCardNumber(card_number)
-            print(f"hp_number: {hp_number}, card_number: {card_number}")
+            # print(f"hp_number: {hp_number}, card_number: {card_number}")
             self.__pre_drawed_card_hp[card_number] = card_hp_image_data_list[hp_number]
 
     def pre_draw_numbers(self):
@@ -334,7 +335,7 @@ class PreDrawedImage:
 
         for number in range(0, len(file_list)):
             number_image_data = os.path.join(self.__project_root, "local_storage", "card_number_image", f"{number}.png")
-            print(f"image data = {number_image_data}")
+            # print(f"image data = {number_image_data}")
             self.__pre_drawed_numbers[number] = ImageDataLoader.load_circle_image_data(number_image_data)
 
     def pre_draw_prev_button(self):
@@ -342,7 +343,7 @@ class PreDrawedImage:
         self.__pre_drawed_prev_button = ImageDataLoader.load_rectangle_image_data(prev_button_image_data)
 
     def pre_draw_battle_field_muligun_background(self, width, height):
-        print(f"pre_draw_battle_field_muligun_background -> width = {width}, height = {height}")
+        # print(f"pre_draw_battle_field_muligun_background -> width = {width}, height = {height}")
 
         muligun_battle_field_background = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
                                                        "muligun_battle_field_background.png")
@@ -411,7 +412,7 @@ class PreDrawedImage:
         for number in range(0, len(file_list)):
             field_energy_image_data = os.path.join(self.__project_root, "local_storage", "field_energy_image",
                                                    f"{number}.png")
-            print(f"image data = {field_energy_image_data}")
+            # print(f"image data = {field_energy_image_data}")
             self.__pre_drawed_field_energy[number] = ImageDataLoader.load_rectangle_image_data(field_energy_image_data)
 
     def pre_draw_effect_animation(self):
@@ -642,7 +643,7 @@ class PreDrawedImage:
 
         for number in range(0, len(unit_hp_image_file_list)):
             unit_hp_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_hp", f"{number}.png")
-            print(f"unit_hp_image_path = {unit_hp_image_path}")
+            # print(f"unit_hp_image_path = {unit_hp_image_path}")
             self.__pre_drawed_unit_hp[number] = ImageDataLoader.load_rectangle_origin_image_data(unit_hp_image_path)
 
         # unit_hp_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_hp")
@@ -679,13 +680,13 @@ class PreDrawedImage:
 
         for png_file in png_files:
             attack_number = int(png_file[:-4])
-            print(f"number images: {attack_number}")
+            # print(f"number images: {attack_number}")
             unit_attack_image_data = os.path.join(self.__project_root, "local_storage", "unit_card_attack_power", f"{png_file}")
             unit_attack_image_data_list[attack_number] = ImageDataLoader.load_rectangle_origin_image_data(unit_attack_image_data)
 
         for card_number in self.__card_info_from_csv_repository.getCardNumber():
             attack_number = self.__card_info_from_csv_repository.getCardAttackForCardNumber(card_number)
-            print(f"attack_number: {attack_number}, card_number: {card_number}")
+            # print(f"attack_number: {attack_number}, card_number: {card_number}")
             self.__pre_drawed_unit_attack[card_number] = unit_attack_image_data_list[attack_number]
 
     def pre_draw_unit_race(self):
@@ -703,12 +704,12 @@ class PreDrawedImage:
 
         for png_file in png_files:
             race_number = int(png_file[:-4])
-            print(f"pre_draw_unit_race() -> race_number: {race_number}")
+            # print(f"pre_draw_unit_race() -> race_number: {race_number}")
             unit_race_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_race", f"{png_file}")
             self.__pre_drawed_unit_race[race_number] = ImageDataLoader.load_rectangle_origin_image_data(unit_race_image_path)
 
     def pre_draw_my_card_background(self, width, height):
-        print(f"pre_draw_my_card_background -> width = {width}, height = {height}")
+        # print(f"pre_draw_my_card_background -> width = {width}, height = {height}")
 
         my_card_background = os.path.join(self.__project_root, "local_storage", "my_card_frame", "my_card_background.png")
         self.__pre_drawed_my_card_background = ImageDataLoader.load_background_image_data(my_card_background, width, height)
@@ -806,11 +807,14 @@ class PreDrawedImage:
             self.__pre_drawed_wizard_card_attack_power[card_number] = wizard_card_attack_image_data_list[attack_number]
 
     def pre_draw_message_on_the_battle_screen(self):
+        image_dir = os.path.join(self.__project_root, "local_storage", "message_on_the_battle_screen")
+        file_list = os.listdir(image_dir)
 
-        for number in range(1, 5):
-            text_image_data = os.path.join(self.__project_root, "local_storage", "message_on_the_battle_screen",
-                                           f"{number}.png")
-            self.__pre_drawed_message_on_the_battle_screen[number] = ImageDataLoader.load_message_on_the_battle_screen_image_data(text_image_data)
+        for number in range(0, len(file_list) - 1):
+            number_image_data = os.path.join(self.__project_root, "local_storage", "message_on_the_battle_screen",
+                                             f"{number}.png")
+            print(f"image data = {number_image_data}")
+            self.__pre_drawed_message_on_the_battle_screen[number] = ImageDataLoader.load_message_on_the_battle_screen_image_data(number_image_data)
 
 
     def pre_draw_battle_field_timer(self):
@@ -822,6 +826,16 @@ class PreDrawedImage:
                                              f"{number}.png")
             print(f"image data = {number_image_data}")
             self.__pre_drawed_battle_field_timer[number] = ImageDataLoader.load_rectangle_image_data(number_image_data)
+
+    def pre_draw_use_energy_opponent_unit(self):
+        image_dir = os.path.join(self.__project_root, "local_storage", "message_on_the_battle_screen", "use_energy_opponent_unit")
+        file_list = os.listdir(image_dir)
+
+        for number in range(1, len(file_list) + 1):
+            number_image_data = os.path.join(self.__project_root, "local_storage", "message_on_the_battle_screen", "use_energy_opponent_unit"
+                                             f"{number}.png")
+            print(f"image data = {number_image_data}")
+            self.__pre_draw_use_energy_opponent_unit[number] = ImageDataLoader.load_message_on_the_battle_screen_image_data(number_image_data)
 
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
@@ -906,6 +920,7 @@ class PreDrawedImage:
 
         self.pre_draw_wizard_card_attack_power()
         self.pre_draw_message_on_the_battle_screen()
+        self.pre_draw_use_energy_opponent_unit()
 
         self.pre_draw_battle_field_timer()
 
@@ -1109,8 +1124,11 @@ class PreDrawedImage:
     def get_pre_draw_wizard_card_attack_power(self, card_number):
         return self.__pre_drawed_wizard_card_attack_power[card_number]
 
-    def get_pre_draw_message_on_the_battle_screen(self, number):
-        return self.__pre_drawed_message_on_the_battle_screen[number]
+    def get_pre_draw_message_on_the_battle_screen(self, message_number):
+        return self.__pre_drawed_message_on_the_battle_screen[message_number]
 
     def get_pre_draw_battle_field_timer(self, number):
         return self.__pre_drawed_battle_field_timer[number]
+
+    def get_pre_draw_use_energy_opponent_unit(self, opponent_index):
+        return self.__pre_draw_use_energy_opponent_unit[opponent_index]
