@@ -124,6 +124,7 @@ from common.attack_type import AttackType
 from common.card_grade import CardGrade
 from common.card_race import CardRace
 from common.card_type import CardType
+from common.message_number import MessageNumber
 from common.survival_type import SurvivalType
 from common.target_type import TargetType
 from fake_battle_field.entity.animation_test_image import AnimationTestImage
@@ -3563,7 +3564,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.current_fixed_details_card = None
                         # self.your_active_panel.clear_all_your_active_panel()
                         self.reset_every_selected_action()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(1)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNABLE_ATTACK_SUMMON_TURN.value)
                         return
 
                     elif your_selected_unit_action_status == FieldUnitActionStatus.Dummy:
@@ -3580,7 +3581,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.current_fixed_details_card = None
                         # self.your_active_panel.clear_all_your_active_panel()
                         self.reset_every_selected_action()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(3)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNABLE_ATTACK_LACK_ACTION_COUNT.value)
                         return
 
                     print("일반 공격 클릭")
@@ -3606,7 +3607,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.current_fixed_details_card = None
                         # self.your_active_panel.clear_all_your_active_panel()
                         self.reset_every_selected_action()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(2)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNAVAILABLE_USE_SKILL_LACK_ENERGY.value)
                         return
 
 
@@ -3651,7 +3652,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.active_panel_rectangle = None
                         # self.your_active_panel.clear_all_your_active_panel()
                         self.reset_every_selected_action()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(1)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNABLE_ATTACK_SUMMON_TURN.value)
                         return
 
                     elif your_selected_unit_action_status == FieldUnitActionStatus.Dummy:
@@ -3701,7 +3702,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.current_fixed_details_card = None
                         # self.your_active_panel.clear_all_your_active_panel()
                         self.reset_every_selected_action()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(2)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNAVAILABLE_USE_SKILL_LACK_ENERGY.value)
                         return
 
                     if your_field_unit_required_human_energy > your_field_unit_attached_human_energy:
@@ -3710,7 +3711,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.current_fixed_details_card = None
                         # self.your_active_panel.clear_all_your_active_panel()
                         self.reset_every_selected_action()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(2)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNAVAILABLE_USE_SKILL_LACK_ENERGY.value)
                         return
 
                     if your_field_unit_required_trent_energy > your_field_unit_attached_trent_energy:
@@ -3719,7 +3720,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.current_fixed_details_card = None
                         # self.your_active_panel.clear_all_your_active_panel()
                         self.reset_every_selected_action()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(2)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNAVAILABLE_USE_SKILL_LACK_ENERGY.value)
                         return
 
                     skill_type = self.card_info_repository.getCardSkillFirstForCardNumber(your_field_unit_id)
@@ -3732,7 +3733,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.current_fixed_details_card = None
                         # self.your_active_panel.clear_all_your_active_panel()
                         self.reset_every_selected_action()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(3)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNABLE_ATTACK_LACK_ACTION_COUNT.value)
                         return
 
                     # 단일기
@@ -3783,7 +3784,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.active_panel_rectangle = None
                         # self.current_fixed_details_card = None
                         # self.your_active_panel.clear_all_your_active_panel()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(1)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNABLE_ATTACK_SUMMON_TURN.value)
                         return
                     elif your_selected_unit_action_status == FieldUnitActionStatus.Dummy:
                         print(f"Dummy 상태입니다")
@@ -3832,7 +3833,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.current_fixed_details_card = None
                         # self.your_active_panel.clear_all_your_active_panel()
                         self.reset_every_selected_action()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(2)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNAVAILABLE_USE_SKILL_LACK_ENERGY.value)
                         return
 
                     if your_field_unit_required_human_energy > your_field_unit_attached_human_energy:
@@ -3841,7 +3842,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.active_panel_rectangle = None
                         # self.current_fixed_details_card = None
                         # self.your_active_panel.clear_all_your_active_panel()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(2)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNAVAILABLE_USE_SKILL_LACK_ENERGY.value)
                         return
 
                     if your_field_unit_required_trent_energy > your_field_unit_attached_trent_energy:
@@ -3850,7 +3851,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.active_panel_rectangle = None
                         # self.current_fixed_details_card = None
                         # self.your_active_panel.clear_all_your_active_panel()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(2)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNAVAILABLE_USE_SKILL_LACK_ENERGY.value)
                         return
 
                     if your_selected_unit_action_count <= 0:
@@ -3860,7 +3861,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.active_panel_rectangle = None
                         # self.current_fixed_details_card = None
                         # self.your_active_panel.clear_all_your_active_panel()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(3)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNABLE_ATTACK_LACK_ACTION_COUNT.value)
                         return
 
                     skill_type = self.card_info_repository.getCardSkillSecondForCardNumber(your_field_unit_id)
