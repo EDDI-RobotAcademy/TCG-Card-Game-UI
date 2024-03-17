@@ -983,21 +983,40 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         if is_my_turn is True:
             return
 
-        your_character_survival_state = \
-        notice_dictionary['NOTIFY_TARGETING_ATTACK_ACTIVE_SKILL_TO_GAME_MAIN_CHARACTER'][
-            'player_main_character_survival_map']['You']
+        self.__opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.PLAY_ANIMATION)
 
+        notify_data = notice_dictionary['NOTIFY_TARGETING_ATTACK_ACTIVE_SKILL_TO_GAME_MAIN_CHARACTER']
+        self.__attack_animation_object.set_notify_data(notify_data)
 
+        # your_character_survival_state = \
+        # notice_dictionary['NOTIFY_TARGETING_ATTACK_ACTIVE_SKILL_TO_GAME_MAIN_CHARACTER'][
+        #     'player_main_character_survival_map']['You']
+        #
+        # remain_hp = notice_dictionary['NOTIFY_TARGETING_ATTACK_ACTIVE_SKILL_TO_GAME_MAIN_CHARACTER'][
+        #     'player_main_character_health_point_map']['You']
+        #
+        # self.__your_hp_repository.change_hp(remain_hp)
+        #
+        # if your_character_survival_state != 'Survival':
+        #     print('죽었습니다!!')
+        #     self.__battle_field_repository.lose()
+        #     return
 
-        remain_hp = notice_dictionary['NOTIFY_TARGETING_ATTACK_ACTIVE_SKILL_TO_GAME_MAIN_CHARACTER'][
-            'player_main_character_health_point_map']['You']
+        self.__attack_animation_object.set_is_opponent_attack_main_character(True)
 
-        self.__your_hp_repository.change_hp(remain_hp)
+        opponent_attacker_unit_info = next(
+            iter(notify_data["player_field_unit_attack_map"]["Opponent"]["field_unit_attack_map"]))
+        opponent_attacker_unit_index = int(opponent_attacker_unit_info)
+        print(f"{Fore.RED}opponent_attacker_unit_index: {Fore.GREEN}{opponent_attacker_unit_index}{Style.RESET_ALL}")
 
-        if your_character_survival_state != 'Survival':
-            print('죽었습니다!!')
-            self.__battle_field_repository.lose()
-            return
+        # target_unit_index = data["player_field_unit_attack_map"]["Opponent"]["field_unit_attack_map"][opponent_attacker_unit_index]["target_unit_index"]
+
+        opponent_attacker_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(opponent_attacker_unit_index)
+        self.__attack_animation_object.set_opponent_animation_actor(opponent_attacker_unit)
+
+        if opponent_attacker_unit.get_card_number() == 27:
+            self.__opponent_field_area_inside_handler.set_field_area_action(
+                OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_VALRN_ACTIVE_TARGETING_SKILL_TO_YOUR_MAIN_CHARACTER)
 
     def notify_targeting_attack_active_skill_to_your_unit(self, notice_dictionary):
 
