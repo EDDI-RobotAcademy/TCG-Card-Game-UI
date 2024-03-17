@@ -3607,7 +3607,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.current_fixed_details_card = None
                         # self.your_active_panel.clear_all_your_active_panel()
                         self.reset_every_selected_action()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNAVAILABLE_USE_SKILL_LACK_ENERGY.value)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNABLE_ATTACK_LACK_ENERGY.value)
                         return
 
 
