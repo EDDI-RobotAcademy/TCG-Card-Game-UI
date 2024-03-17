@@ -33,6 +33,7 @@ from battle_field.entity.current_to_use_field_energy_count import CurrentToUseFi
 from battle_field.entity.decrease_to_use_field_energy_count import DecreaseToUseFieldEnergyCount
 from battle_field.entity.effect_animation import EffectAnimation
 from battle_field.entity.increase_to_use_field_energy_count import IncreaseToUseFieldEnergyCount
+from battle_field.entity.opponent_active_panel import OpponentActivePanel
 from battle_field.entity.your_main_character import YourMainCharacter
 from battle_field.entity.message_on_the_battle_screen import MessageOnTheBattleScreen
 from battle_field.entity.next_field_energy_race import NextFieldEnergyRace
@@ -503,6 +504,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.your_active_panel = YourActivePanel()
         self.your_active_panel.set_total_window_size(self.width, self.height)
+
+        self.opponent_active_panel = OpponentActivePanel()
+        self.opponent_active_panel.set_total_window_size(self.width, self.height)
 
         self.your_hp.set_total_window_size(self.width, self.height)
         self.your_hp_repository.set_first_hp_state()
@@ -2886,6 +2890,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         return point.within(poly)
 
+    # 카드 내리기기
     def on_canvas_release(self, event):
         x, y = event.x, event.y
         y = self.winfo_reqheight() - y
@@ -3527,6 +3532,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         return inside
 
+    #화면 좌클릭
     def on_canvas_left_click(self, event):
         try:
             x, y = event.x, event.y
@@ -3543,11 +3549,159 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.battle_field_function_controller.callGameEndReward()
                 self.battle_result_panel_list = []
                 return
+
             if self.current_field_message_on_the_battle_screen_panel is not None:
                 self.message_on_the_screen.clear_current_message_on_the_battle_screen()
 
             if self.current_fixed_details_card is not None:
                 self.current_fixed_details_card = None
+
+            if self.active_panel_rectangle is not None:
+                self.active_panel_rectangle = None
+
+            if self.opponent_active_panel.get_opponent_active_panel_details_button() is not None:
+                if self.opponent_active_panel.is_point_inside_details_button((x, y)):
+                    print("상대방 상세 보기 클릭")
+
+                    # your_field_unit_id = self.selected_object.get_card_number()
+                    # skill_type = self.card_info_repository.getCardSkillSecondForCardNumber(your_field_unit_id)
+                    # print(f"skill_type: {skill_type}")
+                    opponent_field_unit_id = self.selected_object.get_card_number()
+                    opponent_field_unit_index = self.selected_object.get_index()
+                    opponent_field_unit_attached_energy = self.opponent_field_unit_repository.get_attached_energy_info()
+
+                    select_details_card = FixedDetailsCard((self.width / 2 - 150, self.height / 2 - (150 * 1.618)))
+                    select_details_card.init_card(opponent_field_unit_id)
+                    select_details_card_base = select_details_card.get_fixed_card_base()
+                    select_details_card_base_vertices = select_details_card_base.get_vertices()
+
+                    opponent_field_unit_total_energy = opponent_field_unit_attached_energy.get_total_energy_at_index(
+                        opponent_field_unit_index)
+                    print(f"opponent_field_unit_total_energy: {opponent_field_unit_total_energy}")
+
+                    if opponent_field_unit_total_energy:
+                        opponent_field_unit_attached_energy_info = opponent_field_unit_attached_energy.get_energy_info_at_index(
+                            opponent_field_unit_id)
+                        print(f"opponent_field_unit_attached_energy_info: {opponent_field_unit_attached_energy_info}")
+
+                        opponent_field_unit_attached_undead_energy = opponent_field_unit_attached_energy.get_race_energy_at_index(
+                            opponent_field_unit_index, EnergyType.Undead)
+                        print(f"opponent_field_unit_attached_undead_energy: {opponent_field_unit_attached_undead_energy}")
+                        opponent_field_unit_attached_human_energy = opponent_field_unit_attached_energy.get_race_energy_at_index(
+                            opponent_field_unit_index, EnergyType.Human)
+                        print(f"your_field_unit_attached_human_energy: {opponent_field_unit_attached_human_energy}")
+                        opponent_field_unit_attached_trent_energy = opponent_field_unit_attached_energy.get_race_energy_at_index(
+                            opponent_field_unit_index, EnergyType.Trent)
+                        print(f"opponent_field_unit_attached_trent_energy: {opponent_field_unit_attached_trent_energy}")
+                        race_energy_count = 0
+                        # 언데드 에너지 갯수에 따른 표시
+                        if opponent_field_unit_attached_undead_energy > 0:
+                            print("상세 보기 언데드 생성")
+                            energy_length = race_energy_count * 80
+                            select_details_card_base.set_attached_shapes(
+                                select_details_card.creat_fixed_card_energy_race_circle(
+                                    image_data=self.pre_drawed_image_instance.get_pre_draw_energy_race_with_race_number(
+                                        EnergyType.Undead.value),
+                                    local_translation=select_details_card_base.get_local_translation(),
+                                    vertices=(select_details_card_base_vertices[0][0] - 220 + energy_length,
+                                              select_details_card_base_vertices[0][1] - 40)
+                                )
+                            )
+                            if opponent_field_unit_attached_undead_energy > 1:
+                                print("상세 보기 언데드 숫자 생성")
+                                select_details_card_base.set_attached_shapes(
+                                    select_details_card.create_number_of_cards(
+                                        number_of_cards_data=
+                                        self.pre_drawed_image_instance.get_pre_draw_number_of_details_energy(
+                                            opponent_field_unit_attached_undead_energy),
+                                        local_translation=select_details_card_base.get_local_translation(),
+                                        vertices=[(select_details_card_base_vertices[0][0] - 200 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 80),
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 80),
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 0),
+                                                  (select_details_card_base_vertices[0][0] - 200 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 0)
+                                                  ]
+                                    )
+                                )
+                            race_energy_count += 1
+
+                        # 휴먼 에너지 갯수에 따른 표시
+                        if opponent_field_unit_attached_human_energy > 0:
+                            print("상세 보기 휴먼 생성")
+                            energy_length = race_energy_count * 80
+                            select_details_card_base.set_attached_shapes(
+                                select_details_card.creat_fixed_card_energy_race_circle(
+                                    image_data=self.pre_drawed_image_instance.get_pre_draw_energy_race_with_race_number(
+                                        EnergyType.Human.value),
+                                    local_translation=select_details_card_base.get_local_translation(),
+                                    vertices=(select_details_card_base_vertices[0][0] - 220 + energy_length,
+                                              select_details_card_base_vertices[0][1] - 40)
+                                )
+                            )
+
+                            if opponent_field_unit_attached_human_energy > 1:
+                                print("상세 보기 휴먼 숫자 생성")
+                                select_details_card_base.set_attached_shapes(
+                                    select_details_card.create_number_of_cards(
+                                        number_of_cards_data=
+                                        self.pre_drawed_image_instance.get_pre_draw_number_of_details_energy(
+                                            opponent_field_unit_attached_human_energy),
+                                        local_translation=select_details_card_base.get_local_translation(),
+                                        vertices=[(select_details_card_base_vertices[0][0] - 200 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 80),
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 80),
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 0),
+                                                  (select_details_card_base_vertices[0][0] - 200 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 0)
+                                                  ]
+                                    )
+                                )
+                            race_energy_count += 1
+
+                        # 트런트 에너지 갯수에 따른 표시
+                        if opponent_field_unit_attached_trent_energy > 0:
+                            print("상세 보기 트런트 생성")
+                            energy_length = race_energy_count * 80
+                            select_details_card_base.set_attached_shapes(
+                                select_details_card.creat_fixed_card_energy_race_circle(
+                                    image_data=self.pre_drawed_image_instance.get_pre_draw_energy_race_with_race_number(
+                                        EnergyType.Trent.value),
+                                    local_translation=select_details_card_base.get_local_translation(),
+                                    vertices=(select_details_card_base_vertices[0][0] - 220 + race_energy_count * 80,
+                                              select_details_card_base_vertices[0][1] - 40)
+                                )
+                            )
+
+                            if opponent_field_unit_attached_trent_energy > 1:
+                                print("상세 보기 트런트 숫자 생성")
+                                select_details_card_base.set_attached_shapes(
+                                    select_details_card.create_number_of_cards(
+                                        number_of_cards_data=
+                                        self.pre_drawed_image_instance.get_pre_draw_number_of_details_energy(
+                                            opponent_field_unit_attached_trent_energy),
+                                        local_translation=select_details_card_base.get_local_translation(),
+                                        vertices=[(select_details_card_base_vertices[0][0] - 200 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 80),
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 80),
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 0),
+                                                  (select_details_card_base_vertices[0][0] - 200 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 0)
+                                                  ]
+                                    )
+                                )
+
+                    self.current_fixed_details_card = select_details_card_base
+                    self.active_panel_rectangle = None
+                    self.opponent_active_panel.clear_all_opponent_active_panel()
+                    self.selected_object = None
+                    return
 
             if self.your_active_panel.get_your_active_panel_attack_button() is not None:
                 if self.your_active_panel.is_point_inside_attack_button((x, y)):
