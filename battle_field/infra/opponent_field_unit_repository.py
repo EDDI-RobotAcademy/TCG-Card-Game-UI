@@ -152,6 +152,9 @@ class OpponentFieldUnitRepository:
 
         return -1
 
+    def get_attached_energy_info(self):
+        return self.attached_energy_info
+
     def update_opponent_unit_extra_effect_at_index(self, unit_index, extra_effect_list):
         self.extra_effect_info.update_extra_effect_of_unit(unit_index, extra_effect_list)
 

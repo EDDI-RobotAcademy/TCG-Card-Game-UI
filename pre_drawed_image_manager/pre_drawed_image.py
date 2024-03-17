@@ -102,6 +102,7 @@ class PreDrawedImage:
 
     __pre_drawed_waiting_message = None
     __pre_drawed_message_on_the_battle_screen = {}
+    __pre_draw_use_energy_opponent_unit = {}
 
     __pre_drawed_battle_field_timer = {}
 
@@ -806,11 +807,14 @@ class PreDrawedImage:
             self.__pre_drawed_wizard_card_attack_power[card_number] = wizard_card_attack_image_data_list[attack_number]
 
     def pre_draw_message_on_the_battle_screen(self):
+        image_dir = os.path.join(self.__project_root, "local_storage", "message_on_the_battle_screen")
+        file_list = os.listdir(image_dir)
 
-        for number in range(1, 5):
-            text_image_data = os.path.join(self.__project_root, "local_storage", "message_on_the_battle_screen",
-                                           f"{number}.png")
-            self.__pre_drawed_message_on_the_battle_screen[number] = ImageDataLoader.load_message_on_the_battle_screen_image_data(text_image_data)
+        for number in range(0, len(file_list) - 1):
+            number_image_data = os.path.join(self.__project_root, "local_storage", "message_on_the_battle_screen",
+                                             f"{number}.png")
+            print(f"image data = {number_image_data}")
+            self.__pre_drawed_message_on_the_battle_screen[number] = ImageDataLoader.load_message_on_the_battle_screen_image_data(number_image_data)
 
 
     def pre_draw_battle_field_timer(self):
@@ -822,6 +826,16 @@ class PreDrawedImage:
                                              f"{number}.png")
             print(f"image data = {number_image_data}")
             self.__pre_drawed_battle_field_timer[number] = ImageDataLoader.load_rectangle_image_data(number_image_data)
+
+    def pre_draw_use_energy_opponent_unit(self):
+        image_dir = os.path.join(self.__project_root, "local_storage", "message_on_the_battle_screen", "use_energy_opponent_unit")
+        file_list = os.listdir(image_dir)
+
+        for number in range(1, len(file_list) + 1):
+            number_image_data = os.path.join(self.__project_root, "local_storage", "message_on_the_battle_screen", "use_energy_opponent_unit"
+                                             f"{number}.png")
+            print(f"image data = {number_image_data}")
+            self.__pre_draw_use_energy_opponent_unit[number] = ImageDataLoader.load_message_on_the_battle_screen_image_data(number_image_data)
 
     def pre_draw_every_image(self):
         self.pre_draw_opponent_tomb()
@@ -906,6 +920,7 @@ class PreDrawedImage:
 
         self.pre_draw_wizard_card_attack_power()
         self.pre_draw_message_on_the_battle_screen()
+        self.pre_draw_use_energy_opponent_unit()
 
         self.pre_draw_battle_field_timer()
 
@@ -1109,8 +1124,11 @@ class PreDrawedImage:
     def get_pre_draw_wizard_card_attack_power(self, card_number):
         return self.__pre_drawed_wizard_card_attack_power[card_number]
 
-    def get_pre_draw_message_on_the_battle_screen(self, number):
-        return self.__pre_drawed_message_on_the_battle_screen[number]
+    def get_pre_draw_message_on_the_battle_screen(self, message_number):
+        return self.__pre_drawed_message_on_the_battle_screen[message_number]
 
     def get_pre_draw_battle_field_timer(self, number):
         return self.__pre_drawed_battle_field_timer[number]
+
+    def get_pre_draw_use_energy_opponent_unit(self, opponent_index):
+        return self.__pre_draw_use_energy_opponent_unit[opponent_index]

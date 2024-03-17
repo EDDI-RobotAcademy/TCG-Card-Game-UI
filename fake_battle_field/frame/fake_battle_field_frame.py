@@ -33,6 +33,7 @@ from battle_field.entity.current_to_use_field_energy_count import CurrentToUseFi
 from battle_field.entity.decrease_to_use_field_energy_count import DecreaseToUseFieldEnergyCount
 from battle_field.entity.effect_animation import EffectAnimation
 from battle_field.entity.increase_to_use_field_energy_count import IncreaseToUseFieldEnergyCount
+from battle_field.entity.opponent_active_panel import OpponentActivePanel
 from battle_field.entity.your_main_character import YourMainCharacter
 from battle_field.entity.message_on_the_battle_screen import MessageOnTheBattleScreen
 from battle_field.entity.next_field_energy_race import NextFieldEnergyRace
@@ -124,6 +125,7 @@ from common.attack_type import AttackType
 from common.card_grade import CardGrade
 from common.card_race import CardRace
 from common.card_type import CardType
+from common.message_number import MessageNumber
 from common.survival_type import SurvivalType
 from common.target_type import TargetType
 from fake_battle_field.entity.animation_test_image import AnimationTestImage
@@ -502,6 +504,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.your_active_panel = YourActivePanel()
         self.your_active_panel.set_total_window_size(self.width, self.height)
+
+        self.opponent_active_panel = OpponentActivePanel()
+        self.opponent_active_panel.set_total_window_size(self.width, self.height)
 
         self.your_hp.set_total_window_size(self.width, self.height)
         self.your_hp_repository.set_first_hp_state()
@@ -1931,13 +1936,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.opponent_hp_panel.set_height_ratio(self.height_ratio)
         self.opponent_hp_panel.draw()
 
-        if self.message_on_the_screen.get_current_message_on_the_battle_screen():
-            self.message_on_the_screen.set_width_ratio(self.width_ratio)
-            self.message_on_the_screen.set_height_ratio(self.height_ratio)
-            self.current_field_message_on_the_battle_screen_panel = (
-                self.message_on_the_screen.get_current_message_on_the_battle_screen()
-            )
-            self.current_field_message_on_the_battle_screen_panel.draw()
+        # if self.message_on_the_screen.get_current_message_on_the_battle_screen():
+        #     self.message_on_the_screen.set_width_ratio(self.width_ratio)
+        #     self.message_on_the_screen.set_height_ratio(self.height_ratio)
+        #     self.current_field_message_on_the_battle_screen_panel = (
+        #         self.message_on_the_screen.get_current_message_on_the_battle_screen()
+        #     )
+        #     self.current_field_message_on_the_battle_screen_panel.draw()
 
         if self.animation_test_image_panel is not None:
             self.animation_test_image.set_width_ratio(self.width_ratio)
@@ -2801,6 +2806,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
+        # 글쓰기
+        if self.message_on_the_screen.get_current_message_on_the_battle_screen():
+            self.message_on_the_screen.set_width_ratio(self.width_ratio)
+            self.message_on_the_screen.set_height_ratio(self.height_ratio)
+            self.current_field_message_on_the_battle_screen_panel = (
+                self.message_on_the_screen.get_current_message_on_the_battle_screen()
+            )
+            self.current_field_message_on_the_battle_screen_panel.draw()
+
+
+
         # self.post_draw()
         if len(self.battle_result_panel_list) != 0:
             if self.is_playing_action_animation == False and self.field_area_inside_handler.get_field_area_action() == None:
@@ -2890,6 +2906,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         return point.within(poly)
 
+    # 카드 내리기기
     def on_canvas_release(self, event):
         x, y = event.x, event.y
         y = self.winfo_reqheight() - y
@@ -3531,6 +3548,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         return inside
 
+    #화면 좌클릭
     def on_canvas_left_click(self, event):
         try:
             x, y = event.x, event.y
@@ -3547,11 +3565,159 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.battle_field_function_controller.callGameEndReward()
                 self.battle_result_panel_list = []
                 return
+
             if self.current_field_message_on_the_battle_screen_panel is not None:
                 self.message_on_the_screen.clear_current_message_on_the_battle_screen()
 
             if self.current_fixed_details_card is not None:
                 self.current_fixed_details_card = None
+
+            if self.active_panel_rectangle is not None:
+                self.active_panel_rectangle = None
+
+            if self.opponent_active_panel.get_opponent_active_panel_details_button() is not None:
+                if self.opponent_active_panel.is_point_inside_details_button((x, y)):
+                    print("상대방 상세 보기 클릭")
+
+                    # your_field_unit_id = self.selected_object.get_card_number()
+                    # skill_type = self.card_info_repository.getCardSkillSecondForCardNumber(your_field_unit_id)
+                    # print(f"skill_type: {skill_type}")
+                    opponent_field_unit_id = self.selected_object.get_card_number()
+                    opponent_field_unit_index = self.selected_object.get_index()
+                    opponent_field_unit_attached_energy = self.opponent_field_unit_repository.get_attached_energy_info()
+
+                    select_details_card = FixedDetailsCard((self.width / 2 - 150, self.height / 2 - (150 * 1.618)))
+                    select_details_card.init_card(opponent_field_unit_id)
+                    select_details_card_base = select_details_card.get_fixed_card_base()
+                    select_details_card_base_vertices = select_details_card_base.get_vertices()
+
+                    opponent_field_unit_total_energy = opponent_field_unit_attached_energy.get_total_energy_at_index(
+                        opponent_field_unit_index)
+                    print(f"opponent_field_unit_total_energy: {opponent_field_unit_total_energy}")
+
+                    if opponent_field_unit_total_energy:
+                        opponent_field_unit_attached_energy_info = opponent_field_unit_attached_energy.get_energy_info_at_index(
+                            opponent_field_unit_id)
+                        print(f"opponent_field_unit_attached_energy_info: {opponent_field_unit_attached_energy_info}")
+
+                        opponent_field_unit_attached_undead_energy = opponent_field_unit_attached_energy.get_race_energy_at_index(
+                            opponent_field_unit_index, EnergyType.Undead)
+                        print(f"opponent_field_unit_attached_undead_energy: {opponent_field_unit_attached_undead_energy}")
+                        opponent_field_unit_attached_human_energy = opponent_field_unit_attached_energy.get_race_energy_at_index(
+                            opponent_field_unit_index, EnergyType.Human)
+                        print(f"your_field_unit_attached_human_energy: {opponent_field_unit_attached_human_energy}")
+                        opponent_field_unit_attached_trent_energy = opponent_field_unit_attached_energy.get_race_energy_at_index(
+                            opponent_field_unit_index, EnergyType.Trent)
+                        print(f"opponent_field_unit_attached_trent_energy: {opponent_field_unit_attached_trent_energy}")
+                        race_energy_count = 0
+                        # 언데드 에너지 갯수에 따른 표시
+                        if opponent_field_unit_attached_undead_energy > 0:
+                            print("상세 보기 언데드 생성")
+                            energy_length = race_energy_count * 80
+                            select_details_card_base.set_attached_shapes(
+                                select_details_card.creat_fixed_card_energy_race_circle(
+                                    image_data=self.pre_drawed_image_instance.get_pre_draw_energy_race_with_race_number(
+                                        EnergyType.Undead.value),
+                                    local_translation=select_details_card_base.get_local_translation(),
+                                    vertices=(select_details_card_base_vertices[0][0] - 220 + energy_length,
+                                              select_details_card_base_vertices[0][1] - 40)
+                                )
+                            )
+                            if opponent_field_unit_attached_undead_energy > 1:
+                                print("상세 보기 언데드 숫자 생성")
+                                select_details_card_base.set_attached_shapes(
+                                    select_details_card.create_number_of_cards(
+                                        number_of_cards_data=
+                                        self.pre_drawed_image_instance.get_pre_draw_number_of_details_energy(
+                                            opponent_field_unit_attached_undead_energy),
+                                        local_translation=select_details_card_base.get_local_translation(),
+                                        vertices=[(select_details_card_base_vertices[0][0] - 200 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 80),
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 80),
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 0),
+                                                  (select_details_card_base_vertices[0][0] - 200 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 0)
+                                                  ]
+                                    )
+                                )
+                            race_energy_count += 1
+
+                        # 휴먼 에너지 갯수에 따른 표시
+                        if opponent_field_unit_attached_human_energy > 0:
+                            print("상세 보기 휴먼 생성")
+                            energy_length = race_energy_count * 80
+                            select_details_card_base.set_attached_shapes(
+                                select_details_card.creat_fixed_card_energy_race_circle(
+                                    image_data=self.pre_drawed_image_instance.get_pre_draw_energy_race_with_race_number(
+                                        EnergyType.Human.value),
+                                    local_translation=select_details_card_base.get_local_translation(),
+                                    vertices=(select_details_card_base_vertices[0][0] - 220 + energy_length,
+                                              select_details_card_base_vertices[0][1] - 40)
+                                )
+                            )
+
+                            if opponent_field_unit_attached_human_energy > 1:
+                                print("상세 보기 휴먼 숫자 생성")
+                                select_details_card_base.set_attached_shapes(
+                                    select_details_card.create_number_of_cards(
+                                        number_of_cards_data=
+                                        self.pre_drawed_image_instance.get_pre_draw_number_of_details_energy(
+                                            opponent_field_unit_attached_human_energy),
+                                        local_translation=select_details_card_base.get_local_translation(),
+                                        vertices=[(select_details_card_base_vertices[0][0] - 200 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 80),
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 80),
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 0),
+                                                  (select_details_card_base_vertices[0][0] - 200 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 0)
+                                                  ]
+                                    )
+                                )
+                            race_energy_count += 1
+
+                        # 트런트 에너지 갯수에 따른 표시
+                        if opponent_field_unit_attached_trent_energy > 0:
+                            print("상세 보기 트런트 생성")
+                            energy_length = race_energy_count * 80
+                            select_details_card_base.set_attached_shapes(
+                                select_details_card.creat_fixed_card_energy_race_circle(
+                                    image_data=self.pre_drawed_image_instance.get_pre_draw_energy_race_with_race_number(
+                                        EnergyType.Trent.value),
+                                    local_translation=select_details_card_base.get_local_translation(),
+                                    vertices=(select_details_card_base_vertices[0][0] - 220 + race_energy_count * 80,
+                                              select_details_card_base_vertices[0][1] - 40)
+                                )
+                            )
+
+                            if opponent_field_unit_attached_trent_energy > 1:
+                                print("상세 보기 트런트 숫자 생성")
+                                select_details_card_base.set_attached_shapes(
+                                    select_details_card.create_number_of_cards(
+                                        number_of_cards_data=
+                                        self.pre_drawed_image_instance.get_pre_draw_number_of_details_energy(
+                                            opponent_field_unit_attached_trent_energy),
+                                        local_translation=select_details_card_base.get_local_translation(),
+                                        vertices=[(select_details_card_base_vertices[0][0] - 200 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 80),
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 80),
+                                                  (select_details_card_base_vertices[0][0] - 160 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 0),
+                                                  (select_details_card_base_vertices[0][0] - 200 + energy_length,
+                                                   select_details_card_base_vertices[0][1] - 0)
+                                                  ]
+                                    )
+                                )
+
+                    self.current_fixed_details_card = select_details_card_base
+                    self.active_panel_rectangle = None
+                    self.opponent_active_panel.clear_all_opponent_active_panel()
+                    self.selected_object = None
+                    return
 
             if self.your_active_panel.get_your_active_panel_attack_button() is not None:
                 if self.your_active_panel.is_point_inside_attack_button((x, y)):
@@ -3568,7 +3734,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.current_fixed_details_card = None
                         # self.your_active_panel.clear_all_your_active_panel()
                         self.reset_every_selected_action()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(1)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNABLE_ATTACK_SUMMON_TURN.value)
                         return
 
                     elif your_selected_unit_action_status == FieldUnitActionStatus.Dummy:
@@ -3585,7 +3751,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.current_fixed_details_card = None
                         # self.your_active_panel.clear_all_your_active_panel()
                         self.reset_every_selected_action()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(3)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNABLE_ATTACK_LACK_ACTION_COUNT.value)
                         return
 
                     print("일반 공격 클릭")
@@ -3611,7 +3777,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.current_fixed_details_card = None
                         # self.your_active_panel.clear_all_your_active_panel()
                         self.reset_every_selected_action()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(2)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNABLE_ATTACK_LACK_ENERGY.value)
                         return
 
 
@@ -3656,7 +3822,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.active_panel_rectangle = None
                         # self.your_active_panel.clear_all_your_active_panel()
                         self.reset_every_selected_action()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(1)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNABLE_ATTACK_SUMMON_TURN.value)
                         return
 
                     elif your_selected_unit_action_status == FieldUnitActionStatus.Dummy:
@@ -3706,7 +3872,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.current_fixed_details_card = None
                         # self.your_active_panel.clear_all_your_active_panel()
                         self.reset_every_selected_action()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(2)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNAVAILABLE_USE_SKILL_LACK_ENERGY.value)
                         return
 
                     if your_field_unit_required_human_energy > your_field_unit_attached_human_energy:
@@ -3715,7 +3881,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.current_fixed_details_card = None
                         # self.your_active_panel.clear_all_your_active_panel()
                         self.reset_every_selected_action()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(2)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNAVAILABLE_USE_SKILL_LACK_ENERGY.value)
                         return
 
                     if your_field_unit_required_trent_energy > your_field_unit_attached_trent_energy:
@@ -3724,7 +3890,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.current_fixed_details_card = None
                         # self.your_active_panel.clear_all_your_active_panel()
                         self.reset_every_selected_action()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(2)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNAVAILABLE_USE_SKILL_LACK_ENERGY.value)
                         return
 
                     skill_type = self.card_info_repository.getCardSkillFirstForCardNumber(your_field_unit_id)
@@ -3737,7 +3903,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.current_fixed_details_card = None
                         # self.your_active_panel.clear_all_your_active_panel()
                         self.reset_every_selected_action()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(3)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNABLE_ATTACK_LACK_ACTION_COUNT.value)
                         return
 
                     # 단일기
@@ -3788,7 +3954,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.active_panel_rectangle = None
                         # self.current_fixed_details_card = None
                         # self.your_active_panel.clear_all_your_active_panel()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(1)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNABLE_ATTACK_SUMMON_TURN.value)
                         return
                     elif your_selected_unit_action_status == FieldUnitActionStatus.Dummy:
                         print(f"Dummy 상태입니다")
@@ -3837,7 +4003,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.current_fixed_details_card = None
                         # self.your_active_panel.clear_all_your_active_panel()
                         self.reset_every_selected_action()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(2)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNAVAILABLE_USE_SKILL_LACK_ENERGY.value)
                         return
 
                     if your_field_unit_required_human_energy > your_field_unit_attached_human_energy:
@@ -3846,7 +4012,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.active_panel_rectangle = None
                         # self.current_fixed_details_card = None
                         # self.your_active_panel.clear_all_your_active_panel()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(2)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNAVAILABLE_USE_SKILL_LACK_ENERGY.value)
                         return
 
                     if your_field_unit_required_trent_energy > your_field_unit_attached_trent_energy:
@@ -3855,7 +4021,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.active_panel_rectangle = None
                         # self.current_fixed_details_card = None
                         # self.your_active_panel.clear_all_your_active_panel()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(2)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNAVAILABLE_USE_SKILL_LACK_ENERGY.value)
                         return
 
                     if your_selected_unit_action_count <= 0:
@@ -3865,7 +4031,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # self.active_panel_rectangle = None
                         # self.current_fixed_details_card = None
                         # self.your_active_panel.clear_all_your_active_panel()
-                        self.message_on_the_screen.create_message_on_the_battle_screen(3)
+                        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNABLE_ATTACK_LACK_ACTION_COUNT.value)
                         return
 
                     skill_type = self.card_info_repository.getCardSkillSecondForCardNumber(your_field_unit_id)
@@ -5857,6 +6023,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if self.tomb_panel_selected:
                 print(
                     f"on_canvas_left_click() -> current_tomb_unit_list: {self.your_tomb_repository.get_current_tomb_state()}")
+                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.YOUR_TOMB.value)
                 self.your_tomb.create_tomb_panel_popup_rectangle()
                 self.tomb_panel_popup_rectangle = self.your_tomb.get_tomb_panel_popup_rectangle()
 
@@ -5875,6 +6042,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if self.opponent_tomb_panel_selected:
                 print(
                     f"on_canvas_left_click() -> current_tomb_unit_list: {self.opponent_tomb_repository.get_opponent_tomb_state()}")
+                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.OPPONENT_TOMB.value)
                 self.opponent_tomb.create_opponent_tomb_panel_popup_rectangle()
                 self.opponent_tomb_popup_rectangle_panel = self.opponent_tomb.get_opponent_tomb_panel_popup_rectangle()
 
@@ -5893,6 +6061,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if self.your_lost_zone_panel_selected:
                 print(
                     f"on_canvas_left_click() -> current_lost_zone_card_list: {self.your_lost_zone_repository.get_your_lost_zone_card_list()}")
+                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.YOUR_LOST_ZONE.value)
                 self.your_lost_zone.create_your_lost_zone_popup_panel()
                 self.your_lost_zone_popup_panel = self.your_lost_zone.get_your_lost_zone_popup_panel()
 
@@ -5911,6 +6080,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if self.opponent_lost_zone_panel_selected:
                 print(
                     f"on_canvas_left_click() -> current_lost_zone_card_list: {self.opponent_lost_zone_repository.get_opponent_lost_zone_card_list()}")
+                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.OPPONENT_LOST_ZONE.value)
                 self.opponent_lost_zone.create_opponent_lost_zone_popup_panel()
                 self.opponent_lost_zone_popup_panel = self.opponent_lost_zone.get_opponent_lost_zone_popup_panel()
 
