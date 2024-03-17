@@ -1082,13 +1082,14 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         opponent_attacker_unit_info = next(iter(data["player_field_unit_attack_map"]["Opponent"]["field_unit_attack_map"]))
         opponent_attacker_unit_index = int(opponent_attacker_unit_info)
+        print(f"{Fore.RED}opponent_attacker_unit_index: {Fore.GREEN}{opponent_attacker_unit_index}{Style.RESET_ALL}")
 
         # target_unit_index = data["player_field_unit_attack_map"]["Opponent"]["field_unit_attack_map"][opponent_attacker_unit_index]["target_unit_index"]
 
         opponent_attacker_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(opponent_attacker_unit_index)
         self.__attack_animation_object.set_opponent_animation_actor(opponent_attacker_unit)
 
-        if opponent_attacker_unit.get_card_number() == 19:
+        if opponent_attacker_unit.get_card_number() == 27:
             self.__opponent_field_area_inside_handler.set_field_area_action(
                 OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_VALRN_ACTIVE_TARGETING_SKILL_TO_YOUR_UNIT)
 
