@@ -7217,6 +7217,45 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attack_animation_object.set_is_finished(True)
                 attack_animation_object.set_need_post_process(True)
 
+                notify_data = attack_animation_object.get_notify_data()
+                opponent_dead_unit_index_list = notify_data["player_field_unit_death_map"]["Opponent"]["dead_field_unit_index_list"]
+                your_dead_unit_index_list = notify_data["player_field_unit_death_map"]["You"]["dead_field_unit_index_list"]
+
+                opponent_unit_health_index_map = notify_data["player_field_unit_health_point_map"]["Opponent"]["field_unit_health_point_map"]
+                your_unit_health_index_map = notify_data["player_field_unit_health_point_map"]["You"]["field_unit_health_point_map"]
+
+                for opponent_dead_unit_index in opponent_dead_unit_index_list:
+                    # opponent_dead_unit_index = opponent_dead_unit.get_index()
+                    self.opponent_field_unit_repository.remove_card_by_multiple_index([int(opponent_dead_unit_index)])
+                    self.opponent_field_unit_repository.remove_harmful_status_by_index(int(opponent_dead_unit_index))
+
+                for your_dead_unit_index in your_dead_unit_index_list:
+                    # your_dead_unit_index = your_dead_unit.get_index()
+                    self.your_field_unit_repository.remove_card_by_index(int(your_dead_unit_index))
+                    self.your_field_unit_repository.remove_harmful_status_by_index(int(your_dead_unit_index))
+
+                for index, health in opponent_unit_health_index_map.items():
+                    opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(int(index))
+                    opponent_field_unit_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                    for attached_shape in opponent_field_unit_fixed_card_base.get_attached_shapes():
+                        if isinstance(attached_shape, NonBackgroundNumberImage):
+                            if attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                attached_shape.set_image_data(
+                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(
+                                        health))
+
+                for index, health in your_unit_health_index_map.items():
+                    your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(int(index))
+                    your_field_unit_fixed_card_base = your_field_unit.get_fixed_card_base()
+                    for attached_shape in your_field_unit_fixed_card_base.get_attached_shapes():
+                        if isinstance(attached_shape, NonBackgroundNumberImage):
+                            if attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                attached_shape.set_image_data(
+                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(health))
+
+                self.your_field_unit_repository.replace_field_card_position()
+                self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
                 # if self.attack_animation_object.get_your_field_unit_death():
                 #     your_field_death_unit_index = self.attack_animation_object.get_your_field_death_unit_index()
                 #     self.your_field_unit_repository.remove_card_by_index(your_field_death_unit_index)

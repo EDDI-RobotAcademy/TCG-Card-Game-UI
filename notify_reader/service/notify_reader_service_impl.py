@@ -776,6 +776,20 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         #                                      "Opponent": {"dead_field_unit_index_list": [2]},
         #                                      "You": {"dead_field_unit_index_list": [3]}}}}
 
+        # {"NOTIFY_BASIC_ATTACK_TO_UNIT": {"player_field_unit_attack_map": {"Opponent": {"field_unit_attack_map": {
+        #     "0": {"target_player_index": "You", "target_unit_index": 0, "active_skill_index": -1,
+        #           "passive_skill_index": -1}}}}, "player_field_unit_health_point_map": {
+        #     "You": {"field_unit_health_point_map": {"0": 15}}, "Opponent": {"field_unit_health_point_map": {"0": 0}}},
+        #                                  "player_field_unit_harmful_effect_map": {"You": {
+        #                                      "field_unit_harmful_status_map": {"0": {"harmful_status_list": []}}},
+        #                                                                           "Opponent": {
+        #                                                                               "field_unit_harmful_status_map": {
+        #                                                                                   "0": {
+        #                                                                                       "harmful_status_list": []}}}},
+        #                                  "player_field_unit_death_map": {
+        #                                      "Opponent": {"dead_field_unit_index_list": [0]},
+        #                                      "You": {"dead_field_unit_index_list": []}}}}
+
         self.__opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.PLAY_ANIMATION)
 
         data = notice_dictionary['NOTIFY_BASIC_ATTACK_TO_UNIT']
