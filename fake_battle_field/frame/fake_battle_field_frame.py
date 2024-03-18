@@ -7655,6 +7655,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
 
 
+                self.attack_animation_object.set_opponent_animation_actor(None)
+
                 # if self.attack_animation_object.get_your_field_unit_death():
                 #     your_field_death_unit_index = self.attack_animation_object.get_your_field_death_unit_index()
                 #     self.your_field_unit_repository.remove_card_by_index(your_field_death_unit_index)
@@ -11771,6 +11773,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # opponent_damage = attack_animation_object.get_opponent_animation_actor_damage()
                 health_point = notify_data['player_main_character_health_point_map']['You']
                 self.your_hp_repository.change_hp(int(health_point))
+
+                self.attack_animation_object.set_opponent_animation_actor(None)
 
                 if notify_data['player_main_character_survival_map']['You'] == 'Death':
                     self.your_hp_repository.your_character_die()
