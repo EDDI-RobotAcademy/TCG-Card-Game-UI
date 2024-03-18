@@ -9010,6 +9010,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 self.your_field_unit_repository.replace_field_card_position()
 
+                self.attack_animation_object.set_opponent_animation_actor(None)
                 self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
                 self.opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.Dummy)
                 # self.opponent_nether_blade_second_passive_skill_animation()
@@ -9299,6 +9300,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.opponent_field_area_inside_handler.clear_active_field_area_action()
                 # self.opponent_field_area_inside_handler.clear_field_turn_start_action()
                 self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+
+                self.attack_animation_object.set_opponent_animation_actor(None)
 
         move_to_origin_location(1)
 
