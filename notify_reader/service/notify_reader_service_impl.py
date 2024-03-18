@@ -417,19 +417,60 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
                 if player == 'You':
                     for unit_index in dead_field_unit_index_list:
-                        card_id = self.__your_field_unit_repository.get_card_id_by_index(unit_index)
-                        self.__your_tomb_repository.create_tomb_card(card_id)
-                        self.__your_field_unit_repository.remove_card_by_index(unit_index)
-                        self.__your_field_unit_repository.remove_harmful_status_by_index(unit_index)
-                    self.__your_field_unit_repository.replace_field_card_position()
+                        def remove_field_unit_by_index(index):
+                            card_id = self.__your_field_unit_repository.get_card_id_by_index(index)
+                            self.__your_tomb_repository.create_tomb_card(card_id)
+                            self.__your_field_unit_repository.remove_card_by_index(index)
+                            self.__your_field_unit_repository.remove_harmful_status_by_index(index)
+                            self.__your_field_unit_repository.replace_field_card_position()
+
+                        effect_animation = EffectAnimation()
+                        effect_animation.set_animation_name('death')
+                        effect_animation.change_local_translation(
+                            self.__your_field_unit_repository.find_field_unit_by_index(
+                                unit_index).get_fixed_card_base().get_local_translation()
+                        )
+                        effect_animation.draw_animation_panel()
+
+                        self.__notify_reader_repository.save_notify_effect_animation_request(
+                            EffectAnimationRequest(
+                                effect_animation=effect_animation,
+                                target_player=player,
+                                target_index=unit_index,
+                                target_type=TargetType.UNIT,
+                                call_function=remove_field_unit_by_index,
+                                function_need_param=True,
+                                param = unit_index
+                            )
+                        )
                 elif player == 'Opponent':
                     for unit_index in dead_field_unit_index_list:
-                        card_id = self.__opponent_field_unit_repository.get_opponent_card_id_by_index(unit_index)
-                        self.__opponent_tomb_repository.create_opponent_tomb_card(card_id)
-                        self.__opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
-                        self.__opponent_field_unit_repository.remove_harmful_status_by_index(unit_index)
+                        def remove_field_unit_by_index(index):
+                            card_id = self.__opponent_field_unit_repository.get_opponent_card_id_by_index(index)
+                            self.__opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                            self.__opponent_field_unit_repository.remove_current_field_unit_card(index)
+                            self.__opponent_field_unit_repository.remove_harmful_status_by_index(index)
+                            self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
-                    self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                        effect_animation = EffectAnimation()
+                        effect_animation.set_animation_name('death')
+                        effect_animation.change_local_translation(
+                            self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                                unit_index).get_fixed_card_base().get_local_translation()
+                        )
+                        effect_animation.draw_animation_panel()
+
+                        self.__notify_reader_repository.save_notify_effect_animation_request(
+                            EffectAnimationRequest(
+                                effect_animation=effect_animation,
+                                target_player=player,
+                                target_index=unit_index,
+                                target_type=TargetType.UNIT,
+                                call_function=remove_field_unit_by_index,
+                                function_need_param=True,
+                                param=unit_index
+                            )
+                        )
 
                 else:
                     print(f'apply_notify_data_of_dead_unit error : unknown player {player}')
@@ -592,6 +633,19 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         #     self.__battle_field_repository.lose()
 
         self.__attack_animation_object.set_is_opponent_attack_main_character(True)
+
+
+
+        opponent_attacker_unit_info = next(
+            iter(notify_dict_data["player_field_unit_attack_map"]["Opponent"]["field_unit_attack_map"]))
+        opponent_attacker_unit_index = int(opponent_attacker_unit_info)
+        print(f"{Fore.RED}opponent_attacker_unit_index: {Fore.GREEN}{opponent_attacker_unit_index}{Style.RESET_ALL}")
+
+        # target_unit_index = data["player_field_unit_attack_map"]["Opponent"]["field_unit_attack_map"][opponent_attacker_unit_index]["target_unit_index"]
+
+        opponent_attacker_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
+            opponent_attacker_unit_index)
+        self.__attack_animation_object.set_opponent_animation_actor(opponent_attacker_unit)
 
         self.__opponent_field_area_inside_handler.set_field_area_action(
             OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_GENERAL_ATTACK_TO_MAIN_CHARACTER_PROCESS)
@@ -797,7 +851,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         #                                      "Opponent": {"dead_field_unit_index_list": [0]},
         #                                      "You": {"dead_field_unit_index_list": []}}}}
 
-        self.__opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.PLAY_ANIMATION)
+
 
         data = notice_dictionary['NOTIFY_BASIC_ATTACK_TO_UNIT']
         self.__attack_animation_object.set_notify_data(data)
@@ -925,6 +979,20 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         #     self.__your_field_unit_repository.replace_field_card_position()
 
         self.__attack_animation_object.set_is_opponent_attack_main_character(False)
+
+        opponent_attacker_unit_info = next(
+            iter(data["player_field_unit_attack_map"]["Opponent"]["field_unit_attack_map"]))
+        opponent_attacker_unit_index = int(opponent_attacker_unit_info)
+        print(f"{Fore.RED}opponent_attacker_unit_index: {Fore.GREEN}{opponent_attacker_unit_index}{Style.RESET_ALL}")
+
+        # target_unit_index = data["player_field_unit_attack_map"]["Opponent"]["field_unit_attack_map"][opponent_attacker_unit_index]["target_unit_index"]
+
+        opponent_attacker_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
+            opponent_attacker_unit_index)
+        self.__attack_animation_object.set_opponent_animation_actor(opponent_attacker_unit)
+
+        self.__opponent_field_area_inside_handler.set_active_field_area_action(
+            OpponentFieldAreaActionProcess.PLAY_ANIMATION)
 
         self.__opponent_field_area_inside_handler.set_field_area_action(
             OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_GENERAL_ATTACK_TO_YOUR_UNIT_PROCESS)
