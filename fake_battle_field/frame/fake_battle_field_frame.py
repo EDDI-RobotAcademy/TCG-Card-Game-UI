@@ -5431,7 +5431,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(ActionToApplyOpponent.Dummy)
                         return FieldAreaAction.Dummy
 
-                    self.master.after(0, self.start_nether_blade_second_passive_targeting_motion_animation)
+                    self.create_effect_animation_with_vertices_and_play_animation_and_call_function(
+                        'nether_blade_targeting_skill', self.opponent_main_character_panel.get_vertices(),
+                        self.start_nether_blade_second_passive_targeting_motion_animation
+                    )
+                    # self.master.after(0, self.start_nether_blade_second_passive_targeting_motion_animation)
 
                     return
 
@@ -5462,7 +5466,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         #         _usageSkillIndex="2"))
 
                         # self.attack_animation_object.set_animation_actor_damage(20)
-                        self.master.after(0, self.start_nether_blade_second_passive_targeting_motion_animation)
+                        self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function(
+                            'nether_blade_targeting_skill', opponent_field_unit_object.get_index(),
+                            self.start_nether_blade_second_passive_targeting_motion_animation
+                        )
+                        # self.master.after(0, self.start_nether_blade_second_passive_targeting_motion_animation)
                         self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
 
                         # opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
@@ -5590,7 +5598,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(ActionToApplyOpponent.Dummy)
                         return FieldAreaAction.Dummy
 
-                    self.master.after(0, self.start_nether_blade_second_passive_targeting_motion_animation)
+
+                    self.create_effect_animation_with_vertices_and_play_animation_and_call_function(
+                        'nether_blade_targeting_skill', self.opponent_main_character_panel.get_vertices(),
+                        self.start_nether_blade_second_passive_targeting_motion_animation
+                    )
+                    # self.master.after(0, self.start_nether_blade_second_passive_targeting_motion_animation)
 
                     return
 
@@ -5628,7 +5641,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 _usageSkillIndex="2"))
 
                         # self.attack_animation_object.set_animation_actor_damage(20)
-                        self.master.after(0, self.start_nether_blade_turn_start_second_passive_targeting_motion_animation)
+                        self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function(
+                            'nether_blade_targeting_skill', opponent_field_unit_object.get_index(),
+                            self.start_nether_blade_turn_start_second_passive_targeting_motion_animation
+                        )
+                        # self.master.after(0, self.start_nether_blade_turn_start_second_passive_targeting_motion_animation)
                         self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
 
                         self.reset_every_selected_action()
@@ -9649,6 +9666,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.master.after(20, update_position, step_count + 1)
             else:
                 # self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_PASSIVE_SKILL_PROCESS)
+
                 self.start_opponent_nether_blade_second_passive_targeting_motion_animation(self.attack_animation_object)
 
 
@@ -10402,13 +10420,18 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                     self.opponent_field_unit_repository.apply_harmful_status(opponent_field_unit.get_index(), your_actor_extra_ability)
 
                     if remove_from_field:
-                        card_id = opponent_field_unit.get_card_number()
-                        card_index = opponent_field_unit.get_index()
+                        def remove_field_unit(_opponent_field_unit):
+                            card_id = _opponent_field_unit.get_card_number()
+                            card_index = _opponent_field_unit.get_index()
 
-                        self.opponent_field_unit_repository.remove_current_field_unit_card(card_index)
+                            self.opponent_field_unit_repository.remove_current_field_unit_card(card_index)
 
-                        self.opponent_field_unit_repository.remove_harmful_status_by_index(card_index)
-                        self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                            self.opponent_field_unit_repository.remove_harmful_status_by_index(card_index)
+                            self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+
+                        self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function_with_param(
+                            'death', opponent_field_unit.get_index(), remove_field_unit, opponent_field_unit
+                        )
 
                 else:
                     print(f"{Fore.RED}opponent 메인 캐릭터 공격 -> is_attack_main_character(True): {Fore.GREEN}{is_attack_main_character}{Style.RESET_ALL}")
@@ -10530,7 +10553,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
             else:
-                self.start_nether_blade_turn_start_first_passive_wide_area_motion_animation(attack_animation_object)
+                self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
+                    'nether_blade_area_skill', self.start_nether_blade_turn_start_first_passive_wide_area_motion_animation,
+                    attack_animation_object
+                )
+                # self.start_nether_blade_turn_start_first_passive_wide_area_motion_animation(attack_animation_object)
 
         update_position(1)
 
@@ -10732,16 +10759,22 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
                             animation_index, effect_animation_panel)
 
-                        def remove_opponent_unit():
-                            self.opponent_field_unit_repository.remove_current_field_unit_card(index)
-                            self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                        def remove_opponent_unit(unit_index):
+                            unit_card_id = self.opponent_field_unit_repository.get_opponent_card_id_by_index(unit_index)
+                            self.opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
+                            self.opponent_tomb_repository.create_opponent_tomb_card(unit_card_id)
                             self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-                            self.opponent_field_unit_repository.remove_harmful_status_by_index(index)
+                            self.opponent_field_unit_repository.remove_harmful_status_by_index(unit_index)
 
-                        self.play_effect_animation_by_index_and_call_function(animation_index, remove_opponent_unit)
+                        self.play_effect_animation_by_index_and_call_function_with_param(animation_index, remove_opponent_unit, index)
 
-                self.nether_blade_turn_start_second_passive_skill_animation()
+                def call_nether_blade_second_passive_skill_animation():
+                    if len(self.effect_animation_repository.get_effect_animation_dictionary().keys()) == 0:
+                        self.nether_blade_turn_start_second_passive_skill_animation()
+                    else:
+                        self.master.after(100, call_nether_blade_second_passive_skill_animation)
 
+                call_nether_blade_second_passive_skill_animation()
         move_to_origin_location(1)
 
     def nether_blade_turn_start_second_passive_skill_animation(self):
@@ -10986,13 +11019,18 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                         opponent_field_unit.get_index(), your_actor_extra_ability)
 
                     if remove_from_field:
-                        card_id = opponent_field_unit.get_card_number()
-                        card_index = opponent_field_unit.get_index()
+                        def remove_field_unit(_opponent_field_unit):
 
-                        self.opponent_field_unit_repository.remove_current_field_unit_card(card_index)
+                            card_id = _opponent_field_unit.get_card_number()
+                            card_index = _opponent_field_unit.get_index()
 
-                        self.opponent_field_unit_repository.remove_harmful_status_by_index(card_index)
-                        self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                            self.opponent_field_unit_repository.remove_current_field_unit_card(card_index)
+                            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                            self.opponent_field_unit_repository.remove_harmful_status_by_index(card_index)
+                            self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                        self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function_with_param(
+                            'death', opponent_field_unit.get_index(), remove_field_unit, opponent_field_unit
+                        )
 
                 else:
                     print(
