@@ -10017,31 +10017,39 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                     self.opponent_field_unit_repository.apply_harmful_status(opponent_field_unit.get_index(), your_actor_extra_ability)
 
                     if remove_from_field:
-                        effect_animation = EffectAnimation()
-                        effect_animation.set_animation_name('death')
-                        effect_animation.set_total_window_size(self.width, self.height)
-                        effect_animation.change_local_translation(self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
-                            index).get_fixed_card_base().get_local_translation())
-                        effect_animation.draw_animation_panel()
-                        effect_animation_panel = effect_animation.get_animation_panel()
+                        # effect_animation = EffectAnimation()
+                        # effect_animation.set_animation_name('death')
+                        # effect_animation.set_total_window_size(self.width, self.height)
+                        # effect_animation.change_local_translation(self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                        #     index).get_fixed_card_base().get_local_translation())
+                        # effect_animation.draw_animation_panel()
+                        # effect_animation_panel = effect_animation.get_animation_panel()
+                        #
+                        # animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+                        #     effect_animation)
+                        #
+                        # self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                        #     animation_index, effect_animation_panel)
 
-                        animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
-                            effect_animation)
-
-                        self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
-                            animation_index, effect_animation_panel)
-
-                        def remove_opponent_unit(unit_index):
-                            card_id = self.opponent_field_unit_repository.get_opponent_card_id_by_index(unit_index)
-                            self.opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
+                        def remove_opponent_unit(_unit_index):
+                            print(f"remove opponent unit : {_unit_index}")
+                            card_id = self.opponent_field_unit_repository.get_opponent_card_id_by_index(_unit_index)
+                            self.opponent_field_unit_repository.remove_current_field_unit_card(_unit_index)
                             self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
                             self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-                            self.opponent_field_unit_repository.remove_harmful_status_by_index(unit_index)
+                            self.opponent_field_unit_repository.remove_harmful_status_by_index(_unit_index)
 
-                        self.play_effect_animation_by_index_and_call_function_with_param(animation_index, remove_opponent_unit, index)
-                        
-                self.nether_blade_second_passive_skill_animation()
+                        self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function_with_param(
+                            'death', index, remove_opponent_unit, index)
+                        # self.play_effect_animation_by_index_and_call_function_with_param(animation_index, remove_opponent_unit, index)
 
+                def call_nether_blade_second_passive_skill_animation():
+                    if len(self.effect_animation_repository.get_effect_animation_dictionary().keys()) == 0:
+                        self.nether_blade_second_passive_skill_animation()
+                    else:
+                        self.master.after(100, call_nether_blade_second_passive_skill_animation)
+
+                call_nether_blade_second_passive_skill_animation()
         move_to_origin_location(1)
 
     def nether_blade_second_passive_skill_animation(self):
