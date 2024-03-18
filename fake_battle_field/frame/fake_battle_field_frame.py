@@ -1691,14 +1691,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
                             animation_index, effect_animation_panel)
                         
-                        def remove_opponent_unit():
+                        def remove_opponent_unit(_index):
                             
-                            self.opponent_field_unit_repository.remove_current_field_unit_card(index)
+                            self.opponent_field_unit_repository.remove_current_field_unit_card(_index)
                             self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
                             self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-                            self.opponent_field_unit_repository.remove_harmful_status_by_index(index)
+                            self.opponent_field_unit_repository.remove_harmful_status_by_index(_index)
                             
-                        self.play_effect_animation_by_index_and_call_function(animation_index, remove_opponent_unit)
+                        self.play_effect_animation_by_index_and_call_function_with_param(
+                            animation_index, remove_opponent_unit, index)
 
             second_passive_skill_type = self.card_info_repository.getCardPassiveSecondForCardNumber(19)
             if second_passive_skill_type == 1:
@@ -2195,8 +2196,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
     def redraw(self):
         if self.is_reshape_not_complete:
             return
-        print("나",self.field_area_inside_handler.get_field_area_action())
-        print("상대",self.opponent_field_area_inside_handler.get_field_area_action())
+        # print("나",self.field_area_inside_handler.get_field_area_action())
+        # print("상대",self.opponent_field_area_inside_handler.get_field_area_action())
         self.tkMakeCurrent()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
@@ -2778,6 +2779,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.lightning_border.set_padding(50)
             self.lightning_border.update_shape(card_base)
             self.lightning_border.draw_lightning_border()
+
+        # if self.selected_object is None:
+        #     self.lightning_border.remove_lightning_border()
 
         if self.active_panel_rectangle:
             # self.active_panel_rectangle.set_width_ratio(self.width_ratio)
@@ -5491,13 +5495,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
                                 animation_index, effect_animation_panel)
 
-                            def remove_opponent_unit():
-                                self.opponent_field_unit_repository.remove_current_field_unit_card(index)
-                                self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                            def remove_opponent_unit(_index):
+                                opponent_unit_card_id = (
+                                    self.opponent_field_unit_repository.find_opponent_field_unit_by_index(_index))
+                                self.opponent_field_unit_repository.remove_current_field_unit_card(_index)
+                                self.opponent_tomb_repository.create_opponent_tomb_card(opponent_unit_card_id)
                                 self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-                                self.opponent_field_unit_repository.remove_harmful_status_by_index(index)
+                                self.opponent_field_unit_repository.remove_harmful_status_by_index(_index)
 
-                            self.play_effect_animation_by_index_and_call_function(animation_index, remove_opponent_unit)
+                            # self.play_effect_animation_by_index_and_call_function(animation_index, remove_opponent_unit)
+                            self.play_effect_animation_by_index_and_call_function_with_param(
+                                animation_index, remove_opponent_unit, opponent_field_card_index)
 
                         # self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
                         # self.targeting_enemy_select_using_your_field_card_index = None
@@ -6424,11 +6432,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.your_hand_repository.save_current_hand_state(multi_draw_hand_list)
                 self.your_hand_repository.update_your_hand()
 
-                before_current_deck_list = self.your_deck_repository.get_current_deck_state_object().get_current_deck()
-                print(f"{Fore.RED}before multi draw -> before_current_deck_list:{Fore.GREEN} {before_current_deck_list}{Style.RESET_ALL}")
+                self.your_deck_repository.update_deck(multi_draw_response.get('updated_deck_card_list'))
 
-                for _ in range(20):
-                    self.your_deck_repository.get_current_deck_state_object().draw_card()
+                # before_current_deck_list = self.your_deck_repository.get_current_deck_state_object().get_current_deck()
+                # print(f"{Fore.RED}before multi draw -> before_current_deck_list:{Fore.GREEN} {before_current_deck_list}{Style.RESET_ALL}")
+                #
+                # for _ in range(20):
+                #     self.your_deck_repository.get_current_deck_state_object().draw_card()
 
                 after_current_deck_list = self.your_deck_repository.get_current_deck_state_object().get_current_deck()
                 print(f"{Fore.RED}after multi draw -> after_current_deck_list:{Fore.GREEN} {after_current_deck_list}{Style.RESET_ALL}")
@@ -12077,6 +12087,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.current_fixed_details_card = None
         self.your_active_panel.clear_all_your_active_panel()
 
+        self.field_area_inside_handler.clear_lightning_border_list()
+        self.your_field_unit_lightning_border_list.clear()
+        self.opponent_fixed_unit_card_inside_handler.clear_lightning_border_list()
 
     def create_effect_animation_with_vertices_and_play_animation_and_call_function(self, effect_name, vertices, function):
         effect_animation = EffectAnimation()

@@ -76,3 +76,10 @@ class LightningBorder:
     def draw_lightning_border(self):
         for segment in self.lightning_segments:
             self.lightning_generator.draw_lightning_segment(segment)
+
+    def remove_lightning_border(self):
+        self.shape = None
+        self.padding = 0
+        self.lightning_segments.clear()
+        # for segment in self.lightning_segments:
+        #     self.lightning_generator.draw_lightning_segment(segment)
