@@ -2195,8 +2195,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
     def redraw(self):
         if self.is_reshape_not_complete:
             return
-        print("나",self.field_area_inside_handler.get_field_area_action())
-        print("상대",self.opponent_field_area_inside_handler.get_field_area_action())
+
         self.tkMakeCurrent()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
@@ -2323,8 +2322,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         # if len(self.battle_result_panel_list) == 2:
         if len(self.battle_result_panel_list) != 0:
-            print(self.is_playing_action_animation)
-            print(self.field_area_inside_handler.get_field_area_action())
+            # print(self.is_playing_action_animation)
+            # print(self.field_area_inside_handler.get_field_area_action())
             if self.is_playing_action_animation == False and self.field_area_inside_handler.get_field_area_action() == None:
                 glEnable(GL_BLEND)
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -3794,6 +3793,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # print(self.battle_result_panel_list)
 
                 self.battle_field_function_controller.callGameEndReward()
+                self.repository_clear()
                 self.battle_result_panel_list = []
                 return
 
@@ -12118,3 +12118,22 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.timer.get_timer()
             self.timer.start_timer()
 
+    def repository_clear(self):
+        self.your_deck_repository.clear_every_resource()
+        self.your_hand_repository.clear_every_resource()
+        self.opponent_hand_repository.clear_every_resource()
+        self.your_field_unit_repository.clear_every_resource()
+        self.opponent_field_unit_repository.clear_every_resource()
+        self.your_tomb_repository.clear_every_resource()
+        self.opponent_tomb_repository.clear_every_resource()
+        self.your_hp_repository.clear_every_resource()
+        self.opponent_hp_repository.clear_every_resource()
+        self.your_field_energy_repository.clear_every_resource()
+        self.opponent_field_energy_repository.clear_every_resource()
+        self.your_lost_zone_repository.clear_every_resource()
+        self.opponent_lost_zone_repository.clear_every_resource()
+        self.round_repository.clear_every_resource()
+        self.your_field_unit_action_repository.clear_every_resource()
+        self.timer_repository.clear_every_resource()
+        self.effect_animation_repository.clear_every_resource()
+        # self.battle_field_repository.clear_every_resource()
