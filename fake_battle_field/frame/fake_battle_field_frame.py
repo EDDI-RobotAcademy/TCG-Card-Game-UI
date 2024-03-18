@@ -438,6 +438,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.start_first_turn()
 
+        self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_skill(width, height)
+
         battle_field_scene = BattleFieldScene()
         battle_field_scene.create_battle_field_cene(self.width, self.height)
         self.battle_field_background_shape_list = battle_field_scene.get_battle_field_background()
@@ -9940,9 +9942,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.master.after(20, update_position, step_count + 1)
             else:
 
-                self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
+                # effect_animation.draw_full_screen_animation_panel()
+
+                self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
                     'nether_blade_area_skill', self.start_nether_blade_first_passive_wide_area_motion_animation, attack_animation_object
                 )
+
+                # self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
+                #     'nether_blade_area_skill', self.start_nether_blade_first_passive_wide_area_motion_animation, attack_animation_object
+                # )
                 # self.start_nether_blade_first_passive_wide_area_motion_animation(attack_animation_object)
 
         update_position(1)
@@ -13103,6 +13111,20 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
             animation_index, effect_animation_panel)
 
+
+        self.play_effect_animation_by_index_and_call_function_with_param(animation_index, function, param)
+
+    def create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(self, effect_name, function, param):
+        effect_animation = EffectAnimation()
+        effect_animation.set_animation_name(effect_name)
+        effect_animation.set_total_window_size(self.width, self.height)
+
+        effect_animation.draw_full_screen_animation_panel()
+        effect_animation_panel = effect_animation.get_animation_panel()
+        animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+            effect_animation)
+        self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+            animation_index, effect_animation_panel)
 
         self.play_effect_animation_by_index_and_call_function_with_param(animation_index, function, param)
 

@@ -1,5 +1,5 @@
 import numpy as np
-from PIL import Image
+from PIL import Image, ImageOps
 
 
 class ImageDataLoader:
@@ -8,6 +8,26 @@ class ImageDataLoader:
         try:
             image = Image.open(path)
             resized_image = image.resize((width, height))
+
+            rgba_image = resized_image.convert("RGBA")
+            img_data = np.array(rgba_image)
+
+            resized_image.close()
+            image.close()
+
+            return img_data
+
+        except Exception as e:
+            print(f"Error loading image data: {e}")
+            return None
+
+    @staticmethod
+    def load_force_fit_full_screen_image_data(path, width, height):
+        try:
+            image = Image.open(path)
+
+            # 이미지를 화면 크기에 맞게 확장
+            resized_image = ImageOps.fit(image, (width, height), method=0, bleed=0.1, centering=(0.5, 0.5))
 
             rgba_image = resized_image.convert("RGBA")
             img_data = np.array(rgba_image)
