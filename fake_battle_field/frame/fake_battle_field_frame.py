@@ -1994,6 +1994,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             if is_success_value == False:
                 return
+            
+            return
 
 
 
@@ -3874,6 +3876,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 print(f"추정된 필드 액션 : {self.field_area_inside_handler.get_field_area_action()}")
                 if drop_action_result is FieldAreaAction.PLACE_UNIT:
                     self.field_area_inside_handler.clear_field_area_action()
+                    self.selected_object = None
                 if drop_action_result is FieldAreaAction.DRAW_DECK:
                     self.field_area_inside_handler.clear_field_area_action()
                 # 서포트 관련하여 시작 포인트
@@ -8778,9 +8781,94 @@ class FakeBattleFieldFrame(OpenGLFrame):
             else:
                 contract_of_doom_damage = attack_animation_object.get_animation_actor_damage()
 
-                # 체력 정보 Update
-                # for your_field_unit_index in attack_animation_object.get_your_field_unit_index_list():
-                your_field_unit_health_point_map = attack_animation_object.get_your_field_unit_health_point_map()
+                # # 체력 정보 Update
+                # # for your_field_unit_index in attack_animation_object.get_your_field_unit_index_list():
+                # your_field_unit_health_point_map = attack_animation_object.get_your_field_unit_health_point_map()
+                # for unit_index, remaining_health_point in your_field_unit_health_point_map.items():
+                #     your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(int(unit_index))
+                #     your_fixed_card_base = your_field_unit.get_fixed_card_base()
+                #     your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+                #
+                #     if remaining_health_point <= 0:
+                #         continue
+                #
+                #     for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+                #         if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                #             if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                #                 # your_fixed_card_attached_shape.set_number(int(remaining_health_point))
+                #                 remaining_hp_number = your_fixed_card_attached_shape.get_number()
+                #                 print(f"{Fore.RED}remaining_hp_number: {Fore.GREEN}{remaining_hp_number}{Style.RESET_ALL}")
+                #
+                #                 your_fixed_card_attached_shape.set_image_data(
+                #                     self.pre_drawed_image_instance.get_pre_draw_unit_hp(
+                #                         remaining_hp_number))
+                #
+                # # 죽은 유닛들 묘지에 배치 및 Replacing
+                # for dead_unit_index in attack_animation_object.get_your_dead_field_unit_index_list():
+                #     # self.__attack_animation_object.add_your_dead_field_unit_index_list(int(dead_unit_index))
+                #
+                #     effect_animation = EffectAnimation()
+                #     effect_animation.set_animation_name('death')
+                #     effect_animation.set_total_window_size(self.width, self.height)
+                #     effect_animation.change_local_translation(
+                #         self.your_field_unit_repository.find_field_unit_by_index(
+                #             dead_unit_index).get_fixed_card_base().get_local_translation())
+                #     effect_animation.draw_animation_panel()
+                #     effect_animation_panel = effect_animation.get_animation_panel()
+                #
+                #     animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+                #         effect_animation)
+                #
+                #     self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                #         animation_index, effect_animation_panel)
+                #
+                #     def remove_field_unit(dead_unit_index):
+                #         print(dead_unit_index)
+                #         dead_unit_card_id = self.your_field_unit_repository.find_field_unit_by_index(
+                #             dead_unit_index).get_card_number()
+                #         self.your_field_unit_repository.remove_card_by_index(dead_unit_index)
+                #         self.your_tomb_repository.create_tomb_card(dead_unit_card_id)
+                #         self.your_field_unit_repository.replace_field_card_position()
+                #         self.your_field_unit_repository.remove_harmful_status_by_index(dead_unit_index)
+                #
+                #     self.play_effect_animation_by_index_and_call_function_with_param(animation_index,
+                #                                                                      remove_field_unit, dead_unit_index)
+                #
+                # # 메인 캐릭터 상태 확인 및 체력 Update
+                # # if your_main_character_survival_state != 'Survival':
+                # #     print("Player who get notice is dead.")
+                # #     # TODO: 배틀 정리 요청을 띄우는 화면으로 넘어가야 함
+                #
+                # your_main_character_health_point = self.attack_animation_object.get_your_main_character_health_point()
+                #
+                # self.your_hp_repository.change_hp(your_main_character_health_point)
+                # print(f"{Fore.RED}current_main_character_health:{Fore.GREEN} "
+                #       f"{self.your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
+                #
+                # # 덱 위에서 카드 한 장 뽑아서 로스트 존 보내기
+                # for lost_card_id in attack_animation_object.get_your_lost_card_id_list():
+                #     # attack_animation_object.add_your_lost_card_id_list(lost_card_id)
+                #     self.your_deck_repository.draw_deck()
+                #     print(f"{Fore.RED}current_deck: {Fore.GREEN}"
+                #           f"{self.your_deck_repository.get_current_deck_state()}{Style.RESET_ALL}")
+                #     self.your_lost_zone_repository.create_your_lost_zone_card(lost_card_id)
+                #     print(f"{Fore.RED}current_lost_zone: {Fore.GREEN}"
+                #           f"{self.your_lost_zone_repository.get_your_lost_zone_state()}{Style.RESET_ALL}")
+
+                notify_data = self.attack_animation_object.get_notify_data()
+
+                opponent_usage_card_info = (notify_data)['player_hand_use_map']['Opponent']
+                your_field_unit_health_point_map = (notify_data)['player_field_unit_health_point_map']['You']['field_unit_health_point_map']
+                your_dead_field_unit_index_list = (notify_data)['player_field_unit_death_map']['You']['dead_field_unit_index_list']
+                your_main_character_health_point = (notify_data)['player_main_character_health_point_map']['You']
+                your_main_character_survival_state = (notify_data)['player_main_character_survival_map']['You']
+                your_deck_card_lost_list = (notify_data)['player_deck_card_lost_list_map']['You']
+
+                # 사용된 카드 묘지로 보냄
+                used_card_id = opponent_usage_card_info['card_id']
+                self.opponent_tomb_repository.create_opponent_tomb_card(used_card_id)
+                self.battle_field_repository.set_current_use_card_id(used_card_id)
+
                 for unit_index, remaining_health_point in your_field_unit_health_point_map.items():
                     your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(int(unit_index))
                     your_fixed_card_base = your_field_unit.get_fixed_card_base()
@@ -8792,15 +8880,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
                         if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
                             if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
-                                # your_fixed_card_attached_shape.set_number(int(remaining_health_point))
-                                remaining_hp_number = your_fixed_card_attached_shape.get_number()
-                                print(f"{Fore.RED}remaining_hp_number: {Fore.GREEN}{remaining_hp_number}{Style.RESET_ALL}")
+                                your_fixed_card_attached_shape.set_number(int(remaining_health_point))
+                                print(f"{Fore.RED}your_fixed_card -> int(remaining_health_point): {Fore.GREEN}{int(remaining_health_point)}{Style.RESET_ALL}")
 
                                 your_fixed_card_attached_shape.set_image_data(
-                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(
-                                        remaining_hp_number))
+                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(int(remaining_health_point)))
 
                 # 죽은 유닛들 묘지에 배치 및 Replacing
+
                 for dead_unit_index in attack_animation_object.get_your_dead_field_unit_index_list():
                     # self.__attack_animation_object.add_your_dead_field_unit_index_list(int(dead_unit_index))
 
@@ -8827,27 +8914,24 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.your_field_unit_repository.replace_field_card_position()
                         self.your_field_unit_repository.remove_harmful_status_by_index(dead_unit_index)
 
-                    self.play_effect_animation_by_index_and_call_function_with_param(animation_index,
-                                                                                     remove_field_unit, dead_unit_index)
+
+                self.your_field_unit_repository.replace_field_card_position()
 
                 # 메인 캐릭터 상태 확인 및 체력 Update
-                # if your_main_character_survival_state != 'Survival':
-                #     print("Player who get notice is dead.")
-                #     # TODO: 배틀 정리 요청을 띄우는 화면으로 넘어가야 함
-
-                your_main_character_health_point = self.attack_animation_object.get_your_main_character_health_point()
+                if your_main_character_survival_state != 'Survival':
+                    print("Player who get notice is dead.")
+                    # TODO: 배틀 정리 요청을 띄우는 화면으로 넘어가야 함
 
                 self.your_hp_repository.change_hp(your_main_character_health_point)
                 print(f"{Fore.RED}current_main_character_health:{Fore.GREEN} "
                       f"{self.your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
 
                 # 덱 위에서 카드 한 장 뽑아서 로스트 존 보내기
-                for lost_card_id in attack_animation_object.get_your_lost_card_id_list():
-                    # attack_animation_object.add_your_lost_card_id_list(lost_card_id)
+                for lost_card_id in your_deck_card_lost_list:
                     self.your_deck_repository.draw_deck()
                     print(f"{Fore.RED}current_deck: {Fore.GREEN}"
                           f"{self.your_deck_repository.get_current_deck_state()}{Style.RESET_ALL}")
-                    self.your_lost_zone_repository.create_your_lost_zone_card(lost_card_id)
+                    self.your_lost_zone_repository.create_your_lost_zone_card(int(lost_card_id))
                     print(f"{Fore.RED}current_lost_zone: {Fore.GREEN}"
                           f"{self.your_lost_zone_repository.get_your_lost_zone_state()}{Style.RESET_ALL}")
 
@@ -13049,6 +13133,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.field_area_inside_handler.clear_lightning_border_list()
         self.your_field_unit_lightning_border_list.clear()
         self.opponent_fixed_unit_card_inside_handler.clear_lightning_border_list()
+
+        # self.lightning_border.remove_lightning_border()
 
     def create_effect_animation_with_vertices_and_play_animation_and_call_function(self, effect_name, vertices, function):
         effect_animation = EffectAnimation()
