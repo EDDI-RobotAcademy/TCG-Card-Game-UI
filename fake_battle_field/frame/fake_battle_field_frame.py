@@ -5622,11 +5622,20 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         #         _targetGameMainCharacterIndex="0",
                         #         _usageSkillIndex="2"))
                         
-                        turn_start_second_passive_skill_to_main_character_response = self.__fake_battle_field_frame_repository.request_to_process_turn_start_second_passive_skill_to_main_character(
-                            TurnStartSecondPassiveSkillToMainCharacterRequest(
-                                _sessionInfo=self.__session_repository.get_first_fake_session_info(),
-                                _unitCardIndex=str(opponent_field_unit_object.get_index()),
-                                _targetGameMainCharacterIndex="0",
+                        # turn_start_second_passive_skill_to_main_character_response = self.__fake_battle_field_frame_repository.request_to_process_turn_start_second_passive_skill_to_main_character(
+                        #     TurnStartSecondPassiveSkillToMainCharacterRequest(
+                        #         _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                        #         _unitCardIndex=str(opponent_field_unit_object.get_index()),
+                        #         _targetGameMainCharacterIndex="0",
+                        #         _usageSkillIndex="2"))
+
+                        animation_actor = self.attack_animation_object.get_animation_actor()
+
+                        turn_start_second_passive_skill_to_main_character_response = self.__fake_battle_field_frame_repository.request_to_process_turn_start_second_passive_skill_to_your_field_unit(
+                            TurnStartSecondPassiveSkillToYourFieldUnitRequest(
+                                _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                                _unitCardIndex=str(animation_actor.get_index()),
+                                _opponentTargetCardIndex=str(opponent_field_unit_object.get_index()),
                                 _usageSkillIndex="2"))
 
                         # self.attack_animation_object.set_animation_actor_damage(20)
@@ -12898,6 +12907,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # opponent_damage = attack_animation_object.get_opponent_animation_actor_damage()
                 health_point = notify_data['player_main_character_health_point_map']['You']
                 self.your_hp_repository.change_hp(int(health_point))
+
+                self.attack_animation_object.set_opponent_animation_actor(None)
 
 
         move_to_origin_location(1)
