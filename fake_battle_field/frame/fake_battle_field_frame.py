@@ -112,6 +112,7 @@ from battle_field.infra.your_hp_repository import YourHpRepository
 from battle_field.infra.your_lost_zone_repository import YourLostZoneRepository
 
 from battle_field.infra.your_tomb_repository import YourTombRepository
+from battle_field.infra.battle_field_timer_repository import BattleFieldTimerRepository
 
 from battle_field.state.FieldUnitActionStatus import FieldUnitActionStatus
 from battle_field.state.energy_type import EnergyType
@@ -364,6 +365,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.timer_panel = None
         self.timer = BattleFieldTimer()
+        self.timer_repository = BattleFieldTimerRepository.getInstance()
 
         self.animation_test_image_panel = None
         self.animation_test_image = AnimationTestImage()
@@ -431,6 +433,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.is_reshape_not_complete = False
 
         self.attack_animation_object.set_total_window_size(self.width, self.height)
+
+        self.start_first_turn()
 
         battle_field_scene = BattleFieldScene()
         battle_field_scene.create_battle_field_cene(self.width, self.height)
@@ -1129,8 +1133,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
             print(f"turn_end_request_result: {turn_end_request_result}")
 
             self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(True)
+
+            self.timer.stop_timer()
+            self.timer_repository.set_timer(60)
+            self.timer_repository.set_function(self.call_turn_end)
+            self.timer.get_timer()
+            self.timer.start_timer()
+
             self.your_deck_repository.draw_deck()
             self.your_deck_repository.update_deck(self.your_deck_repository.get_current_deck_state())
+
 
         # ` (숫자 1 옆에 있는 것)
         if key.lower() == 'grave':
@@ -1800,10 +1812,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if is_success_value == False:
                 return
 
-        if key.lower() == '0':
-            self.timer.set_function(self.call_turn_end)
-            self.timer.set_timer(30)
-            self.timer.start_timer()
+
+
 
 
     def on_resize(self, event):
@@ -2963,8 +2973,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.battle_result.set_height_ratio(self.height_ratio)
                 self.battle_result_panel_list[0].draw()
 
-
-
+        #self.check_my_turn()
 
         glEnable(GL_DEPTH_TEST)
 
@@ -6412,7 +6421,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         return True
 
     def call_turn_end(self):
-        self.timer.stop_timer()
+        #self.timer.stop_timer()
         turn_end_request_result = self.round_repository.request_turn_end(
             TurnEndRequest(
                 self.__session_repository.get_session_info()))
@@ -6457,6 +6466,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
             print(f"call_turn_end() -> current_your_field_unit_index: {current_your_field_unit_index}")
             self.your_field_unit_action_repository.set_current_field_unit_action_ready(current_your_field_unit_index)
             self.your_field_unit_action_repository.set_current_field_unit_action_count(current_your_field_unit_index, 1)
+
+        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        if whose_turn is False:
+            self.timer.stop_timer()
+            self.timer_repository.set_timer(60)
+            self.timer_repository.set_function(self.fake_opponent_turn_end)
+            self.timer.get_timer()
+            self.timer.start_timer()
 
     def call_surrender(self):
         print("항복 요청!")
@@ -11972,4 +11989,48 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
 
         self.play_effect_animation_by_index_and_call_function(animation_index, function)
+
+    def start_first_turn(self):
+        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        if whose_turn is True:
+            self.timer_repository.set_function(self.call_turn_end)
+            self.timer_repository.set_timer(60)
+            self.timer.get_timer()
+            self.timer.start_timer()
+
+    def fake_opponent_turn_end(self):
+        print("Opponent Turn을 종료합니다")
+        turn_end_request_result = self.round_repository.request_turn_end(
+            TurnEndRequest(
+                self.__session_repository.get_second_fake_session_info()))
+        print(f"turn_end_request_result: {turn_end_request_result}")
+
+        self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(True)
+        self.timer.stop_timer()
+        self.timer_repository.set_timer(60)
+        self.timer_repository.set_function(self.call_turn_end)
+        self.timer.get_timer()
+        self.timer.start_timer()
+
+    def check_my_turn(self):
+        my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        if my_turn is True:
+            return
+        # my_turn_result = CheckMyTurnRequest(
+        #         self.__session_repository.get_session_info())
+        my_turn_result = self.round_repository.request_turn_end(
+            TurnEndRequest(
+                self.__session_repository.get_session_info()))
+        print(f"my_turn_result: {my_turn_result}")
+
+        if my_turn_result.get('is_success', False) == False:
+            return
+        print(f"my_turn_result: {my_turn_result}")
+        if my_turn_result.get('is_success') is True:
+            self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(True)
+            self.timer.stop_timer()
+            self.timer_repository.set_timer(30)
+            self.timer_repository.set_function(self.call_turn_end)
+            self.timer.get_timer()
+            self.timer.start_timer()
 
