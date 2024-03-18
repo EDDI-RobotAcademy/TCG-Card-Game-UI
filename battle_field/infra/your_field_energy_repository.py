@@ -74,7 +74,7 @@ class YourFieldEnergyRepository:
         if self.__current_field_energy_race == CardRace.UNDEAD:
             return 93
 
-        if self.__current_field_energy_race == CardRace.TRANT:
+        if self.__current_field_energy_race == CardRace.TRENT:
             return 97
 
     def increase_to_use_field_energy_count(self):
@@ -107,7 +107,7 @@ class YourFieldEnergyRepository:
 
     def clear_every_resource(self):
         self.field_energy_state = FieldEnergyState()
-        self.__current_field_energy_race = CardRace.DUMMY
+        self.__current_field_energy_race = CardRace.HUMAN
 
         self.__to_use_field_energy_count = 1
 
