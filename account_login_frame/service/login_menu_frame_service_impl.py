@@ -58,7 +58,7 @@ class LoginMenuFrameServiceImpl(LoginMenuFrameService):
         # button_login = ttk.Button(loginMenuFrame, text="로그인", command=loginMenuFrame.login, style="TButton")
 
         # 로그인 버튼 resize
-        self.button_login_origin = Image.open("local_storage/login_screen_image/login_button.png")
+        self.button_login_origin = Image.open("local_storage/login_screen_image/login_screen_button.png")
         login_button = self.button_login_origin.resize((271, 67))
         self.button_login = ImageTk.PhotoImage(login_button)
 
