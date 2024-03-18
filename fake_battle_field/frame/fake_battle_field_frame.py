@@ -5748,6 +5748,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         return
                     # 서포트
 
+
                     # 실제로 지울 때 몇 개 지우는지만 알면 된다.
                     # 어차피 셔플 받아서 이미지만 갈아 끼워넣을 것이기 때문
                     processing_length = len(self.selected_search_unit_index_list)
@@ -5765,26 +5766,28 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     self.field_area_inside_handler.clear_field_area_action()
 
+                    shuffled_deck_list = response.get('updated_deck_card_list')
+
+                    self.your_deck_repository.update_deck(shuffled_deck_list)
+
                     # 셔플 받았다 가정
-                    current_deck_list = self.your_deck_repository.get_current_deck_state()
-
-                    will_remove_index_from_deck = []
-                    processing_length = len(self.selected_search_unit_index_list)
-                    for index in range(processing_length):
-                        will_remove_index_from_deck.append(
-                            self.selected_search_unit_index_list[index] + 12 *
-                            self.selected_search_unit_page_number_list[index])
-
-                    print(f"will_remove_index_from_deck: {will_remove_index_from_deck}")
-
-                    remaining_shuffled_deck_list = [card for i, card in enumerate(current_deck_list) if
-                                                    i not in will_remove_index_from_deck]
-
-                    # 셔플
-                    random.shuffle(remaining_shuffled_deck_list)
-                    print(f"Shuffled deck (excluding removed indices): {remaining_shuffled_deck_list}")
-
-                    self.your_deck_repository.update_deck(remaining_shuffled_deck_list)
+                    # current_deck_list = self.your_deck_repository.get_current_deck_state()
+                    #
+                    # will_remove_index_from_deck = []
+                    # processing_length = len(self.selected_search_unit_index_list)
+                    # for index in range(processing_length):
+                    #     will_remove_index_from_deck.append(
+                    #         self.selected_search_unit_index_list[index] + 12 *
+                    #         self.selected_search_unit_page_number_list[index])
+                    #
+                    # print(f"will_remove_index_from_deck: {will_remove_index_from_deck}")
+                    #
+                    # remaining_shuffled_deck_list = [card for i, card in enumerate(current_deck_list) if
+                    #                                 i not in will_remove_index_from_deck]
+                    #
+                    # # 셔플
+                    # random.shuffle(remaining_shuffled_deck_list)
+                    # print(f"Shuffled deck (excluding removed indices): {remaining_shuffled_deck_list}")
 
                     self.selected_search_unit_index_list = []
                     self.selected_search_unit_id_list = []
