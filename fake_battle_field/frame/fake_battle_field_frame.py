@@ -3499,6 +3499,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             if placed_card_id == 33:
                                 print(f"시체 폭발(33) -> placed_card_id: {placed_card_id}")
                                 card_id = current_field_unit.get_card_number()
+                                print(current_field_unit.get_index())
+                                print(current_field_unit.get_card_number())
 
                                 opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
                                 for opponent_field_unit_object in opponent_field_unit_object_list:
@@ -6071,21 +6073,25 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                     if your_field_unit is None:
                                         continue
 
-                                    # if self.selected_object.get_card_number() == 9:
-                                    #     self.return_to_initial_location()
+                                    if self.targeting_enemy_select_using_your_field_card_index ==  your_field_unit.get_index():
 
-                                    print(f"your field unit (field_unit) = {type(your_field_unit)}")
-                                    fixed_card_base = your_field_unit.get_fixed_card_base()
-                                    # page_selected_card = self.your_hand_repository.get_current_your_hand_page()
-                                    print(f"your field unit type (fixed_card_base) = {type(fixed_card_base)}")
+                                        # if self.selected_object.get_card_number() == 9:
+                                        #     self.return_to_initial_location()
 
-                                    for fixed_card_base_attached_shape in fixed_card_base.get_attached_shapes():
-                                        if isinstance(fixed_card_base_attached_shape, NonBackgroundNumberImage):
-                                            if fixed_card_base_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                        print(f"your field unit (field_unit) = {type(your_field_unit)}")
+                                        fixed_card_base = your_field_unit.get_fixed_card_base()
+                                        # page_selected_card = self.your_hand_repository.get_current_your_hand_page()
+                                        print(f"your field unit type (fixed_card_base) = {type(fixed_card_base)}")
 
-                                                sacrificed_unit_hp_number = fixed_card_base_attached_shape.get_number()
-                                                sacrificed_unit_hp = sacrificed_unit_hp_number
-                                                break
+                                        for fixed_card_base_attached_shape in fixed_card_base.get_attached_shapes():
+                                            if isinstance(fixed_card_base_attached_shape, NonBackgroundNumberImage):
+                                                if fixed_card_base_attached_shape.get_circle_kinds() is CircleKinds.HP:
+
+                                                    sacrificed_unit_hp_number = fixed_card_base_attached_shape.get_number()
+                                                    print(f'sacrificed_unit_hp_number : {sacrificed_unit_hp_number}')
+                                                    sacrificed_unit_hp = sacrificed_unit_hp_number
+                                                    break
+                                        break
 
                                 for opponent_you_selected_object in self.opponent_you_selected_object_list:
                                     opponent_fixed_card_base = opponent_you_selected_object.get_fixed_card_base()
@@ -6096,7 +6102,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                     for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
                                         if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
                                             if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
-
+                                                print(f'{opponent_you_selected_object.get_index()} hp changed! ')
+                                                print(f"{opponent_fixed_card_attached_shape.get_number()} -> ")
+                                                print(f"{opponent_fixed_card_attached_shape.get_number() - sacrificed_unit_hp}")
                                                 hp_number = opponent_fixed_card_attached_shape.get_number()
                                                 hp_number -= sacrificed_unit_hp
 
