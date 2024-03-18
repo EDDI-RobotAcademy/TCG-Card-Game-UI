@@ -5256,6 +5256,37 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     # self.your_active_panel.clear_all_your_active_panel()
                     self.reset_every_selected_action()
 
+                    animation_actor = self.attack_animation_object.get_animation_actor()
+
+                    # turn_start_second_passive_skill_to_main_character_response = self.__fake_battle_field_frame_repository.request_to_process_turn_start_second_passive_skill_to_main_character(
+                    #     TurnStartSecondPassiveSkillToMainCharacterRequest(
+                    #         _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                    #         _unitCardIndex=str(animation_actor.get_index()),
+                    #         _targetGameMainCharacterIndex="0",
+                    #         _usageSkillIndex="2"))
+
+                    # self.__fake_battle_field_frame_repository.request_attack_main_character_with_active_skill(
+                    #     RequestAttackMainCharacterWithActiveSkill(
+                    #         _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                    #         _unitCardIndex=str(animation_actor.get_index()),
+                    #         _targetGameMainCharacterIndex="0"
+                    #     )
+                    # )
+
+                    process_second_passive_skill_response = self.__fake_battle_field_frame_repository.request_to_process_second_passive_skill_to_main_character(
+                        TargetingPassiveSkillToMainCharacterFromDeployRequest(
+                            _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                            _unitCardIndex=str(animation_actor.get_index()),
+                            _targetGameMainCharacterIndex="0",
+                            _usageSkillIndex="2"))
+
+                    print(f"{Fore.RED}your second_passive_skill_response:{Fore.GREEN} {process_second_passive_skill_response}{Style.RESET_ALL}")
+
+                    is_success = process_second_passive_skill_response['is_success']
+                    if is_success is False:
+                        self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(ActionToApplyOpponent.Dummy)
+                        return FieldAreaAction.Dummy
+
                     self.master.after(0, self.start_nether_blade_second_passive_targeting_motion_animation)
 
                     return
@@ -5278,6 +5309,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if opponent_fixed_card_base.is_point_inside((x, y)):
                         self.attack_animation_object.set_opponent_field_unit(opponent_field_unit_object)
+
+                        # turn_start_second_passive_skill_to_main_character_response = self.__fake_battle_field_frame_repository.request_to_process_turn_start_second_passive_skill_to_main_character(
+                        #     TurnStartSecondPassiveSkillToMainCharacterRequest(
+                        #         _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                        #         _unitCardIndex=str(opponent_field_unit_object.get_index()),
+                        #         _targetGameMainCharacterIndex="0",
+                        #         _usageSkillIndex="2"))
+
                         # self.attack_animation_object.set_animation_actor_damage(20)
                         self.master.after(0, self.start_nether_blade_second_passive_targeting_motion_animation)
                         self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
@@ -9978,7 +10017,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
 
                 else:
-                    print(f"{Fore.RED}메인 캐릭터 공격 -> is_attack_main_character(True): {Fore.GREEN}{is_attack_main_character}{Style.RESET_ALL}")
+                    print(f"{Fore.RED}opponent 메인 캐릭터 공격 -> is_attack_main_character(True): {Fore.GREEN}{is_attack_main_character}{Style.RESET_ALL}")
 
                     self.opponent_hp_repository.take_damage(targeting_damage)
 
@@ -10043,6 +10082,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
                 self.field_area_inside_handler.clear_field_area_action()
                 self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+
+                self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(ActionToApplyOpponent.Dummy)
 
         move_to_origin_location(1)
 
@@ -11862,8 +11903,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.opponent_field_area_inside_handler.clear_field_area_action()
 
         move_to_origin_location(1)
-
-
 
     def apply_response_data_of_field_unit_hp(self, player_field_unit_health_point_data):
         print('apply notify data of field unit hp!! : ', player_field_unit_health_point_data)
