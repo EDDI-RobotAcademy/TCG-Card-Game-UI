@@ -8058,7 +8058,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         opponent_attacker_unit_moving_x = attack_animation_object.get_opponent_attacker_unit_moving_x()
 
-        new_y_value = current_opponent_attacker_unit_local_translation[1] + 240
+        new_y_value = current_opponent_attacker_unit_local_translation[1] - 240
         opponent_attacker_unit_destination_local_translation = (0, new_y_value)
         print(f"{Fore.RED}opponent_attacker_unit_destination_local_translation{Fore.GREEN} {opponent_attacker_unit_destination_local_translation}{Style.RESET_ALL}")
 
@@ -8172,7 +8172,48 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 #
                 #         self.play_effect_animation_by_index_and_call_function(animation_index, remove_opponent_unit)
 
-                self.field_area_inside_handler.clear_field_area_action()
+                notify_data = self.attack_animation_object.get_notify_data()
+                player_field_unit_harmful_effect_data = notify_data['player_field_unit_harmful_effect_map']
+                field_unit_health_point_map = notify_data['player_field_unit_health_point_map']['You']['field_unit_health_point_map']
+                dead_field_unit_index_list = notify_data['player_field_unit_death_map']['You']['dead_field_unit_index_list']
+
+                for player, field_data in player_field_unit_harmful_effect_data.items():
+                    for unit_index, harmful_status_value in field_data.get('field_unit_harmful_status_map', {}).items():
+                        harmful_status_list = harmful_status_value.get('harmful_status_list', [])
+                        if len(harmful_status_list) == 0:
+                            continue
+
+                        if player == 'Opponent':
+                            self.opponent_field_unit_repository.apply_harmful_status(int(unit_index), harmful_status_list)
+                        elif player == 'You':
+                            self.your_field_unit_repository.apply_harmful_status(int(unit_index), harmful_status_list)
+
+                for unit_index, remain_hp in field_unit_health_point_map.items():
+                    if remain_hp <= 0:
+                        continue
+
+                    your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(int(unit_index))
+                    your_fixed_card_base = your_field_unit.get_fixed_card_base()
+                    your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+
+                    for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+                        if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                            if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                your_fixed_card_attached_shape.set_number(remain_hp)
+
+                                your_fixed_card_attached_shape.set_image_data(
+                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(remain_hp))
+
+                for dead_unit_index in dead_field_unit_index_list:
+                    field_unit_id = self.your_field_unit_repository.get_card_id_by_index(dead_unit_index)
+                    self.your_tomb_repository.create_tomb_card(field_unit_id)
+                    self.your_field_unit_repository.remove_card_by_index(dead_unit_index)
+                    self.your_field_unit_repository.remove_harmful_status_by_index(dead_unit_index)
+
+                self.opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.Dummy)
+                self.attack_animation_object.set_opponent_animation_actor(None)
+
+                self.your_field_unit_repository.replace_field_card_position()
 
                 pass
 
