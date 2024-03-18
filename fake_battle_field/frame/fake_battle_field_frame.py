@@ -1135,7 +1135,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(True)
 
             self.timer.stop_timer()
-            self.timer_repository.set_timer(30)
+            self.timer_repository.set_timer(60)
             self.timer_repository.set_function(self.call_turn_end)
             self.timer.get_timer()
             self.timer.start_timer()
@@ -2973,8 +2973,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.battle_result.set_height_ratio(self.height_ratio)
                 self.battle_result_panel_list[0].draw()
 
-
-
+        #self.check_my_turn()
 
         glEnable(GL_DEPTH_TEST)
 
@@ -6471,7 +6470,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
         if whose_turn is False:
             self.timer.stop_timer()
-            self.timer_repository.set_timer(30)
+            self.timer_repository.set_timer(60)
             self.timer_repository.set_function(self.fake_opponent_turn_end)
             self.timer.get_timer()
             self.timer.start_timer()
@@ -11992,7 +11991,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
         if whose_turn is True:
             self.timer_repository.set_function(self.call_turn_end)
-            self.timer_repository.set_timer(30)
+            self.timer_repository.set_timer(60)
             self.timer.get_timer()
             self.timer.start_timer()
 
@@ -12005,21 +12004,30 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(True)
         self.timer.stop_timer()
-        self.timer_repository.set_timer(30)
+        self.timer_repository.set_timer(60)
         self.timer_repository.set_function(self.call_turn_end)
         self.timer.get_timer()
         self.timer.start_timer()
 
     def check_my_turn(self):
-        my_turn_result = CheckMyTurnRequest(
-                self.__session_repository.get_session_info())
-        # turn_end_request_result = self.round_repository.request_turn_end(
-        #     TurnEndRequest(
-        #         self.__session_repository.get_second_fake_session_info()))
+        my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        if my_turn is True:
+            return
+        # my_turn_result = CheckMyTurnRequest(
+        #         self.__session_repository.get_session_info())
+        my_turn_result = self.round_repository.request_turn_end(
+            TurnEndRequest(
+                self.__session_repository.get_session_info()))
+        print(f"my_turn_result: {my_turn_result}")
+
+        if my_turn_result.get('is_success', False) == False:
+            return
         print(f"my_turn_result: {my_turn_result}")
         if my_turn_result.get('is_success') is True:
             self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(True)
+            self.timer.stop_timer()
             self.timer_repository.set_timer(30)
+            self.timer_repository.set_function(self.call_turn_end)
             self.timer.get_timer()
             self.timer.start_timer()
 
