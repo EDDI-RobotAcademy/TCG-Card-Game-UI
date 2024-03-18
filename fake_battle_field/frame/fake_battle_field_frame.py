@@ -438,6 +438,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.start_first_turn()
 
+        self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_skill(width, height)
+
         battle_field_scene = BattleFieldScene()
         battle_field_scene.create_battle_field_cene(self.width, self.height)
         self.battle_field_background_shape_list = battle_field_scene.get_battle_field_background()
@@ -5633,11 +5635,20 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         #         _targetGameMainCharacterIndex="0",
                         #         _usageSkillIndex="2"))
                         
-                        turn_start_second_passive_skill_to_main_character_response = self.__fake_battle_field_frame_repository.request_to_process_turn_start_second_passive_skill_to_main_character(
-                            TurnStartSecondPassiveSkillToMainCharacterRequest(
-                                _sessionInfo=self.__session_repository.get_first_fake_session_info(),
-                                _unitCardIndex=str(opponent_field_unit_object.get_index()),
-                                _targetGameMainCharacterIndex="0",
+                        # turn_start_second_passive_skill_to_main_character_response = self.__fake_battle_field_frame_repository.request_to_process_turn_start_second_passive_skill_to_main_character(
+                        #     TurnStartSecondPassiveSkillToMainCharacterRequest(
+                        #         _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                        #         _unitCardIndex=str(opponent_field_unit_object.get_index()),
+                        #         _targetGameMainCharacterIndex="0",
+                        #         _usageSkillIndex="2"))
+
+                        animation_actor = self.attack_animation_object.get_animation_actor()
+
+                        turn_start_second_passive_skill_to_main_character_response = self.__fake_battle_field_frame_repository.request_to_process_turn_start_second_passive_skill_to_your_field_unit(
+                            TurnStartSecondPassiveSkillToYourFieldUnitRequest(
+                                _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                                _unitCardIndex=str(animation_actor.get_index()),
+                                _opponentTargetCardIndex=str(opponent_field_unit_object.get_index()),
                                 _usageSkillIndex="2"))
 
                         # self.attack_animation_object.set_animation_actor_damage(20)
@@ -7967,11 +7978,28 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attack_animation_object.set_need_post_process(True)
 
                 notify_data = attack_animation_object.get_notify_data()
-                opponent_dead_unit_index_list = notify_data["player_field_unit_death_map"]["Opponent"]["dead_field_unit_index_list"]
-                your_dead_unit_index_list = notify_data["player_field_unit_death_map"]["You"]["dead_field_unit_index_list"]
+                # opponent_dead_unit_index_list = notify_data["player_field_unit_death_map"]["Opponent"]["dead_field_unit_index_list"]
+                # your_dead_unit_index_list = notify_data["player_field_unit_death_map"]["You"]["dead_field_unit_index_list"]
+                # 
+                # opponent_unit_health_index_map = notify_data["player_field_unit_health_point_map"]["Opponent"]["field_unit_health_point_map"]
+                # your_unit_health_index_map = notify_data["player_field_unit_health_point_map"]["You"]["field_unit_health_point_map"]
 
-                opponent_unit_health_index_map = notify_data["player_field_unit_health_point_map"]["Opponent"]["field_unit_health_point_map"]
-                your_unit_health_index_map = notify_data["player_field_unit_health_point_map"]["You"]["field_unit_health_point_map"]
+                if "Opponent" in notify_data["player_field_unit_death_map"]:
+                    opponent_dead_unit_index_list = notify_data["player_field_unit_death_map"]["Opponent"]["dead_field_unit_index_list"]
+                    opponent_unit_health_index_map = notify_data["player_field_unit_health_point_map"]["Opponent"]["field_unit_health_point_map"]
+                else:
+                    # Opponent 키가 없는 경우 처리할 작업 수행
+                    opponent_dead_unit_index_list = []
+                    opponent_unit_health_index_map = {}
+
+                # You 키가 있는지 확인
+                if "You" in notify_data["player_field_unit_death_map"]:
+                    your_dead_unit_index_list = notify_data["player_field_unit_death_map"]["You"]["dead_field_unit_index_list"]
+                    your_unit_health_index_map = notify_data["player_field_unit_health_point_map"]["You"]["field_unit_health_point_map"]
+                else:
+                    # You 키가 없는 경우 처리할 작업 수행
+                    your_dead_unit_index_list = []
+                    your_unit_health_index_map = {}
 
                 for opponent_dead_unit_index in opponent_dead_unit_index_list:
                     # opponent_dead_unit_index = opponent_dead_unit.get_index()
@@ -7985,22 +8013,23 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 for index, health in opponent_unit_health_index_map.items():
                     opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(int(index))
-                    opponent_field_unit_fixed_card_base = opponent_field_unit.get_fixed_card_base()
-                    for attached_shape in opponent_field_unit_fixed_card_base.get_attached_shapes():
-                        if isinstance(attached_shape, NonBackgroundNumberImage):
-                            if attached_shape.get_circle_kinds() is CircleKinds.HP:
-                                attached_shape.set_image_data(
-                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(
-                                        health))
+                    if opponent_field_unit is not None:
+                        opponent_field_unit_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                        for attached_shape in opponent_field_unit_fixed_card_base.get_attached_shapes():
+                            if isinstance(attached_shape, NonBackgroundNumberImage):
+                                if attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                    attached_shape.set_image_data(
+                                        self.pre_drawed_image_instance.get_pre_draw_unit_hp(health))
 
                 for index, health in your_unit_health_index_map.items():
                     your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(int(index))
-                    your_field_unit_fixed_card_base = your_field_unit.get_fixed_card_base()
-                    for attached_shape in your_field_unit_fixed_card_base.get_attached_shapes():
-                        if isinstance(attached_shape, NonBackgroundNumberImage):
-                            if attached_shape.get_circle_kinds() is CircleKinds.HP:
-                                attached_shape.set_image_data(
-                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(health))
+                    if your_field_unit is not None:
+                        your_field_unit_fixed_card_base = your_field_unit.get_fixed_card_base()
+                        for attached_shape in your_field_unit_fixed_card_base.get_attached_shapes():
+                            if isinstance(attached_shape, NonBackgroundNumberImage):
+                                if attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                    attached_shape.set_image_data(
+                                        self.pre_drawed_image_instance.get_pre_draw_unit_hp(health))
 
                 self.your_field_unit_repository.replace_field_card_position()
                 self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
@@ -9958,9 +9987,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.master.after(20, update_position, step_count + 1)
             else:
 
-                self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
+                # effect_animation.draw_full_screen_animation_panel()
+
+                self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
                     'nether_blade_area_skill', self.start_nether_blade_first_passive_wide_area_motion_animation, attack_animation_object
                 )
+
+                # self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
+                #     'nether_blade_area_skill', self.start_nether_blade_first_passive_wide_area_motion_animation, attack_animation_object
+                # )
                 # self.start_nether_blade_first_passive_wide_area_motion_animation(attack_animation_object)
 
         update_position(1)
@@ -12911,6 +12946,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 health_point = notify_data['player_main_character_health_point_map']['You']
                 self.your_hp_repository.change_hp(int(health_point))
 
+                self.attack_animation_object.set_opponent_animation_actor(None)
+
 
         move_to_origin_location(1)
 
@@ -13141,6 +13178,20 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
             animation_index, effect_animation_panel)
 
+
+        self.play_effect_animation_by_index_and_call_function_with_param(animation_index, function, param)
+
+    def create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(self, effect_name, function, param):
+        effect_animation = EffectAnimation()
+        effect_animation.set_animation_name(effect_name)
+        effect_animation.set_total_window_size(self.width, self.height)
+
+        effect_animation.draw_full_screen_animation_panel()
+        effect_animation_panel = effect_animation.get_animation_panel()
+        animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+            effect_animation)
+        self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+            animation_index, effect_animation_panel)
 
         self.play_effect_animation_by_index_and_call_function_with_param(animation_index, function, param)
 
