@@ -2417,7 +2417,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 effect_animation)
             self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
                 animation_index, effect_animation_panel)
-            print('파멸의 계약 맞음 ㅇㅇ')
             self.play_effect_animation_by_index_and_call_function(animation_index, self.your_contract_of_doom_attack_animation)
             #self.master.after(2000, self.your_contract_of_doom_attack_animation)
             self.attack_animation_object.set_animation_action(AnimationAction.DUMMY)
@@ -8723,7 +8722,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
         your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
         your_field_unit_list_length = len(
             self.your_field_unit_repository.get_current_field_unit_list())
-        print('파멸의 계약 시작 : ', your_field_unit_list)
 
         def wide_area_attack(step_count):
             your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
@@ -8888,33 +8886,35 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 # 죽은 유닛들 묘지에 배치 및 Replacing
 
-                for dead_unit_index in attack_animation_object.get_your_dead_field_unit_index_list():
+                for dead_unit_index in your_dead_field_unit_index_list:
                     # self.__attack_animation_object.add_your_dead_field_unit_index_list(int(dead_unit_index))
 
-                    effect_animation = EffectAnimation()
-                    effect_animation.set_animation_name('death')
-                    effect_animation.set_total_window_size(self.width, self.height)
-                    effect_animation.change_local_translation(
-                        self.your_field_unit_repository.find_field_unit_by_index(
-                            dead_unit_index).get_fixed_card_base().get_local_translation())
-                    effect_animation.draw_animation_panel()
-                    effect_animation_panel = effect_animation.get_animation_panel()
+                    # effect_animation = EffectAnimation()
+                    # effect_animation.set_animation_name('death')
+                    # effect_animation.set_total_window_size(self.width, self.height)
+                    # effect_animation.change_local_translation(
+                    #     self.your_field_unit_repository.find_field_unit_by_index(
+                    #         dead_unit_index).get_fixed_card_base().get_local_translation())
+                    # effect_animation.draw_animation_panel()
+                    # effect_animation_panel = effect_animation.get_animation_panel()
+                    #
+                    # animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+                    #     effect_animation)
+                    #
+                    # self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                    #     animation_index, effect_animation_panel)
 
-                    animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
-                        effect_animation)
-
-                    self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
-                        animation_index, effect_animation_panel)
-
-                    def remove_field_unit(dead_unit_index):
+                    def remove_field_unit(unit_index):
                         dead_unit_card_id = self.your_field_unit_repository.find_field_unit_by_index(
-                            dead_unit_index).get_card_number()
-                        self.your_field_unit_repository.remove_card_by_index(dead_unit_index)
+                            unit_index).get_card_number()
+                        self.your_field_unit_repository.remove_card_by_index(unit_index)
                         self.your_tomb_repository.create_tomb_card(dead_unit_card_id)
                         self.your_field_unit_repository.replace_field_card_position()
-                        self.your_field_unit_repository.remove_harmful_status_by_index(dead_unit_index)
+                        self.your_field_unit_repository.remove_harmful_status_by_index(unit_index)
 
-
+                    self.create_effect_animation_to_your_unit_and_play_animation_and_call_function_with_param(
+                        'death', dead_unit_index, remove_field_unit, dead_unit_index
+                    )
                 self.your_field_unit_repository.replace_field_card_position()
 
                 # 메인 캐릭터 상태 확인 및 체력 Update
