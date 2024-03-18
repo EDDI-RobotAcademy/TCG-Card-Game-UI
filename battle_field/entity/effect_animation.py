@@ -92,6 +92,31 @@ class EffectAnimation:
 
         )
 
+    def draw_full_screen_animation_panel(self):
+        left_x_point = 0
+        top_y_point = 0
+        right_x_point = self.total_width
+        bottom_y_point = self.total_height
+
+        # Create vertices for the animation panel
+        full_screen_vertices = [(left_x_point, top_y_point),
+                                (right_x_point, top_y_point),
+                                (right_x_point, bottom_y_point),
+                                (left_x_point, bottom_y_point)]
+
+        self.animation_panel = NonBackgroundImage(
+            image_data=self.__pre_drawed_image.get_pre_draw_effect_animation(self.animation_name),
+            # vertices=[
+            #     (left_x_point, top_y_point),
+            #     (right_x_point, top_y_point),
+            #     (right_x_point, bottom_y_point),
+            #     (left_x_point, bottom_y_point)
+            # ],
+            vertices=full_screen_vertices,
+            local_translation=self.local_translation
+
+        )
+
     def draw_animation_panel(self):
 
         basic_fixed_card_base_vertices = [(-32.5, 0), (137.5, 0), (137.5, 170), (-32.5, 170)]

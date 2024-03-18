@@ -28,3 +28,6 @@ class BattleFieldTimerRepository:
 
     def get_function(self):
         return self.function
+
+    def clear_every_resource(self):
+        self.timer = 60

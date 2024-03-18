@@ -1,4 +1,6 @@
 from tkinter import ttk
+import tkinter
+from PIL import ImageTk, Image
 
 from account_login_frame.repository.login_menu_frame_repository_impl import LoginMenuFrameRepositoryImpl
 from account_login_frame.service.login_menu_frame_service import LoginMenuFrameService
@@ -27,17 +29,45 @@ class LoginMenuFrameServiceImpl(LoginMenuFrameService):
 
         style = ttk.Style()
         style.configure("TFrame", background="#444444")
-        style.configure("TLabel", background="#444444", foreground="#ffffff", font=("Arial", 12))
+        style.configure("TLabel", background="#444444", foreground="#ffffff", font=("Arial", 13))
         style.configure("TButton", background="#2C3E50", foreground="#ffffff", font=("Arial", 12), padding=(10, 5))
+        style.configure("TEntry", foreground="gray")
 
-        label_username = ttk.Label(loginMenuFrame, text="아이디:", style="TLabel")
-        label_password = ttk.Label(loginMenuFrame, text="비밀번호:", style="TLabel")
-        entry_username = ttk.Entry(loginMenuFrame, font=("Arial", 12))
-        entry_password = ttk.Entry(loginMenuFrame, show="*", font=("Arial", 12))
+        def on_entry_click_user_name(event):
+            if entry_username.get() == "ID":
+                entry_username.delete(0, "end")
+                style.configure("TEntry", foreground="black")
+
+        def on_entry_click_password(evnet):
+            if entry_password.get() == "PASSWORD":
+                entry_password.delete(0, "end")
+                style.configure("TEntry", foreground="black")
+                entry_password["show"] = "*"
+
+
+        # label_username = ttk.Label(loginMenuFrame, text="아이디:", style="TLabel")
+        # label_password = ttk.Label(loginMenuFrame, text="비밀번호:", style="TLabel")
+        entry_username = ttk.Entry(loginMenuFrame, font=("Arial", 20))
+        entry_username.insert(0, "ID")
+        entry_username.bind("<FocusIn>", on_entry_click_user_name)
+
+        entry_password = ttk.Entry(loginMenuFrame, font=("Arial", 20))
+        entry_password.insert(0, "PASSWORD")
+        entry_password.bind("<FocusIn>", on_entry_click_password)
 
         # button_login = ttk.Button(loginMenuFrame, text="로그인", command=loginMenuFrame.login, style="TButton")
-        button_login = ttk.Button(loginMenuFrame, text="로그인", style="TButton")
+
+        # 로그인 버튼 resize
+        self.button_login_origin = Image.open("local_storage/login_screen_image/login_screen_button.png")
+        login_button = self.button_login_origin.resize((271, 67))
+        self.button_login = ImageTk.PhotoImage(login_button)
+
+        button_login = tkinter.Button(loginMenuFrame,
+                                      image=self.button_login,
+                                      bd=0, highlightthickness=0,
+                                      width=271, height=67)
         # button_login.bind("<Button-1>", lambda event: switchFrameWithMenuName("lobby-menu"))
+
 
         def on_signin_click(event):
             try:
@@ -66,17 +96,17 @@ class LoginMenuFrameServiceImpl(LoginMenuFrameService):
         # link_signup.bind("<Button-1>", on_signup_click)
         button_login.bind("<Button-1>", on_signin_click)
 
-        link_signup = ttk.Label(loginMenuFrame, text="회원 가입", cursor="hand2", font=("Arial", 10, "underline"))
+        link_signup = ttk.Label(loginMenuFrame, text="회원 가입", cursor="hand2", font=("Arial", 13, "underline"))
         link_signup.bind("<Button-1>", lambda event: switchFrameWithMenuName("account-register"))
 
-        label_username.place(relx=0.44, rely=0.4, anchor="center")
-        entry_username.place(relx=0.56, rely=0.4, anchor="center")
+        # label_username.place(relx=0.44, rely=0.4, anchor="center")
+        entry_username.place(relx=0.5, rely=0.497, width=457, height=68, anchor="center")
 
-        label_password.place(relx=0.44, rely=0.5, anchor="center")
-        entry_password.place(relx=0.56, rely=0.5, anchor="center")
+        # label_password.place(relx=0.44, rely=0.5, anchor="center")
+        entry_password.place(relx=0.5, rely=0.605, width=457, height=68, anchor="center")
 
-        button_login.place(relx=0.5, rely=0.6, anchor="center")
-        link_signup.place(relx=0.5, rely=0.7, anchor="center")
+        button_login.place(relx=0.5, rely=0.784, anchor="center")
+        link_signup.place(relx=0.5, rely=0.85, anchor="center")
 
         return loginMenuFrame
 

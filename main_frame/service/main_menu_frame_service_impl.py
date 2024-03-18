@@ -1,4 +1,5 @@
 import tkinter
+from PIL import ImageTk, Image
 
 from main_frame.repository.main_menu_frame_repository_impl import MainMenuFrameRepositoryImpl
 from main_frame.service.main_menu_frame_service import MainMenuFrameService
@@ -27,15 +28,28 @@ class MainMenuFrameServiceImpl(MainMenuFrameService):
     def createMainUiFrame(self, rootWindow, switchFrameWithMenuName):
         mainMenuFrame = self.__mainMenuFrameRepository.createMainMenuFrame(rootWindow)
 
-        label_text = "EDDI TCG Card Battle"
-        label = tkinter.Label(mainMenuFrame, text=label_text, font=("Helvetica", 72), bg="black", fg="white",
-                              anchor="center", justify="center", pady=50)
-
-        label.place(relx=0.5, rely=0.5, anchor="center", bordermode="outside")  # 가운데 정렬
+        # label_text = "EDDI TCG Card Battle"
+        # label = tkinter.Label(mainMenuFrame, text=label_text, font=("Helvetica", 72), bg="black", fg="white",
+        #                       anchor="center", justify="center", pady=50)
+        #
+        # label.place(relx=0.5, rely=0.5, anchor="center", bordermode="outside")  # 가운데 정렬
 
         # start_button = tkinter.Button(mainMenuFrame, text="시작", bg="#2E7D32", fg="white",
         #                               command=lambda: switchFrameWithMenuName("login-menu"), width=36, height=2)
-        start_button = tkinter.Button(mainMenuFrame, text="시작", bg="#2E7D32", fg="white", width=36, height=2)
+
+
+        self.button_start_origin = Image.open("local_storage/start_screen_image/login_button.png")
+        button_start = self.button_start_origin.resize((264, 67))
+        self.start_login = ImageTk.PhotoImage(button_start)
+
+        self.button_exit_origin = Image.open("local_storage/start_screen_image/sign_up_button.png")
+        button_exit = self.button_exit_origin.resize((264, 67))
+        self.button_exit = ImageTk.PhotoImage(button_exit)
+
+        start_button = tkinter.Button(mainMenuFrame,
+                                      image=self.start_login,
+                                      bd=0, highlightthickness=0,
+                                      width=264, height=67)
 
         def on_session_login_click(event):
             try:
@@ -58,7 +72,7 @@ class MainMenuFrameServiceImpl(MainMenuFrameService):
 
         start_button.bind("<Button-1>", on_session_login_click)
 
-        start_button.place(relx=0.5, rely=0.65, anchor="center")
+        start_button.place(relx=0.397, rely=0.842, anchor="center")
 
         def on_program_exit_click(event):
             try:
@@ -75,9 +89,12 @@ class MainMenuFrameServiceImpl(MainMenuFrameService):
             except Exception as e:
                 print(f"An error occurred: {e}")
 
-        exit_button = tkinter.Button(mainMenuFrame, text="종료", bg="#C62828", fg="white", width=36, height=2)
+        exit_button = tkinter.Button(mainMenuFrame,
+                                     image=self.button_exit,
+                                     bd=0, highlightthickness=0,
+                                     width=264, height=67)
         exit_button.bind("<Button-1>", on_program_exit_click)
-        exit_button.place(relx=0.5, rely=0.75, anchor="center")
+        exit_button.place(relx=0.605, rely=0.842, anchor="center")
 
         return mainMenuFrame
 

@@ -30,6 +30,7 @@ class FieldAreaInsideHandler:
     __recently_added_card_index = None
 
     __required_to_process_passive_skill_multiple_unit_list = []
+    __required_to_process_passive_skill_multiple_unit_map = {}
 
     __unit_action = None
     __turn_start_action = None
@@ -123,6 +124,12 @@ class FieldAreaInsideHandler:
 
     def get_required_to_process_passive_skill_multiple_unit_list(self):
         return self.__required_to_process_passive_skill_multiple_unit_list
+
+    def set_required_to_process_passive_skill_multiple_unit_map(self, required_to_process_passive_skill_multiple_unit_map):
+        self.__required_to_process_passive_skill_multiple_unit_map = required_to_process_passive_skill_multiple_unit_map
+
+    def get_required_to_process_passive_skill_multiple_unit_map(self):
+        return self.__required_to_process_passive_skill_multiple_unit_map
 
     def clear_required_to_process_passive_skill_multiple_unit_list(self):
         self.__required_to_process_passive_skill_multiple_unit_list = []
