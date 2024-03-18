@@ -2402,22 +2402,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         if self.attack_animation_object.get_animation_action() is AnimationAction.CONTRACT_OF_DOOM:
             print(f"{Fore.RED}파멸의 계약 animation 재생{Style.RESET_ALL}")
 
-            effect_animation = EffectAnimation()
-            effect_animation.set_animation_name('contract_of_doom')
-            effect_animation.set_total_window_size(self.width, self.height)
-            field_vertices = self.your_field_panel.get_vertices()
-            main_character_vertices = self.your_main_character_panel.get_vertices()
-            vertices = [field_vertices[1], field_vertices[2],
-                        (field_vertices[3][0], main_character_vertices[2][1]),
-                        (field_vertices[0][0], main_character_vertices[3][1])]
-            effect_animation.draw_animation_panel_with_vertices(vertices)
-            effect_animation_panel = effect_animation.get_animation_panel()
+            self.master.after(2000, self.ready_to_use_contract_of_doom_attack_animation)
 
-            animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
-                effect_animation)
-            self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
-                animation_index, effect_animation_panel)
-            self.play_effect_animation_by_index_and_call_function(animation_index, self.your_contract_of_doom_attack_animation)
             #self.master.after(2000, self.your_contract_of_doom_attack_animation)
             self.attack_animation_object.set_animation_action(AnimationAction.DUMMY)
 
@@ -8712,6 +8698,24 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         move_to_origin_location(1)
 
+    def ready_to_use_contract_of_doom_attack_animation(self):
+        effect_animation = EffectAnimation()
+        effect_animation.set_animation_name('contract_of_doom')
+        effect_animation.set_total_window_size(self.width, self.height)
+        field_vertices = self.your_field_panel.get_vertices()
+        main_character_vertices = self.your_main_character_panel.get_vertices()
+        vertices = [field_vertices[1], field_vertices[2],
+                    (field_vertices[3][0], main_character_vertices[2][1]),
+                    (field_vertices[0][0], main_character_vertices[3][1])]
+        effect_animation.draw_animation_panel_with_vertices(vertices)
+        effect_animation_panel = effect_animation.get_animation_panel()
+
+        animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+            effect_animation)
+        self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+            animation_index, effect_animation_panel)
+
+        self.play_effect_animation_by_index_and_call_function(animation_index, self.your_contract_of_doom_attack_animation)
 
     def your_contract_of_doom_attack_animation(self):
         self.is_playing_action_animation = True
@@ -8865,7 +8869,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # 사용된 카드 묘지로 보냄
                 used_card_id = opponent_usage_card_info['card_id']
                 self.opponent_tomb_repository.create_opponent_tomb_card(used_card_id)
-                self.battle_field_repository.set_current_use_card_id(used_card_id)
 
                 for unit_index, remaining_health_point in your_field_unit_health_point_map.items():
                     your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(int(unit_index))
