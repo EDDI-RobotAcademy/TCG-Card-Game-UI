@@ -150,6 +150,9 @@ class OpponentFixedUnitCardInsideHandler:
         if selected_object.get_card_number() == 35:
             return False
 
+        if selected_object.get_card_number() == 33:
+            return False
+
         if card_type not in [CardType.ITEM.value]:
             return
 
