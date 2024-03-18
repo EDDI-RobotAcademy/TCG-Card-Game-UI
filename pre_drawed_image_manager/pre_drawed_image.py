@@ -832,7 +832,7 @@ class PreDrawedImage:
         file_list = os.listdir(image_dir)
 
         for number in range(1, len(file_list) + 1):
-            number_image_data = os.path.join(self.__project_root, "local_storage", "message_on_the_battle_screen", "use_energy_opponent_unit"
+            number_image_data = os.path.join(self.__project_root, "local_storage", "message_on_the_battle_screen", "use_energy_opponent_unit",
                                              f"{number}.png")
             print(f"image data = {number_image_data}")
             self.__pre_draw_use_energy_opponent_unit[number] = ImageDataLoader.load_message_on_the_battle_screen_image_data(number_image_data)

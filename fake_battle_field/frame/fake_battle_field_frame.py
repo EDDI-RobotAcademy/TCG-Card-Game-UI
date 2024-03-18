@@ -2024,13 +2024,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     print('광역 공격 실행중')
 
                     field_vertices = self.your_field_panel.get_vertices()
+                    main_character_vertices = self.your_main_character_panel.get_vertices()
 
+                  #  vertices = [field_vertices[1], field_vertices[2], field_vertices[3], field_vertices[0]]
 
-                    vertices = [field_vertices[1], field_vertices[2], field_vertices[3], field_vertices[0]]
-                    #
-                    # vertices = [(field_vertices[0][0], main_character_vertices[0][1]),
-                    #             (field_vertices[2][0], main_character_vertices[1][1]),
-                    #             field_vertices[3], field_vertices[0]]
+                    vertices = [field_vertices[1], field_vertices[2],
+                                (field_vertices[3][0], main_character_vertices[2][1]),
+                                (field_vertices[0][0], main_character_vertices[3][1])]
                     effect_animation.draw_animation_panel_with_vertices(vertices)
                     effect_animation_panel = effect_animation.get_animation_panel()
                     animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
@@ -2107,7 +2107,24 @@ class FakeBattleFieldFrame(OpenGLFrame):
         if self.attack_animation_object.get_animation_action() is AnimationAction.CONTRACT_OF_DOOM:
             print(f"{Fore.RED}파멸의 계약 animation 재생{Style.RESET_ALL}")
 
-            self.master.after(2000, self.your_contract_of_doom_attack_animation)
+            effect_animation = EffectAnimation()
+            effect_animation.set_animation_name('contract_of_doom')
+            effect_animation.set_total_window_size(self.width, self.height)
+            field_vertices = self.your_field_panel.get_vertices()
+            main_character_vertices = self.your_main_character_panel.get_vertices()
+            vertices = [field_vertices[1], field_vertices[2],
+                        (field_vertices[3][0], main_character_vertices[2][1]),
+                        (field_vertices[0][0], main_character_vertices[3][1])]
+            effect_animation.draw_animation_panel_with_vertices(vertices)
+            effect_animation_panel = effect_animation.get_animation_panel()
+
+            animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+                effect_animation)
+            self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                animation_index, effect_animation_panel)
+
+            self.play_effect_animation_by_index_and_call_function(animation_index, self.your_contract_of_doom_attack_animation)
+            #self.master.after(2000, self.your_contract_of_doom_attack_animation)
             self.attack_animation_object.set_animation_action(AnimationAction.DUMMY)
 
         if self.field_area_inside_handler.get_field_area_action() is not FieldAreaAction.PLAY_ANIMATION:
@@ -7870,11 +7887,33 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # 죽은 유닛들 묘지에 배치 및 Replacing
                 for dead_unit_index in attack_animation_object.get_your_dead_field_unit_index_list():
                     # self.__attack_animation_object.add_your_dead_field_unit_index_list(int(dead_unit_index))
-                    field_unit_id = self.your_field_unit_repository.get_card_id_by_index(dead_unit_index)
-                    self.your_tomb_repository.create_tomb_card(field_unit_id)
-                    self.your_field_unit_repository.remove_card_by_index(dead_unit_index)
 
-                self.your_field_unit_repository.replace_field_card_position()
+                    effect_animation = EffectAnimation()
+                    effect_animation.set_animation_name('death')
+                    effect_animation.set_total_window_size(self.width, self.height)
+                    effect_animation.change_local_translation(
+                        self.your_field_unit_repository.find_field_unit_by_index(
+                            dead_unit_index).get_fixed_card_base().get_local_translation())
+                    effect_animation.draw_animation_panel()
+                    effect_animation_panel = effect_animation.get_animation_panel()
+
+                    animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+                        effect_animation)
+
+                    self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                        animation_index, effect_animation_panel)
+
+                    def remove_field_unit(dead_unit_index):
+                        print(dead_unit_index)
+                        dead_unit_card_id = self.your_field_unit_repository.find_field_unit_by_index(
+                            dead_unit_index).get_card_number()
+                        self.your_field_unit_repository.remove_card_by_index(dead_unit_index)
+                        self.your_tomb_repository.create_tomb_card(dead_unit_card_id)
+                        self.your_field_unit_repository.replace_field_card_position()
+                        self.your_field_unit_repository.remove_harmful_status_by_index(dead_unit_index)
+
+                    self.play_effect_animation_by_index_and_call_function_with_param(animation_index,
+                                                                                     remove_field_unit, dead_unit_index)
 
                 # 메인 캐릭터 상태 확인 및 체력 Update
                 # if your_main_character_survival_state != 'Survival':
@@ -10744,7 +10783,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         # theta = 0.5 * alpha * 100 = 30 / 50 = 0.6
         omega_accel_alpha = 0.3
 
-        opponent_field_unit = self.attack_animation_object.get_opponent_field_unit()
+        opponent_field_unit = self.attack_animation_object.get_opponent_animation_actor()
 
         def moving_action(step_count):
             if step_count == 1:
@@ -10776,9 +10815,34 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if step_count < steps:
                 self.master.after(20, moving_action, step_count + 1)
             else:
+
+
                 self.finish_opponent_attack_main_character_post_animation(attack_animation_object)
 
         # self.play_effect_animation_by_index(attack_animation_object.get_opponent_animation_actor().get_index())
+        opponent_field_card_id = opponent_field_unit.get_card_number()
+        opponent_field_unit_job_number = self.card_info_repository.getCardJobForCardNumber(opponent_field_card_id)
+        effect_animation_name = ''
+        for attack_type in AttackType:
+            if attack_type.value == opponent_field_unit_job_number:
+                effect_animation_name = attack_type.name
+                print('effect animation name: ', effect_animation_name)
+                break
+
+        effect_animation = EffectAnimation()
+        effect_animation.set_animation_name(effect_animation_name)
+        effect_animation.set_total_window_size(self.width, self.height)
+        vertices = self.your_main_character_panel.get_vertices()
+        effect_animation.draw_animation_panel_with_vertices(vertices)
+        effect_animation_panel = effect_animation.get_animation_panel()
+
+        animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+            effect_animation)
+
+        self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+            animation_index, effect_animation_panel)
+
+        self.play_effect_animation_by_index(animation_index)
         moving_action(1)
 
     def finish_opponent_attack_main_character_post_animation(self, attack_animation_object):
@@ -10900,6 +10964,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # opponent_damage = attack_animation_object.get_opponent_animation_actor_damage()
                 health_point = notify_data['player_main_character_health_point_map']['You']
                 self.your_hp_repository.change_hp(int(health_point))
+
 
         move_to_origin_location(1)
 
