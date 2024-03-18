@@ -657,6 +657,28 @@ class FakeBattleFieldFrame(OpenGLFrame):
         print(f"Key pressed lower(): {key.lower()}")
         print(f"Key pressed type: {type(key)}")
 
+        if key.lower() == 'kp_add':
+            opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
+            for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
+                if opponent_hand == 36:
+                    print("죽음의 대지 사용!! ")
+
+                    result = self.__fake_opponent_hand_repository.request_use_energy_card_to_unit(
+                        RequestUseFieldOfDeath(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _supportCardId=36
+                        ))
+
+                    print(f"fake death scythe result: {result}")
+                    is_success_value = result.get('is_success', False)
+
+                    if is_success_value == False:
+                        return
+
+                    self.__fake_opponent_hand_repository.remove_card_by_index(opponent_hand_index)
+
+                    break
+
         if key.lower() == 'w':
             opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
             for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
@@ -791,7 +813,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     print("test 쉐도우 볼 to unit: ", response)
                     return
 
-        # if key.lower() == 'kp_add':
+
         if key.lower() == 'equal':
             opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
             for opponent_unit_index, opponent_unit in enumerate(opponent_field_unit_list):
