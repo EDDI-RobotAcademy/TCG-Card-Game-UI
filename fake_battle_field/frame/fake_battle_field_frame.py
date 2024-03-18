@@ -7952,11 +7952,28 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attack_animation_object.set_need_post_process(True)
 
                 notify_data = attack_animation_object.get_notify_data()
-                opponent_dead_unit_index_list = notify_data["player_field_unit_death_map"]["Opponent"]["dead_field_unit_index_list"]
-                your_dead_unit_index_list = notify_data["player_field_unit_death_map"]["You"]["dead_field_unit_index_list"]
+                # opponent_dead_unit_index_list = notify_data["player_field_unit_death_map"]["Opponent"]["dead_field_unit_index_list"]
+                # your_dead_unit_index_list = notify_data["player_field_unit_death_map"]["You"]["dead_field_unit_index_list"]
+                # 
+                # opponent_unit_health_index_map = notify_data["player_field_unit_health_point_map"]["Opponent"]["field_unit_health_point_map"]
+                # your_unit_health_index_map = notify_data["player_field_unit_health_point_map"]["You"]["field_unit_health_point_map"]
 
-                opponent_unit_health_index_map = notify_data["player_field_unit_health_point_map"]["Opponent"]["field_unit_health_point_map"]
-                your_unit_health_index_map = notify_data["player_field_unit_health_point_map"]["You"]["field_unit_health_point_map"]
+                if "Opponent" in notify_data["player_field_unit_death_map"]:
+                    opponent_dead_unit_index_list = notify_data["player_field_unit_death_map"]["Opponent"]["dead_field_unit_index_list"]
+                    opponent_unit_health_index_map = notify_data["player_field_unit_health_point_map"]["Opponent"]["field_unit_health_point_map"]
+                else:
+                    # Opponent 키가 없는 경우 처리할 작업 수행
+                    opponent_dead_unit_index_list = []
+                    opponent_unit_health_index_map = {}
+
+                # You 키가 있는지 확인
+                if "You" in notify_data["player_field_unit_death_map"]:
+                    your_dead_unit_index_list = notify_data["player_field_unit_death_map"]["You"]["dead_field_unit_index_list"]
+                    your_unit_health_index_map = notify_data["player_field_unit_health_point_map"]["You"]["field_unit_health_point_map"]
+                else:
+                    # You 키가 없는 경우 처리할 작업 수행
+                    your_dead_unit_index_list = []
+                    your_unit_health_index_map = {}
 
                 for opponent_dead_unit_index in opponent_dead_unit_index_list:
                     # opponent_dead_unit_index = opponent_dead_unit.get_index()
@@ -7970,22 +7987,23 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 for index, health in opponent_unit_health_index_map.items():
                     opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(int(index))
-                    opponent_field_unit_fixed_card_base = opponent_field_unit.get_fixed_card_base()
-                    for attached_shape in opponent_field_unit_fixed_card_base.get_attached_shapes():
-                        if isinstance(attached_shape, NonBackgroundNumberImage):
-                            if attached_shape.get_circle_kinds() is CircleKinds.HP:
-                                attached_shape.set_image_data(
-                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(
-                                        health))
+                    if opponent_field_unit is not None:
+                        opponent_field_unit_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                        for attached_shape in opponent_field_unit_fixed_card_base.get_attached_shapes():
+                            if isinstance(attached_shape, NonBackgroundNumberImage):
+                                if attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                    attached_shape.set_image_data(
+                                        self.pre_drawed_image_instance.get_pre_draw_unit_hp(health))
 
                 for index, health in your_unit_health_index_map.items():
                     your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(int(index))
-                    your_field_unit_fixed_card_base = your_field_unit.get_fixed_card_base()
-                    for attached_shape in your_field_unit_fixed_card_base.get_attached_shapes():
-                        if isinstance(attached_shape, NonBackgroundNumberImage):
-                            if attached_shape.get_circle_kinds() is CircleKinds.HP:
-                                attached_shape.set_image_data(
-                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(health))
+                    if your_field_unit is not None:
+                        your_field_unit_fixed_card_base = your_field_unit.get_fixed_card_base()
+                        for attached_shape in your_field_unit_fixed_card_base.get_attached_shapes():
+                            if isinstance(attached_shape, NonBackgroundNumberImage):
+                                if attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                    attached_shape.set_image_data(
+                                        self.pre_drawed_image_instance.get_pre_draw_unit_hp(health))
 
                 self.your_field_unit_repository.replace_field_card_position()
                 self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
