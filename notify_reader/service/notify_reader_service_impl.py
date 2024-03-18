@@ -1127,50 +1127,65 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         if is_my_turn is True:
             return
 
+        self.__opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.PLAY_ANIMATION)
         data = notice_dictionary['NOTIFY_NON_TARGETING_ACTIVE_SKILL']
         self.__attack_animation_object.set_notify_data(data)
 
-        self.apply_notify_data_of_harmful_status(notice_dictionary['NOTIFY_NON_TARGETING_ACTIVE_SKILL']['player_field_unit_harmful_effect_map'])
-
-        for unit_index, remain_hp in \
-        notice_dictionary['NOTIFY_NON_TARGETING_ACTIVE_SKILL']['player_field_unit_health_point_map'][
-            'You']['field_unit_health_point_map'].items():
-
-            if remain_hp <= 0:
-                continue
-
-            your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(
-                int(unit_index))
-            your_fixed_card_base = your_field_unit.get_fixed_card_base()
-            your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
-
-            for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
-                if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
-                    if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
-                        your_fixed_card_attached_shape.set_number(remain_hp)
-
-                        your_fixed_card_attached_shape.set_image_data(
-                            self.__pre_drawed_image_instance.get_pre_draw_unit_hp(
-                                remain_hp))
-
-        dead_unit_index_list = \
-            notice_dictionary['NOTIFY_NON_TARGETING_ACTIVE_SKILL']['player_field_unit_death_map']['You'][
-                'dead_field_unit_index_list']
-
-
-        for dead_unit_index in dead_unit_index_list:
-            field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(
-                dead_unit_index)
-            self.__your_tomb_repository.create_tomb_card(field_unit_id)
-            self.__your_field_unit_repository.remove_card_by_index(dead_unit_index)
-            self.__your_field_unit_repository.remove_harmful_status_by_index(dead_unit_index)
-
-        self.__your_field_unit_repository.replace_field_card_position()
+        # self.apply_notify_data_of_harmful_status(notice_dictionary['NOTIFY_NON_TARGETING_ACTIVE_SKILL']['player_field_unit_harmful_effect_map'])
+        #
+        # for unit_index, remain_hp in \
+        # notice_dictionary['NOTIFY_NON_TARGETING_ACTIVE_SKILL']['player_field_unit_health_point_map']['You']['field_unit_health_point_map'].items():
+        #
+        #     if remain_hp <= 0:
+        #         continue
+        #
+        #     your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(
+        #         int(unit_index))
+        #     your_fixed_card_base = your_field_unit.get_fixed_card_base()
+        #     your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+        #
+        #     for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+        #         if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+        #             if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+        #                 your_fixed_card_attached_shape.set_number(remain_hp)
+        #
+        #                 your_fixed_card_attached_shape.set_image_data(
+        #                     self.__pre_drawed_image_instance.get_pre_draw_unit_hp(
+        #                         remain_hp))
+        #
+        # dead_unit_index_list = \
+        #     notice_dictionary['NOTIFY_NON_TARGETING_ACTIVE_SKILL']['player_field_unit_death_map']['You'][
+        #         'dead_field_unit_index_list']
+        #
+        #
+        # for dead_unit_index in dead_unit_index_list:
+        #     field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(
+        #         dead_unit_index)
+        #     self.__your_tomb_repository.create_tomb_card(field_unit_id)
+        #     self.__your_field_unit_repository.remove_card_by_index(dead_unit_index)
+        #     self.__your_field_unit_repository.remove_harmful_status_by_index(dead_unit_index)
+        #
+        # self.__your_field_unit_repository.replace_field_card_position()
 
         # self.__attack_animation_object.set_is_opponent_attack_main_character(False)
         #
         # self.__opponent_field_area_inside_handler.set_field_area_action(
         #     OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_PASSIVE_SKILL_PROCESS)
+
+        self.__attack_animation_object.set_is_opponent_attack_main_character(False)
+
+        opponent_attacker_unit_info = next(iter(data["player_field_unit_attack_map"]["Opponent"]["field_unit_attack_map"]))
+        opponent_attacker_unit_index = int(opponent_attacker_unit_info)
+        print(f"{Fore.RED}opponent_attacker_unit_index: {Fore.GREEN}{opponent_attacker_unit_index}{Style.RESET_ALL}")
+
+        # target_unit_index = data["player_field_unit_attack_map"]["Opponent"]["field_unit_attack_map"][opponent_attacker_unit_index]["target_unit_index"]
+
+        opponent_attacker_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(opponent_attacker_unit_index)
+        self.__attack_animation_object.set_opponent_animation_actor(opponent_attacker_unit)
+
+        if opponent_attacker_unit.get_card_number() == 27:
+            self.__opponent_field_area_inside_handler.set_field_area_action(
+                OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_VALRN_ACTIVE_NON_TARGETING_SKILL_TO_YOUR_FIELD)
 
     def notify_use_special_energy_card_to_unit(self, notice_dictionary):
 
