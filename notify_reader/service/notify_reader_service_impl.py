@@ -1637,6 +1637,11 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         data = notice_dictionary['NOTIFY_USE_CATASTROPHIC_DAMAGE_ITEM_CARD']
         self.__attack_animation_object.set_notify_data(data)
 
+        opponent_usage_card_info = (data)['player_hand_use_map']['Opponent']
+        used_card_id = opponent_usage_card_info['card_id']
+
+        self.__battle_field_repository.set_current_use_card_id(used_card_id)
+
         # opponent_usage_card_info = (
         #     data)['player_hand_use_map']['Opponent']
         # your_field_unit_health_point_map = (
