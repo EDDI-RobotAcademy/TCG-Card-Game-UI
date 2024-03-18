@@ -586,8 +586,15 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                     print(f"{Fore.RED}energy_key:{Fore.GREEN} {race_energy_number}{Style.RESET_ALL}")
                     print(f"{Fore.RED}energy_count:{Fore.GREEN} {race_energy_count}{Style.RESET_ALL}")
 
+
+                    before_race_energy = self.__opponent_field_unit_repository.get_opponent_field_unit_race_energy(
+                        int(unit_index), EnergyType.Undead
+                    )
+
+                    energy_diff = race_energy_count - before_race_energy
+
                     self.__opponent_field_unit_repository.attach_race_energy(int(unit_index), EnergyType.Undead,
-                                                                             race_energy_count)
+                                                                             energy_diff)
 
                     opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
                         int(unit_index))
@@ -1682,6 +1689,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                         #     self.__pre_drawed_image_instance.get_pre_draw_unit_hp(int(remaining_health_point)))
 
         # 죽은 유닛들 묘지에 배치 및 Replacing
+
         for dead_unit_index in your_dead_field_unit_index_list:
             self.__attack_animation_object.add_your_dead_field_unit_index_list(int(dead_unit_index))
             # field_unit_id = self.__your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
@@ -1712,6 +1720,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             #       f"{self.__your_lost_zone_repository.get_your_lost_zone_state()}{Style.RESET_ALL}")
 
         self.__attack_animation_object.set_animation_action(AnimationAction.CONTRACT_OF_DOOM)
+        print('파멸의 계약 준비됨')
 
     def notify_use_unit_energy_boost_support(self, notice_dictionary):
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
