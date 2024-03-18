@@ -9936,7 +9936,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
             else:
-                self.start_nether_blade_first_passive_wide_area_motion_animation(attack_animation_object)
+                self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
+                    'dark_blast', self.start_nether_blade_first_passive_wide_area_motion_animation, attack_animation_object
+                )
+                # self.start_nether_blade_first_passive_wide_area_motion_animation(attack_animation_object)
 
         update_position(1)
 
