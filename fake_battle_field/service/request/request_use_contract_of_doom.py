@@ -16,6 +16,6 @@ class RequestUseContractOfDoom:
         }
 
     def __str__(self):
-        return (f"RealBattleStartRequest(protocolNumber={self.__protocolNumber}, "
+        return (f"UseContractOfDoom(protocolNumber={self.__protocolNumber}, "
                 f"itemCardId={self.__itemCardId}, "
                 f"sessionInfo={self.__sessionInfo}")
