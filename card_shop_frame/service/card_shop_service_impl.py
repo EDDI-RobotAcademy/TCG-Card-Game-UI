@@ -1,5 +1,5 @@
 import tkinter
-
+from PIL import ImageTk, Image
 
 from card_shop_frame.repository.card_shop_repository_impl import CardShopMenuFrameRepositoryImpl
 from card_shop_frame.service.card_shop_service import CardShopMenuFrameService
@@ -74,39 +74,87 @@ class CardShopMenuFrameServiceImpl(CardShopMenuFrameService):
         my_money_frame = self.__myGameMoneyFrameService.createMyGameMoneyUiFrame(cardShopMenuFrame)
         my_money_frame.place(relx=0.91, rely=0.06, relwidth=0.09, relheight=0.02, anchor="center")
 
-        self.get_new_all_cards_button = tkinter.Button(cardShopMenuFrame, text="전체 카드 뽑기", bg="#2E2BE2", fg="white",
-                                                       command=lambda: buy_check_button_click("전체"), width=25,height=30)
-        self.get_new_all_cards_button.place(relx=0.2, rely=0.5, anchor="center")
+        # 버튼 이미지를 resize
+        self.button_image_select_all_origin = Image.open("local_storage/shop_image/all_button.png")
+        select_all_button = self.button_image_select_all_origin.resize((295, 300))
+        self.button_image_select_all = ImageTk.PhotoImage(select_all_button)
+
+        self.button_image_select_undead_origin = Image.open("local_storage/shop_image/undead_button.png")
+        select_undead_button = self.button_image_select_undead_origin.resize((295, 300))
+        self.button_image_select_undead = ImageTk.PhotoImage(select_undead_button)
+
+        self.button_image_select_trent_origin = Image.open("local_storage/shop_image/trent_button.png")
+        select_trent_button = self.button_image_select_trent_origin.resize((295, 300))
+        self.button_image_select_trent = ImageTk.PhotoImage(select_trent_button)
+
+        self.button_image_select_human_origin = Image.open("local_storage/shop_image/human_button.png")
+        select_human_button = self.button_image_select_human_origin.resize((295, 300))
+        self.button_image_select_human = ImageTk.PhotoImage(select_human_button)
+
+        self.button_image_back_to_lobby_origin = Image.open("local_storage/shop_image/lobby_button.png")
+        back_to_lobby_button = self.button_image_back_to_lobby_origin.resize((220, 60))
+        self.button_image_back_to_lobby = ImageTk.PhotoImage(back_to_lobby_button)
+
+        self.button_image_my_card_origin = Image.open("local_storage/shop_image/my_card_button.png")
+        my_card_button = self.button_image_my_card_origin.resize((220, 60))
+        self.button_image_my_card_button = ImageTk.PhotoImage(my_card_button)
+
+        # 전체 카드 선택
+        self.get_new_all_cards_button = tkinter.Button(cardShopMenuFrame,
+                                                       image=self.button_image_select_all,
+                                                       bd=0, highlightthickness=0,
+                                                       command=lambda: buy_check_button_click("전체"),
+                                                       width=295, height=300)
+        self.get_new_all_cards_button.place(relx=0.162, rely=0.53, anchor="center")
 
 
-        self.get_new_undead_cards_button = tkinter.Button(cardShopMenuFrame, text="언데드 카드 뽑기", bg="#2E2BE2", fg="white",
-                                                     command=lambda: buy_check_button_click("언데드"), width=25,height=30)
-        self.get_new_undead_cards_button.place(relx=0.4, rely=0.5, anchor="center")
+        # 언데드 카드 선택
+        self.get_new_undead_cards_button = tkinter.Button(cardShopMenuFrame,
+                                                          image=self.button_image_select_undead,
+                                                          bd=0, highlightthickness=0,
+                                                          command=lambda: buy_check_button_click("언데드"),
+                                                          width=295, height=300)
+        self.get_new_undead_cards_button.place(relx=0.39, rely=0.53, anchor="center")
 
 
-        self.get_new_trant_cards_button = tkinter.Button(cardShopMenuFrame, text="트랜트 카드 뽑기", bg="#2E2BE2", fg="white",
-                                                    command=lambda: buy_check_button_click("트랜트"), width=25,height=30)
-        self.get_new_trant_cards_button.place(relx=0.6, rely=0.5, anchor="center")
+        # 트랜트 카드 선택
+        self.get_new_trant_cards_button = tkinter.Button(cardShopMenuFrame,
+                                                         image=self.button_image_select_trent,
+                                                         bd=0, highlightthickness=0,
+                                                         command=lambda: buy_check_button_click("트랜트"),
+                                                         width=295, height=300)
+        self.get_new_trant_cards_button.place(relx=0.612, rely=0.53, anchor="center")
 
 
-        self.get_new_human_cards_button = tkinter.Button(cardShopMenuFrame, text="휴먼 카드 뽑기", bg="#2E2BE2", fg="white",
-                                                    command=lambda: buy_check_button_click("휴먼"), width=25,height=30)
-        self.get_new_human_cards_button.place(relx=0.8, rely=0.5, anchor="center")
+        # 휴먼 카드 선택
+        self.get_new_human_cards_button = tkinter.Button(cardShopMenuFrame,
+                                                         image=self.button_image_select_human,
+                                                         bd=0, highlightthickness=0,
+                                                         command=lambda: buy_check_button_click("휴먼"),
+                                                         width=295, height=300)
+        self.get_new_human_cards_button.place(relx=0.842, rely=0.53, anchor="center")
+
+        # 로비로 돌아가기 버튼
+        self.go_back_to_lobby_button = tkinter.Button(cardShopMenuFrame,
+                                                      image=self.button_image_back_to_lobby,
+                                                      bd=0, highlightthickness=0,
+                                                      relief="flat",
+                                                      command=lambda: switchFrameWithMenuName("lobby-menu"),
+                                                      width=220, height=60)
+        self.go_back_to_lobby_button.place(relx=0.058, rely=0.08, anchor="center")
 
 
-        self.go_back_to_lobby_button = tkinter.Button(cardShopMenuFrame, text="로비로 돌아가기", bg="#2E2BE2", fg="white",
-                                                 command=lambda: switchFrameWithMenuName("lobby-menu")
-                                                 , width=24,height=2)
-        self.go_back_to_lobby_button.place(relx=0.2, rely=0.9, anchor="center")
-
-        self.my_card_button = tkinter.Button(cardShopMenuFrame, text="내 카드 바로가기", bg="#2E2BE2", fg="white",
-                                                 command=lambda: switchFrameWithMenuName("my-card-main"), width=24,
-                                                 height=2)
-        self.my_card_button.place(relx=0.8, rely=0.9, anchor="center")
+        # 내 카드로 이동하는 버튼
+        self.my_card_button = tkinter.Button(cardShopMenuFrame,
+                                             image=self.button_image_my_card_button,
+                                             bd=0, highlightthickness=0,
+                                             relief="flat",
+                                             command=lambda: switchFrameWithMenuName("my-card-main"),
+                                             width=220, height=60)
+        self.my_card_button.place(relx=0.058, rely=0.155, anchor="center")
 
 
         return cardShopMenuFrame
-
 
 
     def injectTransmitIpcChannel(self, transmitIpcChannel):
