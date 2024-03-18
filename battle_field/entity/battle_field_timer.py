@@ -1,17 +1,15 @@
-from battle_field.infra.opponent_hp_repository import OpponentHpRepository
-from image_shape.rectangle_image import RectangleImage
-from opengl_shape.rectangle import Rectangle
+from battle_field.infra.battle_field_timer_repository import BattleFieldTimerRepository
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from image_shape.non_background_image import NonBackgroundImage
 from pyopengltk import OpenGLFrame
 
 class BattleFieldTimer(OpenGLFrame):
     __pre_drawed_image = PreDrawedImage.getInstance()
+    __battle_field_timer_repository = BattleFieldTimerRepository.getInstance()
 
     def __init__(self):
         super().__init__()
         self.timer_panel = None
-        self.timer = 0
         self.timer_id = None
 
         self.total_width = None
@@ -20,8 +18,8 @@ class BattleFieldTimer(OpenGLFrame):
         self.width_ratio = 1
         self.height_ratio = 1
 
-        self.function = None
-
+        self.function = self.__battle_field_timer_repository.get_function()
+        self.timer = self.__battle_field_timer_repository.get_timer()
 
     def set_total_window_size(self, width, height):
         self.total_width = width
@@ -44,12 +42,6 @@ class BattleFieldTimer(OpenGLFrame):
 
     def get_timer_panel(self):
         return self.timer_panel
-
-    def set_timer(self, timer):
-        self.timer = timer
-
-    def set_function(self, function):
-        self.function = function
 
     def draw_current_timer_panel(self):
 
@@ -75,6 +67,10 @@ class BattleFieldTimer(OpenGLFrame):
     def update_current_timer_panel(self):
         if self.timer >= 0:
             self.timer_panel.set_image_data(self.__pre_drawed_image.get_pre_draw_battle_field_timer(self.timer))
+
+    def get_timer(self):
+        self.timer = self.__battle_field_timer_repository.get_timer()
+        self.function = self.__battle_field_timer_repository.get_function()
 
     def start_timer(self):
         if self.timer >= -1:

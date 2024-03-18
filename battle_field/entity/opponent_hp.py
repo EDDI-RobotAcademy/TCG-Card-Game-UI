@@ -48,10 +48,17 @@ class OpponentHp:
         self.current_opponent_hp_state = current_opponent_hp_state
 
     def draw_current_opponent_hp_panel(self):
+        radius = 20
+
         left_x_point = self.total_width * 0.51
         right_x_point = self.total_width * 0.58
         top_y_point = self.total_height * 0.15
         bottom_y_point = self.total_height * 0.23
+
+        # start_x = center[0] - 5 - radius * 1.0
+        # end_x = center[0] - 5 + radius * 1.0
+        # start_y = center[1] - 12 - radius * 1.618 * 1.0
+        # end_y = center[1] - 12 + radius * 1.618 * 1.0
 
         self.opponent_hp_panel = NonBackgroundImage(
             image_data=self.__pre_drawed_image.get_pre_draw_character_hp_image(self.current_opponent_hp_state.get_current_health()),

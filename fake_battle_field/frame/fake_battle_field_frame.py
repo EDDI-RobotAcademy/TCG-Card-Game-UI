@@ -112,6 +112,7 @@ from battle_field.infra.your_hp_repository import YourHpRepository
 from battle_field.infra.your_lost_zone_repository import YourLostZoneRepository
 
 from battle_field.infra.your_tomb_repository import YourTombRepository
+from battle_field.infra.battle_field_timer_repository import BattleFieldTimerRepository
 
 from battle_field.state.FieldUnitActionStatus import FieldUnitActionStatus
 from battle_field.state.energy_type import EnergyType
@@ -364,6 +365,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.timer_panel = None
         self.timer = BattleFieldTimer()
+        self.timer_repository = BattleFieldTimerRepository.getInstance()
 
         self.animation_test_image_panel = None
         self.animation_test_image = AnimationTestImage()
@@ -431,6 +433,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.is_reshape_not_complete = False
 
         self.attack_animation_object.set_total_window_size(self.width, self.height)
+
+        self.start_first_turn()
 
         battle_field_scene = BattleFieldScene()
         battle_field_scene.create_battle_field_cene(self.width, self.height)
@@ -1015,17 +1019,33 @@ class FakeBattleFieldFrame(OpenGLFrame):
         if key.lower() == 'f':
             print(f"{Fore.RED}상대방 네더 블레이드 매 턴 시작 시 광역기 발동!{Style.RESET_ALL}")
 
-            need_to_process_opponent_unit_list = self.opponent_field_area_inside_handler.get_required_to_process_opponent_passive_skill_multiple_unit_list()
-            print(f"{Fore.RED}need_to_process_opponent_unit_list: {Fore.GREEN}{need_to_process_opponent_unit_list}{Style.RESET_ALL}")
+            need_to_process_opponent_unit_map = self.opponent_field_area_inside_handler.get_required_to_process_opponent_passive_skill_multiple_unit_map()
+            print(f"{Fore.RED}need_to_process_opponent_unit_map: {Fore.GREEN}{need_to_process_opponent_unit_map}{Style.RESET_ALL}")
 
-            if len(need_to_process_opponent_unit_list) == 0:
+            if len(need_to_process_opponent_unit_map) == 0:
                 self.opponent_field_area_inside_handler.set_field_turn_start_action(TurnStartAction.Dummy)
                 return
 
-            passive_opponent_unit_index = int(need_to_process_opponent_unit_list.pop(0))
+            passive_opponent_unit_index = None
+            skill_indexes = []
+
+            for key, value in need_to_process_opponent_unit_map.items():
+                if 1 in value:
+                    passive_opponent_unit_index = key
+                    value.remove(1)
+                    skill_indexes = value
+                    break
+
+            if passive_opponent_unit_index is not None:
+                # skill_indexes가 비어 있는지 확인하고, 비어 있으면 해당 유닛 인덱스 제거
+                if not skill_indexes:
+                    del need_to_process_opponent_unit_map[passive_opponent_unit_index]
+                else:
+                    need_to_process_opponent_unit_map[passive_opponent_unit_index] = skill_indexes
+
             self.opponent_field_area_inside_handler.set_field_turn_start_action(TurnStartAction.Dummy)
 
-            opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(passive_opponent_unit_index)
+            opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(int(passive_opponent_unit_index))
             self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
             self.attack_animation_object.set_opponent_animation_actor(opponent_field_unit)
 
@@ -1055,8 +1075,41 @@ class FakeBattleFieldFrame(OpenGLFrame):
         if key.lower() == 'g':
             print(f"{Fore.RED}상대방 네더 블레이드 매 턴 시작 시 타겟팅으로 본체 때리기!{Style.RESET_ALL}")
 
-            opponent_field_unit = self.attack_animation_object.get_opponent_animation_actor()
-            opponent_field_unit_index = opponent_field_unit.get_index()
+            need_to_process_opponent_unit_map = self.opponent_field_area_inside_handler.get_required_to_process_opponent_passive_skill_multiple_unit_map()
+            print(f"{Fore.RED}need_to_process_opponent_unit_map: {Fore.GREEN}{need_to_process_opponent_unit_map}{Style.RESET_ALL}")
+
+            need_to_process_opponent_unit_map = self.opponent_field_area_inside_handler.get_required_to_process_opponent_passive_skill_multiple_unit_map()
+            print(
+                f"{Fore.RED}need_to_process_opponent_unit_map: {Fore.GREEN}{need_to_process_opponent_unit_map}{Style.RESET_ALL}")
+
+            if len(need_to_process_opponent_unit_map) == 0:
+                self.opponent_field_area_inside_handler.set_field_turn_start_action(TurnStartAction.Dummy)
+                return
+
+            passive_opponent_unit_index = None
+            skill_indexes = []
+
+            for key, value in need_to_process_opponent_unit_map.items():
+                if 2 in value:
+                    passive_opponent_unit_index = key
+                    value.remove(2)
+                    skill_indexes = value
+                    break
+
+            if passive_opponent_unit_index is not None:
+                # skill_indexes가 비어 있는지 확인하고, 비어 있으면 해당 유닛 인덱스 제거
+                if not skill_indexes:
+                    del need_to_process_opponent_unit_map[passive_opponent_unit_index]
+                else:
+                    need_to_process_opponent_unit_map[passive_opponent_unit_index] = skill_indexes
+
+            self.opponent_field_area_inside_handler.set_field_turn_start_action(TurnStartAction.Dummy)
+
+            opponent_field_unit_index = int(passive_opponent_unit_index)
+            opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(opponent_field_unit_index)
+            self.opponent_field_area_inside_handler.set_unit_action(
+                OpponentUnitAction.NETHER_BLADE_SECOND_TARGETING_PASSIVE_SKILL)
+            self.attack_animation_object.set_opponent_animation_actor(opponent_field_unit)
 
             #### add
             damage = self.card_info_repository.getCardPassiveSecondDamageForCardNumber(opponent_field_unit.get_card_number())
@@ -1088,16 +1141,46 @@ class FakeBattleFieldFrame(OpenGLFrame):
             # opponent_animation_actor = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(passive_usage_card_index)
             # self.attack_animation_object.set_opponent_animation_actor(opponent_animation_actor)
 
-            opponent_animation_actor = self.attack_animation_object.get_opponent_animation_actor()
-            opponent_animation_actor_index = opponent_animation_actor.get_index()
+            need_to_process_opponent_unit_map = self.opponent_field_area_inside_handler.get_required_to_process_opponent_passive_skill_multiple_unit_map()
+            print(f"{Fore.RED}need_to_process_opponent_unit_map: {Fore.GREEN}{need_to_process_opponent_unit_map}{Style.RESET_ALL}")
 
-            damage = self.card_info_repository.getCardPassiveSecondDamageForCardNumber(opponent_animation_actor.get_card_number())
+            if len(need_to_process_opponent_unit_map) == 0:
+                self.opponent_field_area_inside_handler.set_field_turn_start_action(TurnStartAction.Dummy)
+                return
+
+            passive_opponent_unit_index = None
+            skill_indexes = []
+
+            for key, value in need_to_process_opponent_unit_map.items():
+                if 2 in value:
+                    passive_opponent_unit_index = key
+                    value.remove(2)
+                    skill_indexes = value
+                    break
+
+            if passive_opponent_unit_index is not None:
+                # skill_indexes가 비어 있는지 확인하고, 비어 있으면 해당 유닛 인덱스 제거
+                if not skill_indexes:
+                    del need_to_process_opponent_unit_map[passive_opponent_unit_index]
+                else:
+                    need_to_process_opponent_unit_map[passive_opponent_unit_index] = skill_indexes
+
+            self.opponent_field_area_inside_handler.set_field_turn_start_action(TurnStartAction.Dummy)
+
+            opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(int(passive_opponent_unit_index))
+            self.opponent_field_area_inside_handler.set_unit_action(OpponentUnitAction.NETHER_BLADE_SECOND_TARGETING_PASSIVE_SKILL)
+            self.attack_animation_object.set_opponent_animation_actor(opponent_field_unit)
+
+            # opponent_animation_actor = self.attack_animation_object.get_opponent_animation_actor()
+            # opponent_animation_actor_index = opponent_animation_actor.get_index()
+
+            damage = self.card_info_repository.getCardPassiveSecondDamageForCardNumber(opponent_field_unit.get_card_number())
             self.attack_animation_object.set_opponent_animation_actor_damage(damage)
 
             self.opponent_field_area_inside_handler.set_unit_action(
                 OpponentUnitAction.NETHER_BLADE_SECOND_TARGETING_PASSIVE_SKILL)
 
-            extra_ability = self.opponent_field_unit_repository.get_opponent_unit_extra_ability_at_index(opponent_animation_actor_index)
+            extra_ability = self.opponent_field_unit_repository.get_opponent_unit_extra_ability_at_index(passive_opponent_unit_index)
             self.attack_animation_object.set_extra_ability(extra_ability)
 
             self.opponent_field_area_inside_handler.set_active_field_area_action(
@@ -1114,7 +1197,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             turn_start_second_passive_skill_to_main_character_response = self.__fake_battle_field_frame_repository.request_to_process_turn_start_second_passive_skill_to_your_field_unit(
                 TurnStartSecondPassiveSkillToYourFieldUnitRequest(
                     _sessionInfo=self.__session_repository.get_second_fake_session_info(),
-                    _unitCardIndex=str(opponent_animation_actor_index),
+                    _unitCardIndex=str(passive_opponent_unit_index),
                     _opponentTargetCardIndex=str(first_non_none_index),
                     _usageSkillIndex="2"))
 
@@ -1129,8 +1212,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
             print(f"turn_end_request_result: {turn_end_request_result}")
 
             self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(True)
+
+            self.timer.stop_timer()
+            self.timer_repository.set_timer(60)
+            self.timer_repository.set_function(self.call_turn_end)
+            self.timer.get_timer()
+            self.timer.start_timer()
+
             self.your_deck_repository.draw_deck()
             self.your_deck_repository.update_deck(self.your_deck_repository.get_current_deck_state())
+
 
         # ` (숫자 1 옆에 있는 것)
         if key.lower() == 'grave':
@@ -1800,10 +1891,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if is_success_value == False:
                 return
 
-        if key.lower() == '0':
-            self.timer.set_function(self.call_turn_end)
-            self.timer.set_timer(30)
-            self.timer.start_timer()
+
+
 
 
     def on_resize(self, event):
@@ -2106,7 +2195,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
     def redraw(self):
         if self.is_reshape_not_complete:
             return
-
+        print("나",self.field_area_inside_handler.get_field_area_action())
+        print("상대",self.opponent_field_area_inside_handler.get_field_area_action())
         self.tkMakeCurrent()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
@@ -2963,8 +3053,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.battle_result.set_height_ratio(self.height_ratio)
                 self.battle_result_panel_list[0].draw()
 
-
-
+        #self.check_my_turn()
 
         glEnable(GL_DEPTH_TEST)
 
@@ -3610,6 +3699,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.field_area_inside_handler.set_placed_card_page(
                     self.your_hand_repository.get_current_your_hand_page())
                 print(f"추정된 필드 액션 : {self.field_area_inside_handler.get_field_area_action()}")
+                if drop_action_result is FieldAreaAction.PLACE_UNIT:
+                    self.field_area_inside_handler.clear_field_area_action()
+                if drop_action_result is FieldAreaAction.DRAW_DECK:
+                    self.field_area_inside_handler.clear_field_area_action()
                 # 서포트 관련하여 시작 포인트
                 # handler에서 id 와 index를 받아서 저장 해놓고
                 # false가 떳을 경우의 함수를 추가하여 return값으로 selection_object를 주는 함수를 만든다.
@@ -6412,7 +6505,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         return True
 
     def call_turn_end(self):
-        self.timer.stop_timer()
+        #self.timer.stop_timer()
         turn_end_request_result = self.round_repository.request_turn_end(
             TurnEndRequest(
                 self.__session_repository.get_session_info()))
@@ -6457,6 +6550,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
             print(f"call_turn_end() -> current_your_field_unit_index: {current_your_field_unit_index}")
             self.your_field_unit_action_repository.set_current_field_unit_action_ready(current_your_field_unit_index)
             self.your_field_unit_action_repository.set_current_field_unit_action_count(current_your_field_unit_index, 1)
+
+        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        if whose_turn is False:
+            self.timer.stop_timer()
+            self.timer_repository.set_timer(60)
+            self.timer_repository.set_function(self.fake_opponent_turn_end)
+            self.timer.get_timer()
+            self.timer.start_timer()
 
     def call_surrender(self):
         print("항복 요청!")
@@ -9010,6 +9111,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 self.your_field_unit_repository.replace_field_card_position()
 
+                self.attack_animation_object.set_opponent_animation_actor(None)
                 self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
                 self.opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.Dummy)
                 # self.opponent_nether_blade_second_passive_skill_animation()
@@ -9299,6 +9401,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.opponent_field_area_inside_handler.clear_active_field_area_action()
                 # self.opponent_field_area_inside_handler.clear_field_turn_start_action()
                 self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
+
+                self.attack_animation_object.set_opponent_animation_actor(None)
 
         move_to_origin_location(1)
 
@@ -11969,4 +12073,48 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
 
         self.play_effect_animation_by_index_and_call_function(animation_index, function)
+
+    def start_first_turn(self):
+        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        if whose_turn is True:
+            self.timer_repository.set_function(self.call_turn_end)
+            self.timer_repository.set_timer(60)
+            self.timer.get_timer()
+            self.timer.start_timer()
+
+    def fake_opponent_turn_end(self):
+        print("Opponent Turn을 종료합니다")
+        turn_end_request_result = self.round_repository.request_turn_end(
+            TurnEndRequest(
+                self.__session_repository.get_second_fake_session_info()))
+        print(f"turn_end_request_result: {turn_end_request_result}")
+
+        self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(True)
+        self.timer.stop_timer()
+        self.timer_repository.set_timer(60)
+        self.timer_repository.set_function(self.call_turn_end)
+        self.timer.get_timer()
+        self.timer.start_timer()
+
+    def check_my_turn(self):
+        my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        if my_turn is True:
+            return
+        # my_turn_result = CheckMyTurnRequest(
+        #         self.__session_repository.get_session_info())
+        my_turn_result = self.round_repository.request_turn_end(
+            TurnEndRequest(
+                self.__session_repository.get_session_info()))
+        print(f"my_turn_result: {my_turn_result}")
+
+        if my_turn_result.get('is_success', False) == False:
+            return
+        print(f"my_turn_result: {my_turn_result}")
+        if my_turn_result.get('is_success') is True:
+            self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(True)
+            self.timer.stop_timer()
+            self.timer_repository.set_timer(30)
+            self.timer_repository.set_function(self.call_turn_end)
+            self.timer.get_timer()
+            self.timer.start_timer()
 
