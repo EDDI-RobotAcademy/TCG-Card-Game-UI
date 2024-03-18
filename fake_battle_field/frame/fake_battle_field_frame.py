@@ -1092,6 +1092,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             print(f"turn_end_request_result: {turn_end_request_result}")
 
             self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(True)
+            self.your_deck_repository.draw_deck()
+            self.your_deck_repository.update_deck(self.your_deck_repository.get_current_deck_state())
 
         # ` (숫자 1 옆에 있는 것)
         if key.lower() == 'grave':
@@ -2361,8 +2363,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 else:
                     print("에너지를 태웁니다.")
-                    if total_attached_energy_count == 1:
-                        detach_count = 1
+                    # if total_attached_energy_count == 1:
+                    #     detach_count = 1
 
                     attached_energy_after_energy_burn = total_attached_energy_count - detach_count
                     if attached_energy_after_energy_burn < 0:
@@ -2371,9 +2373,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
                     opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
 
-                    energy_circle_list = []
-                    energy_circle_index_list = []
-                    count = 0
+                    # energy_circle_list = []
+                    # energy_circle_index_list = []
+                    # count = 0
 
                     for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
                         if isinstance(opponent_fixed_card_attached_shape, CircleNumberImage):
@@ -2382,28 +2384,26 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                     self.pre_drawed_image_instance.get_pre_draw_number_image(
                                         attached_energy_after_energy_burn))
 
-                        if isinstance(opponent_fixed_card_attached_shape, Circle):
-                            energy_circle_index_list.append(count)
-                            print(
-                                f"Energy burn opponent unit vertices: {opponent_fixed_card_attached_shape.get_vertices()}")
-                            energy_circle_list.append(opponent_fixed_card_attached_shape)
-
-                            del opponent_fixed_card_attached_shape
-
-                        count += 1
-
-                    energy_circle_index_list.reverse()
-                    for index in energy_circle_index_list:
-                        if 0 <= index < len(opponent_fixed_card_attached_shape_list):
-                            if detach_count == 0:
-                                break
-
-                            del opponent_fixed_card_attached_shape_list[index]
-                            detach_count -= 1
+                    #     if isinstance(opponent_fixed_card_attached_shape, Circle):
+                    #         energy_circle_index_list.append(count)
+                    #         print(
+                    #             f"Energy burn opponent unit vertices: {opponent_fixed_card_attached_shape.get_vertices()}")
+                    #         energy_circle_list.append(opponent_fixed_card_attached_shape)
+                    #
+                    #         del opponent_fixed_card_attached_shape
+                    #
+                    #     count += 1
+                    #
+                    # energy_circle_index_list.reverse()
+                    # for index in energy_circle_index_list:
+                    #     if 0 <= index < len(opponent_fixed_card_attached_shape_list):
+                    #         if detach_count == 0:
+                    #             break
+                    #
+                    #         del opponent_fixed_card_attached_shape_list[index]
+                    #         detach_count -= 1
 
             self.play_effect_animation_by_index_and_call_function(animation_index, calculate_energy_burn)
-
-
 
         if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() == OpponentFieldAreaAction.DEATH_SCYTHE:
             print('create death scythe animation')
@@ -6372,6 +6372,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.apply_response_data_of_field_unit_hp(hp_data)
         self.apply_response_data_of_harmful_status(harmful_data)
         self.apply_response_data_of_dead_unit(dead_data)
+
+        # self.opponent_
 
         self.round_repository.increase_current_round_number()
         round = self.round_repository.get_current_round_number()
