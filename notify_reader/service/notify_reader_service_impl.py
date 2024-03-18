@@ -498,14 +498,19 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
             print(f"{Fore.RED}opponent_which_one_has_passive_skill_to_turn_start_lists:{Fore.GREEN} {opponent_which_one_has_passive_skill_to_turn_start_lists}{Style.RESET_ALL}")
 
-            required_to_process_opponent_passive_skill_multiple_unit_list = []
-            for key, value in opponent_which_one_has_passive_skill_to_turn_start_lists.items():
-                required_to_process_opponent_passive_skill_multiple_unit_list.append(key)
+            # required_to_process_opponent_passive_skill_multiple_unit_list = []
+            # for key, value in opponent_which_one_has_passive_skill_to_turn_start_lists.items():
+            #     required_to_process_opponent_passive_skill_multiple_unit_list.append(key)
+            #
+            # self.__opponent_field_area_inside_handler.set_field_turn_start_action(
+            #     OpponentTurnStartAction.CHECK_MULTIPLE_UNIT_REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
+            # self.__opponent_field_area_inside_handler.set_required_to_process_opponent_passive_skill_multiple_unit_list(
+            #     required_to_process_opponent_passive_skill_multiple_unit_list)
 
             self.__opponent_field_area_inside_handler.set_field_turn_start_action(
                 OpponentTurnStartAction.CHECK_MULTIPLE_UNIT_REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
-            self.__opponent_field_area_inside_handler.set_required_to_process_opponent_passive_skill_multiple_unit_list(
-                required_to_process_opponent_passive_skill_multiple_unit_list)
+            self.__opponent_field_area_inside_handler.set_required_to_process_opponent_passive_skill_multiple_unit_map(
+                opponent_which_one_has_passive_skill_to_turn_start_lists)
 
             return
 
