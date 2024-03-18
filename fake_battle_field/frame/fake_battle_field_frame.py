@@ -800,6 +800,43 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     print("Opponent 쉐도우 볼 to 메인 캐릭터: ", response)
                     return
 
+
+        if key.lower() == 'slash':
+            # RequestAttackWithNonTargetingActiveSkill(protocolNumber=1002, unitCardIndex=3, usageSkillIndex=2, sessionInfo)
+            # 수신된 정보: {"NOTIFY_NON_TARGETING_ACTIVE_SKILL": {"player_field_unit_attack_map": {"Opponent": {
+            #     "field_unit_attack_map": {
+            #         "3": {"target_player_index": "You", "target_unit_index": -1, "active_skill_index": 2,
+            #               "passive_skill_index": -1}}}}, "player_field_unit_health_point_map": {"You": {
+            #     "field_unit_health_point_map": {"9": 0, "8": 0, "4": 0, "2": 0, "10": 5, "0": 25, "3": 0, "7": 0}}},
+            #                                            "player_field_unit_harmful_effect_map": {"You": {
+            #                                                "field_unit_harmful_status_map": {
+            #                                                    "7": {"harmful_status_list": []},
+            #                                                    "9": {"harmful_status_list": []},
+            #                                                    "3": {"harmful_status_list": []},
+            #                                                    "2": {"harmful_status_list": []},
+            #                                                    "0": {"harmful_status_list": []},
+            #                                                    "8": {"harmful_status_list": []},
+            #                                                    "10": {"harmful_status_list": []},
+            #                                                    "4": {"harmful_status_list": []}}}},
+            #                                            "player_field_unit_death_map": {
+            #                                                "You": {"dead_field_unit_index_list": [2, 3, 4, 7, 8, 9]}}}}
+
+            opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+            for opponent_unit_index, opponent_unit in enumerate(opponent_field_unit_list):
+                if opponent_unit == None:
+                    continue
+
+                if opponent_unit.get_card_number() == 27:
+                    response = self.__fake_battle_field_frame_repository.request_attack_opponent_unit(
+                        RequestAttackWithNonTargetingActiveSkill(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _unitCardIndex=opponent_unit_index
+                        )
+                    )
+
+                    print("Opponent 망령의 바다: ", response)
+                    return
+
         if key.lower() == 'kp_home':
             print("만약 Opponent Hand에 출격시킬 유닛이 있다면 내보낸다.")
 
@@ -2579,6 +2616,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
             print(f"{Fore.RED}Opponent valrn이 Your 메인 캐릭터에 쉐도우 볼을 사용합니다!{Style.RESET_ALL}")
 
             self.master.after(2000, self.opponent_valrn_shadow_ball_to_your_main_character_animation)
+
+            self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
+
+        if self.opponent_field_area_inside_handler.get_field_area_action() is OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_VALRN_ACTIVE_NON_TARGETING_SKILL_TO_YOUR_FIELD:
+            print(f"{Fore.RED}Opponent valrn이 Your Field에 망령의 바다를 사용합니다!{Style.RESET_ALL}")
+
+            # self.master.after(2000, self.opponent_valrn_sea_of_wraith_to_your_field_animation)
 
             self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
 
