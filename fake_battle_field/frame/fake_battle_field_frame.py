@@ -3864,6 +3864,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 print(f"추정된 필드 액션 : {self.field_area_inside_handler.get_field_area_action()}")
                 if drop_action_result is FieldAreaAction.PLACE_UNIT:
                     self.field_area_inside_handler.clear_field_area_action()
+                    self.selected_object = None
                 if drop_action_result is FieldAreaAction.DRAW_DECK:
                     self.field_area_inside_handler.clear_field_area_action()
                 # 서포트 관련하여 시작 포인트
@@ -13026,6 +13027,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.field_area_inside_handler.clear_lightning_border_list()
         self.your_field_unit_lightning_border_list.clear()
         self.opponent_fixed_unit_card_inside_handler.clear_lightning_border_list()
+
+        # self.lightning_border.remove_lightning_border()
 
     def create_effect_animation_with_vertices_and_play_animation_and_call_function(self, effect_name, vertices, function):
         effect_animation = EffectAnimation()
