@@ -2116,7 +2116,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
     def redraw(self):
         if self.is_reshape_not_complete:
             return
-
         self.tkMakeCurrent()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
@@ -3619,6 +3618,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.field_area_inside_handler.set_placed_card_page(
                     self.your_hand_repository.get_current_your_hand_page())
                 print(f"추정된 필드 액션 : {self.field_area_inside_handler.get_field_area_action()}")
+                if drop_action_result is FieldAreaAction.PLACE_UNIT:
+                    self.field_area_inside_handler.clear_field_area_action()
                 # 서포트 관련하여 시작 포인트
                 # handler에서 id 와 index를 받아서 저장 해놓고
                 # false가 떳을 경우의 함수를 추가하여 return값으로 selection_object를 주는 함수를 만든다.
