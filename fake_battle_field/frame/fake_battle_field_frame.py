@@ -79,6 +79,8 @@ from battle_field.infra.request.request_attack_to_your_field_unit_with_active_sk
     RequestAttackToYourFieldUnitWithActiveSkill
 from battle_field.infra.request.request_attack_with_non_targeting_active_skill import \
     RequestAttackWithNonTargetingActiveSkill
+from battle_field.infra.request.request_use_add_field_energy_by_sacrificing_field_unit_support_card import \
+    RequestUseAddFieldEnergyBySacrificingFieldUnitSupportCard
 from battle_field.infra.request.request_use_corpse_explosion import RequestUseCorpseExplosion
 from battle_field.infra.request.request_use_death_sice_to_unit import RequestUseDeathSiceToUnit
 from battle_field.infra.request.request_use_energy_burn_to_unit import RequestUseEnergyBurnToUnit
@@ -654,6 +656,53 @@ class FakeBattleFieldFrame(OpenGLFrame):
         print(f"Key pressed lower(): {key.lower()}")
         print(f"Key pressed type: {type(key)}")
 
+
+        if key.lower() == 'kp_add':
+            opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
+            for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
+                if opponent_hand == 36:
+                    print("죽음의 대지 사용!! ")
+
+                    result = self.__fake_opponent_hand_repository.request_use_energy_card_to_unit(
+                        RequestUseFieldOfDeath(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _supportCardId=36
+                        ))
+
+                    print(f"fake death scythe result: {result}")
+                    is_success_value = result.get('is_success', False)
+
+                    if is_success_value == False:
+                        return
+
+                    self.__fake_opponent_hand_repository.remove_card_by_index(opponent_hand_index)
+
+                    break
+
+
+        if key.lower() == 'w':
+            opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
+            for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
+                if opponent_hand == 9:
+                    print("에너지번 사용!! ")
+
+                    result = self.__fake_opponent_hand_repository.request_use_energy_card_to_unit(
+                        RequestUseDeathSiceToUnit(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _itemCardId=9,
+                            _opponentTargetUnitIndex=0
+                        ))
+
+                    print(f"fake death scythe result: {result}")
+                    is_success_value = result.get('is_success', False)
+
+                    if is_success_value == False:
+                        return
+
+                    self.__fake_opponent_hand_repository.remove_card_by_index(opponent_hand_index)
+
+                    break
+
         # if key.lower() == 'w':
         #     opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
         #     for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
@@ -678,6 +727,36 @@ class FakeBattleFieldFrame(OpenGLFrame):
         #             return
         # 
         #     return
+
+
+        if key.lower() == 'kp_prior':
+            opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
+            for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
+                if opponent_hand == 35:
+                    print("사기진작 사용!! ")
+                    opponent_field_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+                    for opponent_field_unit_index, opponent_field_unit in enumerate(opponent_field_list):
+                        if opponent_field_unit == None:
+                            continue
+
+                        result = self.__fake_opponent_hand_repository.request_use_energy_card_to_unit(
+                            RequestUseAddFieldEnergyBySacrificingFieldUnitSupportCard(
+                                _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                                _itemCardId = 35,
+                                _unitIndex=opponent_field_unit_index
+                            )
+                            )
+
+                        print(f"fake death scythe result: {result}")
+                        is_success_value = result.get('is_success', False)
+
+                        if is_success_value == False:
+                            return
+
+                        self.__fake_opponent_hand_repository.remove_card_by_index(opponent_hand_index)
+
+                        break
+                    break
 
         if key.lower() == 's':
             opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
@@ -764,7 +843,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     print("test 쉐도우 볼 to unit: ", response)
                     return
 
-        # if key.lower() == 'kp_add':
+
         if key.lower() == 'equal':
             opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
             for opponent_unit_index, opponent_unit in enumerate(opponent_field_unit_list):
@@ -846,28 +925,28 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     print("Opponent 망령의 바다: ", response)
                     return
 
-        # if key.lower() == 'kp_home':
-        #     print("만약 Opponent Hand에 출격시킬 유닛이 있다면 내보낸다.")
-        #
-        #     opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
-        #     for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
-        #         if opponent_hand == 31 or opponent_hand == 32 :
-        #             print("상대방 유닛 출격")
-        #
-        #             result = self.__fake_opponent_hand_repository.request_deploy_fake_opponent_unit(
-        #                 FakeOpponentDeployUnitRequest(
-        #                     self.__session_repository.get_second_fake_session_info(),
-        #                     opponent_hand))
-        #
-        #             print(f"fake opponent deploy unit result: {result}")
-        #             is_success_value = result.get('is_success', False)
-        #
-        #             if is_success_value == False:
-        #                 return
-        #
-        #             self.__fake_opponent_hand_repository.remove_card_by_index(opponent_hand_index)
-        #
-        #             break
+        if key.lower() == 'kp_home':
+            print("구울 및 스켈레톤 소환.")
+
+            opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
+            for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
+                if opponent_hand == 31 or opponent_hand == 32 :
+                    print("상대방 유닛 출격")
+
+                    result = self.__fake_opponent_hand_repository.request_deploy_fake_opponent_unit(
+                        FakeOpponentDeployUnitRequest(
+                            self.__session_repository.get_second_fake_session_info(),
+                            opponent_hand))
+
+                    print(f"fake opponent deploy unit result: {result}")
+                    is_success_value = result.get('is_success', False)
+
+                    if is_success_value == False:
+                        return
+
+                    self.__fake_opponent_hand_repository.remove_card_by_index(opponent_hand_index)
+
+                    break
 
         if key.lower() == 'z':
             print("만약 Opponent Hand에 출격시킬 유닛이 있다면 내보낸다.")
@@ -1460,7 +1539,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     continue
 
                 if opponent_unit.get_card_number() == 27:
-                    self.your_field_energy_repository.request_to_attach_energy_to_unit(
+                    response = self.your_field_energy_repository.request_to_attach_energy_to_unit(
                         RequestAttachFieldEnergyToUnit(
                             _sessionInfo=self.__session_repository.get_second_fake_session_info(),
                             _unitIndex=opponent_unit.get_index(),
@@ -1469,7 +1548,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         )
                     )
 
-                return
+
+
+                    return
 
         if key == '4':
             opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
@@ -2172,16 +2253,24 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
 
                 if effect_animation_request.get_target_type() == TargetType.AREA:
-                    print('광역 공격 실행중')
+                    vertices = []
+                    if effect_animation_request.get_target_player() == 'You':
+                        field_vertices = self.your_field_panel.get_vertices()
+                        main_character_vertices = self.your_main_character_panel.get_vertices()
+                        #  vertices = [field_vertices[1], field_vertices[2], field_vertices[3], field_vertices[0]]
+                        vertices = [field_vertices[1], field_vertices[2],
+                                    (field_vertices[3][0], main_character_vertices[2][1]),
+                                    (field_vertices[0][0], main_character_vertices[3][1])]
+                    elif effect_animation_request.get_target_player() == 'Opponent':
+                        field_vertices = self.opponent_field_panel.get_vertices()
+                        main_character_vertices = self.opponent_main_character_panel.get_vertices()
 
-                    field_vertices = self.your_field_panel.get_vertices()
-                    main_character_vertices = self.your_main_character_panel.get_vertices()
+                        vertices = [(field_vertices[0][0], main_character_vertices[0][1]),
+                                    (field_vertices[2][0], main_character_vertices[1][1]),
+                                    field_vertices[3], field_vertices[0]]
+                    else:
+                        print('unknown target player!!')
 
-                  #  vertices = [field_vertices[1], field_vertices[2], field_vertices[3], field_vertices[0]]
-
-                    vertices = [field_vertices[1], field_vertices[2],
-                                (field_vertices[3][0], main_character_vertices[2][1]),
-                                (field_vertices[0][0], main_character_vertices[3][1])]
                     effect_animation.draw_animation_panel_with_vertices(vertices)
                     effect_animation_panel = effect_animation.get_animation_panel()
                     animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
@@ -2189,8 +2278,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
                         animation_index, effect_animation_panel)
 
-                    self.play_effect_animation_by_index_and_call_function(animation_index,
-                                                                          effect_animation_request.get_call_function())
+
+                    if effect_animation_request.get_function_need_param():
+                        print('파라미터가 필요한 광역기 실행중')
+                        self.play_effect_animation_by_index_and_call_function_with_param(
+                            animation_index, effect_animation_request.get_call_function(), effect_animation_request.get_param())
+                    else:
+                        print('광역 공격 실행중')
+                        self.play_effect_animation_by_index_and_call_function(animation_index,
+                                                                              effect_animation_request.get_call_function())
 
                 elif effect_animation_request.get_target_type() == TargetType.UNIT:
                     effect_animation.draw_animation_panel()
@@ -3536,6 +3632,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             if placed_card_id == 33:
                                 print(f"시체 폭발(33) -> placed_card_id: {placed_card_id}")
                                 card_id = current_field_unit.get_card_number()
+                                print(current_field_unit.get_index())
+                                print(current_field_unit.get_card_number())
 
                                 opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
                                 for opponent_field_unit_object in opponent_field_unit_object_list:
@@ -5522,6 +5620,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                     self.opponent_field_unit_repository.find_opponent_field_unit_by_index(_index))
                                 self.opponent_field_unit_repository.remove_current_field_unit_card(_index)
                                 self.opponent_tomb_repository.create_opponent_tomb_card(opponent_unit_card_id)
+
                                 self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
                                 self.opponent_field_unit_repository.remove_harmful_status_by_index(_index)
 
@@ -6155,21 +6254,25 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                     if your_field_unit is None:
                                         continue
 
-                                    # if self.selected_object.get_card_number() == 9:
-                                    #     self.return_to_initial_location()
+                                    if self.targeting_enemy_select_using_your_field_card_index ==  your_field_unit.get_index():
 
-                                    print(f"your field unit (field_unit) = {type(your_field_unit)}")
-                                    fixed_card_base = your_field_unit.get_fixed_card_base()
-                                    # page_selected_card = self.your_hand_repository.get_current_your_hand_page()
-                                    print(f"your field unit type (fixed_card_base) = {type(fixed_card_base)}")
+                                        # if self.selected_object.get_card_number() == 9:
+                                        #     self.return_to_initial_location()
 
-                                    for fixed_card_base_attached_shape in fixed_card_base.get_attached_shapes():
-                                        if isinstance(fixed_card_base_attached_shape, NonBackgroundNumberImage):
-                                            if fixed_card_base_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                        print(f"your field unit (field_unit) = {type(your_field_unit)}")
+                                        fixed_card_base = your_field_unit.get_fixed_card_base()
+                                        # page_selected_card = self.your_hand_repository.get_current_your_hand_page()
+                                        print(f"your field unit type (fixed_card_base) = {type(fixed_card_base)}")
 
-                                                sacrificed_unit_hp_number = fixed_card_base_attached_shape.get_number()
-                                                sacrificed_unit_hp = sacrificed_unit_hp_number
-                                                break
+                                        for fixed_card_base_attached_shape in fixed_card_base.get_attached_shapes():
+                                            if isinstance(fixed_card_base_attached_shape, NonBackgroundNumberImage):
+                                                if fixed_card_base_attached_shape.get_circle_kinds() is CircleKinds.HP:
+
+                                                    sacrificed_unit_hp_number = fixed_card_base_attached_shape.get_number()
+                                                    print(f'sacrificed_unit_hp_number : {sacrificed_unit_hp_number}')
+                                                    sacrificed_unit_hp = sacrificed_unit_hp_number
+                                                    break
+                                        break
 
                                 for opponent_you_selected_object in self.opponent_you_selected_object_list:
                                     opponent_fixed_card_base = opponent_you_selected_object.get_fixed_card_base()
@@ -6180,7 +6283,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                     for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
                                         if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
                                             if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
-
+                                                print(f'{opponent_you_selected_object.get_index()} hp changed! ')
+                                                print(f"{opponent_fixed_card_attached_shape.get_number()} -> ")
+                                                print(f"{opponent_fixed_card_attached_shape.get_number() - sacrificed_unit_hp}")
                                                 hp_number = opponent_fixed_card_attached_shape.get_number()
                                                 hp_number -= sacrificed_unit_hp
 
@@ -7932,7 +8037,28 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # attack_animation_object.set_is_finished(True)
                 # attack_animation_object.set_need_post_process(True)
 
-        wide_area_attack(1)
+
+        #todo : 망령의 바다 이펙트로 바꿔야함
+        self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
+            'dark_blast', wide_area_attack, 1)
+        # effect_animation = EffectAnimation()
+        # effect_animation.set_animation_name('dark_blast')
+        # effect_animation.set_total_window_size(self.width, self.height)
+        # field_vertices = self.opponent_field_panel.get_vertices()
+        # main_character_vertices = self.opponent_main_character_panel.get_vertices()
+        # vertices = [(field_vertices[0][0], main_character_vertices[0][1]),
+        #             (field_vertices[2][0], main_character_vertices[1][1]),
+        #             field_vertices[3], field_vertices[0]]
+        #
+        # effect_animation.draw_animation_panel_with_vertices(vertices)
+        # effect_animation_panel = effect_animation.get_animation_panel()
+        # animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+        #     effect_animation)
+        # self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+        #     animation_index, effect_animation_panel)
+        #
+        # self.play_effect_animation_by_index_and_call_function_with_param(animation_index, wide_area_attack, 1)
+        # wide_area_attack(1)
 
     def finish_wide_area_motion_animation(self, attack_animation_object):
         animation_actor = attack_animation_object.get_animation_actor()
@@ -8055,13 +8181,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
                             animation_index, effect_animation_panel)
 
-                        def remove_opponent_unit():
-                            self.opponent_field_unit_repository.remove_current_field_unit_card(index)
-                            self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                        def remove_opponent_unit(unit_index):
+                            unit_card_id = self.opponent_field_unit_repository.get_opponent_card_id_by_index(unit_index)
+                            self.opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
+                            self.opponent_tomb_repository.create_opponent_tomb_card(unit_card_id)
                             self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-                            self.opponent_field_unit_repository.remove_harmful_status_by_index(index)
+                            self.opponent_field_unit_repository.remove_harmful_status_by_index(unit_index)
 
-                        self.play_effect_animation_by_index_and_call_function(animation_index, remove_opponent_unit)
+                        self.play_effect_animation_by_index_and_call_function_with_param(animation_index, remove_opponent_unit, index)
 
                 self.field_area_inside_handler.clear_field_area_action()
 
@@ -8145,12 +8272,32 @@ class FakeBattleFieldFrame(OpenGLFrame):
         update_position(1)
 
     def start_opponent_valrn_sea_of_wraith_motion_animation(self, attack_animation_object):
-        steps = 50
 
-        your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
-        your_field_unit_list_length = len(self.your_field_unit_repository.get_current_field_unit_list())
+
+
+        # todo : 망바 이름으로 바꿔야함
+        effect_animation = EffectAnimation()
+        effect_animation.set_animation_name('dark_blast')
+        effect_animation.set_total_window_size(self.width, self.height)
+        field_vertices = self.your_field_panel.get_vertices()
+        main_character_vertices = self.your_main_character_panel.get_vertices()
+        vertices = [field_vertices[1], field_vertices[2],
+                    (field_vertices[3][0], main_character_vertices[2][1]),
+                    (field_vertices[0][0], main_character_vertices[3][1])]
+
+        effect_animation.draw_animation_panel_with_vertices(vertices)
+        effect_animation_panel = effect_animation.get_animation_panel()
+        animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+            effect_animation)
+        self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+            animation_index, effect_animation_panel)
+
 
         def wide_area_attack(step_count):
+            steps = 50
+            your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
+            your_field_unit_list_length = len(self.your_field_unit_repository.get_current_field_unit_list())
+
             for index in range(
                     your_field_unit_list_length - 1,
                     -1,
@@ -8214,7 +8361,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # attack_animation_object.set_is_finished(True)
                 # attack_animation_object.set_need_post_process(True)
 
-        wide_area_attack(1)
+        self.play_effect_animation_by_index_and_call_function_with_param(animation_index, wide_area_attack, 1)
+
 
     def finish_opponent_valrn_sea_of_wraith_motion_animation(self, attack_animation_object):
         opponent_animation_actor = attack_animation_object.get_opponent_animation_actor()
@@ -8377,15 +8525,36 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                     self.pre_drawed_image_instance.get_pre_draw_unit_hp(remain_hp))
 
                 for dead_unit_index in dead_field_unit_index_list:
-                    field_unit_id = self.your_field_unit_repository.get_card_id_by_index(dead_unit_index)
-                    self.your_tomb_repository.create_tomb_card(field_unit_id)
-                    self.your_field_unit_repository.remove_card_by_index(dead_unit_index)
-                    self.your_field_unit_repository.remove_harmful_status_by_index(dead_unit_index)
+
+                    def remove_field_unit(index):
+                        field_unit_id = self.your_field_unit_repository.get_card_id_by_index(index)
+                        self.your_tomb_repository.create_tomb_card(field_unit_id)
+                        self.your_field_unit_repository.remove_card_by_index(index)
+                        self.your_field_unit_repository.remove_harmful_status_by_index(index)
+                        self.your_field_unit_repository.replace_field_card_position()
+
+                    effect_animation = EffectAnimation()
+                    effect_animation.set_animation_name('death')
+                    effect_animation.set_total_window_size(self.width, self.height)
+                    effect_animation.change_local_translation(
+                        self.your_field_unit_repository.find_field_unit_by_index(
+                            dead_unit_index).get_fixed_card_base().get_local_translation())
+                    effect_animation.draw_animation_panel()
+                    effect_animation_panel = effect_animation.get_animation_panel()
+
+                    animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+                        effect_animation)
+
+                    self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                        animation_index, effect_animation_panel)
+
+                    self.play_effect_animation_by_index_and_call_function_with_param(animation_index, remove_field_unit, dead_unit_index)
+
 
                 self.opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.Dummy)
                 self.attack_animation_object.set_opponent_animation_actor(None)
 
-                self.your_field_unit_repository.replace_field_card_position()
+
 
                 pass
 
@@ -8514,9 +8683,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 your_main_character_health_point = self.attack_animation_object.get_your_main_character_health_point()
 
-                # self.__your_hp_repository.change_hp(your_main_character_health_point)
-                # print(f"{Fore.RED}current_main_character_health:{Fore.GREEN} "
-                #       f"{self.__your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
+                self.your_hp_repository.change_hp(your_main_character_health_point)
+                print(f"{Fore.RED}current_main_character_health:{Fore.GREEN} "
+                      f"{self.your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
 
                 # 덱 위에서 카드 한 장 뽑아서 로스트 존 보내기
                 for lost_card_id in attack_animation_object.get_your_lost_card_id_list():
@@ -8529,6 +8698,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                           f"{self.your_lost_zone_repository.get_your_lost_zone_state()}{Style.RESET_ALL}")
 
                 self.is_attack_motion_finished = True
+                self.field_area_inside_handler.clear_field_area_action()
+                self.opponent_field_area_inside_handler.clear_field_area_action()
                 # attack_animation_object.set_is_finished(True)
                 # attack_animation_object.set_need_post_process(True)
 
@@ -12097,6 +12268,25 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.play_effect_animation_by_index_and_call_function_with_param(animation_index, function, param)
 
+    def create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(self, effect_name, function, param):
+        effect_animation = EffectAnimation()
+        effect_animation.set_animation_name(effect_name)
+        effect_animation.set_total_window_size(self.width, self.height)
+        field_vertices = self.opponent_field_panel.get_vertices()
+        main_character_vertices = self.opponent_main_character_panel.get_vertices()
+        vertices = [(field_vertices[0][0], main_character_vertices[0][1]),
+                    (field_vertices[2][0], main_character_vertices[1][1]),
+                    field_vertices[3], field_vertices[0]]
+
+        effect_animation.draw_animation_panel_with_vertices(vertices)
+        effect_animation_panel = effect_animation.get_animation_panel()
+        animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+            effect_animation)
+        self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+            animation_index, effect_animation_panel)
+
+        self.play_effect_animation_by_index_and_call_function_with_param(animation_index, function, param)
+
     def reset_every_selected_action(self):
         self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
         self.targeting_enemy_select_using_your_field_card_index = None
@@ -12147,6 +12337,42 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
 
         self.play_effect_animation_by_index_and_call_function(animation_index, function)
+
+    def create_effect_animation_to_your_unit_and_play_animation_and_call_function_with_param(self, effect_name, index, function, param):
+        effect_animation = EffectAnimation()
+        effect_animation.set_animation_name(effect_name)
+        effect_animation.set_total_window_size(self.width, self.height)
+        effect_animation.change_local_translation(self.your_field_unit_repository.find_field_unit_by_index(
+            index).get_fixed_card_base().get_local_translation())
+        effect_animation.draw_animation_panel()
+        effect_animation_panel = effect_animation.get_animation_panel()
+
+        animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+            effect_animation)
+
+        self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+            animation_index, effect_animation_panel)
+
+        self.play_effect_animation_by_index_and_call_function_with_param(animation_index, function, param)
+
+    def create_effect_animation_to_your_field_and_play_animation_and_call_function_with_param(self, effect_name, function, param):
+        effect_animation = EffectAnimation()
+        effect_animation.set_animation_name(effect_name)
+        effect_animation.set_total_window_size(self.width, self.height)
+        field_vertices = self.your_field_panel.get_vertices()
+        main_character_vertices = self.your_main_character_panel.get_vertices()
+        vertices = [field_vertices[1], field_vertices[2],
+                    (field_vertices[3][0], main_character_vertices[2][1]),
+                    (field_vertices[0][0], main_character_vertices[3][1])]
+
+        effect_animation.draw_animation_panel_with_vertices(vertices)
+        effect_animation_panel = effect_animation.get_animation_panel()
+        animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+            effect_animation)
+        self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+            animation_index, effect_animation_panel)
+
+        self.play_effect_animation_by_index_and_call_function_with_param(animation_index, function, param)
 
     def start_first_turn(self):
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
