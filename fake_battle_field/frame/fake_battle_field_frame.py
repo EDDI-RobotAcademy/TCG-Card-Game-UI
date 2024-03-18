@@ -2662,6 +2662,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             passive_unit_index = int(required_to_process_passive_skill_multiple_unit_list.pop(0))
             self.field_area_inside_handler.set_field_turn_start_action(TurnStartAction.Dummy)
 
+            # TODO: 네더 블레이드 턴 시작 시 발동하는 타겟팅 처리 진행해야함
             your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(passive_unit_index)
             self.field_area_inside_handler.set_field_area_action(FieldAreaAction.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
 
