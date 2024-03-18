@@ -161,7 +161,9 @@ class OpponentFixedUnitCardInsideHandler:
 
             if opponent_field_unit.get_fixed_card_base().is_point_inside((x, y)):
 
-                self.handle_inside_field_unit(selected_object, opponent_unit_index)
+                result_handle_inside_field_unit = self.handle_inside_field_unit(selected_object, opponent_unit_index)
+                if result_handle_inside_field_unit is False:
+                    return False
                 self.__opponent_unit_id = opponent_field_unit.get_card_number()
                 print("handle_pickable_card_inside_unit -> True")
                 return (opponent_field_unit, opponent_unit_index)
@@ -177,13 +179,19 @@ class OpponentFixedUnitCardInsideHandler:
         placed_card_index = self.__your_hand_repository.find_index_by_selected_object_with_page(selected_object)
 
         if card_type == CardType.ITEM.value:
-            self.handle_item_card(placed_card_id, opponent_unit_index, placed_card_index)
+            result_item_card = self.handle_item_card(placed_card_id, opponent_unit_index, placed_card_index)
+
+            if result_item_card is False:
+                return False
 
     def handle_item_card(self, placed_card_id, unit_index, placed_card_index):
         print("아이템 카드를 사용합니다!")
 
         proper_handler = self.__opponent_fixed_unit_card_inside_handler_table[placed_card_id]
-        proper_handler(placed_card_index, unit_index, placed_card_id)
+        result_handler = proper_handler(placed_card_index, unit_index, placed_card_id)
+
+        if result_handler is False:
+            return False
 
         # self.your_hand_repository.remove_card_by_id(placed_card_id)
         # self.opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
