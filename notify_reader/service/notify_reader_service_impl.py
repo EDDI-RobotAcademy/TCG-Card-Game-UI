@@ -2446,61 +2446,61 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 )
             )
 
-    def notify_check_my_turn(self, notice_dictionary):
-        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
-
-        print(f"{Fore.RED}notify_your_turn_timeout() -> "
-              f"whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
-
-        # data = notice_dictionary['NOTIFY_CHECK_MY_TURN']
-
-        if whose_turn is True:
-            # Your Draw
-            your_drawn_card_list = notice_dictionary['NOTIFY_TURN_END']['player_drawn_card_list_map'].get('You', [])
-            self.__your_hand_repository.save_current_hand_state(your_drawn_card_list)
-            self.__your_hand_repository.update_your_hand()
-
-            your_field_energy = notice_dictionary['NOTIFY_TURN_END']['player_field_energy_map'].get('You', [])
-            self.__your_field_energy_repository.set_your_field_energy(your_field_energy)
-            print(f"{Fore.RED}notify_turn_end() -> your_field_energy:{Fore.GREEN} {your_field_energy}{Style.RESET_ALL}")
-
-            self.apply_notify_data_of_harmful_status(
-                notice_dictionary['NOTIFY_TURN_END']['player_field_unit_harmful_effect_map'])
-
-            self.apply_notify_data_of_field_unit_hp(
-                notice_dictionary['NOTIFY_TURN_END']['player_field_unit_health_point_map'])
-
-            self.apply_notify_data_of_dead_unit(notice_dictionary['NOTIFY_TURN_END']['player_field_unit_death_map'])
-
-            # notify_turn_end() -> notice_dictionary: {
-            #     'NOTIFY_TURN_END': {'player_drawn_card_list_map': {'You': [33]}, 'player_field_energy_map': {'You': 1},
-            #                         'player_field_unit_health_point_map': {
-            #                             'Opponent': {'field_unit_health_point_map': {'8': 20}}},
-            #                         'player_field_unit_harmful_effect_map': {'Opponent': {
-            #                             'field_unit_harmful_status_map': {'8': {'harmful_status_list': []}}}},
-            #                         'player_field_unit_death_map': {'Opponent': {'dead_field_unit_index_list': []}},
-            #                         'player_main_character_survival_map': {},
-            #                         'unit_index_turn_start_passive_list_map': {'3': [], '5': [], '6': [1, 2], '2': [],
-            #                                                                    '1': [], '0': [], '4': []}}}
-            your_which_one_has_passive_skill_to_turn_start_lists = {unit_index: passive_list for
-                                                                    unit_index, passive_list in
-                                                                    notice_dictionary['NOTIFY_TURN_END'][
-                                                                        'unit_index_turn_start_passive_list_map'].items()
-                                                                    if
-                                                                    passive_list}
-            print(
-                f"{Fore.RED}your_which_one_has_passive_skill_to_turn_start_lists:{Fore.GREEN} {your_which_one_has_passive_skill_to_turn_start_lists}{Style.RESET_ALL}")
-
-            required_to_process_passive_skill_multiple_unit_list = []
-            for key, value in your_which_one_has_passive_skill_to_turn_start_lists.items():
-                required_to_process_passive_skill_multiple_unit_list.append(key)
-
-            self.__field_area_inside_handler.set_field_turn_start_action(
-                TurnStartAction.CHECK_MULTIPLE_UNIT_REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
-            self.__field_area_inside_handler.set_required_to_process_passive_skill_multiple_unit_list(
-                required_to_process_passive_skill_multiple_unit_list)
-
-            return
+    # def notify_check_my_turn(self, notice_dictionary):
+    #     whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+    #
+    #     print(f"{Fore.RED}notify_your_turn_timeout() -> "
+    #           f"whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
+    #
+    #     # data = notice_dictionary['NOTIFY_CHECK_MY_TURN']
+    #
+    #     if whose_turn is True:
+    #         # Your Draw
+    #         your_drawn_card_list = notice_dictionary['NOTIFY_TURN_END']['player_drawn_card_list_map'].get('You', [])
+    #         self.__your_hand_repository.save_current_hand_state(your_drawn_card_list)
+    #         self.__your_hand_repository.update_your_hand()
+    #
+    #         your_field_energy = notice_dictionary['NOTIFY_TURN_END']['player_field_energy_map'].get('You', [])
+    #         self.__your_field_energy_repository.set_your_field_energy(your_field_energy)
+    #         print(f"{Fore.RED}notify_turn_end() -> your_field_energy:{Fore.GREEN} {your_field_energy}{Style.RESET_ALL}")
+    #
+    #         self.apply_notify_data_of_harmful_status(
+    #             notice_dictionary['NOTIFY_TURN_END']['player_field_unit_harmful_effect_map'])
+    #
+    #         self.apply_notify_data_of_field_unit_hp(
+    #             notice_dictionary['NOTIFY_TURN_END']['player_field_unit_health_point_map'])
+    #
+    #         self.apply_notify_data_of_dead_unit(notice_dictionary['NOTIFY_TURN_END']['player_field_unit_death_map'])
+    #
+    #         # notify_turn_end() -> notice_dictionary: {
+    #         #     'NOTIFY_TURN_END': {'player_drawn_card_list_map': {'You': [33]}, 'player_field_energy_map': {'You': 1},
+    #         #                         'player_field_unit_health_point_map': {
+    #         #                             'Opponent': {'field_unit_health_point_map': {'8': 20}}},
+    #         #                         'player_field_unit_harmful_effect_map': {'Opponent': {
+    #         #                             'field_unit_harmful_status_map': {'8': {'harmful_status_list': []}}}},
+    #         #                         'player_field_unit_death_map': {'Opponent': {'dead_field_unit_index_list': []}},
+    #         #                         'player_main_character_survival_map': {},
+    #         #                         'unit_index_turn_start_passive_list_map': {'3': [], '5': [], '6': [1, 2], '2': [],
+    #         #                                                                    '1': [], '0': [], '4': []}}}
+    #         your_which_one_has_passive_skill_to_turn_start_lists = {unit_index: passive_list for
+    #                                                                 unit_index, passive_list in
+    #                                                                 notice_dictionary['NOTIFY_TURN_END'][
+    #                                                                     'unit_index_turn_start_passive_list_map'].items()
+    #                                                                 if
+    #                                                                 passive_list}
+    #         print(
+    #             f"{Fore.RED}your_which_one_has_passive_skill_to_turn_start_lists:{Fore.GREEN} {your_which_one_has_passive_skill_to_turn_start_lists}{Style.RESET_ALL}")
+    #
+    #         required_to_process_passive_skill_multiple_unit_list = []
+    #         for key, value in your_which_one_has_passive_skill_to_turn_start_lists.items():
+    #             required_to_process_passive_skill_multiple_unit_list.append(key)
+    #
+    #         self.__field_area_inside_handler.set_field_turn_start_action(
+    #             TurnStartAction.CHECK_MULTIPLE_UNIT_REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
+    #         self.__field_area_inside_handler.set_required_to_process_passive_skill_multiple_unit_list(
+    #             required_to_process_passive_skill_multiple_unit_list)
+    #
+    #         return
 
 
 
