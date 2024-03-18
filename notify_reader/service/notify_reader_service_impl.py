@@ -169,6 +169,10 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.notify_callback_table['NOTIFY_CHECK_MY_TURN'] = (
                 cls.__instance.notify_check_my_turn
             )
+
+            cls.__instance.notify_callback_table['NOTIFY_USE_FIELD_ENERGY_INCREASE_ITEM_CARD'] = (
+                cls.__instance.notify_use_field_energy_increase_item_card
+            )
             # cls.__instance.notify_callback_table['NOTIFY_DEPLOY_NON_TARGETING_ATTACK_PASSIVE_SKILL'] = cls.__instance.notify_deploy_non_targeting_passive_skill_attack
 
         return cls.__instance
@@ -752,11 +756,11 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             if opponent_sacrificed_field_unit_index_list:
                 for dead_unit_index in opponent_sacrificed_field_unit_index_list:
 
-                    def remove_field_unit():
-                        field_unit_id = self.__opponent_field_unit_repository.get_opponent_card_id_by_index(int(dead_unit_index))
+                    def remove_field_unit(unit_index):
+                        field_unit_id = self.__opponent_field_unit_repository.get_opponent_card_id_by_index(unit_index)
                         self.__opponent_tomb_repository.create_opponent_tomb_card(field_unit_id)
-                        self.__opponent_field_unit_repository.remove_current_field_unit_card(int(dead_unit_index))
-
+                        self.__opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
+                        self.__opponent_field_unit_repository.remove_harmful_status_by_index(unit_index)
                         self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
                     effect_animation = EffectAnimation()
@@ -772,7 +776,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                             target_player='Opponent',
                             target_index=dead_unit_index,
                             target_type=TargetType.UNIT,
-                            call_function=remove_field_unit
+                            call_function=remove_field_unit,
+                            function_need_param=True,
+                            param = int(dead_unit_index)
                         )
                     )
 
@@ -2443,11 +2449,11 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             def calculate_unit_energy_remove_item_card():
 
                 for dead_field_unit_index in dead_field_unit_index_list:
-                    def remove_field_unit_by_index():
+                    def remove_field_unit_by_index(index):
                         self.__your_tomb_repository.create_tomb_card(
-                            self.__your_field_unit_repository.find_field_unit_by_index(dead_field_unit_index).get_card_number())
-                        self.__your_field_unit_repository.remove_card_by_index(dead_field_unit_index)
-                        self.__your_field_unit_repository.remove_harmful_status_by_index(dead_field_unit_index)
+                            self.__your_field_unit_repository.find_field_unit_by_index(index).get_card_number())
+                        self.__your_field_unit_repository.remove_card_by_index(index)
+                        self.__your_field_unit_repository.remove_harmful_status_by_index(index)
                         self.__your_field_unit_repository.replace_field_card_position()
 
 
@@ -2465,7 +2471,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                             target_player='You',
                             target_index=dead_field_unit_index,
                             target_type=TargetType.UNIT,
-                            call_function=remove_field_unit_by_index
+                            call_function=remove_field_unit_by_index,
+                            function_need_param=True,
+                            param=dead_field_unit_index
                         )
                     )
 
@@ -2570,6 +2578,37 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
             return
 
+    def notify_use_field_energy_increase_item_card(self, notice_dictionary):
+        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
 
+        if whose_turn is True:
+            return
+
+        notify_dict_data = notice_dictionary['NOTIFY_USE_FIELD_ENERGY_INCREASE_ITEM_CARD']
+
+        hand_use_card_id = int(notify_dict_data.get("player_hand_use_map", {})
+                               .get("Opponent", {})
+                               .get("card_id", None))
+
+        field_energy = notify_dict_data.get('player_field_energy_map', {}).get('Opponent',None)
+
+        def change_field_energy():
+            self.__opponent_field_energy_repository.set_opponent_field_energy(field_energy)
+            self.apply_notify_data_of_dead_unit(notify_dict_data['player_field_unit_death_map'])
+
+        self.__battle_field_repository.set_current_use_card_id(hand_use_card_id)
+        #todo : 애니메이션 제작해서 넘겨야합
+        effect_animation = EffectAnimation()
+        effect_animation.set_animation_name('dark_blast')
+
+        self.__notify_reader_repository.save_notify_effect_animation_request(
+            EffectAnimationRequest(
+                effect_animation=effect_animation,
+                target_player='Opponent',
+                target_index=99999,
+                target_type=TargetType.AREA,
+                call_function=change_field_energy
+            )
+        )
 
 
