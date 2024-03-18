@@ -1043,17 +1043,33 @@ class FakeBattleFieldFrame(OpenGLFrame):
         if key.lower() == 'f':
             print(f"{Fore.RED}상대방 네더 블레이드 매 턴 시작 시 광역기 발동!{Style.RESET_ALL}")
 
-            need_to_process_opponent_unit_list = self.opponent_field_area_inside_handler.get_required_to_process_opponent_passive_skill_multiple_unit_list()
-            print(f"{Fore.RED}need_to_process_opponent_unit_list: {Fore.GREEN}{need_to_process_opponent_unit_list}{Style.RESET_ALL}")
+            need_to_process_opponent_unit_map = self.opponent_field_area_inside_handler.get_required_to_process_opponent_passive_skill_multiple_unit_map()
+            print(f"{Fore.RED}need_to_process_opponent_unit_map: {Fore.GREEN}{need_to_process_opponent_unit_map}{Style.RESET_ALL}")
 
-            if len(need_to_process_opponent_unit_list) == 0:
+            if len(need_to_process_opponent_unit_map) == 0:
                 self.opponent_field_area_inside_handler.set_field_turn_start_action(TurnStartAction.Dummy)
                 return
 
-            passive_opponent_unit_index = int(need_to_process_opponent_unit_list.pop(0))
+            passive_opponent_unit_index = None
+            skill_indexes = []
+
+            for key, value in need_to_process_opponent_unit_map.items():
+                if 1 in value:
+                    passive_opponent_unit_index = key
+                    value.remove(1)
+                    skill_indexes = value
+                    break
+
+            if passive_opponent_unit_index is not None:
+                # skill_indexes가 비어 있는지 확인하고, 비어 있으면 해당 유닛 인덱스 제거
+                if not skill_indexes:
+                    del need_to_process_opponent_unit_map[passive_opponent_unit_index]
+                else:
+                    need_to_process_opponent_unit_map[passive_opponent_unit_index] = skill_indexes
+
             self.opponent_field_area_inside_handler.set_field_turn_start_action(TurnStartAction.Dummy)
 
-            opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(passive_opponent_unit_index)
+            opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(int(passive_opponent_unit_index))
             self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
             self.attack_animation_object.set_opponent_animation_actor(opponent_field_unit)
 
@@ -1083,8 +1099,41 @@ class FakeBattleFieldFrame(OpenGLFrame):
         if key.lower() == 'g':
             print(f"{Fore.RED}상대방 네더 블레이드 매 턴 시작 시 타겟팅으로 본체 때리기!{Style.RESET_ALL}")
 
-            opponent_field_unit = self.attack_animation_object.get_opponent_animation_actor()
-            opponent_field_unit_index = opponent_field_unit.get_index()
+            need_to_process_opponent_unit_map = self.opponent_field_area_inside_handler.get_required_to_process_opponent_passive_skill_multiple_unit_map()
+            print(f"{Fore.RED}need_to_process_opponent_unit_map: {Fore.GREEN}{need_to_process_opponent_unit_map}{Style.RESET_ALL}")
+
+            need_to_process_opponent_unit_map = self.opponent_field_area_inside_handler.get_required_to_process_opponent_passive_skill_multiple_unit_map()
+            print(
+                f"{Fore.RED}need_to_process_opponent_unit_map: {Fore.GREEN}{need_to_process_opponent_unit_map}{Style.RESET_ALL}")
+
+            if len(need_to_process_opponent_unit_map) == 0:
+                self.opponent_field_area_inside_handler.set_field_turn_start_action(TurnStartAction.Dummy)
+                return
+
+            passive_opponent_unit_index = None
+            skill_indexes = []
+
+            for key, value in need_to_process_opponent_unit_map.items():
+                if 2 in value:
+                    passive_opponent_unit_index = key
+                    value.remove(2)
+                    skill_indexes = value
+                    break
+
+            if passive_opponent_unit_index is not None:
+                # skill_indexes가 비어 있는지 확인하고, 비어 있으면 해당 유닛 인덱스 제거
+                if not skill_indexes:
+                    del need_to_process_opponent_unit_map[passive_opponent_unit_index]
+                else:
+                    need_to_process_opponent_unit_map[passive_opponent_unit_index] = skill_indexes
+
+            self.opponent_field_area_inside_handler.set_field_turn_start_action(TurnStartAction.Dummy)
+
+            opponent_field_unit_index = int(passive_opponent_unit_index)
+            opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(opponent_field_unit_index)
+            self.opponent_field_area_inside_handler.set_unit_action(
+                OpponentUnitAction.NETHER_BLADE_SECOND_TARGETING_PASSIVE_SKILL)
+            self.attack_animation_object.set_opponent_animation_actor(opponent_field_unit)
 
             #### add
             damage = self.card_info_repository.getCardPassiveSecondDamageForCardNumber(opponent_field_unit.get_card_number())
@@ -1116,16 +1165,46 @@ class FakeBattleFieldFrame(OpenGLFrame):
             # opponent_animation_actor = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(passive_usage_card_index)
             # self.attack_animation_object.set_opponent_animation_actor(opponent_animation_actor)
 
-            opponent_animation_actor = self.attack_animation_object.get_opponent_animation_actor()
-            opponent_animation_actor_index = opponent_animation_actor.get_index()
+            need_to_process_opponent_unit_map = self.opponent_field_area_inside_handler.get_required_to_process_opponent_passive_skill_multiple_unit_map()
+            print(f"{Fore.RED}need_to_process_opponent_unit_map: {Fore.GREEN}{need_to_process_opponent_unit_map}{Style.RESET_ALL}")
 
-            damage = self.card_info_repository.getCardPassiveSecondDamageForCardNumber(opponent_animation_actor.get_card_number())
+            if len(need_to_process_opponent_unit_map) == 0:
+                self.opponent_field_area_inside_handler.set_field_turn_start_action(TurnStartAction.Dummy)
+                return
+
+            passive_opponent_unit_index = None
+            skill_indexes = []
+
+            for key, value in need_to_process_opponent_unit_map.items():
+                if 2 in value:
+                    passive_opponent_unit_index = key
+                    value.remove(2)
+                    skill_indexes = value
+                    break
+
+            if passive_opponent_unit_index is not None:
+                # skill_indexes가 비어 있는지 확인하고, 비어 있으면 해당 유닛 인덱스 제거
+                if not skill_indexes:
+                    del need_to_process_opponent_unit_map[passive_opponent_unit_index]
+                else:
+                    need_to_process_opponent_unit_map[passive_opponent_unit_index] = skill_indexes
+
+            self.opponent_field_area_inside_handler.set_field_turn_start_action(TurnStartAction.Dummy)
+
+            opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(int(passive_opponent_unit_index))
+            self.opponent_field_area_inside_handler.set_unit_action(OpponentUnitAction.NETHER_BLADE_SECOND_TARGETING_PASSIVE_SKILL)
+            self.attack_animation_object.set_opponent_animation_actor(opponent_field_unit)
+
+            # opponent_animation_actor = self.attack_animation_object.get_opponent_animation_actor()
+            # opponent_animation_actor_index = opponent_animation_actor.get_index()
+
+            damage = self.card_info_repository.getCardPassiveSecondDamageForCardNumber(opponent_field_unit.get_card_number())
             self.attack_animation_object.set_opponent_animation_actor_damage(damage)
 
             self.opponent_field_area_inside_handler.set_unit_action(
                 OpponentUnitAction.NETHER_BLADE_SECOND_TARGETING_PASSIVE_SKILL)
 
-            extra_ability = self.opponent_field_unit_repository.get_opponent_unit_extra_ability_at_index(opponent_animation_actor_index)
+            extra_ability = self.opponent_field_unit_repository.get_opponent_unit_extra_ability_at_index(passive_opponent_unit_index)
             self.attack_animation_object.set_extra_ability(extra_ability)
 
             self.opponent_field_area_inside_handler.set_active_field_area_action(
@@ -1142,7 +1221,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             turn_start_second_passive_skill_to_main_character_response = self.__fake_battle_field_frame_repository.request_to_process_turn_start_second_passive_skill_to_your_field_unit(
                 TurnStartSecondPassiveSkillToYourFieldUnitRequest(
                     _sessionInfo=self.__session_repository.get_second_fake_session_info(),
-                    _unitCardIndex=str(opponent_animation_actor_index),
+                    _unitCardIndex=str(passive_opponent_unit_index),
                     _opponentTargetCardIndex=str(first_non_none_index),
                     _usageSkillIndex="2"))
 
