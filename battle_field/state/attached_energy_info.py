@@ -41,7 +41,7 @@ class AttachedEnergyInfoState:
 
     def get_energy_info_at_index(self, index):
         print(f"get_energy_info_at_index -> self.attached_energy_info: {self.attached_energy_info}")
-        print(f"get_energy_info_at_index -> self.attached_energy_info[index]: {self.attached_energy_info[index]}")
+        # print(f"get_energy_info_at_index -> self.attached_energy_info[index]: {self.attached_energy_info[index]}")
         return self.attached_energy_info.get(index, [])
 
     # def get_race_energy_at_index(self, index, energy_type):
@@ -74,6 +74,8 @@ class AttachedEnergyInfoState:
     def get_race_energy_at_index(self, index, energy_type):
         print(f"Debug: get_race_energy_at_index -> index: {index}")
         print(f"Debug: get_race_energy_at_index -> self.attached_energy_info: {self.attached_energy_info}")
+        if not self.attached_energy_info:
+            return 0
 
         energy_info = self.attached_energy_info.get(index, [])
         print(f"Debug: get_race_energy_at_index -> energy_info: {energy_info}")
