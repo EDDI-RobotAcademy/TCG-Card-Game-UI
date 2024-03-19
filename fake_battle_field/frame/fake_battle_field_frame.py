@@ -7412,7 +7412,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     (vx + step_x, vy + step_y) for vx, vy in attached_shape.vertices
                 ]
                 attached_shape.update_vertices(new_attached_shape_vertices)
-                print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+                # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
             if step_count < steps:
 
@@ -7588,8 +7588,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             (vx + sword_accel_x_dist, vy + sword_accel_y_dist) for vx, vy in sword_shape.vertices
                         ]
                         sword_shape.update_vertices(new_attached_shape_vertices)
-                        print(
-                            f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+                        # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
                         current_angle = sword_shape.get_rotation_angle()
                         sword_shape.update_rotation_angle(current_angle - return_omega_accel_alpha * step_count)
@@ -7603,8 +7602,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     (vx, vy - step_y) for vx, vy in attached_shape.vertices
                 ]
                 attached_shape.update_vertices(new_attached_shape_vertices)
-                print(
-                    f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+                # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
             if step_count < steps:
                 self.master.after(20, move_to_origin_location, step_count + 1)
@@ -7789,8 +7787,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     (vx + step_x, vy + step_y) for vx, vy in attached_shape.vertices
                 ]
                 attached_shape.update_vertices(new_attached_shape_vertices)
-                print(
-                    f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+                # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
             if step_count < steps:
 
@@ -7986,7 +7983,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             (vx + sword_accel_x_dist, vy + sword_accel_y_dist) for vx, vy in sword_shape.vertices
                         ]
                         sword_shape.update_vertices(new_attached_shape_vertices)
-                        print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+                        # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
                         current_angle = sword_shape.get_rotation_angle()
                         sword_shape.update_rotation_angle(current_angle - return_omega_accel_alpha * step_count)
@@ -8177,7 +8174,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     (vx + step_x, vy + step_y) for vx, vy in attached_shape.vertices
                 ]
                 attached_shape.update_vertices(new_attached_shape_vertices)
-                print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+                # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
@@ -8327,7 +8324,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     (vx - step_x, vy - step_y) for vx, vy in attached_shape.vertices
                 ]
                 attached_shape.update_vertices(new_attached_shape_vertices)
-                print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+                # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
             if step_count < steps:
 
@@ -8484,7 +8481,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     (vx + step_x, vy + step_y) for vx, vy in attached_shape.vertices
                 ]
                 attached_shape.update_vertices(new_attached_shape_vertices)
-                print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+                # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
@@ -8631,7 +8628,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     (vx - step_x, vy - step_y) for vx, vy in attached_shape.vertices
                 ]
                 attached_shape.update_vertices(new_attached_shape_vertices)
-                print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+                # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
             if step_count < steps:
 
@@ -9430,7 +9427,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             (vx - sword_accel_x_dist, vy - sword_accel_y_dist) for vx, vy in sword_shape.vertices
                         ]
                         sword_shape.update_vertices(new_attached_shape_vertices)
-                        print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+                        # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
                         current_angle = sword_shape.get_rotation_angle()
                         sword_shape.update_rotation_angle(current_angle - return_omega_accel_alpha * step_count)
@@ -9636,8 +9633,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     (vx - step_x, vy - step_y) for vx, vy in attached_shape.vertices
                 ]
                 attached_shape.update_vertices(new_attached_shape_vertices)
-                print(
-                    f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+                # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
             if step_count < steps:
 
@@ -10157,7 +10153,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     (vx - step_x, vy - step_y) for vx, vy in attached_shape.vertices
                 ]
                 attached_shape.update_vertices(new_attached_shape_vertices)
-                print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+                # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
             if step_count < steps:
 
@@ -11399,8 +11395,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     (vx + step_x, vy + step_y) for vx, vy in attached_shape.vertices
                 ]
                 attached_shape.update_vertices(new_attached_shape_vertices)
-                print(
-                    f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+                # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
@@ -11811,7 +11806,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     (vx + step_x, vy + step_y) for vx, vy in attached_shape.vertices
                 ]
                 attached_shape.update_vertices(new_attached_shape_vertices)
-                print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+                # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
@@ -12135,7 +12130,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     (vx + step_x, vy + step_y) for vx, vy in attached_shape.vertices
                 ]
                 attached_shape.update_vertices(new_attached_shape_vertices)
-                print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+                # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
@@ -13093,7 +13088,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             (vx - sword_accel_x_dist, vy - sword_accel_y_dist) for vx, vy in sword_shape.vertices
                         ]
                         sword_shape.update_vertices(new_attached_shape_vertices)
-                        print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+                        # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
                         current_angle = sword_shape.get_rotation_angle()
                         sword_shape.update_rotation_angle(current_angle - return_omega_accel_alpha * step_count)
