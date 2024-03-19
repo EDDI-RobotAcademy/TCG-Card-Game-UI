@@ -386,6 +386,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.animation_test_image_panel_list = []
 
         self.skill_focus_background_panel = None
+        self.skill_focus_panel = None
 
         self.effect_animation_panel = None
         self.effect_animation = EffectAnimation()
@@ -635,7 +636,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
         skill_focus_panel_instance = SkillFocusPanel()
         skill_focus_panel_instance.set_total_window_size(self.width, self.height)
         skill_focus_panel_instance.create_skill_background_panel()
+        skill_focus_panel_instance.create_skill_focus_panel()
         self.skill_focus_background_panel = skill_focus_panel_instance.get_skill_background_panel()
+        self.skill_focus_panel = skill_focus_panel_instance.get_skill_focus_panel()
 
         self.timer = BattleFieldTimer()
 
@@ -3294,6 +3297,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
             self.skill_focus_background_panel.draw()
+            self.skill_focus_panel.draw()
 
             glDisable(GL_BLEND)
 
@@ -8408,9 +8412,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             # 0.6 = 0.5 * a * 100
             # 0.6 = 50 * a = 0.012
+            # 0.65 = 0.013
             # 0.7 -> 0.014
+            # 0.75 -> 0.015
             # 0.8 -> 0.016
-            skill_focus_background_panel_alpha += 0.016 * step_count
+            skill_focus_background_panel_alpha += 0.014 * step_count
             # print(f"{Fore.RED}0.012 * step_count: {Fore.GREEN}{0.012 * step_count}{Style.RESET_ALL}")
             # print(
             #     f"{Fore.RED}skill_focus_background_panel_alpha: {Fore.GREEN}{skill_focus_background_panel_alpha}{Style.RESET_ALL}")
@@ -8421,6 +8427,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 skill_focus_background_panel_alpha
             )
             self.skill_focus_background_panel.draw()
+
+            skill_focus_panel_alpha = self.skill_focus_panel.color[3]
+            skill_focus_panel_alpha += 0.013 * step_count
+
+            self.skill_focus_panel.color = (
+                self.skill_focus_panel.color[0],
+                self.skill_focus_panel.color[1],
+                self.skill_focus_panel.color[2],
+                skill_focus_panel_alpha
+            )
+            self.skill_focus_panel.draw()
 
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
@@ -8507,8 +8524,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
 
         #todo : 망령의 바다 이펙트로 바꿔야함
-        self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
-            'sea_of_wraith', wide_area_attack, 1)
+        # self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
+        #     'legacy_sea_of_wraith', wide_area_attack, 1)
+
+        wide_area_attack(1)
+
         # effect_animation = EffectAnimation()
         # effect_animation.set_animation_name('dark_blast')
         # effect_animation.set_total_window_size(self.width, self.height)
@@ -8553,13 +8573,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         def move_to_origin_location(step_count):
             new_y = current_your_attacker_unit_local_translation[1] + step_y * step_count
-            print(f"{Fore.RED}step ->{Fore.GREEN}new_y: {new_y}{Style.RESET_ALL}")
+            # print(f"{Fore.RED}step ->{Fore.GREEN}new_y: {new_y}{Style.RESET_ALL}")
 
             new_vertices = [
                 (vx  - step_x * step_count, vy - step_y * step_count) for vx, vy in current_your_attacker_unit_vertices
             ]
             your_fixed_card_base.update_vertices(new_vertices)
-            print(f"{Fore.RED}new_vertices{Fore.GREEN} {new_vertices}{Style.RESET_ALL}")
+            # print(f"{Fore.RED}new_vertices{Fore.GREEN} {new_vertices}{Style.RESET_ALL}")
 
             # tool_card = self.selected_object.get_tool_card()
             # if tool_card is not None:
@@ -8577,8 +8597,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             skill_focus_background_panel_alpha = self.skill_focus_background_panel.color[3]
 
+            # 0.65 = 112.5 * a = 0.00577
             # 0.7 = 0.5 * a * 225
             # 0.7 = 112.5 * a = 0.0062
+            # 0.75 = 112.5 * a = 0.00666
             # 0.8 -> 0.00711
             skill_focus_background_panel_alpha -= 0.0062 * step_count
             # print(f"{Fore.RED}0.012 * step_count: {Fore.GREEN}{0.012 * step_count}{Style.RESET_ALL}")
@@ -8592,6 +8614,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
             )
             self.skill_focus_background_panel.draw()
 
+            skill_focus_panel_alpha = self.skill_focus_panel.color[3]
+            skill_focus_panel_alpha -= 0.00577 * step_count
+
+            self.skill_focus_panel.color = (
+                self.skill_focus_panel.color[0],
+                self.skill_focus_panel.color[1],
+                self.skill_focus_panel.color[2],
+                skill_focus_panel_alpha
+            )
+            self.skill_focus_panel.draw()
+
             if step_count < steps:
 
                 self.master.after(20, move_to_origin_location, step_count + 1)
@@ -8603,6 +8636,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     0
                 )
                 self.skill_focus_background_panel.draw()
+
+                self.skill_focus_panel.color = (
+                    self.skill_focus_panel.color[0],
+                    self.skill_focus_panel.color[1],
+                    self.skill_focus_panel.color[2],
+                    0
+                )
+                self.skill_focus_panel.draw()
 
                 self.is_playing_action_animation = False
                 opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
