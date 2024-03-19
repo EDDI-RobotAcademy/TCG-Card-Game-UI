@@ -274,9 +274,9 @@ class YourHandRepository:
         return self.current_page
 
     def get_current_page_your_hand_list(self):
-        # current_your_hand_page_number = self.get_current_your_hand_page()
-        # print(f"get_current_your_hand_page(): {current_your_hand_page_number}")
-        # print(f"self.your_hand_page_list[current_page]: {self.your_hand_page_list[self.get_current_your_hand_page()]}")
+        current_your_hand_page_number = self.get_current_your_hand_page()
+        print(f"get_current_your_hand_page(): {current_your_hand_page_number}")
+        print(f"self.your_hand_page_list[current_page]: {self.your_hand_page_list[self.get_current_your_hand_page()]}")
 
         # your_hand_page_length = len(self.your_hand_page_list)
         # print(f"your_hand_page_length: {your_hand_page_length}")
@@ -296,7 +296,6 @@ class YourHandRepository:
         #     return None
 
         # print(f"specific_page -> get_your_hand_page_card_object_list(): {self.your_hand_page_list[self.get_current_your_hand_page()].get_your_hand_page_card_object_list()}")
-
         return self.your_hand_page_list[self.get_current_your_hand_page()].get_your_hand_page_card_object_list()
 
     def update_your_hand(self):
