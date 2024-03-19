@@ -48,12 +48,17 @@ class OpponentHp:
         self.current_opponent_hp_state = current_opponent_hp_state
 
     def draw_current_opponent_hp_panel(self):
-        radius = 20
+        # left_x_point = self.total_width * 0.53
+        # right_x_point = self.total_width * 0.58
+        # top_y_point = self.total_height * 0.66816
+        # bottom_y_point = self.total_height * 0.79844
 
-        left_x_point = self.total_width * 0.51
+        # 0.13028
+
+        left_x_point = self.total_width * 0.53
         right_x_point = self.total_width * 0.58
-        top_y_point = self.total_height * 0.15
-        bottom_y_point = self.total_height * 0.23
+        top_y_point = self.total_height * 0.09984
+        bottom_y_point = self.total_height * 0.23012
 
         # start_x = center[0] - 5 - radius * 1.0
         # end_x = center[0] - 5 + radius * 1.0
