@@ -792,32 +792,32 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             return
 
-        # if key.lower() == 'kp_0':
-        #     opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
-        #     for opponent_unit_index, opponent_unit in enumerate(opponent_field_unit_list):
-        #         if opponent_unit == None:
-        #             continue
-        #
-        #         if opponent_unit.get_card_number() == 27:
-        #             self.your_field_energy_repository.request_to_attach_energy_to_unit(
-        #                 RequestAttachFieldEnergyToUnit(
-        #                     _sessionInfo=self.__session_repository.get_second_fake_session_info(),
-        #                     _unitIndex=opponent_unit.get_index(),
-        #                     _energyRace=CardRace.UNDEAD,
-        #                     _energyCount=2
-        #                 )
-        #             )
-        #
-        #             response = self.__fake_battle_field_frame_repository.request_attack_main_character_with_active_skill(
-        #                 RequestAttackMainCharacterWithActiveSkill(
-        #                     _sessionInfo=self.__session_repository.get_second_fake_session_info(),
-        #                     _unitCardIndex=opponent_unit.get_index(),
-        #                     _targetGameMainCharacterIndex="0"
-        #                 )
-        #             )
-        #
-        #             print("test dark ball : ", response)
-        #             return
+        if key.lower() == 'kp_0':
+            opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+            for opponent_unit_index, opponent_unit in enumerate(opponent_field_unit_list):
+                if opponent_unit == None:
+                    continue
+
+                if opponent_unit.get_card_number() == 27:
+                    self.your_field_energy_repository.request_to_attach_energy_to_unit(
+                        RequestAttachFieldEnergyToUnit(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _unitIndex=opponent_unit.get_index(),
+                            _energyRace=CardRace.UNDEAD,
+                            _energyCount=2
+                        )
+                    )
+
+                    response = self.__fake_battle_field_frame_repository.request_attack_main_character_with_active_skill(
+                        RequestAttackMainCharacterWithActiveSkill(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _unitCardIndex=opponent_unit.get_index(),
+                            _targetGameMainCharacterIndex="0"
+                        )
+                    )
+
+                    print("test dark ball : ", response)
+                    return
 
         # if key.lower() == 'kp_decimal':
         if key.lower() == 'period':
@@ -10102,13 +10102,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     your_main_character_survival_state = (
                         notify_data)['player_main_character_survival_map']['You']
 
-                    if your_main_character_survival_state != 'Survival':
-                        print('Your main character is dead!')
-                        return
-
                     self.your_hp_repository.change_hp(int(your_main_character_health_point))
                     print(f"{Fore.RED}current_main_character_health:{Fore.GREEN} "
                           f"{self.your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
+
+                    if your_main_character_survival_state == 'Death':
+                        print('Your main character is dead!')
+                        self.your_hp_repository.your_character_die()
+                        self.battle_field_repository.lose()
+                        return
+
+
 
                     # self.your_hp_repository.take_damage(targeting_damage)
                     self.attack_animation_object.set_is_opponent_attack_main_character(False)
@@ -10722,7 +10726,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     print(f"{Fore.RED}opponent 메인 캐릭터 공격 -> is_attack_main_character(True): {Fore.GREEN}{is_attack_main_character}{Style.RESET_ALL}")
                     remain_hp = process_second_passive_skill_response_data['player_main_character_health_point_map']['Opponent']
                     self.opponent_hp_repository.change_opponent_hp(remain_hp)
-                    if self.opponent_hp_repository.get_opponent_character_survival_info() == SurvivalType.DEATH:
+
+                    survival_info = process_second_passive_skill_response_data['player_main_character_survival_map']['Opponent']
+                    if survival_info == 'Death':
                         self.battle_field_repository.win()
 
 
@@ -13308,6 +13314,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # opponent_damage = attack_animation_object.get_opponent_animation_actor_damage()
                 health_point = notify_data['player_main_character_health_point_map']['You']
                 self.your_hp_repository.change_hp(int(health_point))
+                if self.your_hp_repository.get_your_character_survival_info() == SurvivalType.DEATH:
+                    self.battle_field_repository.lose()
 
                 self.attack_animation_object.set_opponent_animation_actor(None)
 
