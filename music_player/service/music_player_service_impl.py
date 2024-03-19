@@ -29,8 +29,11 @@ class MusicPlayerServiceImpl(MusicPlayerService):
 
     def loadSoundEffects(self):
         self.__musicPlayerRepository.load_sound_effect_path_with_event_name("warrior_basic_attack")
+        self.__musicPlayerRepository.load_sound_effect_path_with_event_name("magician_basic_attack")
         self.__musicPlayerRepository.load_sound_effect_path_with_event_name("valrn_active_skill_1")
+        self.__musicPlayerRepository.load_sound_effect_path_with_event_name("valrn_active_skill_2")
         self.__musicPlayerRepository.load_sound_effect_path_with_event_name("nether_passive_skill_1")
+        self.__musicPlayerRepository.load_sound_effect_path_with_event_name("nether_passive_skill_2")
 
     def playBackgroundMusic(self):
         print("MusicPlayerServiceImpl : playBackgroundMusic")
