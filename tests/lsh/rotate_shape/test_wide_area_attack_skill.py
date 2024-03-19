@@ -1346,7 +1346,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         # sword_accel_x = 1.3777
 
         def update_position(step_count):
-            print(f"{Fore.RED}step_count: {Fore.GREEN}{step_count}{Style.RESET_ALL}")
+            # print(f"{Fore.RED}step_count: {Fore.GREEN}{step_count}{Style.RESET_ALL}")
             # your_fixed_card_base = selected_object.get_fixed_card_base()
 
             new_x = current_your_attacker_unit_local_translation[0] + step_x * step_count
@@ -1697,7 +1697,7 @@ class PreDrawedBattleFieldFrameRefactor(OpenGLFrame):
         step_y *= -1
 
         def update_position(step_count):
-            print(f"{Fore.RED}step_count: {Fore.GREEN}{step_count}{Style.RESET_ALL}")
+            # print(f"{Fore.RED}step_count: {Fore.GREEN}{step_count}{Style.RESET_ALL}")
 
             new_vertices = [
                 (vx + step_x * step_count, vy + step_y * step_count) for vx, vy in current_your_attacker_unit_vertices
