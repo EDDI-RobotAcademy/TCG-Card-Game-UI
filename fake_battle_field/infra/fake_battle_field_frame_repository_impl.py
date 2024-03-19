@@ -99,3 +99,7 @@ class FakeBattleFieldFrameRepositoryImpl(FakeBattleFieldFrameRepository):
     def request_attack_your_unit_with_active_skill(self, requestAttackToYourFieldUnitWithActiveSkill):
         self.__transmitIpcChannel.put(requestAttackToYourFieldUnitWithActiveSkill)
         return self.__receiveIpcChannel.get()
+
+    def request_to_process_second_passive_skill_to_opponent_field_unit(self, targetingPassiveSkillToOpponentFieldUnitFromDeployRequest):
+        self.__transmitIpcChannel.put(targetingPassiveSkillToOpponentFieldUnitFromDeployRequest)
+        return self.__receiveIpcChannel.get()
