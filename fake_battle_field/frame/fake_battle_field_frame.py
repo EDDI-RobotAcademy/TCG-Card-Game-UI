@@ -7301,6 +7301,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         attack_animation_object = AttackAnimation.getInstance()
         animation_actor = attack_animation_object.get_animation_actor()
         # print(f"{Fore.RED}animation_actor(selected_object){Fore.GREEN} {animation_actor}{Style.RESET_ALL}")
+        animation_actor_card_id = animation_actor.get_card_number()
 
         your_fixed_card_base = animation_actor.get_fixed_card_base()
         current_your_attacker_unit_vertices = your_fixed_card_base.get_vertices()
@@ -7421,8 +7422,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
             if step_count < steps:
-
                 self.master.after(20, update_position, step_count + 1)
+                if step_count == 8 and self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
+                    self.__music_player_repository.play_sound_effect_with_event_name_for_wav('magician_basic_attack')
             else:
                 self.start_post_animation(attack_animation_object)
                 self.is_attack_motion_finished = True
@@ -7434,6 +7436,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
     def start_post_animation(self, attack_animation_object):
         sword_shape = attack_animation_object.get_your_weapon_shape()
+        your_animation_actor = attack_animation_object.get_animation_actor()
+        animation_actor_card_id = your_animation_actor.get_card_number()
 
         steps = 30
         # (390 - 153) / 1848 = 0.1282
@@ -7457,7 +7461,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         def slash_with_sword(step_count):
             if step_count == 1:
-                self.__music_player_repository.play_sound_effect_with_event_name('basic_attack')
+                if self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 1:
+                    self.__music_player_repository.play_sound_effect_with_event_name('warrior_basic_attack')
+                # elif self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
+                #     self.__music_player_repository.play_sound_effect_with_event_name_for_wav('magician_basic_attack')
             if step_count < 11:
                 sword_accel_x_dist = sword_accel_x * step_count
 
@@ -7672,6 +7679,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         # opponent_animation_actor_index = next(iter(notify_data['player_field_unit_attack_map']['Opponent']['field_unit_attack_map'].values()))
         opponent_animation_actor = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(opponent_animation_actor_index)
         attack_animation_object.set_opponent_animation_actor(opponent_animation_actor)
+        animation_actor_card_id = opponent_animation_actor.get_card_number()
 
         opponent_fixed_card_base = opponent_animation_actor.get_fixed_card_base()
         current_opponent_attacker_unit_vertices = opponent_fixed_card_base.get_vertices()
@@ -7796,8 +7804,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
             if step_count < steps:
-
                 self.master.after(20, update_position, step_count + 1)
+                if step_count == 8 and self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
+                    self.__music_player_repository.play_sound_effect_with_event_name_for_wav('magician_basic_attack')
             else:
                 self.start_opponent_attack_your_unit_post_animation(attack_animation_object)
                 self.is_attack_motion_finished = True
@@ -7808,6 +7817,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
     def start_opponent_attack_your_unit_post_animation(self, attack_animation_object):
         sword_shape = attack_animation_object.get_opponent_weapon_shape()
+        opponent_animation_actor = attack_animation_object.get_opponent_animation_actor()
+        animation_actor_card_id = opponent_animation_actor.get_card_number()
 
         steps = 30
         # (390 - 153) / 1848 = 0.1282
@@ -7831,7 +7842,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         def slash_with_sword(step_count):
             if step_count == 1:
-                self.__music_player_repository.play_sound_effect_with_event_name('basic_attack')
+                if self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 1:
+                    self.__music_player_repository.play_sound_effect_with_event_name('warrior_basic_attack')
+                # elif self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
+                #     self.__music_player_repository.play_sound_effect_with_event_name_for_wav('magician_basic_attack')
             if step_count < 11:
                 sword_accel_x_dist = sword_accel_x * step_count
 
@@ -9193,6 +9207,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         steps = 20
         attack_animation_object = AttackAnimation.getInstance()
         animation_actor = attack_animation_object.get_animation_actor()
+        animation_actor_card_id = animation_actor.get_card_number()
 
         your_fixed_card_base = animation_actor.get_fixed_card_base()
         current_your_attacker_unit_vertices = your_fixed_card_base.get_vertices()
@@ -9280,8 +9295,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
             if step_count < steps:
-
                 self.master.after(20, update_position, step_count + 1)
+                if step_count == 8 and self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
+                    self.__music_player_repository.play_sound_effect_with_event_name_for_wav('magician_basic_attack')
             else:
                 self.start_you_attack_main_character_post_animation(attack_animation_object)
 
@@ -9291,6 +9307,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
         sword_shape = attack_animation_object.get_your_weapon_shape()
         opponent_main_character = attack_animation_object.get_opponent_main_character()
         opponent_main_character_vertices = opponent_main_character.get_vertices()
+
+        your_animation_actor = attack_animation_object.get_animation_actor()
+        animation_actor_card_id = your_animation_actor.get_card_number()
 
         steps = 30
         # (390 - 153) / 1848 = 0.1282
@@ -9314,7 +9333,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         def slash_with_sword(step_count):
             if step_count == 1:
-                self.__music_player_repository.play_sound_effect_with_event_name('basic_attack')
+                if self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 1:
+                    self.__music_player_repository.play_sound_effect_with_event_name('warrior_basic_attack')
+                # elif self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
+                #     self.__music_player_repository.play_sound_effect_with_event_name_for_wav('magician_basic_attack')
             if step_count < 11:
                 sword_accel_x_dist = sword_accel_x * step_count
 
@@ -10025,10 +10047,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
+                if step_count == 8:
+                    self.__music_player_repository.play_sound_effect_with_event_name('nether_passive_skill_1')
             else:
 
                 # effect_animation.draw_full_screen_animation_panel()
-
+                # self.__music_player_repository.play_sound_effect_with_event_name('nether_passive_skill_1')
                 self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
                     'nether_blade_area_skill', self.start_nether_blade_first_passive_wide_area_motion_animation, attack_animation_object
                 )
@@ -10701,6 +10725,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
+                if step_count == 8:
+                    self.__music_player_repository.play_sound_effect_with_event_name('nether_passive_skill_1')
             else:
                 self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
                     'nether_blade_area_skill', self.start_nether_blade_turn_start_first_passive_wide_area_motion_animation,
@@ -11538,6 +11564,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         # self.play_effect_animation_by_index_and_call_function(your_field_card_index,
         #                                                       burst_shadow_ball_animation)
+        self.__music_player_repository.play_sound_effect_with_event_name('valrn_active_skill_1')
         self.play_effect_animation_with_acceleration_by_index_and_call_function(
             your_field_card_index,
             burst_shadow_ball_animation,
@@ -11956,6 +11983,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         # self.play_effect_animation_by_index_and_call_function(your_field_card_index,
         #                                                       burst_shadow_ball_animation)
+        self.__music_player_repository.play_sound_effect_with_event_name('valrn_active_skill_1')
         self.play_effect_animation_with_acceleration_by_index_and_call_function(
             your_field_card_index,
             burst_shadow_ball_animation,
@@ -12247,6 +12275,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         # self.play_effect_animation_by_index_and_call_function(your_field_card_index,
         #                                                       burst_shadow_ball_animation)
+        self.__music_player_repository.play_sound_effect_with_event_name('valrn_active_skill_1')
         self.play_effect_animation_with_acceleration_by_index_and_call_function(
             opponent_field_card_index,
             burst_shadow_ball_animation,
@@ -12584,6 +12613,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         # self.play_effect_animation_by_index_and_call_function(your_field_card_index,
         #                                                       burst_shadow_ball_animation)
+        self.__music_player_repository.play_sound_effect_with_event_name('valrn_active_skill_1')
         self.play_effect_animation_with_acceleration_by_index_and_call_function(
             opponent_field_card_index,
             burst_shadow_ball_animation,
@@ -12849,7 +12879,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         opponent_animation_actor = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(opponent_animation_actor_index)
         attack_animation_object.set_opponent_animation_actor(opponent_animation_actor)
 
-        # opponent_animation_actor = attack_animation_object.get_opponent_animation_actor()
+        opponent_animation_actor = attack_animation_object.get_opponent_animation_actor()
+        animation_actor_card_id = opponent_animation_actor.get_card_number()
 
         opponent_fixed_card_base = opponent_animation_actor.get_fixed_card_base()
         current_opponent_attacker_unit_vertices = opponent_fixed_card_base.get_vertices()
@@ -12938,6 +12969,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
+                if step_count == 8 and self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
+                    self.__music_player_repository.play_sound_effect_with_event_name_for_wav('magician_basic_attack')
             else:
                 self.start_opponent_attack_main_character_post_animation(attack_animation_object)
 
@@ -12947,6 +12980,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
         sword_shape = attack_animation_object.get_opponent_weapon_shape()
         your_main_character = attack_animation_object.get_your_main_character()
         your_main_character_vertices = your_main_character.get_vertices()
+
+        opponent_animation_actor = attack_animation_object.get_opponent_animation_actor()
+        animation_actor_card_id = opponent_animation_actor.get_card_number()
 
         steps = 30
         # (390 - 153) / 1848 = 0.1282
@@ -12970,7 +13006,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         def moving_action(step_count):
             if step_count == 1:
-                self.__music_player_repository.play_sound_effect_with_event_name('basic_attack')
+                if self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 1:
+                    self.__music_player_repository.play_sound_effect_with_event_name('warrior_basic_attack')
+                # elif self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
+                #     self.__music_player_repository.play_sound_effect_with_event_name_for_wav('magician_basic_attack')
             if step_count < 11:
                 sword_accel_x_dist = sword_accel_x * step_count
 

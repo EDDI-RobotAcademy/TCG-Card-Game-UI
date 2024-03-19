@@ -17,8 +17,9 @@ second_fake_session_info.txt
 # exclude .env
 .env
 
-# exclude *.mp3
+# exclude *.mp3 && *.wav
 *.mp3
+*.wav
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
