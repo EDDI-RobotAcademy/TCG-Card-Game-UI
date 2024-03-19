@@ -47,6 +47,7 @@ from battle_field.entity.surrender_confirm import SurrenderConfirm
 from battle_field.entity.turn_end import TurnEnd
 from battle_field.entity.turn_number import CurrentFieldTurnNumber
 from battle_field.entity.your_active_panel import YourActivePanel
+from battle_field.entity.opponent_details_panel import OpponentDetailsPanel
 from battle_field.entity.your_deck import YourDeck
 from battle_field.entity.your_field_energy import YourFieldEnergy
 from battle_field.entity.your_field_panel import YourFieldPanel
@@ -191,6 +192,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.your_field_panel = None
         self.opponent_field_panel = None
+
+        self.opponent_details_panel_rectangle = None
 
         self.active_panel_rectangle = None
         self.active_panel_attack_button = None
@@ -521,6 +524,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.your_active_panel = YourActivePanel()
         self.your_active_panel.set_total_window_size(self.width, self.height)
+
+        self.opponent_details_panel = OpponentDetailsPanel()
+        self.opponent_details_panel.set_total_window_size(self.width, self.height)
 
         self.opponent_active_panel = OpponentActivePanel()
         self.opponent_active_panel.set_total_window_size(self.width, self.height)
@@ -2999,6 +3005,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             if self.active_panel_details_button is not None:
                 self.active_panel_details_button.draw()
+
+        if self.opponent_details_panel_rectangle:
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+            self.opponent_details_panel_rectangle.draw()
+
+            glDisable(GL_BLEND)
+
+            self.opponent_details_button.draw()
 
         for your_lightning_border in self.field_area_inside_handler.get_lightning_border_list():
             self.lightning_border.set_padding(20)
@@ -7072,6 +7088,26 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.active_panel_second_skill_button = self.your_active_panel.get_your_active_panel_second_skill_button()
                 self.active_panel_third_skill_button = None
                 self.active_panel_details_button = self.your_active_panel.get_your_active_panel_details_button()
+
+        current_opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+        for opponent_field_unit in current_opponent_field_unit_list:
+            if opponent_field_unit is None:
+                continue
+
+            opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+            convert_y = self.winfo_reqheight() - y
+
+            if opponent_fixed_card_base.is_point_inside((x, convert_y)):
+                print(f"Inside Unit")
+                self.opponent_details_panel.create_opponent_details_panel((x, y), opponent_field_unit)
+
+                new_rectangle = self.opponent_details_panel.get_opponent_details_panel()
+                self.opponent_details_panel_rectangle = new_rectangle
+
+                self.opponent_details_button = self.opponent_details_panel.get_opponent_details_panel_button()
+            else:
+                print(f"Outside Unit")
+
 
     def create_opengl_rectangle(self, start_point):
         card_id = self.selected_object.get_card_number()
@@ -13611,6 +13647,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.field_area_inside_handler.clear_lightning_border_list()
         self.your_field_unit_lightning_border_list.clear()
         self.opponent_fixed_unit_card_inside_handler.clear_lightning_border_list()
+
+        self.opponent_details_panel_rectangle = None
+        self.opponent_details_panel.clear_all_opponent_details_panel()
 
         # self.lightning_border.remove_lightning_border()
 
