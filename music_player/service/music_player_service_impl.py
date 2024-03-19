@@ -28,7 +28,9 @@ class MusicPlayerServiceImpl(MusicPlayerService):
         self.__musicPlayerRepository.load_background_music_path_with_frame_name("battle-field")
 
     def loadSoundEffects(self):
-        self.__musicPlayerRepository.load_sound_effect_path_with_event_name("basic_attack")
+        self.__musicPlayerRepository.load_sound_effect_path_with_event_name("warrior_basic_attack")
+        self.__musicPlayerRepository.load_sound_effect_path_with_event_name("valrn_active_skill_1")
+        self.__musicPlayerRepository.load_sound_effect_path_with_event_name("nether_passive_skill_1")
 
     def playBackgroundMusic(self):
         print("MusicPlayerServiceImpl : playBackgroundMusic")
