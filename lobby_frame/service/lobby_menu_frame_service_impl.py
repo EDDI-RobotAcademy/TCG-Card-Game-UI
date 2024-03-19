@@ -308,6 +308,9 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                     self.__fakeYourHandRepository.set_total_window_size(total_width, total_height)
                     self.__fakeYourHandRepository.update_your_hand()
 
+                    self.__fakeYourDeckRepository.set_total_window_size(total_width, total_height)
+                    self.__fakeYourDeckRepository.update_deck(deck_card_list)
+
                 self.__fakeYourDeckRepository.get_current_deck_state_object().draw_card()
 
                 your_field_energy = real_battle_start_response['player_field_energy_map']['You']
