@@ -305,6 +305,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                 if self.__windowSizeRepository.get_is_it_re_entrance():
                     total_width = self.__windowSizeRepository.get_total_width()
                     total_height = self.__windowSizeRepository.get_total_height()
+
                     self.__fakeYourHandRepository.set_total_window_size(total_width, total_height)
                     self.__fakeYourHandRepository.update_your_hand()
 
@@ -324,7 +325,11 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                 )
                 print(f"opponent real_battle_start_response: {real_battle_start_response}")
 
-                self.__fakeOpponentHandRepository.save_fake_opponent_hand_list(opponent_hand_card_list)
+                if self.__windowSizeRepository.get_is_it_re_entrance():
+                    self.__fakeOpponentHandRepository.clear_fake_opponent_hand_list()
+                    self.__fakeOpponentHandRepository.save_fake_opponent_hand_list(opponent_hand_card_list)
+                else:
+                    self.__fakeOpponentHandRepository.save_fake_opponent_hand_list(opponent_hand_card_list)
 
                 opponent_field_energy = real_battle_start_response['player_field_energy_map']['Opponent']
                 print(f"opponent_field_energy: {opponent_field_energy}")
