@@ -3886,6 +3886,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     self.selected_object = None
                 if drop_action_result is FieldAreaAction.DRAW_DECK:
                     self.field_area_inside_handler.clear_field_area_action()
+                if drop_action_result is FieldAreaAction.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS:
+                    self.selected_object = None
                 # 서포트 관련하여 시작 포인트
                 # handler에서 id 와 index를 받아서 저장 해놓고
                 # false가 떳을 경우의 함수를 추가하여 return값으로 selection_object를 주는 함수를 만든다.
@@ -10697,7 +10699,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.master.after(20, update_position, step_count + 1)
             else:
                 self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
-                    'nether_blade_area_skill', self.start_nether_blade_first_passive_wide_area_motion_animation,
+                    'nether_blade_area_skill', self.start_nether_blade_turn_start_first_passive_wide_area_motion_animation,
                     attack_animation_object
                 )
                 # self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
@@ -10895,15 +10897,35 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(animation_index, effect_animation_panel)
 
-                    def remove_opponent_unit(opponent_dead_unit_index):
-                        self.opponent_field_unit_repository.remove_current_field_unit_card(opponent_dead_unit_index)
-                        self.opponent_tomb_repository.create_opponent_tomb_card(opponent_dead_unit_index)
-                        self.opponent_field_unit_repository.remove_harmful_status_by_index(opponent_dead_unit_index)
+                    def remove_opponent_unit(_opponent_dead_unit_index):
+                        opponent_dead_card_id = self.opponent_field_unit_repository.get_opponent_card_id_by_index(_opponent_dead_unit_index)
+                        self.opponent_field_unit_repository.remove_current_field_unit_card(_opponent_dead_unit_index)
+                        self.opponent_tomb_repository.create_opponent_tomb_card(opponent_dead_card_id)
+                        self.opponent_field_unit_repository.remove_harmful_status_by_index(_opponent_dead_unit_index)
                         self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
                     self.play_effect_animation_by_index_and_call_function_with_param(animation_index, remove_opponent_unit, opponent_dead_unit_index)
 
-                self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                    self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                    # opponent_field_dead_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                    #     int(opponent_dead_unit_index))
+                    # self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function_with_param(
+                    #     'death', opponent_dead_unit_index, remove_opponent_unit, opponent_dead_unit_index
+                    # )
+
+                    # def remove_opponent_unit(_unit_index):
+                    #     print(f"remove opponent unit : {_unit_index}")
+                    #     card_id = self.opponent_field_unit_repository.get_opponent_card_id_by_index(_unit_index)
+                    #     self.opponent_field_unit_repository.remove_current_field_unit_card(_unit_index)
+                    #     self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                    #     self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                    #     self.opponent_field_unit_repository.remove_harmful_status_by_index(_unit_index)
+                    #
+                    # self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function_with_param(
+                    #     'death', index, remove_opponent_unit, index)
+
+                # self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
                 # for index in range(
                 #         opponent_field_unit_list_length - 1,
@@ -10977,6 +10999,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 def call_nether_blade_second_passive_skill_animation():
                     print(f"{Fore.RED}call_nether_blade_second_passive_skill_animation(){Style.RESET_ALL}")
+
+                    print(f"effect animation repository dictionary key: {self.effect_animation_repository.get_effect_animation_dictionary().keys()}")
 
                     if len(self.effect_animation_repository.get_effect_animation_dictionary().keys()) == 0:
                         self.nether_blade_turn_start_second_passive_skill_animation()
