@@ -127,8 +127,8 @@ class MuligunYourHandRepository:
             next_x = self.x_base_muligun + x_increment * index
             local_translation = (next_x, current_y)
 
-            tool_card = current_hand_card.get_tool_card()
-            tool_card.local_translate(local_translation)
+            # tool_card = current_hand_card.get_tool_card()
+            # tool_card.local_translate(local_translation)
 
             pickable_card_base = current_hand_card.get_pickable_card_base()
             pickable_card_base.local_translate(local_translation)
