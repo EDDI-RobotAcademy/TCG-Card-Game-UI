@@ -5416,6 +5416,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     self.attack_animation_object.set_animation_actor_damage(your_damage)
                     self.attack_animation_object.set_opponent_main_character(self.opponent_main_character_panel)
+                    self.attack_animation_object.set_is_your_attack_main_character(True)
                     # self.opponent_hp_repository.take_damage(your_damage)
 
                     # self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(ActionToApplyOpponent.Dummy)
@@ -5462,7 +5463,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         return
 
                     self.attack_animation_object.set_is_your_attack_main_character(True)
-
+                    self.attack_animation_object.set_response_data(process_second_passive_skill_response)
                     self.create_effect_animation_with_vertices_and_play_animation_and_call_function(
                         'nether_blade_targeting_skill', self.opponent_main_character_panel.get_vertices(),
                         self.start_nether_blade_second_passive_targeting_motion_animation
@@ -5498,6 +5499,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                         animation_actor = self.attack_animation_object.get_animation_actor()
                         self.attack_animation_object.set_is_your_attack_main_character(False)
+                        self.attack_animation_object.set_opponent_main_character(None)
 
                         process_second_passive_skill_response = self.__fake_battle_field_frame_repository.request_to_process_second_passive_skill_to_opponent_field_unit(
                             TargetingPassiveSkillToOpponentFieldUnitFromDeployRequest(
@@ -5606,6 +5608,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     self.attack_animation_object.set_animation_actor_damage(your_damage)
                     self.attack_animation_object.set_opponent_main_character(self.opponent_main_character_panel)
+                    self.attack_animation_object.set_is_your_attack_main_character(True)
 
                     self.reset_every_selected_action()
 
@@ -5647,7 +5650,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(ActionToApplyOpponent.Dummy)
                         return FieldAreaAction.Dummy
 
-
+                    self.attack_animation_object.set_response_data(process_second_passive_skill_response)
                     self.create_effect_animation_with_vertices_and_play_animation_and_call_function(
                         'nether_blade_targeting_skill', self.opponent_main_character_panel.get_vertices(),
                         self.start_nether_blade_second_passive_targeting_motion_animation
@@ -5674,6 +5677,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     print('찾아2')
 
                     if opponent_fixed_card_base.is_point_inside((x, y)):
+                        self.attack_animation_object.set_opponent_main_character(None)
+                        self.attack_animation_object.set_is_your_attack_main_character(False)
                         self.attack_animation_object.set_opponent_field_unit(opponent_field_unit_object)
 
                         # turn_start_second_passive_skill_to_main_character_response = self.__fake_battle_field_frame_repository.request_to_process_turn_start_second_passive_skill_to_main_character(
@@ -5694,7 +5699,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                         turn_start_second_passive_skill_to_main_character_response = self.__fake_battle_field_frame_repository.request_to_process_turn_start_second_passive_skill_to_your_field_unit(
                             TurnStartSecondPassiveSkillToYourFieldUnitRequest(
-                                _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                                _sessionInfo=self.__session_repository.get_first_fake_session_info(),
                                 _unitCardIndex=str(animation_actor.get_index()),
                                 _opponentTargetCardIndex=str(opponent_field_unit_object.get_index()),
                                 _usageSkillIndex="2"))
@@ -10347,11 +10352,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
     def start_nether_blade_second_passive_targeting_motion_animation(self):
         steps = 50
 
-        is_attack_main_character = False
+        is_attack_main_character = self.attack_animation_object.get_is_your_attack_main_character()
         opponent_field_unit = None
         # targeting_damage = self.attack_animation_object.get_animation_actor_damage()
-        opponent_main_character = self.attack_animation_object.get_opponent_main_character()
-        if opponent_main_character is not None:
+        # opponent_main_character = self.attack_animation_object.get_opponent_main_character()
+        if is_attack_main_character:
             is_attack_main_character = True
         else:
             opponent_field_unit = self.attack_animation_object.get_opponent_field_unit()
@@ -10581,12 +10586,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 else:
                     print(f"{Fore.RED}opponent 메인 캐릭터 공격 -> is_attack_main_character(True): {Fore.GREEN}{is_attack_main_character}{Style.RESET_ALL}")
-                    remain_hp = process_second_passive_skill_response_data['player_main_character_health_point_map_for_notice']['Opponent']
+                    remain_hp = process_second_passive_skill_response_data['player_main_character_health_point_map']['Opponent']
                     self.opponent_hp_repository.change_opponent_hp(remain_hp)
                     if self.opponent_hp_repository.get_opponent_character_survival_info() == SurvivalType.DEATH:
                         self.battle_field_repository.win()
 
-                    self.opponent_hp_repository.take_damage(20)
 
                 # opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
                 # opponent_field_unit_list_length = len(
