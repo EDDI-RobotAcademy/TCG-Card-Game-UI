@@ -63,13 +63,13 @@ class OpponentActivePanel:
         details_button.set_initial_vertices(vertices)
         return details_button
 
-    def create_your_active_panel(self, start_point, selected_object):
+    def create_opponent_active_panel(self, start_point, selected_object):
         card_id = selected_object.get_card_number()
-        skill_count = self.card_info_repository.getCardSkillCounterForCardNumber(card_id)
+        skill_count = 0
 
         width_size = 120 * self.width_ratio
         base_height_size = 74.2 * self.height_ratio
-        height_size = (74.2 * self.height_ratio) * (skill_count + 2)
+        height_size = (74.2 * self.height_ratio) * (skill_count + 1)
 
         rectangle_color = (1.0, 1.0, 1.0, 0.6)
 
