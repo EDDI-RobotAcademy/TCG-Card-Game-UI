@@ -7921,6 +7921,19 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.finish_opponent_attack_your_unit_post_animation(attack_animation_object)
 
         # self.play_effect_animation_by_index(attack_animation_object.get_animation_actor().get_index())
+
+
+        opponent_field_unit_job_number = self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id)
+        effect_animation_name = ''
+        for attack_type in AttackType:
+            if attack_type.value == opponent_field_unit_job_number:
+                effect_animation_name = attack_type.name
+                print('effect animation name: ', effect_animation_name)
+                break
+
+        self.create_effect_animation_to_your_unit_and_play_animation_and_call_function(
+            effect_animation_name, your_field_unit.get_index(), None)
+
         slash_with_sword(1)
 
     def finish_opponent_attack_your_unit_post_animation(self, attack_animation_object):
