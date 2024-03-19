@@ -4388,7 +4388,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     # your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
                     # print(f"스킬 사용 확정 -> your_field_card_index: {your_field_card_index}")
-                    self.your_field_unit_action_repository.use_field_unit_action_count_by_index(your_field_unit_index)
+                    # self.your_field_unit_action_repository.use_field_unit_action_count_by_index(your_field_unit_index)
 
                     your_field_unit_id = self.selected_object.get_card_number()
                     print(f"your_field_unit_id: {your_field_unit_id}")
@@ -4487,6 +4487,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         damage = self.card_info_repository.getCardSkillSecondDamageForCardNumber(your_field_unit_id)
                         self.attack_animation_object.set_animation_actor(self.selected_object)
                         self.attack_animation_object.set_animation_actor_damage(damage)
+
+                        self.your_field_unit_action_repository.use_field_unit_action_count_by_index(
+                            your_field_unit_index)
 
                         extra_ability = self.your_field_unit_repository.get_your_unit_extra_ability_at_index(your_field_unit_index)
                         self.attack_animation_object.set_extra_ability(extra_ability)
@@ -5144,8 +5147,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         print(f'save effect animation: {self.effect_animation_repository.get_effect_animation_by_index(your_field_card_index)}')
                         print(f'save effect animation panel: {self.effect_animation_repository.get_effect_animation_panel_by_index(your_field_card_index)}')
 
-                        self.your_field_unit_action_repository.use_field_unit_action_count_by_index(
-                            your_field_card_index)
+                        # self.your_field_unit_action_repository.use_field_unit_action_count_by_index(
+                        #     your_field_card_index)
 
                         attack_opponent_unit_response = self.__fake_battle_field_frame_repository.request_attack_opponent_unit(
                             RequestAttackOpponentUnit(
@@ -5161,6 +5164,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             print("attack unit failed!! ")
                             self.reset_every_selected_action()
                             return
+
+                        self.your_field_unit_action_repository.use_field_unit_action_count_by_index(
+                            your_field_card_index)
 
                         # self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
                         # opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
