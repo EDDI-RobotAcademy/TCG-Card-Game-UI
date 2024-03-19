@@ -4280,7 +4280,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     your_field_unit_attached_undead_energy = your_field_unit_attached_energy.get_race_energy_at_index(
                         your_field_unit_index, EnergyType.Undead)
-                    # print(f"your_field_unit_attached_undead_energy: {your_field_unit_attached_undead_energy}")
+                    print(f"your_field_unit_attached_undead_energy: {your_field_unit_attached_undead_energy}")
 
                     your_field_unit_attached_human_energy = your_field_unit_attached_energy.get_race_energy_at_index(
                         your_field_unit_index, EnergyType.Human)
