@@ -38,11 +38,11 @@ class MainMenuFrameServiceImpl(MainMenuFrameService):
         #                               command=lambda: switchFrameWithMenuName("login-menu"), width=36, height=2)
 
 
-        self.button_start_origin = Image.open("local_storage/start_screen_image/login_button.png")
+        self.button_start_origin = Image.open("local_storage/start_screen_image/start_button.png")
         button_start = self.button_start_origin.resize((264, 67))
         self.start_login = ImageTk.PhotoImage(button_start)
 
-        self.button_exit_origin = Image.open("local_storage/start_screen_image/sign_up_button.png")
+        self.button_exit_origin = Image.open("local_storage/start_screen_image/exite_button.png")
         button_exit = self.button_exit_origin.resize((264, 67))
         self.button_exit = ImageTk.PhotoImage(button_exit)
 

@@ -104,6 +104,7 @@ from battle_field.infra.request.wide_area_passive_skill_from_deploy_request impo
 from battle_field.infra.request.request_use_special_energy_card_to_unit import RequestUseSpecialEnergyCardToUnit
 
 from battle_field.infra.round_repository import RoundRepository
+from battle_field.infra.window_size_repository import WindowSizeRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
@@ -171,6 +172,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
     __session_repository = SessionRepositoryImpl.getInstance()
     __notify_reader_repository = NotifyReaderRepositoryImpl.getInstance()
     __music_player_repository = MusicPlayerRepositoryImpl.getInstance()
+    window_size_repository = WindowSizeRepository.getInstance()
 
     is_playing_action_animation = False
 
@@ -485,6 +487,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_hand.init_next_prev_gold_button_hand()
         self.your_hand_prev_button = self.your_hand.get_prev_gold_button_hand()
         self.your_hand_next_button = self.your_hand.get_next_gold_button_hand()
+
+        self.window_size_repository.set_is_it_re_entrance(True)
+        self.window_size_repository.set_total_window_size(self.width, self.height)
 
         self.your_deck_repository.set_total_window_size(self.width, self.height)
         # self.your_deck_repository.save_deck_state([93, 35, 35, 93, 25,
@@ -2331,6 +2336,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
         glDisable(GL_DEPTH_TEST)
 
         self.draw_base()
+
+        if self.opponent_field_area_inside_handler.get_field_area_action() is OpponentFieldAreaActionProcess.NEED_TO_FINISH_GAME:
+            print(f"{Fore.RED}게임이 종료되었습니다!{Style.RESET_ALL}")
+            self.timer.stop_timer()
+
+            self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
 
         # if self.opponent_field_area_inside_handler.get_active_field_area_action() is not OpponentFieldAreaActionProcess.PLAY_ANIMATION:
         #     opponent_animation_actor = self.attack_animation_object.get_opponent_animation_actor()
@@ -7455,8 +7466,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
-                if step_count == 8 and self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
-                    self.__music_player_repository.play_sound_effect_with_event_name_for_wav('magician_basic_attack')
+                # if step_count == 8 and self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
+                #     self.__music_player_repository.play_sound_effect_with_event_name_for_wav('magician_basic_attack')
             else:
                 self.start_post_animation(attack_animation_object)
                 self.is_attack_motion_finished = True
@@ -7495,8 +7506,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if step_count == 1:
                 if self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 1:
                     self.__music_player_repository.play_sound_effect_with_event_name('warrior_basic_attack')
-                # elif self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
-                #     self.__music_player_repository.play_sound_effect_with_event_name_for_wav('magician_basic_attack')
+                elif self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
+                    self.__music_player_repository.play_sound_effect_with_event_name('magician_basic_attack')
             if step_count < 11:
                 sword_accel_x_dist = sword_accel_x * step_count
 
@@ -7843,8 +7854,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
-                if step_count == 8 and self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
-                    self.__music_player_repository.play_sound_effect_with_event_name_for_wav('magician_basic_attack')
+                # if step_count == 8 and self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
+                #     self.__music_player_repository.play_sound_effect_with_event_name_for_wav('magician_basic_attack')
             else:
                 self.start_opponent_attack_your_unit_post_animation(attack_animation_object)
                 self.is_attack_motion_finished = True
@@ -7882,8 +7893,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if step_count == 1:
                 if self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 1:
                     self.__music_player_repository.play_sound_effect_with_event_name('warrior_basic_attack')
-                # elif self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
-                #     self.__music_player_repository.play_sound_effect_with_event_name_for_wav('magician_basic_attack')
+                elif self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
+                    self.__music_player_repository.play_sound_effect_with_event_name('magician_basic_attack')
             if step_count < 11:
                 sword_accel_x_dist = sword_accel_x * step_count
 
@@ -7938,6 +7949,19 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.finish_opponent_attack_your_unit_post_animation(attack_animation_object)
 
         # self.play_effect_animation_by_index(attack_animation_object.get_animation_actor().get_index())
+
+
+        opponent_field_unit_job_number = self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id)
+        effect_animation_name = ''
+        for attack_type in AttackType:
+            if attack_type.value == opponent_field_unit_job_number:
+                effect_animation_name = attack_type.name
+                print('effect animation name: ', effect_animation_name)
+                break
+
+        self.create_effect_animation_to_your_unit_and_play_animation_and_call_function(
+            effect_animation_name, your_field_unit.get_index(), None)
+
         slash_with_sword(1)
 
     def finish_opponent_attack_your_unit_post_animation(self, attack_animation_object):
@@ -8236,6 +8260,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
+                if step_count == 6:
+                    self.__music_player_repository.play_sound_effect_with_event_name('valrn_active_skill_2')
             else:
                 self.start_wide_area_motion_animation(attack_animation_object)
                 self.is_attack_motion_finished = True
@@ -8251,6 +8277,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         opponent_field_unit_list_length = len(self.opponent_field_unit_repository.get_current_field_unit_card_object_list())
 
         def wide_area_attack(step_count):
+
             for index in range(
                     opponent_field_unit_list_length - 1,
                     -1,
@@ -8543,6 +8570,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
+                if step_count == 6:
+                    self.__music_player_repository.play_sound_effect_with_event_name('valrn_active_skill_2')
             else:
                 self.start_opponent_valrn_sea_of_wraith_motion_animation(attack_animation_object)
 
@@ -8571,6 +8600,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
 
         def wide_area_attack(step_count):
+
             steps = 50
             your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
             your_field_unit_list_length = len(self.your_field_unit_repository.get_current_field_unit_list())
@@ -9334,8 +9364,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
-                if step_count == 8 and self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
-                    self.__music_player_repository.play_sound_effect_with_event_name_for_wav('magician_basic_attack')
+                # if step_count == 8 and self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
+                #     self.__music_player_repository.play_sound_effect_with_event_name_for_wav('magician_basic_attack')
             else:
                 self.start_you_attack_main_character_post_animation(attack_animation_object)
 
@@ -9373,8 +9403,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if step_count == 1:
                 if self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 1:
                     self.__music_player_repository.play_sound_effect_with_event_name('warrior_basic_attack')
-                # elif self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
-                #     self.__music_player_repository.play_sound_effect_with_event_name_for_wav('magician_basic_attack')
+                elif self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
+                    self.__music_player_repository.play_sound_effect_with_event_name('magician_basic_attack')
             if step_count < 11:
                 sword_accel_x_dist = sword_accel_x * step_count
 
@@ -10085,7 +10115,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
-                if step_count == 8:
+                if step_count == 9:
                     self.__music_player_repository.play_sound_effect_with_event_name('nether_passive_skill_1')
             else:
 
@@ -10396,6 +10426,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
     def start_nether_blade_second_passive_targeting_motion_animation(self):
         steps = 50
+        self.__music_player_repository.play_sound_effect_with_event_name('nether_passive_skill_2')
 
         is_attack_main_character = self.attack_animation_object.get_is_your_attack_main_character()
         opponent_field_unit = None
@@ -10407,6 +10438,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             opponent_field_unit = self.attack_animation_object.get_opponent_field_unit()
 
         def targeting_attack(step_count):
+            # if step_count == 1:
+            #     self.__music_player_repository.play_sound_effect_with_event_name('nether_passive_skill_2')
             vibration_factor = 10
             random_translation = (random.uniform(-vibration_factor, vibration_factor),
                                   random.uniform(-vibration_factor, vibration_factor))
@@ -10751,7 +10784,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
-                if step_count == 8:
+                if step_count == 9:
                     self.__music_player_repository.play_sound_effect_with_event_name('nether_passive_skill_1')
             else:
                 self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
@@ -11150,6 +11183,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
     def start_nether_blade_turn_start_second_passive_targeting_motion_animation(self):
         steps = 50
+        self.__music_player_repository.play_sound_effect_with_event_name('nether_passive_skill_2')
 
         is_attack_main_character = False
         opponent_field_unit = None
@@ -11161,6 +11195,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             opponent_field_unit = self.attack_animation_object.get_opponent_field_unit()
 
         def targeting_attack(step_count):
+            # if step_count == 1:
+            #     self.__music_player_repository.play_sound_effect_with_event_name('nether_passive_skill_2')
             vibration_factor = 10
             random_translation = (random.uniform(-vibration_factor, vibration_factor),
                                   random.uniform(-vibration_factor, vibration_factor))
