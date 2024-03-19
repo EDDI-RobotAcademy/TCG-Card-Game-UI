@@ -6948,6 +6948,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
     def on_canvas_right_click(self, event):
         x, y = event.x, event.y
 
+        if self.is_point_inside_opponent_field_area((x, y), self.opponent_field_panel):
+            pass
+
         if self.selected_object and isinstance(self.selected_object, FixedFieldCard):
             convert_y = self.winfo_reqheight() - y
             fixed_card_base = self.selected_object.get_fixed_card_base()
