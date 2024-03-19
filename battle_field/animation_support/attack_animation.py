@@ -48,6 +48,7 @@ class AttackAnimation:
     response_data = None
 
     is_opponent_attack_main_character = False
+    is_your_attack_main_character = False
 
     opponent_weapon_shape = None
     your_main_character = None
@@ -95,6 +96,12 @@ class AttackAnimation:
 
     def get_is_opponent_attack_main_character(self):
         return self.is_opponent_attack_main_character
+
+    def set_is_your_attack_main_character(self, is_your_attack_main_character):
+        self.is_your_attack_main_character = is_your_attack_main_character
+
+    def get_is_your_attack_main_character(self):
+        return self.is_your_attack_main_character
 
     def set_animation_actor(self, selected_object):
         print(f"{Fore.RED}selected_object{Fore.GREEN} {selected_object}{Style.RESET_ALL}")
