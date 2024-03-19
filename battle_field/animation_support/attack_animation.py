@@ -45,6 +45,7 @@ class AttackAnimation:
     opponent_attacker_unit_moving_x = 0
 
     notify_data = None
+    response_data = None
 
     is_opponent_attack_main_character = False
 
@@ -82,6 +83,12 @@ class AttackAnimation:
 
     def get_total_height(self):
         return self.total_height
+
+    def set_response_data(self, response_data):
+        self.response_data = response_data
+
+    def get_response_data(self):
+        return self.response_data
 
     def set_is_opponent_attack_main_character(self, is_opponent_attack_main_character):
         self.is_opponent_attack_main_character = is_opponent_attack_main_character
