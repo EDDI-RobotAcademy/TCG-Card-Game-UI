@@ -34,6 +34,7 @@ from battle_field.entity.decrease_to_use_field_energy_count import DecreaseToUse
 from battle_field.entity.effect_animation import EffectAnimation
 from battle_field.entity.increase_to_use_field_energy_count import IncreaseToUseFieldEnergyCount
 from battle_field.entity.opponent_active_panel import OpponentActivePanel
+from battle_field.entity.your_hand_details_panel import YourHandDetailsPanel
 from battle_field.entity.your_main_character import YourMainCharacter
 from battle_field.entity.message_on_the_battle_screen import MessageOnTheBattleScreen
 from battle_field.entity.next_field_energy_race import NextFieldEnergyRace
@@ -47,6 +48,7 @@ from battle_field.entity.surrender_confirm import SurrenderConfirm
 from battle_field.entity.turn_end import TurnEnd
 from battle_field.entity.turn_number import CurrentFieldTurnNumber
 from battle_field.entity.your_active_panel import YourActivePanel
+from battle_field.entity.opponent_details_panel import OpponentDetailsPanel
 from battle_field.entity.your_deck import YourDeck
 from battle_field.entity.your_field_energy import YourFieldEnergy
 from battle_field.entity.your_field_panel import YourFieldPanel
@@ -192,6 +194,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_field_panel = None
         self.opponent_field_panel = None
 
+        self.opponent_details_panel_rectangle = None
+        self.your_hand_details_panel_rectangle = None
+
         self.active_panel_rectangle = None
         self.active_panel_attack_button = None
         self.active_panel_first_skill_button = None
@@ -278,12 +283,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.opponent_you_selected_lightning_border_list = []
         self.opponent_you_selected_object_list = []
 
+        self.your_hp = None
+        self.opponent_hp = None
+
         self.your_hp_panel = None
-        self.your_hp = YourHp()
         self.your_hp_repository = YourHpRepository.getInstance()
 
         self.opponent_hp_panel = None
-        self.opponent_hp = OpponentHp()
         self.opponent_hp_repository = OpponentHpRepository.getInstance()
 
         self.your_field_energy_panel = None
@@ -370,7 +376,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.battle_field_muligun_background_shape_list = None
 
         self.timer_panel = None
-        self.timer = BattleFieldTimer()
+        self.timer = None
         self.timer_repository = BattleFieldTimerRepository.getInstance()
 
         self.animation_test_image_panel = None
@@ -440,8 +446,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.attack_animation_object.set_total_window_size(self.width, self.height)
 
-        self.start_first_turn()
-
         self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_skill(width, height)
 
         battle_field_scene = BattleFieldScene()
@@ -469,7 +473,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.opponent_tomb_panel = self.opponent_tomb.get_opponent_tomb_panel()
 
         self.opponent_hand_repository.set_total_window_size(self.width, self.height)
-        self.opponent_hand_repository.save_current_opponent_hand_state([30, 8, 2, 33, 35])
+        # self.opponent_hand_repository.save_current_opponent_hand_state([30, 8, 2, 33, 35])
         self.opponent_hand_repository.create_opponent_hand_card_list()
         self.opponent_hand_card_list = self.opponent_hand_repository.get_current_opponent_hand_card_list()
 
@@ -490,6 +494,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.window_size_repository.set_is_it_re_entrance(True)
         self.window_size_repository.set_total_window_size(self.width, self.height)
+        self.window_size_repository.set_master_opengl_frame(self)
 
         self.your_deck_repository.set_total_window_size(self.width, self.height)
         # self.your_deck_repository.save_deck_state([93, 35, 35, 93, 25,
@@ -522,8 +527,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_active_panel = YourActivePanel()
         self.your_active_panel.set_total_window_size(self.width, self.height)
 
+        self.opponent_details_panel = OpponentDetailsPanel()
+        self.opponent_details_panel.set_total_window_size(self.width, self.height)
+
+        self.your_hand_details_panel = YourHandDetailsPanel()
+        self.your_hand_details_panel.set_total_window_size(self.width, self.height)
+
         self.opponent_active_panel = OpponentActivePanel()
         self.opponent_active_panel.set_total_window_size(self.width, self.height)
+
+        self.your_hp = YourHp()
+        self.opponent_hp = OpponentHp()
 
         self.your_hp.set_total_window_size(self.width, self.height)
         self.your_hp_repository.set_first_hp_state()
@@ -606,10 +620,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.surrender_confirm.create_surrender_confirm_panel_list()
         self.surrender_confirm_panel_list = self.surrender_confirm.get_surrender_confirm_panel_list()
 
-        self.timer.set_total_window_size(self.width, self.height)
-        self.timer.draw_current_timer_panel()
-        self.timer_panel = self.timer.get_timer_panel()
-
         muligun_reset_button_instance = MuligunResetButton()
         muligun_reset_button_instance.set_total_window_size(self.width, self.height)
         muligun_reset_button_instance.init_muligun_reset_button()
@@ -619,6 +629,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
         multi_draw_button_instance.set_total_window_size(self.width, self.height)
         multi_draw_button_instance.init_multi_draw_button()
         self.multi_draw_button = multi_draw_button_instance.get_multi_draw_button()
+
+        self.timer = BattleFieldTimer()
+
+        self.timer.set_total_window_size(self.width, self.height)
+        self.timer.draw_current_timer_panel()
+        self.timer_panel = self.timer.get_timer_panel()
+
+        self.start_first_turn()
 
         if self.battle_field_repository.get_is_game_end():
             print("게임 끝났어 ")
@@ -792,32 +810,32 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             return
 
-        # if key.lower() == 'kp_0':
-        #     opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
-        #     for opponent_unit_index, opponent_unit in enumerate(opponent_field_unit_list):
-        #         if opponent_unit == None:
-        #             continue
-        #
-        #         if opponent_unit.get_card_number() == 27:
-        #             self.your_field_energy_repository.request_to_attach_energy_to_unit(
-        #                 RequestAttachFieldEnergyToUnit(
-        #                     _sessionInfo=self.__session_repository.get_second_fake_session_info(),
-        #                     _unitIndex=opponent_unit.get_index(),
-        #                     _energyRace=CardRace.UNDEAD,
-        #                     _energyCount=2
-        #                 )
-        #             )
-        #
-        #             response = self.__fake_battle_field_frame_repository.request_attack_main_character_with_active_skill(
-        #                 RequestAttackMainCharacterWithActiveSkill(
-        #                     _sessionInfo=self.__session_repository.get_second_fake_session_info(),
-        #                     _unitCardIndex=opponent_unit.get_index(),
-        #                     _targetGameMainCharacterIndex="0"
-        #                 )
-        #             )
-        #
-        #             print("test dark ball : ", response)
-        #             return
+        if key.lower() == 'kp_0':
+            opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+            for opponent_unit_index, opponent_unit in enumerate(opponent_field_unit_list):
+                if opponent_unit == None:
+                    continue
+
+                if opponent_unit.get_card_number() == 27:
+                    self.your_field_energy_repository.request_to_attach_energy_to_unit(
+                        RequestAttachFieldEnergyToUnit(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _unitIndex=opponent_unit.get_index(),
+                            _energyRace=CardRace.UNDEAD,
+                            _energyCount=2
+                        )
+                    )
+
+                    response = self.__fake_battle_field_frame_repository.request_attack_main_character_with_active_skill(
+                        RequestAttackMainCharacterWithActiveSkill(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _unitCardIndex=opponent_unit.get_index(),
+                            _targetGameMainCharacterIndex="0"
+                        )
+                    )
+
+                    print("test dark ball : ", response)
+                    return
 
         # if key.lower() == 'kp_decimal':
         if key.lower() == 'period':
@@ -2993,6 +3011,26 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if self.active_panel_details_button is not None:
                 self.active_panel_details_button.draw()
 
+        if self.opponent_details_panel_rectangle:
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+            self.opponent_details_panel_rectangle.draw()
+
+            glDisable(GL_BLEND)
+
+            self.opponent_details_button.draw()
+
+        if self.your_hand_details_panel_rectangle:
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+            self.your_hand_details_panel_rectangle.draw()
+
+            glDisable(GL_BLEND)
+
+            self.your_hand_details_button.draw()
+
         for your_lightning_border in self.field_area_inside_handler.get_lightning_border_list():
             self.lightning_border.set_padding(20)
             self.lightning_border.update_shape(your_lightning_border)
@@ -4280,7 +4318,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     your_field_unit_attached_undead_energy = your_field_unit_attached_energy.get_race_energy_at_index(
                         your_field_unit_index, EnergyType.Undead)
-                    # print(f"your_field_unit_attached_undead_energy: {your_field_unit_attached_undead_energy}")
+                    print(f"your_field_unit_attached_undead_energy: {your_field_unit_attached_undead_energy}")
 
                     your_field_unit_attached_human_energy = your_field_unit_attached_energy.get_race_energy_at_index(
                         your_field_unit_index, EnergyType.Human)
@@ -4399,7 +4437,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     # your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
                     # print(f"스킬 사용 확정 -> your_field_card_index: {your_field_card_index}")
-                    self.your_field_unit_action_repository.use_field_unit_action_count_by_index(your_field_unit_index)
+                    # self.your_field_unit_action_repository.use_field_unit_action_count_by_index(your_field_unit_index)
 
                     your_field_unit_id = self.selected_object.get_card_number()
                     print(f"your_field_unit_id: {your_field_unit_id}")
@@ -4498,6 +4536,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         damage = self.card_info_repository.getCardSkillSecondDamageForCardNumber(your_field_unit_id)
                         self.attack_animation_object.set_animation_actor(self.selected_object)
                         self.attack_animation_object.set_animation_actor_damage(damage)
+
+                        self.your_field_unit_action_repository.use_field_unit_action_count_by_index(
+                            your_field_unit_index)
 
                         extra_ability = self.your_field_unit_repository.get_your_unit_extra_ability_at_index(your_field_unit_index)
                         self.attack_animation_object.set_extra_ability(extra_ability)
@@ -4884,10 +4925,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # response = self.__field_energy_application.send_request_to_attach_field_energy_to_unit(
                         #     unitIndex=unit_index, energyRace = energy_race, energyCount=energy_count
                         # )
-                        # if not response:
-                        #     self.selected_object = None
-                        #     self.your_field_energy_panel_selected = False
-                        #     return
+                        if not response.get('is_success'):
+                            self.reset_every_selected_action()
+                            return
 
                         # self.your_field_unit_repository.attach_race_energy(
                         #     unit_index,
@@ -5155,8 +5195,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         print(f'save effect animation: {self.effect_animation_repository.get_effect_animation_by_index(your_field_card_index)}')
                         print(f'save effect animation panel: {self.effect_animation_repository.get_effect_animation_panel_by_index(your_field_card_index)}')
 
-                        self.your_field_unit_action_repository.use_field_unit_action_count_by_index(
-                            your_field_card_index)
+                        # self.your_field_unit_action_repository.use_field_unit_action_count_by_index(
+                        #     your_field_card_index)
 
                         attack_opponent_unit_response = self.__fake_battle_field_frame_repository.request_attack_opponent_unit(
                             RequestAttackOpponentUnit(
@@ -5172,6 +5212,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             print("attack unit failed!! ")
                             self.reset_every_selected_action()
                             return
+
+                        self.your_field_unit_action_repository.use_field_unit_action_count_by_index(
+                            your_field_card_index)
 
                         # self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
                         # opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
@@ -6470,94 +6513,161 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 return
 
                             def calculate_corpse_explosion():
+                                print(f"calculate_corpse_explosion : {corpse_explosion_response}")
                                 remove_from_field_index_list = []
                                 remove_from_field_id_list = []
 
                                 sacrificed_unit_hp = 0
 
-                                your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
-                                for your_field_unit in your_field_unit_list:
-                                    if your_field_unit is None:
+                                for opponent_field_unit_index, opponent_field_unit_remain_hp in corpse_explosion_response.get(
+                                        'player_field_unit_health_point_map', {}).get('Opponent', {}).get(
+                                        'field_unit_health_point_map', {}).items():
+                                    if opponent_field_unit_remain_hp == 0:
                                         continue
 
-                                    if isinstance(your_field_unit, FixedFieldCard):
-                                        your_field_unit.selected = False
+                                    opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(int(opponent_field_unit_index))
+                                    opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
 
-                                for your_field_unit in self.your_field_unit_repository.get_current_field_unit_list():
-                                    if your_field_unit is None:
-                                        continue
-
-                                    if self.targeting_enemy_select_using_your_field_card_index ==  your_field_unit.get_index():
-
-                                        # if self.selected_object.get_card_number() == 9:
-                                        #     self.return_to_initial_location()
-
-                                        print(f"your field unit (field_unit) = {type(your_field_unit)}")
-                                        fixed_card_base = your_field_unit.get_fixed_card_base()
-                                        # page_selected_card = self.your_hand_repository.get_current_your_hand_page()
-                                        print(f"your field unit type (fixed_card_base) = {type(fixed_card_base)}")
-
-                                        for fixed_card_base_attached_shape in fixed_card_base.get_attached_shapes():
-                                            if isinstance(fixed_card_base_attached_shape, NonBackgroundNumberImage):
-                                                if fixed_card_base_attached_shape.get_circle_kinds() is CircleKinds.HP:
-
-                                                    sacrificed_unit_hp_number = fixed_card_base_attached_shape.get_number()
-                                                    print(f'sacrificed_unit_hp_number : {sacrificed_unit_hp_number}')
-                                                    sacrificed_unit_hp = sacrificed_unit_hp_number
-                                                    break
-                                        break
-
-                                for opponent_you_selected_object in self.opponent_you_selected_object_list:
-                                    opponent_fixed_card_base = opponent_you_selected_object.get_fixed_card_base()
-
-                                    opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
-                                    # remove_from_field = False
-
-                                    for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
-                                        if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
-                                            if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
-                                                print(f'{opponent_you_selected_object.get_index()} hp changed! ')
-                                                print(f"{opponent_fixed_card_attached_shape.get_number()} -> ")
-                                                print(f"{opponent_fixed_card_attached_shape.get_number() - sacrificed_unit_hp}")
-                                                hp_number = opponent_fixed_card_attached_shape.get_number()
-                                                hp_number -= sacrificed_unit_hp
-
-
-                                                # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
-                                                # (지금 당장 불사가 존재하지 않음)
-                                                if hp_number <= 0:
-                                                    # remove_from_field = True
-                                                    remove_from_field_index_list.append(
-                                                        opponent_you_selected_object.get_index())
-                                                    remove_from_field_id_list.append(
-                                                        opponent_you_selected_object.get_card_number())
-
-                                                    break
+                                    for opponent_fixed_base_attached_shape in opponent_fixed_card_base.get_attached_shapes():
+                                        if isinstance(opponent_fixed_base_attached_shape, NonBackgroundNumberImage):
+                                            if opponent_fixed_base_attached_shape.get_circle_kinds() is CircleKinds.HP:
 
                                                 def calculate_remain_hp_to_opponent_unit(param):
                                                     _opponent_fixed_card_attached_shape = param[0]
                                                     _hp_number = param[1]
-                                                    print(f"corpse explosion -> hp_number: {hp_number}")
+                                                    print(f"corpse explosion -> hp_number: {_hp_number}")
                                                     _opponent_fixed_card_attached_shape.set_number(_hp_number)
-
-                                                    # opponent_fixed_card_attached_shape.set_image_data(
-                                                    #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
-                                                    #     self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
 
                                                     _opponent_fixed_card_attached_shape.set_image_data(
                                                         self.pre_drawed_image_instance.get_pre_draw_unit_hp(_hp_number))
 
                                                 self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function_with_param(
-                                                    'dark_blast', opponent_you_selected_object.get_index(), calculate_remain_hp_to_opponent_unit,
-                                                    (opponent_fixed_card_attached_shape,hp_number))
+                                                    'dark_blast', int(opponent_field_unit_index),
+                                                    calculate_remain_hp_to_opponent_unit,
+                                                    (opponent_fixed_base_attached_shape, opponent_field_unit_remain_hp))
 
-                                    # if remove_from_field:
-                                    #     card_id = opponent_you_selected_object.get_card_number()
-                                    #
-                                    #     self.opponent_field_unit_repository.remove_current_field_unit_card(opponent_you_selected_object.get_index())
-                                    #     self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                                                # opponent_fixed_base_attached_shape.set_number(opponent_field_unit_remain_hp)
+                                                # opponent_fixed_base_attached_shape.set_image_data(
+                                                #     self.pre_drawed_image_instance.get_pre_draw_character_hp_image(opponent_field_unit_remain_hp)
+                                                # )
 
-                                # for remove_from_field in remove_from_field_list:
+
+                                for player, dead_unit_list_map in corpse_explosion_response['player_field_unit_death_map'].items():
+                                    dead_unit_list = dead_unit_list_map['dead_field_unit_index_list']
+
+                                    if player == 'You':
+                                        print('희생당한 유닛 사망처리')
+                                        for dead_unit in dead_unit_list:
+                                            def remove_field_unit(unit_index):
+                                                card_id = self.your_field_unit_repository.get_card_id_by_index(unit_index)
+                                                self.your_tomb_repository.create_tomb_card(card_id)
+                                                self.your_field_unit_repository.remove_card_by_index(unit_index)
+                                                self.your_field_unit_repository.remove_harmful_status_by_index(unit_index)
+                                                self.your_field_unit_repository.replace_field_card_position()
+
+                                            self.create_effect_animation_to_your_unit_and_play_animation_and_call_function_with_param(
+                                                'death', dead_unit,  remove_field_unit ,dead_unit)
+
+
+                                    elif player == 'Opponent':
+                                        print('죽은 상대 유닛 사망처리')
+                                        for dead_unit in dead_unit_list:
+                                            def remove_field_unit(unit_index):
+                                                card_id = self.opponent_field_unit_repository.get_opponent_card_id_by_index(unit_index)
+                                                self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                                                self.opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
+                                                self.opponent_field_unit_repository.remove_harmful_status_by_index(unit_index)
+                                                self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                                            self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function_with_param(
+                                                'death', dead_unit, remove_field_unit, dead_unit)
+
+                                    else:
+                                        print('unknown player!!')
+
+                                # your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
+                                # for your_field_unit in your_field_unit_list:
+                                #     if your_field_unit is None:
+                                #         continue
+                                #
+                                #     if isinstance(your_field_unit, FixedFieldCard):
+                                #         your_field_unit.selected = False
+                                #
+                                # for your_field_unit in self.your_field_unit_repository.get_current_field_unit_list():
+                                #     if your_field_unit is None:
+                                #         continue
+                                #
+                                #     if self.targeting_enemy_select_using_your_field_card_index ==  your_field_unit.get_index():
+                                #
+                                #         # if self.selected_object.get_card_number() == 9:
+                                #         #     self.return_to_initial_location()
+                                #
+                                #         print(f"your field unit (field_unit) = {type(your_field_unit)}")
+                                #         fixed_card_base = your_field_unit.get_fixed_card_base()
+                                #         # page_selected_card = self.your_hand_repository.get_current_your_hand_page()
+                                #         print(f"your field unit type (fixed_card_base) = {type(fixed_card_base)}")
+                                #
+                                #         for fixed_card_base_attached_shape in fixed_card_base.get_attached_shapes():
+                                #             if isinstance(fixed_card_base_attached_shape, NonBackgroundNumberImage):
+                                #                 if fixed_card_base_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                #
+                                #                     sacrificed_unit_hp_number = fixed_card_base_attached_shape.get_number()
+                                #                     print(f'sacrificed_unit_hp_number : {sacrificed_unit_hp_number}')
+                                #                     sacrificed_unit_hp = sacrificed_unit_hp_number
+                                #                     break
+                                #         break
+                                #
+                                # for opponent_you_selected_object in self.opponent_you_selected_object_list:
+                                #     opponent_fixed_card_base = opponent_you_selected_object.get_fixed_card_base()
+                                #
+                                #     opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+                                #     # remove_from_field = False
+                                #
+                                #     for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                                #         if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
+                                #             if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                #                 print(f'{opponent_you_selected_object.get_index()} hp changed! ')
+                                #                 print(f"{opponent_fixed_card_attached_shape.get_number()} -> ")
+                                #                 print(f"{opponent_fixed_card_attached_shape.get_number() - sacrificed_unit_hp}")
+                                #                 hp_number = opponent_fixed_card_attached_shape.get_number()
+                                #                 hp_number -= sacrificed_unit_hp
+                                #
+                                #
+                                #                 # TODO: n 턴간 불사 특성을 검사해야하므로 사실 이것도 summary 방식으로 빼는 것이 맞으나 우선은 진행한다.
+                                #                 # (지금 당장 불사가 존재하지 않음)
+                                #                 if hp_number <= 0:
+                                #                     # remove_from_field = True
+                                #                     remove_from_field_index_list.append(
+                                #                         opponent_you_selected_object.get_index())
+                                #                     remove_from_field_id_list.append(
+                                #                         opponent_you_selected_object.get_card_number())
+                                #
+                                #                     break
+                                #
+                                #                 def calculate_remain_hp_to_opponent_unit(param):
+                                #                     _opponent_fixed_card_attached_shape = param[0]
+                                #                     _hp_number = param[1]
+                                #                     print(f"corpse explosion -> hp_number: {hp_number}")
+                                #                     _opponent_fixed_card_attached_shape.set_number(_hp_number)
+                                #
+                                #                     # opponent_fixed_card_attached_shape.set_image_data(
+                                #                     #     # TODO: 실제로 여기서 서버로부터 계산 받은 값을 적용해야함
+                                #                     #     self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
+                                #
+                                #                     _opponent_fixed_card_attached_shape.set_image_data(
+                                #                         self.pre_drawed_image_instance.get_pre_draw_unit_hp(_hp_number))
+                                #
+                                #                 self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function_with_param(
+                                #                     'dark_blast', opponent_you_selected_object.get_index(), calculate_remain_hp_to_opponent_unit,
+                                #                     (opponent_fixed_card_attached_shape,hp_number))
+                                #
+                                #     # if remove_from_field:
+                                #     #     card_id = opponent_you_selected_object.get_card_number()
+                                #     #
+                                #     #     self.opponent_field_unit_repository.remove_current_field_unit_card(opponent_you_selected_object.get_index())
+                                #     #     self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                                #
+                                # # for remove_from_field in remove_from_field_list:
 
                                 print(
                                     f"corpse explosion your hand index: {self.targeting_ememy_select_using_hand_card_index}")
@@ -6566,70 +6676,71 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                                 self.your_hand_repository.remove_card_by_index_with_page(
                                     self.targeting_ememy_select_using_hand_card_index)
-                                self.your_tomb_repository.create_tomb_card(
-                                    self.targeting_ememy_select_using_hand_card_id)
+                                self.your_hand_repository.update_your_hand()
+                                self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                                self.your_field_unit_repository.replace_field_card_position()
 
-                                for card_id in remove_from_field_id_list:
-                                    self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                                self.fixed_unit_card_inside_action = FixedUnitCardInsideAction.Dummy
 
-                                for index in remove_from_field_index_list:
-                                    effect_animation = EffectAnimation()
-                                    effect_animation.set_animation_name('death')
-                                    effect_animation.set_total_window_size(self.width, self.height)
-                                    effect_animation.change_local_translation(
-                                        self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
-                                        index).get_fixed_card_base().get_local_translation())
-                                    effect_animation.draw_animation_panel()
-                                    effect_animation_panel = effect_animation.get_animation_panel()
+                                self.targeting_ememy_select_using_hand_card_id = -1
+                                self.targeting_ememy_select_using_hand_card_index = -1
+                                self.targeting_enemy_select_using_your_field_card_index = -1
+                                self.targeting_enemy_for_sacrifice_unit_id = -1
 
-                                    animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
-                                        effect_animation)
+                                self.targeting_enemy_select_support_lightning_border_list = []
+                                self.opponent_you_selected_lightning_border_list = []
+                                self.opponent_you_selected_object_list = []
 
-                                    self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
-                                        animation_index, effect_animation_panel)
+                                self.selected_object = None
+                                # self.your_tomb_repository.create_tomb_card(
+                                #     self.targeting_ememy_select_using_hand_card_id)
+                                #
+                                # for card_id in remove_from_field_id_list:
+                                #     self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                                #
+                                # for index in remove_from_field_index_list:
+                                #     effect_animation = EffectAnimation()
+                                #     effect_animation.set_animation_name('death')
+                                #     effect_animation.set_total_window_size(self.width, self.height)
+                                #     effect_animation.change_local_translation(
+                                #         self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                                #         index).get_fixed_card_base().get_local_translation())
+                                #     effect_animation.draw_animation_panel()
+                                #     effect_animation_panel = effect_animation.get_animation_panel()
+                                #
+                                #     animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+                                #         effect_animation)
+                                #
+                                #     self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                                #         animation_index, effect_animation_panel)
+                                #
+                                #     def remove_opponent_unit(_index):
+                                #         self.opponent_field_unit_repository.remove_current_field_unit_card(_index)
+                                #         # TODO: ID 와 index 로 처리하는 것은 명확히 구분될 필요가 있음
+                                #         # self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                                #         self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                                #         self.opponent_field_unit_repository.remove_harmful_status_by_index(_index)
+                                #
+                                #     self.play_effect_animation_by_index_and_call_function_with_param(animation_index, remove_opponent_unit, index)
+                                #
+                                #
+                                #
+                                # print(
+                                #     f"corpse explosion your field index: {self.targeting_enemy_select_using_your_field_card_index}")
 
-                                    def remove_opponent_unit(_index):
-                                        self.opponent_field_unit_repository.remove_current_field_unit_card(_index)
-                                        # TODO: ID 와 index 로 처리하는 것은 명확히 구분될 필요가 있음
-                                        # self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
-                                        self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-                                        self.opponent_field_unit_repository.remove_harmful_status_by_index(_index)
-
-                                    self.play_effect_animation_by_index_and_call_function_with_param(animation_index, remove_opponent_unit, index)
-
-
-
-                                print(
-                                    f"corpse explosion your field index: {self.targeting_enemy_select_using_your_field_card_index}")
-
-                                def remove_your_unit_by_index():
-
-                                    self.your_field_unit_repository.remove_card_by_index(
-                                        self.targeting_enemy_select_using_your_field_card_index)
-                                    self.your_tomb_repository.create_tomb_card(self.targeting_enemy_for_sacrifice_unit_id)
-                                    self.your_field_unit_repository.remove_harmful_status_by_index(self.targeting_enemy_select_using_your_field_card_index)
-                                    # self.your_hand_repository.replace_hand_card_position()
-                                    self.your_hand_repository.update_your_hand()
-                                    self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-                                    self.your_field_unit_repository.replace_field_card_position()
-
-                                    self.fixed_unit_card_inside_action = FixedUnitCardInsideAction.Dummy
-
-                                    self.targeting_ememy_select_using_hand_card_id = -1
-                                    self.targeting_ememy_select_using_hand_card_index = -1
-                                    self.targeting_enemy_select_using_your_field_card_index = -1
-                                    self.targeting_enemy_for_sacrifice_unit_id = -1
-
-                                    self.targeting_enemy_select_support_lightning_border_list = []
-                                    self.opponent_you_selected_lightning_border_list = []
-                                    self.opponent_you_selected_object_list = []
-
-                                    self.selected_object = None
-                                    return
-
-                                self.create_effect_animation_to_your_unit_and_play_animation_and_call_function(
-                                    'death', self.targeting_enemy_select_using_your_field_card_index,
-                                    remove_your_unit_by_index)
+                                # def remove_your_unit_by_index():
+                                #
+                                #     self.your_field_unit_repository.remove_card_by_index(
+                                #         self.targeting_enemy_select_using_your_field_card_index)
+                                #     self.your_tomb_repository.create_tomb_card(self.targeting_enemy_for_sacrifice_unit_id)
+                                #     self.your_field_unit_repository.remove_harmful_status_by_index(self.targeting_enemy_select_using_your_field_card_index)
+                                #     # self.your_hand_repository.replace_hand_card_position()
+                                #
+                                #     return
+                                #
+                                # self.create_effect_animation_to_your_unit_and_play_animation_and_call_function(
+                                #     'death', self.targeting_enemy_select_using_your_field_card_index,
+                                #     remove_your_unit_by_index)
 
 
                             field_vertices = self.opponent_field_panel.get_vertices()
@@ -6992,6 +7103,43 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.active_panel_second_skill_button = self.your_active_panel.get_your_active_panel_second_skill_button()
                 self.active_panel_third_skill_button = None
                 self.active_panel_details_button = self.your_active_panel.get_your_active_panel_details_button()
+
+        current_opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+        for opponent_field_unit in current_opponent_field_unit_list:
+            if opponent_field_unit is None:
+                continue
+
+            opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+            convert_y = self.winfo_reqheight() - y
+
+            if opponent_fixed_card_base.is_point_inside((x, convert_y)):
+                print(f"Inside Unit")
+                self.opponent_details_panel.create_opponent_details_panel((x, y), opponent_field_unit)
+
+                new_rectangle = self.opponent_details_panel.get_opponent_details_panel()
+                self.opponent_details_panel_rectangle = new_rectangle
+
+                self.opponent_details_button = self.opponent_details_panel.get_opponent_details_panel_button()
+            else:
+                print(f"Outside Unit")
+
+        current_page_your_hand_list = self.your_hand_repository.get_current_page_your_hand_list()
+        if current_page_your_hand_list is not None:
+            for current_page_hand_card in current_page_your_hand_list:
+                your_hand_pickable_card_base = current_page_hand_card.get_pickable_card_base()
+                convert_y = self.winfo_reqheight() - y
+
+                if your_hand_pickable_card_base.is_point_inside((x, convert_y)):
+                    print(f"Inside Unit")
+                    self.your_hand_details_panel.create_your_hand_details_panel((x, y), current_page_hand_card)
+
+                    new_rectangle = self.your_hand_details_panel.get_your_hand_details_panel()
+                    self.your_hand_details_panel_rectangle = new_rectangle
+
+                    self.your_hand_details_button = self.your_hand_details_panel.get_your_hand_details_panel_button()
+                else:
+                    print(f"Outside Unit")
+
 
     def create_opengl_rectangle(self, start_point):
         card_id = self.selected_object.get_card_number()
@@ -8327,7 +8475,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         #todo : 망령의 바다 이펙트로 바꿔야함
         self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
-            'dark_blast', wide_area_attack, 1)
+            'sea_of_wraith', wide_area_attack, 1)
         # effect_animation = EffectAnimation()
         # effect_animation.set_animation_name('dark_blast')
         # effect_animation.set_total_window_size(self.width, self.height)
@@ -8566,7 +8714,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         # todo : 망바 이름으로 바꿔야함
         effect_animation = EffectAnimation()
-        effect_animation.set_animation_name('dark_blast')
+        effect_animation.set_animation_name('sea_of_wraith')
         effect_animation.set_total_window_size(self.width, self.height)
         field_vertices = self.your_field_panel.get_vertices()
         main_character_vertices = self.your_main_character_panel.get_vertices()
@@ -10029,13 +10177,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     your_main_character_survival_state = (
                         notify_data)['player_main_character_survival_map']['You']
 
-                    if your_main_character_survival_state != 'Survival':
-                        print('Your main character is dead!')
-                        return
-
                     self.your_hp_repository.change_hp(int(your_main_character_health_point))
                     print(f"{Fore.RED}current_main_character_health:{Fore.GREEN} "
                           f"{self.your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
+
+                    if your_main_character_survival_state == 'Death':
+                        print('Your main character is dead!')
+                        self.your_hp_repository.your_character_die()
+                        self.battle_field_repository.lose()
+                        return
+
+
 
                     # self.your_hp_repository.take_damage(targeting_damage)
                     self.attack_animation_object.set_is_opponent_attack_main_character(False)
@@ -10649,7 +10801,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     print(f"{Fore.RED}opponent 메인 캐릭터 공격 -> is_attack_main_character(True): {Fore.GREEN}{is_attack_main_character}{Style.RESET_ALL}")
                     remain_hp = process_second_passive_skill_response_data['player_main_character_health_point_map']['Opponent']
                     self.opponent_hp_repository.change_opponent_hp(remain_hp)
-                    if self.opponent_hp_repository.get_opponent_character_survival_info() == SurvivalType.DEATH:
+
+                    survival_info = process_second_passive_skill_response_data['player_main_character_survival_map']['Opponent']
+                    if survival_info == 'Death':
                         self.battle_field_repository.win()
 
 
@@ -13235,6 +13389,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # opponent_damage = attack_animation_object.get_opponent_animation_actor_damage()
                 health_point = notify_data['player_main_character_health_point_map']['You']
                 self.your_hp_repository.change_hp(int(health_point))
+                if self.your_hp_repository.get_your_character_survival_info() == SurvivalType.DEATH:
+                    self.battle_field_repository.lose()
 
                 self.attack_animation_object.set_opponent_animation_actor(None)
 
@@ -13524,6 +13680,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_field_unit_lightning_border_list.clear()
         self.opponent_fixed_unit_card_inside_handler.clear_lightning_border_list()
 
+        self.opponent_details_panel_rectangle = None
+        self.opponent_details_panel.clear_all_opponent_details_panel()
+
+        self.your_hand_details_panel_rectangle = None
+        self.your_hand_details_panel.clear_all_your_hand_details_panel()
+
         # self.lightning_border.remove_lightning_border()
 
     def create_effect_animation_with_vertices_and_play_animation_and_call_function(self, effect_name, vertices, function):
@@ -13668,4 +13830,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_field_unit_action_repository.clear_every_resource()
         self.timer_repository.clear_every_resource()
         self.effect_animation_repository.clear_every_resource()
+        
+        del self.timer
         # self.battle_field_repository.clear_every_resource()

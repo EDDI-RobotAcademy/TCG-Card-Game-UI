@@ -63,7 +63,6 @@ class BattleFieldTimer(OpenGLFrame):
 
         )
 
-
     def update_current_timer_panel(self):
         if self.timer >= 0:
             self.timer_panel.set_image_data(self.__pre_drawed_image.get_pre_draw_battle_field_timer(self.timer))

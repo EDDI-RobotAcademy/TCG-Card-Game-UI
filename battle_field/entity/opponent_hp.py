@@ -1,3 +1,5 @@
+from colorama import Fore, Style
+
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.opponent_hp_repository import OpponentHpRepository
 from common.survival_type import SurvivalType
@@ -48,12 +50,17 @@ class OpponentHp:
         self.current_opponent_hp_state = current_opponent_hp_state
 
     def draw_current_opponent_hp_panel(self):
-        radius = 20
+        # left_x_point = self.total_width * 0.53
+        # right_x_point = self.total_width * 0.58
+        # top_y_point = self.total_height * 0.66816
+        # bottom_y_point = self.total_height * 0.79844
 
-        left_x_point = self.total_width * 0.51
+        # 0.13028
+
+        left_x_point = self.total_width * 0.53
         right_x_point = self.total_width * 0.58
-        top_y_point = self.total_height * 0.15
-        bottom_y_point = self.total_height * 0.23
+        top_y_point = self.total_height * 0.09984
+        bottom_y_point = self.total_height * 0.23012
 
         # start_x = center[0] - 5 - radius * 1.0
         # end_x = center[0] - 5 + radius * 1.0
@@ -74,6 +81,7 @@ class OpponentHp:
         #self.opponent_hp_panel.draw()
 
     def update_current_opponent_hp_panel(self):
+        # print(f"{Fore.RED}update_current_opponent_hp_panel(): {Fore.GREEN}{self.current_opponent_hp_state.get_current_health()}{Style.RESET_ALL}")
         self.opponent_hp_panel.set_image_data(self.__pre_drawed_image.get_pre_draw_character_hp_image(self.current_opponent_hp_state.get_current_health()))
 
     def check_opponent_is_survival(self):
