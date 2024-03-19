@@ -371,7 +371,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.battle_field_muligun_background_shape_list = None
 
         self.timer_panel = None
-        self.timer = BattleFieldTimer()
+        self.timer = None
         self.timer_repository = BattleFieldTimerRepository.getInstance()
 
         self.animation_test_image_panel = None
@@ -440,8 +440,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.is_reshape_not_complete = False
 
         self.attack_animation_object.set_total_window_size(self.width, self.height)
-
-        self.start_first_turn()
 
         self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_skill(width, height)
 
@@ -611,10 +609,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.surrender_confirm.create_surrender_confirm_panel_list()
         self.surrender_confirm_panel_list = self.surrender_confirm.get_surrender_confirm_panel_list()
 
-        self.timer.set_total_window_size(self.width, self.height)
-        self.timer.draw_current_timer_panel()
-        self.timer_panel = self.timer.get_timer_panel()
-
         muligun_reset_button_instance = MuligunResetButton()
         muligun_reset_button_instance.set_total_window_size(self.width, self.height)
         muligun_reset_button_instance.init_muligun_reset_button()
@@ -624,6 +618,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
         multi_draw_button_instance.set_total_window_size(self.width, self.height)
         multi_draw_button_instance.init_multi_draw_button()
         self.multi_draw_button = multi_draw_button_instance.get_multi_draw_button()
+
+        self.timer = BattleFieldTimer()
+
+        self.timer.set_total_window_size(self.width, self.height)
+        self.timer.draw_current_timer_panel()
+        self.timer_panel = self.timer.get_timer_panel()
+
+        self.start_first_turn()
 
         if self.battle_field_repository.get_is_game_end():
             print("게임 끝났어 ")
@@ -13745,4 +13747,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_field_unit_action_repository.clear_every_resource()
         self.timer_repository.clear_every_resource()
         self.effect_animation_repository.clear_every_resource()
+        
+        del self.timer
         # self.battle_field_repository.clear_every_resource()
