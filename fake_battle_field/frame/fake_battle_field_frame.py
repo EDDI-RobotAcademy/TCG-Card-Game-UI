@@ -2880,7 +2880,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.master.after(2000, self.opponent_attack_main_character_animation)
 
             self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
-
+            self.opponent_field_area_inside_handler.clear_field_area_action()
         if self.opponent_field_area_inside_handler.get_field_area_action() is OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_GENERAL_ATTACK_TO_YOUR_UNIT_PROCESS:
             print(f"{Fore.RED}Opponent Unit이 Your 유닛을 공격합니다!{Style.RESET_ALL}")
 
@@ -2888,28 +2888,28 @@ class FakeBattleFieldFrame(OpenGLFrame):
             # self.opponent_attack_animation
 
             self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
-
+            self.opponent_field_area_inside_handler.clear_field_area_action()
         if self.opponent_field_area_inside_handler.get_field_area_action() is OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_VALRN_ACTIVE_TARGETING_SKILL_TO_YOUR_UNIT:
             print(f"{Fore.RED}Opponent valrn이 Your 유닛에 쉐도우 볼을 사용합니다!{Style.RESET_ALL}")
 
             self.master.after(2000, self.opponent_valrn_shadow_ball_to_your_unit_animation)
 
             self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
-
+            self.opponent_field_area_inside_handler.clear_field_area_action()
         if self.opponent_field_area_inside_handler.get_field_area_action() is OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_VALRN_ACTIVE_TARGETING_SKILL_TO_YOUR_MAIN_CHARACTER:
             print(f"{Fore.RED}Opponent valrn이 Your 메인 캐릭터에 쉐도우 볼을 사용합니다!{Style.RESET_ALL}")
 
             self.master.after(2000, self.opponent_valrn_shadow_ball_to_your_main_character_animation)
 
             self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
-
+            self.opponent_field_area_inside_handler.clear_field_area_action()
         if self.opponent_field_area_inside_handler.get_field_area_action() is OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_VALRN_ACTIVE_NON_TARGETING_SKILL_TO_YOUR_FIELD:
             print(f"{Fore.RED}Opponent valrn이 Your Field에 망령의 바다를 사용합니다!{Style.RESET_ALL}")
 
             self.master.after(2000, self.opponent_valrn_sea_of_wraith_to_your_field_animation)
 
             self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
-
+            self.opponent_field_area_inside_handler.clear_field_area_action()
         self.post_draw()
 
         if self.opponent_field_area_inside_handler.get_active_field_area_action() is OpponentFieldAreaActionProcess.PLAY_ANIMATION:
@@ -3892,6 +3892,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     self.selected_object = None
                 if drop_action_result is FieldAreaAction.DRAW_DECK:
                     self.field_area_inside_handler.clear_field_area_action()
+                    self.selected_object = None
                 if drop_action_result is FieldAreaAction.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS:
                     self.selected_object = None
                 # 서포트 관련하여 시작 포인트
@@ -6961,6 +6962,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
     def on_canvas_right_click(self, event):
         x, y = event.x, event.y
+
+        if self.is_point_inside_opponent_field_area((x, y), self.opponent_field_panel):
+            pass
 
         if self.selected_object and isinstance(self.selected_object, FixedFieldCard):
             convert_y = self.winfo_reqheight() - y
