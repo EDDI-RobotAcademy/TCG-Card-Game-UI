@@ -65,7 +65,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         self.alpha_background = self.create_opengl_alpha_background()
         self.ok_button = self.create_ok_button()
 
-        self.your_hand_repository = MuligunYourHandRepository.getInstance()
+        self.muligun_your_hand_repository = MuligunYourHandRepository.getInstance()
         # print(f"your_hand_repo: {self.your_hand_repository.get_current_hand_state()}")
         # self.your_hand_repository.save_current_hand_state([6, 8, 19, 20, 151])
         print("Call Muligun Frame Constructor")
@@ -114,9 +114,9 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         self.timer.set_timer(30)
         self.timer.start_timer()
 
-        self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
-        # self.hand_card_state = self.your_hand_repository.get_current_hand_state()
-        self.your_hand_repository.create_hand_card_list()
+        self.hand_card_list = self.muligun_your_hand_repository.get_current_hand_card_list()
+        # self.hand_card_state = self.muligun_your_hand_repository.get_current_hand_state()
+        self.muligun_your_hand_repository.create_hand_card_list()
 
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
@@ -171,8 +171,8 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         self.draw_base()
         self.alpha_background.draw()
         # glDisable(GL_BLEND)
-        if self.your_hand_repository.get_is_my_mulligan():
-            if self.your_hand_repository.get_is_opponent_mulligan():
+        if self.muligun_your_hand_repository.get_is_my_mulligan():
+            if self.muligun_your_hand_repository.get_is_opponent_mulligan():
               #  print(f"check opponent muligun responseData:{mulligan_done}")
 
                # if mulligan_done is True:
@@ -195,7 +195,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
             self.draw_muligun_timer()
 
 
-        # self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
+        # self.hand_card_list = self.muligun_your_hand_repository.get_current_hand_card_list()
         for hand_card in self.hand_card_list:
             attached_tool_card = hand_card.get_tool_card()
             if attached_tool_card is not None:
@@ -212,9 +212,10 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         if self.execute_pick_card_effect is True:
             self.draw_pick_card_effect()
 
-        if self.your_hand_repository.get_is_opponent_mulligan() is False:
+        if self.muligun_your_hand_repository.get_is_opponent_mulligan() is False:
             if self.message_visible is True:
                 self.waiting_message().draw()
+                print(f"메세지 그려지냐?: {self.waiting_message()}")
 
         self.tkSwapBuffers()
 
@@ -302,11 +303,12 @@ class BattleFieldMuligunFrame(OpenGLFrame):
 
             self.selected_object = None
             print(f"self.hand_card_list = {self.hand_card_list}")
-            print(f"self.your_hand_repository.get_current_hand_card_list() = {self.your_hand_repository.get_current_hand_card_list()}")
+            print(f"self.muligun_your_hand_repository.get_current_hand_card_list() = {self.muligun_your_hand_repository.get_current_hand_card_list()}")
 
             # Selection | Deselection
             for hand_card in reversed(self.hand_card_list):
                 pickable_card_base = hand_card.get_pickable_card_base()
+                print(f"{Fore.RED}pickable_card_base:{Fore.GREEN} {pickable_card_base}{Style.RESET_ALL}")
                 are_you_select_pickable_card = pickable_card_base.is_point_inside((x, y))
 
                 if are_you_select_pickable_card:
@@ -322,38 +324,6 @@ class BattleFieldMuligunFrame(OpenGLFrame):
 
                     break
 
-            # for hand_card in reversed(self.hand_card_list):
-            #     pickable_card_base = hand_card.get_pickable_card_base()
-            #
-            #     if pickable_card_base.is_point_inside((x, y)):
-            #         hand_card.selected = not hand_card.selected
-            #         self.selected_object = hand_card
-            #         hand_card_index = self.hand_card_list.index(hand_card)
-            #         self.change_card_object_list[hand_card_index] = hand_card
-            #
-            #         fixed_x, fixed_y = pickable_card_base.get_local_translation()
-            #         new_rectangle = self.create_change_card_expression((fixed_x, fixed_y))
-            #         self.click_card_effect_rectangles.append(new_rectangle)
-            #
-            #         # 교체할 카드 선택 취소 기능)
-            #         if hand_card_index in self.checking_draw_effect:
-            #             del self.checking_draw_effect[hand_card_index]
-            #
-            #             # 선택한 카드 리스트에 담긴 것을 다시 지워야 함.
-            #             if hand_card_index in self.change_card_object_list:
-            #                 del self.change_card_object_list[self.hand_card_list.index(hand_card)]
-            #
-            #         else:
-            #             fixed_x, fixed_y = pickable_card_base.get_local_translation()
-            #             new_rectangle = self.create_change_card_expression((fixed_x, fixed_y))
-            #             self.checking_draw_effect[hand_card_index] = new_rectangle
-            #             print(self.checking_draw_effect)
-            #             print(list(self.checking_draw_effect.keys()))
-
-            # 확인 버튼 기능
-            # if self.ok_button.is_point_inside((x, y)):
-            #     self.on_canvas_ok_button_click(event)
-
             if self.is_point_inside_rectangle((x, y), self.ok_button):
                 self.on_canvas_ok_button_click(event)
 
@@ -365,7 +335,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
             # self.your_hand_repository.select_card_id_list(self.change_card_object_list)# 서버에 보내줄 카드 아이디 리스트로 저장.
             # print(f"your_hand select_card: {self.change_card_object_list}")
             print("on_canvas_ok_button_click()")
-            print(f"{Fore.RED}len(self.current_hand_card_list):{Fore.GREEN} {len(self.your_hand_repository.get_current_hand_card_list())}{Style.RESET_ALL}")
+            print(f"{Fore.RED}len(self.current_hand_card_list):{Fore.GREEN} {len(self.muligun_your_hand_repository.get_current_hand_card_list())}{Style.RESET_ALL}")
 
             will_be_change_card_index_list = self.extract_card_index_list_in_hand_card_list(
                 self.selected_object_list_for_muligun,
@@ -380,38 +350,28 @@ class BattleFieldMuligunFrame(OpenGLFrame):
             will_be_change_card_id_list_str = list(map(str, will_be_change_card_id_list))
             print(f"will_be_change_card_id_list_str: {will_be_change_card_id_list_str}")
 
-            # card_id_list = []
-            # change_card_object_list_length = len(self.change_card_object_list)
-            # print(f"change_card_object_list_length: {change_card_object_list_length}")
-            #
-            # for index in range(change_card_object_list_length):
-            #     card_id_list.append(self.change_card_object_list[index])
-
-            # card_id_list = [str(card.get_card_number()) for card in self.change_card_object_list.values()]
-            # change_card_object_list_length = len(card_id_list)
-
-            # 제거는 인덱스로 해야함
-            self.your_hand_repository.remove_card_by_multiple_index(will_be_change_card_index_list)
-
-            print(f"{Fore.RED}len(self.current_hand_card_list):{Fore.GREEN} {len(self.hand_card_list)}{Style.RESET_ALL}")
-
-            # self.your_hand_repository.delete_select_card(self.change_card_object_list)# 처음 드로우한 5장의 카드 리스트에서 교체할 카드 삭제.
-            self.your_hand_repository.replace_hand_card_position()
-
-            responseData = self.your_hand_repository.requestMuligun(
+            responseData = self.muligun_your_hand_repository.requestMuligun(
                 MuligunRequest(self.sessionRepository.get_session_info(),
                                will_be_change_card_id_list_str))
 
-            print("muligun responseData:", responseData)
+            print(f"{Fore.RED}Mulligan ResponseData:{Fore.GREEN} {responseData}{Style.RESET_ALL}")
 
-            redrawn_hand_card_list = responseData['redrawn_hand_card_list']
-            print(f"{Fore.RED}redrawn_hand_card_list:{Fore.GREEN} {redrawn_hand_card_list}{Style.RESET_ALL}")
+            # 제거는 인덱스로 해야함
+            self.muligun_your_hand_repository.remove_card_by_multiple_index(will_be_change_card_index_list)
 
-            for redrawn_hand_card_id in redrawn_hand_card_list:
+            print(f"{Fore.RED}len(self.current_hand_card_list):{Fore.GREEN} {len(self.hand_card_list)}{Style.RESET_ALL}")
+
+            # self.muligun_your_hand_repository.delete_select_card(self.change_card_object_list)# 처음 드로우한 5장의 카드 리스트에서 교체할 카드 삭제.
+            self.muligun_your_hand_repository.replace_hand_card_position()
+
+            # redrawn_hand_card_list = responseData['redrawn_hand_card_list']
+            # print(f"{Fore.RED}redrawn_hand_card_list:{Fore.GREEN} {redrawn_hand_card_list}{Style.RESET_ALL}")
+
+            for redrawn_hand_card_id in responseData['redrawn_hand_card_list']:
                 print(f"redrawn_hand_card_id: {redrawn_hand_card_id}")
-                self.your_hand_repository.create_muligun_hand_unit_card(redrawn_hand_card_id)
+                self.muligun_your_hand_repository.create_muligun_hand_unit_card(redrawn_hand_card_id)
 
-            self.hand_card_list = self.your_hand_repository.get_current_hand_card_list()
+            self.hand_card_list = self.muligun_your_hand_repository.get_current_hand_card_list()
             print(f"{Fore.RED}self.hand_card_list:{Fore.GREEN} {self.hand_card_list}{Style.RESET_ALL}")
 
             # TODO: 새로 받을 카드 임의로 지정. 나중에는 서버에서 받아야 함. 임의로 넣었기 때문에 현재 2개만 교체 가능
@@ -424,13 +384,13 @@ class BattleFieldMuligunFrame(OpenGLFrame):
             self.execute_pick_card_effect = False
             self.ok_button_clicked = True
 
-            self.your_hand_repository.set_is_my_mulligan(True)
+            self.muligun_your_hand_repository.set_is_my_mulligan(True)
 
 
             # try:
-            #     #     # responseData = self.your_hand_repository.requestCheckOpponentMuligun(
+            #     #     # responseData = self.muligun_your_hand_repository.requestCheckOpponentMuligun(
             #     #     #     CheckOpponentMuligunRequest(self.sessionRepository.get_session_info()))
-            #     mulligan_done = self.your_hand_repository.get_is_mulligan_done()
+            #     mulligan_done = self.muligun_your_hand_repository.get_is_mulligan_done()
             #     print(f"check opponent muligun responseData:{mulligan_done}")
             #
             #     if mulligan_done is True:
@@ -450,13 +410,13 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         else:
             #self.master.after(self.__switchFrameWithMenuName('decision-first'))
             #self.master.after(self.__switchFrameWithMenuName('rock-paper-scissors'))
-            default_list = []
-            responseData = self.your_hand_repository.requestMuligun(
-                MuligunRequest(self.sessionRepository.get_session_info(),
-                               default_list))
-
-            print("muligun responseData:", responseData)
-            self.your_hand_repository.set_is_my_mulligan(False)
+            # default_list = []
+            # responseData = self.muligun_your_hand_repository.requestMuligun(
+            #     MuligunRequest(self.sessionRepository.get_session_info(),
+            #                    default_list))
+            #
+            # print("muligun responseData:", responseData)
+            self.muligun_your_hand_repository.set_is_my_mulligan(False)
             # self.master.after(self.__switchFrameWithMenuName('fake-battle-field'))
 
 
@@ -489,7 +449,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
     def waiting_message(self):
             self.__pre_drawed_image_instance.pre_draw_waiting_message()
             data = self.__pre_drawed_image_instance.get_pre_draw_waiting_message()
-            vertices = [(300, 300), (1600, 300), (1600, 650), (300, 650)]
+            vertices = [(400, 300), (1500, 300), (1500, 700), (400, 700)]
             waiting_message_image = NonBackgroundImage(
                 image_data=data,
                 vertices=vertices)
@@ -555,9 +515,9 @@ class BattleFieldMuligunFrame(OpenGLFrame):
 
     # 서버로 전달 받으면 다시 그릴 카드 리스트에 담기
     # def redraw_card(self):
-    #     # self.your_hand_repository.save_current_hand_state(new_card_number_list)
+    #     # self.muligun_your_hand_repository.save_current_hand_state(new_card_number_list)
     #     # print(f"현재 카드 뭐 있니?: {self.hand_card_state}")
-    #     self.your_hand_repository.create_hand_card_list()
+    #     self.muligun_your_hand_repository.create_hand_card_list()
     #     return self.hand_card_list
 
     def draw_muligun_timer(self):
@@ -574,9 +534,9 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         print("muligunTimeOut")
         self.timer.stop_timer()
         # 내가 멀리건을 선택하지 않았을 경우
-        if not self.your_hand_repository.get_is_my_mulligan():
+        if not self.muligun_your_hand_repository.get_is_my_mulligan():
             default_list = []
-            responseData = self.your_hand_repository.requestMuligun(
+            responseData = self.muligun_your_hand_repository.requestMuligun(
                 MuligunRequest(self.sessionRepository.get_session_info(),
                                default_list))
 
@@ -586,7 +546,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
 
         # 나는 멀리건을 선택하고 상대가 선택하지 않았을 경우
         else:
-            if not self.your_hand_repository.get_is_opponent_mulligan():
+            if not self.muligun_your_hand_repository.get_is_opponent_mulligan():
                 self.message_visible = False
                 self.is_doing_mulligan = False
                 self.__switchFrameWithMenuName('fake-battle-field')
