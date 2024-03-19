@@ -90,6 +90,8 @@ from battle_field.infra.request.request_use_morale_conversion import RequestUseM
 from battle_field.infra.request.request_use_overflow_of_energy import RequestUseOverflowOfEnergy
 from battle_field.infra.request.target_passive_skill_to_main_character_from_deploy_request import \
     TargetingPassiveSkillToMainCharacterFromDeployRequest
+from battle_field.infra.request.targeting_passive_skill_to_opponent_field_unit_from_deploy_request import \
+    TargetingPassiveSkillToOpponentFieldUnitFromDeployRequest
 from battle_field.infra.request.targeting_passive_skill_to_your_field_unit_from_deploy_request import \
     TargetingPassiveSkillToYourFieldUnitFromDeployRequest
 from battle_field.infra.request.turn_start_first_passive_skill_request import TurnStartFirstPassiveSkillRequest
@@ -5442,7 +5444,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     is_success = process_second_passive_skill_response['is_success']
                     if is_success is False:
                         self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(ActionToApplyOpponent.Dummy)
-                        return FieldAreaAction.Dummy
+                        return
 
                     self.create_effect_animation_with_vertices_and_play_animation_and_call_function(
                         'nether_blade_targeting_skill', self.opponent_main_character_panel.get_vertices(),
@@ -5471,12 +5473,20 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     if opponent_fixed_card_base.is_point_inside((x, y)):
                         self.attack_animation_object.set_opponent_field_unit(opponent_field_unit_object)
 
-                        # turn_start_second_passive_skill_to_main_character_response = self.__fake_battle_field_frame_repository.request_to_process_turn_start_second_passive_skill_to_main_character(
-                        #     TurnStartSecondPassiveSkillToMainCharacterRequest(
-                        #         _sessionInfo=self.__session_repository.get_first_fake_session_info(),
-                        #         _unitCardIndex=str(opponent_field_unit_object.get_index()),
-                        #         _targetGameMainCharacterIndex="0",
-                        #         _usageSkillIndex="2"))
+                        animation_actor = self.attack_animation_object.get_animation_actor()
+
+                        process_second_passive_skill_response = self.__fake_battle_field_frame_repository.request_to_process_second_passive_skill_to_opponent_field_unit(
+                            TargetingPassiveSkillToOpponentFieldUnitFromDeployRequest(
+                                _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                                _unitCardIndex=str(animation_actor.get_index()),
+                                _opponentTargetCardIndex=str(opponent_field_unit_object.get_index()),
+                                _usageSkillIndex="2"))
+
+                        is_success = process_second_passive_skill_response['is_success']
+                        if is_success is False:
+                            self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(
+                                ActionToApplyOpponent.Dummy)
+                            return FieldAreaAction.Dummy
 
                         # self.attack_animation_object.set_animation_actor_damage(20)
                         self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function(
@@ -10474,6 +10484,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                             self.opponent_field_unit_repository.remove_harmful_status_by_index(card_index)
                             self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+
+                            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
                         self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function_with_param(
                             'death', opponent_field_unit.get_index(), remove_field_unit, opponent_field_unit
