@@ -3346,12 +3346,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 )
                             )
                             print(f"{Fore.RED}파멸의 계약 -> response:{Fore.GREEN} {response}{Style.RESET_ALL}")
-                            is_success_value = response.get('is_success', False)
+                            is_contract_of_doom_success_value = response.get('is_success', False)
 
-                            if is_success_value == False:
+                            if is_contract_of_doom_success_value == False:
                                 # self.selected_object = None
                                 self.return_to_initial_location()
                                 self.reset_every_selected_action()
+                                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN.value)
                                 return
 
                             self.attack_animation_object.set_your_usage_card_id(your_card_id)
@@ -3552,7 +3553,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 _supportCardId=your_card_id)
                         )
 
-                        if not response.get('is_success'):
+                        is_death_success_value = response.get('is_success', False)
+
+                        if is_death_success_value == False:
                             # self.selected_object = None
                             self.return_to_initial_location()
                             self.reset_every_selected_action()
@@ -3603,8 +3606,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     self.selected_object = None
                     # self.return_to_initial_location()
                     return
+                elif is_pickable_card_inside_unit == False:
+                    self.return_to_initial_location()
+                    self.reset_every_selected_action()
+                    self.message_on_the_screen.create_message_on_the_battle_screen(
+                        MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN.value)
+                    return
                 else:
                     self.return_to_initial_location()
+
 
             # current_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
             # current_field_unit_list_length = len(current_field_unit_list)
@@ -3661,10 +3671,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 )
 
                                 print(f"response: {response}")
-                                if not response.get('is_success'):
+                                is_morale_conversion_success_value = response.get('is_success', False)
+
+                                if is_morale_conversion_success_value == False:
                                     # self.selected_object = None
                                     self.return_to_initial_location()
                                     self.reset_every_selected_action()
+                                    self.message_on_the_screen.create_message_on_the_battle_screen(
+                                        MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN.value)
                                     return
 
                                 card_id = current_field_unit.get_card_number()
@@ -6169,7 +6183,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 _supportCardId="2")
                         )
 
-                        if not response.get('is_success'):
+                        is_success_value = response.get('is_success', False)
+
+                        if is_success_value == False:
                             # self.selected_object = None
                             self.reset_every_selected_action()
                             return
@@ -6454,7 +6470,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 self.targeting_enemy_select_support_lightning_border_list = []
                                 self.opponent_you_selected_lightning_border_list = []
                                 self.opponent_you_selected_object_list = []
-
+                                self.message_on_the_screen.create_message_on_the_battle_screen(
+                                    MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN.value)
                                 self.selected_object = None
                                 return
 
