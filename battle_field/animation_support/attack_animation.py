@@ -45,8 +45,10 @@ class AttackAnimation:
     opponent_attacker_unit_moving_x = 0
 
     notify_data = None
+    response_data = None
 
     is_opponent_attack_main_character = False
+    is_your_attack_main_character = False
 
     opponent_weapon_shape = None
     your_main_character = None
@@ -83,11 +85,23 @@ class AttackAnimation:
     def get_total_height(self):
         return self.total_height
 
+    def set_response_data(self, response_data):
+        self.response_data = response_data
+
+    def get_response_data(self):
+        return self.response_data
+
     def set_is_opponent_attack_main_character(self, is_opponent_attack_main_character):
         self.is_opponent_attack_main_character = is_opponent_attack_main_character
 
     def get_is_opponent_attack_main_character(self):
         return self.is_opponent_attack_main_character
+
+    def set_is_your_attack_main_character(self, is_your_attack_main_character):
+        self.is_your_attack_main_character = is_your_attack_main_character
+
+    def get_is_your_attack_main_character(self):
+        return self.is_your_attack_main_character
 
     def set_animation_actor(self, selected_object):
         print(f"{Fore.RED}selected_object{Fore.GREEN} {selected_object}{Style.RESET_ALL}")

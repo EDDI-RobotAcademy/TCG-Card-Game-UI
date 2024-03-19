@@ -73,3 +73,13 @@ class MusicPlayerRepositoryImpl(MusicPlayerRepository):
         sound.play()
 
         time.sleep(0.1)
+
+    def play_sound_effect_with_event_name_for_wav(self, event_name: str):
+        print("MusicPlayerRepositoryImpl : play_sound_effect_with_event_name_for_wav - " + event_name)
+        pygame.mixer.init()
+        current_location = os.getcwd()
+        sound_effect_file_path = os.path.join(current_location, 'local_storage', 'sound_effect', f'{event_name}.wav')
+        sound = pygame.mixer.Sound(sound_effect_file_path)
+        sound.play()
+
+        time.sleep(0.1)

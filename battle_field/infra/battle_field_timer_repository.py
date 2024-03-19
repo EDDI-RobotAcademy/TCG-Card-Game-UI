@@ -31,3 +31,4 @@ class BattleFieldTimerRepository:
 
     def clear_every_resource(self):
         self.timer = 60
+        self.function = None
