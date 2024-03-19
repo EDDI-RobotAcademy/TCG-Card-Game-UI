@@ -104,6 +104,7 @@ from battle_field.infra.request.wide_area_passive_skill_from_deploy_request impo
 from battle_field.infra.request.request_use_special_energy_card_to_unit import RequestUseSpecialEnergyCardToUnit
 
 from battle_field.infra.round_repository import RoundRepository
+from battle_field.infra.window_size_repository import WindowSizeRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
@@ -171,6 +172,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
     __session_repository = SessionRepositoryImpl.getInstance()
     __notify_reader_repository = NotifyReaderRepositoryImpl.getInstance()
     __music_player_repository = MusicPlayerRepositoryImpl.getInstance()
+    window_size_repository = WindowSizeRepository.getInstance()
 
     is_playing_action_animation = False
 
@@ -485,6 +487,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_hand.init_next_prev_gold_button_hand()
         self.your_hand_prev_button = self.your_hand.get_prev_gold_button_hand()
         self.your_hand_next_button = self.your_hand.get_next_gold_button_hand()
+
+        self.window_size_repository.set_is_it_re_entrance(True)
+        self.window_size_repository.set_total_window_size(self.width, self.height)
 
         self.your_deck_repository.set_total_window_size(self.width, self.height)
         # self.your_deck_repository.save_deck_state([93, 35, 35, 93, 25,
@@ -2331,6 +2336,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
         glDisable(GL_DEPTH_TEST)
 
         self.draw_base()
+
+        if self.opponent_field_area_inside_handler.get_field_area_action() is OpponentFieldAreaActionProcess.NEED_TO_FINISH_GAME:
+            print(f"{Fore.RED}게임이 종료되었습니다!{Style.RESET_ALL}")
+            self.timer.stop_timer()
+
+            self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
 
         # if self.opponent_field_area_inside_handler.get_active_field_area_action() is not OpponentFieldAreaActionProcess.PLAY_ANIMATION:
         #     opponent_animation_actor = self.attack_animation_object.get_opponent_animation_actor()
@@ -7927,6 +7938,19 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.finish_opponent_attack_your_unit_post_animation(attack_animation_object)
 
         # self.play_effect_animation_by_index(attack_animation_object.get_animation_actor().get_index())
+
+
+        opponent_field_unit_job_number = self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id)
+        effect_animation_name = ''
+        for attack_type in AttackType:
+            if attack_type.value == opponent_field_unit_job_number:
+                effect_animation_name = attack_type.name
+                print('effect animation name: ', effect_animation_name)
+                break
+
+        self.create_effect_animation_to_your_unit_and_play_animation_and_call_function(
+            effect_animation_name, your_field_unit.get_index(), None)
+
         slash_with_sword(1)
 
     def finish_opponent_attack_your_unit_post_animation(self, attack_animation_object):

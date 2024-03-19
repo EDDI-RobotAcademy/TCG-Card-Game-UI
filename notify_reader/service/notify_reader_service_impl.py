@@ -175,6 +175,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             )
             # cls.__instance.notify_callback_table['NOTIFY_DEPLOY_NON_TARGETING_ATTACK_PASSIVE_SKILL'] = cls.__instance.notify_deploy_non_targeting_passive_skill_attack
 
+            cls.__instance.notify_callback_table['NOTIFY_SURRENDER'] = cls.__instance.notify_surrender
+
         return cls.__instance
 
     @classmethod
@@ -2352,6 +2354,25 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                     result_your_energy_count = your_energy_count
 
                 self.__your_field_energy_repository.set_your_field_energy(result_your_energy_count)
+
+    def notify_surrender(self, notice_dictionary):
+        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+
+        print(f"{Fore.RED}notify_surrender() -> "
+              f"whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
+
+        if whose_turn is True:
+            self.__opponent_field_area_inside_handler.set_field_area_action(
+                OpponentFieldAreaActionProcess.NEED_TO_FINISH_GAME)
+            return
+
+        data = notice_dictionary['NOTIFY_SURRENDER']
+        print(f"{Fore.RED}notify_surrender:{Fore.GREEN} {data}{Style.RESET_ALL}")
+
+        # self.timer.stop_timer()
+        self.__opponent_field_area_inside_handler.set_field_area_action(
+            OpponentFieldAreaActionProcess.NEED_TO_FINISH_GAME)
+
 
     def notify_use_unit_energy_remove_item_card(self, notice_dictionary):
 
