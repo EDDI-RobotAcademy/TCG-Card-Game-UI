@@ -278,12 +278,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.opponent_you_selected_lightning_border_list = []
         self.opponent_you_selected_object_list = []
 
+        self.your_hp = None
+        self.opponent_hp = None
+
         self.your_hp_panel = None
-        self.your_hp = YourHp()
         self.your_hp_repository = YourHpRepository.getInstance()
 
         self.opponent_hp_panel = None
-        self.opponent_hp = OpponentHp()
         self.opponent_hp_repository = OpponentHpRepository.getInstance()
 
         self.your_field_energy_panel = None
@@ -490,6 +491,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.window_size_repository.set_is_it_re_entrance(True)
         self.window_size_repository.set_total_window_size(self.width, self.height)
+        self.window_size_repository.set_master_opengl_frame(self)
 
         self.your_deck_repository.set_total_window_size(self.width, self.height)
         # self.your_deck_repository.save_deck_state([93, 35, 35, 93, 25,
@@ -524,6 +526,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.opponent_active_panel = OpponentActivePanel()
         self.opponent_active_panel.set_total_window_size(self.width, self.height)
+
+        self.your_hp = YourHp()
+        self.opponent_hp = OpponentHp()
 
         self.your_hp.set_total_window_size(self.width, self.height)
         self.your_hp_repository.set_first_hp_state()

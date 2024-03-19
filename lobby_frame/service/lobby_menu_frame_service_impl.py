@@ -8,16 +8,19 @@ from decouple import config
 from screeninfo import get_monitors
 
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
+from battle_field.infra.opponent_hp_repository import OpponentHpRepository
 from battle_field.infra.window_size_repository import WindowSizeRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
+from battle_field.infra.your_hp_repository import YourHpRepository
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository as MuligunHandRepository
 from battle_field_muligun.service.request.muligun_request import MuligunRequest
 from battle_lobby_frame.controller.battle_lobby_frame_controller_impl import BattleLobbyFrameControllerImpl
 from battle_lobby_frame.repository.battle_lobby_frame_repository_impl import BattleLobbyFrameRepositoryImpl
 from battle_lobby_frame.service.request.request_deck_card_list import RequestDeckCardList
 from battle_lobby_frame.service.request.request_deck_name_list_for_battle import RequestDeckNameListForBattle
+from fake_battle_field.frame.fake_battle_field_frame import FakeBattleFieldFrame
 from fake_battle_field.infra.fake_battle_field_frame_repository_impl import FakeBattleFieldFrameRepositoryImpl
 from fake_battle_field.infra.fake_opponent_hand_repository import FakeOpponentHandRepositoryImpl
 from fake_battle_field.service.request.create_fake_battle_room_request import CreateFakeBattleRoomRequest
@@ -81,6 +84,8 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             cls.__instance.__opponentFieldEnergyRepository = OpponentFieldEnergyRepository.getInstance()
 
             cls.__instance.__windowSizeRepository = WindowSizeRepository.getInstance()
+            cls.__instance.__yourHpRepository = YourHpRepository.getInstance()
+            cls.__instance.__opponentHpRepository = OpponentHpRepository.getInstance()
         return cls.__instance
 
     @classmethod
@@ -303,14 +308,21 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                 print(f"{Fore.RED} current_hand_card_list: {current_hand_card_list}{Style.RESET_ALL}")
 
                 if self.__windowSizeRepository.get_is_it_re_entrance():
+                    print(f"{Fore.RED} get_is_it_re_entrance(): {self.__windowSizeRepository.get_is_it_re_entrance()}{Style.RESET_ALL}")
                     total_width = self.__windowSizeRepository.get_total_width()
                     total_height = self.__windowSizeRepository.get_total_height()
 
-                    self.__fakeYourHandRepository.set_total_window_size(total_width, total_height)
-                    self.__fakeYourHandRepository.update_your_hand()
+                    get_master_opengl_frame = self.__windowSizeRepository.get_master_opengl_frame()
+                    get_master_opengl_frame.init_first_window(total_width, total_height)
 
-                    self.__fakeYourDeckRepository.set_total_window_size(total_width, total_height)
-                    self.__fakeYourDeckRepository.update_deck(deck_card_list)
+                    self.__yourHpRepository.set_first_hp_state()
+                    self.__opponentHpRepository.set_first_hp_state()
+
+                #     self.__fakeYourHandRepository.set_total_window_size(total_width, total_height)
+                #     self.__fakeYourHandRepository.update_your_hand()
+                #
+                #     self.__fakeYourDeckRepository.set_total_window_size(total_width, total_height)
+                #     self.__fakeYourDeckRepository.update_deck(deck_card_list)
 
                 self.__fakeYourDeckRepository.get_current_deck_state_object().draw_card()
 

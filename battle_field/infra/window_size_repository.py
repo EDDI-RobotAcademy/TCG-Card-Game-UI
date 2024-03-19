@@ -4,6 +4,7 @@ class WindowSizeRepository:
     total_width = None
     total_height = None
     is_it_re_entrance = False
+    master_opengl_frame = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -31,3 +32,9 @@ class WindowSizeRepository:
 
     def get_is_it_re_entrance(self):
         return self.is_it_re_entrance
+
+    def set_master_opengl_frame(self, master_opengl_frame):
+        self.master_opengl_frame = master_opengl_frame
+
+    def get_master_opengl_frame(self):
+        return self.master_opengl_frame
