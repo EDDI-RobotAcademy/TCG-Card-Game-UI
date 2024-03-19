@@ -104,6 +104,7 @@ from battle_field.infra.request.wide_area_passive_skill_from_deploy_request impo
 from battle_field.infra.request.request_use_special_energy_card_to_unit import RequestUseSpecialEnergyCardToUnit
 
 from battle_field.infra.round_repository import RoundRepository
+from battle_field.infra.window_size_repository import WindowSizeRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
@@ -171,6 +172,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
     __session_repository = SessionRepositoryImpl.getInstance()
     __notify_reader_repository = NotifyReaderRepositoryImpl.getInstance()
     __music_player_repository = MusicPlayerRepositoryImpl.getInstance()
+    window_size_repository = WindowSizeRepository.getInstance()
 
     is_playing_action_animation = False
 
@@ -485,6 +487,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_hand.init_next_prev_gold_button_hand()
         self.your_hand_prev_button = self.your_hand.get_prev_gold_button_hand()
         self.your_hand_next_button = self.your_hand.get_next_gold_button_hand()
+
+        self.window_size_repository.set_is_it_re_entrance(True)
+        self.window_size_repository.set_total_window_size(self.width, self.height)
 
         self.your_deck_repository.set_total_window_size(self.width, self.height)
         # self.your_deck_repository.save_deck_state([93, 35, 35, 93, 25,
@@ -2331,6 +2336,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
         glDisable(GL_DEPTH_TEST)
 
         self.draw_base()
+
+        if self.opponent_field_area_inside_handler.get_field_area_action() is OpponentFieldAreaActionProcess.NEED_TO_FINISH_GAME:
+            print(f"{Fore.RED}게임이 종료되었습니다!{Style.RESET_ALL}")
+            self.timer.stop_timer()
+
+            self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
 
         # if self.opponent_field_area_inside_handler.get_active_field_area_action() is not OpponentFieldAreaActionProcess.PLAY_ANIMATION:
         #     opponent_animation_actor = self.attack_animation_object.get_opponent_animation_actor()

@@ -2,11 +2,13 @@ import sys
 import time
 import tkinter
 from PIL import ImageTk, Image
+from colorama import Fore, Style
 
 from decouple import config
 from screeninfo import get_monitors
 
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
+from battle_field.infra.window_size_repository import WindowSizeRepository
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
@@ -77,6 +79,8 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
             cls.__instance.__yourFieldEnergyRepository = YourFieldEnergyRepository.getInstance()
             cls.__instance.__opponentFieldEnergyRepository = OpponentFieldEnergyRepository.getInstance()
+
+            cls.__instance.__windowSizeRepository = WindowSizeRepository.getInstance()
         return cls.__instance
 
     @classmethod
@@ -295,6 +299,14 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                 print(f"your_draw_card_id: {your_draw_card_id}")
 
                 self.__fakeYourHandRepository.save_current_hand_state([your_draw_card_id])
+                current_hand_card_list = self.__fakeYourHandRepository.get_current_hand_state()
+                print(f"{Fore.RED} current_hand_card_list: {current_hand_card_list}{Style.RESET_ALL}")
+
+                if self.__windowSizeRepository.get_is_it_re_entrance():
+                    total_width = self.__windowSizeRepository.get_total_width()
+                    total_height = self.__windowSizeRepository.get_total_height()
+                    self.__fakeYourHandRepository.set_total_window_size(total_width, total_height)
+                    self.__fakeYourHandRepository.update_your_hand()
 
                 self.__fakeYourDeckRepository.get_current_deck_state_object().draw_card()
 
