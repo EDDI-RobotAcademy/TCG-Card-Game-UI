@@ -2577,9 +2577,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.opponent_fixed_unit_card_inside_handler.clear_opponent_field_area_action()
             self.opponent_fixed_unit_card_inside_handler.clear_target_index_to_action()
 
-            def calculate_energy_burn():
-                unit_index = target_index
-                print('target_index : ', target_index)
+            def calculate_energy_burn(_target_index):
+                unit_index = _target_index
+                print('target_index : ', _target_index)
                 opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
                     unit_index)
                 print(f"opponent_field_unit: {opponent_field_unit}")
@@ -2607,14 +2607,21 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                     remove_from_field = True
                                     break
 
+                                opponent_fixed_card_attached_shape.set_number(hp)
+
                                 opponent_fixed_card_attached_shape.set_image_data(
                                     self.pre_drawed_image_instance.get_pre_draw_unit_hp(hp))
 
                     if remove_from_field:
-                        self.opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
-                        self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                        def remove_field_unit(index):
+                            unit_card_id = self.opponent_field_unit_repository.get_opponent_card_id_by_index(index)
+                            self.opponent_field_unit_repository.remove_current_field_unit_card(index)
+                            self.opponent_tomb_repository.create_opponent_tomb_card(unit_card_id)
+                            self.opponent_field_unit_repository.remove_harmful_status_by_index(index)
+                            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
-                        self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                        self.create_effect_animation_to_your_unit_and_play_animation_and_call_function_with_param(
+                            'death', unit_index, remove_field_unit, unit_index)
 
                 else:
                     print("에너지를 태웁니다.")
@@ -2662,7 +2669,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     #         del opponent_fixed_card_attached_shape_list[index]
                     #         detach_count -= 1
 
-            self.play_effect_animation_by_index_and_call_function(animation_index, calculate_energy_burn)
+            self.play_effect_animation_by_index_and_call_function_with_param(animation_index, calculate_energy_burn, target_index)
 
         if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() == OpponentFieldAreaAction.DEATH_SCYTHE:
             print('create death scythe animation')
