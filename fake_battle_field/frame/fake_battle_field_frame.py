@@ -3886,6 +3886,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     self.selected_object = None
                 if drop_action_result is FieldAreaAction.DRAW_DECK:
                     self.field_area_inside_handler.clear_field_area_action()
+                    self.selected_object = None
                 if drop_action_result is FieldAreaAction.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS:
                     self.selected_object = None
                 # 서포트 관련하여 시작 포인트
@@ -10577,7 +10578,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 else:
                     print(f"{Fore.RED}opponent 메인 캐릭터 공격 -> is_attack_main_character(True): {Fore.GREEN}{is_attack_main_character}{Style.RESET_ALL}")
 
-                    self.opponent_hp_repository.take_damage(targeting_damage)
+                    # self.opponent_hp_repository.take_damage(targeting_damage)
                     if self.opponent_hp_repository.get_opponent_character_survival_info() == SurvivalType.DEATH:
                         self.battle_field_repository.win()
 
