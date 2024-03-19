@@ -4887,10 +4887,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         # response = self.__field_energy_application.send_request_to_attach_field_energy_to_unit(
                         #     unitIndex=unit_index, energyRace = energy_race, energyCount=energy_count
                         # )
-                        # if not response:
-                        #     self.selected_object = None
-                        #     self.your_field_energy_panel_selected = False
-                        #     return
+                        if not response.get('is_success'):
+                            self.reset_every_selected_action()
+                            return
 
                         # self.your_field_unit_repository.attach_race_energy(
                         #     unit_index,
