@@ -29,8 +29,7 @@ class AttachedEnergyInfoState:
 
     def remove_race_energy_at_index(self, index, energy_type, energy_quantity):
         if index in self.attached_energy_info:
-            self.attached_energy_info[index] = [(t, q - energy_quantity) for t, q in self.attached_energy_info[index] if
-                                                t != energy_type]
+            self.attached_energy_info[index].append((energy_type, -energy_quantity))
 
     def get_total_energy_at_index(self, index):
         print(f"get_total_energy_at_index -> index: {index}")
