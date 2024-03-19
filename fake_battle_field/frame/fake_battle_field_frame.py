@@ -5444,6 +5444,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         'nether_blade_targeting_skill', self.opponent_main_character_panel.get_vertices(),
                         self.start_nether_blade_second_passive_targeting_motion_animation
                     )
+
+                    if process_second_passive_skill_response.get('player_main_character_survival_map_for_notice', {}).get('Opponent',
+                                                                                             None) == 'Death':
+                        self.opponent_hp_repository.opponent_character_die()
+                        print("opponent die")
                     # self.master.after(0, self.start_nether_blade_second_passive_targeting_motion_animation)
 
                     return
@@ -10479,6 +10484,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     print(f"{Fore.RED}opponent 메인 캐릭터 공격 -> is_attack_main_character(True): {Fore.GREEN}{is_attack_main_character}{Style.RESET_ALL}")
 
                     self.opponent_hp_repository.take_damage(targeting_damage)
+                    if self.opponent_hp_repository.get_opponent_character_survival_info() == SurvivalType.DEATH:
+                        self.battle_field_repository.win()
 
                 # opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
                 # opponent_field_unit_list_length = len(
