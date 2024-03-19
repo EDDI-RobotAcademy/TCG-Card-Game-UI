@@ -166,9 +166,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 cls.__instance.notify_turn_start_non_targeting_attack_passive_skill
             )
 
-            cls.__instance.notify_callback_table['NOTIFY_CHECK_MY_TURN'] = (
-                cls.__instance.notify_check_my_turn
-            )
+            # cls.__instance.notify_callback_table['NOTIFY_CHECK_MY_TURN'] = (
+            #     cls.__instance.notify_check_my_turn
+            # )
 
             cls.__instance.notify_callback_table['NOTIFY_USE_FIELD_ENERGY_INCREASE_ITEM_CARD'] = (
                 cls.__instance.notify_use_field_energy_increase_item_card

@@ -35,3 +35,13 @@ class BuyRandomCardFrameServiceImpl(BuyRandomCardFrameService):
 
 
         return buyRandomCardrame
+
+    def saveTransmitIpcChannel(self, transmitIpcChannel):
+        self.__transmitIpcChannel = transmitIpcChannel
+
+    def saveReceiveIpcChannel(self, receiveIpcChannel):
+        self.__receiveIpcChannel = receiveIpcChannel
+
+    def requestCheckGameMoney(self, CheckGameMoneyRequest):
+        self.__transmitIpcChannel.put(CheckGameMoneyRequest)
+        return self.__receiveIpcChannel.get()

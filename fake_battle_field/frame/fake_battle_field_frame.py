@@ -13824,15 +13824,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.timer_repository.set_timer(60)
             self.timer.get_timer()
             self.timer.start_timer()
-            return
-
-        def whose_turn_is_false():
-            self.timer.stop_timer()
-
-        self.timer_repository.set_function(whose_turn_is_false())
-        self.timer_repository.set_timer(60)
-        self.timer.get_timer()
-        self.timer.start_timer()
+        #     return
+        #
+        # def whose_turn_is_false():
+        #     self.timer.stop_timer()
+        #
+        # self.timer_repository.set_function(whose_turn_is_false())
+        # self.timer_repository.set_timer(60)
+        # self.timer.get_timer()
+        # self.timer.start_timer()
 
     def fake_opponent_turn_end(self):
         print("Opponent Turn을 종료합니다")
