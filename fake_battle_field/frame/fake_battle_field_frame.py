@@ -8400,7 +8400,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         #todo : 망령의 바다 이펙트로 바꿔야함
         self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
-            'dark_blast', wide_area_attack, 1)
+            'sea_of_wraith', wide_area_attack, 1)
         # effect_animation = EffectAnimation()
         # effect_animation.set_animation_name('dark_blast')
         # effect_animation.set_total_window_size(self.width, self.height)
@@ -8639,7 +8639,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         # todo : 망바 이름으로 바꿔야함
         effect_animation = EffectAnimation()
-        effect_animation.set_animation_name('dark_blast')
+        effect_animation.set_animation_name('sea_of_wraith')
         effect_animation.set_total_window_size(self.width, self.height)
         field_vertices = self.your_field_panel.get_vertices()
         main_character_vertices = self.your_main_character_panel.get_vertices()
