@@ -204,6 +204,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.active_panel_second_skill_button = None
         self.active_panel_third_skill_button = None
         self.selected_object = None
+        self.opponent_selected_object = None
         self.prev_selected_object = None
         self.drag_start = None
 
@@ -4081,15 +4082,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if self.active_panel_rectangle is not None:
                 self.active_panel_rectangle = None
 
-            if self.opponent_active_panel.get_opponent_active_panel_details_button() is not None:
-                if self.opponent_active_panel.is_point_inside_details_button((x, y)):
+            if self.opponent_details_panel_rectangle is not None:
+                self.opponent_details_panel_rectangle = None
+
+            if self.opponent_details_panel.get_opponent_details_panel_button() is not None:
+                if self.opponent_details_panel.is_point_inside_details_button((x, y)):
                     print("상대방 상세 보기 클릭")
 
-                    # your_field_unit_id = self.selected_object.get_card_number()
-                    # skill_type = self.card_info_repository.getCardSkillSecondForCardNumber(your_field_unit_id)
-                    # print(f"skill_type: {skill_type}")
-                    opponent_field_unit_id = self.selected_object.get_card_number()
-                    opponent_field_unit_index = self.selected_object.get_index()
+                    opponent_field_unit_id = self.opponent_selected_object.get_card_number()
+                    opponent_field_unit_index = self.opponent_selected_object.get_index()
                     opponent_field_unit_attached_energy = self.opponent_field_unit_repository.get_attached_energy_info()
 
                     select_details_card = FixedDetailsCard((self.width / 2 - 150, self.height / 2 - (150 * 1.618)))
@@ -4220,9 +4221,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 )
 
                     self.current_fixed_details_card = select_details_card_base
-                    self.active_panel_rectangle = None
-                    self.opponent_active_panel.clear_all_opponent_active_panel()
-                    self.selected_object = None
+                    self.opponent_details_panel_rectangle = None
+                    self.opponent_details_panel.clear_opponent_details_panel_button()
                     return
 
             if self.your_active_panel.get_your_active_panel_attack_button() is not None:
@@ -7121,9 +7121,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
     def on_canvas_right_click(self, event):
         x, y = event.x, event.y
 
-        if self.is_point_inside_opponent_field_area((x, y), self.opponent_field_panel):
-            pass
-
         if self.selected_object and isinstance(self.selected_object, FixedFieldCard):
             convert_y = self.winfo_reqheight() - y
             fixed_card_base = self.selected_object.get_fixed_card_base()
@@ -7150,6 +7147,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             if opponent_fixed_card_base.is_point_inside((x, convert_y)):
                 print(f"Inside Unit")
+                self.opponent_selected_object = opponent_field_unit
                 self.opponent_details_panel.create_opponent_details_panel((x, y), opponent_field_unit)
 
                 new_rectangle = self.opponent_details_panel.get_opponent_details_panel()
@@ -13790,6 +13788,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.selected_object = None
         self.active_panel_rectangle = None
         self.current_fixed_details_card = None
+        self.opponent_selected_object = None
         self.your_active_panel.clear_all_your_active_panel()
 
         self.field_area_inside_handler.clear_lightning_border_list()
