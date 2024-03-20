@@ -204,6 +204,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.active_panel_second_skill_button = None
         self.active_panel_third_skill_button = None
         self.selected_object = None
+        self.opponent_selected_object = None
         self.prev_selected_object = None
         self.drag_start = None
 
@@ -1342,6 +1343,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 TurnEndRequest(
                     self.__session_repository.get_second_fake_session_info()))
             print(f"turn_end_request_result: {turn_end_request_result}")
+
+            if turn_end_request_result.get('player_main_character_survival_map', {}).get('Opponent', None) == 'Death':
+                print(f"{Fore.RED}Fake Opponent win!{Style.RESET_ALL}")
+                # self.your_hp_repository.your_character_die()
+                # self.battle_field_repository.lose()
+                self.timer.stop_timer()
+                return
 
             self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(True)
 
@@ -2509,30 +2517,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 glDisable(GL_BLEND)
 
-        if self.current_fixed_details_card:
-            self.current_fixed_details_card.set_width_ratio(self.width_ratio)
-            self.current_fixed_details_card.set_height_ratio(self.height_ratio)
-            self.current_fixed_details_card.draw()
 
-            current_attached_shape_list = self.current_fixed_details_card.get_attached_shapes()
-
-            for attached_shape in current_attached_shape_list:
-                if isinstance(attached_shape, Rectangle):
-                    if attached_shape.get_rectangle_kinds() is RectangleKinds.DETAIL:
-                        glEnable(GL_BLEND)
-                        glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA)
-                        attached_shape.set_width_ratio(self.width_ratio)
-                        attached_shape.set_height_ratio(self.height_ratio)
-                        attached_shape.draw()
-                        glDisable(GL_BLEND)
-
-            for attached_shape in current_attached_shape_list:
-                if isinstance(attached_shape, Rectangle):
-                    if attached_shape.get_rectangle_kinds() is RectangleKinds.DETAIL:
-                        continue
-                attached_shape.set_width_ratio(self.width_ratio)
-                attached_shape.set_height_ratio(self.height_ratio)
-                attached_shape.draw()
 
         # for hand_card in self.hand_card_list:
         #     attached_tool_card = hand_card.get_tool_card()
@@ -2969,6 +2954,31 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
             self.opponent_field_area_inside_handler.clear_field_area_action()
         self.post_draw()
+
+        if self.current_fixed_details_card:
+            self.current_fixed_details_card.set_width_ratio(self.width_ratio)
+            self.current_fixed_details_card.set_height_ratio(self.height_ratio)
+            self.current_fixed_details_card.draw()
+
+            current_attached_shape_list = self.current_fixed_details_card.get_attached_shapes()
+
+            for attached_shape in current_attached_shape_list:
+                if isinstance(attached_shape, Rectangle):
+                    if attached_shape.get_rectangle_kinds() is RectangleKinds.DETAIL:
+                        glEnable(GL_BLEND)
+                        glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA)
+                        attached_shape.set_width_ratio(self.width_ratio)
+                        attached_shape.set_height_ratio(self.height_ratio)
+                        attached_shape.draw()
+                        glDisable(GL_BLEND)
+
+            for attached_shape in current_attached_shape_list:
+                if isinstance(attached_shape, Rectangle):
+                    if attached_shape.get_rectangle_kinds() is RectangleKinds.DETAIL:
+                        continue
+                attached_shape.set_width_ratio(self.width_ratio)
+                attached_shape.set_height_ratio(self.height_ratio)
+                attached_shape.draw()
 
         if self.opponent_field_area_inside_handler.get_active_field_area_action() is OpponentFieldAreaActionProcess.PLAY_ANIMATION:
             opponent_animation_actor = self.attack_animation_object.get_opponent_animation_actor()
@@ -3433,12 +3443,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 )
                             )
                             print(f"{Fore.RED}파멸의 계약 -> response:{Fore.GREEN} {response}{Style.RESET_ALL}")
-                            is_success_value = response.get('is_success', False)
+                            is_contract_of_doom_success_value = response.get('is_success', False)
 
-                            if is_success_value == False:
+                            if is_contract_of_doom_success_value == False:
                                 # self.selected_object = None
                                 self.return_to_initial_location()
                                 self.reset_every_selected_action()
+                                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN.value)
                                 return
 
                             self.attack_animation_object.set_your_usage_card_id(your_card_id)
@@ -3639,7 +3650,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 _supportCardId=your_card_id)
                         )
 
-                        if not response.get('is_success'):
+                        is_death_success_value = response.get('is_success', False)
+
+                        if is_death_success_value == False:
                             # self.selected_object = None
                             self.return_to_initial_location()
                             self.reset_every_selected_action()
@@ -3690,8 +3703,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     self.selected_object = None
                     # self.return_to_initial_location()
                     return
+                elif is_pickable_card_inside_unit == False:
+                    self.return_to_initial_location()
+                    self.reset_every_selected_action()
+                    self.message_on_the_screen.create_message_on_the_battle_screen(
+                        MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN.value)
+                    return
                 else:
                     self.return_to_initial_location()
+
 
             # current_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
             # current_field_unit_list_length = len(current_field_unit_list)
@@ -3748,10 +3768,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 )
 
                                 print(f"response: {response}")
-                                if not response.get('is_success'):
+                                is_morale_conversion_success_value = response.get('is_success', False)
+
+                                if is_morale_conversion_success_value == False:
                                     # self.selected_object = None
                                     self.return_to_initial_location()
                                     self.reset_every_selected_action()
+                                    self.message_on_the_screen.create_message_on_the_battle_screen(
+                                        MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN.value)
                                     return
 
                                 card_id = current_field_unit.get_card_number()
@@ -4086,15 +4110,18 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if self.active_panel_rectangle is not None:
                 self.active_panel_rectangle = None
 
-            if self.opponent_active_panel.get_opponent_active_panel_details_button() is not None:
-                if self.opponent_active_panel.is_point_inside_details_button((x, y)):
+            if self.opponent_details_panel_rectangle is not None:
+                self.opponent_details_panel_rectangle = None
+
+            if self.your_hand_details_panel_rectangle is not None:
+                self.your_hand_details_panel_rectangle = None
+
+            if self.opponent_details_panel.get_opponent_details_panel_button() is not None:
+                if self.opponent_details_panel.is_point_inside_details_button((x, y)):
                     print("상대방 상세 보기 클릭")
 
-                    # your_field_unit_id = self.selected_object.get_card_number()
-                    # skill_type = self.card_info_repository.getCardSkillSecondForCardNumber(your_field_unit_id)
-                    # print(f"skill_type: {skill_type}")
-                    opponent_field_unit_id = self.selected_object.get_card_number()
-                    opponent_field_unit_index = self.selected_object.get_index()
+                    opponent_field_unit_id = self.opponent_selected_object.get_card_number()
+                    opponent_field_unit_index = self.opponent_selected_object.get_index()
                     opponent_field_unit_attached_energy = self.opponent_field_unit_repository.get_attached_energy_info()
 
                     select_details_card = FixedDetailsCard((self.width / 2 - 150, self.height / 2 - (150 * 1.618)))
@@ -4225,9 +4252,22 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 )
 
                     self.current_fixed_details_card = select_details_card_base
-                    self.active_panel_rectangle = None
-                    self.opponent_active_panel.clear_all_opponent_active_panel()
-                    self.selected_object = None
+                    self.opponent_details_panel_rectangle = None
+                    self.opponent_details_panel.clear_all_opponent_details_panel()
+                    return
+
+            if self.your_hand_details_panel.get_your_hand_details_panel_button() is not None:
+                if self.your_hand_details_panel.is_point_inside_details_button((x, y)):
+                    print("내 손에 있는 카드 상세 보기")
+                    your_hand_card_id = self.selected_object.get_card_number()
+
+                    select_details_card = FixedDetailsCard((self.width / 2 - 150, self.height / 2 - (150 * 1.618)))
+                    select_details_card.init_card(your_hand_card_id)
+                    select_details_card_base = select_details_card.get_fixed_card_base()
+
+                    self.current_fixed_details_card = select_details_card_base
+                    self.your_hand_details_panel_rectangle = None
+                    self.your_hand_details_panel.clear_all_your_hand_details_panel()
                     return
 
             if self.your_active_panel.get_your_active_panel_attack_button() is not None:
@@ -4854,6 +4894,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if self.surrender_confirm_ok_button_selected:
                         print(f"행복해용~~~")
+                        self.timer.stop_timer()
                         self.battle_field_function_controller.callSurrender()
                         self.is_playing_action_animation = False
                         self.field_area_inside_handler.clear_field_area_action()
@@ -6002,7 +6043,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     self.attack_animation_object.set_animation_actor(your_field_unit)
                     self.field_area_inside_handler.set_field_area_action(FieldAreaAction.PLAY_ANIMATION)
                     self.master.after(0, self.valrn_ready_to_use_shadow_ball_to_opponent_main_character_animation)
-                    if response.get('player_main_character_survival_map_for_notice',{}).get('Opponent',None) == 'Death':
+                    if response.get('player_main_character_survival_map_for_notice', {}).get('Opponent', None) == 'Death':
                         self.opponent_hp_repository.opponent_character_die()
                     #### 애니메이션 프레임
                     return
@@ -6261,7 +6302,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 _supportCardId="2")
                         )
 
-                        if not response.get('is_success'):
+                        is_success_value = response.get('is_success', False)
+
+                        if is_success_value == False:
                             # self.selected_object = None
                             self.reset_every_selected_action()
                             return
@@ -6546,7 +6589,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 self.targeting_enemy_select_support_lightning_border_list = []
                                 self.opponent_you_selected_lightning_border_list = []
                                 self.opponent_you_selected_object_list = []
-
+                                self.message_on_the_screen.create_message_on_the_battle_screen(
+                                    MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN.value)
                                 self.selected_object = None
                                 return
 
@@ -7069,8 +7113,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.__session_repository.get_session_info()))
         print(f"turn_end_request_result: {turn_end_request_result}")
 
+        if not turn_end_request_result.get('is_success', False):
+            return
 
-        if turn_end_request_result.get('is_success', False) == False:
+        if turn_end_request_result.get('player_main_character_survival_map', {}).get('Opponent', None) == 'Death':
+            # self.opponent_hp_repository.opponent_character_die()
+            self.timer.stop_timer()
+            self.battle_field_repository.win()
             return
 
         self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(False)
@@ -7123,9 +7172,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
     def on_canvas_right_click(self, event):
         x, y = event.x, event.y
 
-        if self.is_point_inside_opponent_field_area((x, y), self.opponent_field_panel):
-            pass
-
         if self.selected_object and isinstance(self.selected_object, FixedFieldCard):
             convert_y = self.winfo_reqheight() - y
             fixed_card_base = self.selected_object.get_fixed_card_base()
@@ -7152,6 +7198,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             if opponent_fixed_card_base.is_point_inside((x, convert_y)):
                 print(f"Inside Unit")
+                self.opponent_selected_object = opponent_field_unit
                 self.opponent_details_panel.create_opponent_details_panel((x, y), opponent_field_unit)
 
                 new_rectangle = self.opponent_details_panel.get_opponent_details_panel()
@@ -7169,6 +7216,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 if your_hand_pickable_card_base.is_point_inside((x, convert_y)):
                     print(f"Inside Unit")
+                    self.selected_object = current_page_hand_card
                     self.your_hand_details_panel.create_your_hand_details_panel((x, y), current_page_hand_card)
 
                     new_rectangle = self.your_hand_details_panel.get_your_hand_details_panel()
@@ -9391,6 +9439,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # 메인 캐릭터 상태 확인 및 체력 Update
                 if your_main_character_survival_state != 'Survival':
                     print("Player who get notice is dead.")
+                    self.timer.stop_timer()
+                    self.your_hp_repository.your_character_die()
                     # TODO: 배틀 정리 요청을 띄우는 화면으로 넘어가야 함
 
                 self.your_hp_repository.change_hp(your_main_character_health_point)
@@ -10352,6 +10402,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     if your_main_character_survival_state == 'Death':
                         print('Your main character is dead!')
                         self.your_hp_repository.your_character_die()
+                        self.timer.stop_timer()
                         self.battle_field_repository.lose()
                         return
 
@@ -10972,6 +11023,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     survival_info = process_second_passive_skill_response_data['player_main_character_survival_map']['Opponent']
                     if survival_info == 'Death':
+                        self.timer.stop_timer()
                         self.battle_field_repository.win()
 
 
@@ -12478,6 +12530,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 print(f"your_damage: {your_damage}")
                 self.opponent_hp_repository.take_damage(your_damage)
 
+                if self.opponent_hp_repository.get_current_opponent_hp() <= 0:
+                    print('Fake opponent is dead!')
+                    self.opponent_hp_repository.opponent_character_die()
+                    self.timer.stop_timer()
+
                 self.targeting_enemy_select_using_your_field_card_id = None
 
                 self.field_area_inside_handler.clear_field_area_action()
@@ -12783,6 +12840,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 if your_character_survival_state != 'Survival':
                     print('죽었습니다!!')
+                    self.timer.stop_timer()
                     self.battle_field_repository.lose()
 
         move_to_origin_location(1)
@@ -13862,6 +13920,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.selected_object = None
         self.active_panel_rectangle = None
         self.current_fixed_details_card = None
+        self.opponent_selected_object = None
         self.your_active_panel.clear_all_your_active_panel()
 
         self.field_area_inside_handler.clear_lightning_border_list()
@@ -13954,6 +14013,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.timer_repository.set_timer(60)
             self.timer.get_timer()
             self.timer.start_timer()
+        #     return
+        #
+        # def whose_turn_is_false():
+        #     self.timer.stop_timer()
+        #
+        # self.timer_repository.set_function(whose_turn_is_false())
+        # self.timer_repository.set_timer(60)
+        # self.timer.get_timer()
+        # self.timer.start_timer()
 
     def fake_opponent_turn_end(self):
         print("Opponent Turn을 종료합니다")
@@ -13961,6 +14029,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
             TurnEndRequest(
                 self.__session_repository.get_second_fake_session_info()))
         print(f"turn_end_request_result: {turn_end_request_result}")
+        # your_main_character_survival_state = (
+        #     data)['player_main_character_survival_map']['You']
+
+        if turn_end_request_result.get('player_main_character_survival_map', {}).get('Opponent', None) == 'Death':
+            print(f"{Fore.RED}Fake Opponent win!{Style.RESET_ALL}")
+            # self.your_hp_repository.your_character_die()
+            self.timer.stop_timer()
+            # self.battle_field_repository.win()
+            return
 
         self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(True)
         self.timer.stop_timer()

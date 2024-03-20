@@ -108,6 +108,12 @@ class LoginMenuFrameServiceImpl(LoginMenuFrameService):
         button_login.place(relx=0.5, rely=0.784, anchor="center")
         link_signup.place(relx=0.5, rely=0.85, anchor="center")
 
+        # def on_enter():
+        #     on_signin_click(event='<Return>')
+        #
+        # loginMenuFrame.bind('<Return>', lambda event: on_enter)
+        entry_password.bind("<Return>", on_signin_click)
+
         return loginMenuFrame
 
     def injectTransmitIpcChannel(self, transmitIpcChannel):
