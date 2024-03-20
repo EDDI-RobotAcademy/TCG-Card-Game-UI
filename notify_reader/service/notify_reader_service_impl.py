@@ -18,6 +18,8 @@ from battle_field.infra.opponent_field_energy_repository import OpponentFieldEne
 from battle_field.infra.opponent_field_unit_repository import OpponentFieldUnitRepository
 from battle_field.infra.opponent_hand_repository import OpponentHandRepository
 from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
+from battle_field.infra.opponent_hp_repository import OpponentHpRepository
+
 from battle_field.infra.request.wide_area_passive_skill_from_deploy_request import WideAreaPassiveSkillFromDeployRequest
 from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
@@ -68,6 +70,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance.__your_field_energy_repository = YourFieldEnergyRepository.getInstance()
             cls.__instance.__your_hand_repository = YourHandRepository.getInstance()
             cls.__instance.__fake_opponent_hand_repository = FakeOpponentHandRepositoryImpl.getInstance()
+            cls.__instance.__opponent_hp_repository = OpponentHpRepository.getInstance()
             cls.__instance.__pre_drawed_image_instance = PreDrawedImage.getInstance()
             cls.__instance.__your_hp_repository = YourHpRepository.getInstance()
             cls.__instance.__your_tomb_repository = YourTombRepository.getInstance()
@@ -349,6 +352,13 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         if whose_turn is False:
 
+            for player, survival_info in notice_dictionary['NOTIFY_TURN_END']['player_main_character_survival_map'].items():
+                if player == 'You' and survival_info == 'Death':
+                    self.__your_hp_repository.your_character_die()
+                    self.__battle_field_repository.lose()
+                    # self.__battle_field_timer_repository.
+                    return
+
             # Fake Opponent Draw
             opponent_drawn_card_list = notice_dictionary['NOTIFY_TURN_END']['player_drawn_card_list_map'].get('You', [])
             self.__fake_opponent_hand_repository.save_fake_opponent_hand_list(opponent_drawn_card_list)
@@ -514,6 +524,12 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             self.__opponent_field_area_inside_handler.set_required_to_process_opponent_passive_skill_multiple_unit_map(
                 opponent_which_one_has_passive_skill_to_turn_start_lists)
 
+            return
+
+        # 내 턴 종료시 상대가 덱사 발생한 경우
+        elif (whose_turn is True and
+              notice_dictionary['NOTIFY_TURN_END']['player_main_character_survival_map'].get('You', None) == 'Death'):
+            print('You win')
             return
 
         self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(True)
