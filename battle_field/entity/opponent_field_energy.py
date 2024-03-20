@@ -71,5 +71,4 @@ class OpponentFieldEnergy:
         opponent_field_energy_count = self.__opponent_field_energy_repository.get_opponent_field_energy()
         # print(f"update_current_opponent_field_energy_panel -> opponent_field_energy_count: {opponent_field_energy_count}")
         self.opponent_field_energy_panel.set_image_data(
-            self.__pre_drawed_image.get_pre_draw_field_energy(
-                opponent_field_energy_count))
+            self.__pre_drawed_image.get_pre_draw_field_energy(opponent_field_energy_count))

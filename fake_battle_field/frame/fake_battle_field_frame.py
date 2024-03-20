@@ -2491,30 +2491,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 glDisable(GL_BLEND)
 
-        if self.current_fixed_details_card:
-            self.current_fixed_details_card.set_width_ratio(self.width_ratio)
-            self.current_fixed_details_card.set_height_ratio(self.height_ratio)
-            self.current_fixed_details_card.draw()
 
-            current_attached_shape_list = self.current_fixed_details_card.get_attached_shapes()
-
-            for attached_shape in current_attached_shape_list:
-                if isinstance(attached_shape, Rectangle):
-                    if attached_shape.get_rectangle_kinds() is RectangleKinds.DETAIL:
-                        glEnable(GL_BLEND)
-                        glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA)
-                        attached_shape.set_width_ratio(self.width_ratio)
-                        attached_shape.set_height_ratio(self.height_ratio)
-                        attached_shape.draw()
-                        glDisable(GL_BLEND)
-
-            for attached_shape in current_attached_shape_list:
-                if isinstance(attached_shape, Rectangle):
-                    if attached_shape.get_rectangle_kinds() is RectangleKinds.DETAIL:
-                        continue
-                attached_shape.set_width_ratio(self.width_ratio)
-                attached_shape.set_height_ratio(self.height_ratio)
-                attached_shape.draw()
 
         # for hand_card in self.hand_card_list:
         #     attached_tool_card = hand_card.get_tool_card()
@@ -2951,6 +2928,31 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
             self.opponent_field_area_inside_handler.clear_field_area_action()
         self.post_draw()
+
+        if self.current_fixed_details_card:
+            self.current_fixed_details_card.set_width_ratio(self.width_ratio)
+            self.current_fixed_details_card.set_height_ratio(self.height_ratio)
+            self.current_fixed_details_card.draw()
+
+            current_attached_shape_list = self.current_fixed_details_card.get_attached_shapes()
+
+            for attached_shape in current_attached_shape_list:
+                if isinstance(attached_shape, Rectangle):
+                    if attached_shape.get_rectangle_kinds() is RectangleKinds.DETAIL:
+                        glEnable(GL_BLEND)
+                        glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA)
+                        attached_shape.set_width_ratio(self.width_ratio)
+                        attached_shape.set_height_ratio(self.height_ratio)
+                        attached_shape.draw()
+                        glDisable(GL_BLEND)
+
+            for attached_shape in current_attached_shape_list:
+                if isinstance(attached_shape, Rectangle):
+                    if attached_shape.get_rectangle_kinds() is RectangleKinds.DETAIL:
+                        continue
+                attached_shape.set_width_ratio(self.width_ratio)
+                attached_shape.set_height_ratio(self.height_ratio)
+                attached_shape.draw()
 
         if self.opponent_field_area_inside_handler.get_active_field_area_action() is OpponentFieldAreaActionProcess.PLAY_ANIMATION:
             opponent_animation_actor = self.attack_animation_object.get_opponent_animation_actor()
@@ -4085,6 +4087,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if self.opponent_details_panel_rectangle is not None:
                 self.opponent_details_panel_rectangle = None
 
+            if self.your_hand_details_panel_rectangle is not None:
+                self.your_hand_details_panel_rectangle = None
+
             if self.opponent_details_panel.get_opponent_details_panel_button() is not None:
                 if self.opponent_details_panel.is_point_inside_details_button((x, y)):
                     print("상대방 상세 보기 클릭")
@@ -4222,7 +4227,21 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     self.current_fixed_details_card = select_details_card_base
                     self.opponent_details_panel_rectangle = None
-                    self.opponent_details_panel.clear_opponent_details_panel_button()
+                    self.opponent_details_panel.clear_all_opponent_details_panel()
+                    return
+
+            if self.your_hand_details_panel.get_your_hand_details_panel_button() is not None:
+                if self.your_hand_details_panel.is_point_inside_details_button((x, y)):
+                    print("내 손에 있는 카드 상세 보기")
+                    your_hand_card_id = self.selected_object.get_card_number()
+
+                    select_details_card = FixedDetailsCard((self.width / 2 - 150, self.height / 2 - (150 * 1.618)))
+                    select_details_card.init_card(your_hand_card_id)
+                    select_details_card_base = select_details_card.get_fixed_card_base()
+
+                    self.current_fixed_details_card = select_details_card_base
+                    self.your_hand_details_panel_rectangle = None
+                    self.your_hand_details_panel.clear_all_your_hand_details_panel()
                     return
 
             if self.your_active_panel.get_your_active_panel_attack_button() is not None:
@@ -7165,6 +7184,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 if your_hand_pickable_card_base.is_point_inside((x, convert_y)):
                     print(f"Inside Unit")
+                    self.selected_object = current_page_hand_card
                     self.your_hand_details_panel.create_your_hand_details_panel((x, y), current_page_hand_card)
 
                     new_rectangle = self.your_hand_details_panel.get_your_hand_details_panel()
