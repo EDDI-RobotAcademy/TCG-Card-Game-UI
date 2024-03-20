@@ -718,28 +718,31 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     break
 
 
-        if key.lower() == 'w':
-            opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
-            for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
-                if opponent_hand == 9:
-                    print("에너지번 사용!! ")
-
-                    result = self.__fake_opponent_hand_repository.request_use_energy_card_to_unit(
-                        RequestUseDeathSiceToUnit(
-                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
-                            _itemCardId=9,
-                            _opponentTargetUnitIndex=0
-                        ))
-
-                    print(f"fake death scythe result: {result}")
-                    is_success_value = result.get('is_success', False)
-
-                    if is_success_value == False:
-                        return
-
-                    self.__fake_opponent_hand_repository.remove_card_by_index(opponent_hand_index)
-
-                    break
+        # if key.lower() == 'w':
+        #     opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
+        #     your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
+        #     first_non_none_index = (
+        #         next((index for index, item in enumerate(your_field_unit_list) if item is not None), None))
+        #     for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
+        #         if opponent_hand == 9:
+        #             print("상대방 에너지번 사용!! ")
+        #
+        #             result = self.__fake_opponent_hand_repository.request_use_energy_card_to_unit(
+        #                 RequestUseDeathSiceToUnit(
+        #                     _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+        #                     _itemCardId=9,
+        #                     _opponentTargetUnitIndex=first_non_none_index
+        #                 ))
+        #
+        #             print(f"fake death scythe result: {result}")
+        #             is_success_value = result.get('is_success', False)
+        #
+        #             if is_success_value == False:
+        #                 return
+        #
+        #             self.__fake_opponent_hand_repository.remove_card_by_index(opponent_hand_index)
+        #
+        #             break
 
         # if key.lower() == 'w':
         #     opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
@@ -802,7 +805,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
             first_non_none_index = (
                 next((index for index, item in enumerate(your_field_unit_list) if item is not None), None))
-            your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(first_non_none_index)
+            # your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(first_non_none_index)
             # self.attack_animation_object.set_your_field_unit(your_field_unit)
             for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
                 if opponent_hand == 8:
@@ -1686,27 +1689,54 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         if key.lower() == '6':
             opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
+            your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
+
+            # first_non_none_index = (
+            #     next((index for index, item in enumerate(your_field_unit_list) if item is not None), None))
+            # second_non_none_index = first_non_none_index
+            #
+            # if first_non_none_index is not None:
+            your_field_unit_index_list = []
+            for index, item in enumerate(your_field_unit_list):
+                if item is not None:
+                    your_field_unit_index_list.append(index)
+                if len(your_field_unit_index_list) == 2:
+                    break
+
+            if len(your_field_unit_index_list) == 1:
+                first_non_none_index = your_field_unit_index_list[0]
+                your_field_unit_index_list.append(first_non_none_index)
+
             print(f"opponent hand list : {opponent_hand_list}")
             for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
                 if opponent_hand == 33:
-                    print("상대방 시폭 사용~ ")
+                    opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+                    for opponent_unit_index, opponent_unit in enumerate(opponent_field_unit_list):
+                        opponent_field_unit_id = opponent_unit.get_card_number()
+                        if opponent_field_unit_id == 31 or opponent_field_unit_id == 32:
 
-                    response = self.your_hand_repository.request_use_corpse_explosion(
-                        RequestUseCorpseExplosion(
-                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
-                            _itemCardId = 33,
-                            _opponentTargetUnitIndexList = ["0","1"],
-                            _unitIndex = "0"
-                        )
+                            print("상대방 시폭 사용~ ")
 
-                    )
-                    print(f"use corpse explosion response: {response}")
-                    is_success_value = response.get('is_success', False)
+                            response = self.your_hand_repository.request_use_corpse_explosion(
+                                RequestUseCorpseExplosion(
+                                    _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                                    _itemCardId = 33,
+                                    _opponentTargetUnitIndexList = [str(your_field_unit_index_list[0]), str(your_field_unit_index_list[1])],
+                                    _unitIndex = str(opponent_unit_index)
+                                )
+                            )
+                            print(f"use corpse explosion response: {response}")
+                            is_success_value = response.get('is_success', False)
 
-                    if is_success_value == False:
-                        return
+                            if is_success_value == False:
+                                continue
 
-                    self.__fake_opponent_hand_repository.remove_card_by_index(opponent_hand_index)
+                            self.__fake_opponent_hand_repository.remove_card_by_index(opponent_hand_index)
+
+                            break
+
+
+                        print('희생 불가능한 유닛')
 
                     break
 
@@ -1795,196 +1825,196 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             self.master.after(0, animate)
 
-        if key.lower() == 'a':
-            self.opponent_field_unit_repository.create_field_unit_card(26)
-            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-
-        if key.lower() == 'q':
-            self.opponent_field_unit_repository.create_field_unit_card(31)
-            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+        # if key.lower() == 'a':
+        #     self.opponent_field_unit_repository.create_field_unit_card(26)
+        #     self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+        #
+        # if key.lower() == 'q':
+        #     self.opponent_field_unit_repository.create_field_unit_card(31)
+        #     self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
         # if key.lower() == 'n':
         #     self.opponent_field_unit_repository.create_field_unit_card(19)
         #     self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
-        if key.lower() == 'b':
-            self.your_field_unit_repository.create_field_unit_card(19)
-            self.your_field_unit_repository.replace_field_card_position()
-
-            first_passive_skill_type = self.card_info_repository.getCardPassiveFirstForCardNumber(19)
-            if first_passive_skill_type == 1:
-                print("단일기")
-            elif first_passive_skill_type == 2:
-                print("광역기")
-
-                damage = self.card_info_repository.getCardPassiveFirstDamageForCardNumber(19)
-                print(f"wide area damage: {damage}")
-
-                for index in range(
-                        len(self.opponent_field_unit_repository.get_current_field_unit_card_object_list()) - 1,
-                        -1,
-                        -1):
-                    opponent_field_unit = \
-                        self.opponent_field_unit_repository.get_current_field_unit_card_object_list()[index]
-
-                    if opponent_field_unit is None:
-                        continue
-
-                    remove_from_field = False
-
-                    fixed_card_base = opponent_field_unit.get_fixed_card_base()
-                    attached_shape_list = fixed_card_base.get_attached_shapes()
-
-                    for attached_shape in attached_shape_list:
-                        if isinstance(attached_shape, NonBackgroundNumberImage):
-                            if attached_shape.get_circle_kinds() is CircleKinds.HP:
-
-                                hp_number = attached_shape.get_number()
-                                hp_number -= damage
-
-                                if hp_number <= 0:
-                                    remove_from_field = True
-                                    break
-
-                                print(f"contract_of_doom -> hp_number: {hp_number}")
-                                attached_shape.set_number(hp_number)
-
-                                # attached_shape.set_image_data(
-                                #     self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
-
-                                attached_shape.set_image_data(
-                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(hp_number))
-
-                    if remove_from_field:
-                        card_id = opponent_field_unit.get_card_number()
-
-                        effect_animation = EffectAnimation()
-                        effect_animation.set_animation_name('death')
-                        effect_animation.set_total_window_size(self.width, self.height)
-                        effect_animation.change_local_translation(self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
-                            index).get_fixed_card_base().get_local_translation())
-                        effect_animation.draw_animation_panel()
-                        effect_animation_panel = effect_animation.get_animation_panel()
-
-                        animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
-                            effect_animation)
-
-                        self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
-                            animation_index, effect_animation_panel)
-                        
-                        def remove_opponent_unit(_index):
-                            
-                            self.opponent_field_unit_repository.remove_current_field_unit_card(_index)
-                            self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
-                            self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-                            self.opponent_field_unit_repository.remove_harmful_status_by_index(_index)
-                            
-                        self.play_effect_animation_by_index_and_call_function_with_param(
-                            animation_index, remove_opponent_unit, index)
-
-            second_passive_skill_type = self.card_info_repository.getCardPassiveSecondForCardNumber(19)
-            if second_passive_skill_type == 1:
-                print("단일기")
-
-                # TODO: 여기서 본체 공격 할 수 있어야 함
-                self.targeting_enemy_select_support_lightning_border_list.append(self.opponent_main_character_panel)
-
-                opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
-                valid_opponent_field_units_object_list = [unit for unit in opponent_field_unit_object_list if
-                                                          unit is not None]
-                print(f"실제 유효한 상대 필드 유닛 숫자: {len(valid_opponent_field_units_object_list)}")
-
-                # if len(valid_opponent_field_units_object_list) == 0:
-                #     return
-
-                for opponent_field_unit_object in opponent_field_unit_object_list:
-                    if opponent_field_unit_object is None:
-                        continue
-
-                    fixed_opponent_card_base = opponent_field_unit_object.get_fixed_card_base()
-                    self.targeting_enemy_select_support_lightning_border_list.append(fixed_opponent_card_base)
-
-                self.targeting_enemy_select_support_lightning_border_list.append(self.opponent_main_character_panel)
-
-                self.opponent_fixed_unit_card_inside_handler.set_opponent_field_area_action(
-                    OpponentFieldAreaAction.PASSIVE_SKILL_TARGETING_ENEMY)
-
-                your_field_unit_id = 19
-
-                self.targeting_enemy_select_using_your_field_card_id = your_field_unit_id
-            elif second_passive_skill_type == 2:
-                print("광역기")
+        # if key.lower() == 'b':
+        #     self.your_field_unit_repository.create_field_unit_card(19)
+        #     self.your_field_unit_repository.replace_field_card_position()
+        #
+        #     first_passive_skill_type = self.card_info_repository.getCardPassiveFirstForCardNumber(19)
+        #     if first_passive_skill_type == 1:
+        #         print("단일기")
+        #     elif first_passive_skill_type == 2:
+        #         print("광역기")
+        #
+        #         damage = self.card_info_repository.getCardPassiveFirstDamageForCardNumber(19)
+        #         print(f"wide area damage: {damage}")
+        #
+        #         for index in range(
+        #                 len(self.opponent_field_unit_repository.get_current_field_unit_card_object_list()) - 1,
+        #                 -1,
+        #                 -1):
+        #             opponent_field_unit = \
+        #                 self.opponent_field_unit_repository.get_current_field_unit_card_object_list()[index]
+        #
+        #             if opponent_field_unit is None:
+        #                 continue
+        #
+        #             remove_from_field = False
+        #
+        #             fixed_card_base = opponent_field_unit.get_fixed_card_base()
+        #             attached_shape_list = fixed_card_base.get_attached_shapes()
+        #
+        #             for attached_shape in attached_shape_list:
+        #                 if isinstance(attached_shape, NonBackgroundNumberImage):
+        #                     if attached_shape.get_circle_kinds() is CircleKinds.HP:
+        #
+        #                         hp_number = attached_shape.get_number()
+        #                         hp_number -= damage
+        #
+        #                         if hp_number <= 0:
+        #                             remove_from_field = True
+        #                             break
+        #
+        #                         print(f"contract_of_doom -> hp_number: {hp_number}")
+        #                         attached_shape.set_number(hp_number)
+        #
+        #                         # attached_shape.set_image_data(
+        #                         #     self.pre_drawed_image_instance.get_pre_draw_number_image(hp_number))
+        #
+        #                         attached_shape.set_image_data(
+        #                             self.pre_drawed_image_instance.get_pre_draw_unit_hp(hp_number))
+        #
+        #             if remove_from_field:
+        #                 card_id = opponent_field_unit.get_card_number()
+        #
+        #                 effect_animation = EffectAnimation()
+        #                 effect_animation.set_animation_name('death')
+        #                 effect_animation.set_total_window_size(self.width, self.height)
+        #                 effect_animation.change_local_translation(self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
+        #                     index).get_fixed_card_base().get_local_translation())
+        #                 effect_animation.draw_animation_panel()
+        #                 effect_animation_panel = effect_animation.get_animation_panel()
+        #
+        #                 animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+        #                     effect_animation)
+        #
+        #                 self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+        #                     animation_index, effect_animation_panel)
+        #
+        #                 def remove_opponent_unit(_index):
+        #
+        #                     self.opponent_field_unit_repository.remove_current_field_unit_card(_index)
+        #                     self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+        #                     self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+        #                     self.opponent_field_unit_repository.remove_harmful_status_by_index(_index)
+        #
+        #                 self.play_effect_animation_by_index_and_call_function_with_param(
+        #                     animation_index, remove_opponent_unit, index)
+        #
+        #     second_passive_skill_type = self.card_info_repository.getCardPassiveSecondForCardNumber(19)
+        #     if second_passive_skill_type == 1:
+        #         print("단일기")
+        #
+        #         # TODO: 여기서 본체 공격 할 수 있어야 함
+        #         self.targeting_enemy_select_support_lightning_border_list.append(self.opponent_main_character_panel)
+        #
+        #         opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+        #         valid_opponent_field_units_object_list = [unit for unit in opponent_field_unit_object_list if
+        #                                                   unit is not None]
+        #         print(f"실제 유효한 상대 필드 유닛 숫자: {len(valid_opponent_field_units_object_list)}")
+        #
+        #         # if len(valid_opponent_field_units_object_list) == 0:
+        #         #     return
+        #
+        #         for opponent_field_unit_object in opponent_field_unit_object_list:
+        #             if opponent_field_unit_object is None:
+        #                 continue
+        #
+        #             fixed_opponent_card_base = opponent_field_unit_object.get_fixed_card_base()
+        #             self.targeting_enemy_select_support_lightning_border_list.append(fixed_opponent_card_base)
+        #
+        #         self.targeting_enemy_select_support_lightning_border_list.append(self.opponent_main_character_panel)
+        #
+        #         self.opponent_fixed_unit_card_inside_handler.set_opponent_field_area_action(
+        #             OpponentFieldAreaAction.PASSIVE_SKILL_TARGETING_ENEMY)
+        #
+        #         your_field_unit_id = 19
+        #
+        #         self.targeting_enemy_select_using_your_field_card_id = your_field_unit_id
+        #     elif second_passive_skill_type == 2:
+        #         print("광역기")
 
         # if key.lower() == 't':
         #     self.round_repository.increase_current_round_number()
 
-        if key.lower() == 'e':
-            # result = {
-            #     "hand_use_card_id": 93, "field_unit_index": 0,
-            #     "attach_energy_race_type": 2,
-            #     "attach_race_energy_count": 1,
-            #     "attach_total_energy_count": 1
-            # }
-            # self.attach_energy(result)
-            # return
-            print("attach undead energy")
-
-            # TODO: Change it to ENUM Value (Not just integer)
-            card_race = self.card_info_repository.getCardRaceForCardNumber(93)
-            print(f"card_race: {card_race}")
-
-            attach_energy_count = 1
-            opponent_unit_index = 0
-
-            self.opponent_field_unit_repository.attach_race_energy(opponent_unit_index, EnergyType.Undead, attach_energy_count)
-            opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(0)
-
-            opponent_field_unit_attached_undead_energy_count = self.opponent_field_unit_repository.get_opponent_field_unit_race_energy(0, EnergyType.Undead)
-            print(f"opponent_field_unit_attached_undead_energy_count: {opponent_field_unit_attached_undead_energy_count}")
-
-            before_attach_energy_count = self.opponent_field_unit_repository.get_opponent_field_unit_race_energy(
-                0, EnergyType.Undead)
-
-            self.opponent_field_unit_repository.attach_race_energy(
-                opponent_unit_index,
-                EnergyType.Undead,
-                attach_energy_count)
-            opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(0)
-
-            after_attach_energy_count = self.opponent_field_unit_repository.get_opponent_field_unit_race_energy(
-                0, EnergyType.Undead)
-            total_attached_energy_count = self.opponent_field_unit_repository.get_total_energy_at_index(0)
-            print(
-                f"opponent_field_unit_attached_undead_energy_count: {total_attached_energy_count}")
-
-            opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
-            opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
-
-            for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
-                if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
-                    if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
-                        # opponent_fixed_card_attached_shape.set_image_data(
-                        #     self.pre_drawed_image_instance.get_pre_draw_number_image(
-                        #         total_attached_energy_count))
-
-                        opponent_fixed_card_attached_shape.set_image_data(
-                            self.pre_drawed_image_instance.get_pre_draw_unit_energy(
-                                total_attached_energy_count))
-
-                        print(f"changed energy: {opponent_fixed_card_attached_shape.get_circle_kinds()}")
+        # if key.lower() == 'e':
+        #     # result = {
+        #     #     "hand_use_card_id": 93, "field_unit_index": 0,
+        #     #     "attach_energy_race_type": 2,
+        #     #     "attach_race_energy_count": 1,
+        #     #     "attach_total_energy_count": 1
+        #     # }
+        #     # self.attach_energy(result)
+        #     # return
+        #     print("attach undead energy")
+        #
+        #     # TODO: Change it to ENUM Value (Not just integer)
+        #     card_race = self.card_info_repository.getCardRaceForCardNumber(93)
+        #     print(f"card_race: {card_race}")
+        #
+        #     attach_energy_count = 1
+        #     opponent_unit_index = 0
+        #
+        #     self.opponent_field_unit_repository.attach_race_energy(opponent_unit_index, EnergyType.Undead, attach_energy_count)
+        #     opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(0)
+        #
+        #     opponent_field_unit_attached_undead_energy_count = self.opponent_field_unit_repository.get_opponent_field_unit_race_energy(0, EnergyType.Undead)
+        #     print(f"opponent_field_unit_attached_undead_energy_count: {opponent_field_unit_attached_undead_energy_count}")
+        #
+        #     before_attach_energy_count = self.opponent_field_unit_repository.get_opponent_field_unit_race_energy(
+        #         0, EnergyType.Undead)
+        #
+        #     self.opponent_field_unit_repository.attach_race_energy(
+        #         opponent_unit_index,
+        #         EnergyType.Undead,
+        #         attach_energy_count)
+        #     opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(0)
+        #
+        #     after_attach_energy_count = self.opponent_field_unit_repository.get_opponent_field_unit_race_energy(
+        #         0, EnergyType.Undead)
+        #     total_attached_energy_count = self.opponent_field_unit_repository.get_total_energy_at_index(0)
+        #     print(
+        #         f"opponent_field_unit_attached_undead_energy_count: {total_attached_energy_count}")
+        #
+        #     opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+        #     opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+        #
+        #     for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+        #         if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
+        #             if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+        #                 # opponent_fixed_card_attached_shape.set_image_data(
+        #                 #     self.pre_drawed_image_instance.get_pre_draw_number_image(
+        #                 #         total_attached_energy_count))
+        #
+        #                 opponent_fixed_card_attached_shape.set_image_data(
+        #                     self.pre_drawed_image_instance.get_pre_draw_unit_energy(
+        #                         total_attached_energy_count))
+        #
+        #                 print(f"changed energy: {opponent_fixed_card_attached_shape.get_circle_kinds()}")
 
             # after_attach_energy_count
             # before_attach_energy_count
 
-            every_energy = self.opponent_field_unit_repository.get_energy_info_at_index(0)
-            print(f"every_energy: {every_energy}")
-
-            if card_race == CardRace.UNDEAD.value:
-                card_race_circle = opponent_field_unit.creat_fixed_card_energy_race_circle(
-                    color=(0, 0, 0, 1),
-                    vertices=(0, (total_attached_energy_count * 10) + 20),
-                    local_translation=opponent_fixed_card_base.get_local_translation())
-                opponent_fixed_card_base.set_attached_shapes(card_race_circle)
+            # every_energy = self.opponent_field_unit_repository.get_energy_info_at_index(0)
+            # print(f"every_energy: {every_energy}")
+            #
+            # if card_race == CardRace.UNDEAD.value:
+            #     card_race_circle = opponent_field_unit.creat_fixed_card_energy_race_circle(
+            #         color=(0, 0, 0, 1),
+            #         vertices=(0, (total_attached_energy_count * 10) + 20),
+            #         local_translation=opponent_fixed_card_base.get_local_translation())
+            #     opponent_fixed_card_base.set_attached_shapes(card_race_circle)
 
 
 
@@ -2022,18 +2052,19 @@ class FakeBattleFieldFrame(OpenGLFrame):
         if key.lower() == 'o':
             your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
             first_non_none_index = next((index for index, item in enumerate(your_field_unit_list) if item is not None), None)
-            your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(first_non_none_index)
+            # your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(first_non_none_index)
             # self.attack_animation_object.set_your_field_unit(your_field_unit)
 
             opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
             print(f"opponent_field_unit_list : {opponent_field_unit_list}")
             for opponent_field_index, opponent_unit in enumerate(opponent_field_unit_list):
                 total_energy = self.opponent_field_unit_repository.get_total_energy_at_index(opponent_field_index)
+                required_energy = self.card_info_repository.getCardEnergyForCardNumber(opponent_unit.get_card_number())
                 print(total_energy)
                 # race_energy = self.opponent_field_unit_repository.get_energy_info_at_index(opponent_field_index)
                 # print(race_energy)
 
-                if total_energy >= 1:
+                if total_energy >= int(required_energy):
                     print("상대방 평타공격 to unit~ ")
 
                     response = self.__fake_battle_field_frame_repository.request_attack_opponent_unit(
@@ -2043,6 +2074,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             _targetUnitIndex=first_non_none_index
                         )
                     )
+
                     print(f"{Fore.RED}attack main character -> response:{Fore.GREEN} {response}{Style.RESET_ALL}")
                     is_success_value = response.get('is_success', False)
 
@@ -2050,13 +2082,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         continue
 
                     return
-
-        if key.lower() == 'p':
-            self.your_field_unit_repository.create_field_unit_card(17)
-
-
-
-
 
         if key.lower() == 'c':
             print("파멸의 계약 사용!")
