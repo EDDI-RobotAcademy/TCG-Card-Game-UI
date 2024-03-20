@@ -771,7 +771,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
             for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
                 if opponent_hand == 35:
-                    print("사기진작 사용!! ")
+                    print("상대방 사기 전환 사용!!")
                     opponent_field_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
                     for opponent_field_unit_index, opponent_field_unit in enumerate(opponent_field_list):
                         if opponent_field_unit == None:
@@ -783,7 +783,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 _itemCardId = 35,
                                 _unitIndex=opponent_field_unit_index
                             )
-                            )
+                        )
 
                         print(f"fake death scythe result: {result}")
                         is_success_value = result.get('is_success', False)
@@ -794,19 +794,25 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.__fake_opponent_hand_repository.remove_card_by_index(opponent_hand_index)
 
                         break
+
                     break
 
         if key.lower() == 's':
             opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
+            your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
+            first_non_none_index = (
+                next((index for index, item in enumerate(your_field_unit_list) if item is not None), None))
+            your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(first_non_none_index)
+            # self.attack_animation_object.set_your_field_unit(your_field_unit)
             for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
                 if opponent_hand == 8:
-                    print("죽음의 낫 사용!! ")
+                    print("상대방이 내 필드 첫 번째 생존 유닛에 죽음의 낫 사용!!")
 
                     result = self.__fake_opponent_hand_repository.request_use_energy_card_to_unit(
                         RequestUseDeathSiceToUnit(
                             _sessionInfo=self.__session_repository.get_second_fake_session_info(),
                             _itemCardId=8,
-                            _opponentTargetUnitIndex=0
+                            _opponentTargetUnitIndex=first_non_none_index
                             ))
 
                     print(f"fake death scythe result: {result}")
@@ -821,32 +827,32 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             return
 
-        if key.lower() == 'kp_0':
-            opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
-            for opponent_unit_index, opponent_unit in enumerate(opponent_field_unit_list):
-                if opponent_unit == None:
-                    continue
-
-                if opponent_unit.get_card_number() == 27:
-                    self.your_field_energy_repository.request_to_attach_energy_to_unit(
-                        RequestAttachFieldEnergyToUnit(
-                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
-                            _unitIndex=opponent_unit.get_index(),
-                            _energyRace=CardRace.UNDEAD,
-                            _energyCount=2
-                        )
-                    )
-
-                    response = self.__fake_battle_field_frame_repository.request_attack_main_character_with_active_skill(
-                        RequestAttackMainCharacterWithActiveSkill(
-                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
-                            _unitCardIndex=opponent_unit.get_index(),
-                            _targetGameMainCharacterIndex="0"
-                        )
-                    )
-
-                    print("test dark ball : ", response)
-                    return
+        # if key.lower() == 'kp_0':
+        #     opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+        #     for opponent_unit_index, opponent_unit in enumerate(opponent_field_unit_list):
+        #         if opponent_unit == None:
+        #             continue
+        #
+        #         if opponent_unit.get_card_number() == 27:
+        #             self.your_field_energy_repository.request_to_attach_energy_to_unit(
+        #                 RequestAttachFieldEnergyToUnit(
+        #                     _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+        #                     _unitIndex=opponent_unit.get_index(),
+        #                     _energyRace=CardRace.UNDEAD,
+        #                     _energyCount=2
+        #                 )
+        #             )
+        #
+        #             response = self.__fake_battle_field_frame_repository.request_attack_main_character_with_active_skill(
+        #                 RequestAttackMainCharacterWithActiveSkill(
+        #                     _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+        #                     _unitCardIndex=opponent_unit.get_index(),
+        #                     _targetGameMainCharacterIndex="0"
+        #                 )
+        #             )
+        #
+        #             print("test dark ball : ", response)
+        #             return
 
         # if key.lower() == 'kp_decimal':
         if key.lower() == 'period':
@@ -861,6 +867,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     continue
 
                 if opponent_unit.get_card_number() == 27:
+
                     # self.your_field_energy_repository.request_to_attach_energy_to_unit(
                     #     RequestAttachFieldEnergyToUnit(
                     #         _sessionInfo=self.__session_repository.get_second_fake_session_info(),
@@ -992,8 +999,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
             for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
                 opponent_hand_card_type = self.card_info_repository.getCardTypeForCardNumber(opponent_hand)
-                if opponent_hand_card_type == CardType.UNIT.value:
-                    print("상대방 유닛 출격")
+                if opponent_hand_card_type == CardType.UNIT.value and opponent_hand != 19:
+                    print("네더를 제외한 상대방 유닛 출격")
 
                     result = self.__fake_opponent_hand_repository.request_deploy_fake_opponent_unit(
                         FakeOpponentDeployUnitRequest(
@@ -1012,7 +1019,33 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             return
 
-        if key.lower() == 'v':
+        if key.lower() == 'n':
+            print("만약 Opponent Hand에 네더가 있다면 내보낸다.")
+
+            opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
+            for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
+                opponent_hand_card_type = self.card_info_repository.getCardTypeForCardNumber(opponent_hand)
+                if opponent_hand_card_type == CardType.UNIT.value and opponent_hand == 19:
+                    print("네더를 제외한 상대방 유닛 출격")
+
+                    result = self.__fake_opponent_hand_repository.request_deploy_fake_opponent_unit(
+                        FakeOpponentDeployUnitRequest(
+                            self.__session_repository.get_second_fake_session_info(),
+                            opponent_hand))
+
+                    print(f"fake opponent deploy unit result: {result}")
+                    is_success_value = result.get('is_success', False)
+
+                    if is_success_value == False:
+                        return
+
+                    self.__fake_opponent_hand_repository.remove_card_by_index(opponent_hand_index)
+
+                    return
+
+            return
+
+        if key.lower() == 'r':
             print("상대방이 네더 출격 이후 광역기 사용 요청")
 
             recently_added_card_index = self.opponent_field_unit_repository.get_field_unit_max_index()
@@ -1044,7 +1077,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             return
 
-        if key.lower() == 'm':
+        if key.lower() == 'y':
             print("상대방이 네더 출격 이후 본체 타겟팅 사용 요청")
 
             # your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
@@ -1100,7 +1133,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             return
 
-        if key.lower() == 'n':
+        if key.lower() == 't':
             print("상대방이 네더 출격 이후 Your 유닛에 타겟팅 사용 요청")
 
             recently_added_card_index = self.opponent_field_unit_repository.get_field_unit_max_index()
@@ -1203,7 +1236,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             print(f"{Fore.RED}opponent turn_start_first_passive_skill_response:{Fore.GREEN} {turn_start_first_passive_skill_response}{Style.RESET_ALL}")
             return
 
-        if key.lower() == 'g':
+        if key.lower() == 'h':
             print(f"{Fore.RED}상대방 네더 블레이드 매 턴 시작 시 타겟팅으로 본체 때리기!{Style.RESET_ALL}")
 
             need_to_process_opponent_unit_map = self.opponent_field_area_inside_handler.get_required_to_process_opponent_passive_skill_multiple_unit_map()
@@ -1266,7 +1299,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             print(f"{Fore.RED}opponent turn_start_second_passive_skill_to_main_character_response:{Fore.GREEN} {turn_start_second_passive_skill_to_main_character_response}{Style.RESET_ALL}")
             return
 
-        if key.lower() == 'h':
+        if key.lower() == 'g':
             print(f"{Fore.RED}상대방 네더 블레이드 매 턴 시작 시 타겟팅으로 유닛 때리기!{Style.RESET_ALL}")
 
             # passive_usage_card_index = self.opponent_field_unit_repository.get_field_unit_max_index()
@@ -1882,8 +1915,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             elif second_passive_skill_type == 2:
                 print("광역기")
 
-        if key.lower() == 't':
-            self.round_repository.increase_current_round_number()
+        # if key.lower() == 't':
+        #     self.round_repository.increase_current_round_number()
 
         if key.lower() == 'e':
             # result = {
