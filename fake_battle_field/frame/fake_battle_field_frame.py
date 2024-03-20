@@ -479,7 +479,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.opponent_tomb_panel = self.opponent_tomb.get_opponent_tomb_panel()
 
         self.opponent_hand_repository.set_total_window_size(self.width, self.height)
-        # self.opponent_hand_repository.save_current_opponent_hand_state([30, 8, 2, 33, 35])
+        # TODO: Fake 용으로 뒷면을 그리기 위해 살려둠
+        self.opponent_hand_repository.save_current_opponent_hand_state([-1, -1, -1, -1, -1])
         self.opponent_hand_repository.create_opponent_hand_card_list()
         self.opponent_hand_card_list = self.opponent_hand_repository.get_current_opponent_hand_card_list()
 
