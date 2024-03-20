@@ -1615,6 +1615,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
         if key.lower() == '3':
             print("밸른 필드 에너지 부착")
             opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+            opponent_field_energy_count = self.opponent_field_energy_repository.get_opponent_field_energy()
+            if opponent_field_energy_count > 3:
+                opponent_field_energy_count = 3
             for opponent_unit_index, opponent_unit in enumerate(opponent_field_unit_list):
                 if opponent_unit == None:
                     continue
@@ -1625,7 +1628,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             _sessionInfo=self.__session_repository.get_second_fake_session_info(),
                             _unitIndex=opponent_unit.get_index(),
                             _energyRace=CardRace.UNDEAD,
-                            _energyCount=3
+                            _energyCount=opponent_field_energy_count
                         )
                     )
 
@@ -1635,6 +1638,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         if key == '4':
             opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
+            opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+            first_non_none_index = (
+                next((index for index, item in enumerate(opponent_field_unit_list) if item is not None), None))
             print(f"opponent hand list : {opponent_hand_list}")
             for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
                 opponent_hand_card_type = self.card_info_repository.getCardTypeForCardNumber(opponent_hand)
@@ -1644,7 +1650,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     response = self.__fake_opponent_hand_repository.request_use_energy_card_to_unit(
                         RequestUseEnergyCardToUnit(
                             _sessionInfo=self.__session_repository.get_second_fake_session_info(),
-                            _unitIndex=0,
+                            _unitIndex=first_non_none_index,
                             _energyCardId=93)
                     )
                     print(f"{Fore.RED}fake_opponent_attach_energy -> response:{Fore.GREEN} {response}{Style.RESET_ALL}")
@@ -1767,6 +1773,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         if key.lower() == 'kp_7':
             opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
+            opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+            first_non_none_index = (
+                next((index for index, item in enumerate(opponent_field_unit_list) if item is not None), None))
             print(f"opponent hand list : {opponent_hand_list}")
             for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
 
@@ -1776,7 +1785,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     response = self.__fake_opponent_hand_repository.request_use_energy_card_to_unit(
                         RequestUseSpecialEnergyCardToUnit(
                             _sessionInfo=self.__session_repository.get_second_fake_session_info(),
-                            _unitIndex=0,
+                            _unitIndex=first_non_none_index,
                             _energyCardId=opponent_hand)
                     )
                     print(f"{Fore.RED}fake_opponent_attach_energy -> response:{Fore.GREEN} {response}{Style.RESET_ALL}")
@@ -2051,13 +2060,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         if key.lower() == 'o':
             your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
-            first_non_none_index = next((index for index, item in enumerate(your_field_unit_list) if item is not None), None)
+            first_non_none_index = (
+                next((index for index, item in enumerate(your_field_unit_list) if item is not None), None))
             # your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(first_non_none_index)
             # self.attack_animation_object.set_your_field_unit(your_field_unit)
 
             opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
             print(f"opponent_field_unit_list : {opponent_field_unit_list}")
             for opponent_field_index, opponent_unit in enumerate(opponent_field_unit_list):
+                if opponent_unit is None:
+                    continue
+
                 total_energy = self.opponent_field_unit_repository.get_total_energy_at_index(opponent_field_index)
                 required_energy = self.card_info_repository.getCardEnergyForCardNumber(opponent_unit.get_card_number())
                 print(total_energy)
@@ -13472,7 +13485,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
                 if step_count == 8 and self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
-                    self.__music_player_repository.play_sound_effect_with_event_name_for_wav('magician_basic_attack')
+                    self.__music_player_repository.play_sound_effect_with_event_name('magician_basic_attack')
             else:
                 self.start_opponent_attack_main_character_post_animation(attack_animation_object)
 
