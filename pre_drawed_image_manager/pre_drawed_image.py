@@ -425,6 +425,7 @@ class PreDrawedImage:
         self.pre_draw_sword_attack()
         self.pre_draw_contract_of_doom()
         self.pre_draw_sea_of_wraith()
+        self.pre_draw_legacy_sea_of_wraith()
         self.pre_draw_corpse_explosion()
         # self.pre_draw_nether_blade_area_skill()
         self.pre_draw_nether_blade_targeting_skill()
@@ -500,6 +501,19 @@ class PreDrawedImage:
             sea_of_wraith_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['sea_of_wraith'] = sea_of_wraith_animation
+
+    def pre_draw_legacy_sea_of_wraith(self):
+        sea_of_wraith_animation = {}
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation", 'legacy_sea_of_wraith')
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'legacy_sea_of_wraith',
+                                                f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
+            sea_of_wraith_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
+
+        self.__pre_drawed_effect_animation['legacy_sea_of_wraith'] = sea_of_wraith_animation
 
     def pre_draw_contract_of_doom(self):
         contract_of_doom_animation = {}
