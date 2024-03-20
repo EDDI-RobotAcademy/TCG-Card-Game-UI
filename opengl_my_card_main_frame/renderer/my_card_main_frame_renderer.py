@@ -6,7 +6,7 @@ class MyCardMainFrameRenderer:
         self.window = window
 
     def render(self):
-        print("my card main frame 렌더러 호출")
+        # print("my card main frame 렌더러 호출")
         self.window.tkMakeCurrent()
         GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
