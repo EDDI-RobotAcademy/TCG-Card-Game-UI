@@ -7432,6 +7432,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
         is_opponent_data_in_response = False
         is_your_data_in_response = False
 
+        opponent_unit_index = -1
+        remain_opponent_unit_hp = -1
+
         try:
             dead_opponent_unit_index_list = (
                 response.get('player_field_unit_death_map', {})
@@ -7447,13 +7450,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 .get(str(opponent_unit_index), None))
 
             is_opponent_data_in_response = True
+
         except:
             print("opponent data is not in response")
 
         if is_opponent_data_in_response:
             self.master.after(0, self.attack_animation)
 
-            opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(opponent_unit_index)
+            opponent_field_unit = (
+                self.opponent_field_unit_repository.find_opponent_field_unit_by_index(opponent_unit_index))
             opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
             opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
 
@@ -7497,6 +7502,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
             #
             # self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
+        your_unit_index = -1
+        remain_your_unit_hp = -1
+
         try:
             dead_your_unit_index_list = (
                 response.get('player_field_unit_death_map', {})
@@ -7510,7 +7518,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 response.get('player_field_unit_health_point_map', {})
                 .get('You', {}).get('field_unit_health_point_map', {})
                 .get(str(your_unit_index), None))
+
             is_your_data_in_response = True
+
         except:
             print("your data is not in response")
 
@@ -9534,6 +9544,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 if self.opponent_hp_repository.get_opponent_character_survival_info() == SurvivalType.DEATH:
                     self.is_playing_action_animation = False
                     self.field_area_inside_handler.clear_field_area_action()
+                    self.timer.stop_timer()
 
                 for index in range(
                         len(self.opponent_field_unit_repository.get_current_field_unit_card_object_list()) - 1,
@@ -9899,6 +9910,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 your_damage = attack_animation_object.get_animation_actor_damage()
                 self.opponent_hp_repository.take_damage(your_damage)
+
+                if self.opponent_hp_repository.get_current_opponent_hp() <= 0:
+                    self.opponent_hp_repository.opponent_character_die()
+                    self.timer.stop_timer()
 
         move_to_origin_location(1)
 
