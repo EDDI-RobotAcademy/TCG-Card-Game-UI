@@ -148,10 +148,10 @@ class OpponentFixedUnitCardInsideHandler:
         print(f"card_type: {card_type}")
 
         if selected_object.get_card_number() == 35:
-            return False
+            return
 
         if selected_object.get_card_number() == 33:
-            return False
+            return
 
         if card_type not in [CardType.ITEM.value]:
             return
@@ -172,7 +172,7 @@ class OpponentFixedUnitCardInsideHandler:
                 return (opponent_field_unit, opponent_unit_index)
 
         print("handle_pickable_card_inside_unit -> False")
-        return False
+        return
 
     def handle_inside_field_unit(self, selected_object, opponent_unit_index):
         placed_card_id = selected_object.get_card_number()
