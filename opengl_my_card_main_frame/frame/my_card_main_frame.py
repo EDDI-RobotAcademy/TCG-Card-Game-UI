@@ -38,12 +38,6 @@ class MyCardMainFrame(OpenGLFrame):
         self.lobby_service = LobbyMenuFrameServiceImpl()
         self.current_rely = 0.20
 
-        screen_width = self.winfo_screenwidth()
-        screen_height = self.winfo_screenheight()
-
-        self.width = screen_width
-        self.height = screen_height
-
         self.textbox_string = tk.StringVar()
         self.entry = None
 
@@ -58,6 +52,7 @@ class MyCardMainFrame(OpenGLFrame):
         self.show_fifth_page_card_screen = False
 
         self.bind("<Configure>", self.on_resize)
+        # self.bind("<Button-1>", self.on_canvas_left_click)
 
     def init_monitor_specification(self):
         print(f"init_monitor_specification()")
@@ -149,7 +144,6 @@ class MyCardMainFrame(OpenGLFrame):
             self.render_after = MyDeckRegisterFrameRenderer(self.my_deck_register_scene, self)
             self.render_after.render()
 
-
     def make_card_main_frame(self):
         # project_root = get_project_root()
         # glClearColor(1.0, 1.0, 1.0, 0.0)
@@ -188,16 +182,38 @@ class MyCardMainFrame(OpenGLFrame):
         # self.my_card_main_scene.add_button_list(button_rectangle)
         #print(f"버튼 도형 잘 들어갔니?:{self.my_card_main_scene.get_button_list()}")
 
-        rectangle_size = 130
-        start_point = (1569, 746)
-        end_point = (start_point[0] + rectangle_size * 2.3, start_point[1] + rectangle_size * 0.55)
-        creat_deck_button = ImageRectangleElement("local_storage/my_card_frame/creat_deck_button.png", [
-            (start_point[0], start_point[1]),
-            (end_point[0], start_point[1]),
-            (end_point[0], end_point[1]),
-            (start_point[0], end_point[1]),
-        ])
-        self.my_card_main_scene.add_button_list(creat_deck_button)
+        # width: 1920, height: 1080
+        # 1508, 793
+        # 1508, 874
+        # 1803, 874
+        # 1803, 793
+
+        # 1508 / 1848 -> 0.78541
+        # 1803 / 1848 -> 0.93906
+        # 793 / 1016 -> 0.73426
+        # 874 / 1016 -> 0.80926
+
+        left_x_point = self.width * 0.81601
+        right_x_point = self.width * 0.97564
+        top_y_point = self.height * 0.78051
+        bottom_y_point = self.height * 0.86023
+
+        # rectangle_size = 130
+        # start_point = (1569, 746)
+        # end_point = (start_point[0] + rectangle_size * 2.3, start_point[1] + rectangle_size * 0.55)
+
+        create_deck_button_vertices = [
+            (left_x_point, top_y_point),
+            (right_x_point, top_y_point),
+            (right_x_point, bottom_y_point),
+            (left_x_point, bottom_y_point),
+        ]
+
+        create_deck_button_image = self.__pre_drawed_image_instance.get_pre_draw_create_deck_button()
+        create_deck_button = RectangleImage(image_data=create_deck_button_image,
+                                            vertices=create_deck_button_vertices)
+
+        self.my_card_main_scene.add_button_list(create_deck_button)
 
         # 뒤로가기 버튼
         # go_to_back_button = Rectangle(color=(0.0, 1.0, 0.0, 1.0),
@@ -210,15 +226,27 @@ class MyCardMainFrame(OpenGLFrame):
         # self.my_card_main_scene.add_button_list(go_to_back_button)
         #print(f"버튼 도형 잘 들어갔니?:{self.my_card_main_scene.get_button_list()}")
 
-        rectangle_size = 130
-        start_point = (1569, 846)
-        end_point = (start_point[0] + rectangle_size * 2.3, start_point[1] + rectangle_size * 0.55)
-        go_to_back_button = ImageRectangleElement("local_storage/my_card_frame/go_to_back_button.png", [
-            (start_point[0], start_point[1]),
-            (end_point[0], start_point[1]),
-            (end_point[0], end_point[1]),
-            (start_point[0], end_point[1]),
-        ])
+        # 1508 / 1848 -> 0.78541
+        # 1803 / 1848 -> 0.93906
+        # 900 / 1016 -> 0.73426
+        # 982 / 1016 -> 0.80926
+
+        go_back_left_x_point = self.width * 0.81601
+        go_back_right_x_point = self.width * 0.97564
+        go_back_top_y_point = self.height * 0.88582
+        go_back_bottom_y_point = self.height * 0.96653
+
+        go_to_back_button_vertices = [
+            (go_back_left_x_point, go_back_top_y_point),
+            (go_back_right_x_point, go_back_top_y_point),
+            (go_back_right_x_point, go_back_bottom_y_point),
+            (go_back_left_x_point, go_back_bottom_y_point),
+        ]
+
+        go_to_back_button_image = self.__pre_drawed_image_instance.get_pre_draw_go_back_button()
+        go_to_back_button = RectangleImage(image_data=go_to_back_button_image,
+                                           vertices=go_to_back_button_vertices)
+
         self.my_card_main_scene.add_button_list(go_to_back_button)
 
 
