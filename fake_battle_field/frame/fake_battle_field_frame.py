@@ -9280,6 +9280,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     random_translation = (random.uniform(-vibration_factor, vibration_factor),
                                           random.uniform(-vibration_factor, vibration_factor))
 
+                    random_background_translation = (random.uniform(-vibration_factor, vibration_factor),
+                                                     random.uniform(-vibration_factor, vibration_factor))
+
                     new_fixed_card_base_vertices = [
                         (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
                         fixed_card_base.get_vertices()
@@ -9301,12 +9304,18 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         ]
                         attached_shape.update_vertices(new_attached_shape_vertices)
 
+                    for battle_field_background_shape in self.battle_field_background_shape_list:
+                        battle_field_background_shape.global_translate((random_background_translation[0], random_background_translation[1]))
+
                 else:
                     fixed_card_base.update_vertices(fixed_card_base.get_initial_vertices())
                     if tool_card is not None:
                         tool_card.update_vertices(tool_card.get_initial_vertices())
                     for attached_shape in attached_shape_list:
                         attached_shape.update_vertices(attached_shape.get_initial_vertices())
+
+                    for battle_field_background_shape in self.battle_field_background_shape_list:
+                        battle_field_background_shape.global_translate((0, 0))
 
             if step_count < steps:
                 self.master.after(20, wide_area_attack, step_count + 1)
