@@ -25,6 +25,9 @@ class OpponentHpRepository:
     def get_current_opponent_hp_state(self):
         return self.current_hp_state
 
+    def get_current_opponent_hp(self):
+        return self.current_hp_state.get_current_health()
+
     def take_damage(self, damage=5):
         print("take damaged!!!")
         self.current_hp_state.damage_to_hp(damage)

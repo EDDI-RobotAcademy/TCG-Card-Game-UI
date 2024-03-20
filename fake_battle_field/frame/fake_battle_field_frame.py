@@ -1344,6 +1344,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     self.__session_repository.get_second_fake_session_info()))
             print(f"turn_end_request_result: {turn_end_request_result}")
 
+            if turn_end_request_result.get('player_main_character_survival_map', {}).get('Opponent', None) == 'Death':
+                print(f"{Fore.RED}Fake Opponent win!{Style.RESET_ALL}")
+                # self.your_hp_repository.your_character_die()
+                # self.battle_field_repository.lose()
+                self.timer.stop_timer()
+                return
+
             self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(True)
 
             self.timer.stop_timer()
@@ -4849,6 +4856,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if self.surrender_confirm_ok_button_selected:
                         print(f"행복해용~~~")
+                        self.timer.stop_timer()
                         self.battle_field_function_controller.callSurrender()
                         self.is_playing_action_animation = False
                         self.field_area_inside_handler.clear_field_area_action()
@@ -5997,7 +6005,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     self.attack_animation_object.set_animation_actor(your_field_unit)
                     self.field_area_inside_handler.set_field_area_action(FieldAreaAction.PLAY_ANIMATION)
                     self.master.after(0, self.valrn_ready_to_use_shadow_ball_to_opponent_main_character_animation)
-                    if response.get('player_main_character_survival_map_for_notice',{}).get('Opponent',None) == 'Death':
+                    if response.get('player_main_character_survival_map_for_notice', {}).get('Opponent', None) == 'Death':
                         self.opponent_hp_repository.opponent_character_die()
                     #### 애니메이션 프레임
                     return
@@ -7067,8 +7075,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.__session_repository.get_session_info()))
         print(f"turn_end_request_result: {turn_end_request_result}")
 
+        if not turn_end_request_result.get('is_success', False):
+            return
 
-        if turn_end_request_result.get('is_success', False) == False:
+        if turn_end_request_result.get('player_main_character_survival_map', {}).get('Opponent', None) == 'Death':
+            # self.opponent_hp_repository.opponent_character_die()
+            self.timer.stop_timer()
+            self.battle_field_repository.win()
             return
 
         self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(False)
@@ -9337,6 +9350,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # 메인 캐릭터 상태 확인 및 체력 Update
                 if your_main_character_survival_state != 'Survival':
                     print("Player who get notice is dead.")
+                    self.timer.stop_timer()
+                    self.your_hp_repository.your_character_die()
                     # TODO: 배틀 정리 요청을 띄우는 화면으로 넘어가야 함
 
                 self.your_hp_repository.change_hp(your_main_character_health_point)
@@ -10298,6 +10313,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     if your_main_character_survival_state == 'Death':
                         print('Your main character is dead!')
                         self.your_hp_repository.your_character_die()
+                        self.timer.stop_timer()
                         self.battle_field_repository.lose()
                         return
 
@@ -10918,6 +10934,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     survival_info = process_second_passive_skill_response_data['player_main_character_survival_map']['Opponent']
                     if survival_info == 'Death':
+                        self.timer.stop_timer()
                         self.battle_field_repository.win()
 
 
@@ -12424,6 +12441,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 print(f"your_damage: {your_damage}")
                 self.opponent_hp_repository.take_damage(your_damage)
 
+                if self.opponent_hp_repository.get_current_opponent_hp() <= 0:
+                    print('Fake opponent is dead!')
+                    self.opponent_hp_repository.opponent_character_die()
+                    self.timer.stop_timer()
+
                 self.targeting_enemy_select_using_your_field_card_id = None
 
                 self.field_area_inside_handler.clear_field_area_action()
@@ -12729,6 +12751,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 if your_character_survival_state != 'Survival':
                     print('죽었습니다!!')
+                    self.timer.stop_timer()
                     self.battle_field_repository.lose()
 
         move_to_origin_location(1)
@@ -13897,6 +13920,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
             TurnEndRequest(
                 self.__session_repository.get_second_fake_session_info()))
         print(f"turn_end_request_result: {turn_end_request_result}")
+        # your_main_character_survival_state = (
+        #     data)['player_main_character_survival_map']['You']
+
+        if turn_end_request_result.get('player_main_character_survival_map', {}).get('Opponent', None) == 'Death':
+            print(f"{Fore.RED}Fake Opponent win!{Style.RESET_ALL}")
+            # self.your_hp_repository.your_character_die()
+            self.timer.stop_timer()
+            # self.battle_field_repository.win()
+            return
 
         self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(True)
         self.timer.stop_timer()
