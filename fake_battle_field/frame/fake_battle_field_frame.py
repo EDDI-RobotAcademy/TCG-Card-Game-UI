@@ -452,6 +452,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.attack_animation_object.set_total_window_size(self.width, self.height)
 
         self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_skill(width, height)
+        self.pre_drawed_image_instance.pre_draw_full_screen_sea_of_wraith(width, height)
 
         battle_field_scene = BattleFieldScene()
         battle_field_scene.create_battle_field_cene(self.width, self.height)
@@ -8704,8 +8705,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
         # self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param_full_transparency(
         #     'legacy_sea_of_wraith', wide_area_attack, 1)
 
-        self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
-            'legacy_sea_of_wraith', wide_area_attack, 1)
+        # self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
+        #     'legacy_sea_of_wraith', wide_area_attack, 1)
+        
+        self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
+            'sea_of_wraith', wide_area_attack, 1)
 
         # effect_animation = EffectAnimation()
         # effect_animation.set_animation_name('legacy_sea_of_wraith')

@@ -317,6 +317,7 @@ class FieldAreaInsideHandler:
 
         self.__action_set_card_id = placed_card_id
         self.set_placed_card_index(placed_card_index)
+        self.__your_deck_repository.update_deck_search_unit_card()
 
         self.__field_area_action = FieldAreaAction.SEARCH_UNIT_CARD
         return self.__field_area_action
