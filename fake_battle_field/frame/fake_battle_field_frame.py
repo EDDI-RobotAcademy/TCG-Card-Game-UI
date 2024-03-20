@@ -634,13 +634,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
         multi_draw_button_instance.init_multi_draw_button()
         self.multi_draw_button = multi_draw_button_instance.get_multi_draw_button()
 
-        skill_focus_panel_instance = SkillFocusPanel()
-        skill_focus_panel_instance.set_total_window_size(self.width, self.height)
-        skill_focus_panel_instance.create_skill_background_panel()
-        skill_focus_panel_instance.create_skill_focus_panel()
-        self.skill_focus_background_panel = skill_focus_panel_instance.get_skill_background_panel()
-        self.skill_focus_panel = skill_focus_panel_instance.get_skill_focus_panel()
-
         self.timer = BattleFieldTimer()
 
         self.timer.set_total_window_size(self.width, self.height)
@@ -648,6 +641,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.timer_panel = self.timer.get_timer_panel()
 
         self.start_first_turn()
+
+        skill_focus_panel_instance = SkillFocusPanel()
+        skill_focus_panel_instance.set_total_window_size(self.width, self.height)
+        skill_focus_panel_instance.create_skill_background_panel()
+        skill_focus_panel_instance.create_skill_focus_panel()
+        self.skill_focus_background_panel = skill_focus_panel_instance.get_skill_background_panel()
+        self.skill_focus_panel = skill_focus_panel_instance.get_skill_focus_panel()
 
         if self.battle_field_repository.get_is_game_end():
             print("게임 끝났어 ")
@@ -2243,6 +2243,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
         #     )
         #     self.current_field_message_on_the_battle_screen_panel.draw()
 
+        # if self.skill_focus_background_panel:
+        #     glEnable(GL_BLEND)
+        #     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        #     # glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA)
+        #
+        #     self.skill_focus_background_panel.draw()
+        #     # self.skill_focus_panel.draw()
+        #
+        #     glDisable(GL_BLEND)
+
         if self.animation_test_image_panel is not None:
             self.animation_test_image.set_width_ratio(self.width_ratio)
             self.animation_test_image.set_height_ratio(self.height_ratio)
@@ -2256,8 +2266,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 animation_test_image.set_width_ratio(self.width_ratio)
                 animation_test_image.set_height_ratio(self.height_ratio)
                 animation_test_image_panel.draw()
-
-
 
         if self.effect_animation_list is not [] and self.effect_animation_panel_list is not []:
             for effect_animation, effect_animation_panel in zip(self.effect_animation_list,
@@ -2287,6 +2295,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 effect_animation.set_width_ratio(self.width_ratio)
                 effect_animation.set_height_ratio(self.height_ratio)
                 effect_animation_panel.draw()
+
+        # if self.skill_focus_background_panel:
+        #     glEnable(GL_BLEND)
+        #     # glBlendFunc(GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA)
+        #     # glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA)
+        #     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        #
+        #     self.skill_focus_background_panel.draw()
+        #     # self.skill_focus_panel.draw()
+        #
+        #     glDisable(GL_BLEND)
 
         if self.battle_field_repository.get_is_game_end():
             self.battle_finish()
@@ -3307,7 +3326,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
             self.skill_focus_background_panel.draw()
-            self.skill_focus_panel.draw()
+            # self.skill_focus_panel.draw()
 
             glDisable(GL_BLEND)
 
@@ -8474,7 +8493,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             # 0.7 -> 0.014
             # 0.75 -> 0.015
             # 0.8 -> 0.016
-            skill_focus_background_panel_alpha += 0.014 * step_count
+            skill_focus_background_panel_alpha += 0.013 * step_count
             # print(f"{Fore.RED}0.012 * step_count: {Fore.GREEN}{0.012 * step_count}{Style.RESET_ALL}")
             # print(
             #     f"{Fore.RED}skill_focus_background_panel_alpha: {Fore.GREEN}{skill_focus_background_panel_alpha}{Style.RESET_ALL}")
@@ -8486,16 +8505,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
             )
             self.skill_focus_background_panel.draw()
 
-            skill_focus_panel_alpha = self.skill_focus_panel.color[3]
-            skill_focus_panel_alpha += 0.013 * step_count
-
-            self.skill_focus_panel.color = (
-                self.skill_focus_panel.color[0],
-                self.skill_focus_panel.color[1],
-                self.skill_focus_panel.color[2],
-                skill_focus_panel_alpha
-            )
-            self.skill_focus_panel.draw()
+            # skill_focus_panel_alpha = self.skill_focus_panel.color[3]
+            # skill_focus_panel_alpha -= 0.013 * step_count
+            #
+            # self.skill_focus_panel.color = (
+            #     self.skill_focus_panel.color[0],
+            #     self.skill_focus_panel.color[1],
+            #     self.skill_focus_panel.color[2],
+            #     skill_focus_panel_alpha
+            # )
+            # self.skill_focus_panel.draw()
 
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
@@ -8582,13 +8601,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
 
         #todo : 망령의 바다 이펙트로 바꿔야함
-        # self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
+        # self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param_full_transparency(
         #     'legacy_sea_of_wraith', wide_area_attack, 1)
 
-        wide_area_attack(1)
+        self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
+            'legacy_sea_of_wraith', wide_area_attack, 1)
 
         # effect_animation = EffectAnimation()
-        # effect_animation.set_animation_name('dark_blast')
+        # effect_animation.set_animation_name('legacy_sea_of_wraith')
         # effect_animation.set_total_window_size(self.width, self.height)
         # field_vertices = self.opponent_field_panel.get_vertices()
         # main_character_vertices = self.opponent_main_character_panel.get_vertices()
@@ -8598,11 +8618,60 @@ class FakeBattleFieldFrame(OpenGLFrame):
         #
         # effect_animation.draw_animation_panel_with_vertices(vertices)
         # effect_animation_panel = effect_animation.get_animation_panel()
-        # animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
-        #     effect_animation)
+        # effect_animation_panel.set_image_data(
+        #         self.pre_drawed_image_instance.get_pre_draw_effect_animation('legacy_sea_of_wraith', 23))
+        #
+        # glEnable(GL_BLEND)
+        # glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        #
+        # effect_animation_panel.draw()
+        #
+        # glDisable(GL_BLEND)
+        #
+        # wide_area_attack(1)
+
+        # animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(effect_animation)
         # self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
         #     animation_index, effect_animation_panel)
+
+        # self.play_effect_animation_by_index_and_call_function_with_param(animation_index, function, param)
+
+        # def animate(animation_index, function, param):
+        #     effect_animation = self.effect_animation_repository.get_effect_animation_by_index(animation_index)
+        #     effect_animation.update_effect_animation_panel()
+        #     if not effect_animation.is_finished:
+        #         self.master.after(17, animate)
+        #     else:
+        #         self.effect_animation_repository.remove_effect_animation_by_index(animation_index)
+        #         function(param)
+        #         print("finish animation")
         #
+        # print(f"animation playing at index : {animation_index}")
+        # effect_animation = self.effect_animation_repository.get_effect_animation_by_index(animation_index)
+        # print(f"effect_animation : {effect_animation}")
+        # effect_animation.reset_animation_count()
+        #
+        # self.master.after(0, animate, animation_index, wide_area_attack, 1)
+
+        # self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
+        #     'sea_of_wraith', wide_area_attack, 1)
+
+        # wide_area_attack(1)
+
+        # effect_animation = EffectAnimation()
+        # effect_animation.set_animation_name('legacy_sea_of_wraith')
+        # effect_animation.set_total_window_size(self.width, self.height)
+        # field_vertices = self.opponent_field_panel.get_vertices()
+        # main_character_vertices = self.opponent_main_character_panel.get_vertices()
+        # vertices = [(field_vertices[0][0], main_character_vertices[0][1]),
+        #             (field_vertices[2][0], main_character_vertices[1][1]),
+        #             field_vertices[3], field_vertices[0]]
+        # 
+        # effect_animation.draw_animation_panel_with_vertices(vertices)
+        # effect_animation_panel = effect_animation.get_animation_panel()
+        # animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(effect_animation)
+        # self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(animation_index, effect_animation_panel)
+        # 
         # self.play_effect_animation_by_index_and_call_function_with_param(animation_index, wide_area_attack, 1)
         # wide_area_attack(1)
 
@@ -8660,7 +8729,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             # 0.7 = 112.5 * a = 0.0062
             # 0.75 = 112.5 * a = 0.00666
             # 0.8 -> 0.00711
-            skill_focus_background_panel_alpha -= 0.0062 * step_count
+            skill_focus_background_panel_alpha -= 0.00577 * step_count
             # print(f"{Fore.RED}0.012 * step_count: {Fore.GREEN}{0.012 * step_count}{Style.RESET_ALL}")
             # print(
             #     f"{Fore.RED}skill_focus_background_panel_alpha: {Fore.GREEN}{skill_focus_background_panel_alpha}{Style.RESET_ALL}")
@@ -8672,16 +8741,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
             )
             self.skill_focus_background_panel.draw()
 
-            skill_focus_panel_alpha = self.skill_focus_panel.color[3]
-            skill_focus_panel_alpha -= 0.00577 * step_count
-
-            self.skill_focus_panel.color = (
-                self.skill_focus_panel.color[0],
-                self.skill_focus_panel.color[1],
-                self.skill_focus_panel.color[2],
-                skill_focus_panel_alpha
-            )
-            self.skill_focus_panel.draw()
+            # skill_focus_panel_alpha = self.skill_focus_panel.color[3]
+            # skill_focus_panel_alpha -= 0.00577 * step_count
+            #
+            # self.skill_focus_panel.color = (
+            #     self.skill_focus_panel.color[0],
+            #     self.skill_focus_panel.color[1],
+            #     self.skill_focus_panel.color[2],
+            #     skill_focus_panel_alpha
+            # )
+            # self.skill_focus_panel.draw()
 
             if step_count < steps:
 
@@ -8695,13 +8764,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 )
                 self.skill_focus_background_panel.draw()
 
-                self.skill_focus_panel.color = (
-                    self.skill_focus_panel.color[0],
-                    self.skill_focus_panel.color[1],
-                    self.skill_focus_panel.color[2],
-                    0
-                )
-                self.skill_focus_panel.draw()
+                # self.skill_focus_panel.color = (
+                #     self.skill_focus_panel.color[0],
+                #     self.skill_focus_panel.color[1],
+                #     self.skill_focus_panel.color[2],
+                #     0
+                # )
+                # self.skill_focus_panel.draw()
 
                 self.is_playing_action_animation = False
                 opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
@@ -13812,6 +13881,26 @@ class FakeBattleFieldFrame(OpenGLFrame):
             animation_index, effect_animation_panel)
 
         self.play_effect_animation_by_index_and_call_function_with_param(animation_index, function, param)
+
+    # def create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param_full_transparency(self, effect_name, function, param):
+    #     effect_animation = EffectAnimation()
+    #     effect_animation.set_animation_name(effect_name)
+    #     effect_animation.set_total_window_size(self.width, self.height)
+    #     field_vertices = self.opponent_field_panel.get_vertices()
+    #     main_character_vertices = self.opponent_main_character_panel.get_vertices()
+    #     vertices = [(field_vertices[0][0], main_character_vertices[0][1]),
+    #                 (field_vertices[2][0], main_character_vertices[1][1]),
+    #                 field_vertices[3], field_vertices[0]]
+    #
+    #     effect_animation.draw_animation_panel_with_vertices(vertices)
+    #     effect_animation_panel = effect_animation.get_animation_panel()
+    #     effect_animation_panel.set_alpha(1.0)
+    #     animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+    #         effect_animation)
+    #     self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+    #         animation_index, effect_animation_panel)
+    #
+    #     self.play_effect_animation_by_index_and_call_function_with_param(animation_index, function, param)
 
     def create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(self, effect_name, function, param):
         effect_animation = EffectAnimation()

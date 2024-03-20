@@ -39,6 +39,7 @@ class NonBackgroundImage(Shape):
         if self.get_visible():
             glEnable(GL_BLEND)
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+            # glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
 
             image_data = self.image_data
 
