@@ -166,9 +166,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 cls.__instance.notify_turn_start_non_targeting_attack_passive_skill
             )
 
-            cls.__instance.notify_callback_table['NOTIFY_CHECK_MY_TURN'] = (
-                cls.__instance.notify_check_my_turn
-            )
+            # cls.__instance.notify_callback_table['NOTIFY_CHECK_MY_TURN'] = (
+            #     cls.__instance.notify_check_my_turn
+            # )
 
             cls.__instance.notify_callback_table['NOTIFY_USE_FIELD_ENERGY_INCREASE_ITEM_CARD'] = (
                 cls.__instance.notify_use_field_energy_increase_item_card
@@ -652,7 +652,10 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         self.__attack_animation_object.set_is_opponent_attack_main_character(True)
 
+        survival_info = notify_dict_data['player_main_character_survival_map']['You']
 
+        if survival_info == "Death":
+            self.__your_hp_repository.your_character_die()
 
         opponent_attacker_unit_info = next(
             iter(notify_dict_data["player_field_unit_attack_map"]["Opponent"]["field_unit_attack_map"]))
@@ -1098,6 +1101,11 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         #     return
 
         self.__attack_animation_object.set_is_opponent_attack_main_character(True)
+
+        survival_info = notify_data['player_main_character_survival_map']['You']
+
+        if survival_info == "Death":
+            self.__your_hp_repository.your_character_die()
 
         opponent_attacker_unit_info = next(
             iter(notify_data["player_field_unit_attack_map"]["Opponent"]["field_unit_attack_map"]))
@@ -2076,6 +2084,10 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         self.__attack_animation_object.set_notify_data(data)
 
+        survival_info = data['player_main_character_survival_map']['You']
+        #
+        # if survival_info == 'Death':
+        #     self.__your_hp_repository.your_character_die()
         # your_main_character_health_point = (
         #     data)['player_main_character_health_point_map']['You']
         # your_main_character_survival_state = (
@@ -2381,42 +2393,44 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         if is_my_turn is True:
             return
 
-
-
         notify_dict_data = notice_dictionary['NOTIFY_USE_UNIT_ENERGY_REMOVE_ITEM_CARD']
 
         hand_use_card_id = int(notify_dict_data.get("player_hand_use_map", {})
                                .get("Opponent", {})
                                .get("card_id", None))
+
         if notify_dict_data.get("player_field_unit_energy_map") != {}:
+            # attach_energy_race_type = 0
+            attach_race_energy_count = 0
+
             field_unit_index = list(notify_dict_data.get("player_field_unit_energy_map", {})
                                     .get("You", {})
                                     .get("field_unit_energy_map", {}).keys())[0]
 
-            attach_total_energy_count = int(notify_dict_data.get("player_field_unit_energy_map", {})
+            updated_total_energy_count = int(notify_dict_data.get("player_field_unit_energy_map", {})
                                             .get("You", {})
                                             .get("field_unit_energy_map", {})[field_unit_index]
-                                            .get("total_energy_count", None))
+                                            .get("total_energy_count"))
 
-            if attach_total_energy_count != 0:
-                attach_energy_race_type = list(notify_dict_data.get("player_field_unit_energy_map", {})
+            if updated_total_energy_count != 0:
+                # attach_total_energy_count = int(updated_total_energy_count)
+                attach_energy_race = list(notify_dict_data.get("player_field_unit_energy_map", {})
                                                .get("You", {})
                                                .get("field_unit_energy_map", {})[field_unit_index]
                                                .get("attached_energy_map", {}).keys())[0]
-                attach_race_energy_count = (notify_dict_data.get("player_field_unit_energy_map", {})
-                .get("You", {})
-                .get("field_unit_energy_map", {})[field_unit_index]
-                .get("attached_energy_map", {})[attach_energy_race_type])
 
-                print(attach_race_energy_count)
-                attach_energy_race_type = int(attach_energy_race_type)
-                attach_race_energy_count = int(attach_race_energy_count)
-            else:
-                attach_energy_race_type = None
-                attach_race_energy_count = 0
+                updated_race_energy_count = (notify_dict_data.get("player_field_unit_energy_map", {})
+                                            .get("You", {})
+                                            .get("field_unit_energy_map", {})[field_unit_index]
+                                            .get("attached_energy_map", {})[attach_energy_race])
+
+                # print(attach_race_energy_count)
+
+                # attach_energy_race_type = int(attach_energy_race)
+                attach_race_energy_count = int(updated_race_energy_count)
+                print(f"attach_race_energy_count: {attach_race_energy_count}")
 
             field_unit_index = int(field_unit_index)
-
 
             self.__battle_field_repository.set_current_use_card_id(hand_use_card_id)
             print("detach undead energy")
@@ -2427,13 +2441,14 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                     field_unit_index, EnergyType.Undead)
 
                 difference_energy_count = before_attach_energy_count - attach_race_energy_count
+                print(f"difference_energy_count: {difference_energy_count}")
 
                 self.__your_field_unit_repository.detach_race_energy(
                     field_unit_index,
                     EnergyType.Undead,
                     difference_energy_count)
-                your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(field_unit_index)
 
+                your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(field_unit_index)
                 total_attached_energy_count = self.__your_field_unit_repository.get_total_energy_at_index(field_unit_index)
 
                 your_fixed_card_base = your_field_unit.get_fixed_card_base()
@@ -2442,8 +2457,6 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
                     if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
                         if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
-
-
                             your_fixed_card_attached_shape.set_image_data(
                                 self.__pre_drawed_image_instance.get_pre_draw_unit_energy(
                                     total_attached_energy_count))
@@ -2563,61 +2576,61 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 )
             )
 
-    def notify_check_my_turn(self, notice_dictionary):
-        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
-
-        print(f"{Fore.RED}notify_your_turn_timeout() -> "
-              f"whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
-
-        # data = notice_dictionary['NOTIFY_CHECK_MY_TURN']
-
-        if whose_turn is True:
-            # Your Draw
-            your_drawn_card_list = notice_dictionary['NOTIFY_TURN_END']['player_drawn_card_list_map'].get('You', [])
-            self.__your_hand_repository.save_current_hand_state(your_drawn_card_list)
-            self.__your_hand_repository.update_your_hand()
-
-            your_field_energy = notice_dictionary['NOTIFY_TURN_END']['player_field_energy_map'].get('You', [])
-            self.__your_field_energy_repository.set_your_field_energy(your_field_energy)
-            print(f"{Fore.RED}notify_turn_end() -> your_field_energy:{Fore.GREEN} {your_field_energy}{Style.RESET_ALL}")
-
-            self.apply_notify_data_of_harmful_status(
-                notice_dictionary['NOTIFY_TURN_END']['player_field_unit_harmful_effect_map'])
-
-            self.apply_notify_data_of_field_unit_hp(
-                notice_dictionary['NOTIFY_TURN_END']['player_field_unit_health_point_map'])
-
-            self.apply_notify_data_of_dead_unit(notice_dictionary['NOTIFY_TURN_END']['player_field_unit_death_map'])
-
-            # notify_turn_end() -> notice_dictionary: {
-            #     'NOTIFY_TURN_END': {'player_drawn_card_list_map': {'You': [33]}, 'player_field_energy_map': {'You': 1},
-            #                         'player_field_unit_health_point_map': {
-            #                             'Opponent': {'field_unit_health_point_map': {'8': 20}}},
-            #                         'player_field_unit_harmful_effect_map': {'Opponent': {
-            #                             'field_unit_harmful_status_map': {'8': {'harmful_status_list': []}}}},
-            #                         'player_field_unit_death_map': {'Opponent': {'dead_field_unit_index_list': []}},
-            #                         'player_main_character_survival_map': {},
-            #                         'unit_index_turn_start_passive_list_map': {'3': [], '5': [], '6': [1, 2], '2': [],
-            #                                                                    '1': [], '0': [], '4': []}}}
-            your_which_one_has_passive_skill_to_turn_start_lists = {unit_index: passive_list for
-                                                                    unit_index, passive_list in
-                                                                    notice_dictionary['NOTIFY_TURN_END'][
-                                                                        'unit_index_turn_start_passive_list_map'].items()
-                                                                    if
-                                                                    passive_list}
-            print(
-                f"{Fore.RED}your_which_one_has_passive_skill_to_turn_start_lists:{Fore.GREEN} {your_which_one_has_passive_skill_to_turn_start_lists}{Style.RESET_ALL}")
-
-            required_to_process_passive_skill_multiple_unit_list = []
-            for key, value in your_which_one_has_passive_skill_to_turn_start_lists.items():
-                required_to_process_passive_skill_multiple_unit_list.append(key)
-
-            self.__field_area_inside_handler.set_field_turn_start_action(
-                TurnStartAction.CHECK_MULTIPLE_UNIT_REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
-            self.__field_area_inside_handler.set_required_to_process_passive_skill_multiple_unit_list(
-                required_to_process_passive_skill_multiple_unit_list)
-
-            return
+    # def notify_check_my_turn(self, notice_dictionary):
+    #     whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+    #
+    #     print(f"{Fore.RED}notify_your_turn_timeout() -> "
+    #           f"whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
+    #
+    #     # data = notice_dictionary['NOTIFY_CHECK_MY_TURN']
+    #
+    #     if whose_turn is True:
+    #         # Your Draw
+    #         your_drawn_card_list = notice_dictionary['NOTIFY_TURN_END']['player_drawn_card_list_map'].get('You', [])
+    #         self.__your_hand_repository.save_current_hand_state(your_drawn_card_list)
+    #         self.__your_hand_repository.update_your_hand()
+    #
+    #         your_field_energy = notice_dictionary['NOTIFY_TURN_END']['player_field_energy_map'].get('You', [])
+    #         self.__your_field_energy_repository.set_your_field_energy(your_field_energy)
+    #         print(f"{Fore.RED}notify_turn_end() -> your_field_energy:{Fore.GREEN} {your_field_energy}{Style.RESET_ALL}")
+    #
+    #         self.apply_notify_data_of_harmful_status(
+    #             notice_dictionary['NOTIFY_TURN_END']['player_field_unit_harmful_effect_map'])
+    #
+    #         self.apply_notify_data_of_field_unit_hp(
+    #             notice_dictionary['NOTIFY_TURN_END']['player_field_unit_health_point_map'])
+    #
+    #         self.apply_notify_data_of_dead_unit(notice_dictionary['NOTIFY_TURN_END']['player_field_unit_death_map'])
+    #
+    #         # notify_turn_end() -> notice_dictionary: {
+    #         #     'NOTIFY_TURN_END': {'player_drawn_card_list_map': {'You': [33]}, 'player_field_energy_map': {'You': 1},
+    #         #                         'player_field_unit_health_point_map': {
+    #         #                             'Opponent': {'field_unit_health_point_map': {'8': 20}}},
+    #         #                         'player_field_unit_harmful_effect_map': {'Opponent': {
+    #         #                             'field_unit_harmful_status_map': {'8': {'harmful_status_list': []}}}},
+    #         #                         'player_field_unit_death_map': {'Opponent': {'dead_field_unit_index_list': []}},
+    #         #                         'player_main_character_survival_map': {},
+    #         #                         'unit_index_turn_start_passive_list_map': {'3': [], '5': [], '6': [1, 2], '2': [],
+    #         #                                                                    '1': [], '0': [], '4': []}}}
+    #         your_which_one_has_passive_skill_to_turn_start_lists = {unit_index: passive_list for
+    #                                                                 unit_index, passive_list in
+    #                                                                 notice_dictionary['NOTIFY_TURN_END'][
+    #                                                                     'unit_index_turn_start_passive_list_map'].items()
+    #                                                                 if
+    #                                                                 passive_list}
+    #         print(
+    #             f"{Fore.RED}your_which_one_has_passive_skill_to_turn_start_lists:{Fore.GREEN} {your_which_one_has_passive_skill_to_turn_start_lists}{Style.RESET_ALL}")
+    #
+    #         required_to_process_passive_skill_multiple_unit_list = []
+    #         for key, value in your_which_one_has_passive_skill_to_turn_start_lists.items():
+    #             required_to_process_passive_skill_multiple_unit_list.append(key)
+    #
+    #         self.__field_area_inside_handler.set_field_turn_start_action(
+    #             TurnStartAction.CHECK_MULTIPLE_UNIT_REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
+    #         self.__field_area_inside_handler.set_required_to_process_passive_skill_multiple_unit_list(
+    #             required_to_process_passive_skill_multiple_unit_list)
+    #
+    #         return
 
     def notify_use_field_energy_increase_item_card(self, notice_dictionary):
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()

@@ -34,6 +34,8 @@ from battle_field.entity.decrease_to_use_field_energy_count import DecreaseToUse
 from battle_field.entity.effect_animation import EffectAnimation
 from battle_field.entity.increase_to_use_field_energy_count import IncreaseToUseFieldEnergyCount
 from battle_field.entity.opponent_active_panel import OpponentActivePanel
+from battle_field.entity.skill_focus_panel import SkillFocusPanel
+from battle_field.entity.your_hand_details_panel import YourHandDetailsPanel
 from battle_field.entity.your_main_character import YourMainCharacter
 from battle_field.entity.message_on_the_battle_screen import MessageOnTheBattleScreen
 from battle_field.entity.next_field_energy_race import NextFieldEnergyRace
@@ -47,6 +49,7 @@ from battle_field.entity.surrender_confirm import SurrenderConfirm
 from battle_field.entity.turn_end import TurnEnd
 from battle_field.entity.turn_number import CurrentFieldTurnNumber
 from battle_field.entity.your_active_panel import YourActivePanel
+from battle_field.entity.opponent_details_panel import OpponentDetailsPanel
 from battle_field.entity.your_deck import YourDeck
 from battle_field.entity.your_field_energy import YourFieldEnergy
 from battle_field.entity.your_field_panel import YourFieldPanel
@@ -192,6 +195,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_field_panel = None
         self.opponent_field_panel = None
 
+        self.opponent_details_panel_rectangle = None
+        self.your_hand_details_panel_rectangle = None
+
         self.active_panel_rectangle = None
         self.active_panel_attack_button = None
         self.active_panel_first_skill_button = None
@@ -278,12 +284,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.opponent_you_selected_lightning_border_list = []
         self.opponent_you_selected_object_list = []
 
+        self.your_hp = None
+        self.opponent_hp = None
+
         self.your_hp_panel = None
-        self.your_hp = YourHp()
         self.your_hp_repository = YourHpRepository.getInstance()
 
         self.opponent_hp_panel = None
-        self.opponent_hp = OpponentHp()
         self.opponent_hp_repository = OpponentHpRepository.getInstance()
 
         self.your_field_energy_panel = None
@@ -370,7 +377,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.battle_field_muligun_background_shape_list = None
 
         self.timer_panel = None
-        self.timer = BattleFieldTimer()
+        self.timer = None
         self.timer_repository = BattleFieldTimerRepository.getInstance()
 
         self.animation_test_image_panel = None
@@ -378,6 +385,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.animation_test_image_list = []
         self.animation_test_image_panel_list = []
 
+        self.skill_focus_background_panel = None
+        self.skill_focus_panel = None
 
         self.effect_animation_panel = None
         self.effect_animation = EffectAnimation()
@@ -440,8 +449,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.attack_animation_object.set_total_window_size(self.width, self.height)
 
-        self.start_first_turn()
-
         self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_skill(width, height)
 
         battle_field_scene = BattleFieldScene()
@@ -469,7 +476,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.opponent_tomb_panel = self.opponent_tomb.get_opponent_tomb_panel()
 
         self.opponent_hand_repository.set_total_window_size(self.width, self.height)
-        self.opponent_hand_repository.save_current_opponent_hand_state([30, 8, 2, 33, 35])
+        # self.opponent_hand_repository.save_current_opponent_hand_state([30, 8, 2, 33, 35])
         self.opponent_hand_repository.create_opponent_hand_card_list()
         self.opponent_hand_card_list = self.opponent_hand_repository.get_current_opponent_hand_card_list()
 
@@ -490,6 +497,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.window_size_repository.set_is_it_re_entrance(True)
         self.window_size_repository.set_total_window_size(self.width, self.height)
+        self.window_size_repository.set_master_opengl_frame(self)
 
         self.your_deck_repository.set_total_window_size(self.width, self.height)
         # self.your_deck_repository.save_deck_state([93, 35, 35, 93, 25,
@@ -522,8 +530,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_active_panel = YourActivePanel()
         self.your_active_panel.set_total_window_size(self.width, self.height)
 
+        self.opponent_details_panel = OpponentDetailsPanel()
+        self.opponent_details_panel.set_total_window_size(self.width, self.height)
+
+        self.your_hand_details_panel = YourHandDetailsPanel()
+        self.your_hand_details_panel.set_total_window_size(self.width, self.height)
+
         self.opponent_active_panel = OpponentActivePanel()
         self.opponent_active_panel.set_total_window_size(self.width, self.height)
+
+        self.your_hp = YourHp()
+        self.opponent_hp = OpponentHp()
 
         self.your_hp.set_total_window_size(self.width, self.height)
         self.your_hp_repository.set_first_hp_state()
@@ -606,10 +623,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.surrender_confirm.create_surrender_confirm_panel_list()
         self.surrender_confirm_panel_list = self.surrender_confirm.get_surrender_confirm_panel_list()
 
-        self.timer.set_total_window_size(self.width, self.height)
-        self.timer.draw_current_timer_panel()
-        self.timer_panel = self.timer.get_timer_panel()
-
         muligun_reset_button_instance = MuligunResetButton()
         muligun_reset_button_instance.set_total_window_size(self.width, self.height)
         muligun_reset_button_instance.init_muligun_reset_button()
@@ -619,6 +632,21 @@ class FakeBattleFieldFrame(OpenGLFrame):
         multi_draw_button_instance.set_total_window_size(self.width, self.height)
         multi_draw_button_instance.init_multi_draw_button()
         self.multi_draw_button = multi_draw_button_instance.get_multi_draw_button()
+
+        skill_focus_panel_instance = SkillFocusPanel()
+        skill_focus_panel_instance.set_total_window_size(self.width, self.height)
+        skill_focus_panel_instance.create_skill_background_panel()
+        skill_focus_panel_instance.create_skill_focus_panel()
+        self.skill_focus_background_panel = skill_focus_panel_instance.get_skill_background_panel()
+        self.skill_focus_panel = skill_focus_panel_instance.get_skill_focus_panel()
+
+        self.timer = BattleFieldTimer()
+
+        self.timer.set_total_window_size(self.width, self.height)
+        self.timer.draw_current_timer_panel()
+        self.timer_panel = self.timer.get_timer_panel()
+
+        self.start_first_turn()
 
         if self.battle_field_repository.get_is_game_end():
             print("게임 끝났어 ")
@@ -792,32 +820,32 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             return
 
-        # if key.lower() == 'kp_0':
-        #     opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
-        #     for opponent_unit_index, opponent_unit in enumerate(opponent_field_unit_list):
-        #         if opponent_unit == None:
-        #             continue
-        #
-        #         if opponent_unit.get_card_number() == 27:
-        #             self.your_field_energy_repository.request_to_attach_energy_to_unit(
-        #                 RequestAttachFieldEnergyToUnit(
-        #                     _sessionInfo=self.__session_repository.get_second_fake_session_info(),
-        #                     _unitIndex=opponent_unit.get_index(),
-        #                     _energyRace=CardRace.UNDEAD,
-        #                     _energyCount=2
-        #                 )
-        #             )
-        #
-        #             response = self.__fake_battle_field_frame_repository.request_attack_main_character_with_active_skill(
-        #                 RequestAttackMainCharacterWithActiveSkill(
-        #                     _sessionInfo=self.__session_repository.get_second_fake_session_info(),
-        #                     _unitCardIndex=opponent_unit.get_index(),
-        #                     _targetGameMainCharacterIndex="0"
-        #                 )
-        #             )
-        #
-        #             print("test dark ball : ", response)
-        #             return
+        if key.lower() == 'kp_0':
+            opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+            for opponent_unit_index, opponent_unit in enumerate(opponent_field_unit_list):
+                if opponent_unit == None:
+                    continue
+
+                if opponent_unit.get_card_number() == 27:
+                    self.your_field_energy_repository.request_to_attach_energy_to_unit(
+                        RequestAttachFieldEnergyToUnit(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _unitIndex=opponent_unit.get_index(),
+                            _energyRace=CardRace.UNDEAD,
+                            _energyCount=2
+                        )
+                    )
+
+                    response = self.__fake_battle_field_frame_repository.request_attack_main_character_with_active_skill(
+                        RequestAttackMainCharacterWithActiveSkill(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _unitCardIndex=opponent_unit.get_index(),
+                            _targetGameMainCharacterIndex="0"
+                        )
+                    )
+
+                    print("test dark ball : ", response)
+                    return
 
         # if key.lower() == 'kp_decimal':
         if key.lower() == 'period':
@@ -2993,6 +3021,26 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if self.active_panel_details_button is not None:
                 self.active_panel_details_button.draw()
 
+        if self.opponent_details_panel_rectangle:
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+            self.opponent_details_panel_rectangle.draw()
+
+            glDisable(GL_BLEND)
+
+            self.opponent_details_button.draw()
+
+        if self.your_hand_details_panel_rectangle:
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+            self.your_hand_details_panel_rectangle.draw()
+
+            glDisable(GL_BLEND)
+
+            self.your_hand_details_button.draw()
+
         for your_lightning_border in self.field_area_inside_handler.get_lightning_border_list():
             self.lightning_border.set_padding(20)
             self.lightning_border.update_shape(your_lightning_border)
@@ -3243,6 +3291,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.battle_result.set_width_ratio(self.width_ratio)
                 self.battle_result.set_height_ratio(self.height_ratio)
                 self.battle_result_panel_list[0].draw()
+
+        if self.skill_focus_background_panel:
+            glEnable(GL_BLEND)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+            self.skill_focus_background_panel.draw()
+            self.skill_focus_panel.draw()
+
+            glDisable(GL_BLEND)
 
         #self.check_my_turn()
 
@@ -4294,7 +4351,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     your_field_unit_attached_undead_energy = your_field_unit_attached_energy.get_race_energy_at_index(
                         your_field_unit_index, EnergyType.Undead)
-                    # print(f"your_field_unit_attached_undead_energy: {your_field_unit_attached_undead_energy}")
+                    print(f"your_field_unit_attached_undead_energy: {your_field_unit_attached_undead_energy}")
 
                     your_field_unit_attached_human_energy = your_field_unit_attached_energy.get_race_energy_at_index(
                         your_field_unit_index, EnergyType.Human)
@@ -7083,6 +7140,43 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.active_panel_third_skill_button = None
                 self.active_panel_details_button = self.your_active_panel.get_your_active_panel_details_button()
 
+        current_opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+        for opponent_field_unit in current_opponent_field_unit_list:
+            if opponent_field_unit is None:
+                continue
+
+            opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+            convert_y = self.winfo_reqheight() - y
+
+            if opponent_fixed_card_base.is_point_inside((x, convert_y)):
+                print(f"Inside Unit")
+                self.opponent_details_panel.create_opponent_details_panel((x, y), opponent_field_unit)
+
+                new_rectangle = self.opponent_details_panel.get_opponent_details_panel()
+                self.opponent_details_panel_rectangle = new_rectangle
+
+                self.opponent_details_button = self.opponent_details_panel.get_opponent_details_panel_button()
+            else:
+                print(f"Outside Unit")
+
+        current_page_your_hand_list = self.your_hand_repository.get_current_page_your_hand_list()
+        if current_page_your_hand_list is not None:
+            for current_page_hand_card in current_page_your_hand_list:
+                your_hand_pickable_card_base = current_page_hand_card.get_pickable_card_base()
+                convert_y = self.winfo_reqheight() - y
+
+                if your_hand_pickable_card_base.is_point_inside((x, convert_y)):
+                    print(f"Inside Unit")
+                    self.your_hand_details_panel.create_your_hand_details_panel((x, y), current_page_hand_card)
+
+                    new_rectangle = self.your_hand_details_panel.get_your_hand_details_panel()
+                    self.your_hand_details_panel_rectangle = new_rectangle
+
+                    self.your_hand_details_button = self.your_hand_details_panel.get_your_hand_details_panel_button()
+                else:
+                    print(f"Outside Unit")
+
+
     def create_opengl_rectangle(self, start_point):
         card_id = self.selected_object.get_card_number()
         print(f"card id: {card_id}")
@@ -8331,6 +8425,37 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape.update_vertices(new_attached_shape_vertices)
                 # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
+            skill_focus_background_panel_alpha = self.skill_focus_background_panel.color[3]
+
+            # 0.6 = 0.5 * a * 100
+            # 0.6 = 50 * a = 0.012
+            # 0.65 = 0.013
+            # 0.7 -> 0.014
+            # 0.75 -> 0.015
+            # 0.8 -> 0.016
+            skill_focus_background_panel_alpha += 0.014 * step_count
+            # print(f"{Fore.RED}0.012 * step_count: {Fore.GREEN}{0.012 * step_count}{Style.RESET_ALL}")
+            # print(
+            #     f"{Fore.RED}skill_focus_background_panel_alpha: {Fore.GREEN}{skill_focus_background_panel_alpha}{Style.RESET_ALL}")
+            self.skill_focus_background_panel.color = (
+                self.skill_focus_background_panel.color[0],
+                self.skill_focus_background_panel.color[1],
+                self.skill_focus_background_panel.color[2],
+                skill_focus_background_panel_alpha
+            )
+            self.skill_focus_background_panel.draw()
+
+            skill_focus_panel_alpha = self.skill_focus_panel.color[3]
+            skill_focus_panel_alpha += 0.013 * step_count
+
+            self.skill_focus_panel.color = (
+                self.skill_focus_panel.color[0],
+                self.skill_focus_panel.color[1],
+                self.skill_focus_panel.color[2],
+                skill_focus_panel_alpha
+            )
+            self.skill_focus_panel.draw()
+
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
                 if step_count == 6:
@@ -8416,8 +8541,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
 
         #todo : 망령의 바다 이펙트로 바꿔야함
-        self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
-            'dark_blast', wide_area_attack, 1)
+        # self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
+        #     'legacy_sea_of_wraith', wide_area_attack, 1)
+
+        wide_area_attack(1)
+
         # effect_animation = EffectAnimation()
         # effect_animation.set_animation_name('dark_blast')
         # effect_animation.set_total_window_size(self.width, self.height)
@@ -8462,13 +8590,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         def move_to_origin_location(step_count):
             new_y = current_your_attacker_unit_local_translation[1] + step_y * step_count
-            print(f"{Fore.RED}step ->{Fore.GREEN}new_y: {new_y}{Style.RESET_ALL}")
+            # print(f"{Fore.RED}step ->{Fore.GREEN}new_y: {new_y}{Style.RESET_ALL}")
 
             new_vertices = [
                 (vx  - step_x * step_count, vy - step_y * step_count) for vx, vy in current_your_attacker_unit_vertices
             ]
             your_fixed_card_base.update_vertices(new_vertices)
-            print(f"{Fore.RED}new_vertices{Fore.GREEN} {new_vertices}{Style.RESET_ALL}")
+            # print(f"{Fore.RED}new_vertices{Fore.GREEN} {new_vertices}{Style.RESET_ALL}")
 
             # tool_card = self.selected_object.get_tool_card()
             # if tool_card is not None:
@@ -8484,10 +8612,56 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape.update_vertices(new_attached_shape_vertices)
                 # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
+            skill_focus_background_panel_alpha = self.skill_focus_background_panel.color[3]
+
+            # 0.65 = 112.5 * a = 0.00577
+            # 0.7 = 0.5 * a * 225
+            # 0.7 = 112.5 * a = 0.0062
+            # 0.75 = 112.5 * a = 0.00666
+            # 0.8 -> 0.00711
+            skill_focus_background_panel_alpha -= 0.0062 * step_count
+            # print(f"{Fore.RED}0.012 * step_count: {Fore.GREEN}{0.012 * step_count}{Style.RESET_ALL}")
+            # print(
+            #     f"{Fore.RED}skill_focus_background_panel_alpha: {Fore.GREEN}{skill_focus_background_panel_alpha}{Style.RESET_ALL}")
+            self.skill_focus_background_panel.color = (
+                self.skill_focus_background_panel.color[0],
+                self.skill_focus_background_panel.color[1],
+                self.skill_focus_background_panel.color[2],
+                skill_focus_background_panel_alpha
+            )
+            self.skill_focus_background_panel.draw()
+
+            skill_focus_panel_alpha = self.skill_focus_panel.color[3]
+            skill_focus_panel_alpha -= 0.00577 * step_count
+
+            self.skill_focus_panel.color = (
+                self.skill_focus_panel.color[0],
+                self.skill_focus_panel.color[1],
+                self.skill_focus_panel.color[2],
+                skill_focus_panel_alpha
+            )
+            self.skill_focus_panel.draw()
+
             if step_count < steps:
 
                 self.master.after(20, move_to_origin_location, step_count + 1)
             else:
+                self.skill_focus_background_panel.color = (
+                    self.skill_focus_background_panel.color[0],
+                    self.skill_focus_background_panel.color[1],
+                    self.skill_focus_background_panel.color[2],
+                    0
+                )
+                self.skill_focus_background_panel.draw()
+
+                self.skill_focus_panel.color = (
+                    self.skill_focus_panel.color[0],
+                    self.skill_focus_panel.color[1],
+                    self.skill_focus_panel.color[2],
+                    0
+                )
+                self.skill_focus_panel.draw()
+
                 self.is_playing_action_animation = False
                 opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
                 opponent_field_unit_list_length = len(
@@ -8656,7 +8830,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         # todo : 망바 이름으로 바꿔야함
         effect_animation = EffectAnimation()
-        effect_animation.set_animation_name('dark_blast')
+        effect_animation.set_animation_name('sea_of_wraith')
         effect_animation.set_total_window_size(self.width, self.height)
         field_vertices = self.your_field_panel.get_vertices()
         main_character_vertices = self.your_main_character_panel.get_vertices()
@@ -10119,13 +10293,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     your_main_character_survival_state = (
                         notify_data)['player_main_character_survival_map']['You']
 
-                    if your_main_character_survival_state != 'Survival':
-                        print('Your main character is dead!')
-                        return
-
                     self.your_hp_repository.change_hp(int(your_main_character_health_point))
                     print(f"{Fore.RED}current_main_character_health:{Fore.GREEN} "
                           f"{self.your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
+
+                    if your_main_character_survival_state == 'Death':
+                        print('Your main character is dead!')
+                        self.your_hp_repository.your_character_die()
+                        self.battle_field_repository.lose()
+                        return
+
+
 
                     # self.your_hp_repository.take_damage(targeting_damage)
                     self.attack_animation_object.set_is_opponent_attack_main_character(False)
@@ -10739,7 +10917,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     print(f"{Fore.RED}opponent 메인 캐릭터 공격 -> is_attack_main_character(True): {Fore.GREEN}{is_attack_main_character}{Style.RESET_ALL}")
                     remain_hp = process_second_passive_skill_response_data['player_main_character_health_point_map']['Opponent']
                     self.opponent_hp_repository.change_opponent_hp(remain_hp)
-                    if self.opponent_hp_repository.get_opponent_character_survival_info() == SurvivalType.DEATH:
+
+                    survival_info = process_second_passive_skill_response_data['player_main_character_survival_map']['Opponent']
+                    if survival_info == 'Death':
                         self.battle_field_repository.win()
 
 
@@ -13325,6 +13505,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # opponent_damage = attack_animation_object.get_opponent_animation_actor_damage()
                 health_point = notify_data['player_main_character_health_point_map']['You']
                 self.your_hp_repository.change_hp(int(health_point))
+                if self.your_hp_repository.get_your_character_survival_info() == SurvivalType.DEATH:
+                    self.battle_field_repository.lose()
 
                 self.attack_animation_object.set_opponent_animation_actor(None)
 
@@ -13614,6 +13796,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_field_unit_lightning_border_list.clear()
         self.opponent_fixed_unit_card_inside_handler.clear_lightning_border_list()
 
+        self.opponent_details_panel_rectangle = None
+        self.opponent_details_panel.clear_all_opponent_details_panel()
+
+        self.your_hand_details_panel_rectangle = None
+        self.your_hand_details_panel.clear_all_your_hand_details_panel()
+
         # self.lightning_border.remove_lightning_border()
 
     def create_effect_animation_with_vertices_and_play_animation_and_call_function(self, effect_name, vertices, function):
@@ -13694,6 +13882,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.timer_repository.set_timer(60)
             self.timer.get_timer()
             self.timer.start_timer()
+        #     return
+        #
+        # def whose_turn_is_false():
+        #     self.timer.stop_timer()
+        #
+        # self.timer_repository.set_function(whose_turn_is_false())
+        # self.timer_repository.set_timer(60)
+        # self.timer.get_timer()
+        # self.timer.start_timer()
 
     def fake_opponent_turn_end(self):
         print("Opponent Turn을 종료합니다")
@@ -13749,4 +13946,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_field_unit_action_repository.clear_every_resource()
         self.timer_repository.clear_every_resource()
         self.effect_animation_repository.clear_every_resource()
+        
+        del self.timer
         # self.battle_field_repository.clear_every_resource()

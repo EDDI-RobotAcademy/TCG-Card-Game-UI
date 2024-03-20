@@ -37,6 +37,9 @@ class FakeOpponentHandRepositoryImpl():
     def get_fake_opponent_hand_list(self):
         return self.__fake_opponent_hand_list
 
+    def clear_fake_opponent_hand_list(self):
+        self.__fake_opponent_hand_list = []
+
     def remove_card_by_index(self, card_placed_index):
         # print(f"remove_card_by_index -> self.current_hand_card_list: {self.__fake_opponent_hand_list}, card_placed_index: {card_placed_index}")
         print(f"{Fore.RED}remove_card_by_index -> self.current_hand_card_list: {Fore.GREEN} {self.__fake_opponent_hand_list}, card_placed_index: {card_placed_index}{Style.RESET_ALL}")

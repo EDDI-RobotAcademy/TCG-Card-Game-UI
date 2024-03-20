@@ -216,6 +216,8 @@ class UiFrameControllerImpl(UiFrameController):
 
         self.__legacy_your_hand_repository.saveTransmitIpcChannel(transmitIpcChannel)
 
+        self.__buyRandomCardFrameService.saveTransmitIpcChannel(transmitIpcChannel)
+
 
     def requestToInjectReceiveIpcChannel(self, receiveIpcChannel):
         print("UiFrameControllerImpl: requestToInjectReceiveIpcChannel()")
@@ -255,6 +257,8 @@ class UiFrameControllerImpl(UiFrameController):
         self.__fakeOpponentHandRepository.injectReceiveIpcChannel(receiveIpcChannel)
 
         self.__legacy_your_hand_repository.saveReceiveIpcChannel(receiveIpcChannel)
+
+        self.__buyRandomCardFrameService.saveReceiveIpcChannel(receiveIpcChannel)
 
     def requestToInjectMusicPlayIpcChannel(self, musicPlayIpcChannel):
         print("UiFrameControllerImpl: requestToInjectMusicPlayIpcChannel()")
