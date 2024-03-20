@@ -6,6 +6,10 @@ from image_shape.non_background_image import NonBackgroundImage
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from common.utility import get_project_root
 
+from OpenGL.GL import *
+from OpenGL.GLU import *
+
+
 class EffectAnimation:
     __pre_drawed_image = PreDrawedImage.getInstance()
     __current_animation_count = 0
@@ -192,6 +196,17 @@ class EffectAnimation:
             image_count = self.__current_animation_count
             self.animation_panel.set_image_data(
                 self.__pre_drawed_image.get_pre_draw_effect_animation(self.animation_name, image_count))
+
+            # glEnable(GL_BLEND)
+            # # glBlendFunc(GL_SRC_ALPHA, GL_ONE)
+            # # glBlendFunc(GL_ONE, GL_ZERO)
+            # # glBlendFunc(GL_ZERO, GL_ONE)
+            # # glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+            # glBlendFunc(GL_ONE, GL_ONE)
+            #
+            # self.animation_panel.draw()
+            #
+            # glDisable(GL_BLEND)
         except:
             self.is_finished = True
 
