@@ -72,6 +72,7 @@ from battle_field.infra.opponent_hp_repository import OpponentHpRepository
 from battle_field.infra.opponent_lost_zone_repository import OpponentLostZoneRepository
 
 from battle_field.infra.opponent_tomb_repository import OpponentTombRepository
+from battle_field.infra.request.drawCardByUseSupportCardRequest import DrawCardByUseSupportCardRequest
 from battle_field.infra.request.request_attach_field_energy_to_unit import RequestAttachFieldEnergyToUnit
 from battle_field.infra.request.request_attack_main_character_with_active_skill import \
     RequestAttackMainCharacterWithActiveSkill
@@ -1611,6 +1612,33 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             self.animation_test_image_list.append(animation_test_image)
             self.animation_test_image_panel_list.append(animation_test_image_panel)
+
+        if key.lower() == '2':
+            opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
+            for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
+                if opponent_hand == 20:
+                    print('상대 망자의 늪 사용')
+
+                    response = self.__fake_opponent_hand_repository.request_use_draw_support(
+                        DrawCardByUseSupportCardRequest(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _cardId="20")
+                    )
+
+                    if not response.get('is_success'):
+                        return
+
+                    opponent_drawn_card_list = response.get('player_drawn_card_list_map', {}).get('You', [])
+                    self.__fake_opponent_hand_repository.save_fake_opponent_hand_list(opponent_drawn_card_list)
+                    fake_opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
+                    print(
+                        f"{Fore.RED}fake opponent hand list after support card use:{Fore.GREEN} {fake_opponent_hand_list}{Style.RESET_ALL}")
+
+                    self.__fake_opponent_hand_repository.remove_card_by_index(opponent_hand_index)
+
+                    return
+
+
 
         if key.lower() == '3':
             print("밸른 필드 에너지 부착")
