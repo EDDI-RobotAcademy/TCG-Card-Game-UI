@@ -9911,6 +9911,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 your_damage = attack_animation_object.get_animation_actor_damage()
                 self.opponent_hp_repository.take_damage(your_damage)
 
+                if self.opponent_hp_repository.get_current_opponent_hp() <= 0:
+                    self.opponent_hp_repository.opponent_character_die()
+                    self.timer.stop_timer()
+
         move_to_origin_location(1)
 
     def opponent_nether_blade_first_passive_skill_animation(self):
