@@ -144,14 +144,14 @@ class FixedDetailsCard:
             )
         )
 
-        self.fixed_card_base.set_attached_shapes(
-            self.create_illustration(
-                image_data=self.__pre_drawed_image_instance.get_pre_draw_card_illustration_for_card_number(card_number),
-                local_translation=self.local_translation,
-                vertices=[(25, 67), (rectangle_width - 25, 67), (rectangle_width - 25, rectangle_height - 195),
-                          (25, rectangle_height - 195)]
-            )
-        )
+        # self.fixed_card_base.set_attached_shapes(
+        #     self.create_illustration(
+        #         image_data=self.__pre_drawed_image_instance.get_pre_draw_card_illustration_for_card_number(card_number),
+        #         local_translation=self.local_translation,
+        #         vertices=[(25, 67), (rectangle_width - 25, 67), (rectangle_width - 25, rectangle_height - 195),
+        #                   (25, rectangle_height - 195)]
+        #     )
+        # )
 
         fixed_card_vertices = self.fixed_card_base.get_vertices()
 
