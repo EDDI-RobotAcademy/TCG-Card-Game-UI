@@ -293,7 +293,8 @@ class MyCardMainFrame(OpenGLFrame):
                                                   (next_right_x_point, next_bottom_y_point),
                                                   (next_left_x_point, next_bottom_y_point)
                                               ])
-        self.my_card_main_scene.add_button_list(next_page_button)
+        # self.my_card_main_scene.add_button_list(next_page_button)
+        self.my_card_main_scene.add_next_button(next_page_button)
         print(f"버튼들 다 담김?: {self.my_card_main_scene.get_button_list()}")
 
         # 이전 페이지 버튼
@@ -322,14 +323,15 @@ class MyCardMainFrame(OpenGLFrame):
         prev_top_y_point = self.height * 0.47415
         prev_bottom_y_point = self.height * 0.54612
         prev_gold_button_image_data = self.__pre_drawed_image_instance.get_pre_draw_prev_gold_button()
-        pre_page_button = NonBackgroundImage(image_data=prev_gold_button_image_data,
-                                               vertices=[
-                                                   (prev_left_x_point, prev_top_y_point),
-                                                   (prev_right_x_point, prev_top_y_point),
-                                                   (prev_right_x_point, prev_bottom_y_point),
-                                                   (prev_left_x_point, prev_bottom_y_point)
-                                               ])
-        self.my_card_main_scene.add_button_list(pre_page_button)
+        prev_page_button = NonBackgroundImage(image_data=prev_gold_button_image_data,
+                                              vertices=[
+                                                  (prev_left_x_point, prev_top_y_point),
+                                                  (prev_right_x_point, prev_top_y_point),
+                                                  (prev_right_x_point, prev_bottom_y_point),
+                                                  (prev_left_x_point, prev_bottom_y_point)
+                                              ])
+        # self.my_card_main_scene.add_button_list(pre_page_button)
+        self.my_card_main_scene.add_prev_button(prev_page_button)
 
         # TODO: 카드 갯수 표기 배치 (이건 한 개만 테스트 한 것)
         # 가로 길이 비율 0.036, 세로 길이 비율 0.056
