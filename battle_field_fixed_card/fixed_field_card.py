@@ -160,13 +160,13 @@ class FixedFieldCard:
             )
         )
 
-        self.fixed_card_base.set_attached_shapes(
-            self.create_illustration(
-                image_data=self.__pre_drawed_image_instance.get_pre_draw_card_illustration_for_card_number(card_number),
-                local_translation=self.local_translation,
-                vertices=[(8, 12), (97, 12), (97, 126), (8, 126)]
-            )
-        )
+        # self.fixed_card_base.set_attached_shapes(
+        #     self.create_illustration(
+        #         image_data=self.__pre_drawed_image_instance.get_pre_draw_card_illustration_for_card_number(card_number),
+        #         local_translation=self.local_translation,
+        #         vertices=[(8, 12), (97, 12), (97, 126), (8, 126)]
+        #     )
+        # )
 
         # self.pickable_card_base.set_attached_shapes(
         #     self.create_equipped_mark(
@@ -214,14 +214,14 @@ class FixedFieldCard:
             )
         )
 
-        self.fixed_card_base.set_attached_shapes(
-            self.create_illustration(
-                image_data=self.__pre_drawed_image_instance.get_pre_draw_card_illustration_for_card_number(card_number),
-                local_translation=self.local_translation,
-                vertices=[(25, 67), (rectangle_width - 25, 67), (rectangle_width - 25, rectangle_height - 195),
-                          (25, rectangle_height - 195)]
-            )
-        )
+        # self.fixed_card_base.set_attached_shapes(
+        #     self.create_illustration(
+        #         image_data=self.__pre_drawed_image_instance.get_pre_draw_card_illustration_for_card_number(card_number),
+        #         local_translation=self.local_translation,
+        #         vertices=[(25, 67), (rectangle_width - 25, 67), (rectangle_width - 25, rectangle_height - 195),
+        #                   (25, rectangle_height - 195)]
+        #     )
+        # )
 
         card_controller_shapes = (
             self.card_controller.getCardTypeTable(self.card_info.getCardTypeForCardNumber(card_number)))

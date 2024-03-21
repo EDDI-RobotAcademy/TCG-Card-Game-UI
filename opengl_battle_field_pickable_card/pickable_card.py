@@ -78,14 +78,14 @@ class PickableCard:
         pickable_card_base.set_initial_vertices(vertices)
         return pickable_card_base
 
-    def create_illustration(self, image_data, vertices, local_translation):
-        card_illustration = RectangleImage(image_data=image_data,
-                                           local_translation=local_translation,
-                                           vertices=vertices)
-
-        card_illustration.set_rectangle_kinds(RectangleKinds.ILLUSTRATION)
-        card_illustration.set_initial_vertices(vertices)
-        return card_illustration
+    # def create_illustration(self, image_data, vertices, local_translation):
+    #     card_illustration = RectangleImage(image_data=image_data,
+    #                                        local_translation=local_translation,
+    #                                        vertices=vertices)
+    #
+    #     card_illustration.set_rectangle_kinds(RectangleKinds.ILLUSTRATION)
+    #     card_illustration.set_initial_vertices(vertices)
+    #     return card_illustration
 
     def create_card_frame(self, image_data, vertices, local_translation):
         card_frame = RectangleImage(image_data=image_data,
@@ -132,13 +132,13 @@ class PickableCard:
             )
         )
 
-        self.pickable_card_base.set_attached_shapes(
-            self.create_illustration(
-                image_data=self.__pre_drawed_image_instance.get_pre_draw_card_illustration_for_card_number(card_number),
-                local_translation=self.local_translation,
-                vertices=[(8, 12), (97, 12), (97, 126), (8, 126)]
-            )
-        )
+        # self.pickable_card_base.set_attached_shapes(
+        #     self.create_illustration(
+        #         image_data=self.__pre_drawed_image_instance.get_pre_draw_card_illustration_for_card_number(card_number),
+        #         local_translation=self.local_translation,
+        #         vertices=[(8, 12), (97, 12), (97, 126), (8, 126)]
+        #     )
+        # )
 
         card_controller_shapes = self.card_controller.getCardTypeTable(self.card_info.getCardTypeForCardNumber(card_number))
         card_shapes = card_controller_shapes(self.local_translation, card_number, rectangle_height, rectangle_width)
@@ -188,15 +188,15 @@ class PickableCard:
             )
         )
 
-        self.pickable_card_base.set_attached_shapes(
-            self.create_illustration(
-                image_data=self.__pre_drawed_image_instance.get_pre_draw_card_illustration_for_card_number(
-                    card_number),
-                local_translation=self.local_translation,
-                vertices=[(25, 67), (rectangle_width - 25, 67), (rectangle_width - 25, rectangle_height - 195),
-                          (25, rectangle_height - 195)]
-            )
-        )
+        # self.pickable_card_base.set_attached_shapes(
+        #     self.create_illustration(
+        #         image_data=self.__pre_drawed_image_instance.get_pre_draw_card_illustration_for_card_number(
+        #             card_number),
+        #         local_translation=self.local_translation,
+        #         vertices=[(25, 67), (rectangle_width - 25, 67), (rectangle_width - 25, rectangle_height - 195),
+        #                   (25, rectangle_height - 195)]
+        #     )
+        # )
 
         card_controller_shapes = self.card_controller.getCardTypeTable(
             self.card_info.getCardTypeForCardNumber(card_number)
@@ -239,15 +239,15 @@ class PickableCard:
             )
         )
 
-        self.pickable_card_base.set_attached_shapes(
-            self.create_illustration(
-                image_data=self.__pre_drawed_image_instance.get_pre_draw_card_illustration_for_card_number(
-                    card_number),
-                local_translation=self.local_translation,
-                vertices=[(17, 50), (rectangle_width - 17, 50), (rectangle_width - 17, rectangle_height - 155),
-                          (17, rectangle_height - 155)]
-            )
-        )
+        # self.pickable_card_base.set_attached_shapes(
+        #     self.create_illustration(
+        #         image_data=self.__pre_drawed_image_instance.get_pre_draw_card_illustration_for_card_number(
+        #             card_number),
+        #         local_translation=self.local_translation,
+        #         vertices=[(17, 50), (rectangle_width - 17, 50), (rectangle_width - 17, rectangle_height - 155),
+        #                   (17, rectangle_height - 155)]
+        #     )
+        # )
 
         card_controller_shapes = self.card_controller.getCardTypeTable(
             self.card_info.getCardTypeForCardNumber(card_number)
