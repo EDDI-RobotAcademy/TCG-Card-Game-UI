@@ -1,5 +1,7 @@
 from math import ceil
 
+from colorama import Fore, Style
+
 from battle_field.state.current_deck import CurrentDeckState
 
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
@@ -43,21 +45,29 @@ class MyCardRepository:
         return cls.__instance
 
     def set_total_window_size(self, width, height):
+        print(f"my_card_repository set_total_window_size -> width: {width}, height: {height}")
         self.total_width = width
         self.total_height = height
+
+    def save_my_card_to_dictionary_state(self, my_card_dictionary_list):
+        self.my_card_state.add_to_my_card_dictionary(my_card_dictionary_list)
 
     def save_my_card_number_to_state(self, acquire_my_card_list):
         self.my_card_state.add_to_my_card(acquire_my_card_list)
         print(f"Saved acquire_my_card_list state: {acquire_my_card_list}")
 
-    def get_my_card_number_from_state(self):
+    def get_my_card_dictionary_from_state(self):
         return self.my_card_state.get_my_card_dictionary()
 
     def build_my_card_page(self):
-        my_card_number_list = self.get_my_card_number_from_state()
+        my_card_dictionary = self.get_my_card_dictionary_from_state()
+        my_card_list = list(my_card_dictionary.keys())
+        my_card_number_list = [int(card_id) for card_id in my_card_list]
 
-        num_cards_per_page = 8
+        # num_cards_per_page = 8
+        num_cards_per_page = 4
         num_pages = ceil(len(my_card_number_list) / num_cards_per_page)
+        print(f"{Fore.RED}num_pages: {Fore.GREEN}{num_pages}{Style.RESET_ALL}")
 
         for page_index in range(num_pages):
             start_index = page_index * num_cards_per_page

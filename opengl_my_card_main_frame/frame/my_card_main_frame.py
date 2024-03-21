@@ -1,6 +1,7 @@
 import tkinter as tk
 
 import pandas
+from colorama import Fore, Style
 from pyopengltk import OpenGLFrame
 from OpenGL.GL import *
 from OpenGL.GLUT import *
@@ -15,6 +16,7 @@ from opengl_my_card_main_frame.entity.my_card_main_scene import MyCardMainScene
 from opengl_my_card_main_frame.entity.my_deck_register_scene import MyDeckRegisterScene
 
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
+from opengl_my_card_main_frame.infra.my_card_repository import MyCardRepository
 from opengl_my_card_main_frame.renderer.fifth_page_card_renerer import FifthPageCardRenderer
 from opengl_my_card_main_frame.renderer.fourth_page_card_renderer import FourthPageCardRenderer
 from opengl_my_card_main_frame.renderer.my_card_main_frame_renderer import MyCardMainFrameRenderer
@@ -36,6 +38,7 @@ class MyCardMainFrame(OpenGLFrame):
         self.my_card_main_scene = MyCardMainScene()
         self.my_deck_register_scene = MyDeckRegisterScene()
         self.lobby_service = LobbyMenuFrameServiceImpl()
+        self.my_card_repository = MyCardRepository.getInstance()
         self.current_rely = 0.20
 
         self.textbox_string = tk.StringVar()
@@ -74,7 +77,6 @@ class MyCardMainFrame(OpenGLFrame):
         self.width_ratio = 1.0
         self.height_ratio = 1.0
 
-
     def initgl(self):
         print("initgl 입니다.")
         glClearColor(0.0, 0.0, 0.0, 0)
@@ -99,10 +101,11 @@ class MyCardMainFrame(OpenGLFrame):
         self.prev_height = self.height
         self.is_reshape_not_complete = False
 
+        self.my_card_repository.set_total_window_size(self.width, self.height)
+        self.my_card_repository.build_my_card_page()
+
         self.make_card_main_frame()
         self.render = MyCardMainFrameRenderer(self.my_card_main_scene, self)
-
-
 
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
@@ -375,44 +378,58 @@ class MyCardMainFrame(OpenGLFrame):
         # self.my_card_main_scene.add_text_list(number_of_cards_text3)
 
         # 모든 카드
-        print(f"서버로 부터 가져온 카드 리스트: {self.lobby_service.get_card_data_list()}")
+        # print(f"서버로 부터 가져온 카드 리스트: {self.lobby_service.get_card_data_list()}")
+        my_card_dictionary = self.my_card_repository.get_my_card_dictionary_from_state()
+        print(f"서버로 부터 가져와 저장한 my_card 딕셔너리: {my_card_dictionary}")
         #all_card_number = self.card_data_read().tolist()
-        all_card_number = self.lobby_service.get_card_data_list()
-        number_of_cards = self.lobby_service.get_number_of_cards_list()
-        print(f"카드 갯수 리스트: {number_of_cards}")
+        card_id_list = []
+        card_count_list = []
+        # for card_id, card_count in my_card_dictionary.items():
+            # print("Key:", card_id, "Value:", card_count)
+
+        card_id_list = list(my_card_dictionary.keys())
+        card_id_list_int = [int(card_id) for card_id in card_id_list]
+        card_count_list = list(my_card_dictionary.values())
+
+        # all_card_number = self.lobby_service.get_card_data_list()
+        # number_of_cards = self.lobby_service.get_number_of_cards_list()
+        print(f"{Fore.RED}card_id_list: {card_id_list}{Style.RESET_ALL}")
+        print(f"{Fore.RED}card_count_list: {card_count_list}{Style.RESET_ALL}")
         # print(f"카드 번호 리스트: {all_card_number}")
         # print(f"카드 번호 길이: {len(all_card_number)}")
+        self.my_card_repository.build_my_card_page()
 
-        # x: 1329, y: 495
-        # x: 125, y: 496
-        # difference: 1204 -> 0.65081
-
-        x = 165
-        y = 65
-
-        for i, number in enumerate(all_card_number):
-            try:
-                #print(f"index: {i}, card number: {number}")
-                card = PickableCard(local_translation=(x, y))
-                card.init_card_in_my_card_frame(number, self.width, self.height)
-                self.my_card_main_scene.add_card_list(card)
-                #print(f"카드 리스트: {self.my_card_main_scene.get_card_list()}")
-
-                x += 315
-
-                if (i + 1) % 4 == 0:  # 4개씩
-                    y = 510
-                    x = 165
-                    if (i + 1) % 8 == 0:
-                        x = 165
-                        y = 65
-
-                if (i + 1) % 8 == 0:
-                    continue
-
-            except Exception as e:
-                print(f"Error creating card: {e}")
-                pass
+        # # TODO: UI 디자인 업데이트 이후 수정 필요
+        # # x: 1329, y: 495
+        # # x: 125, y: 496
+        # # difference: 1204 -> 0.65081
+        #
+        # x = 165
+        # y = 65
+        #
+        # for index, card_id in enumerate(card_id_list_int):
+        #     try:
+        #         #print(f"index: {i}, card number: {number}")
+        #         card = PickableCard(local_translation=(x, y))
+        #         card.init_card_in_my_card_frame(card_id, self.width, self.height)
+        #         self.my_card_main_scene.add_card_list(card)
+        #         #print(f"카드 리스트: {self.my_card_main_scene.get_card_list()}")
+        #
+        #         x += 315
+        #
+        #         if (index + 1) % 4 == 0:  # 4개씩
+        #             y = 510
+        #             x = 165
+        #             if (index + 1) % 8 == 0:
+        #                 x = 165
+        #                 y = 65
+        #
+        #         if (index + 1) % 8 == 0:
+        #             continue
+        #
+        #     except Exception as e:
+        #         print(f"Error creating card: {e}")
+        #         pass
 
 
         # 카드 갯수 표기
@@ -421,13 +438,13 @@ class MyCardMainFrame(OpenGLFrame):
         number_right_x_point = self.width * 0.166
         number_top_y_point = self.height * 0.450  # 첫 번째줄은 이 높이로 고정하면 될 듯
         number_bottom_y_point = self.height * 0.506
-        for i, number in enumerate(number_of_cards):
+        for index, card_count in enumerate(card_count_list):
             try:
-                if number == 1:
+                if card_count == 1:
                     # number_of_cards_data = self.__pre_drawed_image_instance.get_pre_draw_number_of_cards(9)
                     self.my_card_main_scene.add_text_list(None)
                 else:
-                    number_of_cards_data = self.__pre_drawed_image_instance.get_pre_draw_number_of_cards(number)
+                    number_of_cards_data = self.__pre_drawed_image_instance.get_pre_draw_number_of_cards(card_count)
 
                     number_of_cards_text = NonBackgroundImage(image_data=number_of_cards_data,
                                                                vertices=[
@@ -441,19 +458,19 @@ class MyCardMainFrame(OpenGLFrame):
                 number_left_x_point += self.width * 0.164
                 number_right_x_point += self.width * 0.164
 
-                if (i + 1) % 4 == 0:
+                if (index + 1) % 4 == 0:
                     number_top_y_point = self.height * 0.940  # 두 번째 줄 부턴 위치 바뀜
                     number_bottom_y_point = self.height * 0.996
                     number_left_x_point = self.width * 0.130
                     number_right_x_point = self.width * 0.166
 
-                    if (i + 1) % 8 == 0:
+                    if (index + 1) % 8 == 0:
                         number_left_x_point = self.width * 0.130
                         number_right_x_point = self.width * 0.166
                         number_top_y_point = self.height * 0.450
                         number_bottom_y_point = self.height * 0.506
 
-                if (i + 1) % 8 == 0:
+                if (index + 1) % 8 == 0:
                     continue
 
             except Exception as e:
