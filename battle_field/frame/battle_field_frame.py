@@ -168,7 +168,7 @@ from session.repository.session_repository_impl import SessionRepositoryImpl
 from battle_field.animation_support.attack_animation import AttackAnimation
 
 
-class FakeBattleFieldFrame(OpenGLFrame):
+class BattleFieldFrame(OpenGLFrame):
     battle_field_function_controller = BattleFieldFunctionControllerImpl.getInstance()
 
     __fake_battle_field_frame_repository = FakeBattleFieldFrameRepositoryImpl.getInstance()
