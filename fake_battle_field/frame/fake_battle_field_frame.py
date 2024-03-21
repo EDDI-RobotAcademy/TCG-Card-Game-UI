@@ -2895,6 +2895,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 vibration(1)
 
+            self.__music_player_repository.play_sound_effect_of_card_execution('energy_burn')
+
             self.play_effect_animation_by_index_and_call_function_with_param(animation_index, vibration_energy_burn, target_index)
 
         if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() == OpponentFieldAreaAction.DEATH_SCYTHE:
@@ -3024,6 +3026,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         calculate_death_scythe()
 
                 vibration(1)
+
+            self.__music_player_repository.play_sound_effect_of_card_execution('death_scythe')
+
             self.play_effect_animation_by_index_and_call_function(animation_index, vibration_death_scythe)
 
         if self.field_area_inside_handler.get_required_to_process_passive_skill_multiple_unit_list():
@@ -3650,6 +3655,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             # is_pickable_card_inside_opponent_field =
 
             if self.is_point_inside_opponent_field_area((x, y), self.opponent_field_panel):
+                self.__music_player_repository.play_sound_effect_of_mouse_on_click('hand_card_drop')
 
                 your_card_id = self.selected_object.get_card_number()
                 card_type = self.card_info_repository.getCardTypeForCardNumber(your_card_id)
@@ -3888,6 +3894,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             self.reset_every_selected_action()
                             return
 
+                        self.__music_player_repository.play_sound_effect_of_card_execution('field_of_death')
+
                         opponent_field_energy = self.opponent_field_energy_repository.get_opponent_field_energy()
                         print(f"before land of death -> opponent_field_energy: {opponent_field_energy}")
 
@@ -3911,6 +3919,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         return
 
             # Opponent Field Area 끝
+            self.__music_player_repository.play_sound_effect_of_mouse_on_click('hand_card_drop')
 
             current_opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
             current_opponent_field_unit_list_length = len(current_opponent_field_unit_list)
@@ -5200,6 +5209,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     pickable_card_base.set_height_ratio(self.height_ratio)
 
                     if pickable_card_base.is_point_inside((x, y)):
+                        self.__music_player_repository.play_sound_effect_of_mouse_on_click('hand_card_pick')
                         print("카드 선택!")
                         hand_card.selected = not hand_card.selected
                         self.selected_object = hand_card
@@ -6555,6 +6565,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             return
 
                         print("덱에서 에너지 검색해서 부스팅 진행")
+                        self.__music_player_repository.play_sound_effect_of_card_execution('overflow_of_energy')
 
                         current_process_card_id = self.field_area_inside_handler.get_action_set_card_id()
 
@@ -6671,6 +6682,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         print(f"self.field_area_inside_handler.get - > {self.field_area_inside_handler.get_field_area_action()}")
                         return
                     # 서포트
+                    self.__music_player_repository.play_sound_effect_of_card_execution('call_of_leonic')
 
 
                     # 실제로 지울 때 몇 개 지우는지만 알면 된다.
@@ -7144,6 +7156,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             your_hand_next_button_clicked = self.your_hand.is_point_inside_next_button_hand((x, y))
             if your_hand_next_button_clicked:
                 print("Your Hand Next Button Clicked!")
+                self.__music_player_repository.play_sound_effect_of_mouse_on_click('page_button_click')
 
                 self.your_hand_repository.next_your_hand_page()
                 self.selected_object = None
@@ -7151,6 +7164,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             your_hand_prev_button_clicked = self.your_hand.is_point_inside_prev_button_hand((x, y))
             if your_hand_prev_button_clicked:
                 print("Your Hand Prev Button Clicked!")
+                self.__music_player_repository.play_sound_effect_of_mouse_on_click('page_button_click')
 
                 self.your_hand_repository.prev_your_hand_page()
                 self.selected_object = None
@@ -14213,6 +14227,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
             animation_index, effect_animation_panel)
 
+        self.__music_player_repository.play_sound_effect_of_card_execution(effect_name)
 
         self.play_effect_animation_by_index_and_call_function(animation_index, function)
 
@@ -14326,6 +14341,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
             animation_index, effect_animation_panel)
 
+        self.__music_player_repository.play_sound_effect_of_card_execution(effect_name)
+
         self.play_effect_animation_by_index_and_call_function(animation_index, function)
 
 
@@ -14345,6 +14362,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
             animation_index, effect_animation_panel)
 
+        if effect_name == 'dark_blast':
+            self.__music_player_repository.play_sound_effect_of_card_execution('energy_burn')
 
         self.play_effect_animation_by_index_and_call_function(animation_index, function)
 

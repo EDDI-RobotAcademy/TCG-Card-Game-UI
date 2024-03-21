@@ -19,6 +19,7 @@ from common.card_type import CardType
 from shapely.geometry import Point, Polygon
 
 from common.message_number import MessageNumber
+from music_player.repository.music_player_repository_impl import MusicPlayerRepositoryImpl
 from session.repository.session_repository_impl import SessionRepositoryImpl
 from test_detector.detector import DetectorAboutTest
 
@@ -44,6 +45,7 @@ class FieldAreaInsideHandler:
     __card_info_repository = CardInfoFromCsvRepositoryImpl.getInstance()
     __your_tomb_repository = YourTombRepository.getInstance()
     __session_info_repository = SessionRepositoryImpl.getInstance()
+    __music_player_repository = MusicPlayerRepositoryImpl.getInstance()
 
     __your_field_unit_action_repository = YourFieldUnitActionRepository.getInstance()
     __detector_about_test = DetectorAboutTest.getInstance()
@@ -275,6 +277,7 @@ class FieldAreaInsideHandler:
         if is_success_value == False:
             return
 
+        self.__music_player_repository.play_sound_effect_of_card_execution('swamp_of_ghost')
         # TODO: Summary와 연동하도록 재구성 필요
         # drawn_card_list = self.__your_deck_repository.draw_deck_with_count(3)
         drawn_card_list = response['player_draw_card_list_map']['You']
