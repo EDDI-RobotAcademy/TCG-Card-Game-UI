@@ -8,6 +8,9 @@ class BuyCheckRepositoryImpl(BuyCheckRepository):
     __receiveIpcChannel = None
     __randomCardList = None
 
+    total_width = None
+    total_height = None
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -18,6 +21,10 @@ class BuyCheckRepositoryImpl(BuyCheckRepository):
         if cls.__instance is None:
             cls.__instance = cls()
         return cls.__instance
+
+    def set_total_window_size(self, width, height):
+        self.total_width = width
+        self.total_height = height
 
     def createBuyCheckFrame(self, rootWindow):
         print("BuyCheckRepositoryImpl: createBuyCheckFrame()")

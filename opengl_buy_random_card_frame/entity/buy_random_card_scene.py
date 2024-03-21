@@ -5,6 +5,14 @@ class BuyRandomCardScene:
         self.button_list = []
         self.card_list = []
 
+        self.buy_random_background = None
+
+    def add_buy_random_background(self, background):
+        self.buy_random_background = background
+
+    def get_buy_random_background(self):
+        return self.buy_random_background
+
     def add_my_card_background(self, rectangle):
         self.my_card_background.append(rectangle)
 

@@ -6,23 +6,24 @@ class BuyRandomCardFrameRenderer:
         self.window = window
 
     def render(self):
-        print("buy random card frame 렌더러 호출")
+        # print("buy random card frame 렌더러 호출")
         self.window.tkMakeCurrent()
         GL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT)
 
         # 배경 및 사이드에 있는 나의 덱 화면
-        for image_element in self.scene.my_card_background:
-            print(f"이미지 그리기: {image_element}")
-            self._render_shape(image_element)
-
+        # for image_element in self.scene.my_card_background:
+        #     print(f"이미지 그리기: {image_element}")
+        #     self._render_shape(image_element)
+        if self.scene.buy_random_background:
+            self.scene.buy_random_background.draw()
 
         # 버튼 도형
         for button in self.scene.button_list:
-            print(f"버튼 그리기: {button}")
+            # print(f"버튼 그리기: {button}")
             self._render_shape(button)
 
         for card in self.scene.card_list[:10]:
-            print(f"카드 리스트 몇 개임? {len(self.scene.card_list[:10])}")
+            # print(f"카드 리스트 몇 개임? {len(self.scene.card_list[:10])}")
             attached_tool_card = card.get_tool_card()
             attached_tool_card.draw()
 

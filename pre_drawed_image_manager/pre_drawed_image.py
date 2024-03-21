@@ -62,6 +62,8 @@ class PreDrawedImage:
     __pre_drawed_battle_field_muligun_background = None
     __pre_drawed_battle_field_background = None
 
+    __pre_drawed_buy_random_background = None
+
     __pre_drawed_card_back_frame = None
 
     __pre_drawed_next_gold_button = None
@@ -756,6 +758,10 @@ class PreDrawedImage:
         my_card_background = os.path.join(self.__project_root, "local_storage", "my_card_frame", "my_card_background.png")
         self.__pre_drawed_my_card_background = ImageDataLoader.load_background_image_data(my_card_background, width, height)
 
+    def pre_draw_buy_random_background(self, width, height):
+        buy_random_background = os.path.join(self.__project_root, "local_storage", "image", "battle_lobby", "background.png")
+        self.__pre_drawed_buy_random_background = ImageDataLoader.load_background_image_data(buy_random_background, width, height)
+
     def pre_draw_rock(self):
         rock = os.path.join(self.__project_root, "local_storage", "rock_paper_scissors_image", "rock.png")
         self.__pre_drawed_rock = ImageDataLoader.load_lanczos_resized_image_data(rock)
@@ -1182,3 +1188,6 @@ class PreDrawedImage:
 
     def get_pre_draw_create_deck_button(self):
         return self.__pre_drawed_create_deck_button
+
+    def get_pre_drawed_buy_random_background(self):
+        return self.__pre_drawed_buy_random_background
