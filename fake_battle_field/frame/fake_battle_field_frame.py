@@ -4081,6 +4081,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 is_success_value = response.get('is_success', False)
 
                                 if is_success_value == False:
+                                    self.message_on_the_screen.create_message_on_the_battle_screen(
+                                        MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN.value)
+                                    self.return_to_initial_location()
                                     return
 
                                 self.your_field_unit_repository.update_your_unit_extra_effect_at_index(unit_index, ["DarkFire","Freeze"])
@@ -4097,6 +4100,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 is_success_value = response.get('is_success', False)
 
                                 if is_success_value == False:
+                                    self.message_on_the_screen.create_message_on_the_battle_screen(
+                                        MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN.value)
+                                    self.return_to_initial_location()
                                     return
 
                             # self.selected_object = None
