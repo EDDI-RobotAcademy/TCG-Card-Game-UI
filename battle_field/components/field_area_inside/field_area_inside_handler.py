@@ -12,11 +12,13 @@ from battle_field.infra.your_field_unit_repository import YourFieldUnitRepositor
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
+from common.card_grade import CardGrade
 from common.card_type import CardType
 
 # pip3 install shapely
 from shapely.geometry import Point, Polygon
 
+from common.message_number import MessageNumber
 from session.repository.session_repository_impl import SessionRepositoryImpl
 from test_detector.detector import DetectorAboutTest
 
@@ -158,7 +160,7 @@ class FieldAreaInsideHandler:
     def handle_card_drop(self, x, y, selected_object, your_battle_field_panel):
         print("handle_card_drop()")
         if not self.is_drop_location_valid_your_unit_field(x, y, your_battle_field_panel) or not selected_object:
-            return None
+            return FieldAreaAction.Dummy
 
         placed_card_id = selected_object.get_card_number()
 
@@ -192,7 +194,12 @@ class FieldAreaInsideHandler:
             print(f"{Fore.RED}deploy_your_unit_request:{Fore.GREEN} {deploy_your_unit_request}{Style.RESET_ALL}")
             deploy_is_success = deploy_your_unit_request['is_success']
             if deploy_is_success is False:
-                return FieldAreaAction.Dummy
+                print(f"self.__card_info_repository.getCardGradeForCardNumber(placed_card_id): {self.__card_info_repository.getCardGradeForCardNumber(placed_card_id)}")
+                if int(self.__card_info_repository.getCardGradeForCardNumber(placed_card_id)) is CardGrade.MYTHICAL.value:
+                    print("신화유닛 4턴 후 사용 가능")
+                    return MessageNumber.USE_MYTH_CARD_AFTER_FOUR_TURN
+                print("유닛 소환 실패 ")
+                return MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN
 
         # TODO: Memory Leak에 대한 추가 작업이 필요할 수 있음
         # self.__your_hand_repository.remove_card_by_index(placed_card_index)

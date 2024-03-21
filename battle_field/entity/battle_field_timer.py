@@ -49,8 +49,8 @@ class BattleFieldTimer(OpenGLFrame):
 
         left_x_point = self.total_width * 0.865
         right_x_point = self.total_width
-        top_y_point = self.total_height * 0.249
-        bottom_y_point = self.total_height * 0.317
+        top_y_point = self.total_height * 0.245
+        bottom_y_point = self.total_height * 0.351
 
         self.timer_panel = NonBackgroundImage(
             image_data=self.__pre_drawed_image.get_pre_draw_battle_field_timer(self.timer),

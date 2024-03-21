@@ -2572,6 +2572,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape.draw()
 
         if self.battle_field_repository.get_current_use_card_id():
+            self.message_on_the_screen.clear_current_message_on_the_battle_screen()
             card_id = self.battle_field_repository.get_current_use_card_id()
             self.notice_card.init_card_view_larger(card_id)
             self.master.after(2000, lambda: self.notice_card.reset_fixed_card_base(card_id))
@@ -4205,7 +4206,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             drop_action_result = self.field_area_inside_handler.handle_card_drop(x, y, self.selected_object,
                                                                                  self.your_field_panel)
-            if drop_action_result is None or drop_action_result is FieldAreaAction.Dummy:
+
+            if drop_action_result is MessageNumber.USE_MYTH_CARD_AFTER_FOUR_TURN:
+                print("신화카드는 4턴 후에 사용 가능")
+                self.return_to_initial_location()
+                self.message_on_the_screen.create_message_on_the_battle_screen(drop_action_result.value)
+            elif drop_action_result is MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN:
+                print("상대턴 사용 불가")
+                self.return_to_initial_location()
+                self.message_on_the_screen.create_message_on_the_battle_screen(drop_action_result.value)
+            elif drop_action_result is None or drop_action_result is FieldAreaAction.Dummy:
                 print("self.field_area_inside_handler.get_field_area_action() = None")
                 self.return_to_initial_location()
             elif drop_action_result is FieldAreaAction.ENERGY_BOOST:
