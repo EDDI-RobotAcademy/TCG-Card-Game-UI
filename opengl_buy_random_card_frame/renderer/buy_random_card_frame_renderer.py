@@ -1,6 +1,12 @@
 from OpenGL import GL
 
+from card_shop_frame.frame.buy_check_frame.repository.buy_check_repository_impl import BuyCheckRepositoryImpl
+
+
 class BuyRandomCardFrameRenderer:
+
+    buy_check_repository = BuyCheckRepositoryImpl.getInstance()
+
     def __init__(self, scene, window):
         self.scene = scene
         self.window = window
@@ -22,15 +28,28 @@ class BuyRandomCardFrameRenderer:
             # print(f"버튼 그리기: {button}")
             self._render_shape(button)
 
-        for card in self.scene.card_list[:10]:
-            # print(f"카드 리스트 몇 개임? {len(self.scene.card_list[:10])}")
-            attached_tool_card = card.get_tool_card()
-            attached_tool_card.draw()
+        # for card in self.scene.card_list[:10]:
+        #     # print(f"카드 리스트 몇 개임? {len(self.scene.card_list[:10])}")
+        #     attached_tool_card = card.get_tool_card()
+        #     attached_tool_card.draw()
+        #
+        #     pickable_card_base = card.get_pickable_card_base()
+        #     pickable_card_base.draw()
+        #
+        #     attached_shape_list = pickable_card_base.get_attached_shapes()
+        #     for attached_shape in attached_shape_list:
+        #         attached_shape.draw()
 
-            pickable_card_base = card.get_pickable_card_base()
-            pickable_card_base.draw()
+        if self.buy_check_repository.get_need_to_redraw():
+            self.buy_check_repository.set_need_to_redraw(False)
 
-            attached_shape_list = pickable_card_base.get_attached_shapes()
+            self.buy_check_repository.create_random_buy_list()
+
+        for card in self.buy_check_repository.get_random_buy_card_object_list():
+            fixed_card_base = card.get_fixed_card_base()
+            fixed_card_base.draw()
+
+            attached_shape_list = fixed_card_base.get_attached_shapes()
             for attached_shape in attached_shape_list:
                 attached_shape.draw()
 
