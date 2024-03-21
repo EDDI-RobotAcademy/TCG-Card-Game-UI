@@ -1,4 +1,6 @@
 from battle_field.infra.battle_field_timer_repository import BattleFieldTimerRepository
+from music_player.repository.music_player_repository import MusicPlayerRepository
+from music_player.repository.music_player_repository_impl import MusicPlayerRepositoryImpl
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from image_shape.non_background_image import NonBackgroundImage
 from pyopengltk import OpenGLFrame
@@ -6,6 +8,7 @@ from pyopengltk import OpenGLFrame
 class BattleFieldTimer(OpenGLFrame):
     __pre_drawed_image = PreDrawedImage.getInstance()
     __battle_field_timer_repository = BattleFieldTimerRepository.getInstance()
+    __music_player_repository = MusicPlayerRepositoryImpl.getInstance()
 
     def __init__(self):
         super().__init__()
@@ -75,6 +78,8 @@ class BattleFieldTimer(OpenGLFrame):
         self.unit_timeout_function = self.__battle_field_timer_repository.get_unit_timeout_function()
 
     def start_timer(self):
+        if self.timer == 11:
+            self.__music_player_repository.play_sound_effect_of_timer('ten_secs')
         if self.timer >= -1:
             self.timer -= 1
             self.timer_id = self.master.after(1000, self.start_timer)
