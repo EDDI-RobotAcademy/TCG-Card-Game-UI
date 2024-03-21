@@ -112,12 +112,12 @@ class MyCardPage:
         print(f"my_card_page_card_list: {my_card_page_card_list}")
 
         for index, card_id in enumerate(my_card_page_card_list):
-            print(f"index: {index}, card_number: {card_id}")
+            # print(f"index: {index}, card_number: {card_id}")
             my_card = PickableCard(local_translation=self.get_next_card_position(index))
             # new_card = FixedFieldCard(local_translation=self.get_next_card_position(index))
-            print("Success to make PickableCard")
+            # print("Success to make PickableCard")
             my_card.init_card_in_my_card_frame(card_id, self.total_width, self.total_height)
             # my_card.init_card(card_id)
-            print("Success to create card frame")
+            # print("Success to create card frame")
             my_card.set_index(index)
             self.my_card_page_card_object_list.append(my_card)

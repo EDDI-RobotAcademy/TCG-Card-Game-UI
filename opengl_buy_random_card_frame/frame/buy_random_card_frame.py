@@ -5,6 +5,7 @@ from OpenGL.GLU import *
 from screeninfo import get_monitors
 
 from common.utility import get_project_root
+from image_shape.rectangle_image import RectangleImage
 from opengl_buy_random_card_frame.entity.buy_random_card_scene import BuyRandomCardScene
 
 from opengl_battle_field_pickable_card.legacy.pickable_card import LegacyPickableCard
@@ -12,13 +13,14 @@ from opengl_buy_random_card_frame.renderer.buy_random_card_frame_renderer import
 from opengl_shape.image_rectangle_element import ImageRectangleElement
 from opengl_shape.rectangle import Rectangle
 from card_shop_frame.frame.buy_check_frame.repository.buy_check_repository_impl import BuyCheckRepositoryImpl
-
-
+from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
 class BuyRandomCardFrame(OpenGLFrame):
     __instance = None
 
+    __pre_drawed_image_instance = PreDrawedImage.getInstance()
+    buy_check_repository = BuyCheckRepositoryImpl.getInstance()
 
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
@@ -44,7 +46,7 @@ class BuyRandomCardFrame(OpenGLFrame):
         self.prev_width = self.current_width
         self.prev_height = self.current_height
 
-        is_reshape_not_complete = True
+        self.is_reshape_not_complete = True
 
         self.bind("<Configure>", self.on_resize)
 
@@ -82,7 +84,7 @@ class BuyRandomCardFrame(OpenGLFrame):
         # self.tkMakeCurrent()
 
     def init_first_window(self, width, height):
-        print(f"Operate Only Once -> width: {width}, height: {height}")
+        print(f"buy_random_card_frame() - Operate Only Once -> width: {width}, height: {height}")
         self.width = width
         self.height = height
 
@@ -92,6 +94,8 @@ class BuyRandomCardFrame(OpenGLFrame):
         self.prev_width = self.width
         self.prev_height = self.height
         self.is_reshape_not_complete = False
+
+        self.buy_check_repository.set_total_window_size(self.width, self.height)
 
         self.make_card_main_frame()
         self.render = BuyRandomCardFrameRenderer(self.buy_random_card_scene, self)
@@ -131,10 +135,20 @@ class BuyRandomCardFrame(OpenGLFrame):
         glClear(GL_COLOR_BUFFER_BIT)
 
         # 나의 카드 배경 화면
-        background_rectangle = ImageRectangleElement(image_path=os.path.join(project_root, "local_storage", "image", "battle_lobby", "background.png"),
-                                                     local_translation=(0, 0),
-                                                     vertices=[(0, 0), (self.width, 0), (self.width, self.height), (0, self.height)])
-        self.buy_random_card_scene.add_my_card_background(background_rectangle)
+        # background_rectangle = ImageRectangleElement(image_path=os.path.join(project_root, "local_storage", "image", "battle_lobby", "background.png"),
+        #                                              local_translation=(0, 0),
+        #                                              vertices=[(0, 0), (self.width, 0), (self.width, self.height), (0, self.height)])
+
+        self.__pre_drawed_image_instance.pre_draw_buy_random_background(self.width, self.height)
+        background_data = self.__pre_drawed_image_instance.get_pre_drawed_buy_random_background()
+        background_rectangle = RectangleImage(image_data=background_data,
+                                              vertices=[
+                                                  (0, 0),
+                                                  (self.width, 0),
+                                                  (self.width, self.height),
+                                                  (0, self.height)])
+
+        self.buy_random_card_scene.add_buy_random_background(background_rectangle)
 
 
         # 뒤로가기 버튼
@@ -185,8 +199,8 @@ class BuyRandomCardFrame(OpenGLFrame):
 
         self.render.render()
 
-        if self.redraw_check is True:
-            self.make_card_main_frame()
-            self.render_after = BuyRandomCardFrameRenderer(self.buy_random_card_scene, self)
-            self.render_after.render()
+        # if self.redraw_check is True:
+        #     self.make_card_main_frame()
+        #     self.render_after = BuyRandomCardFrameRenderer(self.buy_random_card_scene, self)
+        #     self.render_after.render()
 
