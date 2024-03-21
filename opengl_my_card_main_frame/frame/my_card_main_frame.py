@@ -203,10 +203,10 @@ class MyCardMainFrame(OpenGLFrame):
         # 793 / 1016 -> 0.73426
         # 874 / 1016 -> 0.80926
 
-        left_x_point = self.width * 0.81601
-        right_x_point = self.width * 0.97564
-        top_y_point = self.height * 0.78051
-        bottom_y_point = self.height * 0.86023
+        left_x_point = self.width * 0.01028
+        right_x_point = self.width * 0.10227
+        top_y_point = self.height * 0.02657
+        bottom_y_point = self.height * 0.07677
 
         # rectangle_size = 130
         # start_point = (1569, 746)
@@ -220,10 +220,14 @@ class MyCardMainFrame(OpenGLFrame):
         ]
 
         create_deck_button_image = self.__pre_drawed_image_instance.get_pre_draw_create_deck_button()
-        create_deck_button = RectangleImage(image_data=create_deck_button_image,
-                                            vertices=create_deck_button_vertices)
+        create_deck_button = Rectangle(
+            (1.0, 1.0, 1.0, 0.0),
+            create_deck_button_vertices,
+            (0, 0),
+            (0, 0))
+        create_deck_button.set_draw_border(False)
 
-        self.my_card_main_scene.add_button_list(create_deck_button)
+        self.my_card_main_scene.add_create_deck_button(create_deck_button)
 
         # 뒤로가기 버튼
         # go_to_back_button = Rectangle(color=(0.0, 1.0, 0.0, 1.0),
@@ -241,10 +245,17 @@ class MyCardMainFrame(OpenGLFrame):
         # 900 / 1016 -> 0.73426
         # 982 / 1016 -> 0.80926
 
-        go_back_left_x_point = self.width * 0.81601
-        go_back_right_x_point = self.width * 0.97564
-        go_back_top_y_point = self.height * 0.88582
-        go_back_bottom_y_point = self.height * 0.96653
+        # x: 217, y: 80
+        # x: 371, y: 27
+        # 371 / 1848 -> 0.20075
+        # 217 / 1848 -> 0.11742
+        # 27 / 1016 -> 0.02657
+        # 78 / 1016 -> 0.07677
+
+        go_back_left_x_point = self.width * 0.11742
+        go_back_right_x_point = self.width * 0.20075
+        go_back_top_y_point = self.height * 0.02657
+        go_back_bottom_y_point = self.height * 0.07677
 
         go_to_back_button_vertices = [
             (go_back_left_x_point, go_back_top_y_point),
@@ -253,11 +264,16 @@ class MyCardMainFrame(OpenGLFrame):
             (go_back_left_x_point, go_back_bottom_y_point),
         ]
 
-        go_to_back_button_image = self.__pre_drawed_image_instance.get_pre_draw_go_back_button()
-        go_to_back_button = RectangleImage(image_data=go_to_back_button_image,
-                                           vertices=go_to_back_button_vertices)
+        # go_to_back_button_image = self.__pre_drawed_image_instance.get_pre_draw_go_back_button()
+        go_to_back_button = Rectangle(
+            (1.0, 1.0, 1.0, 0.0),
+            go_to_back_button_vertices,
+            (0, 0),
+            (0, 0))
+        go_to_back_button.set_draw_border(False)
 
-        self.my_card_main_scene.add_button_list(go_to_back_button)
+        # self.my_card_main_scene.add_button_list(go_to_back_button)
+        self.my_card_main_scene.add_go_back_button(go_to_back_button)
 
 
         # 다음 페이지 버튼
