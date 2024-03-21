@@ -12109,7 +12109,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
             effect_animation.set_animation_name('burst_shadow_ball')
             effect_animation.set_total_window_size(self.width, self.height)
             # vertices = opponent_field_unit_fixed_card_base.get_vertices()
-            effect_animation.draw_animation_panel_with_vertices(opponent_field_unit_fixed_card_base_vertices)
+            # effect_animation.draw_animation_panel_with_vertices(opponent_field_unit_fixed_card_base_vertices)
+            effect_animation.change_local_translation(opponent_field_unit_fixed_card_base_vertices.get_local_translation())
+            effect_animation.draw_animation_panel()
             effect_animation_panel = effect_animation.get_animation_panel()
 
             self.effect_animation_repository.save_effect_animation_at_dictionary_with_index(
@@ -13164,7 +13166,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
             effect_animation.set_animation_name('burst_shadow_ball')
             effect_animation.set_total_window_size(self.width, self.height)
             # vertices = opponent_field_unit_fixed_card_base.get_vertices()
-            effect_animation.draw_animation_panel_with_vertices(your_field_unit_fixed_card_base_vertices)
+            #effect_animation.draw_animation_panel_with_vertices(your_field_unit_fixed_card_base_vertices)
+            effect_animation.change_local_translation(
+                your_field_unit_fixed_card_base.get_local_translation()
+            )
+            effect_animation.draw_animation_panel()
             effect_animation_panel = effect_animation.get_animation_panel()
 
             self.effect_animation_repository.save_effect_animation_at_dictionary_with_index(
@@ -13327,6 +13333,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 animation_actor_skill_damage = self.card_info_repository.getCardSkillFirstDamageForCardNumber(animation_actor_card_id)
                 print(f"animation_actor_skill_damage: {animation_actor_skill_damage}")
 
+
                 notify_data = self.attack_animation_object.get_notify_data()
 
                 your_field_unit_health_point_map = (notify_data)['player_field_unit_health_point_map']['You']['field_unit_health_point_map']
@@ -13355,11 +13362,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 # 죽은 유닛들 묘지에 배치 및 Replacing
                 for dead_unit_index in your_dead_field_unit_index_list:
-                    field_unit_id = self.your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
-                    self.your_tomb_repository.create_tomb_card(field_unit_id)
-                    self.your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
-
-                self.your_field_unit_repository.replace_field_card_position()
+                    def remove_field_unit(unit_index):
+                        field_unit_id = self.your_field_unit_repository.get_card_id_by_index(unit_index)
+                        self.your_tomb_repository.create_tomb_card(field_unit_id)
+                        self.your_field_unit_repository.remove_card_by_index(unit_index)
+                        self.your_field_unit_repository.remove_harmful_status_by_index(unit_index)
+                        self.your_field_unit_repository.replace_field_card_position()
+                    self.create_effect_animation_to_your_unit_and_play_animation_and_call_function_with_param(
+                        'death', dead_unit_index, remove_field_unit, dead_unit_index)
 
                 # opponent_field_unit_object = attack_animation_object.get_opponent_field_unit()
                 # opponent_fixed_card_base = opponent_field_unit_object.get_fixed_card_base()
