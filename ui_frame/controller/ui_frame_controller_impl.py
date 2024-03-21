@@ -1,6 +1,7 @@
 from account_register_frame.service.account_register_frame_service_impl import AccountRegisterFrameServiceImpl
 from app_window.service.window_service_impl import WindowServiceImpl
 from account_login_frame.service.login_menu_frame_service_impl import LoginMenuFrameServiceImpl
+from battle_field.frame.battle_field_frame import BattleFieldFrame
 from battle_field.infra.battle_field_repository import BattleFieldRepository
 
 from battle_field.infra.legacy.your_hand_repository import LegacyYourHandRepository
@@ -14,6 +15,7 @@ from battle_field.infra.legacy.circle_image_legacy_your_hand_repository import C
 from battle_field.infra.your_field_unit_repository import YourFieldUnitRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field.infra.your_tomb_repository import YourTombRepository
+from battle_field.service.battle_field_frame_service_impl import BattleFieldFrameServiceImpl
 from battle_field_function.service.battle_field_function_service_impl import BattleFieldFunctionServiceImpl
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
 from battle_field.infra.legacy.circle_image_legacy_your_tomb_repository import CircleImageLegacyYourTombRepository
@@ -53,6 +55,8 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance = super().__new__(cls)
             cls.__instance.__uiFrameService = UiFrameServiceImpl.getInstance()
             cls.__instance.__windowService = WindowServiceImpl.getInstance()
+
+            cls.__instance.__battleFieldFrameService = BattleFieldFrameServiceImpl.getInstance()
 
             cls.__instance.__fakeBattleFieldFrameServiece = FakeBattleFieldFrameServiceImpl.getInstance()
             cls.__instance.__fakeOpponentHandRepository = FakeOpponentHandRepositoryImpl.getInstance()
@@ -94,6 +98,8 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__decisionFirstStrikeFrameService = DecisionFirstStrikeFrameService.getInstance()
 
             cls.__instance.__battle_result_frame_service = TestResultFrameService.getInstance()
+
+            cls.__instance.__battleFieldFrame = BattleFieldFrame
 
         return cls.__instance
 
@@ -158,6 +164,9 @@ class UiFrameControllerImpl(UiFrameController):
 
         self.__battleFieldFunctionService.saveFrame(self, fakeBattleFieldFrame)
 
+        battleFieldFrame = self.__battleFieldFrame()
+        self.__uiFrameService.registerBattleFieldUiFrame(battleFieldFrame)
+
     def first_main_window(self):
         self.switchFrameWithMenuName("main-menu")
 
@@ -218,6 +227,8 @@ class UiFrameControllerImpl(UiFrameController):
 
         self.__buyRandomCardFrameService.saveTransmitIpcChannel(transmitIpcChannel)
 
+        self.__battleFieldFrameService.injectTransmitIpcChannel(transmitIpcChannel)
+
 
     def requestToInjectReceiveIpcChannel(self, receiveIpcChannel):
         print("UiFrameControllerImpl: requestToInjectReceiveIpcChannel()")
@@ -259,6 +270,8 @@ class UiFrameControllerImpl(UiFrameController):
         self.__legacy_your_hand_repository.saveReceiveIpcChannel(receiveIpcChannel)
 
         self.__buyRandomCardFrameService.saveReceiveIpcChannel(receiveIpcChannel)
+
+        self.__battleFieldFrameService.injectReceiveIpcChannel(receiveIpcChannel)
 
     def requestToInjectMusicPlayIpcChannel(self, musicPlayIpcChannel):
         print("UiFrameControllerImpl: requestToInjectMusicPlayIpcChannel()")
