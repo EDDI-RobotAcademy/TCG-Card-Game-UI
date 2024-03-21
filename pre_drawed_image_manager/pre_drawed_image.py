@@ -126,7 +126,7 @@ class PreDrawedImage:
                                                  f"{card_number}.png")
             # self.__pre_drawed_card_frame[card_number] = ImageDataLoader.load_rectangle_image_data(card_frame_image_data)
             # load_rectangle_origin_image_data
-            self.__pre_drawed_card_frame[card_number] = ImageDataLoader.load_card_frame_image_data(card_frame_image_data)
+            # self.__pre_drawed_card_frame[card_number] = ImageDataLoader.load_card_frame_image_data(card_frame_image_data)
             self.__pre_drawed_card_frame[card_number] = ImageDataLoader.load_rectangle_origin_image_data(card_frame_image_data)
 
     def pre_draw_opponent_tomb(self):

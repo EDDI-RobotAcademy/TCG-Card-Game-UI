@@ -381,6 +381,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.timer_panel = None
         self.timer = None
         self.timer_repository = BattleFieldTimerRepository.getInstance()
+        self.unit_timer = None
 
         self.animation_test_image_panel = None
         self.animation_test_image = AnimationTestImage()
@@ -531,6 +532,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.opponent_lost_zone.create_opponent_lost_zone_panel()
         self.opponent_lost_zone_panel = self.opponent_lost_zone.get_opponent_lost_zone_panel()
 
+        self.message_on_the_screen.set_total_window_size(self.width, self.height)
+        self.current_field_message_on_the_battle_screen_panel = (
+            self.message_on_the_screen.get_current_message_on_the_battle_screen()
+        )
+
+
         self.your_active_panel = YourActivePanel()
         self.your_active_panel.set_total_window_size(self.width, self.height)
 
@@ -612,11 +619,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.turn_number.get_current_field_turn_number_panel()
         )
 
-        self.message_on_the_screen.set_total_window_size(self.width, self.height)
-        self.current_field_message_on_the_battle_screen_panel = (
-            self.message_on_the_screen.get_current_message_on_the_battle_screen()
-        )
-
         self.option.set_total_window_size(self.width, self.height)
         self.option.create_option_button()
         self.option_button = self.option.get_option_button()
@@ -638,6 +640,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.multi_draw_button = multi_draw_button_instance.get_multi_draw_button()
 
         self.timer = BattleFieldTimer()
+        self.unit_timer = BattleFieldTimer()
 
         self.timer.set_total_window_size(self.width, self.height)
         self.timer.draw_current_timer_panel()
@@ -1400,6 +1403,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             self.your_deck_repository.draw_deck()
             self.your_deck_repository.update_deck(self.your_deck_repository.get_current_deck_state())
+            self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.YOUR_TURN.value)
+            self.reset_every_selected_action()
 
             return
 
@@ -7130,7 +7135,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if self.tomb_panel_selected:
                 print(
                     f"on_canvas_left_click() -> current_tomb_unit_list: {self.your_tomb_repository.get_current_tomb_state()}")
-                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.YOUR_TOMB.value)
+
                 self.your_tomb.create_tomb_panel_popup_rectangle()
                 self.tomb_panel_popup_rectangle = self.your_tomb.get_tomb_panel_popup_rectangle()
 
@@ -7139,6 +7144,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.opponent_lost_zone_panel_selected = False
                 self.muligun_reset_button_clicked = False
                 self.multi_draw_button_clicked = False
+                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.YOUR_TOMB.value)
                 return
 
             self.opponent_tomb_panel_selected = self.left_click_detector.which_one_select_is_in_opponent_tomb_area(
@@ -7149,7 +7155,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if self.opponent_tomb_panel_selected:
                 print(
                     f"on_canvas_left_click() -> current_tomb_unit_list: {self.opponent_tomb_repository.get_opponent_tomb_state()}")
-                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.OPPONENT_TOMB.value)
                 self.opponent_tomb.create_opponent_tomb_panel_popup_rectangle()
                 self.opponent_tomb_popup_rectangle_panel = self.opponent_tomb.get_opponent_tomb_panel_popup_rectangle()
 
@@ -7158,6 +7163,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.opponent_lost_zone_panel_selected = False
                 self.muligun_reset_button_clicked = False
                 self.multi_draw_button_clicked = False
+                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.OPPONENT_TOMB.value)
                 return
 
             self.your_lost_zone_panel_selected = self.left_click_detector.which_one_select_is_in_your_lost_zone_area(
@@ -7168,7 +7174,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if self.your_lost_zone_panel_selected:
                 print(
                     f"on_canvas_left_click() -> current_lost_zone_card_list: {self.your_lost_zone_repository.get_your_lost_zone_card_list()}")
-                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.YOUR_LOST_ZONE.value)
                 self.your_lost_zone.create_your_lost_zone_popup_panel()
                 self.your_lost_zone_popup_panel = self.your_lost_zone.get_your_lost_zone_popup_panel()
 
@@ -7177,6 +7182,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.opponent_lost_zone_panel_selected = False
                 self.muligun_reset_button_clicked = False
                 self.multi_draw_button_clicked = False
+                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.YOUR_LOST_ZONE.value)
+
                 return
 
             self.opponent_lost_zone_panel_selected = self.left_click_detector.which_one_select_is_in_opponent_lost_zone_area(
@@ -7187,15 +7194,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if self.opponent_lost_zone_panel_selected:
                 print(
                     f"on_canvas_left_click() -> current_lost_zone_card_list: {self.opponent_lost_zone_repository.get_opponent_lost_zone_card_list()}")
-                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.OPPONENT_LOST_ZONE.value)
                 self.opponent_lost_zone.create_opponent_lost_zone_popup_panel()
                 self.opponent_lost_zone_popup_panel = self.opponent_lost_zone.get_opponent_lost_zone_popup_panel()
+                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.OPPONENT_LOST_ZONE.value)
 
                 self.tomb_panel_selected = False
                 self.opponent_tomb_panel_selected = False
                 self.your_lost_zone_panel_selected = False
                 self.muligun_reset_button_clicked = False
                 self.multi_draw_button_clicked = False
+
+
                 return
 
             self.muligun_reset_button_clicked = self.is_point_inside_muligun_reset_button(
@@ -7438,6 +7447,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.timer_repository.set_function(self.fake_opponent_turn_end)
             self.timer.get_timer()
             self.timer.start_timer()
+            self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.OPPONENT_TURN.value)
+            self.reset_every_selected_action()
 
     def call_surrender(self):
         print("항복 요청!")
@@ -11027,6 +11038,19 @@ class FakeBattleFieldFrame(OpenGLFrame):
         step_x = (your_attacker_unit_destination_local_translation[0] - current_your_attacker_unit_local_translation[0]) / steps
         step_y = (your_attacker_unit_destination_local_translation[1] - current_your_attacker_unit_local_translation[1]) / steps
         step_y *= -1
+        #
+        # def nether_blade_second_passive_skill_timeout():
+        #     self.unit_timer.stop_unit_timer()
+        #     self.timer_repository.set_unit_timer(10)
+        #     self.timer_repository.set_unit_timeout_function(nether_blade_second_passive_skill_timeout)
+        #     self.return_to_initial_location()
+        #     self.reset_every_selected_action()
+        #
+        #
+        # self.timer_repository.set_unit_timeout_function(nether_blade_second_passive_skill_timeout)
+        # self.timer_repository.set_unit_timer(10)
+        # self.unit_timer.get_unit_timer()
+        # self.unit_timer.start_unit_timer()
 
         def update_position(step_count):
             print(f"{Fore.RED}step_count: {Fore.GREEN}{step_count}{Style.RESET_ALL}")
@@ -11085,6 +11109,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     your_field_unit_id = 19
                     self.targeting_enemy_select_using_your_field_card_id = your_field_unit_id
 
+        self.timer_repository.set_check_nether_blade_second_passive_targeting_animation(True)
         update_position(1)
 
     def start_nether_blade_second_passive_targeting_motion_animation(self):
@@ -11159,7 +11184,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # self.is_attack_motion_finished = True
                 # attack_animation_object.set_is_finished(True)
                 # attack_animation_object.set_need_post_process(True)
-
         targeting_attack(1)
 
     def finish_nether_blade_second_passive_targeting_animation(self, attack_animation_object):
@@ -11400,6 +11424,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(ActionToApplyOpponent.Dummy)
 
+        self.timer_repository.set_check_nether_blade_second_passive_targeting_animation(False)
         move_to_origin_location(1)
 
     def nether_blade_turn_start_first_passive_skill_animation(self):
@@ -11788,6 +11813,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
         step_y = (your_attacker_unit_destination_local_translation[1] - current_your_attacker_unit_local_translation[1]) / steps
         step_y *= -1
 
+        # self.timer_repository.set_unit_timer(10)
+        # self.timer_repository.set_unit_timeout_function(self.nether_blade_second_passive_skill_timeout)
+        # self.unit_timer.get_unit_timer()
+        # self.unit_timer.start_unit_timer()
+
         def update_position(step_count):
             print(f"{Fore.RED}step_count: {Fore.GREEN}{step_count}{Style.RESET_ALL}")
 
@@ -11845,6 +11875,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     your_field_unit_id = 19
                     self.targeting_enemy_select_using_your_field_card_id = your_field_unit_id
 
+        self.timer_repository.set_check_nether_blade_turn_start_second_passive_targeting_animation(True)
         update_position(1)
 
     def start_nether_blade_turn_start_second_passive_targeting_motion_animation(self):
@@ -11919,7 +11950,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # self.is_attack_motion_finished = True
                 # attack_animation_object.set_is_finished(True)
                 # attack_animation_object.set_need_post_process(True)
-
         targeting_attack(1)
 
     def finish_nether_blade_turn_start_second_passive_targeting_animation(self, attack_animation_object):
@@ -12098,6 +12128,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(ActionToApplyOpponent.Dummy)
 
+        self.timer_repository.set_check_nether_blade_turn_start_second_passive_targeting_animation(False)
         move_to_origin_location(1)
 
     def valrn_ready_to_use_shadow_ball_to_opponent_unit_animation(self):
@@ -14329,9 +14360,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
         if whose_turn is True:
             self.timer_repository.set_function(self.call_turn_end)
+            self.timer_repository.set_unit_timeout_function(self.targeting_skill_timeout)
             self.timer_repository.set_timer(60)
             self.timer.get_timer()
             self.timer.start_timer()
+            self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.YOUR_TURN.value)
+
         #     return
         #
         # def whose_turn_is_false():
@@ -14341,6 +14375,22 @@ class FakeBattleFieldFrame(OpenGLFrame):
         # self.timer_repository.set_timer(60)
         # self.timer.get_timer()
         # self.timer.start_timer()
+
+    def targeting_skill_timeout(self):
+        print("패시브 타임아웃 확인")
+        my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        if my_turn is False:
+            return
+        print("내 턴에만 되는지 확인용")
+        if self.timer_repository.get_check_nether_blade_second_passive_targeting_animation() is True:
+            self.finish_nether_blade_second_passive_targeting_animation(self.attack_animation_object)
+            self.reset_every_selected_action()
+
+        if self.timer_repository.get_check_nether_blade_turn_start_second_passive_targeting_animation() is True:
+            self.finish_nether_blade_turn_start_second_passive_targeting_animation(self.attack_animation_object)
+            self.reset_every_selected_action()
+        else:
+            self.reset_every_selected_action()
 
     def fake_opponent_turn_end(self):
         print("Opponent Turn을 종료합니다")
