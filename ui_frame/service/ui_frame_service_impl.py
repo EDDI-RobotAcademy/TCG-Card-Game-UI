@@ -100,6 +100,6 @@ class UiFrameServiceImpl(UiFrameService):
         print(f"{Fore.GREEN}UiFrameServiceImpl: register_battle_result_frame(){Style.RESET_ALL}")
         self.__uiFrameRepository.registerUiFrame("battle-result", battleResultFrame)
 
-    def RegisterBattleFieldUiFrame(self, battleFieldFrame):
+    def registerBattleFieldUiFrame(self, battleFieldFrame):
         print(f"{Fore.GREEN}UiFrameServiceImpl: registerBattleFieldUiFrame(){Style.RESET_ALL}")
         self.__uiFrameRepository.registerUiFrame("battle-field", battleFieldFrame)
