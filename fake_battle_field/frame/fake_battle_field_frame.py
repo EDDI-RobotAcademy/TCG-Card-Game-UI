@@ -381,6 +381,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.timer_panel = None
         self.timer = None
         self.timer_repository = BattleFieldTimerRepository.getInstance()
+        self.unit_timer = None
 
         self.animation_test_image_panel = None
         self.animation_test_image = AnimationTestImage()
@@ -639,6 +640,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.multi_draw_button = multi_draw_button_instance.get_multi_draw_button()
 
         self.timer = BattleFieldTimer()
+        self.unit_timer = BattleFieldTimer()
 
         self.timer.set_total_window_size(self.width, self.height)
         self.timer.draw_current_timer_panel()
@@ -11020,6 +11022,19 @@ class FakeBattleFieldFrame(OpenGLFrame):
         step_x = (your_attacker_unit_destination_local_translation[0] - current_your_attacker_unit_local_translation[0]) / steps
         step_y = (your_attacker_unit_destination_local_translation[1] - current_your_attacker_unit_local_translation[1]) / steps
         step_y *= -1
+        #
+        # def nether_blade_second_passive_skill_timeout():
+        #     self.unit_timer.stop_unit_timer()
+        #     self.timer_repository.set_unit_timer(10)
+        #     self.timer_repository.set_unit_timeout_function(nether_blade_second_passive_skill_timeout)
+        #     self.return_to_initial_location()
+        #     self.reset_every_selected_action()
+        #
+        #
+        # self.timer_repository.set_unit_timeout_function(nether_blade_second_passive_skill_timeout)
+        # self.timer_repository.set_unit_timer(10)
+        # self.unit_timer.get_unit_timer()
+        # self.unit_timer.start_unit_timer()
 
         def update_position(step_count):
             print(f"{Fore.RED}step_count: {Fore.GREEN}{step_count}{Style.RESET_ALL}")
@@ -11078,6 +11093,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     your_field_unit_id = 19
                     self.targeting_enemy_select_using_your_field_card_id = your_field_unit_id
 
+        self.timer_repository.set_check_nether_blade_second_passive_targeting_animation(True)
         update_position(1)
 
     def start_nether_blade_second_passive_targeting_motion_animation(self):
@@ -11152,7 +11168,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # self.is_attack_motion_finished = True
                 # attack_animation_object.set_is_finished(True)
                 # attack_animation_object.set_need_post_process(True)
-
         targeting_attack(1)
 
     def finish_nether_blade_second_passive_targeting_animation(self, attack_animation_object):
@@ -11393,6 +11408,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(ActionToApplyOpponent.Dummy)
 
+        self.timer_repository.set_check_nether_blade_second_passive_targeting_animation(False)
         move_to_origin_location(1)
 
     def nether_blade_turn_start_first_passive_skill_animation(self):
@@ -11781,6 +11797,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
         step_y = (your_attacker_unit_destination_local_translation[1] - current_your_attacker_unit_local_translation[1]) / steps
         step_y *= -1
 
+        # self.timer_repository.set_unit_timer(10)
+        # self.timer_repository.set_unit_timeout_function(self.nether_blade_second_passive_skill_timeout)
+        # self.unit_timer.get_unit_timer()
+        # self.unit_timer.start_unit_timer()
+
         def update_position(step_count):
             print(f"{Fore.RED}step_count: {Fore.GREEN}{step_count}{Style.RESET_ALL}")
 
@@ -11838,6 +11859,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     your_field_unit_id = 19
                     self.targeting_enemy_select_using_your_field_card_id = your_field_unit_id
 
+        self.timer_repository.set_check_nether_blade_turn_start_second_passive_targeting_animation(True)
         update_position(1)
 
     def start_nether_blade_turn_start_second_passive_targeting_motion_animation(self):
@@ -11912,7 +11934,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # self.is_attack_motion_finished = True
                 # attack_animation_object.set_is_finished(True)
                 # attack_animation_object.set_need_post_process(True)
-
         targeting_attack(1)
 
     def finish_nether_blade_turn_start_second_passive_targeting_animation(self, attack_animation_object):
@@ -12091,6 +12112,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(ActionToApplyOpponent.Dummy)
 
+        self.timer_repository.set_check_nether_blade_turn_start_second_passive_targeting_animation(False)
         move_to_origin_location(1)
 
     def valrn_ready_to_use_shadow_ball_to_opponent_unit_animation(self):
@@ -14322,6 +14344,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
         if whose_turn is True:
             self.timer_repository.set_function(self.call_turn_end)
+            self.timer_repository.set_unit_timeout_function(self.targeting_skill_timeout)
             self.timer_repository.set_timer(60)
             self.timer.get_timer()
             self.timer.start_timer()
@@ -14336,6 +14359,22 @@ class FakeBattleFieldFrame(OpenGLFrame):
         # self.timer_repository.set_timer(60)
         # self.timer.get_timer()
         # self.timer.start_timer()
+
+    def targeting_skill_timeout(self):
+        print("패시브 타임아웃 확인")
+        my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        if my_turn is False:
+            return
+        print("내 턴에만 되는지 확인용")
+        if self.timer_repository.get_check_nether_blade_second_passive_targeting_animation() is True:
+            self.finish_nether_blade_second_passive_targeting_animation(self.attack_animation_object)
+            self.reset_every_selected_action()
+
+        if self.timer_repository.get_check_nether_blade_turn_start_second_passive_targeting_animation() is True:
+            self.finish_nether_blade_turn_start_second_passive_targeting_animation(self.attack_animation_object)
+            self.reset_every_selected_action()
+        else:
+            self.reset_every_selected_action()
 
     def fake_opponent_turn_end(self):
         print("Opponent Turn을 종료합니다")
