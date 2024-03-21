@@ -273,15 +273,15 @@ class MyCardMainFrame(OpenGLFrame):
         # 982 / 1016 -> 0.80926
 
         # 1850, 1016 (academy pc)
-        # x: 108, y: 572
-        # x: 136, y: 571
-        # difference -> 0.01513
+        # x: 1393, y: 485
+        # x: 1416, y: 491
+        # difference -> 23 -> 0.01243
 
         # 다음 페이지 버튼 도형으로 만든 것.
-        next_left_x_point = self.width * 0.730
-        next_right_x_point = self.width * 0.786
-        next_top_y_point = self.height * 0.483
-        next_bottom_y_point = self.height * 0.553
+        next_left_x_point = self.width * 0.71757
+        next_right_x_point = self.width * 0.77357
+        next_top_y_point = self.height * 0.47415
+        next_bottom_y_point = self.height * 0.54612
         next_gold_button_image_data = self.__pre_drawed_image_instance.get_pre_draw_next_gold_button()
         next_page_button = NonBackgroundImage(image_data=next_gold_button_image_data,
                                               vertices=[
@@ -303,11 +303,21 @@ class MyCardMainFrame(OpenGLFrame):
         #
         # self.my_card_main_scene.add_button_list(before_page_button_rectangle)
 
+        # 0.07283 <- 버튼 위아래 간격
+        # 0.07283 / 2 -> 0.036415
+        # 실제 0.07197 / 2 -> 0.035985
+        # 실제 디자인 화면에서 책 페이지의 크기 높이값 933 -> 0.91830708661
+
+        # 46 / 1016 -> 0.04527 실제 책 페이지 시작 위치
+        # 979 / 1016 -> 0.96358 실제 책 페이지 끝 위치
+        # difference -> 0.91831
+        # 0.91831 / 2 -> 0.459155
+
         # 이전 페이지 버튼 도형으로 만든 것.
-        prev_left_x_point = self.width * 0.002
-        prev_right_x_point = self.width * 0.058
-        prev_top_y_point = self.height * 0.483
-        prev_bottom_y_point = self.height * 0.553
+        prev_left_x_point = self.width * 0.01064
+        prev_right_x_point = self.width * 0.0688
+        prev_top_y_point = self.height * 0.47415
+        prev_bottom_y_point = self.height * 0.54612
         prev_gold_button_image_data = self.__pre_drawed_image_instance.get_pre_draw_prev_gold_button()
         pre_page_button = NonBackgroundImage(image_data=prev_gold_button_image_data,
                                                vertices=[
@@ -373,6 +383,10 @@ class MyCardMainFrame(OpenGLFrame):
         # print(f"카드 번호 리스트: {all_card_number}")
         # print(f"카드 번호 길이: {len(all_card_number)}")
 
+        # x: 1329, y: 495
+        # x: 125, y: 496
+        # difference: 1204 -> 0.65081
+
         x = 165
         y = 30
 
@@ -380,7 +394,7 @@ class MyCardMainFrame(OpenGLFrame):
             try:
                 #print(f"index: {i}, card number: {number}")
                 card = PickableCard(local_translation=(x, y))
-                card.init_card_in_my_card_frame(number)
+                card.init_card_in_my_card_frame(number, self.width, self.height)
                 self.my_card_main_scene.add_card_list(card)
                 #print(f"카드 리스트: {self.my_card_main_scene.get_card_list()}")
 
