@@ -205,11 +205,12 @@ class PickableCard:
         for shape in card_shapes:
             self.pickable_card_base.set_attached_shapes(shape)
 
-    def init_card_in_my_card_frame(self, card_number):
+    def init_card_in_my_card_frame(self, card_number, total_width, total_height):
         self.set_card_number(card_number)
 
         rectangle_width = 230
-        rectangle_height = rectangle_width * 1.618
+        # 실제 카드의 비율은 1.615
+        rectangle_height = rectangle_width * 1.615
 
         print(f"rectangle_width: {rectangle_width}")
         print(f"rectangle_height: {rectangle_height}")
