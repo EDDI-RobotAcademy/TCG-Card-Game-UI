@@ -31,6 +31,12 @@ class MyCardMainFrameRenderer:
         for button in self.scene.button_list:
             self._render_shape(button)
 
+        if self.scene.next_button:
+            self.scene.next_button.draw()
+
+        if self.scene.prev_button:
+            self.scene.prev_button.draw()
+
         for my_card in self.my_card_repository.get_my_card_object_list_from_current_page():
             my_card_pickable_base = my_card.get_pickable_card_base()
             my_card_pickable_base.draw()

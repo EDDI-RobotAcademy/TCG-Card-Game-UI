@@ -82,13 +82,13 @@ class MyCardRepository:
 
             self.my_card_page_list.append(my_card_page)
 
-    def next_deck_page(self):
+    def next_my_card_page(self):
         if self.current_page == len(self.my_card_page_list) - 1:
             return
 
         self.current_page += 1
 
-    def prev_deck_page(self):
+    def prev_my_card_page(self):
         if self.current_page == 0:
             return
 

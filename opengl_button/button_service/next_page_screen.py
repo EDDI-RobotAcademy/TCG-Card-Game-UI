@@ -1,21 +1,51 @@
+from colorama import Fore, Style
+from shapely import Polygon, Point
+
 from opengl_my_card_main_frame.entity.my_card_main_scene import MyCardMainScene
+from opengl_my_card_main_frame.infra.my_card_repository import MyCardRepository
 
 
 class NextPageScreen:
+
+    my_card_repository = MyCardRepository.getInstance()
+
     def __init__(self, my_card_main_frame, page_manager):
 
         self.my_card_main_frame = my_card_main_frame
         self.page_manager = page_manager
 
-        self.my_card_main_scene = MyCardMainScene()
+        self.my_card_main_scene = my_card_main_frame.my_card_main_scene
 
         self.width_ratio = 1
         self.height_ratio = 1
+
+    def is_point_inside_object(self, object, coordinates):
+        x, y = coordinates
+        y *= -1
+
+        object_vertices = object.get_vertices()
+
+        ratio_applied_valid_object = [(x * self.width_ratio, y * self.height_ratio) for x, y in object_vertices]
+        print(f"next_page_screen -> is_point_inside_object() - ratio_applied_valid_your_field: {ratio_applied_valid_object}")
+        print(f"x: {x * self.width_ratio}, y: {y * self.height_ratio}")
+
+        poly = Polygon(ratio_applied_valid_object)
+        point = Point(x, y)
+
+        return point.within(poly)
 
     def mouse_click_event(self, event):
         try:
             x, y = event.x, event.y
             y = self.my_card_main_frame.winfo_reqheight() - y
+
+            next_button = self.my_card_main_scene.get_next_button()
+            if self.is_point_inside_object(next_button, (x, y)):
+                print(f"next_page_screen -> mouse_click_event() clicked next_button")
+                print(f"{Fore.RED}current page number: {self.my_card_repository.get_current_my_card_page()}{Style.RESET_ALL}")
+
+                self.my_card_repository.next_my_card_page()
+
 
             # deck_button_rectangle_vertices = [(0.85 * self.my_card_main_frame.width - self.my_card_main_frame.width * 0.25,
             #                                    0.85 * self.my_card_main_frame.height + 90),
@@ -32,23 +62,23 @@ class NextPageScreen:
             #         self.page_manager.go_to_next_page()
             #         self.handle_page_transition()
 
-            next_left_x_point = self.my_card_main_frame.width * 0.730
-            next_right_x_point = self.my_card_main_frame.width * 0.786
-            next_top_y_point = self.my_card_main_frame.height * 0.483
-            next_bottom_y_point = self.my_card_main_frame.height * 0.553
-
-            deck_button_rectangle_vertices = [
-                (next_left_x_point, next_top_y_point),
-                (next_right_x_point, next_top_y_point),
-                (next_right_x_point, next_bottom_y_point),
-                (next_left_x_point, next_bottom_y_point)
-            ]
-
-            if self.check_collision(x, y, deck_button_rectangle_vertices):
-                print("첫 번째 페이지 입니다.")
-                if event:
-                    self.page_manager.go_to_next_page()
-                    self.handle_page_transition()
+            # next_left_x_point = self.my_card_main_frame.width * 0.730
+            # next_right_x_point = self.my_card_main_frame.width * 0.786
+            # next_top_y_point = self.my_card_main_frame.height * 0.483
+            # next_bottom_y_point = self.my_card_main_frame.height * 0.553
+            #
+            # deck_button_rectangle_vertices = [
+            #     (next_left_x_point, next_top_y_point),
+            #     (next_right_x_point, next_top_y_point),
+            #     (next_right_x_point, next_bottom_y_point),
+            #     (next_left_x_point, next_bottom_y_point)
+            # ]
+            #
+            # if self.check_collision(x, y, deck_button_rectangle_vertices):
+            #     print("첫 번째 페이지 입니다.")
+            #     if event:
+            #         self.page_manager.go_to_next_page()
+                    # self.handle_page_transition()
 
 
             # if self.is_point_inside_next_button((x, y)):

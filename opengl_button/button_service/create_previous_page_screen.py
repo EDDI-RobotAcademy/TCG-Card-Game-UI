@@ -1,12 +1,19 @@
+from colorama import Fore, Style
+from shapely import Polygon, Point
+
 from opengl_my_card_main_frame.entity.my_card_main_scene import MyCardMainScene
+from opengl_my_card_main_frame.infra.my_card_repository import MyCardRepository
 
 
 class CreatePreviousPageScreen:
+
+    my_card_repository = MyCardRepository.getInstance()
+
     def __init__(self, my_card_main_frame, page_manager):
 
         self.my_card_main_frame = my_card_main_frame
         self.page_manager = page_manager
-        self.my_card_main_scene = MyCardMainScene()
+        self.my_card_main_scene = my_card_main_frame.my_card_main_scene
 
         self.width_ratio = 1
         self.height_ratio = 1
@@ -16,41 +23,30 @@ class CreatePreviousPageScreen:
             x, y = event.x, event.y
             y = self.my_card_main_frame.winfo_reqheight() - y
 
+            prev_button = self.my_card_main_scene.get_prev_button()
+            if self.is_point_inside_object(prev_button, (x, y)):
+                print(f"prev_button_screen -> mouse_click_event() clicked next_button")
+                print(f"{Fore.RED}current page number: {self.my_card_repository.get_current_my_card_page()}{Style.RESET_ALL}")
 
-            # before_page_button_rectangle_vertices = [(50, 0.85 * self.my_card_main_frame.height + 90),
-            #                                          (0.15 * self.my_card_main_frame.width, 0.85 * self.my_card_main_frame.height + 90),
-            #                                          (0.15 * self.my_card_main_frame.width, self.my_card_main_frame.height - 100 + 90),
-            #                                          (50, self.my_card_main_frame.height - 100 + 90)]
-            #
-            # if self.check_collision(x, y, before_page_button_rectangle_vertices):
-            #     if event:
-            #         self.page_manager.go_to_previous_page()
-            #         self.handle_page_transition()
-
-            prev_left_x_point = self.my_card_main_frame.width * 0.002
-            prev_right_x_point = self.my_card_main_frame.width * 0.058
-            prev_top_y_point = self.my_card_main_frame.height * 0.483
-            prev_bottom_y_point = self.my_card_main_frame.height * 0.553
-
-            before_page_button_rectangle_vertices = [
-                (prev_left_x_point, prev_top_y_point),
-                (prev_right_x_point, prev_top_y_point),
-                (prev_right_x_point, prev_bottom_y_point),
-                (prev_left_x_point, prev_bottom_y_point)
-            ]
-
-            if self.check_collision(x, y, before_page_button_rectangle_vertices):
-                if event:
-                    self.page_manager.go_to_previous_page()
-                    self.handle_page_transition()
-
-            prev_button_clicked = self.is_point_inside_prev_button((x, y))
-            if prev_button_clicked:
-                self.page_manager.go_to_previous_page()
-                self.handle_page_transition()
+                self.my_card_repository.prev_my_card_page()
 
         except Exception as e:
             print(f"previous page button Error : {e}")
+
+    def is_point_inside_object(self, object, coordinates):
+        x, y = coordinates
+        y *= -1
+
+        object_vertices = object.get_vertices()
+
+        ratio_applied_valid_object = [(x * self.width_ratio, y * self.height_ratio) for x, y in object_vertices]
+        print(f"prev_page_screen -> is_point_inside_object() - ratio_applied_valid_your_field: {ratio_applied_valid_object}")
+        print(f"x: {x * self.width_ratio}, y: {y * self.height_ratio}")
+
+        poly = Polygon(ratio_applied_valid_object)
+        point = Point(x, y)
+
+        return point.within(poly)
 
     def handle_page_transition(self):
         current_page = self.page_manager.get_current_page()

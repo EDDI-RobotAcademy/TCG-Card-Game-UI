@@ -27,7 +27,7 @@ from fake_battle_field.service.fake_battle_field_frame_service_impl import FakeB
 from lobby_frame.service.lobby_menu_frame_service_impl import LobbyMenuFrameServiceImpl
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
 from matching_window.service.matching_window_service_impl import MatchingWindowServiceImpl
-from opengl_battle_field.frame.battle_field_frame import BattleFieldFrame
+from opengl_battle_field.frame.battle_field_frame import legacyBattleFieldFrame
 from opengl_my_card_main_frame.service.my_card_main_frame_service_impl import MyCardMainFrameServiceImpl
 from opengl_buy_random_card_frame.service.buy_random_card_frame_service_impl import BuyRandomCardFrameServiceImpl
 from opengl_my_deck_register_frame.service.my_deck_register_frame_service_impl import MyDeckRegisterFrameServiceImpl
@@ -70,7 +70,7 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__buyRandomCardFrameService = BuyRandomCardFrameServiceImpl.getInstance()
             cls.__instance.__battleFieldFunctionService = BattleFieldFunctionServiceImpl.getInstance()
             cls.__instance.__myDeckRegisterFrameService = MyDeckRegisterFrameServiceImpl.getInstance()
-            cls.__instance.__battleFieldFrame = BattleFieldFrame
+            cls.__instance.__legacyBattleFieldFrame = legacyBattleFieldFrame
             cls.__instance.__sessionService = SessionServiceImpl.getInstance()
             cls.__instance.__matchingWindowService = MatchingWindowServiceImpl.getInstance()
             cls.__instance.__battleFieldRepository = BattleFieldRepository.getInstance()
@@ -137,8 +137,8 @@ class UiFrameControllerImpl(UiFrameController):
         # myDeckRegisterFrame = self.__myDeckRegisterFrameService.createMyDeckRegisterUiFrame(rootWindow, self.switchFrameWithMenuName)
         # self.__uiFrameService.registerMyDeckRegisterUiFrame(myDeckRegisterFrame)
 
-        battleFieldFrame = self.__battleFieldFrame()
-        self.__uiFrameService.registerBattleFieldUiFrame(battleFieldFrame)
+        legacyBattleFieldFrame = self.__legacyBattleFieldFrame()
+        self.__uiFrameService.legacyRegisterBattleFieldUiFrame(legacyBattleFieldFrame)
 
         battleFieldMuligunFrame = self.__battleFieldMuligunFrameServiece.createBattleFieldMuligunFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerBattleFieldMuligunUiFrame(battleFieldMuligunFrame)
