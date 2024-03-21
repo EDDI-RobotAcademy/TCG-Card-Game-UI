@@ -58,6 +58,6 @@ class UiFrameService(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def RegisterBattleFieldUiFrame(self, battleFieldFrame):
+    def registerBattleFieldUiFrame(self, battleFieldFrame):
         pass
 
