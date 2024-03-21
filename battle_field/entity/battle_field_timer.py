@@ -21,7 +21,6 @@ class BattleFieldTimer(OpenGLFrame):
 
         self.function = self.__battle_field_timer_repository.get_function()
         self.timer = self.__battle_field_timer_repository.get_timer()
-        self.unit_timer = self.__battle_field_timer_repository.get_unit_timer()
         self.unit_timeout_function = self.__battle_field_timer_repository.get_unit_timeout_function()
 
     def set_total_window_size(self, width, height):
@@ -80,8 +79,9 @@ class BattleFieldTimer(OpenGLFrame):
             self.timer -= 1
             self.timer_id = self.master.after(1000, self.start_timer)
         if self.timer == -1:
-            self.function()
             self.unit_timeout_function()
+            self.function()
+
 
     def stop_timer(self):
         if self.timer_id is not None:
@@ -91,20 +91,4 @@ class BattleFieldTimer(OpenGLFrame):
     def deleteTimer(self):
         self.destroy()
 
-    def get_unit_timer(self):
-        self.unit_timer = self.__battle_field_timer_repository.get_unit_timer()
 
-
-    def start_unit_timer(self):
-        print("유닛 타이머 시작")
-        if self.unit_timer >= -1:
-            self.unit_timer -= 1
-            self.unit_timer_id = self.master.after(1000, self.start_unit_timer)
-        if self.unit_timer == -1:
-            self.unit_timeout_function()
-
-    def stop_unit_timer(self):
-        print("유닛 타이머 초기화")
-        if self.unit_timer_id is not None:
-            self.master.after_cancel(self.unit_timer_id)
-            self.unit_timer_id = None

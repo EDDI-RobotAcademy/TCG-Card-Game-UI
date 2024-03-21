@@ -11093,6 +11093,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     your_field_unit_id = 19
                     self.targeting_enemy_select_using_your_field_card_id = your_field_unit_id
 
+        self.timer_repository.set_check_nether_blade_second_passive_targeting_animation(True)
         update_position(1)
 
     def start_nether_blade_second_passive_targeting_motion_animation(self):
@@ -11407,6 +11408,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(ActionToApplyOpponent.Dummy)
 
+        self.timer_repository.set_check_nether_blade_second_passive_targeting_animation(False)
         move_to_origin_location(1)
 
     def nether_blade_turn_start_first_passive_skill_animation(self):
@@ -11857,6 +11859,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     your_field_unit_id = 19
                     self.targeting_enemy_select_using_your_field_card_id = your_field_unit_id
 
+        self.timer_repository.set_check_nether_blade_turn_start_second_passive_targeting_animation(True)
         update_position(1)
 
     def start_nether_blade_turn_start_second_passive_targeting_motion_animation(self):
@@ -11931,7 +11934,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # self.is_attack_motion_finished = True
                 # attack_animation_object.set_is_finished(True)
                 # attack_animation_object.set_need_post_process(True)
-        self.unit_timer.stop_unit_timer()
         targeting_attack(1)
 
     def finish_nether_blade_turn_start_second_passive_targeting_animation(self, attack_animation_object):
@@ -12110,6 +12112,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(ActionToApplyOpponent.Dummy)
 
+        self.timer_repository.set_check_nether_blade_turn_start_second_passive_targeting_animation(False)
         move_to_origin_location(1)
 
     def valrn_ready_to_use_shadow_ball_to_opponent_unit_animation(self):
@@ -14359,21 +14362,19 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
     def targeting_skill_timeout(self):
         print("패시브 타임아웃 확인")
+        my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        if my_turn is False:
+            return
+        print("내 턴에만 되는지 확인용")
+        if self.timer_repository.get_check_nether_blade_second_passive_targeting_animation() is True:
+            self.finish_nether_blade_second_passive_targeting_animation(self.attack_animation_object)
+            self.reset_every_selected_action()
 
-        # self.unit_timer.stop_unit_timer()
-        # self.timer_repository.set_unit_timer(10)
-        # self.timer_repository.set_unit_timeout_function(nether_blade_second_passive_skill_timeout)
-        #이건 패시브 발동 시에 대한 if문이라 애니메이션 실행 중에는 작동하지 않음
-        # if self.opponent_fixed_unit_card_inside_handler.get_action_to_apply_opponent() is ActionToApplyOpponent.NETHER_BLADE_SECOND_TARGETING_PASSIVE_SKILL:
-        #     self.finish_nether_blade_second_passive_targeting_animation(self.attack_animation_object)
-        #     self.reset_every_selected_action()
-        #
-        # if self.opponent_fixed_unit_card_inside_handler.get_action_to_apply_opponent() is ActionToApplyOpponent.NETHER_BLADE_TURN_START_SECOND_TARGETING_PASSIVE_SKILL:
-        #     self.finish_nether_blade_turn_start_second_passive_targeting_animation(self.attack_animation_object)
-        #     self.reset_every_selected_action()
-        #self.finish_nether_blade_second_passive_targeting_animation(self.attack_animation_object)
-        #self.finish_nether_blade_turn_start_second_passive_targeting_animation(self.attack_animation_object)
-        self.reset_every_selected_action()
+        if self.timer_repository.get_check_nether_blade_turn_start_second_passive_targeting_animation() is True:
+            self.finish_nether_blade_turn_start_second_passive_targeting_animation(self.attack_animation_object)
+            self.reset_every_selected_action()
+        else:
+            self.reset_every_selected_action()
 
     def fake_opponent_turn_end(self):
         print("Opponent Turn을 종료합니다")
