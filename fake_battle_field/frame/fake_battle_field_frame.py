@@ -1748,6 +1748,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 if opponent_hand == 33:
                     opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
                     for opponent_unit_index, opponent_unit in enumerate(opponent_field_unit_list):
+                        if opponent_unit == None:
+                            continue
                         opponent_field_unit_id = opponent_unit.get_card_number()
                         if opponent_field_unit_id == 31 or opponent_field_unit_id == 32:
 
