@@ -79,7 +79,7 @@ class UiFrameServiceImpl(UiFrameService):
 
     def legacyRegisterBattleFieldUiFrame(self, legacyBattleFieldFrame):
         print(f"{Fore.GREEN}UiFrameServiceImpl: legacyRegisterBattleFieldUiFrame(){Style.RESET_ALL}")
-        self.__uiFrameRepository.registerUiFrame("battle-field", legacyBattleFieldFrame)
+        self.__uiFrameRepository.registerUiFrame("legacy-battle-field", legacyBattleFieldFrame)
 
     def registerDecisionFirstStrikeFrame(self, decisionFirstStrikeFrame):
         self.__uiFrameRepository.registerUiFrame("decision-first", decisionFirstStrikeFrame)
@@ -99,3 +99,7 @@ class UiFrameServiceImpl(UiFrameService):
     def register_battle_result_frame(self, battleResultFrame):
         print(f"{Fore.GREEN}UiFrameServiceImpl: register_battle_result_frame(){Style.RESET_ALL}")
         self.__uiFrameRepository.registerUiFrame("battle-result", battleResultFrame)
+
+    def RegisterBattleFieldUiFrame(self, battleFieldFrame):
+        print(f"{Fore.GREEN}UiFrameServiceImpl: registerBattleFieldUiFrame(){Style.RESET_ALL}")
+        self.__uiFrameRepository.registerUiFrame("battle-field", battleFieldFrame)

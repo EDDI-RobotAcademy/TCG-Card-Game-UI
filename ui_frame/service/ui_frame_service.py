@@ -57,3 +57,7 @@ class UiFrameService(abc.ABC):
     def injectMusicPlayIpcChannel(self, musicPlayIpcChannel):
         pass
 
+    @abc.abstractmethod
+    def RegisterBattleFieldUiFrame(self, battleFieldFrame):
+        pass
+
