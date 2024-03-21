@@ -102,7 +102,7 @@ class MyCardMainFrame(OpenGLFrame):
         self.is_reshape_not_complete = False
 
         self.my_card_repository.set_total_window_size(self.width, self.height)
-        self.my_card_repository.build_my_card_page()
+        # self.my_card_repository.build_my_card_page()
 
         self.make_card_main_frame()
         self.render = MyCardMainFrameRenderer(self.my_card_main_scene, self)
@@ -219,7 +219,7 @@ class MyCardMainFrame(OpenGLFrame):
             (left_x_point, bottom_y_point),
         ]
 
-        create_deck_button_image = self.__pre_drawed_image_instance.get_pre_draw_create_deck_button()
+        # create_deck_button_image = self.__pre_drawed_image_instance.get_pre_draw_create_deck_button()
         create_deck_button = Rectangle(
             (1.0, 1.0, 1.0, 0.0),
             create_deck_button_vertices,
