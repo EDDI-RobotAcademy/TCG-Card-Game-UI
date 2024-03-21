@@ -79,6 +79,10 @@ class YourFieldEnergyRepository:
 
     def increase_to_use_field_energy_count(self):
         self.__to_use_field_energy_count += 1
+
+        if self.__to_use_field_energy_count > 10:
+            self.__to_use_field_energy_count = 10
+
         if self.__to_use_field_energy_count > self.field_energy_state.get_your_field_energy_count():
             self.__to_use_field_energy_count = self.field_energy_state.get_your_field_energy_count()
 

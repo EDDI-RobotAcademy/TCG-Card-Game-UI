@@ -438,7 +438,7 @@ class PreDrawedImage:
         self.pre_draw_sword_attack()
         self.pre_draw_contract_of_doom()
         # self.pre_draw_sea_of_wraith()
-        self.pre_draw_legacy_sea_of_wraith()
+        # self.pre_draw_legacy_sea_of_wraith()
         self.pre_draw_corpse_explosion()
         # self.pre_draw_nether_blade_area_skill()
         self.pre_draw_nether_blade_targeting_skill()
