@@ -531,6 +531,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.opponent_lost_zone.create_opponent_lost_zone_panel()
         self.opponent_lost_zone_panel = self.opponent_lost_zone.get_opponent_lost_zone_panel()
 
+        self.message_on_the_screen.set_total_window_size(self.width, self.height)
+        self.current_field_message_on_the_battle_screen_panel = (
+            self.message_on_the_screen.get_current_message_on_the_battle_screen()
+        )
+
+
         self.your_active_panel = YourActivePanel()
         self.your_active_panel.set_total_window_size(self.width, self.height)
 
@@ -610,11 +616,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.turn_number.create_current_field_turn_number_panel()
         self.current_field_turn_number_panel = (
             self.turn_number.get_current_field_turn_number_panel()
-        )
-
-        self.message_on_the_screen.set_total_window_size(self.width, self.height)
-        self.current_field_message_on_the_battle_screen_panel = (
-            self.message_on_the_screen.get_current_message_on_the_battle_screen()
         )
 
         self.option.set_total_window_size(self.width, self.height)
@@ -1400,6 +1401,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             self.your_deck_repository.draw_deck()
             self.your_deck_repository.update_deck(self.your_deck_repository.get_current_deck_state())
+            self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.YOUR_TURN.value)
+            self.reset_every_selected_action()
 
             return
 
@@ -6961,7 +6964,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if self.tomb_panel_selected:
                 print(
                     f"on_canvas_left_click() -> current_tomb_unit_list: {self.your_tomb_repository.get_current_tomb_state()}")
-                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.YOUR_TOMB.value)
+
                 self.your_tomb.create_tomb_panel_popup_rectangle()
                 self.tomb_panel_popup_rectangle = self.your_tomb.get_tomb_panel_popup_rectangle()
 
@@ -6970,6 +6973,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.opponent_lost_zone_panel_selected = False
                 self.muligun_reset_button_clicked = False
                 self.multi_draw_button_clicked = False
+                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.YOUR_TOMB.value)
                 return
 
             self.opponent_tomb_panel_selected = self.left_click_detector.which_one_select_is_in_opponent_tomb_area(
@@ -6980,7 +6984,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if self.opponent_tomb_panel_selected:
                 print(
                     f"on_canvas_left_click() -> current_tomb_unit_list: {self.opponent_tomb_repository.get_opponent_tomb_state()}")
-                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.OPPONENT_TOMB.value)
                 self.opponent_tomb.create_opponent_tomb_panel_popup_rectangle()
                 self.opponent_tomb_popup_rectangle_panel = self.opponent_tomb.get_opponent_tomb_panel_popup_rectangle()
 
@@ -6989,6 +6992,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.opponent_lost_zone_panel_selected = False
                 self.muligun_reset_button_clicked = False
                 self.multi_draw_button_clicked = False
+                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.OPPONENT_TOMB.value)
                 return
 
             self.your_lost_zone_panel_selected = self.left_click_detector.which_one_select_is_in_your_lost_zone_area(
@@ -6999,7 +7003,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if self.your_lost_zone_panel_selected:
                 print(
                     f"on_canvas_left_click() -> current_lost_zone_card_list: {self.your_lost_zone_repository.get_your_lost_zone_card_list()}")
-                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.YOUR_LOST_ZONE.value)
                 self.your_lost_zone.create_your_lost_zone_popup_panel()
                 self.your_lost_zone_popup_panel = self.your_lost_zone.get_your_lost_zone_popup_panel()
 
@@ -7008,6 +7011,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.opponent_lost_zone_panel_selected = False
                 self.muligun_reset_button_clicked = False
                 self.multi_draw_button_clicked = False
+                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.YOUR_LOST_ZONE.value)
+
                 return
 
             self.opponent_lost_zone_panel_selected = self.left_click_detector.which_one_select_is_in_opponent_lost_zone_area(
@@ -7018,15 +7023,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if self.opponent_lost_zone_panel_selected:
                 print(
                     f"on_canvas_left_click() -> current_lost_zone_card_list: {self.opponent_lost_zone_repository.get_opponent_lost_zone_card_list()}")
-                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.OPPONENT_LOST_ZONE.value)
                 self.opponent_lost_zone.create_opponent_lost_zone_popup_panel()
                 self.opponent_lost_zone_popup_panel = self.opponent_lost_zone.get_opponent_lost_zone_popup_panel()
+                self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.OPPONENT_LOST_ZONE.value)
 
                 self.tomb_panel_selected = False
                 self.opponent_tomb_panel_selected = False
                 self.your_lost_zone_panel_selected = False
                 self.muligun_reset_button_clicked = False
                 self.multi_draw_button_clicked = False
+
+
                 return
 
             self.muligun_reset_button_clicked = self.is_point_inside_muligun_reset_button(
@@ -7269,6 +7276,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.timer_repository.set_function(self.fake_opponent_turn_end)
             self.timer.get_timer()
             self.timer.start_timer()
+            self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.OPPONENT_TURN.value)
+            self.reset_every_selected_action()
 
     def call_surrender(self):
         print("항복 요청!")
@@ -14153,6 +14162,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.timer_repository.set_timer(60)
             self.timer.get_timer()
             self.timer.start_timer()
+            self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.YOUR_TURN.value)
+
         #     return
         #
         # def whose_turn_is_false():
