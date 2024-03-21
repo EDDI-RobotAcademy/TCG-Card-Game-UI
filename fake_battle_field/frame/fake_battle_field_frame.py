@@ -2583,7 +2583,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         if self.attack_animation_object.get_animation_action() is AnimationAction.DEATH_SCYTHE:
             print(f"{Fore.RED}죽음의 낫 animation 재생{Style.RESET_ALL}")
 
-            self.master.after(0, self.death_scythe_animation())
+            self.master.after(0, self.death_scythe_animation)
 
             # self.master.after(2000, self.your_contract_of_doom_attack_animation)
             self.attack_animation_object.set_animation_action(AnimationAction.DUMMY)
@@ -2591,7 +2591,15 @@ class FakeBattleFieldFrame(OpenGLFrame):
         if self.attack_animation_object.get_animation_action() is AnimationAction.ENERGY_BURN:
             print(f"{Fore.RED}에너지번 animation 재생{Style.RESET_ALL}")
 
-            self.master.after(0, self.energy_burn_animation())
+            self.master.after(0, self.energy_burn_animation)
+
+            # self.master.after(2000, self.your_contract_of_doom_attack_animation)
+            self.attack_animation_object.set_animation_action(AnimationAction.DUMMY)
+
+        if self.attack_animation_object.get_animation_action() is AnimationAction.CORPSE_EXPLOSION:
+            print(f"{Fore.RED}시폭 animation 재생{Style.RESET_ALL}")
+
+            self.master.after(2000, self.corpse_explosion_animation)
 
             # self.master.after(2000, self.your_contract_of_doom_attack_animation)
             self.attack_animation_object.set_animation_action(AnimationAction.DUMMY)
@@ -7041,9 +7049,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 #     remove_your_unit_by_index)
 
                             def vibration_corpse_explosion():
-                                self.corpse_explosion_vibration_finish_count = len(self.opponent_you_selected_object_list)
+                                vibration_object_list = self.opponent_you_selected_object_list
+                                sacrificed_unit = self.your_field_unit_repository.find_field_unit_by_index(self.targeting_enemy_select_using_your_field_card_index)
+                                vibration_object_list.append(sacrificed_unit)
+                                self.corpse_explosion_vibration_finish_count = len(vibration_object_list)
+                                # self.corpse_explosion_vibration_finish_count = len(self.opponent_you_selected_object_list)
                                 self.corpse_explosion_vibration_current_count = 0
-                                for selected_object in self.opponent_you_selected_object_list:
+                                for selected_object in vibration_object_list:
 
                                     steps = 30
 
@@ -14904,3 +14916,260 @@ class FakeBattleFieldFrame(OpenGLFrame):
         
         del self.timer
         # self.battle_field_repository.clear_every_resource()
+
+    def corpse_explosion_animation(self):
+        data = self.attack_animation_object.get_notify_data()
+        your_field_unit_health_point_map = data['player_field_unit_health_point_map']['You']['field_unit_health_point_map']
+        your_dead_field_unit_index_list = data['player_field_unit_death_map']['You']['dead_field_unit_index_list']
+        opponent_sacrificed_field_unit_index_list = data['player_field_unit_death_map']['Opponent']['dead_field_unit_index_list']
+
+        # 사용된 카드 묘지로 보냄
+
+
+        def calculate_your_field_unit_hp(param):
+            print('calculate your field unit hp!!')
+            # 체력 정보 Update
+            your_field_unit_health_point_map = param[0]
+            opponent_sacrificed_field_unit_index_list = param[1]
+            for unit_index, remaining_health_point in your_field_unit_health_point_map.items():
+                your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(int(unit_index))
+                your_fixed_card_base = your_field_unit.get_fixed_card_base()
+                your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+
+                if remaining_health_point <= 0:
+                    continue
+
+                for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+                    if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                        if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                            def set_hp(param):
+                                _your_fixed_card_attached_shape = param[0]
+                                _remaining_health_point = param[1]
+                                _your_fixed_card_attached_shape.set_number(int(_remaining_health_point))
+                                _your_fixed_card_attached_shape.set_image_data(
+                                    self.pre_drawed_image_instance.get_pre_draw_unit_hp(int(_remaining_health_point)))
+
+
+
+                            self.create_effect_animation_to_your_unit_and_play_animation_and_call_function_with_param(
+                                'dark_blast', int(unit_index), set_hp, (your_fixed_card_attached_shape, remaining_health_point)
+                            )
+
+
+
+                            # effect_animation = EffectAnimation()
+                            # effect_animation.set_animation_name('dark_blast')
+                            # effect_animation.change_local_translation(
+                            #     self.your_field_unit_repository.find_field_unit_by_index(int(unit_index))
+                            #     .get_fixed_card_base().get_local_translation())
+                            # effect_animation.draw_animation_panel()
+                            #
+                            # self.__notify_reader_repository.save_notify_effect_animation_request(
+                            #     EffectAnimationRequest(
+                            #         effect_animation=effect_animation,
+                            #         target_player='You',
+                            #         target_index=int(unit_index),
+                            #         target_type=TargetType.UNIT,
+                            #         call_function=set_hp,
+                            #         function_need_param=True,
+                            #         param=(your_fixed_card_attached_shape, remaining_health_point)
+                            #
+                            #     )
+                            # )
+
+            # 죽은 유닛들 묘지에 배치 및 Replacing
+            if your_dead_field_unit_index_list:
+                for dead_unit_index in your_dead_field_unit_index_list:
+                    unit_index = dead_unit_index
+
+                    def remove_your_unit(unit_index):
+                        # unit_index = dead_unit_index
+                        print('index??? : ', unit_index)
+                        field_unit_id = self.your_field_unit_repository.get_card_id_by_index(unit_index)
+                        self.your_tomb_repository.create_tomb_card(field_unit_id)
+                        self.your_field_unit_repository.remove_card_by_index(unit_index)
+                        self.your_field_unit_repository.remove_harmful_status_by_index(unit_index)
+                        self.your_field_unit_repository.replace_field_card_position()
+
+                    self.create_effect_animation_to_your_unit_and_play_animation_and_call_function_with_param(
+                        'death', dead_unit_index, remove_your_unit, dead_unit_index)
+
+                    # effect_animation = EffectAnimation()
+                    # effect_animation.set_unit_index(dead_unit_index)
+                    # effect_animation.set_animation_name('death')
+                    # effect_animation.change_local_translation(
+                    #     self.your_field_unit_repository.find_field_unit_by_index(int(dead_unit_index))
+                    #     .get_fixed_card_base().get_local_translation())
+                    # effect_animation.draw_animation_panel()
+                    #
+                    # self.__notify_reader_repository.save_notify_effect_animation_request(
+                    #     EffectAnimationRequest(
+                    #         effect_animation=effect_animation,
+                    #         target_player='You',
+                    #         target_index=dead_unit_index,
+                    #         target_type=TargetType.UNIT,
+                    #         call_function=remove_your_unit,
+                    #         function_need_param=True,
+                    #         param=dead_unit_index
+                    #     )
+                    # )
+
+            if opponent_sacrificed_field_unit_index_list:
+                for dead_unit_index in opponent_sacrificed_field_unit_index_list:
+                    def remove_field_unit(unit_index):
+                        field_unit_id = self.opponent_field_unit_repository.get_opponent_card_id_by_index(unit_index)
+                        self.opponent_tomb_repository.create_opponent_tomb_card(field_unit_id)
+                        self.opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
+                        self.opponent_field_unit_repository.remove_harmful_status_by_index(unit_index)
+                        self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                    self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function_with_param(
+                        'death', dead_unit_index, remove_field_unit, dead_unit_index)
+
+                    # effect_animation = EffectAnimation()
+                    # effect_animation.set_animation_name('death')
+                    # effect_animation.change_local_translation(
+                    #     self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(int(dead_unit_index))
+                    #     .get_fixed_card_base().get_local_translation())
+                    # effect_animation.draw_animation_panel()
+                    #
+                    # self.__notify_reader_repository.save_notify_effect_animation_request(
+                    #     EffectAnimationRequest(
+                    #         effect_animation=effect_animation,
+                    #         target_player='Opponent',
+                    #         target_index=dead_unit_index,
+                    #         target_type=TargetType.UNIT,
+                    #         call_function=remove_field_unit,
+                    #         function_need_param=True,
+                    #         param=int(dead_unit_index)
+                    #     )
+                    # )
+
+        def vibration_corpse_explosion(param):
+            your_field_unit_health_point_map = param[0]
+            opponent_sacrificed_field_unit_index_list = param[1]
+            your_unit_index_list = list(your_field_unit_health_point_map.keys())
+            opponent_unit_index_list = opponent_sacrificed_field_unit_index_list
+            self.corpse_explosion_vibration_finish_count = len(your_unit_index_list) + len(opponent_unit_index_list)
+            self.corpse_explosion_vibration_current_count = 0
+
+            for unit_index in your_unit_index_list:
+                steps = 30
+
+                field_unit_object = self.your_field_unit_repository.find_field_unit_by_index(int(unit_index))
+
+                def vibration(field_unit_object, step_count):
+                    fixed_card_base = field_unit_object.get_fixed_card_base()
+                    tool_card = field_unit_object.get_tool_card()
+                    attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                    if step_count % 2 == 1:
+                        vibration_factor = 10
+                        random_translation = (random.uniform(-vibration_factor, vibration_factor),
+                                              random.uniform(-vibration_factor, vibration_factor))
+
+                        new_fixed_card_base_vertices = [
+                            (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                            fixed_card_base.get_vertices()
+                        ]
+                        fixed_card_base.update_vertices(new_fixed_card_base_vertices)
+
+                        if tool_card is not None:
+                            new_tool_card_vertices = [
+                                (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                                tool_card.get_vertices()
+                            ]
+                            tool_card.update_vertices(new_tool_card_vertices)
+
+                        for attached_shape in attached_shape_list:
+                            new_attached_shape_vertices = [
+                                (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                                attached_shape.get_vertices()
+                            ]
+                            attached_shape.update_vertices(new_attached_shape_vertices)
+
+                    else:
+                        fixed_card_base.update_vertices(fixed_card_base.get_initial_vertices())
+                        if tool_card is not None:
+                            tool_card.update_vertices(tool_card.get_initial_vertices())
+                        for attached_shape in attached_shape_list:
+                            attached_shape.update_vertices(attached_shape.get_initial_vertices())
+
+                    if step_count < steps:
+                        self.master.after(20, vibration, field_unit_object, step_count + 1)
+                    else:
+                        self.corpse_explosion_vibration_current_count += 1
+                        if self.corpse_explosion_vibration_finish_count == self.corpse_explosion_vibration_current_count:
+                            calculate_your_field_unit_hp(param)
+
+                vibration(field_unit_object, 1)
+
+            for unit_index in opponent_unit_index_list:
+                steps = 30
+
+                field_unit_object = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(unit_index)
+
+
+                def vibration(field_unit_object, step_count):
+
+                    fixed_card_base = field_unit_object.get_fixed_card_base()
+                    tool_card = field_unit_object.get_tool_card()
+                    attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                    if step_count % 2 == 1:
+                        vibration_factor = 10
+                        random_translation = (random.uniform(-vibration_factor, vibration_factor),
+                                              random.uniform(-vibration_factor, vibration_factor))
+
+                        new_fixed_card_base_vertices = [
+                            (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                            fixed_card_base.get_vertices()
+                        ]
+                        fixed_card_base.update_vertices(new_fixed_card_base_vertices)
+
+                        if tool_card is not None:
+                            new_tool_card_vertices = [
+                                (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                                tool_card.get_vertices()
+                            ]
+                            tool_card.update_vertices(new_tool_card_vertices)
+
+                        for attached_shape in attached_shape_list:
+                            new_attached_shape_vertices = [
+                                (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
+                                attached_shape.get_vertices()
+                            ]
+                            attached_shape.update_vertices(new_attached_shape_vertices)
+
+                    else:
+                        fixed_card_base.update_vertices(fixed_card_base.get_initial_vertices())
+                        if tool_card is not None:
+                            tool_card.update_vertices(tool_card.get_initial_vertices())
+                        for attached_shape in attached_shape_list:
+                            attached_shape.update_vertices(attached_shape.get_initial_vertices())
+
+                    if step_count < steps:
+                        self.master.after(20, vibration, field_unit_object, step_count + 1)
+                    else:
+                        self.corpse_explosion_vibration_current_count += 1
+                        if self.corpse_explosion_vibration_finish_count == self.corpse_explosion_vibration_current_count:
+                            calculate_your_field_unit_hp(param)
+
+                vibration(field_unit_object, 1)
+
+        self.create_effect_animation_to_your_field_and_play_animation_and_call_function_with_param(
+            'corpse_explosion', vibration_corpse_explosion, (your_field_unit_health_point_map ,opponent_sacrificed_field_unit_index_list)
+        )
+
+        # effect_animation = EffectAnimation()
+        # effect_animation.set_animation_name('corpse_explosion')
+        #
+        # self.__notify_reader_repository.save_notify_effect_animation_request(
+        #     EffectAnimationRequest(
+        #         effect_animation=effect_animation,
+        #         target_player='You',
+        #         target_index=1000,
+        #         target_type=TargetType.AREA,
+        #         call_function=calculate_your_field_unit_hp
+        #     )
+        # )
