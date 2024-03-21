@@ -106,6 +106,9 @@ class PreDrawedImage:
 
     __pre_drawed_battle_field_timer = {}
 
+    __pre_drawed_create_deck_button = None
+    __pre_drawed_go_back_button = None
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -122,7 +125,9 @@ class PreDrawedImage:
             card_frame_image_data = os.path.join(self.__project_root, "local_storage", "card_frame",
                                                  f"{card_number}.png")
             # self.__pre_drawed_card_frame[card_number] = ImageDataLoader.load_rectangle_image_data(card_frame_image_data)
-            self.__pre_drawed_card_frame[card_number] = ImageDataLoader.load_card_frame_image_data(card_frame_image_data)
+            # load_rectangle_origin_image_data
+            # self.__pre_drawed_card_frame[card_number] = ImageDataLoader.load_card_frame_image_data(card_frame_image_data)
+            self.__pre_drawed_card_frame[card_number] = ImageDataLoader.load_rectangle_origin_image_data(card_frame_image_data)
 
     def pre_draw_opponent_tomb(self):
         tomb_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "tomb.jpeg")
@@ -187,6 +192,14 @@ class PreDrawedImage:
         your_hand_panel_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
                                                   "background.png")
         self.__pre_drawed_your_hand_panel = ImageDataLoader.load_rectangle_image_data(your_hand_panel_image_path)
+
+    def pre_draw_create_deck_button(self):
+        create_deck_button_image_path = os.path.join(self.__project_root, "local_storage", "my_card_frame", "creat_deck_button.png")
+        self.__pre_drawed_create_deck_button = ImageDataLoader.load_rectangle_origin_image_data(create_deck_button_image_path)
+
+    def pre_draw_go_back_button(self):
+        go_back_button_image_path = os.path.join(self.__project_root, "local_storage", "my_card_frame", "go_to_back_button.png")
+        self.__pre_drawed_go_back_button = ImageDataLoader.load_rectangle_origin_image_data(go_back_button_image_path)
 
     def pre_draw_your_unit_field(self):
         your_unit_field_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
@@ -425,7 +438,7 @@ class PreDrawedImage:
         self.pre_draw_sword_attack()
         self.pre_draw_contract_of_doom()
         # self.pre_draw_sea_of_wraith()
-        self.pre_draw_legacy_sea_of_wraith()
+        # self.pre_draw_legacy_sea_of_wraith()
         self.pre_draw_corpse_explosion()
         # self.pre_draw_nether_blade_area_skill()
         self.pre_draw_nether_blade_targeting_skill()
@@ -952,9 +965,14 @@ class PreDrawedImage:
         self.pre_draw_use_energy_opponent_unit()
 
         self.pre_draw_battle_field_timer()
+        self.pre_draw_create_deck_button()
+        self.pre_draw_go_back_button()
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
+
+    def get_pre_draw_go_back_button(self):
+        return self.__pre_drawed_go_back_button;
 
     def get_pre_draw_opponent_tomb(self):
         return self.__pre_drawed_opponent_tomb
@@ -1161,3 +1179,6 @@ class PreDrawedImage:
 
     def get_pre_draw_use_energy_opponent_unit(self, opponent_index):
         return self.__pre_draw_use_energy_opponent_unit[opponent_index]
+
+    def get_pre_draw_create_deck_button(self):
+        return self.__pre_drawed_create_deck_button

@@ -32,6 +32,7 @@ from lobby_frame.service.request.check_game_money_request import CheckGameMoneyR
 from matching_window.controller.matching_window_controller_impl import MatchingWindowControllerImpl
 from lobby_frame.service.request.exit_request import ExitRequest
 from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
+from opengl_my_card_main_frame.infra.my_card_repository import MyCardRepository
 from rock_paper_scissors.frame.check_rock_paper_scissors_winner.repository.check_rock_paper_scissors_winner_repository_impl import \
     CheckRockPaperScissorsWinnerRepositoryImpl
 from rock_paper_scissors.frame.check_rock_paper_scissors_winner.service.check_rock_paper_scissors_winner_service_impl import \
@@ -86,6 +87,9 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             cls.__instance.__windowSizeRepository = WindowSizeRepository.getInstance()
             cls.__instance.__yourHpRepository = YourHpRepository.getInstance()
             cls.__instance.__opponentHpRepository = OpponentHpRepository.getInstance()
+
+            # Shop
+            cls.__instance.__myCardRepository = MyCardRepository.getInstance()
         return cls.__instance
 
     @classmethod
@@ -386,12 +390,15 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                     if responseData is not None:
                         server_data = responseData.get("card_id_list")
 
-                        for i, number in enumerate(server_data):
-                            for key, value in server_data[i].items():
-                                self.card_data_list.append(int(key))
-                                self.number_of_cards_list.append(int(value))
-                                print(f"서버로 부터 카드 정보 잘 받았니?:{self.card_data_list}")
-                                print(f"서버로 부터 카드 갯수 잘 받았니?: {self.number_of_cards_list}")
+                        self.__myCardRepository.save_my_card_to_dictionary_state(server_data)
+                        print(f"my_card_dictionary: {self.__myCardRepository.get_my_card_dictionary_from_state()}")
+
+                        # for i, number in enumerate(server_data):
+                        #     for key, value in server_data[i].items():
+                        #         self.card_data_list.append(int(key))
+                        #         self.number_of_cards_list.append(int(value))
+                        #         print(f"서버로 부터 카드 정보 잘 받았니?:{self.card_data_list}")
+                        #         print(f"서버로 부터 카드 갯수 잘 받았니?: {self.number_of_cards_list}")
 
                         switchFrameWithMenuName("my-card-main")
 

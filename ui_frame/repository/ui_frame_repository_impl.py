@@ -1,5 +1,6 @@
 from pyopengltk import OpenGLFrame
 
+from opengl_my_card_main_frame.frame.my_card_main_frame import MyCardMainFrame
 from ui_frame.repository.ui_frame_repository import UiFrameRepository
 
 
@@ -53,6 +54,9 @@ class UiFrameRepositoryImpl(UiFrameRepository):
         self.__musicPlayIpcChannel.put(name)
 
         if isinstance(foundUiFrame, OpenGLFrame):
+            # if isinstance(foundUiFrame, MyCardMainFrame):
+            #     return
+
             # foundUiFrame.start_redraw_loop()
             self.__animation_running = True
             def animate():

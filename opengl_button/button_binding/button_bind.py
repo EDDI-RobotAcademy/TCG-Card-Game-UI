@@ -24,6 +24,9 @@ class MyCardMainFrameButtonBind:
         self.my_card_main_frame.bind("<Button-1>", self.combined_mouse_click_event)
 
     def combined_mouse_click_event(self, event):
+        x, y = event.x, event.y
+        print(f"x: {x}, y: {y}")
+
         self.deck_register_event_handler.mouse_click_event(event)
         self.go_to_back_event_handler.mouse_click_event(event)
         self.create_decK_register_button_event_handler.mouse_click_event(event)
