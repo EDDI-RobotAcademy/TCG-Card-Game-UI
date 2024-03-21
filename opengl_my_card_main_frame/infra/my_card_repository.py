@@ -46,15 +46,18 @@ class MyCardRepository:
         self.total_width = width
         self.total_height = height
 
+    def save_my_card_to_dictionary_state(self, my_card_dictionary_list):
+        self.my_card_state.add_to_my_card_dictionary(my_card_dictionary_list)
+
     def save_my_card_number_to_state(self, acquire_my_card_list):
         self.my_card_state.add_to_my_card(acquire_my_card_list)
         print(f"Saved acquire_my_card_list state: {acquire_my_card_list}")
 
-    def get_my_card_number_from_state(self):
+    def get_my_card_dictionary_from_state(self):
         return self.my_card_state.get_my_card_dictionary()
 
     def build_my_card_page(self):
-        my_card_number_list = self.get_my_card_number_from_state()
+        my_card_number_list = self.get_my_card_dictionary_from_state()
 
         num_cards_per_page = 8
         num_pages = ceil(len(my_card_number_list) / num_cards_per_page)

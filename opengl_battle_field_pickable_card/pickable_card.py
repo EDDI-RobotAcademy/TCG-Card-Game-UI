@@ -208,7 +208,7 @@ class PickableCard:
     def init_card_in_my_card_frame(self, card_number, total_width, total_height):
         self.set_card_number(card_number)
 
-        rectangle_width = 230
+        rectangle_width = 300
         # 실제 카드의 비율은 1.615
         rectangle_height = rectangle_width * 1.615
 
