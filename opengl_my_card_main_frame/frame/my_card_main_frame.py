@@ -80,7 +80,12 @@ class MyCardMainFrame(OpenGLFrame):
         glClearColor(0.0, 0.0, 0.0, 0)
         glOrtho(0, self.width, self.height, 0, -1, 1)
 
-        self.tkMakeCurrent()
+        # self.tkMakeCurrent()
+        #
+        # self.make_card_main_frame()
+        # self.render = MyCardMainFrameRenderer(self.my_card_main_scene, self)
+        #
+        # self.render.render()
 
     def init_first_window(self, width, height):
         print(f"Operate Only Once -> width: {width}, height: {height}")
@@ -96,6 +101,8 @@ class MyCardMainFrame(OpenGLFrame):
 
         self.make_card_main_frame()
         self.render = MyCardMainFrameRenderer(self.my_card_main_scene, self)
+
+
 
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
@@ -130,8 +137,8 @@ class MyCardMainFrame(OpenGLFrame):
             return
 
         self.tkMakeCurrent()
-
         self.render.render()
+
         if self.show_my_deck_register_screen is True:
             glEnable(GL_BLEND)
             if glIsEnabled(GL_BLEND):
@@ -260,6 +267,16 @@ class MyCardMainFrame(OpenGLFrame):
         #
         # self.my_card_main_scene.add_button_list(next_page_button_rectangle)
 
+        # 1508 / 1848 -> 0.78541
+        # 1803 / 1848 -> 0.93906
+        # 900 / 1016 -> 0.73426
+        # 982 / 1016 -> 0.80926
+
+        # 1850, 1016 (academy pc)
+        # x: 108, y: 572
+        # x: 136, y: 571
+        # difference -> 0.01513
+
         # 다음 페이지 버튼 도형으로 만든 것.
         next_left_x_point = self.width * 0.730
         next_right_x_point = self.width * 0.786
@@ -267,12 +284,12 @@ class MyCardMainFrame(OpenGLFrame):
         next_bottom_y_point = self.height * 0.553
         next_gold_button_image_data = self.__pre_drawed_image_instance.get_pre_draw_next_gold_button()
         next_page_button = NonBackgroundImage(image_data=next_gold_button_image_data,
-                                               vertices=[
-                                                   (next_left_x_point, next_top_y_point),
-                                                   (next_right_x_point, next_top_y_point),
-                                                   (next_right_x_point, next_bottom_y_point),
-                                                   (next_left_x_point, next_bottom_y_point)
-                                               ])
+                                              vertices=[
+                                                  (next_left_x_point, next_top_y_point),
+                                                  (next_right_x_point, next_top_y_point),
+                                                  (next_right_x_point, next_bottom_y_point),
+                                                  (next_left_x_point, next_bottom_y_point)
+                                              ])
         self.my_card_main_scene.add_button_list(next_page_button)
         print(f"버튼들 다 담김?: {self.my_card_main_scene.get_button_list()}")
 
