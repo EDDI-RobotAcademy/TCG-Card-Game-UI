@@ -1,3 +1,4 @@
+from colorama import Fore, Style
 from shapely import Polygon, Point
 
 from opengl_my_card_main_frame.entity.my_card_main_scene import MyCardMainScene
@@ -41,6 +42,7 @@ class NextPageScreen:
             next_button = self.my_card_main_scene.get_next_button()
             if self.is_point_inside_object(next_button, (x, y)):
                 print(f"next_page_screen -> mouse_click_event() clicked next_button")
+                print(f"{Fore.RED}current page number: {self.my_card_repository.get_current_my_card_page()}{Style.RESET_ALL}")
 
                 self.my_card_repository.next_my_card_page()
 
