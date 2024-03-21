@@ -388,7 +388,7 @@ class MyCardMainFrame(OpenGLFrame):
         # difference: 1204 -> 0.65081
 
         x = 165
-        y = 30
+        y = 65
 
         for i, number in enumerate(all_card_number):
             try:
@@ -401,11 +401,11 @@ class MyCardMainFrame(OpenGLFrame):
                 x += 315
 
                 if (i + 1) % 4 == 0:  # 4개씩
-                    y = 500
+                    y = 510
                     x = 165
                     if (i + 1) % 8 == 0:
                         x = 165
-                        y = 30
+                        y = 65
 
                 if (i + 1) % 8 == 0:
                     continue

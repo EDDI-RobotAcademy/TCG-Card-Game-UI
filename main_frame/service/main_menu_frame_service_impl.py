@@ -42,7 +42,7 @@ class MainMenuFrameServiceImpl(MainMenuFrameService):
         button_start = self.button_start_origin.resize((264, 67))
         self.start_login = ImageTk.PhotoImage(button_start)
 
-        self.button_exit_origin = Image.open("local_storage/start_screen_image/exite_button.png")
+        self.button_exit_origin = Image.open("local_storage/start_screen_image/exit_button.png")
         button_exit = self.button_exit_origin.resize((264, 67))
         self.button_exit = ImageTk.PhotoImage(button_exit)
 
