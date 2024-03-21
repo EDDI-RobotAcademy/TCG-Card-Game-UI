@@ -32,23 +32,23 @@ class NextPageScreen:
             #         self.page_manager.go_to_next_page()
             #         self.handle_page_transition()
 
-            next_left_x_point = self.my_card_main_frame.width * 0.730
-            next_right_x_point = self.my_card_main_frame.width * 0.786
-            next_top_y_point = self.my_card_main_frame.height * 0.483
-            next_bottom_y_point = self.my_card_main_frame.height * 0.553
-
-            deck_button_rectangle_vertices = [
-                (next_left_x_point, next_top_y_point),
-                (next_right_x_point, next_top_y_point),
-                (next_right_x_point, next_bottom_y_point),
-                (next_left_x_point, next_bottom_y_point)
-            ]
-
-            if self.check_collision(x, y, deck_button_rectangle_vertices):
-                print("첫 번째 페이지 입니다.")
-                if event:
-                    self.page_manager.go_to_next_page()
-                    self.handle_page_transition()
+            # next_left_x_point = self.my_card_main_frame.width * 0.730
+            # next_right_x_point = self.my_card_main_frame.width * 0.786
+            # next_top_y_point = self.my_card_main_frame.height * 0.483
+            # next_bottom_y_point = self.my_card_main_frame.height * 0.553
+            #
+            # deck_button_rectangle_vertices = [
+            #     (next_left_x_point, next_top_y_point),
+            #     (next_right_x_point, next_top_y_point),
+            #     (next_right_x_point, next_bottom_y_point),
+            #     (next_left_x_point, next_bottom_y_point)
+            # ]
+            #
+            # if self.check_collision(x, y, deck_button_rectangle_vertices):
+            #     print("첫 번째 페이지 입니다.")
+            #     if event:
+            #         self.page_manager.go_to_next_page()
+                    # self.handle_page_transition()
 
 
             # if self.is_point_inside_next_button((x, y)):

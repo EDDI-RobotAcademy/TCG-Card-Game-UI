@@ -5,6 +5,9 @@ class MyCardMainScene:
         self.button_list = [] # 버튼 도형
         self.card_list = [] # 나타낼 카드 리스트
 
+        self.next_button = None
+        self.prev_button = None
+
     def add_my_card_background(self, rectangle):
         self.my_card_background.append(rectangle)
 
