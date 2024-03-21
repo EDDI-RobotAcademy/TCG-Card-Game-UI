@@ -1911,6 +1911,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         self.__opponent_field_area_inside_handler.set_field_area_action(
             OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_PASSIVE_SKILL_PROCESS)
 
+        self.__opponent_field_area_inside_handler.set_unit_action(
+            OpponentUnitAction.NETHER_BLADE_SECOND_TARGETING_PASSIVE_SKILL)
+
     def notify_deploy_targeting_attack_passive_skill_to_unit(self, notice_dictionary):
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
 
@@ -1963,6 +1966,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         self.__opponent_field_area_inside_handler.set_field_area_action(
             OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_PASSIVE_SKILL_PROCESS)
 
+        self.__opponent_field_area_inside_handler.set_unit_action(OpponentUnitAction.NETHER_BLADE_SECOND_TARGETING_PASSIVE_SKILL)
+
     def notify_turn_start_non_targeting_attack_passive_skill(self, notice_dictionary):
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
 
@@ -2012,6 +2017,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         self.__opponent_field_area_inside_handler.set_field_area_action(
             OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_PASSIVE_SKILL_PROCESS)
+
+        self.__opponent_field_area_inside_handler.set_unit_action(
+            OpponentUnitAction.NETHER_BLADE_FIRST_WIDE_AREA_PASSIVE_SKILL)
 
     def notify_deploy_non_targeting_attack_passive_skill(self, notice_dictionary):
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
@@ -2065,6 +2073,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         self.__opponent_field_area_inside_handler.set_field_area_action(
             OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_PASSIVE_SKILL_PROCESS)
 
+        self.__opponent_field_area_inside_handler.set_unit_action(
+            OpponentUnitAction.NETHER_BLADE_FIRST_WIDE_AREA_PASSIVE_SKILL)
+
     def notify_turn_start_targeting_attack_to_game_main_character(self, notice_dictionary):
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
 
@@ -2094,6 +2105,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         self.__opponent_field_area_inside_handler.set_field_area_action(
             OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_PASSIVE_SKILL_PROCESS)
+
+        self.__opponent_field_area_inside_handler.set_unit_action(
+            OpponentUnitAction.NETHER_BLADE_SECOND_TARGETING_PASSIVE_SKILL)
 
     def notify_deploy_targeting_attack_to_game_main_character(self, notice_dictionary):
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
@@ -2130,6 +2144,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         self.__opponent_field_area_inside_handler.set_field_area_action(
             OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_PASSIVE_SKILL_PROCESS)
+
+        self.__opponent_field_area_inside_handler.set_unit_action(
+            OpponentUnitAction.NETHER_BLADE_SECOND_TARGETING_PASSIVE_SKILL)
 
     def notify_use_instant_unit_death_item_card(self, notice_dictionary):
 
