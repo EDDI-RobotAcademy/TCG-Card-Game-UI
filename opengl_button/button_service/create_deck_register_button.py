@@ -111,9 +111,10 @@ class CreateDeckRegisterButton:
                     self.my_card_main_frame.drawMyCardMainFrame()
 
                     print("다 지워졌니?")
+                    # TODO: 준비중인 페이지 입니다 메세지 창 띄우기
 
         except Exception as e:
-            print(f"create deck register Error : {e}")
+            print(f"create deck register button Error : {e}")
 
     def check_collision(self, x, y, vertices):
         print(f"checking collision: x:{x}, y:{y}")

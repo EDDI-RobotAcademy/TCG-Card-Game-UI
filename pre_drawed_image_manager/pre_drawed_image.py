@@ -125,7 +125,9 @@ class PreDrawedImage:
             card_frame_image_data = os.path.join(self.__project_root, "local_storage", "card_frame",
                                                  f"{card_number}.png")
             # self.__pre_drawed_card_frame[card_number] = ImageDataLoader.load_rectangle_image_data(card_frame_image_data)
+            # load_rectangle_origin_image_data
             self.__pre_drawed_card_frame[card_number] = ImageDataLoader.load_card_frame_image_data(card_frame_image_data)
+            self.__pre_drawed_card_frame[card_number] = ImageDataLoader.load_rectangle_origin_image_data(card_frame_image_data)
 
     def pre_draw_opponent_tomb(self):
         tomb_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "tomb.jpeg")

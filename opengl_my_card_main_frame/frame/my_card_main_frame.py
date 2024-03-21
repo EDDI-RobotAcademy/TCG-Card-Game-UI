@@ -80,7 +80,12 @@ class MyCardMainFrame(OpenGLFrame):
         glClearColor(0.0, 0.0, 0.0, 0)
         glOrtho(0, self.width, self.height, 0, -1, 1)
 
-        self.tkMakeCurrent()
+        # self.tkMakeCurrent()
+        #
+        # self.make_card_main_frame()
+        # self.render = MyCardMainFrameRenderer(self.my_card_main_scene, self)
+        #
+        # self.render.render()
 
     def init_first_window(self, width, height):
         print(f"Operate Only Once -> width: {width}, height: {height}")
@@ -96,6 +101,8 @@ class MyCardMainFrame(OpenGLFrame):
 
         self.make_card_main_frame()
         self.render = MyCardMainFrameRenderer(self.my_card_main_scene, self)
+
+
 
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
@@ -130,8 +137,8 @@ class MyCardMainFrame(OpenGLFrame):
             return
 
         self.tkMakeCurrent()
-
         self.render.render()
+
         if self.show_my_deck_register_screen is True:
             glEnable(GL_BLEND)
             if glIsEnabled(GL_BLEND):
@@ -260,19 +267,29 @@ class MyCardMainFrame(OpenGLFrame):
         #
         # self.my_card_main_scene.add_button_list(next_page_button_rectangle)
 
+        # 1508 / 1848 -> 0.78541
+        # 1803 / 1848 -> 0.93906
+        # 900 / 1016 -> 0.73426
+        # 982 / 1016 -> 0.80926
+
+        # 1850, 1016 (academy pc)
+        # x: 1393, y: 485
+        # x: 1416, y: 491
+        # difference -> 23 -> 0.01243
+
         # 다음 페이지 버튼 도형으로 만든 것.
-        next_left_x_point = self.width * 0.730
-        next_right_x_point = self.width * 0.786
-        next_top_y_point = self.height * 0.483
-        next_bottom_y_point = self.height * 0.553
+        next_left_x_point = self.width * 0.71757
+        next_right_x_point = self.width * 0.77357
+        next_top_y_point = self.height * 0.47415
+        next_bottom_y_point = self.height * 0.54612
         next_gold_button_image_data = self.__pre_drawed_image_instance.get_pre_draw_next_gold_button()
         next_page_button = NonBackgroundImage(image_data=next_gold_button_image_data,
-                                               vertices=[
-                                                   (next_left_x_point, next_top_y_point),
-                                                   (next_right_x_point, next_top_y_point),
-                                                   (next_right_x_point, next_bottom_y_point),
-                                                   (next_left_x_point, next_bottom_y_point)
-                                               ])
+                                              vertices=[
+                                                  (next_left_x_point, next_top_y_point),
+                                                  (next_right_x_point, next_top_y_point),
+                                                  (next_right_x_point, next_bottom_y_point),
+                                                  (next_left_x_point, next_bottom_y_point)
+                                              ])
         self.my_card_main_scene.add_button_list(next_page_button)
         print(f"버튼들 다 담김?: {self.my_card_main_scene.get_button_list()}")
 
@@ -286,11 +303,21 @@ class MyCardMainFrame(OpenGLFrame):
         #
         # self.my_card_main_scene.add_button_list(before_page_button_rectangle)
 
+        # 0.07283 <- 버튼 위아래 간격
+        # 0.07283 / 2 -> 0.036415
+        # 실제 0.07197 / 2 -> 0.035985
+        # 실제 디자인 화면에서 책 페이지의 크기 높이값 933 -> 0.91830708661
+
+        # 46 / 1016 -> 0.04527 실제 책 페이지 시작 위치
+        # 979 / 1016 -> 0.96358 실제 책 페이지 끝 위치
+        # difference -> 0.91831
+        # 0.91831 / 2 -> 0.459155
+
         # 이전 페이지 버튼 도형으로 만든 것.
-        prev_left_x_point = self.width * 0.002
-        prev_right_x_point = self.width * 0.058
-        prev_top_y_point = self.height * 0.483
-        prev_bottom_y_point = self.height * 0.553
+        prev_left_x_point = self.width * 0.01064
+        prev_right_x_point = self.width * 0.0688
+        prev_top_y_point = self.height * 0.47415
+        prev_bottom_y_point = self.height * 0.54612
         prev_gold_button_image_data = self.__pre_drawed_image_instance.get_pre_draw_prev_gold_button()
         pre_page_button = NonBackgroundImage(image_data=prev_gold_button_image_data,
                                                vertices=[
@@ -356,25 +383,29 @@ class MyCardMainFrame(OpenGLFrame):
         # print(f"카드 번호 리스트: {all_card_number}")
         # print(f"카드 번호 길이: {len(all_card_number)}")
 
+        # x: 1329, y: 495
+        # x: 125, y: 496
+        # difference: 1204 -> 0.65081
+
         x = 165
-        y = 30
+        y = 65
 
         for i, number in enumerate(all_card_number):
             try:
                 #print(f"index: {i}, card number: {number}")
                 card = PickableCard(local_translation=(x, y))
-                card.init_card_in_my_card_frame(number)
+                card.init_card_in_my_card_frame(number, self.width, self.height)
                 self.my_card_main_scene.add_card_list(card)
                 #print(f"카드 리스트: {self.my_card_main_scene.get_card_list()}")
 
                 x += 315
 
                 if (i + 1) % 4 == 0:  # 4개씩
-                    y = 500
+                    y = 510
                     x = 165
                     if (i + 1) % 8 == 0:
                         x = 165
-                        y = 30
+                        y = 65
 
                 if (i + 1) % 8 == 0:
                     continue
@@ -455,8 +486,8 @@ class MyCardMainFrame(OpenGLFrame):
         self.my_deck_register_scene.add_my_deck_background(deck_register_rectangle)
 
         # 텍스트 박스
-        self.entry = tk.Entry(self.master, textvariable=self.textbox_string)
-        self.entry.place(relx=0.5, rely=0.4, width=300, height=50, anchor="center")
+        # self.entry = tk.Entry(self.master, textvariable=self.textbox_string)
+        # self.entry.place(relx=0.5, rely=0.4, width=300, height=50, anchor="center")
         # self.my_deck_register_scene.add_deck_name_list(self.textbox_string.get()) # 생성한 덱의 이름을 리스트에 저장
 
         # 확인 버튼 사각형
@@ -477,18 +508,19 @@ class MyCardMainFrame(OpenGLFrame):
 
         self.my_deck_register_scene.add_button_list(ok_button_rectangle)
 
+        # TODO: 이 버튼 기능 나중에 살리기
         # 되돌아 가기 버튼 사각형
-        go_to_back_button_rectangle = Rectangle(color=(0.0, 1.0, 0.0, 1.0),
-                                                local_translation=(0, 0),
-                                                vertices=[(center_x - 0.5 * button_width - ok_button_x_offset,
-                                                           center_y - 0.5 * 0.5 * self.height - button_height + ok_button_y_offset),
-                                                          (center_x + 0.5 * button_width - ok_button_x_offset,
-                                                           center_y - 0.5 * 0.5 * self.height - button_height + ok_button_y_offset),
-                                                          (center_x + 0.5 * button_width - ok_button_x_offset,
-                                                           center_y - 0.5 * 0.5 * self.height + ok_button_y_offset),
-                                                          (center_x - 0.5 * button_width - ok_button_x_offset,
-                                                           center_y - 0.5 * 0.5 * self.height + ok_button_y_offset)])
-        self.my_deck_register_scene.add_button_list(go_to_back_button_rectangle)
+        # go_to_back_button_rectangle = Rectangle(color=(0.0, 1.0, 0.0, 1.0),
+        #                                         local_translation=(0, 0),
+        #                                         vertices=[(center_x - 0.5 * button_width - ok_button_x_offset,
+        #                                                    center_y - 0.5 * 0.5 * self.height - button_height + ok_button_y_offset),
+        #                                                   (center_x + 0.5 * button_width - ok_button_x_offset,
+        #                                                    center_y - 0.5 * 0.5 * self.height - button_height + ok_button_y_offset),
+        #                                                   (center_x + 0.5 * button_width - ok_button_x_offset,
+        #                                                    center_y - 0.5 * 0.5 * self.height + ok_button_y_offset),
+        #                                                   (center_x - 0.5 * button_width - ok_button_x_offset,
+        #                                                    center_y - 0.5 * 0.5 * self.height + ok_button_y_offset)])
+        # self.my_deck_register_scene.add_button_list(go_to_back_button_rectangle)
 
     def getMyDeckRegisterScene(self):
         return self.my_deck_register_scene

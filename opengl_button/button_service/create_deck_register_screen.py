@@ -16,15 +16,27 @@ class CreateDeckRegisterScreen:
             #                                   (0.85 * self.my_card_main_frame.width,
             #                                    self.my_card_main_frame.height - 100)]
 
-            rectangle_size = 130
-            start_point = (1569, 746)
-            end_point = (start_point[0] + rectangle_size * 2.3, start_point[1] + rectangle_size * 0.55)
+            left_x_point = self.my_card_main_frame.width * 0.81601
+            right_x_point = self.my_card_main_frame.width * 0.97564
+            top_y_point = self.my_card_main_frame.height * 0.78051
+            bottom_y_point = self.my_card_main_frame.height * 0.86023
+
             deck_button_rectangle_vertices = [
-                (start_point[0], start_point[1]),
-                (end_point[0], start_point[1]),
-                (end_point[0], end_point[1]),
-                (start_point[0], end_point[1])
+                (left_x_point, top_y_point),
+                (right_x_point, top_y_point),
+                (right_x_point, bottom_y_point),
+                (left_x_point, bottom_y_point)
             ]
+
+            # rectangle_size = 130
+            # start_point = (1569, 746)
+            # end_point = (start_point[0] + rectangle_size * 2.3, start_point[1] + rectangle_size * 0.55)
+            # deck_button_rectangle_vertices = [
+            #     (start_point[0], start_point[1]),
+            #     (end_point[0], start_point[1]),
+            #     (end_point[0], end_point[1]),
+            #     (start_point[0], end_point[1])
+            # ]
 
             if self.check_collision(x, y, deck_button_rectangle_vertices):
                 self.my_card_main_frame.show_my_deck_register_screen = True
@@ -32,7 +44,7 @@ class CreateDeckRegisterScreen:
                 print("투명 화면, 덱 생성 화면 그려졌니?")
 
         except Exception as e:
-            print(f"create deck register Error : {e}")
+            print(f"create deck register screen Error : {e}")
 
     def check_collision(self, x, y, vertices):
         # print(f"checking collision: x:{x}, y:{y}")
