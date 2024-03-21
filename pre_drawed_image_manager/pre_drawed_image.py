@@ -386,12 +386,12 @@ class PreDrawedImage:
     def pre_draw_next_gold_button(self):
         next_gold_button_image_path = os.path.join(self.__project_root, "local_storage", "button_image",
                                                    "next_gold_button.png")
-        self.__pre_drawed_next_gold_button = ImageDataLoader.load_rectangle_image_data(next_gold_button_image_path)
+        self.__pre_drawed_next_gold_button = ImageDataLoader.load_rectangle_origin_image_data(next_gold_button_image_path)
 
     def pre_draw_prev_gold_button(self):
         prev_gold_button_image_path = os.path.join(self.__project_root, "local_storage", "button_image",
                                                    "prev_gold_button.png")
-        self.__pre_drawed_prev_gold_button = ImageDataLoader.load_rectangle_image_data(prev_gold_button_image_path)
+        self.__pre_drawed_prev_gold_button = ImageDataLoader.load_rectangle_origin_image_data(prev_gold_button_image_path)
 
     def pre_draw_ok_button(self):
         prev_gold_button_image_path = os.path.join(self.__project_root, "local_storage", "button_image",

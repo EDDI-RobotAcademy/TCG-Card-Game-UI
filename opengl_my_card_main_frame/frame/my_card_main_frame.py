@@ -280,11 +280,28 @@ class MyCardMainFrame(OpenGLFrame):
         # x: 1416, y: 491
         # difference -> 23 -> 0.01243
 
+        # x: 1331, y: 543
+        # x: 1030, y: 939
+        # 1848, 1016
+        # 1030 / 1848 -> 0.55735
+        # 939 / 1016 -> 0.92421
+
+        # x: 1430, y: 517
+        # x: 1134, y: 916
+        # 1134 / 1848 -> 0.61363
+        # difference = 0.61363 - 0.55735 = 0.05628
+        # 0.77357 - 0.71757 = 0.056
+
+        # 높이값 difference -> 0.54612 - 0.47415 = 0.07197
+        # 4 / 1848 -> 0.00216
+        # 17 / 1016 -> 0.01673
+        # 도형 이미지 비율 (1.54791)
+
         # 다음 페이지 버튼 도형으로 만든 것.
-        next_left_x_point = self.width * 0.71757
-        next_right_x_point = self.width * 0.77357
-        next_top_y_point = self.height * 0.47415
-        next_bottom_y_point = self.height * 0.54612
+        next_left_x_point = self.width * 0.55519
+        next_right_x_point = self.width * 0.61309
+        next_top_y_point = self.height * 0.86602
+        next_bottom_y_point = self.height * 0.94094
         next_gold_button_image_data = self.__pre_drawed_image_instance.get_pre_draw_next_gold_button()
         next_page_button = NonBackgroundImage(image_data=next_gold_button_image_data,
                                               vertices=[
@@ -317,11 +334,18 @@ class MyCardMainFrame(OpenGLFrame):
         # difference -> 0.91831
         # 0.91831 / 2 -> 0.459155
 
+        # next_left_x_point = self.width * 0.55519
+        # next_right_x_point = self.width * 0.61309
+        # next_top_y_point = self.height * 0.86602
+        # next_bottom_y_point = self.height * 0.94094
+
+        # 813 / 1848 -> 0.43993
+
         # 이전 페이지 버튼 도형으로 만든 것.
-        prev_left_x_point = self.width * 0.01064
-        prev_right_x_point = self.width * 0.0688
-        prev_top_y_point = self.height * 0.47415
-        prev_bottom_y_point = self.height * 0.54612
+        prev_left_x_point = self.width * 0.38203
+        prev_right_x_point = self.width * 0.43993
+        prev_top_y_point = self.height * 0.86602
+        prev_bottom_y_point = self.height * 0.94094
         prev_gold_button_image_data = self.__pre_drawed_image_instance.get_pre_draw_prev_gold_button()
         prev_page_button = NonBackgroundImage(image_data=prev_gold_button_image_data,
                                               vertices=[
@@ -436,48 +460,48 @@ class MyCardMainFrame(OpenGLFrame):
 
         # 카드 갯수 표기
         #TODO: 갯수가 1개인 경우에는 표기 안 함.
-        number_left_x_point = self.width * 0.130  # 첫 번째 카드는 이 위치로 고정
-        number_right_x_point = self.width * 0.166
-        number_top_y_point = self.height * 0.450  # 첫 번째줄은 이 높이로 고정하면 될 듯
-        number_bottom_y_point = self.height * 0.506
-        for index, card_count in enumerate(card_count_list):
-            try:
-                if card_count == 1:
-                    # number_of_cards_data = self.__pre_drawed_image_instance.get_pre_draw_number_of_cards(9)
-                    self.my_card_main_scene.add_text_list(None)
-                else:
-                    number_of_cards_data = self.__pre_drawed_image_instance.get_pre_draw_number_of_cards(card_count)
-
-                    number_of_cards_text = NonBackgroundImage(image_data=number_of_cards_data,
-                                                               vertices=[
-                                                                   (number_left_x_point, number_top_y_point),
-                                                                   (number_right_x_point, number_top_y_point),
-                                                                   (number_right_x_point, number_bottom_y_point),
-                                                                   (number_left_x_point, number_bottom_y_point)
-                                                               ])
-                    self.my_card_main_scene.add_text_list(number_of_cards_text)
-
-                number_left_x_point += self.width * 0.164
-                number_right_x_point += self.width * 0.164
-
-                if (index + 1) % 4 == 0:
-                    number_top_y_point = self.height * 0.940  # 두 번째 줄 부턴 위치 바뀜
-                    number_bottom_y_point = self.height * 0.996
-                    number_left_x_point = self.width * 0.130
-                    number_right_x_point = self.width * 0.166
-
-                    if (index + 1) % 8 == 0:
-                        number_left_x_point = self.width * 0.130
-                        number_right_x_point = self.width * 0.166
-                        number_top_y_point = self.height * 0.450
-                        number_bottom_y_point = self.height * 0.506
-
-                if (index + 1) % 8 == 0:
-                    continue
-
-            except Exception as e:
-                print(f"Error number text: {e}")
-                pass
+        # number_left_x_point = self.width * 0.130  # 첫 번째 카드는 이 위치로 고정
+        # number_right_x_point = self.width * 0.166
+        # number_top_y_point = self.height * 0.450  # 첫 번째줄은 이 높이로 고정하면 될 듯
+        # number_bottom_y_point = self.height * 0.506
+        # for index, card_count in enumerate(card_count_list):
+        #     try:
+        #         if card_count == 1:
+        #             # number_of_cards_data = self.__pre_drawed_image_instance.get_pre_draw_number_of_cards(9)
+        #             self.my_card_main_scene.add_text_list(None)
+        #         else:
+        #             number_of_cards_data = self.__pre_drawed_image_instance.get_pre_draw_number_of_cards(card_count)
+        #
+        #             number_of_cards_text = NonBackgroundImage(image_data=number_of_cards_data,
+        #                                                        vertices=[
+        #                                                            (number_left_x_point, number_top_y_point),
+        #                                                            (number_right_x_point, number_top_y_point),
+        #                                                            (number_right_x_point, number_bottom_y_point),
+        #                                                            (number_left_x_point, number_bottom_y_point)
+        #                                                        ])
+        #             self.my_card_main_scene.add_text_list(number_of_cards_text)
+        #
+        #         number_left_x_point += self.width * 0.164
+        #         number_right_x_point += self.width * 0.164
+        #
+        #         if (index + 1) % 4 == 0:
+        #             number_top_y_point = self.height * 0.940  # 두 번째 줄 부턴 위치 바뀜
+        #             number_bottom_y_point = self.height * 0.996
+        #             number_left_x_point = self.width * 0.130
+        #             number_right_x_point = self.width * 0.166
+        #
+        #             if (index + 1) % 8 == 0:
+        #                 number_left_x_point = self.width * 0.130
+        #                 number_right_x_point = self.width * 0.166
+        #                 number_top_y_point = self.height * 0.450
+        #                 number_bottom_y_point = self.height * 0.506
+        #
+        #         if (index + 1) % 8 == 0:
+        #             continue
+        #
+        #     except Exception as e:
+        #         print(f"Error number text: {e}")
+        #         pass
 
 
 
@@ -559,10 +583,10 @@ class MyCardMainFrame(OpenGLFrame):
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
     # 2) 다시 그려야 함.
-    def drawMyCardMainFrame(self):
-        if self.show_first_page_card_screen is True:
-            self.render = MyCardMainFrameRenderer(self.my_card_main_scene, self)
-            self.render.render()
+    # def drawMyCardMainFrame(self):
+    #     if self.show_first_page_card_screen is True:
+    #         self.render = MyCardMainFrameRenderer(self.my_card_main_scene, self)
+    #         self.render.render()
 
     # 텍스트 박스 지우기 위한 텍스트 박스 객체 가져오는 함수
     def getTextBox(self):
@@ -572,22 +596,22 @@ class MyCardMainFrame(OpenGLFrame):
     def getString(self):
         return self.textbox_string.get()
 
-    def second_page_card_draw(self):
-        if self.show_second_page_card_screen is True:
-            self.render = SecondPageCardRenderer(self.my_card_main_scene, self)
-            self.render.render()
-
-    def third_page_card_draw(self):
-        if self.show_third_page_card_screen is True:
-            self.render = ThirdPageCardRenderer(self.my_card_main_scene, self)
-            self.render.render()
-
-    def fourth_page_card_draw(self):
-        if self.show_fourth_page_card_screen is True:
-            self.render = FourthPageCardRenderer(self.my_card_main_scene, self)
-            self.render.render()
-
-    def fifth_page_card_draw(self):
-        if self.show_fifth_page_card_screen is True:
-            self.render = FifthPageCardRenderer(self.my_card_main_scene, self)
-            self.render.render()
+    # def second_page_card_draw(self):
+    #     if self.show_second_page_card_screen is True:
+    #         self.render = SecondPageCardRenderer(self.my_card_main_scene, self)
+    #         self.render.render()
+    #
+    # def third_page_card_draw(self):
+    #     if self.show_third_page_card_screen is True:
+    #         self.render = ThirdPageCardRenderer(self.my_card_main_scene, self)
+    #         self.render.render()
+    #
+    # def fourth_page_card_draw(self):
+    #     if self.show_fourth_page_card_screen is True:
+    #         self.render = FourthPageCardRenderer(self.my_card_main_scene, self)
+    #         self.render.render()
+    #
+    # def fifth_page_card_draw(self):
+    #     if self.show_fifth_page_card_screen is True:
+    #         self.render = FifthPageCardRenderer(self.my_card_main_scene, self)
+    #         self.render.render()
