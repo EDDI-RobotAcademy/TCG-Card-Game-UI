@@ -208,7 +208,7 @@ class PickableCard:
     def init_card_in_my_card_frame(self, card_number):
         self.set_card_number(card_number)
 
-        rectangle_width = 245
+        rectangle_width = 230
         rectangle_height = rectangle_width * 1.618
 
         print(f"rectangle_width: {rectangle_width}")

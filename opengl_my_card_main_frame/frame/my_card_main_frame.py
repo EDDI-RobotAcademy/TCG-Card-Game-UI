@@ -357,7 +357,7 @@ class MyCardMainFrame(OpenGLFrame):
         # print(f"카드 번호 길이: {len(all_card_number)}")
 
         x = 165
-        y = 30
+        y = 65
 
         for i, number in enumerate(all_card_number):
             try:
@@ -370,11 +370,11 @@ class MyCardMainFrame(OpenGLFrame):
                 x += 315
 
                 if (i + 1) % 4 == 0:  # 4개씩
-                    y = 500
+                    y = 510
                     x = 165
                     if (i + 1) % 8 == 0:
                         x = 165
-                        y = 30
+                        y = 65
 
                 if (i + 1) % 8 == 0:
                     continue
