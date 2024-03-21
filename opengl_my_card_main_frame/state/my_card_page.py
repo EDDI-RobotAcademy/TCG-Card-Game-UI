@@ -17,8 +17,8 @@ class MyCardPage:
     # 430 / 1920, 252 / 1043
     # 1490 / 1920, 252 / 1043
     # 6개 구성 (x_right_base_ratio - x_left_base_ratio) / 6
-    x_left_base_ratio = 0.224
-    x_right_base_ratio = 0.768
+    x_left_base_ratio = 0.024
+    x_right_base_ratio = 0.568
     y_bottom_base_ratio = 0.2416
     y_top_base_ratio = 0.593
 
