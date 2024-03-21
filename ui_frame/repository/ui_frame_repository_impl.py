@@ -54,8 +54,8 @@ class UiFrameRepositoryImpl(UiFrameRepository):
         self.__musicPlayIpcChannel.put(name)
 
         if isinstance(foundUiFrame, OpenGLFrame):
-            if isinstance(foundUiFrame, MyCardMainFrame):
-                return
+            # if isinstance(foundUiFrame, MyCardMainFrame):
+            #     return
 
             # foundUiFrame.start_redraw_loop()
             self.__animation_running = True
