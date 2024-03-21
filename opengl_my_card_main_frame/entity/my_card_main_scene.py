@@ -26,6 +26,18 @@ class MyCardMainScene:
     def get_button_list(self):
         return self.button_list
 
+    def add_next_button(self, button):
+        self.next_button = button
+
+    def get_next_button(self):
+        return self.next_button
+
+    def add_prev_button(self, button):
+        self.prev_button = button
+
+    def get_prev_button(self):
+        return self.prev_button
+
     def add_card_list(self, card):
         self.card_list.append(card)
 
