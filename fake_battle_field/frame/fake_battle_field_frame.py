@@ -12295,7 +12295,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             effect_animation.set_total_window_size(self.width, self.height)
             # vertices = opponent_field_unit_fixed_card_base.get_vertices()
             # effect_animation.draw_animation_panel_with_vertices(opponent_field_unit_fixed_card_base_vertices)
-            effect_animation.change_local_translation(opponent_field_unit_fixed_card_base_vertices.get_local_translation())
+            effect_animation.change_local_translation(opponent_field_unit_fixed_card_base.get_local_translation())
             effect_animation.draw_animation_panel()
             effect_animation_panel = effect_animation.get_animation_panel()
 

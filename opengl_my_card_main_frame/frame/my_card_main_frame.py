@@ -77,7 +77,6 @@ class MyCardMainFrame(OpenGLFrame):
         self.width_ratio = 1.0
         self.height_ratio = 1.0
 
-
     def initgl(self):
         print("initgl 입니다.")
         glClearColor(0.0, 0.0, 0.0, 0)
@@ -102,10 +101,11 @@ class MyCardMainFrame(OpenGLFrame):
         self.prev_height = self.height
         self.is_reshape_not_complete = False
 
+        self.my_card_repository.set_total_window_size(self.width, self.height)
+        self.my_card_repository.build_my_card_page()
+
         self.make_card_main_frame()
         self.render = MyCardMainFrameRenderer(self.my_card_main_scene, self)
-
-
 
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
@@ -397,38 +397,39 @@ class MyCardMainFrame(OpenGLFrame):
         print(f"{Fore.RED}card_count_list: {card_count_list}{Style.RESET_ALL}")
         # print(f"카드 번호 리스트: {all_card_number}")
         # print(f"카드 번호 길이: {len(all_card_number)}")
+        self.my_card_repository.build_my_card_page()
 
-        # TODO: UI 디자인 업데이트 이후 수정 필요
-        # x: 1329, y: 495
-        # x: 125, y: 496
-        # difference: 1204 -> 0.65081
-
-        x = 165
-        y = 65
-
-        for index, card_id in enumerate(card_id_list_int):
-            try:
-                #print(f"index: {i}, card number: {number}")
-                card = PickableCard(local_translation=(x, y))
-                card.init_card_in_my_card_frame(card_id, self.width, self.height)
-                self.my_card_main_scene.add_card_list(card)
-                #print(f"카드 리스트: {self.my_card_main_scene.get_card_list()}")
-
-                x += 315
-
-                if (index + 1) % 4 == 0:  # 4개씩
-                    y = 510
-                    x = 165
-                    if (index + 1) % 8 == 0:
-                        x = 165
-                        y = 65
-
-                if (index + 1) % 8 == 0:
-                    continue
-
-            except Exception as e:
-                print(f"Error creating card: {e}")
-                pass
+        # # TODO: UI 디자인 업데이트 이후 수정 필요
+        # # x: 1329, y: 495
+        # # x: 125, y: 496
+        # # difference: 1204 -> 0.65081
+        #
+        # x = 165
+        # y = 65
+        #
+        # for index, card_id in enumerate(card_id_list_int):
+        #     try:
+        #         #print(f"index: {i}, card number: {number}")
+        #         card = PickableCard(local_translation=(x, y))
+        #         card.init_card_in_my_card_frame(card_id, self.width, self.height)
+        #         self.my_card_main_scene.add_card_list(card)
+        #         #print(f"카드 리스트: {self.my_card_main_scene.get_card_list()}")
+        #
+        #         x += 315
+        #
+        #         if (index + 1) % 4 == 0:  # 4개씩
+        #             y = 510
+        #             x = 165
+        #             if (index + 1) % 8 == 0:
+        #                 x = 165
+        #                 y = 65
+        #
+        #         if (index + 1) % 8 == 0:
+        #             continue
+        #
+        #     except Exception as e:
+        #         print(f"Error creating card: {e}")
+        #         pass
 
 
         # 카드 갯수 표기

@@ -393,6 +393,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                         self.__myCardRepository.save_my_card_to_dictionary_state(server_data)
                         print(f"my_card_dictionary: {self.__myCardRepository.get_my_card_dictionary_from_state()}")
 
+
                         # for i, number in enumerate(server_data):
                         #     for key, value in server_data[i].items():
                         #         self.card_data_list.append(int(key))
