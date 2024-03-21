@@ -77,9 +77,9 @@ class UiFrameServiceImpl(UiFrameService):
         print(f"{Fore.GREEN}UiFrameServiceImpl: registerBuyRandomCardUiFrame(){Style.RESET_ALL}")
         self.__uiFrameRepository.registerUiFrame("battle-field-muligun", battleFieldMuligunFrame)
 
-    def registerBattleFieldUiFrame(self, battleFieldFrame):
-        print(f"{Fore.GREEN}UiFrameServiceImpl: registerBattleFieldUiFrame(){Style.RESET_ALL}")
-        self.__uiFrameRepository.registerUiFrame("battle-field", battleFieldFrame)
+    def legacyRegisterBattleFieldUiFrame(self, legacyBattleFieldFrame):
+        print(f"{Fore.GREEN}UiFrameServiceImpl: legacyRegisterBattleFieldUiFrame(){Style.RESET_ALL}")
+        self.__uiFrameRepository.registerUiFrame("battle-field", legacyBattleFieldFrame)
 
     def registerDecisionFirstStrikeFrame(self, decisionFirstStrikeFrame):
         self.__uiFrameRepository.registerUiFrame("decision-first", decisionFirstStrikeFrame)

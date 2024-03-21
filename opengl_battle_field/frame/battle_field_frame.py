@@ -19,7 +19,7 @@ from opengl_tomb.tomb import Tomb
 from opengl_trap.trap import Trap
 
 
-class BattleFieldFrame(OpenGLFrame):
+class legacyBattleFieldFrame(OpenGLFrame):
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
         self.battle_field = BattleField()
