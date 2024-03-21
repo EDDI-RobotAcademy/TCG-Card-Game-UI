@@ -17,7 +17,9 @@ class MyCardPage:
     # 430 / 1920, 252 / 1043
     # 1490 / 1920, 252 / 1043
     # 6개 구성 (x_right_base_ratio - x_left_base_ratio) / 6
-    x_left_base_ratio = 0.024
+    # x_left_base_ratio = 0.024
+    # 32 / 1848 -> 0.01731
+    x_left_base_ratio = 0.01731
     x_right_base_ratio = 0.568
     y_bottom_base_ratio = 0.2416
     y_top_base_ratio = 0.593
@@ -48,16 +50,32 @@ class MyCardPage:
     def get_my_card_page_card_object_list(self):
         return self.my_card_page_card_object_list
 
+    # x: 50, y: 232
+    # x: 1574, y: 242
+    # 50 / 1848 -> 0.02705
+    # 1574 / 1848 -> 0.85173
+    # 242 / 1016 -> 0.23818
+    # 732 / 1016 -> 0.72047
+
+    # target_width = 1524 = 5x + 4y
+    # 340 * 4 = 1360
+    # 1524 - 1360 = 32.8 (33)
+    # 373 / 1848 -> 0.20183
+    # 340 / 1848 -> 0.18398
+    # 1524 / 1848 -> 0.82467
+
     def get_next_card_position(self, index):
         print(f"my_card_page -> get_next_card_position() - self.total_width: {self.total_width}")
         # TODO: 배치 간격 고려
-        card_width_ratio = 300 / self.total_width
+        card_width_ratio = 360 / self.total_width
         place_index = index % 4
 
         current_y = self.total_height * self.y_bottom_base_ratio
         base_x = self.total_width * self.x_left_base_ratio
 
-        x_increment = (self.x_right_base_ratio - self.x_left_base_ratio + card_width_ratio) / 4.0
+        # 0.20183 - 0.18398
+        # 0.82467
+        x_increment = 0.87467 / 4.0
         next_x = base_x + self.total_width * (x_increment * place_index)
         return (next_x, current_y)
 
