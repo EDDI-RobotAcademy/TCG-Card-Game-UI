@@ -100,6 +100,8 @@ class BuyRandomCardFrame(OpenGLFrame):
         self.make_card_main_frame()
         self.render = BuyRandomCardFrameRenderer(self.buy_random_card_scene, self)
 
+        self.buy_check_repository.create_random_buy_list()
+
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
 
