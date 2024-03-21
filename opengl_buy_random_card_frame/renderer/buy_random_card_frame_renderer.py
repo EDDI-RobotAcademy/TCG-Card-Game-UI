@@ -46,10 +46,10 @@ class BuyRandomCardFrameRenderer:
             self.buy_check_repository.create_random_buy_list()
 
         for card in self.buy_check_repository.get_random_buy_card_object_list():
-            fixed_card_base = card.get_fixed_card_base()
-            fixed_card_base.draw()
+            pickable_card_base = card.get_pickable_card_base()
+            pickable_card_base.draw()
 
-            attached_shape_list = fixed_card_base.get_attached_shapes()
+            attached_shape_list = pickable_card_base.get_attached_shapes()
             for attached_shape in attached_shape_list:
                 attached_shape.draw()
 

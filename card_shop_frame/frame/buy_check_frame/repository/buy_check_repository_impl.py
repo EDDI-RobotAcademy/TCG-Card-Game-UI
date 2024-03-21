@@ -1,6 +1,7 @@
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from card_shop_frame.frame.buy_check_frame.entity.buy_check_frame import BuyCheckFrame
 from card_shop_frame.frame.buy_check_frame.repository.buy_check_repository import BuyCheckRepository
+from opengl_battle_field_pickable_card.pickable_card import PickableCard
 
 
 class BuyCheckRepositoryImpl(BuyCheckRepository):
@@ -70,9 +71,9 @@ class BuyCheckRepositoryImpl(BuyCheckRepository):
 
         for index, card_id in enumerate(random_buy_list):
             print(f"index: {index}, card_number: {card_id}")
-            new_card = FixedFieldCard(local_translation=self.get_next_card_position(index))
+            new_card = PickableCard(local_translation=self.get_next_card_position(index))
             # new_card.init_random_buy_card(card_id)
-            new_card.init_card(card_id)
+            new_card.init_random_buy_card(card_id)
             new_card.set_index(index)
             self.random_buy_card_object_list.append(new_card)
 
