@@ -1,6 +1,12 @@
 from OpenGL import GL
 
+from opengl_my_card_main_frame.infra.my_card_repository import MyCardRepository
+
+
 class MyCardMainFrameRenderer:
+
+    my_card_repository = MyCardRepository.getInstance()
+
     def __init__(self, scene, window):
         self.scene = scene
         self.window = window
@@ -25,16 +31,24 @@ class MyCardMainFrameRenderer:
         for button in self.scene.button_list:
             self._render_shape(button)
 
-        for card in self.scene.card_list[:8]:
-            # attached_tool_card = card.get_tool_card()
-            # attached_tool_card.draw()
+        for my_card in self.my_card_repository.get_my_card_object_list_from_current_page():
+            my_card_pickable_base = my_card.get_pickable_card_base()
+            my_card_pickable_base.draw()
 
-            pickable_card_base = card.get_pickable_card_base()
-            pickable_card_base.draw()
+            my_card_attached_shape_list = my_card_pickable_base.get_attached_shapes()
+            for my_card_attached_shape in my_card_attached_shape_list:
+                my_card_attached_shape.draw()
 
-            attached_shape_list = pickable_card_base.get_attached_shapes()
-            for attached_shape in attached_shape_list:
-                attached_shape.draw()
+        # for card in self.scene.card_list[:8]:
+        #     # attached_tool_card = card.get_tool_card()
+        #     # attached_tool_card.draw()
+        #
+        #     pickable_card_base = card.get_pickable_card_base()
+        #     pickable_card_base.draw()
+        #
+        #     attached_shape_list = pickable_card_base.get_attached_shapes()
+        #     for attached_shape in attached_shape_list:
+        #         attached_shape.draw()
 
         self.window.tkSwapBuffers()
 
