@@ -13,7 +13,7 @@ class MyCardMainFrameButtonBind:
         self.ui_frame_service = UiFrameServiceImpl.getInstance()
         self.page_manager = PageManager()
 
-        # self.deck_register_event_handler = CreateDeckRegisterScreen(self.my_card_main_frame)
+        self.deck_register_event_handler = CreateDeckRegisterScreen(self.my_card_main_frame)
         self.go_to_back_event_handler = GoToBackLobbyFrame(self.master, self.my_card_main_frame)
         self.create_decK_register_button_event_handler = CreateDeckRegisterButton(self.my_card_main_frame)
         self.next_page_screen_event_handler = NextPageScreen(self.my_card_main_frame, self.page_manager)
@@ -27,7 +27,7 @@ class MyCardMainFrameButtonBind:
         x, y = event.x, event.y
         print(f"x: {x}, y: {y}")
 
-        # self.deck_register_event_handler.mouse_click_event(event)
+        self.deck_register_event_handler.mouse_click_event(event)
         self.go_to_back_event_handler.mouse_click_event(event)
         self.create_decK_register_button_event_handler.mouse_click_event(event)
         self.next_page_screen_event_handler.mouse_click_event(event)
