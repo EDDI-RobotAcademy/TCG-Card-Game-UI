@@ -8,6 +8,8 @@ class MyCardMainScene:
         self.next_button = None
         self.prev_button = None
 
+        self.go_back_button = None
+
     def add_my_card_background(self, rectangle):
         self.my_card_background.append(rectangle)
 
@@ -37,6 +39,18 @@ class MyCardMainScene:
 
     def get_prev_button(self):
         return self.prev_button
+
+    def add_go_back_button(self, button):
+        self.go_back_button = button
+
+    def get_go_back_button(self):
+        return self.go_back_button
+
+    def add_create_deck_button(self, button):
+        self.create_deck_button = button
+
+    def get_create_deck_button(self):
+        return self.create_deck_button
 
     def add_card_list(self, card):
         self.card_list.append(card)

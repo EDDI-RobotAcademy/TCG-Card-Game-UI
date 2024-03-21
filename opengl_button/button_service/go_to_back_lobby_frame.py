@@ -1,3 +1,6 @@
+from colorama import Fore, Style
+from shapely import Polygon, Point
+
 from ui_frame.service.ui_frame_service_impl import UiFrameServiceImpl
 
 
@@ -7,39 +10,35 @@ class GoToBackLobbyFrame:
         self.my_card_main_frame = my_card_main_frame
         self.ui_frame_service = UiFrameServiceImpl.getInstance()
 
+        self.my_card_main_scene = my_card_main_frame.my_card_main_scene
+
+        self.width_ratio = 1
+        self.height_ratio = 1
+
+    def is_point_inside_object(self, object, coordinates):
+        x, y = coordinates
+        y *= -1
+
+        object_vertices = object.get_vertices()
+
+        ratio_applied_valid_object = [(x * self.width_ratio, y * self.height_ratio) for x, y in object_vertices]
+        print(f"go_back_button -> is_point_inside_object() - ratio_applied_valid_your_field: {ratio_applied_valid_object}")
+        print(f"x: {x * self.width_ratio}, y: {y * self.height_ratio}")
+
+        poly = Polygon(ratio_applied_valid_object)
+        point = Point(x, y)
+
+        return point.within(poly)
+
     def mouse_click_event(self, event):
         try:
             x, y = event.x, event.y
             y = self.master.winfo_reqheight() - y
 
-            # rectangle_vertices = [(0.85 * self.my_card_main_frame.width, 0.85 * self.my_card_main_frame.height + 90),
-            #                       (self.my_card_main_frame.width - 50, 0.85 * self.my_card_main_frame.height + 90),
-            #                       (self.my_card_main_frame.width - 50, self.my_card_main_frame.height - 10),
-            #                       (0.85 * self.my_card_main_frame.width, self.my_card_main_frame.height - 10)]
+            go_back_button = self.my_card_main_scene.get_go_back_button()
+            if self.is_point_inside_object(go_back_button, (x, y)):
+                print(f"mouse_click_event() clicked go_back_button")
 
-            go_back_left_x_point = self.my_card_main_frame.width * 0.81601
-            go_back_right_x_point = self.my_card_main_frame.width * 0.97564
-            go_back_top_y_point = self.my_card_main_frame.height * 0.88582
-            go_back_bottom_y_point = self.my_card_main_frame.height * 0.96653
-
-            rectangle_vertices = [
-                (go_back_left_x_point, go_back_top_y_point),
-                (go_back_right_x_point, go_back_top_y_point),
-                (go_back_right_x_point, go_back_bottom_y_point),
-                (go_back_left_x_point, go_back_bottom_y_point),
-            ]
-
-            # rectangle_size = 130
-            # start_point = (1569, 846)
-            # end_point = (start_point[0] + rectangle_size * 2.3, start_point[1] + rectangle_size * 0.55)
-            # rectangle_vertices = [
-            #     (start_point[0], start_point[1]),
-            #     (end_point[0], start_point[1]),
-            #     (end_point[0], end_point[1]),
-            #     (start_point[0], end_point[1])
-            # ]
-
-            if self.check_collision(x, y, rectangle_vertices):
                 self.switchFrame("lobby-menu")
 
         except Exception as e:
