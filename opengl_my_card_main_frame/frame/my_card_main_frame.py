@@ -455,8 +455,8 @@ class MyCardMainFrame(OpenGLFrame):
         self.my_deck_register_scene.add_my_deck_background(deck_register_rectangle)
 
         # 텍스트 박스
-        self.entry = tk.Entry(self.master, textvariable=self.textbox_string)
-        self.entry.place(relx=0.5, rely=0.4, width=300, height=50, anchor="center")
+        # self.entry = tk.Entry(self.master, textvariable=self.textbox_string)
+        # self.entry.place(relx=0.5, rely=0.4, width=300, height=50, anchor="center")
         # self.my_deck_register_scene.add_deck_name_list(self.textbox_string.get()) # 생성한 덱의 이름을 리스트에 저장
 
         # 확인 버튼 사각형
@@ -477,18 +477,19 @@ class MyCardMainFrame(OpenGLFrame):
 
         self.my_deck_register_scene.add_button_list(ok_button_rectangle)
 
+        # TODO: 이 버튼 기능 나중에 살리기
         # 되돌아 가기 버튼 사각형
-        go_to_back_button_rectangle = Rectangle(color=(0.0, 1.0, 0.0, 1.0),
-                                                local_translation=(0, 0),
-                                                vertices=[(center_x - 0.5 * button_width - ok_button_x_offset,
-                                                           center_y - 0.5 * 0.5 * self.height - button_height + ok_button_y_offset),
-                                                          (center_x + 0.5 * button_width - ok_button_x_offset,
-                                                           center_y - 0.5 * 0.5 * self.height - button_height + ok_button_y_offset),
-                                                          (center_x + 0.5 * button_width - ok_button_x_offset,
-                                                           center_y - 0.5 * 0.5 * self.height + ok_button_y_offset),
-                                                          (center_x - 0.5 * button_width - ok_button_x_offset,
-                                                           center_y - 0.5 * 0.5 * self.height + ok_button_y_offset)])
-        self.my_deck_register_scene.add_button_list(go_to_back_button_rectangle)
+        # go_to_back_button_rectangle = Rectangle(color=(0.0, 1.0, 0.0, 1.0),
+        #                                         local_translation=(0, 0),
+        #                                         vertices=[(center_x - 0.5 * button_width - ok_button_x_offset,
+        #                                                    center_y - 0.5 * 0.5 * self.height - button_height + ok_button_y_offset),
+        #                                                   (center_x + 0.5 * button_width - ok_button_x_offset,
+        #                                                    center_y - 0.5 * 0.5 * self.height - button_height + ok_button_y_offset),
+        #                                                   (center_x + 0.5 * button_width - ok_button_x_offset,
+        #                                                    center_y - 0.5 * 0.5 * self.height + ok_button_y_offset),
+        #                                                   (center_x - 0.5 * button_width - ok_button_x_offset,
+        #                                                    center_y - 0.5 * 0.5 * self.height + ok_button_y_offset)])
+        # self.my_deck_register_scene.add_button_list(go_to_back_button_rectangle)
 
     def getMyDeckRegisterScene(self):
         return self.my_deck_register_scene

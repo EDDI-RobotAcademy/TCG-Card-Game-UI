@@ -49,10 +49,8 @@ class CreatePreviousPageScreen:
                 self.page_manager.go_to_previous_page()
                 self.handle_page_transition()
 
-
-
         except Exception as e:
-            print(f"create deck register Error : {e}")
+            print(f"previous page button Error : {e}")
 
     def handle_page_transition(self):
         current_page = self.page_manager.get_current_page()
