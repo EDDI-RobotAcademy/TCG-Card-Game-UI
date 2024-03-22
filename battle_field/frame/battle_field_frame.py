@@ -4755,10 +4755,10 @@ class BattleFieldFrame(OpenGLFrame):
             self.battle_field_repository.win()
             return
 
-        self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(False)
-        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
-        print(
-            f"{Fore.RED}call_turn_end() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
+        # self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(False)
+        # whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        # print(
+        #     f"{Fore.RED}call_turn_end() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
 
         hp_data = turn_end_request_result['player_field_unit_health_point_map']
         harmful_data = turn_end_request_result['player_field_unit_harmful_effect_map']
@@ -4792,15 +4792,15 @@ class BattleFieldFrame(OpenGLFrame):
             self.your_field_unit_action_repository.set_current_field_unit_action_ready(current_your_field_unit_index)
             self.your_field_unit_action_repository.set_current_field_unit_action_count(current_your_field_unit_index, 1)
 
-        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
-        if whose_turn is False:
-            self.timer.stop_timer()
-            self.timer_repository.set_timer(60)
-            self.timer_repository.set_function(self.fake_opponent_turn_end)
-            self.timer.get_timer()
-            self.timer.start_timer()
-            self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.OPPONENT_TURN.value)
-            self.reset_every_selected_action()
+        # whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        # if whose_turn is False:
+        self.timer.stop_timer()
+        self.timer_repository.set_timer(60)
+        self.timer_repository.set_function(self.fake_opponent_turn_end)
+        self.timer.get_timer()
+        self.timer.start_timer()
+        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.OPPONENT_TURN.value)
+        self.reset_every_selected_action()
 
     def call_surrender(self):
         print("항복 요청!")
@@ -11231,14 +11231,17 @@ class BattleFieldFrame(OpenGLFrame):
         self.play_effect_animation_by_index_and_call_function_with_param(animation_index, function, param)
 
     def start_first_turn(self):
+        self.timer_repository.set_timer(60)
+        self.timer.get_timer()
+        self.timer.start_timer()
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
         if whose_turn is True:
             self.timer_repository.set_function(self.call_turn_end)
             self.timer_repository.set_unit_timeout_function(self.targeting_skill_timeout)
-            self.timer_repository.set_timer(60)
-            self.timer.get_timer()
-            self.timer.start_timer()
+
             self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.YOUR_TURN.value)
+        else:
+            self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.OPPONENT_TURN.value)
 
         #     return
         #
@@ -11252,9 +11255,9 @@ class BattleFieldFrame(OpenGLFrame):
 
     def targeting_skill_timeout(self):
         print("패시브 타임아웃 확인")
-        my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
-        if my_turn is False:
-            return
+        # my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        # if my_turn is False:
+        #     return
         print("내 턴에만 되는지 확인용")
         if self.timer_repository.get_check_nether_blade_second_passive_targeting_animation() is True:
             self.finish_nether_blade_second_passive_targeting_animation(self.attack_animation_object)
@@ -11290,9 +11293,9 @@ class BattleFieldFrame(OpenGLFrame):
         self.timer.start_timer()
 
     def check_my_turn(self):
-        my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
-        if my_turn is True:
-            return
+        # my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        # if my_turn is True:
+        #     return
         # my_turn_result = CheckMyTurnRequest(
         #         self.__session_repository.get_session_info())
         my_turn_result = self.round_repository.request_turn_end(
