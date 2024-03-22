@@ -59,7 +59,7 @@ class BattleFieldMuligunTimer(OpenGLFrame):
         bottom_y_point = self.total_height * 0.22
 
         self.timer_panel = RectangleImage(
-            image_data=self.__pre_drawed_image.get_pre_draw_character_hp_image(self.timer),
+            image_data=self.__pre_drawed_image.get_pre_draw_battle_field_timer(self.timer),
             #image_data=self.__pre_drawed_image.get_pre_draw_number_image(self.current_your_hp_state.get_current_health()),
             vertices=[
                 (left_x_point, top_y_point),
