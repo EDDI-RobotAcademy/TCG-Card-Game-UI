@@ -31,6 +31,7 @@ from lobby_frame.service.request.card_list_request import CardListRequest
 from lobby_frame.service.request.check_game_money_request import CheckGameMoneyRequest
 from matching_window.controller.matching_window_controller_impl import MatchingWindowControllerImpl
 from lobby_frame.service.request.exit_request import ExitRequest
+from music_player.repository.music_player_repository_impl import MusicPlayerRepositoryImpl
 from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
 from opengl_my_card_main_frame.infra.my_card_repository import MyCardRepository
 from rock_paper_scissors.frame.check_rock_paper_scissors_winner.repository.check_rock_paper_scissors_winner_repository_impl import \
@@ -90,6 +91,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
             # Shop
             cls.__instance.__myCardRepository = MyCardRepository.getInstance()
+            cls.__instance.__musicPlayerRepository = MusicPlayerRepositoryImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -145,6 +147,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
         def onClickEntrance(event):
             #rootWindow.after(3000, self.__waitForPrepareBattle)
+            self.__musicPlayerRepository.play_sound_effect_of_mouse_on_click('menu_button_click')
             self.__matchingWindowController.makeMatchingWindow(rootWindow)
             self.__matchingWindowController.matching(rootWindow)
 
@@ -173,6 +176,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
         def on_fake_battle_field_button_click():
             print("Fake Battle Field Frame Start!")
+            self.__musicPlayerRepository.play_sound_effect_of_mouse_on_click('menu_button_click')
 
             create_fake_battle_field_response = self.__fakeBattleFieldFrameRepository.requestCreateFakeBattleRoom(
                 CreateFakeBattleRoomRequest())
@@ -362,6 +366,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
         fake_battle_field_button.place(relx=0.2, rely=0.65, anchor="center")
 
         def onClickExit(event):
+            self.__musicPlayerRepository.play_sound_effect_of_mouse_on_click('menu_button_click')
             try:
                 responseData = self.__lobbyMenuFrameRepository.requestProgramExit(
                     ExitRequest())
@@ -379,6 +384,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
         exit_button.bind("<Button-1>", onClickExit)
 
         def onClickMyCard(event):
+            self.__musicPlayerRepository.play_sound_effect_of_mouse_on_click('menu_button_click')
             try:
                 session_info = self.__sessionRepository.get_session_info()
                 if session_info is not None:
@@ -412,6 +418,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
         my_card_button.bind("<Button-1>", onClickMyCard)
 
         def onClickCardShop(event):
+            self.__musicPlayerRepository.play_sound_effect_of_mouse_on_click('menu_button_click')
             try:
                 responseData = self.__lobbyMenuFrameRepository.requestCheckGameMoney(CheckGameMoneyRequest
                                                                                      (self.__sessionRepository.get_session_info()))
@@ -430,6 +437,15 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                 print(f"An error occurred: {e}")
 
         card_shop_button.bind("<Button-1>", onClickCardShop)
+
+        def play_mouse_on_button_sound(event):
+            self.__musicPlayerRepository.play_sound_effect_of_mouse_on_click('mouse_on_button')
+
+        battle_entrance_button.bind("<Enter>", play_mouse_on_button_sound)
+        fake_battle_field_button.bind("<Enter>", play_mouse_on_button_sound)
+        my_card_button.bind("<Enter>", play_mouse_on_button_sound)
+        card_shop_button.bind("<Enter>", play_mouse_on_button_sound)
+        exit_button.bind("<Enter>", play_mouse_on_button_sound)
 
         return lobbyMenuFrame
 

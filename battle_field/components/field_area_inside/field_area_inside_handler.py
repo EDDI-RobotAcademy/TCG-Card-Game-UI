@@ -205,6 +205,7 @@ class FieldAreaInsideHandler:
 
         # TODO: Memory Leak에 대한 추가 작업이 필요할 수 있음
         # self.__your_hand_repository.remove_card_by_index(placed_card_index)
+        self.__music_player_repository.play_sound_effect_of_unit_deploy(str(placed_card_id))
         self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)
 
         self.__your_field_unit_repository.create_field_unit_card(placed_card_id)

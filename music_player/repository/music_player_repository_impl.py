@@ -84,8 +84,7 @@ class MusicPlayerRepositoryImpl(MusicPlayerRepository):
     #
     #     time.sleep(0.1)
     def play_sound_effect_of_mouse_on_click(self, mouse_on_click_event_name: str):
-        print("MusicPlayerRepositoryImpl : play_sound_effect_of_mouse_on_click - " + mouse_on_click_event_name)
-        pygame.mixer.init()
+        # print("MusicPlayerRepositoryImpl : play_sound_effect_of_mouse_on_click - " + mouse_on_click_event_name)
         current_location = os.getcwd()
         sound_effect_file_path = (
             os.path.join(
@@ -94,12 +93,12 @@ class MusicPlayerRepositoryImpl(MusicPlayerRepository):
         if not os.path.exists(sound_effect_file_path):
             print('유효하지 않은 경로입니다.')
             return
+        pygame.mixer.init()
         sound = pygame.mixer.Sound(sound_effect_file_path)
         sound.play()
 
     def play_sound_effect_of_battle_match(self, battle_match_event_name: str):
         print("MusicPlayerRepositoryImpl : play_sound_effect_of_battle_match - " + battle_match_event_name)
-        pygame.mixer.init()
         current_location = os.getcwd()
         sound_effect_file_path = (
             os.path.join(
@@ -108,12 +107,26 @@ class MusicPlayerRepositoryImpl(MusicPlayerRepository):
         if not os.path.exists(sound_effect_file_path):
             print('유효하지 않은 경로입니다.')
             return
+        pygame.mixer.init()
+        sound = pygame.mixer.Sound(sound_effect_file_path)
+        sound.play()
+
+    def play_sound_effect_of_unit_deploy(self, deployed_unit_number: str):
+        print("MusicPlayerRepositoryImpl : play_sound_effect_of_unit_deploy - " + deployed_unit_number)
+        current_location = os.getcwd()
+        sound_effect_file_path = (
+            os.path.join(
+                current_location,
+                'local_storage', 'sound_effect', 'unit_deploy', f'{deployed_unit_number}.mp3'))
+        if not os.path.exists(sound_effect_file_path):
+            print('유효하지 않은 경로입니다.')
+            return
+        pygame.mixer.init()
         sound = pygame.mixer.Sound(sound_effect_file_path)
         sound.play()
 
     def play_sound_effect_of_unit_attack(self, unit_attack_event_name: str):
         print("MusicPlayerRepositoryImpl : play_sound_effect_of_unit_attack - " + unit_attack_event_name)
-        pygame.mixer.init()
         current_location = os.getcwd()
         sound_effect_file_path = (
             os.path.join(
@@ -122,12 +135,12 @@ class MusicPlayerRepositoryImpl(MusicPlayerRepository):
         if not os.path.exists(sound_effect_file_path):
             print('유효하지 않은 경로입니다.')
             return
+        pygame.mixer.init()
         sound = pygame.mixer.Sound(sound_effect_file_path)
         sound.play()
 
     def play_sound_effect_of_card_execution(self, card_execution_event_name: str):
         print("MusicPlayerRepositoryImpl : play_sound_effect_of_card_execution - " + card_execution_event_name)
-        pygame.mixer.init()
         current_location = os.getcwd()
         sound_effect_file_path = (
             os.path.join(
@@ -136,12 +149,16 @@ class MusicPlayerRepositoryImpl(MusicPlayerRepository):
         if not os.path.exists(sound_effect_file_path):
             print('유효하지 않은 경로입니다.')
             return
+        pygame.mixer.init()
         sound = pygame.mixer.Sound(sound_effect_file_path)
         sound.play()
 
-    def play_sound_effect_of_timer(self, timer_event_name: str):
+    def play_sound_effect_of_timer(self, timer_event_name: str, stop_event: int):
         print("MusicPlayerRepositoryImpl : play_sound_effect_of_timer - " + timer_event_name)
         pygame.mixer.init()
+        if stop_event == -1:
+            pygame.mixer.stop()
+            return
         current_location = os.getcwd()
         sound_effect_file_path = (
             os.path.join(

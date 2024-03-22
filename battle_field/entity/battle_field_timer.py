@@ -78,8 +78,10 @@ class BattleFieldTimer(OpenGLFrame):
         self.unit_timeout_function = self.__battle_field_timer_repository.get_unit_timeout_function()
 
     def start_timer(self):
+        if self.timer == 60:
+            self.__music_player_repository.play_sound_effect_of_timer('', -1)
         if self.timer == 11:
-            self.__music_player_repository.play_sound_effect_of_timer('ten_secs')
+            self.__music_player_repository.play_sound_effect_of_timer('ten_secs', 1)
         if self.timer >= -1:
             self.timer -= 1
             self.timer_id = self.master.after(1000, self.start_timer)

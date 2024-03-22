@@ -31,6 +31,10 @@ class MusicPlayerRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def play_sound_effect_of_unit_deploy(self, deployed_unit_number: str):
+        pass
+
+    @abc.abstractmethod
     def play_sound_effect_of_unit_attack(self, unit_attack_event_name: str):
         pass
 
@@ -39,7 +43,7 @@ class MusicPlayerRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def play_sound_effect_of_timer(self, timer_event_name: str):
+    def play_sound_effect_of_timer(self, timer_event_name: str, stop_event: int):
         pass
 
     @abc.abstractmethod
