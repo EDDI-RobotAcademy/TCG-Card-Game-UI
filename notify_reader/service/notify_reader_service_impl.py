@@ -1647,6 +1647,10 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         data = notice_dictionary['NOTIFY_TURN_START_TARGETING_ATTACK_PASSIVE_SKILL_TO_UNIT']
         self.__attack_animation_object.set_notify_data(data)
 
+        for opponent_field_unit in self.__opponent_field_unit_repository.get_current_field_unit_card_object_list():
+            if opponent_field_unit.get_card_number() == 19:
+                self.__attack_animation_object.set_opponent_animation_actor(opponent_field_unit)
+
         # your_field_unit_health_point_map = (
         #     data)['player_field_unit_health_point_map']['You']['field_unit_health_point_map']
         # your_field_unit_harmful_effect_list = (
@@ -1695,6 +1699,10 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         data = notice_dictionary['NOTIFY_DEPLOY_TARGETING_ATTACK_PASSIVE_SKILL_TO_UNIT']
         self.__attack_animation_object.set_notify_data(data)
 
+        for opponent_field_unit in self.__opponent_field_unit_repository.get_current_field_unit_card_object_list():
+            if opponent_field_unit.get_card_number() == 19:
+                self.__attack_animation_object.set_opponent_animation_actor(opponent_field_unit)
+
         # your_field_unit_health_point_map = (
         #     data)['player_field_unit_health_point_map']['You']['field_unit_health_point_map']
         # your_field_unit_harmful_effect_list = (
@@ -1741,6 +1749,11 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         data = notice_dictionary['NOTIFY_TURN_START_NON_TARGETING_ATTACK_PASSIVE_SKILL']
         self.__attack_animation_object.set_notify_data(data)
+
+        for opponent_field_unit in self.__opponent_field_unit_repository.get_current_field_unit_card_object_list():
+            if opponent_field_unit.get_card_number() == 19:
+                self.__attack_animation_object.set_opponent_animation_actor(opponent_field_unit)
+
 
         # your_field_unit_health_point_map = (
         #     data)['player_field_unit_health_point_map']['You']['field_unit_health_point_map']
@@ -1790,6 +1803,16 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         self.__attack_animation_object.set_notify_data(data)
 
+        for opponent_field_unit in self.__opponent_field_unit_repository.get_current_field_unit_card_object_list():
+            if opponent_field_unit.get_card_number()==19:
+                self.__attack_animation_object.set_opponent_animation_actor(opponent_field_unit)
+
+
+
+        # self.__attack_animation_object.set_opponent_animation_actor(
+        #     self.__opponent_field_unit_repository.find_opponent_field_unit_by_index()
+        # )
+
         # your_field_unit_health_point_map = (
         #     data)['player_field_unit_health_point_map']['You']['field_unit_health_point_map']
         # your_field_unit_harmful_effect_list = (
@@ -1837,6 +1860,10 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         data = notice_dictionary['NOTIFY_TURN_START_TARGETING_ATTACK_TO_GAME_MAIN_CHARACTER']
         self.__attack_animation_object.set_notify_data(data)
 
+        for opponent_field_unit in self.__opponent_field_unit_repository.get_current_field_unit_card_object_list():
+            if opponent_field_unit.get_card_number() == 19:
+                self.__attack_animation_object.set_opponent_animation_actor(opponent_field_unit)
+
         # your_main_character_health_point = (
         #     data)['player_main_character_health_point_map']['You']
         # your_main_character_survival_state = (
@@ -1867,6 +1894,10 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         self.__attack_animation_object.set_notify_data(data)
 
         survival_info = data['player_main_character_survival_map']['You']
+
+        for opponent_field_unit in self.__opponent_field_unit_repository.get_current_field_unit_card_object_list():
+            if opponent_field_unit.get_card_number() == 19:
+                self.__attack_animation_object.set_opponent_animation_actor(opponent_field_unit)
         #
         # if survival_info == 'Death':
         #     self.__your_hp_repository.your_character_die()

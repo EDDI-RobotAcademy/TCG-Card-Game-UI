@@ -1922,6 +1922,10 @@ class BattleFieldFrame(OpenGLFrame):
 
         if self.__notify_reader_repository.get_notify_message_on_screen():
             print('get_notify_message_on_screen:', self.__notify_reader_repository.get_notify_message_on_screen())
+            if self.__notify_reader_repository.get_notify_message_on_screen() == MessageNumber.YOUR_TURN.value:
+                self.reset_your_turn_timer()
+
+
             self.message_on_the_screen.create_message_on_the_battle_screen(
                 self.__notify_reader_repository.get_notify_message_on_screen()
             )
@@ -4794,7 +4798,7 @@ class BattleFieldFrame(OpenGLFrame):
         # if whose_turn is False:
         self.timer.stop_timer()
         self.timer_repository.set_timer(60)
-        self.timer_repository.set_function(self.fake_opponent_turn_end)
+        self.timer_repository.set_function(None)
         self.timer.get_timer()
         self.timer.start_timer()
         self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.OPPONENT_TURN.value)
@@ -11227,6 +11231,14 @@ class BattleFieldFrame(OpenGLFrame):
             animation_index, effect_animation_panel)
 
         self.play_effect_animation_by_index_and_call_function_with_param(animation_index, function, param)
+
+    def reset_your_turn_timer(self):
+        self.timer.stop_timer()
+        self.timer_repository.set_timer(60)
+        self.timer_repository.set_function(self.call_turn_end)
+        self.timer_repository.set_unit_timeout_function(self.targeting_skill_timeout)
+        self.timer.get_timer()
+        self.timer.start_timer()
 
     def start_first_turn(self):
         self.timer_repository.set_timer(60)
