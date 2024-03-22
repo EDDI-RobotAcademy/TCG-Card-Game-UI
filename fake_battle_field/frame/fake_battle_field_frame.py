@@ -3556,20 +3556,22 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
-        # 글쓰기
         if self.message_on_the_screen.get_current_message_on_the_battle_screen():
             glEnable(GL_DEPTH_TEST)
             glDepthFunc(GL_ALWAYS)
             # glEnable(GL_BLEND)
             # glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
             self.message_on_the_screen.set_width_ratio(self.width_ratio)
             self.message_on_the_screen.set_height_ratio(self.height_ratio)
             self.current_field_message_on_the_battle_screen_panel = (
                 self.message_on_the_screen.get_current_message_on_the_battle_screen()
             )
             self.current_field_message_on_the_battle_screen_panel.draw()
+
             # glDisable(GL_BLEND)
             glDisable(GL_DEPTH_TEST)
+
 
 
 
@@ -3606,6 +3608,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     battle_result_panel.set_width_ratio(self.width_ratio)
                     battle_result_panel.set_height_ratio(self.height_ratio)
                     battle_result_panel.draw()
+
 
 
         if self.skill_focus_background_panel:
@@ -4285,10 +4288,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if drop_action_result is MessageNumber.USE_MYTH_CARD_AFTER_FOUR_TURN:
                 print("신화카드는 4턴 후에 사용 가능")
                 self.return_to_initial_location()
+                self.reset_every_selected_action()
                 self.message_on_the_screen.create_message_on_the_battle_screen(drop_action_result.value)
             elif drop_action_result is MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN:
                 print("상대턴 사용 불가")
                 self.return_to_initial_location()
+                self.reset_every_selected_action()
                 self.message_on_the_screen.create_message_on_the_battle_screen(drop_action_result.value)
             elif drop_action_result is None or drop_action_result is FieldAreaAction.Dummy:
                 print("self.field_area_inside_handler.get_field_area_action() = None")
@@ -4435,9 +4440,13 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     select_details_card_base = select_details_card.get_fixed_card_base()
                     select_details_card_base_vertices = select_details_card_base.get_vertices()
 
+                    opponent_field_unit_extra_effect_info = (
+                        self.opponent_field_unit_repository.get_your_unit_extra_ability_at_index(opponent_field_unit_index))
+
                     opponent_field_unit_total_energy = opponent_field_unit_attached_energy.get_total_energy_at_index(
                         opponent_field_unit_index)
                     print(f"opponent_field_unit_total_energy: {opponent_field_unit_total_energy}")
+
 
                     if opponent_field_unit_total_energy:
                         opponent_field_unit_attached_energy_info = opponent_field_unit_attached_energy.get_energy_info_at_index(
@@ -4454,6 +4463,40 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             opponent_field_unit_index, EnergyType.Trent)
                         print(f"opponent_field_unit_attached_trent_energy: {opponent_field_unit_attached_trent_energy}")
                         race_energy_count = 0
+
+                        if opponent_field_unit_extra_effect_info is not None:
+                            select_details_card_base.set_attached_shapes(
+                                select_details_card.creat_fixed_card_dark_flame_image(
+                                    image_data=self.pre_drawed_image_instance.get_pre_draw_dark_flame_energy(),
+                                    local_translation=select_details_card_base.get_local_translation(),
+                                    vertices=[(select_details_card_base_vertices[2][0] + 30,
+                                              select_details_card_base_vertices[2][1] - 25),
+                                              (select_details_card_base_vertices[2][0] + 80,
+                                              select_details_card_base_vertices[2][1] - 25),
+                                              (select_details_card_base_vertices[2][0] + 80,
+                                              select_details_card_base_vertices[2][1] + 25),
+                                              (select_details_card_base_vertices[2][0] + 30,
+                                              select_details_card_base_vertices[2][1] + 25)
+                                              ]
+                                )
+                            )
+
+                            select_details_card_base.set_attached_shapes(
+                                select_details_card.creat_fixed_card_freezing_image(
+                                    image_data=self.pre_drawed_image_instance.get_pre_draw_freezing_energy(),
+                                    local_translation=select_details_card_base.get_local_translation(),
+                                    vertices=[(select_details_card_base_vertices[2][0] + 80,
+                                              select_details_card_base_vertices[2][1] - 25),
+                                              (select_details_card_base_vertices[2][0] + 130,
+                                              select_details_card_base_vertices[2][1] - 25),
+                                              (select_details_card_base_vertices[2][0] + 130,
+                                              select_details_card_base_vertices[2][1] + 25),
+                                              (select_details_card_base_vertices[2][0] + 80,
+                                              select_details_card_base_vertices[2][1] + 25)
+                                              ]
+                                )
+                            )
+
                         # 언데드 에너지 갯수에 따른 표시
                         if opponent_field_unit_attached_undead_energy > 0:
                             print("상세 보기 언데드 생성")
@@ -5043,6 +5086,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     select_details_card_base = select_details_card.get_fixed_card_base()
                     select_details_card_base_vertices = select_details_card_base.get_vertices()
 
+                    your_field_unit_extra_effect_info = (
+                        self.your_field_unit_repository.get_your_unit_extra_ability_at_index(your_field_unit_index))
+
+                    print(f"your_field_unit_extra_effect_info : {your_field_unit_extra_effect_info}")
+
                     your_field_unit_total_energy = your_field_unit_attached_energy.get_total_energy_at_index(
                         your_field_unit_index)
                     print(f"your_field_unit_total_energy: {your_field_unit_total_energy}")
@@ -5062,6 +5110,40 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             your_field_unit_index, EnergyType.Trent)
                         print(f"your_field_unit_attached_trent_energy: {your_field_unit_attached_trent_energy}")
                         race_energy_count = 0
+
+                        if your_field_unit_extra_effect_info is not None:
+                            select_details_card_base.set_attached_shapes(
+                                select_details_card.creat_fixed_card_dark_flame_image(
+                                    image_data=self.pre_drawed_image_instance.get_pre_draw_dark_flame_energy(),
+                                    local_translation=select_details_card_base.get_local_translation(),
+                                    vertices=[(select_details_card_base_vertices[2][0] + 30,
+                                              select_details_card_base_vertices[2][1] - 25),
+                                              (select_details_card_base_vertices[2][0] + 80,
+                                              select_details_card_base_vertices[2][1] - 25),
+                                              (select_details_card_base_vertices[2][0] + 80,
+                                              select_details_card_base_vertices[2][1] + 25),
+                                              (select_details_card_base_vertices[2][0] + 30,
+                                              select_details_card_base_vertices[2][1] + 25)
+                                              ]
+                                )
+                            )
+
+                            select_details_card_base.set_attached_shapes(
+                                select_details_card.creat_fixed_card_freezing_image(
+                                    image_data=self.pre_drawed_image_instance.get_pre_draw_freezing_energy(),
+                                    local_translation=select_details_card_base.get_local_translation(),
+                                    vertices=[(select_details_card_base_vertices[2][0] + 80,
+                                              select_details_card_base_vertices[2][1] - 25),
+                                              (select_details_card_base_vertices[2][0] + 130,
+                                              select_details_card_base_vertices[2][1] - 25),
+                                              (select_details_card_base_vertices[2][0] + 130,
+                                              select_details_card_base_vertices[2][1] + 25),
+                                              (select_details_card_base_vertices[2][0] + 80,
+                                              select_details_card_base_vertices[2][1] + 25)
+                                              ]
+                                )
+                            )
+
                         # 언데드 에너지 갯수에 따른 표시
                         if your_field_unit_attached_undead_energy > 0:
                             print("상세 보기 언데드 생성")
@@ -9306,6 +9388,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape.update_vertices(new_attached_shape_vertices)
                 # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
+            skill_focus_background_panel_alpha = self.skill_focus_background_panel.color[3]
+            skill_focus_background_panel_alpha += 0.013 * step_count
+
+            self.skill_focus_background_panel.color = (
+                self.skill_focus_background_panel.color[0],
+                self.skill_focus_background_panel.color[1],
+                self.skill_focus_background_panel.color[2],
+                skill_focus_background_panel_alpha
+            )
+            self.skill_focus_background_panel.draw()
+
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
                 if step_count == 6:
@@ -9316,8 +9409,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
         update_position(1)
 
     def start_opponent_valrn_sea_of_wraith_motion_animation(self, attack_animation_object):
-
-
 
         # todo : 망바 이름으로 바꿔야함
         effect_animation = EffectAnimation()
@@ -9406,8 +9497,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # attack_animation_object.set_is_finished(True)
                 # attack_animation_object.set_need_post_process(True)
 
-        self.play_effect_animation_by_index_and_call_function_with_param(animation_index, wide_area_attack, 1)
+        # self.play_effect_animation_by_index_and_call_function_with_param(animation_index, wide_area_attack, 1)
 
+        self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
+            'sea_of_wraith', wide_area_attack, 1)
 
     def finish_opponent_valrn_sea_of_wraith_motion_animation(self, attack_animation_object):
         opponent_animation_actor = attack_animation_object.get_opponent_animation_actor()
@@ -9455,6 +9548,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 ]
                 attached_shape.update_vertices(new_attached_shape_vertices)
                 # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+
+            skill_focus_background_panel_alpha = self.skill_focus_background_panel.color[3]
+            skill_focus_background_panel_alpha -= 0.00577 * step_count
+
+            self.skill_focus_background_panel.color = (
+                self.skill_focus_background_panel.color[0],
+                self.skill_focus_background_panel.color[1],
+                self.skill_focus_background_panel.color[2],
+                skill_focus_background_panel_alpha
+            )
+            self.skill_focus_background_panel.draw()
 
             if step_count < steps:
 
@@ -9635,6 +9739,19 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.your_field_unit_repository.get_current_field_unit_list())
 
         def wide_area_attack(step_count):
+            vibration_factor = 10
+
+            random_background_translation = (random.uniform(-vibration_factor, vibration_factor),
+                                             random.uniform(-vibration_factor, vibration_factor))
+
+            if step_count % 2 == 1:
+                for battle_field_background_shape in self.battle_field_background_shape_list:
+                    battle_field_background_shape.global_translate(
+                        (random_background_translation[0], random_background_translation[1]))
+            else:
+                for battle_field_background_shape in self.battle_field_background_shape_list:
+                    battle_field_background_shape.global_translate((0, 0))
+
             your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
             your_field_unit_list_length = len(
                 self.your_field_unit_repository.get_current_field_unit_list())
@@ -9653,12 +9770,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape_list = fixed_card_base.get_attached_shapes()
 
                 if step_count % 2 == 1:
-                    vibration_factor = 10
                     random_translation = (random.uniform(-vibration_factor, vibration_factor),
                                           random.uniform(-vibration_factor, vibration_factor))
-
-                    random_background_translation = (random.uniform(-vibration_factor, vibration_factor),
-                                                     random.uniform(-vibration_factor, vibration_factor))
 
                     new_fixed_card_base_vertices = [
                         (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
@@ -9680,19 +9793,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             attached_shape.get_vertices()
                         ]
                         attached_shape.update_vertices(new_attached_shape_vertices)
-
-                    for battle_field_background_shape in self.battle_field_background_shape_list:
-                        battle_field_background_shape.global_translate((random_background_translation[0], random_background_translation[1]))
-
                 else:
                     fixed_card_base.update_vertices(fixed_card_base.get_initial_vertices())
                     if tool_card is not None:
                         tool_card.update_vertices(tool_card.get_initial_vertices())
                     for attached_shape in attached_shape_list:
                         attached_shape.update_vertices(attached_shape.get_initial_vertices())
-
-                    for battle_field_background_shape in self.battle_field_background_shape_list:
-                        battle_field_background_shape.global_translate((0, 0))
 
             if step_count < steps:
                 self.master.after(20, wide_area_attack, step_count + 1)
@@ -9879,6 +9985,19 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         
         def opponent_wide_area_attack(step_count):
+            vibration_factor = 10
+
+            random_background_translation = (random.uniform(-vibration_factor, vibration_factor),
+                                             random.uniform(-vibration_factor, vibration_factor))
+
+            if step_count % 2 == 1:
+                for battle_field_background_shape in self.battle_field_background_shape_list:
+                    battle_field_background_shape.global_translate(
+                        (random_background_translation[0], random_background_translation[1]))
+            else:
+                for battle_field_background_shape in self.battle_field_background_shape_list:
+                    battle_field_background_shape.global_translate((0, 0))
+
             for index in range(
                     opponent_field_unit_list_length - 1,
                     -1,
@@ -9896,9 +10015,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     vibration_factor = 10
                     random_translation = (random.uniform(-vibration_factor, vibration_factor),
                                           random.uniform(-vibration_factor, vibration_factor))
-
-                    background_random_translation = (random.uniform(-vibration_factor, vibration_factor),
-                                                     random.uniform(-vibration_factor, vibration_factor))
 
                     new_fixed_card_base_vertices = [
                         (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
@@ -9921,18 +10037,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         ]
                         attached_shape.update_vertices(new_attached_shape_vertices)
 
-                    for battle_field_background_shape in self.battle_field_background_shape_list:
-                        battle_field_background_shape.global_translate((background_random_translation[0], background_random_translation[1]))
-
                 else:
                     fixed_card_base.update_vertices(fixed_card_base.get_initial_vertices())
                     if tool_card is not None:
                         tool_card.update_vertices(tool_card.get_initial_vertices())
                     for attached_shape in attached_shape_list:
                         attached_shape.update_vertices(attached_shape.get_initial_vertices())
-
-                    for battle_field_background_shape in self.battle_field_background_shape_list:
-                        battle_field_background_shape.global_translate((0, 0))
 
             if step_count < steps:
                 self.master.after(20, opponent_wide_area_attack, step_count + 1)
