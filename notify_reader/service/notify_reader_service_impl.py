@@ -1698,6 +1698,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         self.__attack_animation_object.set_is_opponent_attack_main_character(False)
 
+        self.__opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.PLAY_ANIMATION)
+
         self.__opponent_field_area_inside_handler.set_field_area_action(
             OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_PASSIVE_SKILL_PROCESS)
 
@@ -1758,6 +1760,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         self.__attack_animation_object.set_is_opponent_attack_main_character(False)
 
+        self.__opponent_field_area_inside_handler.set_active_field_area_action(
+            OpponentFieldAreaActionProcess.PLAY_ANIMATION)
+
         self.__opponent_field_area_inside_handler.set_field_area_action(
             OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_PASSIVE_SKILL_PROCESS)
 
@@ -1807,6 +1812,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         #     self.__your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
         #
         # self.__your_field_unit_repository.replace_field_card_position()
+
+        self.__opponent_field_area_inside_handler.set_active_field_area_action(
+            OpponentFieldAreaActionProcess.PLAY_ANIMATION)
 
         self.__opponent_field_area_inside_handler.set_field_area_action(
             OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_PASSIVE_SKILL_PROCESS)
@@ -1868,6 +1876,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         #
         # self.__your_field_unit_repository.replace_field_card_position()
 
+        self.__opponent_field_area_inside_handler.set_active_field_area_action(
+            OpponentFieldAreaActionProcess.PLAY_ANIMATION)
+
         self.__opponent_field_area_inside_handler.set_field_area_action(
             OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_PASSIVE_SKILL_PROCESS)
 
@@ -1898,6 +1909,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         #       f"{self.__your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
 
         self.__attack_animation_object.set_is_opponent_attack_main_character(True)
+
+        self.__opponent_field_area_inside_handler.set_active_field_area_action(
+            OpponentFieldAreaActionProcess.PLAY_ANIMATION)
 
         self.__opponent_field_area_inside_handler.set_field_area_action(
             OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_PASSIVE_SKILL_PROCESS)
@@ -1935,6 +1949,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         #       f"{self.__your_hp_repository.get_current_your_hp_state().get_current_health()}{Style.RESET_ALL}")
 
         self.__attack_animation_object.set_is_opponent_attack_main_character(True)
+
+        self.__opponent_field_area_inside_handler.set_active_field_area_action(
+            OpponentFieldAreaActionProcess.PLAY_ANIMATION)
 
         self.__opponent_field_area_inside_handler.set_field_area_action(
             OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_PASSIVE_SKILL_PROCESS)
