@@ -1655,9 +1655,14 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         data = notice_dictionary['NOTIFY_TURN_START_TARGETING_ATTACK_PASSIVE_SKILL_TO_UNIT']
         self.__attack_animation_object.set_notify_data(data)
 
-        opponent_unit_index = int(list(data['player_field_unit_attack_map']['Opponent']['field_unit_attack_map'].keys())[0])
-        opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(opponent_unit_index)
+        opponent_unit_index = list(data['player_field_unit_attack_map']['Opponent']['field_unit_attack_map'].keys())[0]
+        opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(int(opponent_unit_index))
         self.__attack_animation_object.set_opponent_animation_actor(opponent_field_unit)
+
+        your_field_unit_index = data['player_field_unit_attack_map']['Opponent']['field_unit_attack_map'][opponent_unit_index][
+            'target_unit_index']
+        your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(your_field_unit_index)
+        self.__attack_animation_object.set_your_field_unit(your_field_unit)
 
 
 
@@ -1891,9 +1896,14 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         data = notice_dictionary['NOTIFY_TURN_START_TARGETING_ATTACK_TO_GAME_MAIN_CHARACTER']
         self.__attack_animation_object.set_notify_data(data)
 
-        opponent_unit_index = int(list(data['player_field_unit_attack_map']['Opponent']['field_unit_attack_map'].keys())[0])
-        opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(opponent_unit_index)
+        opponent_unit_index = list(data['player_field_unit_attack_map']['Opponent']['field_unit_attack_map'].keys())[0]
+        opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(int(opponent_unit_index))
         self.__attack_animation_object.set_opponent_animation_actor(opponent_field_unit)
+
+        your_field_unit_index = data['player_field_unit_attack_map']['Opponent']['field_unit_attack_map'][opponent_unit_index][
+            'target_unit_index']
+        your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(your_field_unit_index)
+        self.__attack_animation_object.set_your_field_unit(your_field_unit)
 
         # your_main_character_health_point = (
         #     data)['player_main_character_health_point_map']['You']
