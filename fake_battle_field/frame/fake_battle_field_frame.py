@@ -134,6 +134,7 @@ from battle_field_muligun.service.request.muligun_request import MuligunRequest
 
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.attack_type import AttackType
+from common.battle_finish_position import BattleFinishPosition
 from common.card_grade import CardGrade
 from common.card_race import CardRace
 from common.card_type import CardType
@@ -401,6 +402,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.battle_field_repository = BattleFieldRepository.getInstance()
         self.battle_result = BattleResult()
         self.battle_result_panel_list = []
+
+        self.game_end_sound_call = False
 
         self.notice_card = FixedFieldCard(local_translation=(self.width / 2 - 150, self.height / 2 - (150 * 1.618)))
 
@@ -3603,11 +3606,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
         #         self.battle_result_panel_list[0].draw()
 
         if len(self.battle_result_panel_list) != 0:
-            if self.is_playing_action_animation == False and self.field_area_inside_handler.get_field_area_action() == None:
+            if not self.is_playing_action_animation and self.field_area_inside_handler.get_field_area_action() is None:
                 for battle_result_panel in self.battle_result_panel_list:
                     battle_result_panel.set_width_ratio(self.width_ratio)
                     battle_result_panel.set_height_ratio(self.height_ratio)
                     battle_result_panel.draw()
+                if self.battle_field_repository.get_is_win() == BattleFinishPosition.Winner and not self.game_end_sound_call:
+                    self.__music_player_repository.play_sound_effect_of_game_end('winner')
+                    self.game_end_sound_call = True
+                elif self.battle_field_repository.get_is_win() == BattleFinishPosition.Loser and not self.game_end_sound_call:
+                    self.__music_player_repository.play_sound_effect_of_game_end('loser')
+                    self.game_end_sound_call = True
 
 
 
@@ -15197,6 +15206,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.effect_animation_repository.clear_every_resource()
         
         del self.timer
+        self.game_end_sound_call = False
         # self.battle_field_repository.clear_every_resource()
 
     def corpse_explosion_animation(self):
