@@ -64,6 +64,8 @@ class MyCardRepository:
         my_card_list = list(my_card_dictionary.keys())
         my_card_number_list = [int(card_id) for card_id in my_card_list]
 
+        my_card_count_list = list(my_card_dictionary.values())
+
         # num_cards_per_page = 8
         num_cards_per_page = 4
         num_pages = ceil(len(my_card_number_list) / num_cards_per_page)
@@ -73,10 +75,13 @@ class MyCardRepository:
             start_index = page_index * num_cards_per_page
             end_index = (page_index + 1) * num_cards_per_page
             current_my_card_page = my_card_number_list[start_index:end_index]
+            current_my_card_count_page = my_card_count_list[start_index:end_index]
 
             my_card_page = MyCardPage()
             my_card_page.set_total_window_size(self.total_width, self.total_height)
             my_card_page.add_my_card_to_page(current_my_card_page)
+            my_card_page.add_my_card_count_to_page(current_my_card_count_page)
+
             my_card_page.set_page_number(page_index + 1)
             my_card_page.create_my_card_list()
 

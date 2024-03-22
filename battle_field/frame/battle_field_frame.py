@@ -6582,6 +6582,17 @@ class BattleFieldFrame(OpenGLFrame):
                 attached_shape.update_vertices(new_attached_shape_vertices)
                 # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
+            skill_focus_background_panel_alpha = self.skill_focus_background_panel.color[3]
+            skill_focus_background_panel_alpha += 0.013 * step_count
+
+            self.skill_focus_background_panel.color = (
+                self.skill_focus_background_panel.color[0],
+                self.skill_focus_background_panel.color[1],
+                self.skill_focus_background_panel.color[2],
+                skill_focus_background_panel_alpha
+            )
+            self.skill_focus_background_panel.draw()
+
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
                 if step_count == 6:
@@ -6675,11 +6686,9 @@ class BattleFieldFrame(OpenGLFrame):
                 self.master.after(20, wide_area_attack, step_count + 1)
             else:
                 self.finish_opponent_valrn_sea_of_wraith_motion_animation(attack_animation_object)
-                # self.is_attack_motion_finished = True
-                # attack_animation_object.set_is_finished(True)
-                # attack_animation_object.set_need_post_process(True)
 
-        self.play_effect_animation_by_index_and_call_function_with_param(animation_index, wide_area_attack, 1)
+        self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
+            'sea_of_wraith', wide_area_attack, 1)
 
     def finish_opponent_valrn_sea_of_wraith_motion_animation(self, attack_animation_object):
         opponent_animation_actor = attack_animation_object.get_opponent_animation_actor()
@@ -6730,7 +6739,17 @@ class BattleFieldFrame(OpenGLFrame):
                     (vx - step_x, vy - step_y) for vx, vy in attached_shape.vertices
                 ]
                 attached_shape.update_vertices(new_attached_shape_vertices)
-                # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+
+            skill_focus_background_panel_alpha = self.skill_focus_background_panel.color[3]
+            skill_focus_background_panel_alpha -= 0.00577 * step_count
+
+            self.skill_focus_background_panel.color = (
+                self.skill_focus_background_panel.color[0],
+                self.skill_focus_background_panel.color[1],
+                self.skill_focus_background_panel.color[2],
+                skill_focus_background_panel_alpha
+            )
+            self.skill_focus_background_panel.draw()
 
             if step_count < steps:
 
@@ -6840,6 +6859,19 @@ class BattleFieldFrame(OpenGLFrame):
             self.your_field_unit_repository.get_current_field_unit_list())
 
         def wide_area_attack(step_count):
+            vibration_factor = 10
+
+            random_background_translation = (random.uniform(-vibration_factor, vibration_factor),
+                                             random.uniform(-vibration_factor, vibration_factor))
+
+            if step_count % 2 == 1:
+                for battle_field_background_shape in self.battle_field_background_shape_list:
+                    battle_field_background_shape.global_translate(
+                        (random_background_translation[0], random_background_translation[1]))
+            else:
+                for battle_field_background_shape in self.battle_field_background_shape_list:
+                    battle_field_background_shape.global_translate((0, 0))
+
             your_field_unit_list = self.your_field_unit_repository.get_current_field_unit_list()
             your_field_unit_list_length = len(
                 self.your_field_unit_repository.get_current_field_unit_list())
@@ -6858,12 +6890,8 @@ class BattleFieldFrame(OpenGLFrame):
                 attached_shape_list = fixed_card_base.get_attached_shapes()
 
                 if step_count % 2 == 1:
-                    vibration_factor = 10
                     random_translation = (random.uniform(-vibration_factor, vibration_factor),
                                           random.uniform(-vibration_factor, vibration_factor))
-
-                    random_background_translation = (random.uniform(-vibration_factor, vibration_factor),
-                                                     random.uniform(-vibration_factor, vibration_factor))
 
                     new_fixed_card_base_vertices = [
                         (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
@@ -6885,20 +6913,12 @@ class BattleFieldFrame(OpenGLFrame):
                             attached_shape.get_vertices()
                         ]
                         attached_shape.update_vertices(new_attached_shape_vertices)
-
-                    for battle_field_background_shape in self.battle_field_background_shape_list:
-                        battle_field_background_shape.global_translate(
-                            (random_background_translation[0], random_background_translation[1]))
-
                 else:
                     fixed_card_base.update_vertices(fixed_card_base.get_initial_vertices())
                     if tool_card is not None:
                         tool_card.update_vertices(tool_card.get_initial_vertices())
                     for attached_shape in attached_shape_list:
                         attached_shape.update_vertices(attached_shape.get_initial_vertices())
-
-                    for battle_field_background_shape in self.battle_field_background_shape_list:
-                        battle_field_background_shape.global_translate((0, 0))
 
             if step_count < steps:
                 self.master.after(20, wide_area_attack, step_count + 1)
@@ -6997,6 +7017,19 @@ class BattleFieldFrame(OpenGLFrame):
             self.opponent_field_unit_repository.get_current_field_unit_card_object_list())
 
         def opponent_wide_area_attack(step_count):
+            vibration_factor = 10
+
+            random_background_translation = (random.uniform(-vibration_factor, vibration_factor),
+                                             random.uniform(-vibration_factor, vibration_factor))
+
+            if step_count % 2 == 1:
+                for battle_field_background_shape in self.battle_field_background_shape_list:
+                    battle_field_background_shape.global_translate(
+                        (random_background_translation[0], random_background_translation[1]))
+            else:
+                for battle_field_background_shape in self.battle_field_background_shape_list:
+                    battle_field_background_shape.global_translate((0, 0))
+
             for index in range(
                     opponent_field_unit_list_length - 1,
                     -1,
@@ -7014,9 +7047,6 @@ class BattleFieldFrame(OpenGLFrame):
                     vibration_factor = 10
                     random_translation = (random.uniform(-vibration_factor, vibration_factor),
                                           random.uniform(-vibration_factor, vibration_factor))
-
-                    background_random_translation = (random.uniform(-vibration_factor, vibration_factor),
-                                                     random.uniform(-vibration_factor, vibration_factor))
 
                     new_fixed_card_base_vertices = [
                         (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
@@ -7039,19 +7069,12 @@ class BattleFieldFrame(OpenGLFrame):
                         ]
                         attached_shape.update_vertices(new_attached_shape_vertices)
 
-                    for battle_field_background_shape in self.battle_field_background_shape_list:
-                        battle_field_background_shape.global_translate(
-                            (background_random_translation[0], background_random_translation[1]))
-
                 else:
                     fixed_card_base.update_vertices(fixed_card_base.get_initial_vertices())
                     if tool_card is not None:
                         tool_card.update_vertices(tool_card.get_initial_vertices())
                     for attached_shape in attached_shape_list:
                         attached_shape.update_vertices(attached_shape.get_initial_vertices())
-
-                    for battle_field_background_shape in self.battle_field_background_shape_list:
-                        battle_field_background_shape.global_translate((0, 0))
 
             if step_count < steps:
                 self.master.after(20, opponent_wide_area_attack, step_count + 1)
