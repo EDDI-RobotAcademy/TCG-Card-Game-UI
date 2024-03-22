@@ -289,6 +289,9 @@ class MyCardPage:
             # TODO: 배치 간격 고려
             card_width_ratio = 350 / self.total_width
             place_index = index % 4
+            card_width_center_ratio = card_width_ratio / 2.0
+
+            card_count_number_left_from_center = 0.018
 
             current_y = self.total_height * (self.y_bottom_base_ratio - 0.1)
 
@@ -305,12 +308,14 @@ class MyCardPage:
             print(f"extra_margin_ratio: {extra_margin_ratio}")
 
             base_x = extra_margin_ratio * self.total_width
+            card_count_number_left = card_width_center_ratio - card_count_number_left_from_center
 
             # 0.20183 - 0.18398
             # 0.82467
             # x_increment = 0.87467 / 4.0
             # x_increment = (limit_boundary_width_ratio - extra_margin_ratio * 2) / 4.0
-            next_x = base_x + self.total_width * (card_between_width_margin_ratio * place_index) + self.total_width * card_width_ratio * place_index
+            x_increment = self.total_width * (card_between_width_margin_ratio * place_index) + self.total_width * card_width_ratio * place_index
+            next_x = base_x + card_count_number_left + x_increment
             print(f"{Fore.RED}next_x: {next_x}{Style.RESET_ALL}")
 
             # next_x = base_x + self.total_width * (x_increment * place_index)
