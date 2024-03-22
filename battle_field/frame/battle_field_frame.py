@@ -2331,9 +2331,10 @@ class BattleFieldFrame(OpenGLFrame):
                                 is_success_value = response.get('is_success', False)
 
                                 if is_success_value == False:
+                                    self.return_to_initial_location()
+                                    self.reset_every_selected_action()
                                     self.message_on_the_screen.create_message_on_the_battle_screen(
                                         MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN.value)
-                                    self.return_to_initial_location()
                                     return
 
                                 self.your_field_unit_repository.update_your_unit_extra_effect_at_index(unit_index,
@@ -2352,9 +2353,10 @@ class BattleFieldFrame(OpenGLFrame):
                                 is_success_value = response.get('is_success', False)
 
                                 if is_success_value == False:
+                                    self.return_to_initial_location()
+                                    self.reset_every_selected_action()
                                     self.message_on_the_screen.create_message_on_the_battle_screen(
                                         MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN.value)
-                                    self.return_to_initial_location()
                                     return
 
                             # self.selected_object = None
@@ -4400,19 +4402,10 @@ class BattleFieldFrame(OpenGLFrame):
                             is_success_value = corpse_explosion_response.get('is_success', False)
 
                             if is_success_value == False:
-                                self.fixed_unit_card_inside_action = FixedUnitCardInsideAction.Dummy
-
-                                self.targeting_ememy_select_using_hand_card_id = -1
-                                self.targeting_ememy_select_using_hand_card_index = -1
-                                self.targeting_enemy_select_using_your_field_card_index = -1
-                                self.targeting_enemy_for_sacrifice_unit_id = -1
-
-                                self.targeting_enemy_select_support_lightning_border_list = []
-                                self.opponent_you_selected_lightning_border_list = []
-                                self.opponent_you_selected_object_list = []
+                                self.return_to_initial_location()
+                                self.reset_every_selected_action()
                                 self.message_on_the_screen.create_message_on_the_battle_screen(
                                     MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN.value)
-                                self.selected_object = None
                                 return
 
                             def calculate_corpse_explosion():

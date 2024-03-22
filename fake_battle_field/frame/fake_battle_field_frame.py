@@ -134,6 +134,7 @@ from battle_field_muligun.service.request.muligun_request import MuligunRequest
 
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.attack_type import AttackType
+from common.battle_finish_position import BattleFinishPosition
 from common.card_grade import CardGrade
 from common.card_race import CardRace
 from common.card_type import CardType
@@ -401,6 +402,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.battle_field_repository = BattleFieldRepository.getInstance()
         self.battle_result = BattleResult()
         self.battle_result_panel_list = []
+
+        self.game_end_sound_call = False
 
         self.notice_card = FixedFieldCard(local_translation=(self.width / 2 - 150, self.height / 2 - (150 * 1.618)))
 
@@ -3603,11 +3606,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
         #         self.battle_result_panel_list[0].draw()
 
         if len(self.battle_result_panel_list) != 0:
-            if self.is_playing_action_animation == False and self.field_area_inside_handler.get_field_area_action() == None:
+            if not self.is_playing_action_animation and self.field_area_inside_handler.get_field_area_action() is None:
                 for battle_result_panel in self.battle_result_panel_list:
                     battle_result_panel.set_width_ratio(self.width_ratio)
                     battle_result_panel.set_height_ratio(self.height_ratio)
                     battle_result_panel.draw()
+                if self.battle_field_repository.get_is_win() == BattleFinishPosition.Winner and not self.game_end_sound_call:
+                    self.__music_player_repository.play_sound_effect_of_game_end('winner')
+                    self.game_end_sound_call = True
+                elif self.battle_field_repository.get_is_win() == BattleFinishPosition.Loser and not self.game_end_sound_call:
+                    self.__music_player_repository.play_sound_effect_of_game_end('loser')
+                    self.game_end_sound_call = True
 
 
 
@@ -4153,9 +4162,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 is_success_value = response.get('is_success', False)
 
                                 if is_success_value == False:
+                                    self.return_to_initial_location()
+                                    self.reset_every_selected_action()
                                     self.message_on_the_screen.create_message_on_the_battle_screen(
                                         MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN.value)
-                                    self.return_to_initial_location()
                                     return
 
                                 self.your_field_unit_repository.update_your_unit_extra_effect_at_index(unit_index, ["DarkFire","Freeze"])
@@ -4172,9 +4182,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 is_success_value = response.get('is_success', False)
 
                                 if is_success_value == False:
+                                    self.return_to_initial_location()
+                                    self.reset_every_selected_action()
                                     self.message_on_the_screen.create_message_on_the_battle_screen(
                                         MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN.value)
-                                    self.return_to_initial_location()
                                     return
 
                             # self.selected_object = None
@@ -6970,19 +6981,20 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             is_success_value = corpse_explosion_response.get('is_success', False)
 
                             if is_success_value == False:
-                                self.fixed_unit_card_inside_action = FixedUnitCardInsideAction.Dummy
-
-                                self.targeting_ememy_select_using_hand_card_id = -1
-                                self.targeting_ememy_select_using_hand_card_index = -1
-                                self.targeting_enemy_select_using_your_field_card_index = -1
-                                self.targeting_enemy_for_sacrifice_unit_id = -1
-
-                                self.targeting_enemy_select_support_lightning_border_list = []
-                                self.opponent_you_selected_lightning_border_list = []
-                                self.opponent_you_selected_object_list = []
+                                # self.fixed_unit_card_inside_action = FixedUnitCardInsideAction.Dummy
+                                #
+                                # self.targeting_ememy_select_using_hand_card_id = -1
+                                # self.targeting_ememy_select_using_hand_card_index = -1
+                                # self.targeting_enemy_select_using_your_field_card_index = -1
+                                # self.targeting_enemy_for_sacrifice_unit_id = -1
+                                #
+                                # self.targeting_enemy_select_support_lightning_border_list = []
+                                # self.opponent_you_selected_lightning_border_list = []
+                                # self.opponent_you_selected_object_list = []
+                                self.return_to_initial_location()
+                                self.reset_every_selected_action()
                                 self.message_on_the_screen.create_message_on_the_battle_screen(
                                     MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN.value)
-                                self.selected_object = None
                                 return
 
                             def calculate_corpse_explosion():
@@ -15194,6 +15206,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.effect_animation_repository.clear_every_resource()
         
         del self.timer
+        self.game_end_sound_call = False
         # self.battle_field_repository.clear_every_resource()
 
     def corpse_explosion_animation(self):
