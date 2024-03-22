@@ -55,6 +55,7 @@ class PreDrawedImage:
 
     __pre_drawed_win_text = None
     __pre_drawed_lose_text = None
+    __pre_drawed_battle_result_background = None
 
     __pre_drawed_confirm_button = None
 
@@ -214,6 +215,11 @@ class PreDrawedImage:
                                                            "battle_field", "environment.jpeg")
         self.__pre_drawed_battle_field_environment = ImageDataLoader.load_rectangle_image_data(
             battle_field_environment_image_path)
+
+    def pre_draw_battle_result_background(self):
+        battle_result_background_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
+                                           "battle_result_background.png")
+        self.__pre_drawed_battle_result_background = ImageDataLoader.load_rectangle_image_data(battle_result_background_image_path)
 
     def pre_draw_win_text(self):
         win_text_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
@@ -919,6 +925,7 @@ class PreDrawedImage:
         self.pre_draw_turn_number()
         self.pre_draw_win_text()
         self.pre_draw_lose_text()
+        self.pre_draw_battle_result_background()
 
         self.pre_draw_card_illustration()
         self.pre_draw_card_race()
@@ -1207,3 +1214,6 @@ class PreDrawedImage:
 
     def get_pre_drawed_buy_random_background(self):
         return self.__pre_drawed_buy_random_background
+
+    def get_pre_draw_battle_result_background(self):
+        return self.__pre_drawed_battle_result_background
