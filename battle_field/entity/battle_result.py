@@ -39,8 +39,8 @@ class BattleResult:
 
     def create_battle_result_panel_list(self):
         self.battle_result_panel_list = []
-        self.create_battle_result_text()
         self.create_battle_result_panel()
+        self.create_battle_result_text()
 
 
 
@@ -54,8 +54,8 @@ class BattleResult:
         # print(f"게임 끝~~ {self.__battle_field_repository.get_is_game_end()}")
         # print(f"이겼냐 {self.__battle_field_repository.get_is_win()}")
 
-        battle_result_panel = Rectangle(
-            (0, 0, 0, 0.5),
+        battle_result_panel = NonBackgroundImage(
+            self.__pre_drawed_image.get_pre_draw_battle_result_background(),
             [
                 (left_x_point, top_y_point),
                 (right_x_point, top_y_point),
@@ -64,7 +64,18 @@ class BattleResult:
             ],
             (0, 0),
             (0, 0))
-        battle_result_panel.set_draw_border(False)
+
+        # battle_result_panel = Rectangle(
+        #     (0, 0, 0, 0.5),
+        #     [
+        #         (left_x_point, top_y_point),
+        #         (right_x_point, top_y_point),
+        #         (right_x_point, bottom_y_point),
+        #         (left_x_point, bottom_y_point)
+        #     ],
+        #     (0, 0),
+        #     (0, 0))
+        # battle_result_panel.set_draw_border(False)
 
         self.battle_result_panel_list.append(battle_result_panel)
 

@@ -1,5 +1,6 @@
 import tkinter
 from PIL import ImageTk, Image
+from colorama import Fore, Style
 
 from main_frame.repository.main_menu_frame_repository_impl import MainMenuFrameRepositoryImpl
 from main_frame.service.main_menu_frame_service import MainMenuFrameService
@@ -10,6 +11,8 @@ from session.service.session_service_impl import SessionServiceImpl
 
 class MainMenuFrameServiceImpl(MainMenuFrameService):
     __instance = None
+
+    title_bar_height = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -28,6 +31,10 @@ class MainMenuFrameServiceImpl(MainMenuFrameService):
 
     def createMainUiFrame(self, rootWindow, switchFrameWithMenuName):
         mainMenuFrame = self.__mainMenuFrameRepository.createMainMenuFrame(rootWindow)
+        # title_bar_height = mainMenuFrame.winfo_rooty() - mainMenuFrame.winfo_y()
+        # print(f"{Fore.RED}title_bar_height: {title_bar_height}{Style.RESET_ALL}")
+        # outer_window_height = mainMenuFrame.winfo_height() + title_bar_height
+        # print(f"{Fore.RED}outer_window_height: {outer_window_height}{Style.RESET_ALL}")
 
         # label_text = "EDDI TCG Card Battle"
         # label = tkinter.Label(mainMenuFrame, text=label_text, font=("Helvetica", 72), bg="black", fg="white",

@@ -13,6 +13,7 @@ class PreDrawedImage:
 
     __pre_drawed_card_frame = {}
     __pre_drawed_battle_field_card_frame = {}
+    __pre_drawed_random_buy_card_frame = {}
 
     __pre_drawed_card_illustration = {}
 
@@ -54,6 +55,7 @@ class PreDrawedImage:
 
     __pre_drawed_win_text = None
     __pre_drawed_lose_text = None
+    __pre_drawed_battle_result_background = None
 
     __pre_drawed_confirm_button = None
 
@@ -213,6 +215,11 @@ class PreDrawedImage:
                                                            "battle_field", "environment.jpeg")
         self.__pre_drawed_battle_field_environment = ImageDataLoader.load_rectangle_image_data(
             battle_field_environment_image_path)
+
+    def pre_draw_battle_result_background(self):
+        battle_result_background_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
+                                           "battle_result_background.png")
+        self.__pre_drawed_battle_result_background = ImageDataLoader.load_rectangle_image_data(battle_result_background_image_path)
 
     def pre_draw_win_text(self):
         win_text_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
@@ -807,6 +814,17 @@ class PreDrawedImage:
                 ImageDataLoader.load_battle_field_card_frame_image_data(battle_field_card_frame_image_data)
             )
 
+    def pre_draw_random_buy_card_frame(self):
+        for card_number in self.__card_info_from_csv_repository.getCardNumber():
+            random_buy_card_frame_image_data = os.path.join(self.__project_root, "local_storage",
+                                                              "battle_field_card_frame",
+                                                              f"{card_number}.png")
+            self.__pre_drawed_random_buy_card_frame[card_number] = (
+                ImageDataLoader.load_rectangle_origin_image_data(random_buy_card_frame_image_data)
+            )
+
+
+
     def pre_draw_waiting_message(self):
         waiting_message_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
                                                   "waiting_message_opponent_meligun_select.png")
@@ -907,6 +925,7 @@ class PreDrawedImage:
         self.pre_draw_turn_number()
         self.pre_draw_win_text()
         self.pre_draw_lose_text()
+        self.pre_draw_battle_result_background()
 
         self.pre_draw_card_illustration()
         self.pre_draw_card_race()
@@ -923,6 +942,7 @@ class PreDrawedImage:
 
         self.pre_draw_card_frame()
         self.pre_draw_battle_field_card_frame()
+        self.pre_draw_random_buy_card_frame()
         self.pre_draw_dark_flame_energy()
         self.pre_draw_freezing_energy()
 
@@ -1162,6 +1182,9 @@ class PreDrawedImage:
     def get_pre_draw_battle_field_card_frame_for_card_number(self, card_number):
         return self.__pre_drawed_battle_field_card_frame[card_number]
 
+    def get_pre_draw_random_buy_card_frame_for_card_number(self, card_number):
+        return self.__pre_drawed_random_buy_card_frame[card_number]
+
     def get_pre_draw_waiting_message(self):
         return self.__pre_drawed_waiting_message
 
@@ -1191,3 +1214,6 @@ class PreDrawedImage:
 
     def get_pre_drawed_buy_random_background(self):
         return self.__pre_drawed_buy_random_background
+
+    def get_pre_draw_battle_result_background(self):
+        return self.__pre_drawed_battle_result_background
