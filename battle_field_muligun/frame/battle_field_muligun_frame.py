@@ -184,9 +184,9 @@ class BattleFieldMuligunFrame(OpenGLFrame):
                 print("사용자 둘 다 멀리건 선택 완료")
                 # TODO: 배틀 필드 화면으로 넘어가야 함.
                 self.timer_visible = False
-                # self.master.after(self.__switchFrameWithMenuName('fake-battle-field'))
+                # self.master.after(self.__switchFrameWithMenuName('battle-field'))
                 self.is_doing_mulligan = False
-                self.__switchFrameWithMenuName('fake-battle-field')
+                self.__switchFrameWithMenuName('battle-field')
             else:
                 self.message_visible = True
                 #TODO: 시간 초가 종료 되었을 때 상대가 선택하지 않으면 배틀 필드 화면으로 넘어감.
@@ -218,7 +218,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         if self.muligun_your_hand_repository.get_is_opponent_mulligan() is False:
             if self.message_visible is True:
                 self.waiting_message().draw()
-                print(f"메세지 그려지냐?: {self.waiting_message()}")
+                # print(f"메세지 그려지냐?: {self.waiting_message()}")
 
         self.tkSwapBuffers()
 
@@ -388,8 +388,14 @@ class BattleFieldMuligunFrame(OpenGLFrame):
             self.ok_button_clicked = True
 
             self.muligun_your_hand_repository.set_is_my_mulligan(True)
-
-            self.your_hand_repository.save_current_hand_state(self.hand_card_list)
+            current_hand_state = self.muligun_your_hand_repository.get_current_hand_state()
+            self.your_hand_repository.save_current_hand_state(current_hand_state)
+            # print(self.hand_card_list)
+            # for hand_card in self.hand_card_list:
+            #     print(hand_card)
+            #     print(hand_card.get_card_number())
+            #     self.your_hand_repository.save_current_hand_state(hand_card.get_card_number())
+            # self.your_hand_repository.save_current_hand_state(self.hand_card_list)
             self.your_hand_repository.build_your_hand_page()
 
             # try:
@@ -404,8 +410,8 @@ class BattleFieldMuligunFrame(OpenGLFrame):
             #         print("사용자 둘 다 멀리건 선택 완료")
             #         # TODO: 배틀 필드 화면으로 넘어가야 함.
             #         self.timer_visible = False
-            #         # self.master.after(self.__switchFrameWithMenuName('fake-battle-field'))
-            #         self.__switchFrameWithMenuName('fake-battle-field')
+            #         # self.master.after(self.__switchFrameWithMenuName('battle-field'))
+            #         self.__switchFrameWithMenuName('battle-field')
             #     else:
             #         self.message_visible = True
             #
@@ -422,7 +428,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
             #
             # print("muligun responseData:", responseData)
             self.muligun_your_hand_repository.set_is_my_mulligan(False)
-            # self.master.after(self.__switchFrameWithMenuName('fake-battle-field'))
+            # self.master.after(self.__switchFrameWithMenuName('battle-field'))
 
 
     # 멀리건 화면에서 교체하려는 카드 클릭시 나타나는 표현
@@ -547,12 +553,12 @@ class BattleFieldMuligunFrame(OpenGLFrame):
 
             print(f"{Fore.RED}Mulligan ResponseData:{Fore.GREEN} {responseData}{Style.RESET_ALL}")
             self.is_doing_mulligan = False
-            self.__switchFrameWithMenuName('fake-battle-field')
+            self.__switchFrameWithMenuName('battle-field')
 
         # 나는 멀리건을 선택하고 상대가 선택하지 않았을 경우
         else:
             if not self.muligun_your_hand_repository.get_is_opponent_mulligan():
                 self.message_visible = False
                 self.is_doing_mulligan = False
-                self.__switchFrameWithMenuName('fake-battle-field')
-        # self.master.after(self.__switchFrameWithMenuName('fake-battle-field'))
+                self.__switchFrameWithMenuName('battle-field')
+        # self.master.after(self.__switchFrameWithMenuName('battle-field'))

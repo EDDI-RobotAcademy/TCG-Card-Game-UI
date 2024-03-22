@@ -51,6 +51,7 @@ class MuligunYourHandRepository:
             print(f"index: {index}, card_number: {card_number}")
             initial_position = self.get_start_hand_card_position(index)
             new_card = PickableCard(local_translation=initial_position, scale=300)
+            new_card.set_card_number(card_number)
             new_card.init_card_scale(card_number)
             self.current_hand_card_list.append(new_card)
 
@@ -78,6 +79,7 @@ class MuligunYourHandRepository:
         index = len(self.current_hand_card_list)
         print(f"create_muligun_hand_unit_card() -> card_id: {card_id}, index: {index}")
         new_card = PickableCard(local_translation=self.get_start_hand_card_position(index), scale=300)
+        new_card.set_card_number(card_id)
         print("PickableCard 생성자 호출")
         new_card.init_card_scale(card_id)
         print("new_card.init_card_scale(card_id)")
