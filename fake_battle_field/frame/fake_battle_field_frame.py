@@ -2267,13 +2267,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.surrender_confirm.set_width_ratio(self.width_ratio)
         self.surrender_confirm.set_height_ratio(self.height_ratio)
-        if self.option_popup_surrender_button_selected:
-            for surrender_confirm_panel in self.surrender_confirm_panel_list:
-                surrender_confirm_panel.draw()
+
 
         glDisable(GL_BLEND)
+        
+
 
     def post_draw(self):
+
         # glEnable(GL_BLEND)
         # glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA)
 
@@ -2312,14 +2313,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.current_field_turn_number_panel.set_height_ratio(self.height_ratio)
         self.current_field_turn_number_panel.draw()
 
-        self.muligun_reset_button.set_width_ratio(self.width_ratio)
-        self.muligun_reset_button.set_height_ratio(self.height_ratio)
-        self.muligun_reset_button.draw()
-
-        self.multi_draw_button.set_width_ratio(self.width_ratio)
-        self.multi_draw_button.set_height_ratio(self.height_ratio)
-        self.multi_draw_button.draw()
-
         self.timer.set_width_ratio(self.width_ratio)
         self.timer.set_height_ratio(self.height_ratio)
         self.timer.update_current_timer_panel()
@@ -2334,6 +2327,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_hp_panel.set_width_ratio(self.width_ratio)
         self.your_hp_panel.set_height_ratio(self.height_ratio)
         self.your_hp_panel.draw()
+       
+        self.muligun_reset_button.set_width_ratio(self.width_ratio)
+        self.muligun_reset_button.set_height_ratio(self.height_ratio)
+        self.muligun_reset_button.draw()
+
+        self.multi_draw_button.set_width_ratio(self.width_ratio)
+        self.multi_draw_button.set_height_ratio(self.height_ratio)
+        self.multi_draw_button.draw()
+
+       
 
         self.opponent_hp.set_width_ratio(self.width_ratio)
         self.opponent_hp.set_height_ratio(self.height_ratio)
@@ -2394,15 +2397,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 effect_animation_panel.draw()
 
 
-        if self.effect_animation_repository.get_effect_animation_dictionary() is not {} and self.effect_animation_repository.get_effect_animation_panel_dictionary() is not {}:
 
-            for effect_animation, effect_animation_panel in zip(self.effect_animation_repository.get_effect_animation_dictionary().values(),
-                                                                self.effect_animation_repository.get_effect_animation_panel_dictionary().values()):
-                if effect_animation.is_finished:
-                    continue
-                effect_animation.set_width_ratio(self.width_ratio)
-                effect_animation.set_height_ratio(self.height_ratio)
-                effect_animation_panel.draw()
 
         # if self.skill_focus_background_panel:
         #     glEnable(GL_BLEND)
@@ -2633,22 +2628,24 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     attached_shape.set_height_ratio(self.height_ratio)
                     attached_shape.draw()
 
+
+        
+
         # if len(self.battle_result_panel_list) == 2:
-        if len(self.battle_result_panel_list) != 0:
-            # print(self.is_playing_action_animation)
-            # print(self.field_area_inside_handler.get_field_area_action())
-            if self.is_playing_action_animation == False and self.field_area_inside_handler.get_field_area_action() == None:
-                glEnable(GL_BLEND)
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
-                self.battle_result.set_width_ratio(self.width_ratio)
-                self.battle_result.set_height_ratio(self.height_ratio)
-                self.battle_result_panel_list[1].draw()
+        # if len(self.battle_result_panel_list) != 0:
+        #     if self.is_playing_action_animation == False and self.field_area_inside_handler.get_field_area_action() == None:
+        #         glEnable(GL_BLEND)
+        #         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        #         glEnable(GL_DEPTH_TEST)
+        #         glDepthFunc(GL_ALWAYS)
+        #
+        #         self.battle_result.set_width_ratio(self.width_ratio)
+        #         self.battle_result.set_height_ratio(self.height_ratio)
+        #         self.battle_result_panel_list[1].draw()
+        #
+        #         glDisable(GL_BLEND)
 
-                # for battle_result_panel in self.battle_result_panel_list:
-                #     battle_result_panel.draw()
-
-                glDisable(GL_BLEND)
 
 
 
@@ -2670,6 +2667,14 @@ class FakeBattleFieldFrame(OpenGLFrame):
         #         attached_shape.set_width_ratio(self.width_ratio)
         #         attached_shape.set_height_ratio(self.height_ratio)
         #         attached_shape.draw()
+
+
+        # if len(self.battle_result_panel_list) != 0:
+        #     if self.is_playing_action_animation == False and self.field_area_inside_handler.get_field_area_action() == None:
+        #     # if len(self.battle_result_panel_list) != 0:
+        #         self.battle_result.set_width_ratio(self.width_ratio)
+        #         self.battle_result.set_height_ratio(self.height_ratio)
+        #         self.battle_result_panel_list[1].draw()
 
         for opponent_hand_card in self.opponent_hand_card_list:
             opponent_hand_card_base = opponent_hand_card.get_fixed_card_base()
@@ -2710,6 +2715,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.your_hand_prev_button.draw()
         self.your_hand_next_button.draw()
 
+        self.post_draw()
+
         if self.field_area_inside_handler.get_field_area_action() is FieldAreaAction.PLAY_ANIMATION:
             for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
                 if field_unit is None:
@@ -2732,6 +2739,46 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     attached_shape.set_width_ratio(self.width_ratio)
                     attached_shape.set_height_ratio(self.height_ratio)
                     attached_shape.draw()
+
+        if self.opponent_field_area_inside_handler.get_active_field_area_action() is OpponentFieldAreaActionProcess.PLAY_ANIMATION:
+            opponent_animation_actor = self.attack_animation_object.get_opponent_animation_actor()
+            opponent_animation_actor_index = opponent_animation_actor.get_index()
+
+            for index, opponent_field_unit in enumerate(
+                    self.opponent_field_unit_repository.get_current_field_unit_card_object_list()):
+                if opponent_field_unit is None:
+                    continue
+
+                if opponent_animation_actor_index != index:
+                    continue
+
+                attached_tool_card = opponent_field_unit.get_tool_card()
+                if attached_tool_card is not None:
+                    attached_tool_card.set_width_ratio(self.width_ratio)
+                    attached_tool_card.set_height_ratio(self.height_ratio)
+                    attached_tool_card.draw()
+
+                fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                fixed_card_base.set_width_ratio(self.width_ratio)
+                fixed_card_base.set_height_ratio(self.height_ratio)
+                fixed_card_base.draw()
+
+                attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                for attached_shape in attached_shape_list:
+                    attached_shape.set_width_ratio(self.width_ratio)
+                    attached_shape.set_height_ratio(self.height_ratio)
+                    attached_shape.draw()
+
+        if self.effect_animation_repository.get_effect_animation_dictionary() is not {} and self.effect_animation_repository.get_effect_animation_panel_dictionary() is not {}:
+
+            for effect_animation, effect_animation_panel in zip(self.effect_animation_repository.get_effect_animation_dictionary().values(),
+                                                                self.effect_animation_repository.get_effect_animation_panel_dictionary().values()):
+                if effect_animation.is_finished:
+                    continue
+                effect_animation.set_width_ratio(self.width_ratio)
+                effect_animation.set_height_ratio(self.height_ratio)
+                effect_animation_panel.draw()
 
         if self.opponent_fixed_unit_card_inside_handler.get_opponent_field_area_action() == OpponentFieldAreaAction.ENERGY_BURN:
 
@@ -3185,7 +3232,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
             self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
             self.opponent_field_area_inside_handler.clear_field_area_action()
-        self.post_draw()
+        # self.post_draw()
 
         if self.current_fixed_details_card:
             self.current_fixed_details_card.set_width_ratio(self.width_ratio)
@@ -3212,34 +3259,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
-        if self.opponent_field_area_inside_handler.get_active_field_area_action() is OpponentFieldAreaActionProcess.PLAY_ANIMATION:
-            opponent_animation_actor = self.attack_animation_object.get_opponent_animation_actor()
-            opponent_animation_actor_index = opponent_animation_actor.get_index()
 
-            for index, opponent_field_unit in enumerate(self.opponent_field_unit_repository.get_current_field_unit_card_object_list()):
-                if opponent_field_unit is None:
-                    continue
-
-                if opponent_animation_actor_index != index:
-                    continue
-
-                attached_tool_card = opponent_field_unit.get_tool_card()
-                if attached_tool_card is not None:
-                    attached_tool_card.set_width_ratio(self.width_ratio)
-                    attached_tool_card.set_height_ratio(self.height_ratio)
-                    attached_tool_card.draw()
-
-                fixed_card_base = opponent_field_unit.get_fixed_card_base()
-                fixed_card_base.set_width_ratio(self.width_ratio)
-                fixed_card_base.set_height_ratio(self.height_ratio)
-                fixed_card_base.draw()
-
-                attached_shape_list = fixed_card_base.get_attached_shapes()
-
-                for attached_shape in attached_shape_list:
-                    attached_shape.set_width_ratio(self.width_ratio)
-                    attached_shape.set_height_ratio(self.height_ratio)
-                    attached_shape.draw()
 
         if self.selected_object:
             card_base = None
@@ -3343,6 +3363,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.lightning_border.set_padding(20)
             self.lightning_border.update_shape(opponent_you_selected)
             self.lightning_border.draw_lightning_border()
+
+
 
         if self.field_area_inside_handler.get_field_area_action() is FieldAreaAction.SEARCH_UNIT_CARD:
             # print(f"검색하기 위한 덱 화면 띄우기")
@@ -3548,13 +3570,40 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
 
 
+        if self.option_popup_surrender_button_selected:
+            for surrender_confirm_panel in self.surrender_confirm_panel_list:
+                surrender_confirm_panel.draw()
+
+
         # self.post_draw()
+
+        # if len(self.battle_result_panel_list) != 0:
+        #     if self.is_playing_action_animation == False and self.field_area_inside_handler.get_field_area_action() == None:
+        #         # glEnable(GL_BLEND)
+        #         # glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        #         # glEnable(GL_DEPTH_TEST)
+        #         # glDepthFunc(GL_ALWAYS)
+        #
+        #         self.battle_result.set_width_ratio(self.width_ratio)
+        #         self.battle_result.set_height_ratio(self.height_ratio)
+        #         self.battle_result_panel_list[1].draw()
+        #
+        #         # glDisable(GL_BLEND)
+        #
+        # if len(self.battle_result_panel_list) != 0:
+        #     if self.is_playing_action_animation == False and self.field_area_inside_handler.get_field_area_action() == None:
+        #     # if len(self.battle_result_panel_list) != 0:
+        #         self.battle_result.set_width_ratio(self.width_ratio)
+        #         self.battle_result.set_height_ratio(self.height_ratio)
+        #         self.battle_result_panel_list[0].draw()
+
         if len(self.battle_result_panel_list) != 0:
             if self.is_playing_action_animation == False and self.field_area_inside_handler.get_field_area_action() == None:
-            # if len(self.battle_result_panel_list) != 0:
-                self.battle_result.set_width_ratio(self.width_ratio)
-                self.battle_result.set_height_ratio(self.height_ratio)
-                self.battle_result_panel_list[0].draw()
+                for battle_result_panel in self.battle_result_panel_list:
+                    battle_result_panel.set_width_ratio(self.width_ratio)
+                    battle_result_panel.set_height_ratio(self.height_ratio)
+                    battle_result_panel.draw()
+
 
         if self.skill_focus_background_panel:
             glEnable(GL_BLEND)
