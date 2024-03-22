@@ -349,7 +349,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
 
         self.__notify_reader_repository.save_notify_message_on_screen(
-            MessageNumber.YOUR_TURN)
+            MessageNumber.YOUR_TURN.value)
 
         # Your Draw
         your_drawn_card_list = notice_dictionary['NOTIFY_TURN_END']['player_drawn_card_list_map'].get('You', [])
