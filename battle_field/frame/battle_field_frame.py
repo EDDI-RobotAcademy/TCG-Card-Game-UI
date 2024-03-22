@@ -1096,6 +1096,11 @@ class BattleFieldFrame(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
+        self.your_hand_prev_button.draw()
+        self.your_hand_next_button.draw()
+
+        self.post_draw()
+
         current_page_your_hand_list = self.your_hand_repository.get_current_page_your_hand_list()
         if current_page_your_hand_list is not None:
             for get_current_page_hand_card in current_page_your_hand_list:
@@ -1121,10 +1126,7 @@ class BattleFieldFrame(OpenGLFrame):
                         self.lightning_border.update_shape(selected_search_unit)
                         self.lightning_border.draw_lightning_border()
 
-        self.your_hand_prev_button.draw()
-        self.your_hand_next_button.draw()
 
-        self.post_draw()
 
         if self.field_area_inside_handler.get_field_area_action() is FieldAreaAction.PLAY_ANIMATION:
             for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
@@ -1623,6 +1625,7 @@ class BattleFieldFrame(OpenGLFrame):
             self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
             self.opponent_field_area_inside_handler.clear_field_area_action()
 
+        # self.post_draw()
 
         if self.current_fixed_details_card:
             self.current_fixed_details_card.set_width_ratio(self.width_ratio)
@@ -1955,7 +1958,7 @@ class BattleFieldFrame(OpenGLFrame):
         #         self.battle_result_panel_list[0].draw()
 
         if len(self.battle_result_panel_list) != 0:
-            if self.is_playing_action_animation == False and self.field_area_inside_handler.get_field_area_action() == None:
+            if self.is_playing_action_animation == False and self.field_area_inside_handler.get_field_area_action() == None and self.opponent_field_area_inside_handler.get_field_area_action() == None:
                 for battle_result_panel in self.battle_result_panel_list:
                     battle_result_panel.set_width_ratio(self.width_ratio)
                     battle_result_panel.set_height_ratio(self.height_ratio)
@@ -4781,6 +4784,9 @@ class BattleFieldFrame(OpenGLFrame):
         hp_data = turn_end_request_result['player_field_unit_health_point_map']
         harmful_data = turn_end_request_result['player_field_unit_harmful_effect_map']
         dead_data = turn_end_request_result['player_field_unit_death_map']
+        field_energy_count = turn_end_request_result['player_field_energy_map']['Opponent']
+
+        self.opponent_field_energy_repository.set_opponent_field_energy(field_energy_count)
 
         self.apply_response_data_of_field_unit_hp(hp_data)
         self.apply_response_data_of_harmful_status(harmful_data)
