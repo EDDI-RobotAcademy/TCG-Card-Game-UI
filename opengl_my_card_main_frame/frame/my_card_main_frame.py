@@ -79,7 +79,7 @@ class MyCardMainFrame(OpenGLFrame):
 
     def initgl(self):
         print("initgl 입니다.")
-        glClearColor(0.0, 0.0, 0.0, 0)
+        glClearColor(1.0, 1.0, 1.0, 0)
         glOrtho(0, self.width, self.height, 0, -1, 1)
 
         # self.tkMakeCurrent()
@@ -142,17 +142,17 @@ class MyCardMainFrame(OpenGLFrame):
         self.tkMakeCurrent()
         self.render.render()
 
-        if self.show_my_deck_register_screen is True:
-            glEnable(GL_BLEND)
-            if glIsEnabled(GL_BLEND):
-                print("Blending is enabled.")
-            else:
-                print("Blending is not enabled.")
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-
-            self.make_my_deck_register_frame()
-            self.render_after = MyDeckRegisterFrameRenderer(self.my_deck_register_scene, self)
-            self.render_after.render()
+        # if self.show_my_deck_register_screen is True:
+        #     glEnable(GL_BLEND)
+        #     if glIsEnabled(GL_BLEND):
+        #         print("Blending is enabled.")
+        #     else:
+        #         print("Blending is not enabled.")
+        #     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        #
+        #     self.make_my_deck_register_frame()
+        #     self.render_after = MyDeckRegisterFrameRenderer(self.my_deck_register_scene, self)
+        #     self.render_after.render()
 
     def make_card_main_frame(self):
         # project_root = get_project_root()

@@ -103,6 +103,9 @@ class MyCardRepository:
         return self.current_page
 
     def get_my_card_object_list_from_current_page(self):
-        print(self.my_card_page_list)
-        print(self.get_current_my_card_page())
+        # print(self.my_card_page_list)
+        # print(self.get_current_my_card_page())
         return self.my_card_page_list[self.get_current_my_card_page()].get_my_card_page_card_object_list()
+
+    def get_my_card_count_object_list_from_current_page(self):
+        return self.my_card_page_list[self.get_current_my_card_page()].get_my_card_page_card_count_object_list()

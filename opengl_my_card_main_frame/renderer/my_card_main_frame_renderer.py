@@ -23,16 +23,16 @@ class MyCardMainFrameRenderer:
         for image_element in self.scene.my_card_background:
             self._render_shape(image_element)
 
-        # 나의 카드 텍스트
-        for text in self.scene.text_list[:8]:
-            if text is None:
-                pass
-            else:
-                self._render_shape(text)
-
-        # 버튼 도형
-        # for button in self.scene.button_list:
-        #     self._render_shape(button)
+        # # 나의 카드 텍스트
+        # for text in self.scene.text_list[:8]:
+        #     if text is None:
+        #         pass
+        #     else:
+        #         self._render_shape(text)
+        #
+        # # 버튼 도형
+        # # for button in self.scene.button_list:
+        # #     self._render_shape(button)
 
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -59,16 +59,9 @@ class MyCardMainFrameRenderer:
             for my_card_attached_shape in my_card_attached_shape_list:
                 my_card_attached_shape.draw()
 
-        # for card in self.scene.card_list[:8]:
-        #     # attached_tool_card = card.get_tool_card()
-        #     # attached_tool_card.draw()
-        #
-        #     pickable_card_base = card.get_pickable_card_base()
-        #     pickable_card_base.draw()
-        #
-        #     attached_shape_list = pickable_card_base.get_attached_shapes()
-        #     for attached_shape in attached_shape_list:
-        #         attached_shape.draw()
+        for my_card_count in self.my_card_repository.get_my_card_count_object_list_from_current_page():
+            # print(f"my_card_count: {my_card_count}")
+            my_card_count.draw()
 
         self.window.tkSwapBuffers()
 
