@@ -1093,6 +1093,11 @@ class BattleFieldFrame(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
+        self.your_hand_prev_button.draw()
+        self.your_hand_next_button.draw()
+
+        self.post_draw()
+
         current_page_your_hand_list = self.your_hand_repository.get_current_page_your_hand_list()
         if current_page_your_hand_list is not None:
             for get_current_page_hand_card in current_page_your_hand_list:
@@ -1118,10 +1123,7 @@ class BattleFieldFrame(OpenGLFrame):
                         self.lightning_border.update_shape(selected_search_unit)
                         self.lightning_border.draw_lightning_border()
 
-        self.your_hand_prev_button.draw()
-        self.your_hand_next_button.draw()
 
-        self.post_draw()
 
         if self.field_area_inside_handler.get_field_area_action() is FieldAreaAction.PLAY_ANIMATION:
             for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
