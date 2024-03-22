@@ -45,15 +45,17 @@ class FixedDetailsCard:
     def get_fixed_card_base(self):
         return self.fixed_card_base
 
-    def creat_fixed_card_dark_flame_image_circle(self, image_data, vertices):
+    def creat_fixed_card_dark_flame_image(self, image_data, vertices, local_translation):
         attached_dark_flame_image = NonBackgroundImage(image_data=image_data,
+                                                       local_translation=local_translation,
                                                        vertices=vertices)
 
         attached_dark_flame_image.set_initial_vertices(vertices)
         return attached_dark_flame_image
 
-    def creat_fixed_card_freezing_image_circle(self, image_data, vertices):
+    def creat_fixed_card_freezing_image(self, image_data, vertices, local_translation):
         attached_freezing_image = NonBackgroundImage(image_data=image_data,
+                                                     local_translation=local_translation,
                                                      vertices=vertices)
 
         attached_freezing_image.set_initial_vertices(vertices)
@@ -167,27 +169,27 @@ class FixedDetailsCard:
                                                    )
             )
 
-            self.fixed_card_base.set_attached_shapes(
-                self.create_buff_check_rectangle(color=(0, 0, 0, 0.40),
-                                                 local_translation=self.local_translation,
-                                                 vertices=[
-                                                     (fixed_card_vertices[2][0] + 200, fixed_card_vertices[2][1] - 140),
-                                                     (fixed_card_vertices[2][0], fixed_card_vertices[2][1] - 140),
-                                                     (fixed_card_vertices[2][0], fixed_card_vertices[2][1]),
-                                                     (fixed_card_vertices[2][0] + 200, fixed_card_vertices[2][1])]
-                                                 )
-            )
-
-            self.fixed_card_base.set_attached_shapes(
-                self.create_nerf_check_rectangle(color=(0, 0, 0, 0.40),
-                                                 local_translation=self.local_translation,
-                                                 vertices=[
-                                                     (fixed_card_vertices[3][0] - 200, fixed_card_vertices[3][1] - 140),
-                                                     (fixed_card_vertices[3][0], fixed_card_vertices[3][1] - 140),
-                                                     (fixed_card_vertices[3][0], fixed_card_vertices[3][1]),
-                                                     (fixed_card_vertices[3][0] - 200, fixed_card_vertices[3][1])]
-                                                 )
-            )
+            # self.fixed_card_base.set_attached_shapes(
+            #     self.create_buff_check_rectangle(color=(0, 0, 0, 0.40),
+            #                                      local_translation=self.local_translation,
+            #                                      vertices=[
+            #                                          (fixed_card_vertices[2][0] + 200, fixed_card_vertices[2][1] - 140),
+            #                                          (fixed_card_vertices[2][0], fixed_card_vertices[2][1] - 140),
+            #                                          (fixed_card_vertices[2][0], fixed_card_vertices[2][1]),
+            #                                          (fixed_card_vertices[2][0] + 200, fixed_card_vertices[2][1])]
+            #                                      )
+            # )
+            #
+            # self.fixed_card_base.set_attached_shapes(
+            #     self.create_nerf_check_rectangle(color=(0, 0, 0, 0.40),
+            #                                      local_translation=self.local_translation,
+            #                                      vertices=[
+            #                                          (fixed_card_vertices[3][0] - 200, fixed_card_vertices[3][1] - 140),
+            #                                          (fixed_card_vertices[3][0], fixed_card_vertices[3][1] - 140),
+            #                                          (fixed_card_vertices[3][0], fixed_card_vertices[3][1]),
+            #                                          (fixed_card_vertices[3][0] - 200, fixed_card_vertices[3][1])]
+            #                                      )
+            # )
 
         card_controller_shapes = (self.card_controller.getCardTypeTable(self.card_info.getCardTypeForCardNumber(card_number)))
         card_shapes = card_controller_shapes(self.local_translation, card_number, rectangle_height, rectangle_width)

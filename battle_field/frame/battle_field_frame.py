@@ -2464,10 +2464,12 @@ class BattleFieldFrame(OpenGLFrame):
             if drop_action_result is MessageNumber.USE_MYTH_CARD_AFTER_FOUR_TURN:
                 print("신화카드는 4턴 후에 사용 가능")
                 self.return_to_initial_location()
+                self.reset_every_selected_action()
                 self.message_on_the_screen.create_message_on_the_battle_screen(drop_action_result.value)
             elif drop_action_result is MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN:
                 print("상대턴 사용 불가")
                 self.return_to_initial_location()
+                self.reset_every_selected_action()
                 self.message_on_the_screen.create_message_on_the_battle_screen(drop_action_result.value)
             elif drop_action_result is None or drop_action_result is FieldAreaAction.Dummy:
                 print("self.field_area_inside_handler.get_field_area_action() = None")
@@ -2615,6 +2617,10 @@ class BattleFieldFrame(OpenGLFrame):
                     select_details_card_base = select_details_card.get_fixed_card_base()
                     select_details_card_base_vertices = select_details_card_base.get_vertices()
 
+                    opponent_field_unit_extra_effect_info = (
+                        self.opponent_field_unit_repository.get_your_unit_extra_ability_at_index(
+                            opponent_field_unit_index))
+
                     opponent_field_unit_total_energy = opponent_field_unit_attached_energy.get_total_energy_at_index(
                         opponent_field_unit_index)
                     print(f"opponent_field_unit_total_energy: {opponent_field_unit_total_energy}")
@@ -2634,6 +2640,39 @@ class BattleFieldFrame(OpenGLFrame):
                         opponent_field_unit_attached_trent_energy = opponent_field_unit_attached_energy.get_race_energy_at_index(
                             opponent_field_unit_index, EnergyType.Trent)
                         print(f"opponent_field_unit_attached_trent_energy: {opponent_field_unit_attached_trent_energy}")
+
+                        if opponent_field_unit_extra_effect_info is not None:
+                            select_details_card_base.set_attached_shapes(
+                                select_details_card.creat_fixed_card_dark_flame_image(
+                                    image_data=self.pre_drawed_image_instance.get_pre_draw_dark_flame_energy(),
+                                    local_translation=select_details_card_base.get_local_translation(),
+                                    vertices=[(select_details_card_base_vertices[2][0] + 30,
+                                              select_details_card_base_vertices[2][1] - 25),
+                                              (select_details_card_base_vertices[2][0] + 80,
+                                              select_details_card_base_vertices[2][1] - 25),
+                                              (select_details_card_base_vertices[2][0] + 80,
+                                              select_details_card_base_vertices[2][1] + 25),
+                                              (select_details_card_base_vertices[2][0] + 30,
+                                              select_details_card_base_vertices[2][1] + 25)
+                                              ]
+                                )
+                            )
+
+                            select_details_card_base.set_attached_shapes(
+                                select_details_card.creat_fixed_card_freezing_image(
+                                    image_data=self.pre_drawed_image_instance.get_pre_draw_freezing_energy(),
+                                    local_translation=select_details_card_base.get_local_translation(),
+                                    vertices=[(select_details_card_base_vertices[2][0] + 80,
+                                              select_details_card_base_vertices[2][1] - 25),
+                                              (select_details_card_base_vertices[2][0] + 130,
+                                              select_details_card_base_vertices[2][1] - 25),
+                                              (select_details_card_base_vertices[2][0] + 130,
+                                              select_details_card_base_vertices[2][1] + 25),
+                                              (select_details_card_base_vertices[2][0] + 80,
+                                              select_details_card_base_vertices[2][1] + 25)
+                                              ]
+                                )
+                            )
                         race_energy_count = 0
                         # 언데드 에너지 갯수에 따른 표시
                         if opponent_field_unit_attached_undead_energy > 0:
@@ -3143,6 +3182,9 @@ class BattleFieldFrame(OpenGLFrame):
                     select_details_card_base = select_details_card.get_fixed_card_base()
                     select_details_card_base_vertices = select_details_card_base.get_vertices()
 
+                    your_field_unit_extra_effect_info = (
+                        self.your_field_unit_repository.get_your_unit_extra_ability_at_index(your_field_unit_index))
+
                     your_field_unit_total_energy = your_field_unit_attached_energy.get_total_energy_at_index(
                         your_field_unit_index)
                     print(f"your_field_unit_total_energy: {your_field_unit_total_energy}")
@@ -3162,6 +3204,40 @@ class BattleFieldFrame(OpenGLFrame):
                             your_field_unit_index, EnergyType.Trent)
                         print(f"your_field_unit_attached_trent_energy: {your_field_unit_attached_trent_energy}")
                         race_energy_count = 0
+
+                        if your_field_unit_extra_effect_info is not None:
+                            select_details_card_base.set_attached_shapes(
+                                select_details_card.creat_fixed_card_dark_flame_image(
+                                    image_data=self.pre_drawed_image_instance.get_pre_draw_dark_flame_energy(),
+                                    local_translation=select_details_card_base.get_local_translation(),
+                                    vertices=[(select_details_card_base_vertices[2][0] + 30,
+                                              select_details_card_base_vertices[2][1] - 25),
+                                              (select_details_card_base_vertices[2][0] + 80,
+                                              select_details_card_base_vertices[2][1] - 25),
+                                              (select_details_card_base_vertices[2][0] + 80,
+                                              select_details_card_base_vertices[2][1] + 25),
+                                              (select_details_card_base_vertices[2][0] + 30,
+                                              select_details_card_base_vertices[2][1] + 25)
+                                              ]
+                                )
+                            )
+
+                            select_details_card_base.set_attached_shapes(
+                                select_details_card.creat_fixed_card_freezing_image(
+                                    image_data=self.pre_drawed_image_instance.get_pre_draw_freezing_energy(),
+                                    local_translation=select_details_card_base.get_local_translation(),
+                                    vertices=[(select_details_card_base_vertices[2][0] + 80,
+                                              select_details_card_base_vertices[2][1] - 25),
+                                              (select_details_card_base_vertices[2][0] + 130,
+                                              select_details_card_base_vertices[2][1] - 25),
+                                              (select_details_card_base_vertices[2][0] + 130,
+                                              select_details_card_base_vertices[2][1] + 25),
+                                              (select_details_card_base_vertices[2][0] + 80,
+                                              select_details_card_base_vertices[2][1] + 25)
+                                              ]
+                                )
+                            )
+
                         # 언데드 에너지 갯수에 따른 표시
                         if your_field_unit_attached_undead_energy > 0:
                             print("상세 보기 언데드 생성")
