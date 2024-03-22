@@ -2,6 +2,9 @@ from OpenGL import GL
 
 from opengl_my_card_main_frame.infra.my_card_repository import MyCardRepository
 
+from OpenGL.GL import *
+from OpenGL.GLU import *
+
 
 class MyCardMainFrameRenderer:
 
@@ -28,8 +31,19 @@ class MyCardMainFrameRenderer:
                 self._render_shape(text)
 
         # 버튼 도형
-        for button in self.scene.button_list:
-            self._render_shape(button)
+        # for button in self.scene.button_list:
+        #     self._render_shape(button)
+
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+        if self.scene.go_back_button:
+            self.scene.go_back_button.draw()
+
+        if self.scene.create_deck_button:
+            self.scene.create_deck_button.draw()
+
+        glDisable(GL_BLEND)
 
         if self.scene.next_button:
             self.scene.next_button.draw()

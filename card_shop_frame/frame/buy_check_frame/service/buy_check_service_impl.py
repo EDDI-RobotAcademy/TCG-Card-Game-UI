@@ -59,6 +59,7 @@ class BuyCheckServiceImpl(BuyCheckService):
 
 
         def yes_click_button(buyCheckFrame):
+            # title_bar_height = root.winfo_rooty()
             if self.legend_stack_count == 0:
                 responseData = self.__buyCheckRepository.requestBuyRandomCard(
                     BuyRandomCardRequest(sessionInfo=self.__sessionRepository.get_session_info(), race_name=self.findRace(), is_confirmed_upper_legend=True))
@@ -73,7 +74,11 @@ class BuyCheckServiceImpl(BuyCheckService):
             cardlist = responseData.get('card_id_list')
             print(f"cardlist: {cardlist}")
             if is_success == True:
+                self.__buyCheckRepository.clearRandomCardList()
+                self.__buyCheckRepository.clear_random_buy_card_object_list()
                 self.__buyCheckRepository.setRandomCardList(cardlist)
+                # self.__buyCheckRepository.create_random_buy_list()
+                self.__buyCheckRepository.set_need_to_redraw(True)
                 count_down_confirmed_upper_legend()
                 self.__cardShopMenuFrameService.RestoreCardShopUiButton()
                 switchFrameWithMenuName("buy-random-card")

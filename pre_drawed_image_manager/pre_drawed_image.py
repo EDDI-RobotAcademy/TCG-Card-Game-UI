@@ -13,6 +13,7 @@ class PreDrawedImage:
 
     __pre_drawed_card_frame = {}
     __pre_drawed_battle_field_card_frame = {}
+    __pre_drawed_random_buy_card_frame = {}
 
     __pre_drawed_card_illustration = {}
 
@@ -61,6 +62,8 @@ class PreDrawedImage:
     __pre_drawed_reset_button = None
     __pre_drawed_battle_field_muligun_background = None
     __pre_drawed_battle_field_background = None
+
+    __pre_drawed_buy_random_background = None
 
     __pre_drawed_card_back_frame = None
 
@@ -386,12 +389,12 @@ class PreDrawedImage:
     def pre_draw_next_gold_button(self):
         next_gold_button_image_path = os.path.join(self.__project_root, "local_storage", "button_image",
                                                    "next_gold_button.png")
-        self.__pre_drawed_next_gold_button = ImageDataLoader.load_rectangle_image_data(next_gold_button_image_path)
+        self.__pre_drawed_next_gold_button = ImageDataLoader.load_rectangle_origin_image_data(next_gold_button_image_path)
 
     def pre_draw_prev_gold_button(self):
         prev_gold_button_image_path = os.path.join(self.__project_root, "local_storage", "button_image",
                                                    "prev_gold_button.png")
-        self.__pre_drawed_prev_gold_button = ImageDataLoader.load_rectangle_image_data(prev_gold_button_image_path)
+        self.__pre_drawed_prev_gold_button = ImageDataLoader.load_rectangle_origin_image_data(prev_gold_button_image_path)
 
     def pre_draw_ok_button(self):
         prev_gold_button_image_path = os.path.join(self.__project_root, "local_storage", "button_image",
@@ -756,6 +759,10 @@ class PreDrawedImage:
         my_card_background = os.path.join(self.__project_root, "local_storage", "my_card_frame", "my_card_background.png")
         self.__pre_drawed_my_card_background = ImageDataLoader.load_background_image_data(my_card_background, width, height)
 
+    def pre_draw_buy_random_background(self, width, height):
+        buy_random_background = os.path.join(self.__project_root, "local_storage", "image", "battle_lobby", "background.png")
+        self.__pre_drawed_buy_random_background = ImageDataLoader.load_background_image_data(buy_random_background, width, height)
+
     def pre_draw_rock(self):
         rock = os.path.join(self.__project_root, "local_storage", "rock_paper_scissors_image", "rock.png")
         self.__pre_drawed_rock = ImageDataLoader.load_lanczos_resized_image_data(rock)
@@ -800,6 +807,17 @@ class PreDrawedImage:
             self.__pre_drawed_battle_field_card_frame[card_number] = (
                 ImageDataLoader.load_battle_field_card_frame_image_data(battle_field_card_frame_image_data)
             )
+
+    def pre_draw_random_buy_card_frame(self):
+        for card_number in self.__card_info_from_csv_repository.getCardNumber():
+            random_buy_card_frame_image_data = os.path.join(self.__project_root, "local_storage",
+                                                              "battle_field_card_frame",
+                                                              f"{card_number}.png")
+            self.__pre_drawed_random_buy_card_frame[card_number] = (
+                ImageDataLoader.load_rectangle_origin_image_data(random_buy_card_frame_image_data)
+            )
+
+
 
     def pre_draw_waiting_message(self):
         waiting_message_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
@@ -917,6 +935,7 @@ class PreDrawedImage:
 
         self.pre_draw_card_frame()
         self.pre_draw_battle_field_card_frame()
+        self.pre_draw_random_buy_card_frame()
         self.pre_draw_dark_flame_energy()
         self.pre_draw_freezing_energy()
 
@@ -1156,6 +1175,9 @@ class PreDrawedImage:
     def get_pre_draw_battle_field_card_frame_for_card_number(self, card_number):
         return self.__pre_drawed_battle_field_card_frame[card_number]
 
+    def get_pre_draw_random_buy_card_frame_for_card_number(self, card_number):
+        return self.__pre_drawed_random_buy_card_frame[card_number]
+
     def get_pre_draw_waiting_message(self):
         return self.__pre_drawed_waiting_message
 
@@ -1182,3 +1204,6 @@ class PreDrawedImage:
 
     def get_pre_draw_create_deck_button(self):
         return self.__pre_drawed_create_deck_button
+
+    def get_pre_drawed_buy_random_background(self):
+        return self.__pre_drawed_buy_random_background

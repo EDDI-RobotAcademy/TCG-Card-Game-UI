@@ -208,7 +208,7 @@ class PickableCard:
     def init_card_in_my_card_frame(self, card_number, total_width, total_height):
         self.set_card_number(card_number)
 
-        rectangle_width = 300
+        rectangle_width = 350
         # 실제 카드의 비율은 1.615
         rectangle_height = rectangle_width * 1.615
 
@@ -253,6 +253,41 @@ class PickableCard:
         card_controller_shapes = self.card_controller.getCardTypeTable(
             self.card_info.getCardTypeForCardNumber(card_number)
         )
+        card_shapes = card_controller_shapes(self.local_translation, card_number, rectangle_height, rectangle_width)
+        for shape in card_shapes:
+            self.pickable_card_base.set_attached_shapes(shape)
+
+    def init_random_buy_card(self, card_number):
+        self.set_card_number(card_number)
+
+        rectangle_width = 200
+        rectangle_height = rectangle_width * 1.615
+
+        basic_pickable_card_base_vertices = [
+            (0, 0),
+            (rectangle_width, 0),
+            (rectangle_width, rectangle_height),
+            (0, rectangle_height)
+        ]
+
+        self.pickable_card_base = (
+            self.create_card_base_pickable_rectangle(
+                color=(0.0, 0.78, 0.34, 1.0),
+                local_translation=self.local_translation,
+                vertices=basic_pickable_card_base_vertices
+            )
+        )
+
+        self.pickable_card_base.set_attached_shapes(
+            self.create_card_frame(
+                image_data=self.__pre_drawed_image_instance.get_pre_draw_random_buy_card_frame_for_card_number(card_number),
+                local_translation=self.local_translation,
+                vertices=basic_pickable_card_base_vertices
+            )
+        )
+
+        card_controller_shapes = self.card_controller.getCardTypeTable(
+            self.card_info.getCardTypeForCardNumber(card_number))
         card_shapes = card_controller_shapes(self.local_translation, card_number, rectangle_height, rectangle_width)
         for shape in card_shapes:
             self.pickable_card_base.set_attached_shapes(shape)
