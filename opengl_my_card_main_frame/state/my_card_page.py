@@ -281,19 +281,37 @@ class MyCardPage:
         # 카드 간격 <-> 50
         # 50 / 1850 -> 0.02702
 
-        #
+        # 0.036 <= x_ratio
+        # 0.056 <= y_ratio
 
         def get_next_card_count_position(self, index):
             print(f"my_card_page -> get_next_card_count_position() - self.total_width: {self.total_width}")
             # TODO: 배치 간격 고려
-            card_width_ratio = 360 / self.total_width
+            card_width_ratio = 350 / self.total_width
             place_index = index % 4
 
             current_y = self.total_height * (self.y_bottom_base_ratio - 0.1)
-            base_x = self.total_width * self.x_left_base_ratio
+
+            card_between_width_margin = 55
+            card_between_width_margin_ratio = card_between_width_margin / self.total_width
+
+            # 1631 / 1850 = 0.88162
+            limit_boundary_width_ratio = 0.88162
+            # 1630 / 1850 = 0.88108
+            # limit_boundary_width_ratio = 0.88108
+
+            # extra_margin_ratio = (limit_boundary_width_ratio - (card_width_ratio * 4.0 + card_between_width_margin_ratio * 3.0)) / 2.0
+            extra_margin_ratio = (limit_boundary_width_ratio - (card_width_ratio * 4.0 + card_between_width_margin_ratio * 3.0)) / 2.0
+            print(f"extra_margin_ratio: {extra_margin_ratio}")
+
+            base_x = extra_margin_ratio * self.total_width
 
             # 0.20183 - 0.18398
             # 0.82467
-            x_increment = 0.87467 / 4.0
-            next_x = base_x + self.total_width * (x_increment * place_index)
+            # x_increment = 0.87467 / 4.0
+            # x_increment = (limit_boundary_width_ratio - extra_margin_ratio * 2) / 4.0
+            next_x = base_x + self.total_width * (card_between_width_margin_ratio * place_index) + self.total_width * card_width_ratio * place_index
+            print(f"{Fore.RED}next_x: {next_x}{Style.RESET_ALL}")
+
+            # next_x = base_x + self.total_width * (x_increment * place_index)
             return (next_x, current_y)
