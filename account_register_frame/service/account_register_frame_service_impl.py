@@ -5,6 +5,7 @@ from PIL import ImageTk, Image
 from account_register_frame.repository.account_register_frame_repository_impl import AccountRegisterFrameRepositoryImpl
 from account_register_frame.service.account_register_frame_service import AccountRegisterFrameService
 from account_register_frame.service.request.account_register_request import AccountRegisterRequest
+from music_player.repository.music_player_repository_impl import MusicPlayerRepositoryImpl
 
 
 class AccountRegisterFrameServiceImpl(AccountRegisterFrameService):
@@ -14,6 +15,7 @@ class AccountRegisterFrameServiceImpl(AccountRegisterFrameService):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
             cls.__instance.__accountRegisterFrameRepository = AccountRegisterFrameRepositoryImpl.getInstance()
+            cls.__instance.__musicPlayerRepository = MusicPlayerRepositoryImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -68,6 +70,7 @@ class AccountRegisterFrameServiceImpl(AccountRegisterFrameService):
                                        width=271, height=67)
 
         def on_signup_click(event):
+            self.__musicPlayerRepository.play_sound_effect_of_mouse_on_click('menu_button_click')
             try:
                 responseData = self.__accountRegisterFrameRepository.requestRegister(
                     AccountRegisterRequest(entry_username.get(), entry_password.get()))
@@ -90,6 +93,11 @@ class AccountRegisterFrameServiceImpl(AccountRegisterFrameService):
         entry_password.place(relx=0.5, rely=0.605, width=457, height=68, anchor="center")
 
         signup_button.place(relx=0.5, rely=0.784, anchor="center")
+
+        def play_mouse_on_button_sound(event):
+            self.__musicPlayerRepository.play_sound_effect_of_mouse_on_click('mouse_on_button')
+
+        signup_button.bind('<Enter>', play_mouse_on_button_sound)
 
         return accountRegisterFrame
 
