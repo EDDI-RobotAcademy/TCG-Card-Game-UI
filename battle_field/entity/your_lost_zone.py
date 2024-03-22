@@ -1,11 +1,13 @@
+from image_shape.non_background_image import NonBackgroundImage
 from opengl_shape.rectangle import Rectangle
+from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
 class YourLostZone:
     def __init__(self):
         self.your_lost_zone_panel = None
         self.your_lost_zone_popup_panel = None
-
+        self.pre_draw_image = PreDrawedImage.getInstance()
         self.total_width = None
         self.total_height = None
 
@@ -65,8 +67,8 @@ class YourLostZone:
         height_top_margin_20 = self.total_height * 0.2
         height_bottom_margin_80 = self.total_height * 0.8
 
-        self.your_lost_zone_popup_panel = Rectangle(
-            (0.0, 0.0, 0.0, 0.8),
+        self.your_lost_zone_popup_panel = NonBackgroundImage(
+            self.pre_draw_image.get_pre_draw_popup_panel(),
             [
                 (width_left_margin_20, height_top_margin_20),
                 (width_left_margin_20, height_bottom_margin_80),
@@ -76,7 +78,7 @@ class YourLostZone:
             (0, 0),
             (0, 0))
 
-        self.your_lost_zone_popup_panel.set_draw_border(False)
+        # self.your_lost_zone_popup_panel.set_draw_border(False)
 
     def is_point_inside_popup_rectangle(self, point):
         point_x, point_y = point
