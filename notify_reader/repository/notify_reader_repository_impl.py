@@ -7,6 +7,7 @@ class NotifyReaderRepositoryImpl(NotifyReaderRepository):
     __functions_called_by_notice_table = {}
     __notify_effect_animation_request_list = []
     __is_your_turn_for_check_fake_process = False
+    __notify_message_on_screen = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -52,3 +53,12 @@ class NotifyReaderRepositoryImpl(NotifyReaderRepository):
 
     def save_notify_effect_animation_request(self, effect_animation_request):
         self.__notify_effect_animation_request_list.append(effect_animation_request)
+
+    def save_notify_message_on_screen(self, notify_message_on_screen):
+        self.__notify_message_on_screen = notify_message_on_screen
+
+    def get_notify_message_on_screen(self):
+        return self.__notify_message_on_screen
+
+    def clear_notify_message_on_screen(self):
+        self.__notify_message_on_screen = None

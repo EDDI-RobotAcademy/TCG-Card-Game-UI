@@ -1920,17 +1920,21 @@ class BattleFieldFrame(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
+        if self.__notify_reader_repository.get_notify_message_on_screen():
+            self.message_on_the_screen.create_message_on_the_battle_screen(
+                self.__notify_reader_repository.get_notify_message_on_screen()
+            )
+            self.__notify_reader_repository.clear_notify_message_on_screen()
+
         # 글쓰기
         if self.message_on_the_screen.get_current_message_on_the_battle_screen():
-            glEnable(GL_BLEND)
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
             self.message_on_the_screen.set_width_ratio(self.width_ratio)
             self.message_on_the_screen.set_height_ratio(self.height_ratio)
             self.current_field_message_on_the_battle_screen_panel = (
                 self.message_on_the_screen.get_current_message_on_the_battle_screen()
             )
             self.current_field_message_on_the_battle_screen_panel.draw()
-            glDisable(GL_BLEND)
 
         # self.post_draw()
         # if len(self.battle_result_panel_list) != 0:

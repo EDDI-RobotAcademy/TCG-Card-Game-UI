@@ -33,6 +33,7 @@ from battle_field.state.energy_type import EnergyType
 from battle_field_function.service.battle_field_function_service_impl import BattleFieldFunctionServiceImpl
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
+from common.message_number import MessageNumber
 from common.target_type import TargetType
 from fake_battle_field.infra.fake_battle_field_frame_repository_impl import FakeBattleFieldFrameRepositoryImpl
 from fake_battle_field.infra.fake_opponent_hand_repository import FakeOpponentHandRepositoryImpl
@@ -346,12 +347,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
     def notify_turn_end(self, notice_dictionary):
         print(f"{Fore.RED}notify_turn_end() -> notice_dictionary:{Fore.GREEN} {notice_dictionary}{Style.RESET_ALL}")
 
-        # 내 턴 종료시 상대가 덱사 발생한 경우
-        if notice_dictionary['NOTIFY_TURN_END']['player_main_character_survival_map'].get('You', None) == 'Death':
-            print('You win')
-            return
 
-        self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(True)
+        self.__notify_reader_repository.save_notify_message_on_screen(
+            MessageNumber.YOUR_TURN)
 
         # Your Draw
         your_drawn_card_list = notice_dictionary['NOTIFY_TURN_END']['player_drawn_card_list_map'].get('You', [])
@@ -370,16 +368,6 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         self.apply_notify_data_of_dead_unit(notice_dictionary['NOTIFY_TURN_END']['player_field_unit_death_map'])
 
-        # notify_turn_end() -> notice_dictionary: {
-        #     'NOTIFY_TURN_END': {'player_drawn_card_list_map': {'You': [33]}, 'player_field_energy_map': {'You': 1},
-        #                         'player_field_unit_health_point_map': {
-        #                             'Opponent': {'field_unit_health_point_map': {'8': 20}}},
-        #                         'player_field_unit_harmful_effect_map': {'Opponent': {
-        #                             'field_unit_harmful_status_map': {'8': {'harmful_status_list': []}}}},
-        #                         'player_field_unit_death_map': {'Opponent': {'dead_field_unit_index_list': []}},
-        #                         'player_main_character_survival_map': {},
-        #                         'unit_index_turn_start_passive_list_map': {'3': [], '5': [], '6': [1, 2], '2': [],
-        #                                                                    '1': [], '0': [], '4': []}}}
         your_which_one_has_passive_skill_to_turn_start_lists = {unit_index: passive_list for unit_index, passive_list in
                                                            notice_dictionary['NOTIFY_TURN_END'][
                                                                'unit_index_turn_start_passive_list_map'].items() if
