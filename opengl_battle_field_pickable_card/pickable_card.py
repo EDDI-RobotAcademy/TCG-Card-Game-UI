@@ -260,7 +260,7 @@ class PickableCard:
     def init_random_buy_card(self, card_number):
         self.set_card_number(card_number)
 
-        rectangle_width = 200
+        rectangle_width = 220
         rectangle_height = rectangle_width * 1.615
 
         basic_pickable_card_base_vertices = [

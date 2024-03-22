@@ -1,3 +1,5 @@
+from colorama import Fore, Style
+
 from battle_field_fixed_card.fixed_field_card import FixedFieldCard
 from card_shop_frame.frame.buy_check_frame.entity.buy_check_frame import BuyCheckFrame
 from card_shop_frame.frame.buy_check_frame.repository.buy_check_repository import BuyCheckRepository
@@ -52,17 +54,37 @@ class BuyCheckRepositoryImpl(BuyCheckRepository):
     def get_next_card_position(self, index):
         # TODO: 배치 간격 고려
         # 10개 배치 (위 5, 아래 5)
-        card_width_ratio = 105 / self.total_width
+        current_card_size = 220
+        card_width_ratio = current_card_size / self.total_width
+        card_height_ratio = current_card_size * 1.615 / self.total_height
+        print(f"{Fore.RED}card_width_ratio: {card_width_ratio}{Style.RESET_ALL}")
+        card_height_margin = 100
+        card_height_margin_ratio = card_height_margin / self.total_height
+        print(f"{Fore.RED}card_height_margin_ratio: {card_height_margin_ratio}{Style.RESET_ALL}")
+
+        top_height = ((1 - (card_height_ratio * 2 + card_height_margin_ratio)) / 2) * self.total_height
+
+        card_width_margin = 60
+        card_width_margin_ratio = card_width_margin / self.total_width
+        left_start_width = ((1 - (card_width_ratio * 5 + card_width_margin_ratio * 4)) / 2) * self.total_width
+        x_increment = (card_width_ratio + card_width_margin_ratio) * self.total_width
+
         place_index = index % 5
 
         if index > 4:
-            current_y = self.total_height * self.y_bottom_base_ratio
+            # current_y = self.total_height * self.y_bottom_base_ratio
+            # current_y = ((1 - (card_height_ratio * 2 + card_height_margin_ratio)) / 2) * self.total_height
+            current_y = top_height
         else:
-            current_y = self.total_height * self.y_top_base_ratio
+            # current_y = self.total_height * self.y_top_base_ratio
+            current_y = top_height + (card_height_ratio + card_height_margin_ratio) * self.total_height
 
-        base_x = self.total_width * self.x_left_base_ratio
-        x_increment = (self.x_right_base_ratio - self.x_left_base_ratio + card_width_ratio) / 5.0
-        next_x = base_x + self.total_width * (x_increment * place_index)
+        # base_x = self.total_width * self.x_left_base_ratio
+        # x_increment = (self.x_right_base_ratio - self.x_left_base_ratio + card_width_ratio) / 5.0
+        # next_x = base_x + self.total_width * (x_increment * place_index)
+
+        next_x = left_start_width + x_increment * place_index
+        print(f"{Fore.RED}next_x: {next_x}, current_y: {current_y}{Style.RESET_ALL}")
         return (next_x, current_y)
 
     def create_random_buy_list(self):
