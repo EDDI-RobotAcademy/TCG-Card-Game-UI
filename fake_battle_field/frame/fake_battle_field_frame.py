@@ -9934,9 +9934,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     random_translation = (random.uniform(-vibration_factor, vibration_factor),
                                           random.uniform(-vibration_factor, vibration_factor))
 
-                    background_random_translation = (random.uniform(-vibration_factor, vibration_factor),
-                                                     random.uniform(-vibration_factor, vibration_factor))
-
                     new_fixed_card_base_vertices = [
                         (vx + random_translation[0], vy + random_translation[1]) for vx, vy in
                         fixed_card_base.get_vertices()
