@@ -56,6 +56,9 @@ class MyCardPage:
         self.my_card_page_card_list = []
         self.my_card_page_card_object_list = []
 
+        self.my_card_page_card_count_list = []
+        self.my_card_page_card_count_object_list = []
+
     def set_total_window_size(self, width, height):
         self.total_width = width
         self.total_height = height
@@ -67,6 +70,10 @@ class MyCardPage:
         if isinstance(my_card_list, list):
             self.my_card_page_card_list.extend(my_card_list)
 
+    def add_my_card_count_to_page(self, my_card_count_list):
+        if isinstance(my_card_count_list, list):
+            self.my_card_page_card_count_list.extend(my_card_count_list)
+
     def update_my_card_to_page(self, my_card_list):
         if isinstance(my_card_list, list):
             self.my_card_page_card_list = []
@@ -77,6 +84,12 @@ class MyCardPage:
 
     def get_my_card_page_card_object_list(self):
         return self.my_card_page_card_object_list
+
+    def get_my_card_page_card_count_list(self):
+        return self.my_card_page_card_count_list
+
+    def get_my_card_page_card_count_object_list(self):
+        return self.my_card_page_card_count_object_list
 
     # x: 50, y: 232
     # x: 1574, y: 242
@@ -109,7 +122,9 @@ class MyCardPage:
 
     def create_my_card_list(self):
         my_card_page_card_list = self.get_my_card_page_card_list()
-        print(f"my_card_page_card_list: {my_card_page_card_list}")
+        # print(f"my_card_page_card_list: {my_card_page_card_list}")
+
+        my_card_page_card_count_list = self.get_my_card_page_card_count_list()
 
         for index, card_id in enumerate(my_card_page_card_list):
             # print(f"index: {index}, card_number: {card_id}")
