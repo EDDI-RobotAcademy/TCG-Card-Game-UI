@@ -139,9 +139,12 @@ class MusicPlayerRepositoryImpl(MusicPlayerRepository):
         sound = pygame.mixer.Sound(sound_effect_file_path)
         sound.play()
 
-    def play_sound_effect_of_timer(self, timer_event_name: str):
+    def play_sound_effect_of_timer(self, timer_event_name: str, stop_event: int):
         print("MusicPlayerRepositoryImpl : play_sound_effect_of_timer - " + timer_event_name)
         pygame.mixer.init()
+        if stop_event == -1:
+            pygame.mixer.stop()
+            return
         current_location = os.getcwd()
         sound_effect_file_path = (
             os.path.join(
