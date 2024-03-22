@@ -134,6 +134,7 @@ from battle_field_muligun.service.request.muligun_request import MuligunRequest
 
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.attack_type import AttackType
+from common.battle_finish_position import BattleFinishPosition
 from common.card_grade import CardGrade
 from common.card_race import CardRace
 from common.card_type import CardType
@@ -207,6 +208,8 @@ class BattleFieldFrame(OpenGLFrame):
         self.drag_start = None
 
         self.lightning_border = LightningBorder()
+
+        self.game_end_sound_call = False
 
         self.your_hand_repository = YourHandRepository.getInstance()
         self.hand_card_list = None
@@ -1463,6 +1466,8 @@ class BattleFieldFrame(OpenGLFrame):
 
                 vibration(1)
 
+            self.__music_player_repository.play_sound_effect_of_card_execution('death_scythe')
+
             self.play_effect_animation_by_index_and_call_function(animation_index, vibration_death_scythe)
 
         if self.field_area_inside_handler.get_required_to_process_passive_skill_multiple_unit_list():
@@ -1958,6 +1963,12 @@ class BattleFieldFrame(OpenGLFrame):
                     battle_result_panel.set_width_ratio(self.width_ratio)
                     battle_result_panel.set_height_ratio(self.height_ratio)
                     battle_result_panel.draw()
+                if self.battle_field_repository.get_is_win() == BattleFinishPosition.Winner and not self.game_end_sound_call:
+                    self.__music_player_repository.play_sound_effect_of_game_end('winner')
+                    self.game_end_sound_call = True
+                elif self.battle_field_repository.get_is_win() == BattleFinishPosition.Loser and not self.game_end_sound_call:
+                    self.__music_player_repository.play_sound_effect_of_game_end('loser')
+                    self.game_end_sound_call = True
 
         if self.skill_focus_background_panel:
             glEnable(GL_BLEND)
@@ -2144,6 +2155,8 @@ class BattleFieldFrame(OpenGLFrame):
                             self.return_to_initial_location()
                             self.reset_every_selected_action()
                             return
+
+                        self.__music_player_repository.play_sound_effect_of_card_execution('field_of_death')
 
                         opponent_field_energy = self.opponent_field_energy_repository.get_opponent_field_energy()
                         print(f"before land of death -> opponent_field_energy: {opponent_field_energy}")
@@ -4163,6 +4176,7 @@ class BattleFieldFrame(OpenGLFrame):
                             return
 
                         print("덱에서 에너지 검색해서 부스팅 진행")
+                        self.__music_player_repository.play_sound_effect_of_card_execution('overflow_of_energy')
 
                         current_process_card_id = self.field_area_inside_handler.get_action_set_card_id()
 
@@ -4280,6 +4294,8 @@ class BattleFieldFrame(OpenGLFrame):
                         print(
                             f"self.field_area_inside_handler.get - > {self.field_area_inside_handler.get_field_area_action()}")
                         return
+
+                    self.__music_player_repository.play_sound_effect_of_card_execution('call_of_leonic')
                     # 서포트
 
                     # 실제로 지울 때 몇 개 지우는지만 알면 된다.
@@ -5777,9 +5793,9 @@ class BattleFieldFrame(OpenGLFrame):
         def slash_with_sword(step_count):
             if step_count == 1:
                 if self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 1:
-                    self.__music_player_repository.play_sound_effect_with_event_name('warrior_basic_attack')
+                    self.__music_player_repository.play_sound_effect_of_unit_attack('warrior_basic_attack')
                 elif self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
-                    self.__music_player_repository.play_sound_effect_with_event_name('magician_basic_attack')
+                    self.__music_player_repository.play_sound_effect_of_unit_attack('magician_basic_attack')
             if step_count < 11:
                 sword_accel_x_dist = sword_accel_x * step_count
 
@@ -6124,7 +6140,7 @@ class BattleFieldFrame(OpenGLFrame):
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
                 if step_count == 6:
-                    self.__music_player_repository.play_sound_effect_with_event_name('valrn_active_skill_2')
+                    self.__music_player_repository.play_sound_effect_of_unit_attack('valrn_active_skill_2')
             else:
                 self.start_wide_area_motion_animation(attack_animation_object)
                 self.is_attack_motion_finished = True
@@ -6469,7 +6485,7 @@ class BattleFieldFrame(OpenGLFrame):
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
                 if step_count == 6:
-                    self.__music_player_repository.play_sound_effect_with_event_name('valrn_active_skill_2')
+                    self.__music_player_repository.play_sound_effect_of_unit_attack('valrn_active_skill_2')
             else:
                 self.start_opponent_valrn_sea_of_wraith_motion_animation(attack_animation_object)
 
@@ -7182,9 +7198,9 @@ class BattleFieldFrame(OpenGLFrame):
         def slash_with_sword(step_count):
             if step_count == 1:
                 if self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 1:
-                    self.__music_player_repository.play_sound_effect_with_event_name('warrior_basic_attack')
+                    self.__music_player_repository.play_sound_effect_of_unit_attack('warrior_basic_attack')
                 elif self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
-                    self.__music_player_repository.play_sound_effect_with_event_name('magician_basic_attack')
+                    self.__music_player_repository.play_sound_effect_of_unit_attack('magician_basic_attack')
             if step_count < 11:
                 sword_accel_x_dist = sword_accel_x * step_count
 
@@ -7393,6 +7409,8 @@ class BattleFieldFrame(OpenGLFrame):
 
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
+                if step_count == 9:
+                    self.__music_player_repository.play_sound_effect_of_unit_attack('nether_passive_skill_1')
             else:
                 self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
                     'nether_blade_area_skill',
@@ -7635,6 +7653,7 @@ class BattleFieldFrame(OpenGLFrame):
     ### Opponent Second Passive
     def start_opponent_nether_blade_second_passive_targeting_motion_animation(self, attack_animation_object):
         steps = 50
+        self.__music_player_repository.play_sound_effect_of_unit_attack('nether_passive_skill_2')
 
         is_attack_main_character = False
         your_field_unit = None
@@ -7897,7 +7916,7 @@ class BattleFieldFrame(OpenGLFrame):
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
                 if step_count == 9:
-                    self.__music_player_repository.play_sound_effect_with_event_name('nether_passive_skill_1')
+                    self.__music_player_repository.play_sound_effect_of_unit_attack('nether_passive_skill_1')
             else:
 
                 # effect_animation.draw_full_screen_animation_panel()
@@ -8231,7 +8250,7 @@ class BattleFieldFrame(OpenGLFrame):
 
     def start_nether_blade_second_passive_targeting_motion_animation(self):
         steps = 50
-        self.__music_player_repository.play_sound_effect_with_event_name('nether_passive_skill_2')
+        self.__music_player_repository.play_sound_effect_of_unit_attack('nether_passive_skill_2')
 
         is_attack_main_character = self.attack_animation_object.get_is_your_attack_main_character()
         opponent_field_unit = None
@@ -8505,7 +8524,7 @@ class BattleFieldFrame(OpenGLFrame):
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
                 if step_count == 9:
-                    self.__music_player_repository.play_sound_effect_with_event_name('nether_passive_skill_1')
+                    self.__music_player_repository.play_sound_effect_of_unit_attack('nether_passive_skill_1')
             else:
                 self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
                     'nether_blade_area_skill',
@@ -8841,7 +8860,7 @@ class BattleFieldFrame(OpenGLFrame):
 
     def start_nether_blade_turn_start_second_passive_targeting_motion_animation(self):
         steps = 50
-        self.__music_player_repository.play_sound_effect_with_event_name('nether_passive_skill_2')
+        self.__music_player_repository.play_sound_effect_of_unit_attack('nether_passive_skill_2')
 
         is_attack_main_character = False
         opponent_field_unit = None
@@ -9248,7 +9267,7 @@ class BattleFieldFrame(OpenGLFrame):
 
         # self.play_effect_animation_by_index_and_call_function(your_field_card_index,
         #                                                       burst_shadow_ball_animation)
-        self.__music_player_repository.play_sound_effect_with_event_name('valrn_active_skill_1')
+        self.__music_player_repository.play_sound_effect_of_unit_attack('valrn_active_skill_1')
         self.play_effect_animation_with_acceleration_by_index_and_call_function(
             your_field_card_index,
             burst_shadow_ball_animation,
@@ -9652,7 +9671,7 @@ class BattleFieldFrame(OpenGLFrame):
 
         # self.play_effect_animation_by_index_and_call_function(your_field_card_index,
         #                                                       burst_shadow_ball_animation)
-        self.__music_player_repository.play_sound_effect_with_event_name('valrn_active_skill_1')
+        self.__music_player_repository.play_sound_effect_of_unit_attack('valrn_active_skill_1')
         self.play_effect_animation_with_acceleration_by_index_and_call_function(
             your_field_card_index,
             burst_shadow_ball_animation,
@@ -9960,7 +9979,7 @@ class BattleFieldFrame(OpenGLFrame):
 
         # self.play_effect_animation_by_index_and_call_function(your_field_card_index,
         #                                                       burst_shadow_ball_animation)
-        self.__music_player_repository.play_sound_effect_with_event_name('valrn_active_skill_1')
+        self.__music_player_repository.play_sound_effect_of_unit_attack('valrn_active_skill_1')
         self.play_effect_animation_with_acceleration_by_index_and_call_function(
             opponent_field_card_index,
             burst_shadow_ball_animation,
@@ -10323,7 +10342,7 @@ class BattleFieldFrame(OpenGLFrame):
 
         # self.play_effect_animation_by_index_and_call_function(your_field_card_index,
         #                                                       burst_shadow_ball_animation)
-        self.__music_player_repository.play_sound_effect_with_event_name('valrn_active_skill_1')
+        self.__music_player_repository.play_sound_effect_of_unit_attack('valrn_active_skill_1')
         self.play_effect_animation_with_acceleration_by_index_and_call_function(
             opponent_field_card_index,
             burst_shadow_ball_animation,
@@ -10635,8 +10654,8 @@ class BattleFieldFrame(OpenGLFrame):
 
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
-                if step_count == 8 and self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
-                    self.__music_player_repository.play_sound_effect_with_event_name('magician_basic_attack')
+                # if step_count == 8 and self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
+                #     self.__music_player_repository.play_sound_effect_with_event_name('magician_basic_attack')
             else:
                 self.start_opponent_attack_main_character_post_animation(attack_animation_object)
 
@@ -10673,9 +10692,9 @@ class BattleFieldFrame(OpenGLFrame):
         def moving_action(step_count):
             if step_count == 1:
                 if self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 1:
-                    self.__music_player_repository.play_sound_effect_with_event_name('warrior_basic_attack')
-                # elif self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
-                #     self.__music_player_repository.play_sound_effect_with_event_name_for_wav('magician_basic_attack')
+                    self.__music_player_repository.play_sound_effect_of_unit_attack('warrior_basic_attack')
+                elif self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
+                    self.__music_player_repository.play_sound_effect_of_unit_attack('magician_basic_attack')
             if step_count < 11:
                 sword_accel_x_dist = sword_accel_x * step_count
 
@@ -11164,6 +11183,8 @@ class BattleFieldFrame(OpenGLFrame):
         self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
             animation_index, effect_animation_panel)
 
+        self.__music_player_repository.play_sound_effect_of_card_execution(effect_name)
+
         self.play_effect_animation_by_index_and_call_function(animation_index, function)
 
     def create_effect_animation_with_vertices_and_play_animation_and_call_function_with_param(self, effect_name,
@@ -11215,6 +11236,9 @@ class BattleFieldFrame(OpenGLFrame):
 
         self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
             animation_index, effect_animation_panel)
+
+        if effect_name == 'dark_blast':
+            self.__music_player_repository.play_sound_effect_of_card_execution('energy_burn')
 
         self.play_effect_animation_by_index_and_call_function_with_param(animation_index, function, param)
 
@@ -11574,6 +11598,8 @@ class BattleFieldFrame(OpenGLFrame):
 
                     self.create_effect_animation_to_your_unit_and_play_animation_and_call_function(
                         'death_scythe', int(unit_index), vibration_death_scythe_you)
+
+                self.__music_player_repository.play_sound_effect_of_card_execution('death_scythe')
 
     def energy_burn_animation(self):
         notify_dict_data = self.attack_animation_object.get_notify_data()
