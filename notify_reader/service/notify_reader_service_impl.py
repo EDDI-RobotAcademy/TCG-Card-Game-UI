@@ -1709,9 +1709,13 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         data = notice_dictionary['NOTIFY_DEPLOY_TARGETING_ATTACK_PASSIVE_SKILL_TO_UNIT']
         self.__attack_animation_object.set_notify_data(data)
 
-        opponent_unit_index = int(list(data['player_field_unit_attack_map']['Opponent']['field_unit_attack_map'].keys())[0])
-        opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(opponent_unit_index)
+        opponent_unit_index = list(data['player_field_unit_attack_map']['Opponent']['field_unit_attack_map'].keys())[0]
+        opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(int(opponent_unit_index))
         self.__attack_animation_object.set_opponent_animation_actor(opponent_field_unit)
+
+        your_field_unit_index = data['player_field_unit_attack_map']['Opponent']['field_unit_attack_map'][opponent_unit_index]['target_unit_index']
+        your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(your_field_unit_index)
+        self.__attack_animation_object.set_your_field_unit(your_field_unit)
 
         # opponent_unit_index = int(list(data['player_field_unit_attack_map']['Opponent']['field_unit_attack_map'].keys())[0])
         # opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(opponent_unit_index)
@@ -2179,22 +2183,24 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
             # 필드 에너지 제거
             if player_who_targeted == "Opponent":
-                remove_field_energy_point = data["player_field_energy_map"][player_who_targeted]
-                opponent_energy_count = self.__opponent_field_energy_repository.get_opponent_field_energy() - remove_field_energy_point
-                if opponent_energy_count <= 0:
-                    result_opponent_energy_count = 0
-                else:
-                    result_opponent_energy_count = opponent_energy_count
+                result_opponent_energy_count = data["player_field_energy_map"][player_who_targeted]
+                # remove_field_energy_point = data["player_field_energy_map"][player_who_targeted]
+                # opponent_energy_count = self.__opponent_field_energy_repository.get_opponent_field_energy() - remove_field_energy_point
+                # if opponent_energy_count <= 0:
+                #     result_opponent_energy_count = 0
+                # else:
+                #     result_opponent_energy_count = opponent_energy_count
 
                 self.__opponent_field_energy_repository.set_opponent_field_energy(result_opponent_energy_count)
 
             elif player_who_targeted == "You":
-                remove_field_energy_point = data["player_field_energy_map"][player_who_targeted]
-                your_energy_count = self.__your_field_energy_repository.get_your_field_energy() - remove_field_energy_point
-                if your_energy_count <= 0:
-                    result_your_energy_count = 0
-                else:
-                    result_your_energy_count = your_energy_count
+                result_your_energy_count = data["player_field_energy_map"][player_who_targeted]
+                # remove_field_energy_point = data["player_field_energy_map"][player_who_targeted]
+                # your_energy_count = self.__your_field_energy_repository.get_your_field_energy() - remove_field_energy_point
+                # if your_energy_count <= 0:
+                #     result_your_energy_count = 0
+                # else:
+                #     result_your_energy_count = your_energy_count
 
                 self.__your_field_energy_repository.set_your_field_energy(result_your_energy_count)
 

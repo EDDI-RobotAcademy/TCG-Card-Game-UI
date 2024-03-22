@@ -1121,7 +1121,7 @@ class BattleFieldFrame(OpenGLFrame):
         self.your_hand_prev_button.draw()
         self.your_hand_next_button.draw()
 
-        self.post_draw()
+
 
         if self.field_area_inside_handler.get_field_area_action() is FieldAreaAction.PLAY_ANIMATION:
             for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
@@ -1146,35 +1146,7 @@ class BattleFieldFrame(OpenGLFrame):
                     attached_shape.set_height_ratio(self.height_ratio)
                     attached_shape.draw()
 
-        if self.opponent_field_area_inside_handler.get_active_field_area_action() is OpponentFieldAreaActionProcess.PLAY_ANIMATION:
-            opponent_animation_actor = self.attack_animation_object.get_opponent_animation_actor()
-            opponent_animation_actor_index = opponent_animation_actor.get_index()
 
-            for index, opponent_field_unit in enumerate(
-                    self.opponent_field_unit_repository.get_current_field_unit_card_object_list()):
-                if opponent_field_unit is None:
-                    continue
-
-                if opponent_animation_actor_index != index:
-                    continue
-
-                attached_tool_card = opponent_field_unit.get_tool_card()
-                if attached_tool_card is not None:
-                    attached_tool_card.set_width_ratio(self.width_ratio)
-                    attached_tool_card.set_height_ratio(self.height_ratio)
-                    attached_tool_card.draw()
-
-                fixed_card_base = opponent_field_unit.get_fixed_card_base()
-                fixed_card_base.set_width_ratio(self.width_ratio)
-                fixed_card_base.set_height_ratio(self.height_ratio)
-                fixed_card_base.draw()
-
-                attached_shape_list = fixed_card_base.get_attached_shapes()
-
-                for attached_shape in attached_shape_list:
-                    attached_shape.set_width_ratio(self.width_ratio)
-                    attached_shape.set_height_ratio(self.height_ratio)
-                    attached_shape.draw()
 
         if self.effect_animation_repository.get_effect_animation_dictionary() is not {} and self.effect_animation_repository.get_effect_animation_panel_dictionary() is not {}:
 
@@ -1618,6 +1590,7 @@ class BattleFieldFrame(OpenGLFrame):
             self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
             self.opponent_field_area_inside_handler.clear_field_area_action()
 
+        self.post_draw()
 
         if self.current_fixed_details_card:
             self.current_fixed_details_card.set_width_ratio(self.width_ratio)
@@ -1644,7 +1617,35 @@ class BattleFieldFrame(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
+        if self.opponent_field_area_inside_handler.get_active_field_area_action() is OpponentFieldAreaActionProcess.PLAY_ANIMATION:
+            opponent_animation_actor = self.attack_animation_object.get_opponent_animation_actor()
+            opponent_animation_actor_index = opponent_animation_actor.get_index()
 
+            for index, opponent_field_unit in enumerate(
+                    self.opponent_field_unit_repository.get_current_field_unit_card_object_list()):
+                if opponent_field_unit is None:
+                    continue
+
+                if opponent_animation_actor_index != index:
+                    continue
+
+                attached_tool_card = opponent_field_unit.get_tool_card()
+                if attached_tool_card is not None:
+                    attached_tool_card.set_width_ratio(self.width_ratio)
+                    attached_tool_card.set_height_ratio(self.height_ratio)
+                    attached_tool_card.draw()
+
+                fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                fixed_card_base.set_width_ratio(self.width_ratio)
+                fixed_card_base.set_height_ratio(self.height_ratio)
+                fixed_card_base.draw()
+
+                attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                for attached_shape in attached_shape_list:
+                    attached_shape.set_width_ratio(self.width_ratio)
+                    attached_shape.set_height_ratio(self.height_ratio)
+                    attached_shape.draw()
 
         if self.selected_object:
             card_base = None
