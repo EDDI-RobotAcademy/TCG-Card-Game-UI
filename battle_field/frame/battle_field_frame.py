@@ -1921,6 +1921,7 @@ class BattleFieldFrame(OpenGLFrame):
                 attached_shape.draw()
 
         if self.__notify_reader_repository.get_notify_message_on_screen():
+            print('get_notify_message_on_screen:', self.__notify_reader_repository.get_notify_message_on_screen())
             self.message_on_the_screen.create_message_on_the_battle_screen(
                 self.__notify_reader_repository.get_notify_message_on_screen()
             )
