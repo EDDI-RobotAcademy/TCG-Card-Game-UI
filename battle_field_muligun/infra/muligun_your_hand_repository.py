@@ -207,3 +207,7 @@ class MuligunYourHandRepository:
         print("상대 멀리건 확인 요청")
         return self.__receiveIpcChannel.get()
 
+    def requestBattleStart(self, battleStartRequest):
+        self.__transmitIpcChannel.put(battleStartRequest)
+        return self.__receiveIpcChannel.get()
+

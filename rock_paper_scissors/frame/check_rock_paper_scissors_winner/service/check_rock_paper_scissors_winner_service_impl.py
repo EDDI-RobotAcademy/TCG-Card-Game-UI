@@ -50,7 +50,7 @@ class CheckRockPaperScissorsWinnerServiceImpl(CheckRockPaperScissorsWinnerServic
             if responseData.get("am_i_first_turn") in ("WIN", "LOSE"):
                 self.__checkRockPaperScissorsWinnerRepositoryImpl.setRPSWinner(responseData.get("am_i_first_turn"))
                 self.check_RPS_label.configure(text="당신이 " + self.findWinner() + "입니다.")
-                self.__notifyReaderRepositoryImpl.set_is_your_turn_for_check_fake_process(self.setWinnerToNotify)
+                self.__notifyReaderRepositoryImpl.set_is_your_turn_for_check_fake_process(self.setWinnerToNotify())
                 checkRockPaperScissorsWinnerFrame.update()
                 time.sleep(5)
                 switchFrameWithMenuName('battle-field-muligun')

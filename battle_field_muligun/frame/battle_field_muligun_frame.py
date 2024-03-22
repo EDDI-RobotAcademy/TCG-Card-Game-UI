@@ -11,6 +11,7 @@ from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleF
 from battle_field_muligun.service.request.check_opponent_muligun_request import CheckOpponentMuligunRequest
 from battle_field_muligun.service.request.muligun_request import MuligunRequest
 from battle_field_muligun_timer.battle_field_muligun_timer import BattleFieldMuligunTimer
+from fake_battle_field.service.request.real_battle_start_request import RealBattleStartRequest
 from image_shape.non_background_image import NonBackgroundImage
 from image_shape.rectangle_image import RectangleImage
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
@@ -186,6 +187,11 @@ class BattleFieldMuligunFrame(OpenGLFrame):
                 self.timer_visible = False
                 # self.master.after(self.__switchFrameWithMenuName('battle-field'))
                 self.is_doing_mulligan = False
+                self.muligun_your_hand_repository.requestBattleStart(
+                    RealBattleStartRequest(
+                        self.sessionRepository.get_session_info()
+                    )
+                )
                 self.__switchFrameWithMenuName('battle-field')
             else:
                 self.message_visible = True
