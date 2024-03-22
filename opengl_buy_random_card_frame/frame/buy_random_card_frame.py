@@ -167,32 +167,32 @@ class BuyRandomCardFrame(OpenGLFrame):
         self.response_card_number = BuyCheckRepositoryImpl.getInstance().getRandomCardList()
         print(f"response_card_number: {self.response_card_number}")
 
-        x = 200
-        y = 200
-
-        for i, number in enumerate(self.response_card_number):
-            try:
-                print(f"index: {i}, card number: {number}")
-                card = LegacyPickableCard(local_translation=(x, y), scale=800)
-                card.init_card(number)
-                self.buy_random_card_scene.add_card_list(card)
-                #print(f"카드 리스트: {self.buy_random_card_scene.get_card_list()}")
-
-                x += 300
-
-                if (i + 1) % 5 == 0:
-                    x = 200
-                    y = 500
-                    if (i + 1) % 10 == 0:
-                        x = 200
-                        y = 50
-
-                if (i + 1) % 10 == 0:
-                    continue
-
-            except Exception as e:
-                print(f"Error creating card: {e}")
-                pass
+        # x = 200
+        # y = 200
+        #
+        # for i, number in enumerate(self.response_card_number):
+        #     try:
+        #         print(f"index: {i}, card number: {number}")
+        #         card = LegacyPickableCard(local_translation=(x, y), scale=800)
+        #         card.init_card(number)
+        #         self.buy_random_card_scene.add_card_list(card)
+        #         #print(f"카드 리스트: {self.buy_random_card_scene.get_card_list()}")
+        #
+        #         x += 300
+        #
+        #         if (i + 1) % 5 == 0:
+        #             x = 200
+        #             y = 500
+        #             if (i + 1) % 10 == 0:
+        #                 x = 200
+        #                 y = 50
+        #
+        #         if (i + 1) % 10 == 0:
+        #             continue
+        #
+        #     except Exception as e:
+        #         print(f"Error creating card: {e}")
+        #         pass
 
 
     def redraw(self):
