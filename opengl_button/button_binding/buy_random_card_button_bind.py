@@ -14,4 +14,7 @@ class BuyRandomCardFrameButtonBind:
         self.my_card_main_frame.bind("<Button-1>", self.combined_mouse_click_event)
 
     def combined_mouse_click_event(self, event):
+        x, y = event.x, event.y
+        print(f"x: {x}, y: {y}")
+
         self.back_to_shop_frame_event_handler.mouse_click_event(event)
