@@ -5,6 +5,7 @@ from PIL import ImageTk, Image
 from account_login_frame.repository.login_menu_frame_repository_impl import LoginMenuFrameRepositoryImpl
 from account_login_frame.service.login_menu_frame_service import LoginMenuFrameService
 from account_login_frame.service.request.account_login_request import AccountLoginRequest
+from music_player.repository.music_player_repository_impl import MusicPlayerRepositoryImpl
 from session.repository.session_repository_impl import SessionRepositoryImpl
 
 
@@ -16,6 +17,7 @@ class LoginMenuFrameServiceImpl(LoginMenuFrameService):
             cls.__instance = super().__new__(cls)
             cls.__instance.__loginMenuFrameRepository = LoginMenuFrameRepositoryImpl.getInstance()
             cls.__instance.__sessionRepository = SessionRepositoryImpl.getInstance()
+            cls.__instance.__musicPlayerRepository = MusicPlayerRepositoryImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -70,6 +72,7 @@ class LoginMenuFrameServiceImpl(LoginMenuFrameService):
 
 
         def on_signin_click(event):
+            self.__musicPlayerRepository.play_sound_effect_of_mouse_on_click('menu_button_click')
             try:
                 responseData = self.__loginMenuFrameRepository.requestLogin(
                     AccountLoginRequest(entry_username.get(), entry_password.get()))
@@ -113,6 +116,11 @@ class LoginMenuFrameServiceImpl(LoginMenuFrameService):
         #
         # loginMenuFrame.bind('<Return>', lambda event: on_enter)
         entry_password.bind("<Return>", on_signin_click)
+
+        def play_mouse_on_button_sound(event):
+            self.__musicPlayerRepository.play_sound_effect_of_mouse_on_click('mouse_on_button')
+
+        button_login.bind('<Enter>', play_mouse_on_button_sound)
 
         return loginMenuFrame
 
