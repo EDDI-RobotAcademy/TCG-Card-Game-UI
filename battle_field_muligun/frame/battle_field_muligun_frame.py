@@ -187,12 +187,13 @@ class BattleFieldMuligunFrame(OpenGLFrame):
                 self.timer_visible = False
                 # self.master.after(self.__switchFrameWithMenuName('battle-field'))
                 self.is_doing_mulligan = False
-                self.muligun_your_hand_repository.requestBattleStart(
+                response = self.muligun_your_hand_repository.requestBattleStart(
                     RealBattleStartRequest(
                         self.sessionRepository.get_session_info()
                     )
                 )
-                self.__switchFrameWithMenuName('battle-field')
+                if response.get('is_success', False) == True:
+                    self.__switchFrameWithMenuName('battle-field')
             else:
                 self.message_visible = True
                 #TODO: 시간 초가 종료 되었을 때 상대가 선택하지 않으면 배틀 필드 화면으로 넘어감.
