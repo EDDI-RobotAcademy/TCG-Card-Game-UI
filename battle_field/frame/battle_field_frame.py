@@ -624,15 +624,15 @@ class BattleFieldFrame(OpenGLFrame):
         self.surrender_confirm.create_surrender_confirm_panel_list()
         self.surrender_confirm_panel_list = self.surrender_confirm.get_surrender_confirm_panel_list()
 
-        muligun_reset_button_instance = MuligunResetButton()
-        muligun_reset_button_instance.set_total_window_size(self.width, self.height)
-        muligun_reset_button_instance.init_muligun_reset_button()
-        self.muligun_reset_button = muligun_reset_button_instance.get_muligun_reset_button()
-
-        multi_draw_button_instance = MultiDrawButton()
-        multi_draw_button_instance.set_total_window_size(self.width, self.height)
-        multi_draw_button_instance.init_multi_draw_button()
-        self.multi_draw_button = multi_draw_button_instance.get_multi_draw_button()
+        # muligun_reset_button_instance = MuligunResetButton()
+        # muligun_reset_button_instance.set_total_window_size(self.width, self.height)
+        # muligun_reset_button_instance.init_muligun_reset_button()
+        # self.muligun_reset_button = muligun_reset_button_instance.get_muligun_reset_button()
+        # 
+        # multi_draw_button_instance = MultiDrawButton()
+        # multi_draw_button_instance.set_total_window_size(self.width, self.height)
+        # multi_draw_button_instance.init_multi_draw_button()
+        # self.multi_draw_button = multi_draw_button_instance.get_multi_draw_button()
 
         self.timer = BattleFieldTimer()
         self.unit_timer = BattleFieldTimer()
@@ -1516,7 +1516,7 @@ class BattleFieldFrame(OpenGLFrame):
 
             turn_start_first_passive_skill_response = self.__fake_battle_field_frame_repository.request_to_process_turn_start_first_passive_skill_to_your_field_unit(
                 TurnStartFirstPassiveSkillRequest(
-                    _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                    _sessionInfo=self.__session_repository.get_session_info(),
                     _unitCardIndex=str(your_field_unit_index),
                     _usageSkillIndex="1"))
 
@@ -2085,7 +2085,7 @@ class BattleFieldFrame(OpenGLFrame):
 
                             response = self.__fake_battle_field_frame_repository.request_use_contract_of_doom(
                                 RequestUseContractOfDoom(
-                                    _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                                    _sessionInfo=self.__session_repository.get_session_info(),
                                     _itemCardId="25"
                                 )
                             )
@@ -2142,7 +2142,7 @@ class BattleFieldFrame(OpenGLFrame):
 
                         response = self.your_hand_repository.request_use_field_of_death(
                             RequestUseFieldOfDeath(
-                                _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                                _sessionInfo=self.__session_repository.get_session_info(),
                                 _supportCardId=your_card_id)
                         )
 
@@ -2255,7 +2255,7 @@ class BattleFieldFrame(OpenGLFrame):
 
                                 response = self.your_hand_repository.request_use_morale_conversion(
                                     RequestUseMoraleConversion(
-                                        _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                                        _sessionInfo=self.__session_repository.get_session_info(),
                                         _unitIndex=unit_index,
                                         _itemCardId=placed_card_id)
                                 )
@@ -2343,7 +2343,7 @@ class BattleFieldFrame(OpenGLFrame):
                             if card_id == 151:
                                 response = self.your_hand_repository.request_use_energy_card_to_unit(
                                     RequestUseSpecialEnergyCardToUnit(
-                                        _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                                        _sessionInfo=self.__session_repository.get_session_info(),
                                         _unitIndex=unit_index,
                                         _energyCardId=card_id)
                                 )
@@ -2364,7 +2364,7 @@ class BattleFieldFrame(OpenGLFrame):
                             else:
                                 response = self.your_hand_repository.request_use_energy_card_to_unit(
                                     RequestUseEnergyCardToUnit(
-                                        _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                                        _sessionInfo=self.__session_repository.get_session_info(),
                                         _unitIndex=unit_index,
                                         _energyCardId=card_id)
                                 )
@@ -3096,7 +3096,7 @@ class BattleFieldFrame(OpenGLFrame):
 
                         response = self.__fake_battle_field_frame_repository.request_attack_opponent_unit(
                             RequestAttackWithNonTargetingActiveSkill(
-                                _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                                _sessionInfo=self.__session_repository.get_session_info(),
                                 _unitCardIndex=your_field_unit_index
                             )
                         )
@@ -3397,7 +3397,7 @@ class BattleFieldFrame(OpenGLFrame):
 
                         response = self.your_field_energy_repository.request_to_attach_energy_to_unit(
                             RequestAttachFieldEnergyToUnit(
-                                _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                                _sessionInfo=self.__session_repository.get_session_info(),
                                 _unitIndex=unit_index,
                                 _energyRace=energy_race,
                                 _energyCount=energy_count
@@ -3480,7 +3480,7 @@ class BattleFieldFrame(OpenGLFrame):
                     # Todo : response방식 변경 필요
                     response = self.__fake_battle_field_frame_repository.request_attack_main_character(
                         RequestAttackMainCharacter(
-                            _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                            _sessionInfo=self.__session_repository.get_session_info(),
                             _attacker_unit_index=your_field_card_index,
                             _target_game_main_character_index="0")
                     )
@@ -3608,7 +3608,7 @@ class BattleFieldFrame(OpenGLFrame):
 
                         attack_opponent_unit_response = self.__fake_battle_field_frame_repository.request_attack_opponent_unit(
                             RequestAttackOpponentUnit(
-                                _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                                _sessionInfo=self.__session_repository.get_session_info(),
                                 _attackerUnitIndex=your_field_card_index,
                                 _targetUnitIndex=opponent_field_card_index
                             )
@@ -3663,7 +3663,7 @@ class BattleFieldFrame(OpenGLFrame):
 
                     process_second_passive_skill_response = self.__fake_battle_field_frame_repository.request_to_process_second_passive_skill_to_main_character(
                         TargetingPassiveSkillToMainCharacterFromDeployRequest(
-                            _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                            _sessionInfo=self.__session_repository.get_session_info(),
                             _unitCardIndex=str(animation_actor.get_index()),
                             _targetGameMainCharacterIndex="0",
                             _usageSkillIndex="2"))
@@ -3719,7 +3719,7 @@ class BattleFieldFrame(OpenGLFrame):
 
                         process_second_passive_skill_response = self.__fake_battle_field_frame_repository.request_to_process_second_passive_skill_to_opponent_field_unit(
                             TargetingPassiveSkillToOpponentFieldUnitFromDeployRequest(
-                                _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                                _sessionInfo=self.__session_repository.get_session_info(),
                                 _unitCardIndex=str(animation_actor.get_index()),
                                 _opponentTargetCardIndex=str(opponent_field_unit_object.get_index()),
                                 _usageSkillIndex="2"))
@@ -3766,7 +3766,7 @@ class BattleFieldFrame(OpenGLFrame):
 
                     process_second_passive_skill_response = self.__fake_battle_field_frame_repository.request_to_process_second_passive_skill_to_main_character(
                         TargetingPassiveSkillToMainCharacterFromDeployRequest(
-                            _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                            _sessionInfo=self.__session_repository.get_session_info(),
                             _unitCardIndex=str(animation_actor.get_index()),
                             _targetGameMainCharacterIndex="0",
                             _usageSkillIndex="2"))
@@ -3815,7 +3815,7 @@ class BattleFieldFrame(OpenGLFrame):
 
                         turn_start_second_passive_skill_to_main_character_response = self.__fake_battle_field_frame_repository.request_to_process_turn_start_second_passive_skill_to_your_field_unit(
                             TurnStartSecondPassiveSkillToYourFieldUnitRequest(
-                                _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                                _sessionInfo=self.__session_repository.get_session_info(),
                                 _unitCardIndex=str(animation_actor.get_index()),
                                 _opponentTargetCardIndex=str(opponent_field_unit_object.get_index()),
                                 _usageSkillIndex="2"))
@@ -3976,7 +3976,7 @@ class BattleFieldFrame(OpenGLFrame):
 
                     response = self.__fake_battle_field_frame_repository.request_attack_main_character_with_active_skill(
                         RequestAttackMainCharacterWithActiveSkill(
-                            _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                            _sessionInfo=self.__session_repository.get_session_info(),
                             _unitCardIndex=your_field_card_index,
                             _targetGameMainCharacterIndex="0"
                         )
@@ -4022,7 +4022,7 @@ class BattleFieldFrame(OpenGLFrame):
 
                         response = self.__fake_battle_field_frame_repository.request_attack_opponent_unit(
                             RequestAttackToOpponentFieldUnitWithActiveSkill(
-                                _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                                _sessionInfo=self.__session_repository.get_session_info(),
                                 _unitCardIndex=your_field_card_index,
                                 _opponentTargetCardIndex=opponent_field_unit_object.get_index()
                             )
@@ -4083,7 +4083,7 @@ class BattleFieldFrame(OpenGLFrame):
 
                         response = self.your_hand_repository.request_use_overflow_of_energy(
                             RequestUseOverflowOfEnergy(
-                                _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                                _sessionInfo=self.__session_repository.get_session_info(),
                                 _unitIndex=your_unit_index,
                                 _supportCardId="2")
                         )
@@ -4195,7 +4195,7 @@ class BattleFieldFrame(OpenGLFrame):
 
                     response = self.your_deck_repository.request_use_call_of_leonic(
                         RequestUseCallOfLeonic(
-                            _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                            _sessionInfo=self.__session_repository.get_session_info(),
                             _supportCardId="30",
                             _targetUnitCardIndexList=search_request_index_list)
                     )
@@ -4336,7 +4336,7 @@ class BattleFieldFrame(OpenGLFrame):
 
                             corpse_explosion_response = self.your_hand_repository.request_use_corpse_explosion(
                                 RequestUseCorpseExplosion(
-                                    _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                                    _sessionInfo=self.__session_repository.get_session_info(),
                                     _itemCardId=33,
                                     _unitIndex=self.targeting_enemy_select_using_your_field_card_index,
                                     _opponentTargetUnitIndexList=opponent_you_selected_object_index_list
@@ -4634,7 +4634,7 @@ class BattleFieldFrame(OpenGLFrame):
                 current_hand_card_list_str = list(map(str, current_hand_card_list))
 
                 muligunResponseData = self.your_hand_repository.request_fake_muligun(
-                    MuligunRequest(self.__session_repository.get_first_fake_session_info(),
+                    MuligunRequest(self.__session_repository.get_session_info(),
                                    current_hand_card_list_str))
 
                 # self.your_hand_repository.remove_card_by_index_with_page([0, 1, 2, 3, 4, 5])
@@ -4668,7 +4668,7 @@ class BattleFieldFrame(OpenGLFrame):
                 self.muligun_reset_button_clicked = False
 
                 multi_draw_response = self.__fake_battle_field_frame_repository.request_fake_multi_draw(
-                    FakeMultiDrawRequest(self.__session_repository.get_first_fake_session_info()))
+                    FakeMultiDrawRequest(self.__session_repository.get_session_info()))
 
                 print(f"{Fore.RED}multi_draw_response:{Fore.GREEN} {multi_draw_response}{Style.RESET_ALL}")
                 multi_draw_hand_list = multi_draw_response['player_multi_drawn_card_list']['You']
