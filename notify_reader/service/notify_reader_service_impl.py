@@ -1025,8 +1025,16 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         self.__attack_animation_object.set_is_opponent_attack_main_character(False)
 
+
+
+
         opponent_attacker_unit_info = next(iter(data["player_field_unit_attack_map"]["Opponent"]["field_unit_attack_map"]))
         opponent_attacker_unit_index = int(opponent_attacker_unit_info)
+
+        your_field_unit_index = data["player_field_unit_attack_map"]["Opponent"]["field_unit_attack_map"][opponent_attacker_unit_info]['target_unit_index']
+        your_field_unit = self.__your_field_unit_repository.find_field_unit_by_index(int(your_field_unit_index))
+        self.__attack_animation_object.set_your_field_unit(your_field_unit)
+
         print(f"{Fore.RED}opponent_attacker_unit_index: {Fore.GREEN}{opponent_attacker_unit_index}{Style.RESET_ALL}")
 
         # target_unit_index = data["player_field_unit_attack_map"]["Opponent"]["field_unit_attack_map"][opponent_attacker_unit_index]["target_unit_index"]
@@ -1650,6 +1658,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         opponent_unit_index = int(list(data['player_field_unit_attack_map']['Opponent']['field_unit_attack_map'].keys())[0])
         opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(opponent_unit_index)
         self.__attack_animation_object.set_opponent_animation_actor(opponent_field_unit)
+
+        
 
         # your_field_unit_health_point_map = (
         #     data)['player_field_unit_health_point_map']['You']['field_unit_health_point_map']
