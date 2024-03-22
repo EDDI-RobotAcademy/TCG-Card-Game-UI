@@ -1659,7 +1659,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(opponent_unit_index)
         self.__attack_animation_object.set_opponent_animation_actor(opponent_field_unit)
 
-        
+
 
         # your_field_unit_health_point_map = (
         #     data)['player_field_unit_health_point_map']['You']['field_unit_health_point_map']
@@ -1817,9 +1817,11 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         self.__attack_animation_object.set_notify_data(data)
 
-        for opponent_field_unit in self.__opponent_field_unit_repository.get_current_field_unit_card_object_list():
-            if opponent_field_unit.get_card_number()==19:
-                self.__attack_animation_object.set_opponent_animation_actor(opponent_field_unit)
+        opponent_unit_index = int(
+            list(data['player_field_unit_attack_map']['Opponent']['field_unit_attack_map'].keys())[0])
+        opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
+            opponent_unit_index)
+        self.__attack_animation_object.set_opponent_animation_actor(opponent_field_unit)
 
 
 

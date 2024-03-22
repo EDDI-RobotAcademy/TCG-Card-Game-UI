@@ -1950,7 +1950,7 @@ class BattleFieldFrame(OpenGLFrame):
         #         self.battle_result_panel_list[0].draw()
 
         if len(self.battle_result_panel_list) != 0:
-            if self.is_playing_action_animation == False and self.field_area_inside_handler.get_field_area_action() == None:
+            if self.is_playing_action_animation == False and self.field_area_inside_handler.get_field_area_action() == None and self.opponent_field_area_inside_handler.get_field_area_action() == None:
                 for battle_result_panel in self.battle_result_panel_list:
                     battle_result_panel.set_width_ratio(self.width_ratio)
                     battle_result_panel.set_height_ratio(self.height_ratio)
@@ -4765,6 +4765,9 @@ class BattleFieldFrame(OpenGLFrame):
         hp_data = turn_end_request_result['player_field_unit_health_point_map']
         harmful_data = turn_end_request_result['player_field_unit_harmful_effect_map']
         dead_data = turn_end_request_result['player_field_unit_death_map']
+        field_energy_count = turn_end_request_result['player_field_energy_map']['Opponent']
+
+        self.opponent_field_energy_repository.set_opponent_field_energy(field_energy_count)
 
         self.apply_response_data_of_field_unit_hp(hp_data)
         self.apply_response_data_of_harmful_status(harmful_data)
