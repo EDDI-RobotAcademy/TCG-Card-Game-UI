@@ -17,6 +17,7 @@ class MainMenuFrameServiceImpl(MainMenuFrameService):
             cls.__instance.__mainMenuFrameRepository = MainMenuFrameRepositoryImpl.getInstance()
 
             cls.__instance.__sessionService = SessionServiceImpl.getInstance()
+            cls.__instance.__musicPlayerRepository = MusicPlayerRepositoryImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -52,6 +53,7 @@ class MainMenuFrameServiceImpl(MainMenuFrameService):
                                       width=264, height=67)
 
         def on_session_login_click(event):
+            self.__musicPlayerRepository.play_sound_effect_of_mouse_on_click('menu_button_click')
             try:
                 if self.__sessionService.getSessionInfo() is not None:
                     responseData = self.__sessionService.requestLoginWithSession()
@@ -75,6 +77,7 @@ class MainMenuFrameServiceImpl(MainMenuFrameService):
         start_button.place(relx=0.397, rely=0.842, anchor="center")
 
         def on_program_exit_click(event):
+            self.__musicPlayerRepository.play_sound_effect_of_mouse_on_click('menu_button_click')
             try:
                 responseData = self.__mainMenuFrameRepository.requestProgramExit(
                     ProgramExitRequest())
@@ -95,6 +98,12 @@ class MainMenuFrameServiceImpl(MainMenuFrameService):
                                      width=264, height=67)
         exit_button.bind("<Button-1>", on_program_exit_click)
         exit_button.place(relx=0.605, rely=0.842, anchor="center")
+
+        def play_mouse_on_button_sound(event):
+            self.__musicPlayerRepository.play_sound_effect_of_mouse_on_click('mouse_on_button')
+
+        start_button.bind('<Enter>', play_mouse_on_button_sound)
+        exit_button.bind('<Enter>', play_mouse_on_button_sound)
 
         return mainMenuFrame
 
