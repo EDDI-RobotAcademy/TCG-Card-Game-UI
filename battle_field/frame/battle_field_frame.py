@@ -3442,6 +3442,7 @@ class BattleFieldFrame(OpenGLFrame):
 
                     if pickable_card_base.is_point_inside((x, y)):
                         print("카드 선택!")
+                        self.__music_player_repository.play_sound_effect_of_mouse_on_click('hand_card_pick')
                         hand_card.selected = not hand_card.selected
                         self.selected_object = hand_card
                         self.drag_start = (x, y)
@@ -4240,11 +4241,13 @@ class BattleFieldFrame(OpenGLFrame):
 
                 if self.your_deck.is_point_inside_next_button((x, y)):
                     print("다음 버튼 클릭")
+                    self.__music_player_repository.play_sound_effect_of_mouse_on_click('page_button_click')
 
                     self.your_deck_repository.next_deck_page()
 
                 if self.your_deck.is_point_inside_prev_button((x, y)):
                     print("이전 버튼 클릭")
+                    self.__music_player_repository.play_sound_effect_of_mouse_on_click('page_button_click')
 
                     self.your_deck_repository.prev_deck_page()
 
@@ -4600,6 +4603,7 @@ class BattleFieldFrame(OpenGLFrame):
             your_hand_next_button_clicked = self.your_hand.is_point_inside_next_button_hand((x, y))
             if your_hand_next_button_clicked:
                 print("Your Hand Next Button Clicked!")
+                self.__music_player_repository.play_sound_effect_of_mouse_on_click('page_button_click')
 
                 self.your_hand_repository.next_your_hand_page()
                 self.selected_object = None
@@ -4607,6 +4611,7 @@ class BattleFieldFrame(OpenGLFrame):
             your_hand_prev_button_clicked = self.your_hand.is_point_inside_prev_button_hand((x, y))
             if your_hand_prev_button_clicked:
                 print("Your Hand Prev Button Clicked!")
+                self.__music_player_repository.play_sound_effect_of_mouse_on_click('page_button_click')
 
                 self.your_hand_repository.prev_your_hand_page()
                 self.selected_object = None
