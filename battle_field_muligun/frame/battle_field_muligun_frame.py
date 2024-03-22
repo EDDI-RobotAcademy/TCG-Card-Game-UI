@@ -5,6 +5,7 @@ from pyopengltk import OpenGLFrame
 from screeninfo import get_monitors
 from shapely import Polygon, Point
 
+from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
 from battle_field_muligun.service.request.check_opponent_muligun_request import CheckOpponentMuligunRequest
@@ -23,6 +24,8 @@ from session.repository.session_repository_impl import SessionRepositoryImpl
 class BattleFieldMuligunFrame(OpenGLFrame):
     sessionRepository = SessionRepositoryImpl.getInstance()
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
+
+    your_hand_repository = YourHandRepository.getInstance()
 
     def __init__(self,  master=None, switchFrameWithMenuName=None, **kwargs):
         super().__init__(master, **kwargs)
@@ -386,6 +389,8 @@ class BattleFieldMuligunFrame(OpenGLFrame):
 
             self.muligun_your_hand_repository.set_is_my_mulligan(True)
 
+            self.your_hand_repository.save_current_hand_state(self.hand_card_list)
+            self.your_hand_repository.build_your_hand_page()
 
             # try:
             #     #     # responseData = self.muligun_your_hand_repository.requestCheckOpponentMuligun(
