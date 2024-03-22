@@ -6506,6 +6506,17 @@ class BattleFieldFrame(OpenGLFrame):
                 attached_shape.update_vertices(new_attached_shape_vertices)
                 # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
+            skill_focus_background_panel_alpha = self.skill_focus_background_panel.color[3]
+            skill_focus_background_panel_alpha += 0.013 * step_count
+
+            self.skill_focus_background_panel.color = (
+                self.skill_focus_background_panel.color[0],
+                self.skill_focus_background_panel.color[1],
+                self.skill_focus_background_panel.color[2],
+                skill_focus_background_panel_alpha
+            )
+            self.skill_focus_background_panel.draw()
+
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
                 if step_count == 6:
@@ -6599,11 +6610,9 @@ class BattleFieldFrame(OpenGLFrame):
                 self.master.after(20, wide_area_attack, step_count + 1)
             else:
                 self.finish_opponent_valrn_sea_of_wraith_motion_animation(attack_animation_object)
-                # self.is_attack_motion_finished = True
-                # attack_animation_object.set_is_finished(True)
-                # attack_animation_object.set_need_post_process(True)
 
-        self.play_effect_animation_by_index_and_call_function_with_param(animation_index, wide_area_attack, 1)
+        self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
+            'sea_of_wraith', wide_area_attack, 1)
 
     def finish_opponent_valrn_sea_of_wraith_motion_animation(self, attack_animation_object):
         opponent_animation_actor = attack_animation_object.get_opponent_animation_actor()
@@ -6654,7 +6663,17 @@ class BattleFieldFrame(OpenGLFrame):
                     (vx - step_x, vy - step_y) for vx, vy in attached_shape.vertices
                 ]
                 attached_shape.update_vertices(new_attached_shape_vertices)
-                # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
+
+            skill_focus_background_panel_alpha = self.skill_focus_background_panel.color[3]
+            skill_focus_background_panel_alpha -= 0.00577 * step_count
+
+            self.skill_focus_background_panel.color = (
+                self.skill_focus_background_panel.color[0],
+                self.skill_focus_background_panel.color[1],
+                self.skill_focus_background_panel.color[2],
+                skill_focus_background_panel_alpha
+            )
+            self.skill_focus_background_panel.draw()
 
             if step_count < steps:
 
