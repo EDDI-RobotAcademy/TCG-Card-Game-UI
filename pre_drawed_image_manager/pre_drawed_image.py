@@ -111,6 +111,7 @@ class PreDrawedImage:
     __pre_draw_use_energy_opponent_unit = {}
 
     __pre_drawed_battle_field_timer = {}
+    __pre_drawed_mulligan_timer = {}
 
     __pre_drawed_create_deck_button = None
     __pre_drawed_go_back_button = None
@@ -911,6 +912,15 @@ class PreDrawedImage:
             print(f"image data = {number_image_data}")
             self.__pre_draw_use_energy_opponent_unit[number] = ImageDataLoader.load_message_on_the_battle_screen_image_data(number_image_data)
 
+    def pre_draw_mulligan_timer(self):
+        image_dir = os.path.join(self.__project_root, "local_storage", "mulligan_timer")
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list) + 1):
+            timer_image_data = os.path.join(self.__project_root, "local_storage", "mulligan_timer", f"{number}.png")
+            print(f"animation image data = {timer_image_data}")
+            self.__pre_drawed_mulligan_timer[number] = ImageDataLoader.load_rectangle_image_data(timer_image_data)
+
     def pre_draw_every_image(self):
         self.pre_draw_popup_panel()
 
@@ -1003,6 +1013,8 @@ class PreDrawedImage:
         self.pre_draw_battle_field_timer()
         self.pre_draw_create_deck_button()
         self.pre_draw_go_back_button()
+
+        self.pre_draw_mulligan_timer()
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
@@ -1230,3 +1242,6 @@ class PreDrawedImage:
 
     def get_pre_draw_popup_panel(self):
         return self.__pre_drawed_popup_panel
+
+    def get_pre_draw_mulligan_timer(self, number=0):
+        return self.__pre_drawed_mulligan_timer[number]
