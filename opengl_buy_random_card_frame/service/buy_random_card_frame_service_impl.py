@@ -33,7 +33,6 @@ class BuyRandomCardFrameServiceImpl(BuyRandomCardFrameService):
         buttonBinding = BuyRandomCardFrameButtonBind(master=rootWindow, frame=buyRandomCardrame)
         buttonBinding.button_bind()
 
-
         return buyRandomCardrame
 
     def saveTransmitIpcChannel(self, transmitIpcChannel):
