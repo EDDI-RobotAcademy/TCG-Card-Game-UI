@@ -148,6 +148,9 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
         def onClickEntrance(event):
             #rootWindow.after(3000, self.__waitForPrepareBattle)
             self.__musicPlayerRepository.play_sound_effect_of_mouse_on_click('menu_button_click')
+
+            self.__sessionRepository.clearFirstFakeSessionInfoFile()
+
             self.__matchingWindowController.makeMatchingWindow(rootWindow)
             self.__matchingWindowController.matching(rootWindow)
 
