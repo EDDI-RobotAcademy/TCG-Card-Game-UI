@@ -203,7 +203,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
 
                 print('battle_start_response', response)
                 is_your_turn = response['is_your_turn']
-
+                NotifyReaderRepositoryImpl.getInstance().set_is_your_turn_for_check_fake_process(is_your_turn)
                 if is_your_turn:
                     draw_card_id = response['player_draw_card_list_map']['You']
                     self.your_hand_repository.save_current_hand_state(draw_card_id)
