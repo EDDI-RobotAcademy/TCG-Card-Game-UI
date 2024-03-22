@@ -65,9 +65,9 @@ class MyCardPage:
         self.my_card_page_card_count_object_list = []
 
         self.start_x_point = 0
-        self.end_x_point = self.total_width * 0.36
+        self.end_x_point = 0
         self.start_y_point = 0
-        self.end_y_point = self.total_height * 56
+        self.end_y_point = 0
 
     def set_total_window_size(self, width, height):
         self.total_width = width
@@ -213,25 +213,75 @@ class MyCardPage:
             my_card.set_index(index)
             self.my_card_page_card_object_list.append(my_card)
 
-        # for index, card_count in enumerate(my_card_page_card_count_list):
-        #     my_card_count = 0
-        #     if card_count == 1:
-        #         continue
-        #
-        #     else:
-        #         number_of_cards_image_data = self.__pre_drawed_image_instance.get_pre_draw_number_of_cards(card_count)
-        #         number_of_cards_text = NonBackgroundImage(image_data=number_of_cards_image_data,
-        #                                                   vertices=[
-        #                                                       (self.start_x_point, self.start_y_point),
-        #                                                       (self.end_x_point, self.start_y_point),
-        #                                                       (self.end_x_point, self.end_y_point),
-        #                                                       (self.start_x_point, self.end_y_point)
-        #                                                   ],
-        #                                                   local_translation=self.get_next_card_count_position(index))
-        #
-        #         self.my_card_page_card_count_object_list.append(number_of_cards_text)
+        for index, card_count in enumerate(my_card_page_card_count_list):
+            my_card_count = 0
+            number_of_cards_image_data = None
+            if card_count == 1:
+                continue
+            elif card_count > 20:
+                number_of_cards_image_data = self.__pre_drawed_image_instance.get_pre_draw_exceed_number_of_cards()
+            else:
+                number_of_cards_image_data = self.__pre_drawed_image_instance.get_pre_draw_number_of_cards(card_count)
 
+            card_width_ratio = 350 / self.total_width
+            place_index = index % 4
+            card_width_center_ratio = card_width_ratio / 2.0
 
+            # card_count_number_left_from_center = 0.018
+            card_count_number_left_from_center = (72 * 1.22 / self.total_width) / 2.0
+
+            # current_y = self.total_height * (self.y_bottom_base_ratio - 0.1)
+
+            card_between_width_margin = 55
+            card_between_width_margin_ratio = card_between_width_margin / self.total_width
+
+            limit_boundary_width_ratio = 0.88162
+
+            extra_margin_ratio = (limit_boundary_width_ratio - (card_width_ratio * 4.0 + card_between_width_margin_ratio * 3.0)) / 2.0
+            print(f"extra_margin_ratio: {extra_margin_ratio}")
+
+            base_x = extra_margin_ratio * self.total_width
+            card_count_number_left = (card_width_center_ratio - card_count_number_left_from_center) * self.total_width
+
+            # 0.20183 - 0.18398
+            # 0.82467
+            # x_increment = 0.87467 / 4.0
+            # x_increment = (limit_boundary_width_ratio - extra_margin_ratio * 2) / 4.0
+            x_increment = self.total_width * (card_between_width_margin_ratio * place_index) + self.total_width * card_width_ratio * place_index
+            next_x = base_x + card_count_number_left + x_increment
+
+            # 55, 39
+            # card_count_width_ratio = 0.036
+            # card_count_width_ratio = 0.0497619
+            # card_count_ratio = 1.38976
+            card_count_width_ratio = 72 * 1.22 / self.total_width
+
+            self.start_x_point = next_x
+            self.end_x_point = next_x + card_count_width_ratio * self.total_width
+
+            # card_count_height_ratio = 0.056
+            # card_count_height_ratio = 0.0383858
+            # card_count_height_ratio = card_count_width_ratio * card_count_ratio
+            # card_count_height_ratio = card_count_width_ratio
+            card_count_height_ratio = 72 / self.total_height
+
+            # 44 / 1016 = 0.043307
+            # 0.82874 - 0.043307 = 0.785433
+            # 4 / 1016 = 0.003937
+            # 0.785433 - 0.003937 = 0.781496
+            current_y = 0.781496 * self.total_height
+            self.start_y_point = current_y
+            self.end_y_point = current_y + card_count_height_ratio * self.total_height
+
+            number_of_cards_text = NonBackgroundImage(image_data=number_of_cards_image_data,
+                                                      vertices=[
+                                                          (self.start_x_point, self.start_y_point),
+                                                          (self.end_x_point, self.start_y_point),
+                                                          (self.end_x_point, self.end_y_point),
+                                                          (self.start_x_point, self.end_y_point)
+                                                      ])
+
+            self.my_card_page_card_count_object_list.append(number_of_cards_text)
 
         # number_left_x_point = self.width * 0.130  # 첫 번째 카드는 이 위치로 고정
         # number_right_x_point = self.width * 0.166
@@ -284,39 +334,41 @@ class MyCardPage:
         # 0.036 <= x_ratio
         # 0.056 <= y_ratio
 
-        def get_next_card_count_position(self, index):
-            print(f"my_card_page -> get_next_card_count_position() - self.total_width: {self.total_width}")
-            # TODO: 배치 간격 고려
-            card_width_ratio = 350 / self.total_width
-            place_index = index % 4
-            card_width_center_ratio = card_width_ratio / 2.0
+    def get_next_card_count_position(self, index):
+        print(f"my_card_page -> get_next_card_count_position() - self.total_width: {self.total_width}")
+        # TODO: 배치 간격 고려
+        card_width_ratio = 350 / self.total_width
+        place_index = index % 4
+        card_width_center_ratio = card_width_ratio / 2.0
 
-            card_count_number_left_from_center = 0.018
+        card_count_number_left_from_center = 0.018
 
-            current_y = self.total_height * (self.y_bottom_base_ratio - 0.1)
+        current_y = self.total_height * (self.y_bottom_base_ratio - 0.1)
 
-            card_between_width_margin = 55
-            card_between_width_margin_ratio = card_between_width_margin / self.total_width
+        card_between_width_margin = 55
+        card_between_width_margin_ratio = card_between_width_margin / self.total_width
 
-            # 1631 / 1850 = 0.88162
-            limit_boundary_width_ratio = 0.88162
-            # 1630 / 1850 = 0.88108
-            # limit_boundary_width_ratio = 0.88108
+        # 1631 / 1850 = 0.88162
+        limit_boundary_width_ratio = 0.88162
+        # 1630 / 1850 = 0.88108
+        # limit_boundary_width_ratio = 0.88108
 
-            # extra_margin_ratio = (limit_boundary_width_ratio - (card_width_ratio * 4.0 + card_between_width_margin_ratio * 3.0)) / 2.0
-            extra_margin_ratio = (limit_boundary_width_ratio - (card_width_ratio * 4.0 + card_between_width_margin_ratio * 3.0)) / 2.0
-            print(f"extra_margin_ratio: {extra_margin_ratio}")
+        # extra_margin_ratio = (limit_boundary_width_ratio - (card_width_ratio * 4.0 + card_between_width_margin_ratio * 3.0)) / 2.0
+        extra_margin_ratio = (limit_boundary_width_ratio - (card_width_ratio * 4.0 + card_between_width_margin_ratio * 3.0)) / 2.0
+        print(f"extra_margin_ratio: {extra_margin_ratio}")
 
-            base_x = extra_margin_ratio * self.total_width
-            card_count_number_left = card_width_center_ratio - card_count_number_left_from_center
+        base_x = extra_margin_ratio * self.total_width
+        card_count_number_left = (card_width_center_ratio - card_count_number_left_from_center) * self.total_width
 
-            # 0.20183 - 0.18398
-            # 0.82467
-            # x_increment = 0.87467 / 4.0
-            # x_increment = (limit_boundary_width_ratio - extra_margin_ratio * 2) / 4.0
-            x_increment = self.total_width * (card_between_width_margin_ratio * place_index) + self.total_width * card_width_ratio * place_index
-            next_x = base_x + card_count_number_left + x_increment
-            print(f"{Fore.RED}next_x: {next_x}{Style.RESET_ALL}")
+        # 0.20183 - 0.18398
+        # 0.82467
+        # x_increment = 0.87467 / 4.0
+        # x_increment = (limit_boundary_width_ratio - extra_margin_ratio * 2) / 4.0
+        x_increment = self.total_width * (card_between_width_margin_ratio * place_index) + self.total_width * card_width_ratio * place_index
+        next_x = base_x + card_count_number_left + x_increment
+        print(f"{Fore.RED}card_count_number_left: {card_count_number_left}{Style.RESET_ALL}")
+        print(f"{Fore.RED}next_x: {next_x}{Style.RESET_ALL}")
 
-            # next_x = base_x + self.total_width * (x_increment * place_index)
-            return (next_x, current_y)
+        # next_x = base_x + self.total_width * (x_increment * place_index)
+        # return (next_x, current_y)
+        return (next_x, 100)

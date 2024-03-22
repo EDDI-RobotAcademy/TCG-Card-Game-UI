@@ -794,11 +794,14 @@ class PreDrawedImage:
         image_dir = os.path.join(self.__project_root, "local_storage", "my_card_frame", "number_of_cards_owned")
         file_list = os.listdir(image_dir)
 
-        for number in range(2, 10):
+        for number in range(2, 21):
             text_image_data = os.path.join(self.__project_root, "local_storage", "my_card_frame", "number_of_cards_owned",
                                            f"{number}.png")
-            print(f"animation image data = {text_image_data}")
-            self.__pre_drawed_number_of_cards[number] = ImageDataLoader.load_rectangle_image_data(text_image_data)
+            # print(f"animation image data = {text_image_data}")
+            self.__pre_drawed_number_of_cards[number] = ImageDataLoader.load_rectangle_origin_image_data(text_image_data)
+
+        text_image_data = os.path.join(self.__project_root, "local_storage", "my_card_frame", "number_of_cards_owned", "n.png")
+        self.__pre_drawed_number_of_cards['n'] = ImageDataLoader.load_rectangle_origin_image_data(text_image_data)
 
     def pre_draw_multi_draw_button(self):
         multi_draw_button_image_data = os.path.join(self.__project_root, "local_storage", "button_image", "multi_draw_button.jpg")
@@ -811,7 +814,7 @@ class PreDrawedImage:
         for number in range(2, 10):
             text_image_data = os.path.join(self.__project_root, "local_storage", "energy_details_number",
                                            f"{number}.png")
-            print(f"animation image data = {text_image_data}")
+            # print(f"animation image data = {text_image_data}")
             self.__pre_drawed_number_of_details_energy[number] = ImageDataLoader.load_rectangle_image_data(text_image_data)
 
     def pre_draw_battle_field_card_frame(self):
@@ -857,7 +860,7 @@ class PreDrawedImage:
 
         for png_file in png_files:
             card_type_mark = int(png_file[:-4])
-            print(f"pre_draw_unit_race() -> race_number: {card_type_mark}")
+            # print(f"pre_draw_unit_race() -> race_number: {card_type_mark}")
             card_type_mark_image_path = os.path.join(self.__project_root, "local_storage", "card_type_mark", f"{png_file}")
             self.__pre_drawed_card_type_mark[card_type_mark] = ImageDataLoader.load_rectangle_image_data(card_type_mark_image_path)
 
@@ -870,7 +873,7 @@ class PreDrawedImage:
 
         for png_file in png_files:
             attack_number = int(png_file[:-4])
-            print(f"number images: {attack_number}")
+            # print(f"number images: {attack_number}")
             wizard_card_attack_image_data = os.path.join(self.__project_root, "local_storage", "wizard_card_attack_power",
                                                   f"{png_file}")
             wizard_card_attack_image_data_list[attack_number] = ImageDataLoader.load_rectangle_origin_image_data(
@@ -878,7 +881,7 @@ class PreDrawedImage:
 
         for card_number in self.__card_info_from_csv_repository.getCardNumber():
             attack_number = self.__card_info_from_csv_repository.getCardAttackForCardNumber(card_number)
-            print(f"attack_number: {attack_number}, card_number: {card_number}")
+            # print(f"attack_number: {attack_number}, card_number: {card_number}")
             self.__pre_drawed_wizard_card_attack_power[card_number] = wizard_card_attack_image_data_list[attack_number]
 
     def pre_draw_message_on_the_battle_screen(self):
@@ -888,7 +891,7 @@ class PreDrawedImage:
         for number in range(0, len(file_list) - 1):
             number_image_data = os.path.join(self.__project_root, "local_storage", "message_on_the_battle_screen",
                                              f"{number}.png")
-            print(f"image data = {number_image_data}")
+            # print(f"image data = {number_image_data}")
             self.__pre_drawed_message_on_the_battle_screen[number] = ImageDataLoader.load_message_on_the_battle_screen_image_data(number_image_data)
 
 
@@ -1194,6 +1197,9 @@ class PreDrawedImage:
 
     def get_pre_draw_number_of_cards(self, number):
         return self.__pre_drawed_number_of_cards[number]
+
+    def get_pre_draw_exceed_number_of_cards(self):
+        return self.__pre_drawed_number_of_cards['n']
 
     def get_pre_draw_multi_draw_button(self):
         return self.__pre_drawed_multi_draw_button
