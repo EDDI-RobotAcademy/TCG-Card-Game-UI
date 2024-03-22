@@ -141,13 +141,10 @@ from common.message_number import MessageNumber
 from common.survival_type import SurvivalType
 from common.target_type import TargetType
 from fake_battle_field.entity.animation_test_image import AnimationTestImage
-from fake_battle_field.entity.muligun_reset_button import MuligunResetButton
-from fake_battle_field.entity.multi_draw_button import MultiDrawButton
 from fake_battle_field.infra.fake_battle_field_frame_repository_impl import FakeBattleFieldFrameRepositoryImpl
 from fake_battle_field.infra.fake_opponent_hand_repository import FakeOpponentHandRepositoryImpl
 from fake_battle_field.service.request.attack_main_character_request import RequestAttackMainCharacter
 from fake_battle_field.service.request.call_of_leonic_request import RequestUseCallOfLeonic
-from fake_battle_field.service.request.fake_multi_draw_request import FakeMultiDrawRequest
 from fake_battle_field.service.request.fake_opponent_deploy_unit_request import FakeOpponentDeployUnitRequest
 from fake_battle_field.service.request.request_use_contract_of_doom import RequestUseContractOfDoom
 from image_shape.circle_image import CircleImage
@@ -371,12 +368,8 @@ class BattleFieldFrame(OpenGLFrame):
         self.surrender_confirm_ok_button_selected = False
         self.surrender_confirm_close_button_selected = False
 
-        self.multi_draw_button = None
-        self.multi_draw_button_clicked = False
 
-        self.muligun_reset_button = None
-        self.muligun_reset_button_clicked = False
-        self.battle_field_muligun_background_shape_list = None
+
 
         self.timer_panel = None
         self.timer = None
@@ -624,15 +617,7 @@ class BattleFieldFrame(OpenGLFrame):
         self.surrender_confirm.create_surrender_confirm_panel_list()
         self.surrender_confirm_panel_list = self.surrender_confirm.get_surrender_confirm_panel_list()
 
-        # muligun_reset_button_instance = MuligunResetButton()
-        # muligun_reset_button_instance.set_total_window_size(self.width, self.height)
-        # muligun_reset_button_instance.init_muligun_reset_button()
-        # self.muligun_reset_button = muligun_reset_button_instance.get_muligun_reset_button()
-        # 
-        # multi_draw_button_instance = MultiDrawButton()
-        # multi_draw_button_instance.set_total_window_size(self.width, self.height)
-        # multi_draw_button_instance.init_multi_draw_button()
-        # self.multi_draw_button = multi_draw_button_instance.get_multi_draw_button()
+
 
         self.timer = BattleFieldTimer()
         self.unit_timer = BattleFieldTimer()
@@ -836,13 +821,7 @@ class BattleFieldFrame(OpenGLFrame):
         self.current_field_turn_number_panel.set_height_ratio(self.height_ratio)
         self.current_field_turn_number_panel.draw()
 
-        self.muligun_reset_button.set_width_ratio(self.width_ratio)
-        self.muligun_reset_button.set_height_ratio(self.height_ratio)
-        self.muligun_reset_button.draw()
 
-        self.multi_draw_button.set_width_ratio(self.width_ratio)
-        self.multi_draw_button.set_height_ratio(self.height_ratio)
-        self.multi_draw_button.draw()
 
         self.timer.set_width_ratio(self.width_ratio)
         self.timer.set_height_ratio(self.height_ratio)
@@ -3337,8 +3316,6 @@ class BattleFieldFrame(OpenGLFrame):
             self.opponent_tomb_panel_selected = False
             self.your_lost_zone_panel_selected = False
             self.opponent_lost_zone_panel_selected = False
-            self.muligun_reset_button_clicked = False
-            self.multi_draw_button_clicked = False
 
             # TODO: Your Hand List in Page
             print(f"Your Hand List in Page")
@@ -4552,8 +4529,6 @@ class BattleFieldFrame(OpenGLFrame):
                 self.opponent_tomb_panel_selected = False
                 self.your_lost_zone_panel_selected = False
                 self.opponent_lost_zone_panel_selected = False
-                self.muligun_reset_button_clicked = False
-                self.multi_draw_button_clicked = False
                 self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.YOUR_TOMB.value)
                 return
 
@@ -4571,8 +4546,6 @@ class BattleFieldFrame(OpenGLFrame):
                 self.tomb_panel_selected = False
                 self.your_lost_zone_panel_selected = False
                 self.opponent_lost_zone_panel_selected = False
-                self.muligun_reset_button_clicked = False
-                self.multi_draw_button_clicked = False
                 self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.OPPONENT_TOMB.value)
                 return
 
@@ -4590,8 +4563,6 @@ class BattleFieldFrame(OpenGLFrame):
                 self.tomb_panel_selected = False
                 self.opponent_tomb_panel_selected = False
                 self.opponent_lost_zone_panel_selected = False
-                self.muligun_reset_button_clicked = False
-                self.multi_draw_button_clicked = False
                 self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.YOUR_LOST_ZONE.value)
 
                 return
@@ -4611,82 +4582,9 @@ class BattleFieldFrame(OpenGLFrame):
                 self.tomb_panel_selected = False
                 self.opponent_tomb_panel_selected = False
                 self.your_lost_zone_panel_selected = False
-                self.muligun_reset_button_clicked = False
-                self.multi_draw_button_clicked = False
 
                 return
 
-            self.muligun_reset_button_clicked = self.is_point_inside_muligun_reset_button(
-                (x, y),
-                self.muligun_reset_button,
-                self.winfo_reqheight())
-
-            if self.muligun_reset_button_clicked:
-                print(f"muligun_reset_button_clicked()")
-
-                self.tomb_panel_selected = False
-                self.opponent_tomb_panel_selected = False
-                self.your_lost_zone_panel_selected = False
-                self.opponent_lost_zone_panel_selected = False
-                self.multi_draw_button_clicked = False
-
-                current_hand_card_list = self.your_hand_repository.get_current_hand_state()
-                current_hand_card_list_str = list(map(str, current_hand_card_list))
-
-                muligunResponseData = self.your_hand_repository.request_fake_muligun(
-                    MuligunRequest(self.__session_repository.get_session_info(),
-                                   current_hand_card_list_str))
-
-                # self.your_hand_repository.remove_card_by_index_with_page([0, 1, 2, 3, 4, 5])
-
-                print(f"muligun responseData: {muligunResponseData}")
-                redrawn_hand_card_list = muligunResponseData['redrawn_hand_card_list']
-                print(f"{Fore.RED}redrawn_hand_card_list:{Fore.GREEN} {redrawn_hand_card_list}{Style.RESET_ALL}")
-                # redrawn_hand_card_list_str = list(map(str, redrawn_hand_card_list))
-                self.your_hand_repository.clear_your_hand_state()
-                self.your_hand_repository.save_current_hand_state(redrawn_hand_card_list)
-                self.your_hand_repository.update_your_hand()
-
-                deck_card_list = muligunResponseData['updated_deck_card_list']
-                # self.your_deck_repository.clear_deck_state()
-                self.your_deck_repository.update_deck(deck_card_list)
-
-                return
-
-            self.multi_draw_button_clicked = self.is_point_inside_multi_draw_button(
-                (x, y),
-                self.multi_draw_button,
-                self.winfo_reqheight())
-
-            if self.multi_draw_button_clicked:
-                print(f"multi_draw_button_clicked()")
-
-                self.tomb_panel_selected = False
-                self.opponent_tomb_panel_selected = False
-                self.your_lost_zone_panel_selected = False
-                self.opponent_lost_zone_panel_selected = False
-                self.muligun_reset_button_clicked = False
-
-                multi_draw_response = self.__fake_battle_field_frame_repository.request_fake_multi_draw(
-                    FakeMultiDrawRequest(self.__session_repository.get_session_info()))
-
-                print(f"{Fore.RED}multi_draw_response:{Fore.GREEN} {multi_draw_response}{Style.RESET_ALL}")
-                multi_draw_hand_list = multi_draw_response['player_multi_drawn_card_list']['You']
-
-                self.your_hand_repository.save_current_hand_state(multi_draw_hand_list)
-                self.your_hand_repository.update_your_hand()
-
-                self.your_deck_repository.update_deck(multi_draw_response.get('updated_deck_card_list'))
-
-                # before_current_deck_list = self.your_deck_repository.get_current_deck_state_object().get_current_deck()
-                # print(f"{Fore.RED}before multi draw -> before_current_deck_list:{Fore.GREEN} {before_current_deck_list}{Style.RESET_ALL}")
-                #
-                # for _ in range(20):
-                #     self.your_deck_repository.get_current_deck_state_object().draw_card()
-
-                after_current_deck_list = self.your_deck_repository.get_current_deck_state_object().get_current_deck()
-                print(
-                    f"{Fore.RED}after multi draw -> after_current_deck_list:{Fore.GREEN} {after_current_deck_list}{Style.RESET_ALL}")
 
             self.turn_end_button_selected = self.left_click_detector.which_one_select_is_in_turn_end_area(
                 (x, y),
@@ -4757,46 +4655,13 @@ class BattleFieldFrame(OpenGLFrame):
             self.opponent_tomb_panel_selected = False
             self.your_lost_zone_panel_selected = False
             self.opponent_lost_zone_panel_selected = False
-            self.muligun_reset_button_clicked = False
 
         except Exception as e:
             print(f"Exception in on_canvas_click: {e}")
 
-    def is_point_inside_multi_draw_button(self, click_point, multi_draw_button, canvas_height):
-        x, y = click_point
-        y = canvas_height - y
 
-        translated_vertices = [
-            (x * self.width_ratio, y * self.height_ratio)
-            for x, y in multi_draw_button.get_vertices()
-        ]
-        print(f"translated_vertices: {translated_vertices}")
 
-        if not (translated_vertices[0][0] <= x <= translated_vertices[2][0] and
-                translated_vertices[1][1] <= y <= translated_vertices[2][1]):
-            print("multi_draw_button result -> False")
-            return False
 
-        print("multi_draw_button result -> True")
-        return True
-
-    def is_point_inside_muligun_reset_button(self, click_point, muligun_reset_button, canvas_height):
-        x, y = click_point
-        y = canvas_height - y
-
-        translated_vertices = [
-            (x * self.width_ratio, y * self.height_ratio)
-            for x, y in muligun_reset_button.get_vertices()
-        ]
-        print(f"translated_vertices: {translated_vertices}")
-
-        if not (translated_vertices[0][0] <= x <= translated_vertices[2][0] and
-                translated_vertices[1][1] <= y <= translated_vertices[2][1]):
-            print("muligun_reset_button result -> False")
-            return False
-
-        print("muligun_reset_button result -> True")
-        return True
 
     def call_turn_end(self):
         # self.timer.stop_timer()
