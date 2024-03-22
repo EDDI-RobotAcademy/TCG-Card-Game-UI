@@ -48,6 +48,8 @@ class PreDrawedImage:
     __pre_drawed_your_hand_panel = None
     __pre_drawed_your_unit_field = None
 
+    __pre_drawed_popup_panel = None
+
     __pre_drawed_field_energy = {}
     __pre_drawed_battle_field_environment = None
     __pre_drawed_turn_end_button = None
@@ -168,6 +170,12 @@ class PreDrawedImage:
                                                       "background.png")
         self.__pre_drawed_opponent_unit_field = ImageDataLoader.load_rectangle_image_data(
             opponent_unit_field_image_path)
+
+    def pre_draw_popup_panel(self):
+        popup_panel_image_path =  os.path.join(self.__project_root, "local_storage", "image", "battle_field",
+                                                      "popup_background.png")
+        self.__pre_drawed_popup_panel = ImageDataLoader.load_rectangle_image_data(
+            popup_panel_image_path)
 
     def pre_draw_your_tomb(self):
         tomb_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "tomb.jpeg")
@@ -904,6 +912,8 @@ class PreDrawedImage:
             self.__pre_draw_use_energy_opponent_unit[number] = ImageDataLoader.load_message_on_the_battle_screen_image_data(number_image_data)
 
     def pre_draw_every_image(self):
+        self.pre_draw_popup_panel()
+
         self.pre_draw_opponent_tomb()
         self.pre_draw_opponent_lost_zone()
         self.pre_draw_opponent_trap()
@@ -1217,3 +1227,6 @@ class PreDrawedImage:
 
     def get_pre_draw_battle_result_background(self):
         return self.__pre_drawed_battle_result_background
+
+    def get_pre_draw_popup_panel(self):
+        return self.__pre_drawed_popup_panel

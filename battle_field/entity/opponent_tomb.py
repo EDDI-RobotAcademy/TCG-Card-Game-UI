@@ -1,11 +1,13 @@
+from image_shape.non_background_image import NonBackgroundImage
 from opengl_shape.rectangle import Rectangle
+from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
 
 class OpponentTomb:
     def __init__(self):
         self.opponent_tomb_panel = None
         self.opponent_tomb_panel_popup_rectangle = None
-
+        self.pre_draw_image = PreDrawedImage.getInstance()
         self.total_width = None
         self.total_height = None
 
@@ -65,8 +67,23 @@ class OpponentTomb:
         height_top_margin_20 = self.total_height * 0.2
         height_bottom_margin_80 = self.total_height * 0.8
 
-        self.opponent_tomb_panel_popup_rectangle = Rectangle(
-            (0.0, 0.0, 0.0, 0.8),
+        # self.opponent_tomb_panel_popup_rectangle = Rectangle(
+        #     (0.0, 0.0, 0.0, 0.8),
+        #     [
+        #         (width_left_margin_20, height_top_margin_20),
+        #         (width_left_margin_20, height_bottom_margin_80),
+        #         (width_right_margin_80, height_bottom_margin_80),
+        #         (width_right_margin_80, height_top_margin_20)
+        #     ],
+        #     (0, 0),
+        #     (0, 0))
+        #
+        # self.opponent_tomb_panel_popup_rectangle.set_draw_border(False)
+
+
+
+        self.opponent_tomb_panel_popup_rectangle = NonBackgroundImage(
+            self.pre_draw_image.get_pre_draw_popup_panel(),
             [
                 (width_left_margin_20, height_top_margin_20),
                 (width_left_margin_20, height_bottom_margin_80),
@@ -76,7 +93,7 @@ class OpponentTomb:
             (0, 0),
             (0, 0))
 
-        self.opponent_tomb_panel_popup_rectangle.set_draw_border(False)
+        # self.opponent_tomb_panel_popup_rectangle.set_draw_border(False)
 
     def is_point_inside_popup_rectangle(self, point):
         point_x, point_y = point

@@ -3406,8 +3406,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         if self.tomb_panel_selected:
             # if self.selected_tomb is TombType.Your:
-            glEnable(GL_BLEND)
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+            # glEnable(GL_BLEND)
+            # glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
             self.tomb_panel_popup_rectangle.set_width_ratio(self.width_ratio)
             self.tomb_panel_popup_rectangle.set_height_ratio(self.height_ratio)
@@ -3452,12 +3452,12 @@ class FakeBattleFieldFrame(OpenGLFrame):
             #
             # temp_rect.draw()
 
-            glDisable(GL_BLEND)
+            # glDisable(GL_BLEND)
 
         if self.opponent_tomb_panel_selected:
             # elif self.selected_tomb is TombType.Opponent:
-            glEnable(GL_BLEND)
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+            # glEnable(GL_BLEND)
+            # glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
             self.opponent_tomb_popup_rectangle_panel.set_width_ratio(self.width_ratio)
             self.opponent_tomb_popup_rectangle_panel.set_height_ratio(self.height_ratio)
@@ -3483,11 +3483,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     attached_shape.set_height_ratio(self.height_ratio)
                     attached_shape.draw()
 
-            glDisable(GL_BLEND)
+            # glDisable(GL_BLEND)
 
         if self.your_lost_zone_panel_selected:
-            glEnable(GL_BLEND)
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+            # glEnable(GL_BLEND)
+            # glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
             self.your_lost_zone_popup_panel.set_width_ratio(self.width_ratio)
             self.your_lost_zone_popup_panel.set_height_ratio(self.height_ratio)
@@ -3512,11 +3512,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     attached_shape.set_height_ratio(self.height_ratio)
                     attached_shape.draw()
 
-            glDisable(GL_BLEND)
+            # glDisable(GL_BLEND)
 
         if self.opponent_lost_zone_panel_selected:
-            glEnable(GL_BLEND)
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+            # glEnable(GL_BLEND)
+            # glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
             self.opponent_lost_zone_popup_panel.set_width_ratio(self.width_ratio)
             self.opponent_lost_zone_popup_panel.set_height_ratio(self.height_ratio)
@@ -3541,7 +3541,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     attached_shape.set_height_ratio(self.height_ratio)
                     attached_shape.draw()
 
-            glDisable(GL_BLEND)
+            # glDisable(GL_BLEND)
 
         if self.notice_card.get_fixed_card_base():
 
@@ -3558,15 +3558,18 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         # 글쓰기
         if self.message_on_the_screen.get_current_message_on_the_battle_screen():
-            glEnable(GL_BLEND)
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+            glEnable(GL_DEPTH_TEST)
+            glDepthFunc(GL_ALWAYS)
+            # glEnable(GL_BLEND)
+            # glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
             self.message_on_the_screen.set_width_ratio(self.width_ratio)
             self.message_on_the_screen.set_height_ratio(self.height_ratio)
             self.current_field_message_on_the_battle_screen_panel = (
                 self.message_on_the_screen.get_current_message_on_the_battle_screen()
             )
             self.current_field_message_on_the_battle_screen_panel.draw()
-            glDisable(GL_BLEND)
+            # glDisable(GL_BLEND)
+            glDisable(GL_DEPTH_TEST)
 
 
 
