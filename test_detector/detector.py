@@ -15,7 +15,7 @@ class DetectorAboutTest:
             cls.__instance = cls()
         return cls.__instance
 
-    def set_it_fake_battle_field(self, is_fake_battle_field):
+    def set_is_fake_battle_field(self, is_fake_battle_field):
         self.is_fake_battle_field = is_fake_battle_field
 
     def get_is_fake_battle_field(self):

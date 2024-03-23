@@ -102,9 +102,11 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__battle_result_frame_service = TestResultFrameService.getInstance()
 
             cls.__instance.__battleFieldFrame = BattleFieldFrame
+            cls.__instance.notify_reader_controller = NotifyReaderControllerImpl.getInstance()
 
             # For Check Fake Battle Field or Real Battle Field
             cls.__instance.detector_about_test = DetectorAboutTest.getInstance()
+            cls.__instance.fake_notify_reader_controller = FakeNotifyReaderControllerImpl.getInstance()
 
         return cls.__instance
 
@@ -186,9 +188,9 @@ class UiFrameControllerImpl(UiFrameController):
         def get_notify():
             # detector_about_test.set_is_it_test(True)
             if self.detector_about_test.get_is_fake_battle_field() is False:
-                NotifyReaderControllerImpl.getInstance().requestToReadNotifyCommand()
+                self.notify_reader_controller.requestToReadNotifyCommand()
             else:
-                FakeNotifyReaderControllerImpl.getInstance().requestToReadNotifyCommand()
+                self.fake_notify_reader_controller.requestToReadNotifyCommand()
 
             rootWindow.after(17, get_notify)
         rootWindow.after(0,get_notify)
