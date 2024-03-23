@@ -63,6 +63,11 @@ class MyCardMainFrameRenderer:
         if self.scene.prev_button:
             self.scene.prev_button.draw()
 
+        current_page_object = self.my_card_repository.get_current_page_object()
+        current_page_number_object = current_page_object.get_current_page_number()
+        if current_page_number_object:
+            current_page_number_object.draw()
+
         self.window.tkSwapBuffers()
 
     def _render_shape(self, shape):

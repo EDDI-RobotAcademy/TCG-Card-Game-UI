@@ -84,8 +84,13 @@ class MyCardRepository:
 
             my_card_page.set_page_number(page_index + 1)
             my_card_page.create_my_card_list()
+            my_card_page.create_current_page_representation(page_index + 1)
 
             self.my_card_page_list.append(my_card_page)
+
+        # x: 934, y: 929
+        # x: 970, y: 902
+        # self.create_max_page_representation(num_pages)
 
     def next_my_card_page(self):
         if self.current_page == len(self.my_card_page_list) - 1:
@@ -101,6 +106,9 @@ class MyCardRepository:
 
     def get_current_my_card_page(self):
         return self.current_page
+
+    def get_current_page_object(self):
+        return self.my_card_page_list[self.get_current_my_card_page()]
 
     def get_my_card_object_list_from_current_page(self):
         # print(self.my_card_page_list)
