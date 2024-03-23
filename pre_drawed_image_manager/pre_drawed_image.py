@@ -116,6 +116,9 @@ class PreDrawedImage:
     __pre_drawed_create_deck_button = None
     __pre_drawed_go_back_button = None
 
+    __pre_drawed_page_slash = None
+    __pre_drawed_page_number = {}
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -139,6 +142,10 @@ class PreDrawedImage:
     def pre_draw_opponent_tomb(self):
         tomb_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "tomb.jpeg")
         self.__pre_drawed_opponent_tomb = ImageDataLoader.load_rectangle_image_data(tomb_image_path)
+
+    def pre_draw_page_slash(self):
+        page_slash_image_path = os.path.join(self.__project_root, "local_storage", "number_of_page", "0.png")
+        self.__pre_drawed_page_slash = ImageDataLoader.load_rectangle_origin_image_data(page_slash_image_path)
 
     def pre_draw_opponent_lost_zone(self):
         lost_zone_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
@@ -322,6 +329,23 @@ class PreDrawedImage:
             type_number = self.__card_info_from_csv_repository.getCardTypeForCardNumber(card_number)
             # print(f"type_number: {type_number}, card_number: {card_number}")
             self.__pre_drawed_card_type[card_number] = card_type_image_data_list[type_number]
+
+    def pre_draw_page_number(self):
+        image_dir = os.path.join(self.__project_root, "local_storage", "number_of_page")
+        file_list = os.listdir(image_dir)
+
+        for page_number in range(1, len(file_list) + 1):
+            page_number_image_data = os.path.join(self.__project_root, "local_storage", "mulligan_timer", f"{page_number}.png")
+            self.__pre_drawed_page_number[page_number] = ImageDataLoader.load_rectangle_origin_image_data(page_number_image_data)
+
+    def pre_draw_mulligan_timer(self):
+        image_dir = os.path.join(self.__project_root, "local_storage", "mulligan_timer")
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list) + 1):
+            timer_image_data = os.path.join(self.__project_root, "local_storage", "mulligan_timer", f"{number}.png")
+            print(f"animation image data = {timer_image_data}")
+            self.__pre_drawed_mulligan_timer[number] = ImageDataLoader.load_rectangle_image_data(timer_image_data)
 
     def pre_draw_card_attack(self):
         image_dir = os.path.join(self.__project_root, "local_storage", "card_number_image")
@@ -1019,11 +1043,17 @@ class PreDrawedImage:
 
         self.pre_draw_mulligan_timer()
 
+        self.pre_draw_page_slash()
+        self.pre_draw_page_number()
+
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
 
     def get_pre_draw_go_back_button(self):
-        return self.__pre_drawed_go_back_button;
+        return self.__pre_drawed_go_back_button
+
+    def get_pre_draw_page_slash(self):
+        return self.__pre_drawed_page_slash
 
     def get_pre_draw_opponent_tomb(self):
         return self.__pre_drawed_opponent_tomb
@@ -1251,3 +1281,6 @@ class PreDrawedImage:
 
     def get_pre_draw_mulligan_timer(self, number=0):
         return self.__pre_drawed_mulligan_timer[number]
+
+    def get_pre_drawed_page_number(self, page_number):
+        return self.__pre_drawed_page_number[page_number]
