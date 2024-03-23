@@ -1,15 +1,19 @@
 from battle_field_function.service.battle_field_function_service_impl import BattleFieldFunctionServiceImpl
-from notify_reader.controller.notify_reader_controller import NotifyReaderController
-from notify_reader.service.notify_reader_service_impl import NotifyReaderServiceImpl
+from fake_notify_reader.controller.fake_notify_reader_controller import FakeNotifyReaderController
+from fake_notify_reader.service.fake_notify_reader_service_impl import FakeNotifyReaderServiceImpl
 
 
-class FakeNotifyReaderControllerImpl(NotifyReaderController):
+# from notify_reader.controller.notify_reader_controller import NotifyReaderController
+# from notify_reader.service.notify_reader_service_impl import NotifyReaderServiceImpl
+
+
+class FakeNotifyReaderControllerImpl(FakeNotifyReaderController):
     __instance = None
 
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
-            cls.__instance.__notifyReaderService = NotifyReaderServiceImpl.getInstance()
+            cls.__instance.__notifyReaderService = FakeNotifyReaderServiceImpl.getInstance()
             cls.__instance.__battleFieldFunctionService = BattleFieldFunctionServiceImpl.getInstance()
             #todo : 실행되어야 할 함수 위치를 등록해주세요
         return cls.__instance

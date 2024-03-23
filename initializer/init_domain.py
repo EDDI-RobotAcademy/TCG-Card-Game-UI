@@ -5,6 +5,7 @@ from app_window.service.window_service_impl import WindowServiceImpl
 from card_info_from_csv.controller.card_info_from_csv_controller_impl import CardInfoFromCsvControllerImpl
 from client_socket.service.client_socket_service_impl import ClientSocketServiceImpl
 from account_login_frame.service.login_menu_frame_service_impl import LoginMenuFrameServiceImpl
+from fake_notify_reader.controller.fake_notify_reader_controller_impl import FakeNotifyReaderControllerImpl
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
 from music_player.controller.music_player_controller_impl import MusicPlayerControllerImpl
 from notify_reader.controller.notify_reader_controller_impl import NotifyReaderControllerImpl
@@ -45,6 +46,12 @@ class DomainInitializer:
         notifyReaderController = NotifyReaderControllerImpl.getInstance()
         notifyReaderController.requestToMappingNoticeWithFunction()
         notifyReaderController.requestToInjectNoWaitIpcChannel(noWaitIpcChannel)
+
+    @staticmethod
+    def initFakeNotifyReaderDomain(noWaitIpcChannel):
+        fakeNotifyReaderController = FakeNotifyReaderControllerImpl.getInstance()
+        fakeNotifyReaderController.requestToMappingNoticeWithFunction()
+        fakeNotifyReaderController.requestToInjectNoWaitIpcChannel(noWaitIpcChannel)
 
     @staticmethod
     def initAccountRegisterFrameDomain():
@@ -126,8 +133,12 @@ class DomainInitializer:
         DomainInitializer.initTransmitterDomain(uiTransmitIpcChannel)
         DomainInitializer.initReceiverDomain(uiReceiveIpcChannel, uiNoWaitIpcChannel)
         DomainInitializer.initMusicPlayerDomain(uiMusicPlayIpcChannel)
+
+        # Notify Domain
         DomainInitializer.initNotifyReaderDomain(uiNoWaitIpcChannel)
 
+        # Fake Notify Domain
+        DomainInitializer.initFakeNotifyReaderDomain(uiNoWaitIpcChannel)
 
         # Task Worker Domain
         DomainInitializer.initTaskWorkerDomain()
