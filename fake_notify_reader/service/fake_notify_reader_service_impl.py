@@ -37,18 +37,22 @@ from common.message_number import MessageNumber
 from common.target_type import TargetType
 from fake_battle_field.infra.fake_battle_field_frame_repository_impl import FakeBattleFieldFrameRepositoryImpl
 from fake_battle_field.infra.fake_opponent_hand_repository import FakeOpponentHandRepositoryImpl
+from fake_notify_reader.entity.fake_notice_type import FakeNoticeType
+from fake_notify_reader.repository.fake_notify_reader_repository_impl import FakeNotifyReaderRepositoryImpl
+from fake_notify_reader.service.fake_notify_reader_service import FakeNotifyReaderService
+from fake_notify_reader.service.request.fake_effect_animation_request import FakeEffectAnimationRequest
 from image_shape.circle_kinds import CircleKinds
 from image_shape.non_background_number_image import NonBackgroundNumberImage
-from notify_reader.entity.notice_type import NoticeType
-from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
-from notify_reader.service.notify_reader_service import NotifyReaderService
-from notify_reader.service.request.effect_animation_request import EffectAnimationRequest
+# from notify_reader.entity.notice_type import NoticeType
+# from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
+# from notify_reader.service.notify_reader_service import NotifyReaderService
+# from notify_reader.service.request.effect_animation_request import EffectAnimationRequest
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 from battle_field.animation_support.attack_animation import AttackAnimation
 from session.repository.session_repository_impl import SessionRepositoryImpl
 
 
-class FakeNotifyReaderServiceImpl(NotifyReaderService):
+class FakeNotifyReaderServiceImpl(FakeNotifyReaderService):
     __instance = None
 
     notify_callback_table = {}
@@ -59,7 +63,7 @@ class FakeNotifyReaderServiceImpl(NotifyReaderService):
 
             cls.__instance.__attack_animation_object = AttackAnimation.getInstance()
 
-            cls.__instance.__notify_reader_repository = NotifyReaderRepositoryImpl.getInstance()
+            cls.__instance.__notify_reader_repository = FakeNotifyReaderRepositoryImpl.getInstance()
             cls.__instance.__battle_field_function_service = BattleFieldFunctionServiceImpl.getInstance()
 
             cls.__instance.__card_info_repository = CardInfoFromCsvRepositoryImpl.getInstance()
@@ -194,41 +198,41 @@ class FakeNotifyReaderServiceImpl(NotifyReaderService):
 
     def saveHandCardUseFunction(self, hand_card_use_function):
         print(f"saveHandCardUseFunction: {hand_card_use_function}")
-        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_HAND_CARD_USE.name,
+        self.__notify_reader_repository.registerFunctionWithNoticeName(FakeNoticeType.NOTIFY_HAND_CARD_USE.name,
                                                                        hand_card_use_function)
 
     def saveDrawCountFunction(self, draw_count_function):
         print(f"saveDrawCountFunction: {draw_count_function}")
-        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_DRAW_COUNT.name,
+        self.__notify_reader_repository.registerFunctionWithNoticeName(FakeNoticeType.NOTIFY_DRAW_COUNT.name,
                                                                        draw_count_function)
 
     def saveDrawnCardListFunction(self, drawn_card_list_function):
         print(f"saveDrawnCardListFunction: {drawn_card_list_function}")
-        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_DRAWN_CARD_LIST.name,
+        self.__notify_reader_repository.registerFunctionWithNoticeName(FakeNoticeType.NOTIFY_DRAWN_CARD_LIST.name,
                                                                        drawn_card_list_function)
 
     def saveDeckCardUseListFunction(self, deck_card_list_use_function):
         print(f"saveDeckCardListUseFunction: {deck_card_list_use_function}")
-        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_DECK_CARD_LIST_USE.name,
+        self.__notify_reader_repository.registerFunctionWithNoticeName(FakeNoticeType.NOTIFY_DECK_CARD_LIST_USE.name,
                                                                        deck_card_list_use_function)
 
     def saveFieldUnitEnergyFunction(self, field_unit_energy_function):
         print(f"saveFieldUnitEnergy: {field_unit_energy_function}")
-        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_FIELD_UNIT_ENERGY.name,
+        self.__notify_reader_repository.registerFunctionWithNoticeName(FakeNoticeType.NOTIFY_FIELD_UNIT_ENERGY.name,
                                                                        field_unit_energy_function)
 
     def saveSearchCountFunction(self, search_count_function):
         print(f"saveSearchCount: {search_count_function}")
-        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_SEARCH_COUNT.name,
+        self.__notify_reader_repository.registerFunctionWithNoticeName(FakeNoticeType.NOTIFY_SEARCH_COUNT.name,
                                                                        search_count_function)
 
     def saveSearchCardListFunction(self, search_card_list_function):
         print(f"saveSearchCardListFunction: {search_card_list_function}")
-        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_SEARCH_CARD_LIST.name,
+        self.__notify_reader_repository.registerFunctionWithNoticeName(FakeNoticeType.NOTIFY_SEARCH_CARD_LIST.name,
                                                                        search_card_list_function)
 
     def saveSpawnUnitFunction(self, spawn_unit_function):
-        self.__notify_reader_repository.registerFunctionWithNoticeName(NoticeType.NOTIFY_UNIT_SPAWN.name,
+        self.__notify_reader_repository.registerFunctionWithNoticeName(FakeNoticeType.NOTIFY_UNIT_SPAWN.name,
                                                                        spawn_unit_function)
 
     def readNoticeAndCallFunction(self):
@@ -2569,7 +2573,7 @@ class FakeNotifyReaderServiceImpl(NotifyReaderService):
         effect_animation.set_animation_name('dark_blast')
 
         self.__notify_reader_repository.save_notify_effect_animation_request(
-            EffectAnimationRequest(
+            FakeEffectAnimationRequest(
                 effect_animation=effect_animation,
                 target_player='Opponent',
                 target_index=99999,

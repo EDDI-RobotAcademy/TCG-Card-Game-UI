@@ -1,7 +1,8 @@
-from notify_reader.repository.notify_reader_repository import NotifyReaderRepository
+# from notify_reader.repository.notify_reader_repository import NotifyReaderRepository
+from fake_notify_reader.repository.fake_notify_reader_repository import FakeNotifyReaderRepository
 
 
-class FakeNotifyReaderRepositoryImpl(NotifyReaderRepository):
+class FakeNotifyReaderRepositoryImpl(FakeNotifyReaderRepository):
     __instance = None
     __noWaitIpcChannel = None
     __functions_called_by_notice_table = {}
