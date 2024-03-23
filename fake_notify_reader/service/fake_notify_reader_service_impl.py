@@ -264,10 +264,10 @@ class FakeNotifyReaderServiceImpl(FakeNotifyReaderService):
         #  continue
 
     def notify_deploy_unit(self, notice_dictionary):
-        print(f"notify_deploy_unit() -> notice_dictionary: {notice_dictionary}")
+        print(f"{Fore.RED}fake notify_deploy_unit() -> notice_dictionary: {notice_dictionary}{Style.RESET_ALL}")
 
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
-        print(f"{Fore.RED}notify_deploy_unit() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
+        print(f"{Fore.RED}fake notify_deploy_unit() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
 
         if whose_turn is True:
             return
@@ -277,7 +277,7 @@ class FakeNotifyReaderServiceImpl(FakeNotifyReaderService):
                    .get('Opponent', {})
                    .get('card_id', None))
 
-        print(f"{Fore.RED}notify_deploy_unit() -> Opponent deploy card_id:{Fore.GREEN} {card_id}{Style.RESET_ALL}")
+        print(f"{Fore.RED}fake notify_deploy_unit() -> Opponent deploy card_id:{Fore.GREEN} {card_id}{Style.RESET_ALL}")
 
         self.__battle_field_repository.set_current_use_card_id(card_id)
         self.__opponent_field_unit_repository.create_field_unit_card(card_id)
@@ -353,7 +353,7 @@ class FakeNotifyReaderServiceImpl(FakeNotifyReaderService):
         self.__opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.REQUIRE_TO_PROCESS_PASSIVE_SKILL_PROCESS)
 
     def notify_turn_end(self, notice_dictionary):
-        print(f"{Fore.RED}notify_turn_end() -> notice_dictionary:{Fore.GREEN} {notice_dictionary}{Style.RESET_ALL}")
+        print(f"{Fore.RED}fake notify_turn_end() -> notice_dictionary:{Fore.GREEN} {notice_dictionary}{Style.RESET_ALL}")
 
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
         print(f"{Fore.RED}notify_turn_end() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
@@ -362,8 +362,6 @@ class FakeNotifyReaderServiceImpl(FakeNotifyReaderService):
             if notice_dictionary['NOTIFY_TURN_END']['player_main_character_survival_map'].get('You', None) == 'Death':
                 print('You win')
                 return
-
-            self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(True)
 
             # Your Draw
             your_drawn_card_list = notice_dictionary['NOTIFY_TURN_END']['player_drawn_card_list_map'].get('You', [])
@@ -409,37 +407,172 @@ class FakeNotifyReaderServiceImpl(FakeNotifyReaderService):
             self.__field_area_inside_handler.set_required_to_process_passive_skill_multiple_unit_list(
                 required_to_process_passive_skill_multiple_unit_list)
 
-        self.__notify_reader_repository.save_notify_message_on_screen(MessageNumber.YOUR_TURN.value)
+        self.__notify_reader_repository.save_notify_message_on_screen(MessageNumber.OPPONENT_TURN.value)
 
-        # Your Draw
-        your_drawn_card_list = notice_dictionary['NOTIFY_TURN_END']['player_drawn_card_list_map'].get('You', [])
-        self.__your_hand_repository.save_current_hand_state(your_drawn_card_list)
-        self.__your_hand_repository.update_your_hand()
+        for player, survival_info in notice_dictionary['NOTIFY_TURN_END']['player_main_character_survival_map'].items():
+            if player == 'You' and survival_info == 'Death':
+                self.__your_hp_repository.your_character_die()
+                self.__battle_field_repository.lose()
+                # self.__battle_field_timer_repository.
+                return
 
-        your_field_energy = notice_dictionary['NOTIFY_TURN_END']['player_field_energy_map'].get('You', [])
-        self.__your_field_energy_repository.set_your_field_energy(your_field_energy)
-        print(f"{Fore.RED}notify_turn_end() -> your_field_energy:{Fore.GREEN} {your_field_energy}{Style.RESET_ALL}")
+        # Fake Opponent Draw
+        opponent_drawn_card_list = notice_dictionary['NOTIFY_TURN_END']['player_drawn_card_list_map'].get('You', [])
+        self.__fake_opponent_hand_repository.save_fake_opponent_hand_list(opponent_drawn_card_list)
+        fake_opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
+        print(f"{Fore.RED}notify_turn_end() -> fake opponent hand list:{Fore.GREEN} {fake_opponent_hand_list}{Style.RESET_ALL}")
 
-        self.apply_notify_data_of_harmful_status(
-            notice_dictionary['NOTIFY_TURN_END']['player_field_unit_harmful_effect_map'])
+        fake_opponent_field_energy = notice_dictionary['NOTIFY_TURN_END']['player_field_energy_map'].get('You', [])
+        self.__opponent_field_energy_repository.set_opponent_field_energy(fake_opponent_field_energy)
+        print(f"{Fore.RED}notify_turn_end() -> fake opponent_field_energy:{Fore.GREEN} {fake_opponent_field_energy}{Style.RESET_ALL}")
 
-        self.apply_notify_data_of_field_unit_hp(
-            notice_dictionary['NOTIFY_TURN_END']['player_field_unit_health_point_map'])
+        opponent_field_energy_count = self.__opponent_field_energy_repository.get_opponent_field_energy()
+        print(f"{Fore.RED}opponent_field_energy_count:{Fore.GREEN} {opponent_field_energy_count}{Style.RESET_ALL}")
 
-        self.apply_notify_data_of_dead_unit(notice_dictionary['NOTIFY_TURN_END']['player_field_unit_death_map'])
+        for player, field_data in notice_dictionary['NOTIFY_TURN_END']['player_field_unit_harmful_effect_map'].items():
+            if player == 'You':
+                player = 'Opponent'
+            elif player == 'Opponent':
+                player = 'You'
+            for unit_index, harmful_status_value in field_data.get('field_unit_harmful_status_map', {}).items():
+                harmful_status_list = harmful_status_value.get('harmful_status_list', [])
+                if len(harmful_status_list) == 0:
+                    continue
 
-        your_which_one_has_passive_skill_to_turn_start_lists = {unit_index: passive_list for unit_index, passive_list in
-                                                           notice_dictionary['NOTIFY_TURN_END'][
-                                                               'unit_index_turn_start_passive_list_map'].items() if
-                                                           passive_list}
-        print(f"{Fore.RED}your_which_one_has_passive_skill_to_turn_start_lists:{Fore.GREEN} {your_which_one_has_passive_skill_to_turn_start_lists}{Style.RESET_ALL}")
+                if player == 'Opponent':
+                    self.__opponent_field_unit_repository.apply_harmful_status(int(unit_index), harmful_status_list)
+                elif player == 'You':
+                    self.__your_field_unit_repository.apply_harmful_status(int(unit_index), harmful_status_list)
 
-        required_to_process_passive_skill_multiple_unit_list = []
-        for key, value in your_which_one_has_passive_skill_to_turn_start_lists.items():
-            required_to_process_passive_skill_multiple_unit_list.append(key)
+        for player, hp_map in notice_dictionary['NOTIFY_TURN_END']['player_field_unit_health_point_map'].items():
+            if player == 'You':
+                player = 'Opponent'
+            elif player == 'Opponent':
+                player = 'You'
+            for unit_index, remain_hp in hp_map['field_unit_health_point_map'].items():
+                if remain_hp <= 0:
+                    continue
 
-        self.__field_area_inside_handler.set_field_turn_start_action(TurnStartAction.CHECK_MULTIPLE_UNIT_REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
-        self.__field_area_inside_handler.set_required_to_process_passive_skill_multiple_unit_list(required_to_process_passive_skill_multiple_unit_list)
+                if player == 'You':
+                    field_unit = self.__your_field_unit_repository.find_field_unit_by_index(int(unit_index))
+                    fixed_card_base = field_unit.get_fixed_card_base()
+                    fixed_card_attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                    for fixed_card_attached_shape in fixed_card_attached_shape_list:
+                        if isinstance(fixed_card_attached_shape, NonBackgroundNumberImage):
+                            if fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                fixed_card_attached_shape.set_number(remain_hp)
+                                fixed_card_attached_shape.set_image_data(
+                                    self.__pre_drawed_image_instance.get_pre_draw_unit_hp(remain_hp))
+
+                elif player == 'Opponent':
+                    field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                        int(unit_index))
+                    fixed_card_base = field_unit.get_fixed_card_base()
+                    fixed_card_attached_shape_list = fixed_card_base.get_attached_shapes()
+
+                    for fixed_card_attached_shape in fixed_card_attached_shape_list:
+                        if isinstance(fixed_card_attached_shape, NonBackgroundNumberImage):
+                            if fixed_card_attached_shape.get_circle_kinds() is CircleKinds.HP:
+                                fixed_card_attached_shape.set_number(remain_hp)
+                                fixed_card_attached_shape.set_image_data(
+                                    self.__pre_drawed_image_instance.get_pre_draw_unit_hp(remain_hp))
+
+        for player, dead_field_unit_index_list_map in notice_dictionary['NOTIFY_TURN_END'][
+            'player_field_unit_death_map'].items():
+            if player == 'You':
+                player = 'Opponent'
+            elif player == 'Opponent':
+                player = 'You'
+            dead_field_unit_index_list = dead_field_unit_index_list_map.get('dead_field_unit_index_list', [])
+            if len(dead_field_unit_index_list) == 0:
+                continue
+
+            if player == 'You':
+                for unit_index in dead_field_unit_index_list:
+                    def remove_field_unit_by_index(index):
+                        card_id = self.__your_field_unit_repository.get_card_id_by_index(index)
+                        self.__your_tomb_repository.create_tomb_card(card_id)
+                        self.__your_field_unit_repository.remove_card_by_index(index)
+                        self.__your_field_unit_repository.remove_harmful_status_by_index(index)
+                        self.__your_field_unit_repository.replace_field_card_position()
+
+                    effect_animation = EffectAnimation()
+                    effect_animation.set_animation_name('death')
+                    effect_animation.change_local_translation(
+                        self.__your_field_unit_repository.find_field_unit_by_index(
+                            unit_index).get_fixed_card_base().get_local_translation()
+                    )
+                    effect_animation.draw_animation_panel()
+
+                    self.__notify_reader_repository.save_notify_effect_animation_request(
+                        FakeEffectAnimationRequest(
+                            effect_animation=effect_animation,
+                            target_player=player,
+                            target_index=unit_index,
+                            target_type=TargetType.UNIT,
+                            call_function=remove_field_unit_by_index,
+                            function_need_param=True,
+                            param=unit_index
+                        )
+                    )
+            elif player == 'Opponent':
+                for unit_index in dead_field_unit_index_list:
+                    def remove_field_unit_by_index(index):
+                        card_id = self.__opponent_field_unit_repository.get_opponent_card_id_by_index(index)
+                        self.__opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                        self.__opponent_field_unit_repository.remove_current_field_unit_card(index)
+                        self.__opponent_field_unit_repository.remove_harmful_status_by_index(index)
+                        self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                    effect_animation = EffectAnimation()
+                    effect_animation.set_animation_name('death')
+                    effect_animation.change_local_translation(
+                        self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                            unit_index).get_fixed_card_base().get_local_translation()
+                    )
+                    effect_animation.draw_animation_panel()
+
+                    self.__notify_reader_repository.save_notify_effect_animation_request(
+                        FakeEffectAnimationRequest(
+                            effect_animation=effect_animation,
+                            target_player=player,
+                            target_index=unit_index,
+                            target_type=TargetType.UNIT,
+                            call_function=remove_field_unit_by_index,
+                            function_need_param=True,
+                            param=unit_index
+                        )
+                    )
+
+            else:
+                print(f'apply_notify_data_of_dead_unit error : unknown player {player}')
+
+        # notify_turn_end() -> notice_dictionary: {
+        #     'NOTIFY_TURN_END': {'player_drawn_card_list_map': {'You': [33]}, 'player_field_energy_map': {'You': 1},
+        #                         'player_field_unit_health_point_map': {
+        #                             'Opponent': {'field_unit_health_point_map': {'8': 20}}},
+        #                         'player_field_unit_harmful_effect_map': {'Opponent': {
+        #                             'field_unit_harmful_status_map': {'8': {'harmful_status_list': []}}}},
+        #                         'player_field_unit_death_map': {'Opponent': {'dead_field_unit_index_list': []}},
+        #                         'player_main_character_survival_map': {},
+        #                         'unit_index_turn_start_passive_list_map': {'3': [], '5': [], '6': [1, 2], '2': [],
+        #                                                                    '1': [], '0': [], '4': []}}}
+        opponent_which_one_has_passive_skill_to_turn_start_lists = {unit_index: passive_list for
+                                                                    unit_index, passive_list in
+                                                                    notice_dictionary['NOTIFY_TURN_END'][
+                                                                        'unit_index_turn_start_passive_list_map'].items()
+                                                                    if
+                                                                    passive_list}
+
+        print(f"{Fore.RED}opponent_which_one_has_passive_skill_to_turn_start_lists:{Fore.GREEN} {opponent_which_one_has_passive_skill_to_turn_start_lists}{Style.RESET_ALL}")
+
+        self.__opponent_field_area_inside_handler.set_field_turn_start_action(
+            OpponentTurnStartAction.CHECK_MULTIPLE_UNIT_REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
+        self.__opponent_field_area_inside_handler.set_required_to_process_opponent_passive_skill_multiple_unit_map(
+            opponent_which_one_has_passive_skill_to_turn_start_lists)
+
+        return
 
     def notify_attach_general_energy_card(self, notice_dictionary):
 

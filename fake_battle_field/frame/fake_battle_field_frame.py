@@ -151,6 +151,7 @@ from fake_battle_field.service.request.call_of_leonic_request import RequestUseC
 from fake_battle_field.service.request.fake_multi_draw_request import FakeMultiDrawRequest
 from fake_battle_field.service.request.fake_opponent_deploy_unit_request import FakeOpponentDeployUnitRequest
 from fake_battle_field.service.request.request_use_contract_of_doom import RequestUseContractOfDoom
+from fake_notify_reader.repository.fake_notify_reader_repository_impl import FakeNotifyReaderRepositoryImpl
 from image_shape.circle_image import CircleImage
 from image_shape.circle_kinds import CircleKinds
 from image_shape.circle_number_image import CircleNumberImage
@@ -158,7 +159,7 @@ from image_shape.non_background_number_image import NonBackgroundNumberImage
 from image_shape.rectangle_kinds import RectangleKinds
 from music_player.repository.music_player_repository_impl import MusicPlayerRepositoryImpl
 
-from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
+# from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
@@ -175,7 +176,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
     __fake_battle_field_frame_repository = FakeBattleFieldFrameRepositoryImpl.getInstance()
     __fake_opponent_hand_repository = FakeOpponentHandRepositoryImpl.getInstance()
     __session_repository = SessionRepositoryImpl.getInstance()
-    __notify_reader_repository = NotifyReaderRepositoryImpl.getInstance()
+    __notify_reader_repository = FakeNotifyReaderRepositoryImpl.getInstance()
     __music_player_repository = MusicPlayerRepositoryImpl.getInstance()
     window_size_repository = WindowSizeRepository.getInstance()
 

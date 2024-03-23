@@ -4783,8 +4783,7 @@ class BattleFieldFrame(OpenGLFrame):
 
         # self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(False)
         # whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
-        # print(
-        #     f"{Fore.RED}call_turn_end() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
+        # print(f"{Fore.RED}call_turn_end() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
 
         hp_data = turn_end_request_result['player_field_unit_health_point_map']
         harmful_data = turn_end_request_result['player_field_unit_harmful_effect_map']

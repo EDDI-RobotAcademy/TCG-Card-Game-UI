@@ -7,7 +7,7 @@ class FakeNotifyReaderRepositoryImpl(FakeNotifyReaderRepository):
     __noWaitIpcChannel = None
     __functions_called_by_notice_table = {}
     __notify_effect_animation_request_list = []
-    __is_your_turn_for_check_fake_process = False
+    __is_your_turn_for_check_fake_process = True
     __notify_message_on_screen = None
 
     def __new__(cls):
