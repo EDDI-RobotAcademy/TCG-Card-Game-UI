@@ -335,7 +335,7 @@ class PreDrawedImage:
         file_list = os.listdir(image_dir)
 
         for page_number in range(1, len(file_list) + 1):
-            page_number_image_data = os.path.join(self.__project_root, "local_storage", "mulligan_timer", f"{page_number}.png")
+            page_number_image_data = os.path.join(self.__project_root, "local_storage", "number_of_page", f"{page_number}.png")
             self.__pre_drawed_page_number[page_number] = ImageDataLoader.load_rectangle_origin_image_data(page_number_image_data)
 
     def pre_draw_mulligan_timer(self):

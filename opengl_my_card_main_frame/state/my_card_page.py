@@ -57,6 +57,8 @@ class MyCardPage:
     y_bottom_base_ratio = 0.207645
     y_top_base_ratio = 0.593
 
+    current_page_number = None
+
     def __init__(self):
         self.my_card_page_card_list = []
         self.my_card_page_card_object_list = []
@@ -100,6 +102,9 @@ class MyCardPage:
 
     def get_my_card_page_card_count_object_list(self):
         return self.my_card_page_card_count_object_list
+
+    def get_current_page_number(self):
+        return self.current_page_number
 
     # x: 50, y: 232
     # x: 1574, y: 242
@@ -283,48 +288,52 @@ class MyCardPage:
 
             self.my_card_page_card_count_object_list.append(number_of_cards_text)
 
-        # number_left_x_point = self.width * 0.130  # 첫 번째 카드는 이 위치로 고정
-        # number_right_x_point = self.width * 0.166
-        # number_top_y_point = self.height * 0.450  # 첫 번째줄은 이 높이로 고정하면 될 듯
-        # number_bottom_y_point = self.height * 0.506
-        # for index, card_count in enumerate(card_count_list):
-        #     try:
-        #         if card_count == 1:
-        #             # number_of_cards_data = self.__pre_drawed_image_instance.get_pre_draw_number_of_cards(9)
-        #             self.my_card_main_scene.add_text_list(None)
-        #         else:
-        #             number_of_cards_data = self.__pre_drawed_image_instance.get_pre_draw_number_of_cards(card_count)
+    def create_current_page_representation(self, page_index):
+        # x: 870, y: 897
+        # x: 894, y: 927
+        # 870 / 1848 = 0.4707792
+        # 894 / 1848 = 0.4837662
+        # 897 / 1016 = 0.8828740
+        # 927 / 1016 = 0.9124015
+
+        # 0.0037878
+        # x_difference = 0.033924 + 0.4648422 = 0.46863
+        # 0.4987662 + 0.033924 = 0.502554
+        # 0.4648422 - 0.033924 = 0.4309182
+        # 0.4987662 - 0.033924 = 0.4648422
+        start_x_point = 0.4619422 * self.total_width
+        end_x_point = 0.4958662 * self.total_width
+        start_y_point = 0.866437 * self.total_height
+        end_y_point = 0.9354015 * self.total_height
+
+        current_page_number_image = self.__pre_drawed_image_instance.get_pre_drawed_page_number(page_index)
+        current_page_number = NonBackgroundImage(image_data=current_page_number_image,
+                                                 vertices=[
+                                                     (start_x_point, start_y_point),
+                                                     (end_x_point, start_y_point),
+                                                     (end_x_point, end_y_point),
+                                                     (start_x_point, end_y_point)
+                                                 ])
+        self.current_page_number = current_page_number
+
+        # card_count_width_ratio = 72 * 1.22 / self.total_width
         #
-        #             number_of_cards_text = NonBackgroundImage(image_data=number_of_cards_data,
-        #                                                        vertices=[
-        #                                                            (number_left_x_point, number_top_y_point),
-        #                                                            (number_right_x_point, number_top_y_point),
-        #                                                            (number_right_x_point, number_bottom_y_point),
-        #                                                            (number_left_x_point, number_bottom_y_point)
-        #                                                        ])
-        #             self.my_card_main_scene.add_text_list(number_of_cards_text)
+        # self.start_x_point = next_x
+        # self.end_x_point = next_x + card_count_width_ratio * self.total_width
         #
-        #         number_left_x_point += self.width * 0.164
-        #         number_right_x_point += self.width * 0.164
+        # card_count_height_ratio = 72 / self.total_height
         #
-        #         if (index + 1) % 4 == 0:
-        #             number_top_y_point = self.height * 0.940  # 두 번째 줄 부턴 위치 바뀜
-        #             number_bottom_y_point = self.height * 0.996
-        #             number_left_x_point = self.width * 0.130
-        #             number_right_x_point = self.width * 0.166
+        # current_y = 0.781496 * self.total_height
+        # self.start_y_point = current_y
+        # self.end_y_point = current_y + card_count_height_ratio * self.total_height
         #
-        #             if (index + 1) % 8 == 0:
-        #                 number_left_x_point = self.width * 0.130
-        #                 number_right_x_point = self.width * 0.166
-        #                 number_top_y_point = self.height * 0.450
-        #                 number_bottom_y_point = self.height * 0.506
-        #
-        #         if (index + 1) % 8 == 0:
-        #             continue
-        #
-        #     except Exception as e:
-        #         print(f"Error number text: {e}")
-        #         pass
+        # number_of_cards_text = NonBackgroundImage(image_data=number_of_cards_image_data,
+        #                                           vertices=[
+        #                                               (self.start_x_point, self.start_y_point),
+        #                                               (self.end_x_point, self.start_y_point),
+        #                                               (self.end_x_point, self.end_y_point),
+        #                                               (self.start_x_point, self.end_y_point)
+        #                                           ])
 
         # x: 385, y: 434
         # x: 435, y: 433
