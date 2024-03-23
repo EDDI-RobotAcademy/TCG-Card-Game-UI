@@ -328,7 +328,7 @@ class MyCardMainFrame(OpenGLFrame):
                                               ])
         # self.my_card_main_scene.add_button_list(next_page_button)
         self.my_card_main_scene.add_next_button(next_page_button)
-        print(f"버튼들 다 담김?: {self.my_card_main_scene.get_button_list()}")
+        print(f"my_card_main_frame -> 버튼들(next_button) 다 담김?: {self.my_card_main_scene.get_next_button()}")
 
         # 이전 페이지 버튼
         # before_page_button_rectangle = Rectangle(color=(0.0, 0.0, 1.0, 1.0),
@@ -372,6 +372,7 @@ class MyCardMainFrame(OpenGLFrame):
                                               ])
         # self.my_card_main_scene.add_button_list(pre_page_button)
         self.my_card_main_scene.add_prev_button(prev_page_button)
+        print(f"my_card_main_frame -> 버튼들(prev_button) 다 담김?: {self.my_card_main_scene.get_prev_button()}")
 
         # TODO: 카드 갯수 표기 배치 (이건 한 개만 테스트 한 것)
         # 가로 길이 비율 0.036, 세로 길이 비율 0.056

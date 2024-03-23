@@ -45,12 +45,6 @@ class MyCardMainFrameRenderer:
 
         glDisable(GL_BLEND)
 
-        if self.scene.next_button:
-            self.scene.next_button.draw()
-
-        if self.scene.prev_button:
-            self.scene.prev_button.draw()
-
         for my_card in self.my_card_repository.get_my_card_object_list_from_current_page():
             my_card_pickable_base = my_card.get_pickable_card_base()
             my_card_pickable_base.draw()
@@ -62,6 +56,12 @@ class MyCardMainFrameRenderer:
         for my_card_count in self.my_card_repository.get_my_card_count_object_list_from_current_page():
             # print(f"my_card_count: {my_card_count}")
             my_card_count.draw()
+
+        if self.scene.next_button:
+            self.scene.next_button.draw()
+
+        if self.scene.prev_button:
+            self.scene.prev_button.draw()
 
         self.window.tkSwapBuffers()
 
