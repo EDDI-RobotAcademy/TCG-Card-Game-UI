@@ -347,9 +347,13 @@ class NotifyReaderServiceImpl(NotifyReaderService):
     def notify_turn_end(self, notice_dictionary):
         print(f"{Fore.RED}notify_turn_end() -> notice_dictionary:{Fore.GREEN} {notice_dictionary}{Style.RESET_ALL}")
 
-
         self.__notify_reader_repository.save_notify_message_on_screen(
             MessageNumber.YOUR_TURN.value)
+
+        # Deck Update
+        print(f"{Fore.RED}before draw current_deck: {Fore.GREEN}{self.__your_deck_repository.get_current_deck_state()}{Style.RESET_ALL}")
+        self.__your_deck_repository.draw_deck()
+        print(f"{Fore.RED}after draw current_deck: {Fore.GREEN}{self.__your_deck_repository.get_current_deck_state()}{Style.RESET_ALL}")
 
         # Your Draw
         your_drawn_card_list = notice_dictionary['NOTIFY_TURN_END']['player_drawn_card_list_map'].get('You', [])

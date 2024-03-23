@@ -87,7 +87,8 @@ class BattleFieldTimer(OpenGLFrame):
             self.timer_id = self.master.after(1000, self.start_timer)
         if self.timer == -1:
             self.unit_timeout_function()
-            self.function()
+            timer_function = self.function
+            timer_function()
 
 
     def stop_timer(self):
