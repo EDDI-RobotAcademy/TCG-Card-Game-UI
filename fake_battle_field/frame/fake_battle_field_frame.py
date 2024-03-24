@@ -2584,7 +2584,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             self.play_harmful_effect_animation(self.opponent_field_unit_repository, index, fixed_card_effect_animation)
                             print('create harmful effect animation')
                         else:
-                            print(fixed_card_effect_animation.get_animation_panel())
                             fixed_card_effect_animation.get_animation_panel().draw()
                     else:
                         opponent_field_unit.create_fixed_card_dark_flame_effect_animation()
@@ -2666,7 +2665,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                                                    fixed_card_effect_animation)
                                 print('create harmful effect animation')
                             else:
-                                print(fixed_card_effect_animation.get_animation_panel())
                                 fixed_card_effect_animation.get_animation_panel().draw()
                         else:
                             field_unit.create_fixed_card_dark_flame_effect_animation()
