@@ -10810,14 +10810,19 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # attack_animation_object.set_need_post_process(True)
 
         if is_attack_main_character:
-            self.create_effect_animation_with_vertices_and_play_animation_and_call_function_with_param(
-                'nether_blade_targeting_skill', self.your_main_character_panel.get_vertices(),
-                targeting_attack, 1
-            )
+            self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
+                'nether_blade_targeting_skill', targeting_attack, 1)
+            # self.create_effect_animation_with_vertices_and_play_animation_and_call_function_with_param(
+            #     'nether_blade_targeting_skill', self.your_main_character_panel.get_vertices(),
+            #     targeting_attack, 1
+            # )
         else:
-            self.create_effect_animation_to_your_unit_and_play_animation_and_call_function_with_param(
-                'nether_blade_targeting_skill', your_field_unit.get_index(), targeting_attack, 1
-            )
+            self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
+                'nether_blade_targeting_skill', targeting_attack, 1)
+            # self.create_effect_animation_to_your_unit_and_play_animation_and_call_function_with_param(
+            #     'nether_blade_targeting_skill', your_field_unit.get_index(), targeting_attack, 1
+            # )
+
         # targeting_attack(1)
 
     def finish_opponent_nether_blade_second_passive_targeting_animation(self, attack_animation_object):
