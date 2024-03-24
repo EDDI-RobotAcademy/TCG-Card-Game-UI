@@ -446,6 +446,7 @@ class BattleFieldFrame(OpenGLFrame):
 
         self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_skill(width, height)
         self.pre_drawed_image_instance.pre_draw_full_screen_sea_of_wraith(width, height)
+        self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_targeting_skill(width, height)
 
         battle_field_scene = BattleFieldScene()
         battle_field_scene.create_battle_field_cene(self.width, self.height)
@@ -8290,7 +8291,21 @@ class BattleFieldFrame(OpenGLFrame):
         self.timer_repository.set_check_nether_blade_second_passive_targeting_animation(True)
         update_position(1)
 
+    # def start_nether_blade_second_passive_targeting_motion_animation(self):
+    #     steps = 20
+    #
+    #     def nether_blade_second_targeting_action(step_count):
+    #
+    #         if step_count < steps:
+    #             self.master.after(20, nether_blade_second_targeting_action, step_count + 1)
+    #         else:
+    #             self.nether_blade_second_passive_targeting_skill_after_effect()
+    #
+    #     self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
+    #         'sea_of_wraith', nether_blade_second_targeting_action, 1)
+
     def start_nether_blade_second_passive_targeting_motion_animation(self):
+    # def nether_blade_second_passive_targeting_skill_after_effect(self):
         steps = 50
         self.__music_player_repository.play_sound_effect_of_unit_attack('nether_passive_skill_2')
 
