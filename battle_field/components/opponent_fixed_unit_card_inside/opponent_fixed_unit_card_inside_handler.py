@@ -165,8 +165,8 @@ class OpponentFixedUnitCardInsideHandler:
             if opponent_field_unit.get_fixed_card_base().is_point_inside((x, y)):
 
                 result_handle_inside_field_unit = self.handle_inside_field_unit(selected_object, opponent_unit_index)
-                if result_handle_inside_field_unit is False:
-                    return False
+                if result_handle_inside_field_unit:
+                    return result_handle_inside_field_unit
                 self.__opponent_unit_id = opponent_field_unit.get_card_number()
                 print("handle_pickable_card_inside_unit -> True")
                 return (opponent_field_unit, opponent_unit_index)
@@ -183,9 +183,8 @@ class OpponentFixedUnitCardInsideHandler:
 
         if card_type == CardType.ITEM.value:
             result_item_card = self.handle_item_card(placed_card_id, opponent_unit_index, placed_card_index)
+            return result_item_card
 
-            if result_item_card is False:
-                return False
 
     def handle_item_card(self, placed_card_id, unit_index, placed_card_index):
         print("아이템 카드를 사용합니다!")
@@ -193,8 +192,7 @@ class OpponentFixedUnitCardInsideHandler:
         proper_handler = self.__opponent_fixed_unit_card_inside_handler_table[placed_card_id]
         result_handler = proper_handler(placed_card_index, unit_index, placed_card_id)
 
-        if result_handler is False:
-            return False
+        return result_handler
 
         # self.your_hand_repository.remove_card_by_id(placed_card_id)
         # self.opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
@@ -224,9 +222,12 @@ class OpponentFixedUnitCardInsideHandler:
                 self.__target_index_to_action = unit_index
                 self.__opponent_field_area_action = OpponentFieldAreaAction.ENERGY_BURN
 
+                return None
+
             else:
                 print(f"use energy burn false!! ")
-                return False
+                is_energy_burn_false_message = energy_burn_response.get('false_message_enum')
+                return is_energy_burn_false_message
         except Exception as e:
             print(f"energy burn error : {e}")
             return
@@ -408,8 +409,11 @@ class OpponentFixedUnitCardInsideHandler:
 
             self.__opponent_field_area_action = OpponentFieldAreaAction.DEATH_SCYTHE
             self.__target_index_to_action = unit_index
+
+            return None
         else:
-            return False
+            is_death_sice_false_message = death_sice_usage_response.get('false_message_enum')
+            return is_death_sice_false_message
 
         # opponent_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(unit_index)
         # opponent_unit_card_id = opponent_unit.get_card_number()
