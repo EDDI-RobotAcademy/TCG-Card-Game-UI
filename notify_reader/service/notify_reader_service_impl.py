@@ -181,6 +181,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
             cls.__instance.notify_callback_table['NOTIFY_SURRENDER'] = cls.__instance.notify_surrender
 
+            cls.__instance.notify_callback_table[
+                'NOTIFY_USE_UNIT_ENERGY_BOOST_SUPPORT_CARD'] = cls.__instance.notify_use_unit_energy_boost_support
+
         return cls.__instance
 
     @classmethod
@@ -1441,25 +1444,45 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         opponent_usage_card_info = (
             data)['player_hand_use_map']['Opponent']
-        opponent_draw_count = (
-            data)['player_draw_count_map']['Opponent']
+
 
         # 사용된 카드 묘지로 보냄
         used_card_id = opponent_usage_card_info['card_id']
         self.__opponent_tomb_repository.create_opponent_tomb_card(used_card_id)
         self.__battle_field_repository.set_current_use_card_id(used_card_id)
 
-        # 뒷면 카드 3장 추가
-        unknown_hand_list = []
-        for count in range(opponent_draw_count):
-            unknown_hand_list.append(-1)
+        def opponent_draw_card(data):
 
-        current_opponent_hand = self.__opponent_hand_repository.get_current_opponent_hand_state()
-        print(f"current_opponent_hand: {current_opponent_hand}")
-        self.__opponent_hand_repository.save_current_opponent_hand_state(unknown_hand_list)
+            opponent_draw_count = (
+                data)['player_draw_count_map']['Opponent']
 
-        updated_opponent_hand = self.__opponent_hand_repository.get_current_opponent_hand_state()
-        print(f"updated_opponent_hand: {updated_opponent_hand}")
+            # 뒷면 카드 3장 추가
+            unknown_hand_list = []
+            for count in range(opponent_draw_count):
+                unknown_hand_list.append(-1)
+
+            current_opponent_hand = self.__opponent_hand_repository.get_current_opponent_hand_state()
+            print(f"current_opponent_hand: {current_opponent_hand}")
+            self.__opponent_hand_repository.save_current_opponent_hand_state(unknown_hand_list)
+
+            updated_opponent_hand = self.__opponent_hand_repository.get_current_opponent_hand_state()
+            print(f"updated_opponent_hand: {updated_opponent_hand}")
+
+        effect_animation = EffectAnimation()
+        effect_animation.set_animation_name('swamp_of_ghost')
+
+        self.__notify_reader_repository.save_notify_effect_animation_request(
+            EffectAnimationRequest(
+                effect_animation=effect_animation,
+                target_player='Opponent',
+                target_index=99999,
+                target_type=TargetType.AREA,
+                call_function=opponent_draw_card,
+                function_need_param=True,
+                param = data,
+                need_dalay=True
+            )
+        )
 
         # TODO: 상대 핸드 뒷면 이미지를 추가된 카드 장수 만큼 띄워야 함
 
@@ -1564,16 +1587,18 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         print('파멸의 계약 준비됨')
 
     def notify_use_unit_energy_boost_support(self, notice_dictionary):
-        
+        data = notice_dictionary['NOTIFY_USE_UNIT_ENERGY_BOOST_SUPPORT_CARD']
 
         # 수신된 정보를 대입
-        data = notice_dictionary['NOTIFY_USE_UNIT_ENERGY_BOOST_SUPPORT_CARD']
+
         for key in data['player_hand_use_map']:
             player_who_use_card = key
             usage_card_deck_list_map = (
                 data)['player_deck_card_use_list_map'][player_who_use_card]
             field_unit_energy_map = (
                 data)['player_field_unit_energy_map'][player_who_use_card]['field_unit_energy_map']
+            hand_use_card_id = data['player_hand_use_map'][player_who_use_card]['card_id']
+            self.__battle_field_repository.set_current_use_card_id(hand_use_card_id)
 
             # 카드를 사용 하고, 묘지로 보냄
             for used_card_id in usage_card_deck_list_map:
@@ -1582,7 +1607,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                     self.__opponent_tomb_repository.create_opponent_tomb_card(used_card_id)
                 elif player_who_use_card == "You":
                     self.__your_tomb_repository.create_tomb_card(used_card_id)
-                self.__battle_field_repository.set_current_use_card_id(used_card_id)
+
 
             # 필드 유닛 에너지 정보 호출
             for unit_index, unit_value in \
@@ -1603,55 +1628,103 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
                      # 필드 유닛 에너지 정보 갱신
                     for field_unit_index, field_unit_energy_info in field_unit_energy_map.items():
+                        field_unit_index = int(field_unit_index)
                         print(f"{Fore.RED}field_unit_index:{Fore.GREEN} {field_unit_index}{Style.RESET_ALL}")
                         print(f"{Fore.RED}field_unit_energy_info:{Fore.GREEN} {field_unit_energy_info}{Style.RESET_ALL}")
 
                         if player_who_use_card == "Opponent":
-                            current_opponent_field_unit_race_energy_count = (
-                                self.__opponent_field_unit_repository.get_opponent_field_unit_race_energy(
-                                    int(field_unit_index), int(race_energy_number)))
-                            print(f"{Fore.RED}current_opponent_field_unit_race_energy_count:{Fore.GREEN}"
-                                  f" {current_opponent_field_unit_race_energy_count}{Style.RESET_ALL}")
+                            def calculate_notify_overflow_of_energy(param):
+                                field_unit_index = param[0]
+                                race_energy_number = param[1]
+                                field_unit_energy_info = param[2]
+                                current_opponent_field_unit_race_energy_count = (
+                                    self.__opponent_field_unit_repository.get_opponent_field_unit_race_energy(
+                                        field_unit_index, race_energy_number))
+                                print(f"{Fore.RED}current_opponent_field_unit_race_energy_count:{Fore.GREEN}"
+                                      f" {current_opponent_field_unit_race_energy_count}{Style.RESET_ALL}")
 
-                            opponent_field_unit = (
-                                self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(int(field_unit_index)))
-                            print(f"opponent_field_unit:{opponent_field_unit}")
+                                opponent_field_unit = (
+                                    self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(field_unit_index))
+                                print(f"opponent_field_unit:{opponent_field_unit}")
 
-                            opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
-                            opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
+                                opponent_fixed_card_base = opponent_field_unit.get_fixed_card_base()
+                                opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
 
-                            total_energy_count = field_unit_energy_info['total_energy_count']
-                            print(f"{Fore.RED}total_energy_count:{Fore.GREEN} {total_energy_count}{Style.RESET_ALL}")
+                                total_energy_count = field_unit_energy_info['total_energy_count']
+                                print(f"{Fore.RED}total_energy_count:{Fore.GREEN} {total_energy_count}{Style.RESET_ALL}")
 
-                            for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
-                                if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
-                                    if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
-                                        opponent_fixed_card_attached_shape.set_image_data(
-                                            self.__pre_drawed_image_instance.get_pre_draw_unit_energy(
-                                                total_energy_count))
+                                for opponent_fixed_card_attached_shape in opponent_fixed_card_attached_shape_list:
+                                    if isinstance(opponent_fixed_card_attached_shape, NonBackgroundNumberImage):
+                                        if opponent_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+                                            opponent_fixed_card_attached_shape.set_image_data(
+                                                self.__pre_drawed_image_instance.get_pre_draw_unit_energy(
+                                                    total_energy_count))
+
+                            effect_animation = EffectAnimation()
+                            effect_animation.set_animation_name('overflow_of_energy')
+                            effect_animation.change_local_translation(
+                                self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
+                                    field_unit_index).get_fixed_card_base().get_local_translation())
+                            effect_animation.draw_animation_panel()
+
+                            self.__notify_reader_repository.save_notify_effect_animation_request(
+                                EffectAnimationRequest(
+                                    effect_animation=effect_animation,
+                                    target_player=player_who_use_card,
+                                    target_index=field_unit_index,
+                                    target_type=TargetType.UNIT,
+                                    call_function=calculate_notify_overflow_of_energy,
+                                    function_need_param=True,
+                                    param=(field_unit_index, race_energy_number, field_unit_energy_info)
+                                )
+                            )
 
                         elif player_who_use_card == "You":
-                            current_your_field_unit_race_energy_count = (
-                                self.__your_field_unit_repository.get_your_field_unit_race_energy(
-                                    int(field_unit_index), int(race_energy_number)))
-                            print(f"{Fore.RED}current_your_field_unit_race_energy_count:{Fore.GREEN}"
-                                  f" {current_your_field_unit_race_energy_count}{Style.RESET_ALL}")
+                            def calculate_notify_overflow_of_energy(param):
+                                field_unit_index = param[0]
+                                race_energy_number = param[1]
+                                field_unit_energy_info = param[2]
+                                current_your_field_unit_race_energy_count = (
+                                    self.__your_field_unit_repository.get_your_field_unit_race_energy(
+                                        int(field_unit_index), int(race_energy_number)))
+                                print(f"{Fore.RED}current_your_field_unit_race_energy_count:{Fore.GREEN}"
+                                      f" {current_your_field_unit_race_energy_count}{Style.RESET_ALL}")
 
-                            your_field_unit = (
-                                self.__your_field_unit_repository.find_field_unit_by_index(int(field_unit_index)))
+                                your_field_unit = (
+                                    self.__your_field_unit_repository.find_field_unit_by_index(int(field_unit_index)))
 
-                            your_fixed_card_base = your_field_unit.get_fixed_card_base()
-                            your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
+                                your_fixed_card_base = your_field_unit.get_fixed_card_base()
+                                your_fixed_card_attached_shape_list = your_fixed_card_base.get_attached_shapes()
 
-                            total_energy_count = field_unit_energy_info['total_energy_count']
-                            print(f"{Fore.RED}total_energy_count:{Fore.GREEN} {total_energy_count}{Style.RESET_ALL}")
+                                total_energy_count = field_unit_energy_info['total_energy_count']
+                                print(f"{Fore.RED}total_energy_count:{Fore.GREEN} {total_energy_count}{Style.RESET_ALL}")
 
-                            for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
-                                if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
-                                    if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
-                                        your_fixed_card_attached_shape.set_image_data(
-                                            self.__pre_drawed_image_instance.get_pre_draw_unit_energy(
-                                                total_energy_count))
+                                for your_fixed_card_attached_shape in your_fixed_card_attached_shape_list:
+                                    if isinstance(your_fixed_card_attached_shape, NonBackgroundNumberImage):
+                                        if your_fixed_card_attached_shape.get_circle_kinds() is CircleKinds.ENERGY:
+                                            your_fixed_card_attached_shape.set_image_data(
+                                                self.__pre_drawed_image_instance.get_pre_draw_unit_energy(
+                                                    total_energy_count))
+
+                            effect_animation = EffectAnimation()
+                            effect_animation.set_animation_name('overflow_of_energy')
+                            effect_animation.change_local_translation(self.__your_field_unit_repository.find_field_unit_by_index(
+                                field_unit_index).get_fixed_card_base().get_local_translation())
+                            effect_animation.draw_animation_panel()
+
+                            self.__notify_reader_repository.save_notify_effect_animation_request(
+                                EffectAnimationRequest(
+                                    effect_animation=effect_animation,
+                                    target_player=player_who_use_card,
+                                    target_index=field_unit_index,
+                                    target_type=TargetType.UNIT,
+                                    call_function=calculate_notify_overflow_of_energy,
+                                    function_need_param=True,
+                                    param=(field_unit_index,race_energy_number,field_unit_energy_info)
+                                )
+                            )
+
+
 
     def notify_turn_start_targeting_attack_passive_skill_to_unit(self, notice_dictionary):
 
@@ -2214,26 +2287,61 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
             # 필드 에너지 제거
             if player_who_targeted == "Opponent":
-                result_opponent_energy_count = data["player_field_energy_map"][player_who_targeted]
-                # remove_field_energy_point = data["player_field_energy_map"][player_who_targeted]
-                # opponent_energy_count = self.__opponent_field_energy_repository.get_opponent_field_energy() - remove_field_energy_point
-                # if opponent_energy_count <= 0:
-                #     result_opponent_energy_count = 0
-                # else:
-                #     result_opponent_energy_count = opponent_energy_count
+                def remove_field_energy(data):
+                    result_opponent_energy_count = data["player_field_energy_map"]['Opponent']
+                    # remove_field_energy_point = data["player_field_energy_map"][player_who_targeted]
+                    # opponent_energy_count = self.__opponent_field_energy_repository.get_opponent_field_energy() - remove_field_energy_point
+                    # if opponent_energy_count <= 0:
+                    #     result_opponent_energy_count = 0
+                    # else:
+                    #     result_opponent_energy_count = opponent_energy_count
+                    self.__opponent_field_energy_repository.set_opponent_field_energy(result_opponent_energy_count)
 
-                self.__opponent_field_energy_repository.set_opponent_field_energy(result_opponent_energy_count)
+                effect_animation = EffectAnimation()
+                effect_animation.set_animation_name('death_of_field')
+
+                self.__notify_reader_repository.save_notify_effect_animation_request(
+                    EffectAnimationRequest(
+                        effect_animation=effect_animation,
+                        target_player='Opponent',
+                        target_index=99999,
+                        target_type=TargetType.AREA,
+                        call_function=remove_field_energy,
+                        function_need_param=True,
+                        param=data,
+                        need_dalay=True
+                    )
+                )
+
 
             elif player_who_targeted == "You":
-                result_your_energy_count = data["player_field_energy_map"][player_who_targeted]
-                # remove_field_energy_point = data["player_field_energy_map"][player_who_targeted]
-                # your_energy_count = self.__your_field_energy_repository.get_your_field_energy() - remove_field_energy_point
-                # if your_energy_count <= 0:
-                #     result_your_energy_count = 0
-                # else:
-                #     result_your_energy_count = your_energy_count
+                def remove_field_energy(data):
+                    result_your_energy_count = data["player_field_energy_map"]['You']
+                    # remove_field_energy_point = data["player_field_energy_map"][player_who_targeted]
+                    # your_energy_count = self.__your_field_energy_repository.get_your_field_energy() - remove_field_energy_point
+                    # if your_energy_count <= 0:
+                    #     result_your_energy_count = 0
+                    # else:
+                    #     result_your_energy_count = your_energy_count
 
-                self.__your_field_energy_repository.set_your_field_energy(result_your_energy_count)
+                    self.__your_field_energy_repository.set_your_field_energy(result_your_energy_count)
+
+                effect_animation = EffectAnimation()
+                effect_animation.set_animation_name('death_of_field')
+
+                self.__notify_reader_repository.save_notify_effect_animation_request(
+                    EffectAnimationRequest(
+                        effect_animation=effect_animation,
+                        target_player='You',
+                        target_index=99999,
+                        target_type=TargetType.AREA,
+                        call_function=remove_field_energy,
+                        function_need_param=True,
+                        param=data
+                    )
+                )
+
+
 
     def notify_surrender(self, notice_dictionary):
 

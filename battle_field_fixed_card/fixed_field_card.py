@@ -1,3 +1,4 @@
+from battle_field.entity.effect_animation import EffectAnimation
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from image_shape.circle_image import CircleImage
 from image_shape.non_background_image import NonBackgroundImage
@@ -22,6 +23,8 @@ class FixedFieldCard:
         self.card_number = None
         self.card_info = CardInfoFromCsvRepositoryImpl.getInstance()
         self.card_controller = CardControllerImpl.getInstance()
+        self.dark_flame_effect_animation = None
+        self.freeze_effect_animation = None
         self.index = 0
 
     def get_card_number(self):
@@ -65,6 +68,22 @@ class FixedFieldCard:
 
         attached_freezing_image.set_initial_vertices(vertices)
         return attached_freezing_image
+
+    def create_fixed_card_dark_flame_effect_animation(self):
+
+        self.dark_flame_effect_animation = EffectAnimation()
+        self.dark_flame_effect_animation.set_animation_name('burn_effect')
+        self.dark_flame_effect_animation.change_local_translation(self.local_translation)
+        # self.dark_flame_effect_animation = NonBackgroundImage(
+        #     image_data=self.__pre_drawed_image_instance.get_pre_draw_dark_flame_effect_animation(),
+        #     vertices=vertices,
+        #     local_translation=self.local_translation
+        # )
+        # self.dark_flame_effect_animation.set_initial_vertices(vertices)
+
+    def get_fixed_card_dark_flame_effect_animation(self):
+        return self.dark_flame_effect_animation
+
 
     def creat_fixed_card_energy_race_circle(self, color, vertices, local_translation):
         attached_energy_circle = Circle(color=color,
