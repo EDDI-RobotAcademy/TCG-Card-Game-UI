@@ -1430,6 +1430,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             return
 
         if key.lower() == 'kp_1':
+
             if self.animation_test_image_panel:
                 self.animation_test_image_panel = None
 
@@ -1812,6 +1813,30 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 )
 
                 return
+
+        if key.lower() == '8':
+            opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
+            opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+            first_non_none_index = (
+                next((index for index, item in enumerate(opponent_field_unit_list) if item is not None), None))
+            print(f"opponent hand list : {opponent_hand_list}")
+            for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
+                if opponent_hand == 2:
+                    print("상대방 넘쳐흐르는 사기 사용!! ")
+
+                    response = self.your_hand_repository.request_use_overflow_of_energy(
+                        RequestUseOverflowOfEnergy(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _unitIndex=first_non_none_index,
+                            _supportCardId="2")
+                    )
+
+                    is_success_value = response.get('is_success', False)
+
+                    if is_success_value == False:
+                        # self.selected_object = None
+                        self.reset_every_selected_action()
+                        return
 
         if key.lower() == 'kp_7':
             opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
@@ -2422,6 +2447,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         if len(self.__notify_reader_repository.get_notify_effect_animation_request_list()) != 0:
             for _ in range(0,len(self.__notify_reader_repository.get_notify_effect_animation_request_list())):
                 effect_animation_request = self.__notify_reader_repository.get_notify_effect_animation_request_list().pop()
+                print(f"effect animation request : {effect_animation_request}")
                 effect_animation = effect_animation_request.get_effect_animation()
                 effect_animation.set_total_window_size(self.width, self.height)
 
@@ -2456,7 +2482,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     if effect_animation_request.get_function_need_param():
                         print('파라미터가 필요한 광역기 실행중')
                         self.play_effect_animation_by_index_and_call_function_with_param(
-                            animation_index, effect_animation_request.get_call_function(), effect_animation_request.get_param())
+                            animation_index, effect_animation_request.get_call_function(), effect_animation_request.get_param(),effect_animation_request.get_need_delay())
                     else:
                         print('광역 공격 실행중')
                         self.play_effect_animation_by_index_and_call_function(animation_index,
@@ -2474,7 +2500,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if effect_animation_request.get_function_need_param():
                         self.play_effect_animation_by_index_and_call_function_with_param(animation_index, effect_animation_request.get_call_function(
-                            ),effect_animation_request.get_param())
+                            ),effect_animation_request.get_param(),effect_animation_request.get_need_delay())
                     else:
                         self.play_effect_animation_by_index_and_call_function(animation_index,
                                                                               effect_animation_request.get_call_function())
@@ -2571,6 +2597,24 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
+            if self.opponent_field_unit_repository.get_is_index_in_harmful_status(index) == True:
+                if 'DarkFire' in self.opponent_field_unit_repository.get_harmful_status_by_index(index):
+                    fixed_card_effect_animation = opponent_field_unit.get_fixed_card_dark_flame_effect_animation()
+                    if fixed_card_effect_animation is not None:
+                        fixed_card_effect_animation.set_total_window_size(self.width, self.height)
+                        fixed_card_effect_animation.set_width_ratio(self.width_ratio)
+                        fixed_card_effect_animation.set_height_ratio(self.height_ratio)
+                        print(fixed_card_effect_animation.get_animation_panel())
+                        if fixed_card_effect_animation.get_animation_panel() == None:
+                            vertices = [(0, 0), (105, 0), (105, 170), (0, 170)]
+                            fixed_card_effect_animation.draw_animation_panel_with_vertices(vertices)
+                            self.play_harmful_effect_animation(self.opponent_field_unit_repository, index, fixed_card_effect_animation)
+                            print('create harmful effect animation')
+                        else:
+                            fixed_card_effect_animation.get_animation_panel().draw()
+                    else:
+                        opponent_field_unit.create_fixed_card_dark_flame_effect_animation()
+
         if self.battle_field_repository.get_current_use_card_id():
             self.message_on_the_screen.clear_current_message_on_the_battle_screen()
             card_id = self.battle_field_repository.get_current_use_card_id()
@@ -2611,7 +2655,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.attack_animation_object.set_animation_action(AnimationAction.DUMMY)
 
         if self.field_area_inside_handler.get_field_area_action() is not FieldAreaAction.PLAY_ANIMATION:
-            for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
+            for index, field_unit in enumerate(self.your_field_unit_repository.get_current_field_unit_list()):
                 if field_unit is None:
                     continue
 
@@ -2633,7 +2677,24 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     attached_shape.set_height_ratio(self.height_ratio)
                     attached_shape.draw()
 
-
+                if self.your_field_unit_repository.get_is_index_in_harmful_status(index) == True:
+                    if 'DarkFire' in self.your_field_unit_repository.get_harmful_status_by_index(index):
+                        fixed_card_effect_animation = field_unit.get_fixed_card_dark_flame_effect_animation()
+                        if fixed_card_effect_animation is not None:
+                            fixed_card_effect_animation.set_total_window_size(self.width, self.height)
+                            fixed_card_effect_animation.set_width_ratio(self.width_ratio)
+                            fixed_card_effect_animation.set_height_ratio(self.height_ratio)
+                            print(fixed_card_effect_animation.get_animation_panel())
+                            if fixed_card_effect_animation.get_animation_panel() == None:
+                                vertices = [(0, 0), (105, 0), (105, 170), (0, 170)]
+                                fixed_card_effect_animation.draw_animation_panel_with_vertices(vertices)
+                                self.play_harmful_effect_animation(self.your_field_unit_repository, index,
+                                                                   fixed_card_effect_animation)
+                                print('create harmful effect animation')
+                            else:
+                                fixed_card_effect_animation.get_animation_panel().draw()
+                        else:
+                            field_unit.create_fixed_card_dark_flame_effect_animation()
         
 
         # if len(self.battle_result_panel_list) == 2:
@@ -5812,6 +5873,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                         self.apply_basic_attack_result_to_ui_with_response(attack_opponent_unit_response)
 
+                        self.apply_response_data_of_harmful_status(attack_opponent_unit_response["player_field_unit_harmful_effect_map"])
+
                         # is_opponent_data_in_response = False
                         # is_your_data_in_response = False
                         #
@@ -8051,6 +8114,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             #     self.your_field_unit_repository.remove_card_by_index(dead_your_unit_index)
             #
             # self.your_field_unit_repository.replace_field_card_position()
+
+
 
     def attack_animation(self):
         self.is_playing_action_animation = True
@@ -14438,6 +14503,22 @@ class FakeBattleFieldFrame(OpenGLFrame):
         except Exception as e:
             print('An error occurred while applying harmful status data:', e)
 
+    def play_harmful_effect_animation(self, repository,index, harmful_effect_animation):
+
+        def animate():
+            if repository.get_is_index_in_harmful_status(index):
+                harmful_effect_animation.update_harmful_effect_animation_panel()
+            else:
+                harmful_effect_animation.is_finished = True
+
+            if not harmful_effect_animation.is_finished:
+                self.master.after(17, animate)
+            else:
+                print("harmful_effect_animation finish")
+
+        harmful_effect_animation.reset_animation_count()
+        self.master.after(0, animate)
+
 
     def play_effect_animation(self):
         if self.is_effect_animation_playing:
@@ -14535,7 +14616,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.master.after(0, animate)
 
 
-    def play_effect_animation_by_index_and_call_function_with_param(self, index, function, param):
+    def play_effect_animation_by_index_and_call_function_with_param(self, index, function, param, need_delay = False):
 
         def animate():
             effect_animation = self.effect_animation_repository.get_effect_animation_by_index(index)
@@ -14543,6 +14624,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if not effect_animation.is_finished:
                 self.master.after(17, animate)
             else:
+
                 self.effect_animation_repository.remove_effect_animation_by_index(index)
                 function(param)
                 print("finish animation")
@@ -14552,7 +14634,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
         print(f"effect_animation : {effect_animation}")
         effect_animation.reset_animation_count()
 
-        self.master.after(0, animate)
+        if need_delay:
+            self.master.after(2000, animate)
+        else:
+            self.master.after(0, animate)
         
         
     def create_effect_animation_to_opponent_unit_and_play_animation_and_call_function(self, effect_name, index, function):

@@ -104,6 +104,9 @@ class YourFieldUnitRepository:
     def get_harmful_status_by_index(self, index):
         self.harmful_status_info.get_harmful_status_of_index(index)
 
+    def get_is_index_in_harmful_status(self, index):
+        return self.harmful_status_info.is_index_in_harmful_status(index)
+
     def remove_harmful_status_by_index(self, index):
         self.harmful_status_info.remove_harmful_status_of_index(index)
 
