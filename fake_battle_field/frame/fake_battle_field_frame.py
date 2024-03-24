@@ -458,6 +458,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_skill(width, height)
         self.pre_drawed_image_instance.pre_draw_full_screen_sea_of_wraith(width, height)
+        self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_targeting_skill(width, height)
 
         battle_field_scene = BattleFieldScene()
         battle_field_scene.create_battle_field_cene(self.width, self.height)
@@ -6004,6 +6005,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.start_nether_blade_second_passive_targeting_motion_animation
                     )
 
+                    # self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
+                    #     'nether_blade_targeting_skill', wide_area_attack, 1)
+
                     if process_second_passive_skill_response.get('player_main_character_survival_map_for_notice', {}).get('Opponent',
                                                                                              None) == 'Death':
                         self.opponent_hp_repository.opponent_character_die()
@@ -6052,11 +6056,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.attack_animation_object.set_response_data(process_second_passive_skill_response)
 
                         # self.attack_animation_object.set_animation_actor_damage(20)
-                        self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function(
-                            'nether_blade_targeting_skill', opponent_field_unit_object.get_index(),
-                            self.start_nether_blade_second_passive_targeting_motion_animation
-                        )
-                        # self.master.after(0, self.start_nether_blade_second_passive_targeting_motion_animation)
+                        # self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function(
+                        #     'nether_blade_targeting_skill', opponent_field_unit_object.get_index(),
+                        #     self.start_nether_blade_second_passive_targeting_motion_animation
+                        # )
+                        self.master.after(0, self.nether_blade_second_passive_skill_animation)
                         self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
 
                         # opponent_fixed_card_attached_shape_list = opponent_fixed_card_base.get_attached_shapes()
@@ -6186,11 +6190,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         return FieldAreaAction.Dummy
 
                     self.attack_animation_object.set_response_data(process_second_passive_skill_response)
-                    self.create_effect_animation_with_vertices_and_play_animation_and_call_function(
-                        'nether_blade_targeting_skill', self.opponent_main_character_panel.get_vertices(),
-                        self.start_nether_blade_second_passive_targeting_motion_animation
-                    )
-                    # self.master.after(0, self.start_nether_blade_second_passive_targeting_motion_animation)
+                    # self.create_effect_animation_with_vertices_and_play_animation_and_call_function(
+                    #     'nether_blade_targeting_skill', self.opponent_main_character_panel.get_vertices(),
+                    #     self.start_nether_blade_second_passive_targeting_motion_animation
+                    # )
+                    self.master.after(0, self.nether_blade_turn_start_second_passive_skill_animation)
 
                     return
 
@@ -11242,13 +11246,46 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             'death', index, remove_opponent_unit, index)
                         # self.play_effect_animation_by_index_and_call_function_with_param(animation_index, remove_opponent_unit, index)
 
-                def call_nether_blade_second_passive_skill_animation():
+                def ready_to_operate_deploy_nether_blade_second_passive_skill_animation():
                     if len(self.effect_animation_repository.get_effect_animation_dictionary().keys()) == 0:
-                        self.nether_blade_second_passive_skill_animation()
-                    else:
-                        self.master.after(100, call_nether_blade_second_passive_skill_animation)
+                        self.targeting_enemy_select_support_lightning_border_list.append(
+                            self.opponent_main_character_panel)
 
-                call_nether_blade_second_passive_skill_animation()
+                        opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+                        valid_opponent_field_units_object_list = [unit for unit in opponent_field_unit_object_list if
+                                                                  unit is not None]
+                        print(f"실제 유효한 상대 필드 유닛 숫자: {len(valid_opponent_field_units_object_list)}")
+
+                        # if len(valid_opponent_field_units_object_list) == 0:
+                        #     return
+
+                        for opponent_field_unit_object in opponent_field_unit_object_list:
+                            if opponent_field_unit_object is None:
+                                continue
+
+                            fixed_opponent_card_base = opponent_field_unit_object.get_fixed_card_base()
+                            self.targeting_enemy_select_support_lightning_border_list.append(fixed_opponent_card_base)
+
+                        self.targeting_enemy_select_support_lightning_border_list.append(
+                            self.opponent_main_character_panel)
+
+                        self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(
+                            ActionToApplyOpponent.NETHER_BLADE_TURN_START_SECOND_TARGETING_PASSIVE_SKILL)
+
+                        your_field_unit_id = 19
+                        self.targeting_enemy_select_using_your_field_card_id = your_field_unit_id
+                    else:
+                        self.master.after(100, ready_to_operate_deploy_nether_blade_second_passive_skill_animation)
+
+                ready_to_operate_deploy_nether_blade_second_passive_skill_animation()
+
+                # def call_nether_blade_second_passive_skill_animation():
+                #     if len(self.effect_animation_repository.get_effect_animation_dictionary().keys()) == 0:
+                #         self.nether_blade_second_passive_skill_animation()
+                #     else:
+                #         self.master.after(100, call_nether_blade_second_passive_skill_animation)
+                # 
+                # call_nether_blade_second_passive_skill_animation()
         move_to_origin_location(1)
 
     def nether_blade_second_passive_skill_animation(self):
@@ -11312,36 +11349,37 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 self.master.after(20, update_position, step_count + 1)
             else:
                 # self.start_nether_blade_first_passive_wide_area_motion_animation(attack_animation_object)
+                self.start_nether_blade_second_passive_targeting_motion_animation()
 
-                #### 두 번째 패시브 단일기
-                second_passive_skill_type = self.card_info_repository.getCardPassiveSecondForCardNumber(19)
-                if second_passive_skill_type == 1:
-                    print("단일기")
-
-                    # TODO: 여기서 본체 공격 할 수 있어야 함
-                    self.targeting_enemy_select_support_lightning_border_list.append(self.opponent_main_character_panel)
-
-                    opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
-                    valid_opponent_field_units_object_list = [unit for unit in opponent_field_unit_object_list if unit is not None]
-                    print(f"실제 유효한 상대 필드 유닛 숫자: {len(valid_opponent_field_units_object_list)}")
-
-                    # if len(valid_opponent_field_units_object_list) == 0:
-                    #     return
-
-                    for opponent_field_unit_object in opponent_field_unit_object_list:
-                        if opponent_field_unit_object is None:
-                            continue
-
-                        fixed_opponent_card_base = opponent_field_unit_object.get_fixed_card_base()
-                        self.targeting_enemy_select_support_lightning_border_list.append(fixed_opponent_card_base)
-
-                    self.targeting_enemy_select_support_lightning_border_list.append(self.opponent_main_character_panel)
-
-                    self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(
-                        ActionToApplyOpponent.NETHER_BLADE_SECOND_TARGETING_PASSIVE_SKILL)
-
-                    your_field_unit_id = 19
-                    self.targeting_enemy_select_using_your_field_card_id = your_field_unit_id
+                # #### 두 번째 패시브 단일기
+                # second_passive_skill_type = self.card_info_repository.getCardPassiveSecondForCardNumber(19)
+                # if second_passive_skill_type == 1:
+                #     print("단일기")
+                # 
+                #     # TODO: 여기서 본체 공격 할 수 있어야 함
+                #     self.targeting_enemy_select_support_lightning_border_list.append(self.opponent_main_character_panel)
+                # 
+                #     opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+                #     valid_opponent_field_units_object_list = [unit for unit in opponent_field_unit_object_list if unit is not None]
+                #     print(f"실제 유효한 상대 필드 유닛 숫자: {len(valid_opponent_field_units_object_list)}")
+                # 
+                #     # if len(valid_opponent_field_units_object_list) == 0:
+                #     #     return
+                # 
+                #     for opponent_field_unit_object in opponent_field_unit_object_list:
+                #         if opponent_field_unit_object is None:
+                #             continue
+                # 
+                #         fixed_opponent_card_base = opponent_field_unit_object.get_fixed_card_base()
+                #         self.targeting_enemy_select_support_lightning_border_list.append(fixed_opponent_card_base)
+                # 
+                #     self.targeting_enemy_select_support_lightning_border_list.append(self.opponent_main_character_panel)
+                # 
+                #     self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(
+                #         ActionToApplyOpponent.NETHER_BLADE_SECOND_TARGETING_PASSIVE_SKILL)
+                # 
+                #     your_field_unit_id = 19
+                #     self.targeting_enemy_select_using_your_field_card_id = your_field_unit_id
 
         self.timer_repository.set_check_nether_blade_second_passive_targeting_animation(True)
         update_position(1)
@@ -11418,7 +11456,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # self.is_attack_motion_finished = True
                 # attack_animation_object.set_is_finished(True)
                 # attack_animation_object.set_need_post_process(True)
-        targeting_attack(1)
+
+        # targeting_attack(1)
+        self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
+            'nether_blade_targeting_skill', targeting_attack, 1)
 
     def finish_nether_blade_second_passive_targeting_animation(self, attack_animation_object):
         animation_actor = attack_animation_object.get_animation_actor()
@@ -12011,17 +12052,76 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 #
                 #         self.play_effect_animation_by_index_and_call_function_with_param(animation_index, remove_opponent_unit, index)
 
-                def call_nether_blade_second_passive_skill_animation():
-                    print(f"{Fore.RED}call_nether_blade_second_passive_skill_animation(){Style.RESET_ALL}")
+                # def call_nether_blade_second_passive_skill_animation():
+                #     print(f"{Fore.RED}call_nether_blade_second_passive_skill_animation(){Style.RESET_ALL}")
+                # 
+                #     print(f"effect animation repository dictionary key: {self.effect_animation_repository.get_effect_animation_dictionary().keys()}")
+                # 
+                #     if len(self.effect_animation_repository.get_effect_animation_dictionary().keys()) == 0:
+                #         self.nether_blade_turn_start_second_passive_skill_animation()
+                #     else:
+                #         self.master.after(100, call_nether_blade_second_passive_skill_animation)
 
-                    print(f"effect animation repository dictionary key: {self.effect_animation_repository.get_effect_animation_dictionary().keys()}")
+                # call_nether_blade_second_passive_skill_animation()
 
+                def ready_to_operate_nether_blade_second_passive_skill_animation():
                     if len(self.effect_animation_repository.get_effect_animation_dictionary().keys()) == 0:
-                        self.nether_blade_turn_start_second_passive_skill_animation()
-                    else:
-                        self.master.after(100, call_nether_blade_second_passive_skill_animation)
+                        self.targeting_enemy_select_support_lightning_border_list.append(
+                            self.opponent_main_character_panel)
 
-                call_nether_blade_second_passive_skill_animation()
+                        opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+                        valid_opponent_field_units_object_list = [unit for unit in opponent_field_unit_object_list if
+                                                                  unit is not None]
+                        print(f"실제 유효한 상대 필드 유닛 숫자: {len(valid_opponent_field_units_object_list)}")
+
+                        # if len(valid_opponent_field_units_object_list) == 0:
+                        #     return
+
+                        for opponent_field_unit_object in opponent_field_unit_object_list:
+                            if opponent_field_unit_object is None:
+                                continue
+
+                            fixed_opponent_card_base = opponent_field_unit_object.get_fixed_card_base()
+                            self.targeting_enemy_select_support_lightning_border_list.append(fixed_opponent_card_base)
+
+                        self.targeting_enemy_select_support_lightning_border_list.append(
+                            self.opponent_main_character_panel)
+
+                        self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(
+                            ActionToApplyOpponent.NETHER_BLADE_TURN_START_SECOND_TARGETING_PASSIVE_SKILL)
+
+                        your_field_unit_id = 19
+                        self.targeting_enemy_select_using_your_field_card_id = your_field_unit_id
+                    else:
+                        self.master.after(100, ready_to_operate_nether_blade_second_passive_skill_animation)
+
+                ready_to_operate_nether_blade_second_passive_skill_animation()
+
+                # start_nether_blade_turn_start_second_passive_targeting_motion_animation
+                # self.targeting_enemy_select_support_lightning_border_list.append(self.opponent_main_character_panel)
+                #
+                #                     opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+                #                     valid_opponent_field_units_object_list = [unit for unit in opponent_field_unit_object_list if unit is not None]
+                #                     print(f"실제 유효한 상대 필드 유닛 숫자: {len(valid_opponent_field_units_object_list)}")
+                #
+                #                     # if len(valid_opponent_field_units_object_list) == 0:
+                #                     #     return
+                #
+                #                     for opponent_field_unit_object in opponent_field_unit_object_list:
+                #                         if opponent_field_unit_object is None:
+                #                             continue
+                #
+                #                         fixed_opponent_card_base = opponent_field_unit_object.get_fixed_card_base()
+                #                         self.targeting_enemy_select_support_lightning_border_list.append(fixed_opponent_card_base)
+                #
+                #                     self.targeting_enemy_select_support_lightning_border_list.append(self.opponent_main_character_panel)
+                #
+                #                     self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(
+                #                         ActionToApplyOpponent.NETHER_BLADE_TURN_START_SECOND_TARGETING_PASSIVE_SKILL)
+                #
+                #                     your_field_unit_id = 19
+                #                     self.targeting_enemy_select_using_your_field_card_id = your_field_unit_id
+
         move_to_origin_location(1)
 
     def nether_blade_turn_start_second_passive_skill_animation(self):
@@ -12074,40 +12174,52 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape.update_vertices(new_attached_shape_vertices)
                 # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
+            # skill_focus_background_panel_alpha = self.skill_focus_background_panel.color[3]
+            # skill_focus_background_panel_alpha += 0.013 * step_count
+            # 
+            # self.skill_focus_background_panel.color = (
+            #     self.skill_focus_background_panel.color[0],
+            #     self.skill_focus_background_panel.color[1],
+            #     self.skill_focus_background_panel.color[2],
+            #     skill_focus_background_panel_alpha
+            # )
+            # self.skill_focus_background_panel.draw()
+
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
             else:
-                # self.start_nether_blade_first_passive_wide_area_motion_animation(attack_animation_object)
-
-                #### 두 번째 패시브 단일기
-                second_passive_skill_type = self.card_info_repository.getCardPassiveSecondForCardNumber(19)
-                if second_passive_skill_type == 1:
-                    print("단일기")
-
-                    # TODO: 여기서 본체 공격 할 수 있어야 함
-                    self.targeting_enemy_select_support_lightning_border_list.append(self.opponent_main_character_panel)
-
-                    opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
-                    valid_opponent_field_units_object_list = [unit for unit in opponent_field_unit_object_list if unit is not None]
-                    print(f"실제 유효한 상대 필드 유닛 숫자: {len(valid_opponent_field_units_object_list)}")
-
-                    # if len(valid_opponent_field_units_object_list) == 0:
-                    #     return
-
-                    for opponent_field_unit_object in opponent_field_unit_object_list:
-                        if opponent_field_unit_object is None:
-                            continue
-
-                        fixed_opponent_card_base = opponent_field_unit_object.get_fixed_card_base()
-                        self.targeting_enemy_select_support_lightning_border_list.append(fixed_opponent_card_base)
-
-                    self.targeting_enemy_select_support_lightning_border_list.append(self.opponent_main_character_panel)
-
-                    self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(
-                        ActionToApplyOpponent.NETHER_BLADE_TURN_START_SECOND_TARGETING_PASSIVE_SKILL)
-
-                    your_field_unit_id = 19
-                    self.targeting_enemy_select_using_your_field_card_id = your_field_unit_id
+                self.start_nether_blade_turn_start_second_passive_targeting_motion_animation()
+                # # self.start_nether_blade_first_passive_wide_area_motion_animation(attack_animation_object)
+                #
+                # #### 두 번째 패시브 단일기
+                # second_passive_skill_type = self.card_info_repository.getCardPassiveSecondForCardNumber(19)
+                # if second_passive_skill_type == 1:
+                #     print("단일기")
+                #
+                #     # TODO: 여기서 본체 공격 할 수 있어야 함
+                #     self.targeting_enemy_select_support_lightning_border_list.append(self.opponent_main_character_panel)
+                #
+                #     opponent_field_unit_object_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+                #     valid_opponent_field_units_object_list = [unit for unit in opponent_field_unit_object_list if unit is not None]
+                #     print(f"실제 유효한 상대 필드 유닛 숫자: {len(valid_opponent_field_units_object_list)}")
+                #
+                #     # if len(valid_opponent_field_units_object_list) == 0:
+                #     #     return
+                #
+                #     for opponent_field_unit_object in opponent_field_unit_object_list:
+                #         if opponent_field_unit_object is None:
+                #             continue
+                #
+                #         fixed_opponent_card_base = opponent_field_unit_object.get_fixed_card_base()
+                #         self.targeting_enemy_select_support_lightning_border_list.append(fixed_opponent_card_base)
+                #
+                #     self.targeting_enemy_select_support_lightning_border_list.append(self.opponent_main_character_panel)
+                #
+                #     self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(
+                #         ActionToApplyOpponent.NETHER_BLADE_TURN_START_SECOND_TARGETING_PASSIVE_SKILL)
+                #
+                #     your_field_unit_id = 19
+                #     self.targeting_enemy_select_using_your_field_card_id = your_field_unit_id
 
         self.timer_repository.set_check_nether_blade_turn_start_second_passive_targeting_animation(True)
         update_position(1)
@@ -12184,7 +12296,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 # self.is_attack_motion_finished = True
                 # attack_animation_object.set_is_finished(True)
                 # attack_animation_object.set_need_post_process(True)
-        targeting_attack(1)
+
+        # targeting_attack(1)
+        self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
+            'nether_blade_targeting_skill', targeting_attack, 1)
 
     def finish_nether_blade_turn_start_second_passive_targeting_animation(self, attack_animation_object):
         animation_actor = attack_animation_object.get_animation_actor()
@@ -12233,10 +12348,30 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 attached_shape.update_vertices(new_attached_shape_vertices)
                 # print(f"{Fore.RED}new_attached_shape_vertices: {Fore.GREEN}{new_attached_shape_vertices}{Style.RESET_ALL}")
 
+            # 112.5 * a = 0.65
+            skill_focus_background_panel_alpha = self.skill_focus_background_panel.color[3]
+            skill_focus_background_panel_alpha -= 0.005777 * step_count
+
+            self.skill_focus_background_panel.color = (
+                self.skill_focus_background_panel.color[0],
+                self.skill_focus_background_panel.color[1],
+                self.skill_focus_background_panel.color[2],
+                skill_focus_background_panel_alpha
+            )
+            self.skill_focus_background_panel.draw()
+
             if step_count < steps:
 
                 self.master.after(20, move_to_origin_location, step_count + 1)
             else:
+                self.skill_focus_background_panel.color = (
+                    self.skill_focus_background_panel.color[0],
+                    self.skill_focus_background_panel.color[1],
+                    self.skill_focus_background_panel.color[2],
+                    0
+                )
+                self.skill_focus_background_panel.draw()
+
                 self.is_playing_action_animation = False
                 targeting_damage = 20
                 if is_attack_main_character is False:
