@@ -2563,27 +2563,31 @@ class FakeBattleFieldFrame(OpenGLFrame):
             fixed_card_base.set_height_ratio(self.height_ratio)
             fixed_card_base.draw()
 
-            if self.opponent_field_unit_repository.get_is_index_in_harmful_status(index):
-
-                if 'dark_flame' in self.opponent_field_unit_repository.get_harmful_status_by_index(index):
-
-                    fixed_card_effect_animation = opponent_field_unit.get_fixed_card_dark_flame_effect_animation()
-                    if fixed_card_effect_animation is not None:
-                        if fixed_card_effect_animation.get_animation_panel() == None:
-                            vertices = [(0, 0), (105, 0), (105, 170), (0, 170)]
-                            fixed_card_effect_animation.draw_animation_panel_with_vertices(vertices)
-
-                        fixed_card_effect_animation.update_effect_animation_panel()
-                        fixed_card_effect_animation.get_animation_panel().draw()
-                    else:
-                        opponent_field_unit.create_fixed_card_dark_flame_effect_animation()
-
             attached_shape_list = fixed_card_base.get_attached_shapes()
 
             for attached_shape in attached_shape_list:
                 attached_shape.set_width_ratio(self.width_ratio)
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
+
+            if self.opponent_field_unit_repository.get_is_index_in_harmful_status(index) == True:
+                if 'DarkFire' in self.opponent_field_unit_repository.get_harmful_status_by_index(index):
+                    fixed_card_effect_animation = opponent_field_unit.get_fixed_card_dark_flame_effect_animation()
+                    if fixed_card_effect_animation is not None:
+                        fixed_card_effect_animation.set_total_window_size(self.width, self.height)
+                        fixed_card_effect_animation.set_width_ratio(self.width_ratio)
+                        fixed_card_effect_animation.set_height_ratio(self.height_ratio)
+                        print(fixed_card_effect_animation.get_animation_panel())
+                        if fixed_card_effect_animation.get_animation_panel() == None:
+                            vertices = [(0, 0), (105, 0), (105, 170), (0, 170)]
+                            fixed_card_effect_animation.draw_animation_panel_with_vertices(vertices)
+                            self.play_harmful_effect_animation(self.opponent_field_unit_repository, index, fixed_card_effect_animation)
+                            print('create harmful effect animation')
+                        else:
+                            print(fixed_card_effect_animation.get_animation_panel())
+                            fixed_card_effect_animation.get_animation_panel().draw()
+                    else:
+                        opponent_field_unit.create_fixed_card_dark_flame_effect_animation()
 
         if self.battle_field_repository.get_current_use_card_id():
             self.message_on_the_screen.clear_current_message_on_the_battle_screen()
@@ -2625,7 +2629,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             self.attack_animation_object.set_animation_action(AnimationAction.DUMMY)
 
         if self.field_area_inside_handler.get_field_area_action() is not FieldAreaAction.PLAY_ANIMATION:
-            for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
+            for index, field_unit in enumerate(self.your_field_unit_repository.get_current_field_unit_list()):
                 if field_unit is None:
                     continue
 
@@ -2647,7 +2651,25 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     attached_shape.set_height_ratio(self.height_ratio)
                     attached_shape.draw()
 
-
+                if self.your_field_unit_repository.get_is_index_in_harmful_status(index) == True:
+                    if 'DarkFire' in self.your_field_unit_repository.get_harmful_status_by_index(index):
+                        fixed_card_effect_animation = field_unit.get_fixed_card_dark_flame_effect_animation()
+                        if fixed_card_effect_animation is not None:
+                            fixed_card_effect_animation.set_total_window_size(self.width, self.height)
+                            fixed_card_effect_animation.set_width_ratio(self.width_ratio)
+                            fixed_card_effect_animation.set_height_ratio(self.height_ratio)
+                            print(fixed_card_effect_animation.get_animation_panel())
+                            if fixed_card_effect_animation.get_animation_panel() == None:
+                                vertices = [(0, 0), (105, 0), (105, 170), (0, 170)]
+                                fixed_card_effect_animation.draw_animation_panel_with_vertices(vertices)
+                                self.play_harmful_effect_animation(self.your_field_unit_repository, index,
+                                                                   fixed_card_effect_animation)
+                                print('create harmful effect animation')
+                            else:
+                                print(fixed_card_effect_animation.get_animation_panel())
+                                fixed_card_effect_animation.get_animation_panel().draw()
+                        else:
+                            field_unit.create_fixed_card_dark_flame_effect_animation()
         
 
         # if len(self.battle_result_panel_list) == 2:
@@ -5826,6 +5848,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                         self.apply_basic_attack_result_to_ui_with_response(attack_opponent_unit_response)
 
+                        self.apply_response_data_of_harmful_status(attack_opponent_unit_response["player_field_unit_harmful_effect_map"])
+
                         # is_opponent_data_in_response = False
                         # is_your_data_in_response = False
                         #
@@ -8053,6 +8077,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
             #     self.your_field_unit_repository.remove_card_by_index(dead_your_unit_index)
             #
             # self.your_field_unit_repository.replace_field_card_position()
+
+
 
     def attack_animation(self):
         self.is_playing_action_animation = True
@@ -14301,6 +14327,22 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.your_field_unit_repository.apply_harmful_status(int(unit_index), harmful_status_list)
         except Exception as e:
             print('An error occurred while applying harmful status data:', e)
+
+    def play_harmful_effect_animation(self, repository,index, harmful_effect_animation):
+
+        def animate():
+            if repository.get_is_index_in_harmful_status(index):
+                harmful_effect_animation.update_harmful_effect_animation_panel()
+            else:
+                harmful_effect_animation.is_finished = True
+
+            if not harmful_effect_animation.is_finished:
+                self.master.after(17, animate)
+            else:
+                print("harmful_effect_animation finish")
+
+        harmful_effect_animation.reset_animation_count()
+        self.master.after(0, animate)
 
 
     def play_effect_animation(self):
