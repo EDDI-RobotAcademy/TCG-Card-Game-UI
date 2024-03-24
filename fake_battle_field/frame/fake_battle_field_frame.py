@@ -4023,29 +4023,35 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             self.reset_every_selected_action()
                             return
 
-                        self.__music_player_repository.play_sound_effect_of_card_execution('field_of_death')
+                        def field_of_death(param):
 
-                        opponent_field_energy = self.opponent_field_energy_repository.get_opponent_field_energy()
-                        print(f"before land of death -> opponent_field_energy: {opponent_field_energy}")
+                            self.__music_player_repository.play_sound_effect_of_card_execution('field_of_death')
 
-                        self.opponent_field_energy_repository.decrease_opponent_field_energy(2)
+                            opponent_field_energy = self.opponent_field_energy_repository.get_opponent_field_energy()
+                            print(f"before land of death -> opponent_field_energy: {opponent_field_energy}")
 
-                        print(
-                            f"after land of death -> opponent_field_energy: {self.opponent_field_energy_repository.get_opponent_field_energy()}")
+                            self.opponent_field_energy_repository.decrease_opponent_field_energy(2)
 
-                        self.your_tomb_repository.create_tomb_card(your_card_id)
+                            print(
+                                f"after land of death -> opponent_field_energy: {self.opponent_field_energy_repository.get_opponent_field_energy()}")
 
-                        # your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
-                        # self.your_hand_repository.remove_card_by_index(your_card_index)
-                        your_card_index = self.your_hand_repository.find_index_by_selected_object_with_page(
-                            self.selected_object)
-                        self.your_hand_repository.remove_card_by_index_with_page(your_card_index)
+                            self.your_tomb_repository.create_tomb_card(your_card_id)
 
-                        # self.your_hand_repository.replace_hand_card_position()
-                        self.your_hand_repository.update_your_hand()
+                            # your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
+                            # self.your_hand_repository.remove_card_by_index(your_card_index)
+                            your_card_index = self.your_hand_repository.find_index_by_selected_object_with_page(
+                                self.selected_object)
+                            self.your_hand_repository.remove_card_by_index_with_page(your_card_index)
 
-                        self.selected_object = None
-                        return
+                            # self.your_hand_repository.replace_hand_card_position()
+                            self.your_hand_repository.update_your_hand()
+
+                            self.selected_object = None
+                            return
+
+                        self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
+                            'death_of_field', field_of_death, None
+                        )
 
             # Opponent Field Area 끝
             self.__music_player_repository.play_sound_effect_of_mouse_on_click('hand_card_drop')
@@ -6816,44 +6822,53 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             return
 
                         print("덱에서 에너지 검색해서 부스팅 진행")
-                        self.__music_player_repository.play_sound_effect_of_card_execution('overflow_of_energy')
 
-                        current_process_card_id = self.field_area_inside_handler.get_action_set_card_id()
+                        def overflow_of_energy(response):
+                            self.__music_player_repository.play_sound_effect_of_card_execution('overflow_of_energy')
 
-                        proper_handler = self.support_card_handler.getSupportCardHandler(current_process_card_id)
-                        # proper_handler(your_field_unit.get_index())
+                            current_process_card_id = self.field_area_inside_handler.get_action_set_card_id()
 
-                        your_field_unit_index = your_field_unit.get_index()
-                        print(f"your_field_unit index: {your_field_unit_index}")
+                            proper_handler = self.support_card_handler.getSupportCardHandler(current_process_card_id)
+                            # proper_handler(your_field_unit.get_index())
 
-                        # real_field_unit_index = self.your_field_unit_repository.find_field_unit_by_index(your_field_unit.get_index())
-                        # print(f"real_field_unit_index: {real_field_unit_index}")
+                            # your_field_unit_index = your_field_unit.get_index()
+                            # print(f"your_field_unit index: {your_unit_index}")
 
-                        updated_deck_card_list = response.get('updated_deck_card_list')
-                        print(f"updated_deck_card_list: {updated_deck_card_list}")
+                            # real_field_unit_index = self.your_field_unit_repository.find_field_unit_by_index(your_field_unit.get_index())
+                            # print(f"real_field_unit_index: {real_field_unit_index}")
 
-                        proper_handler(your_field_unit_index, updated_deck_card_list)
+                            updated_deck_card_list = response.get('updated_deck_card_list')
+                            your_field_unit_index = int(list(response['player_field_unit_energy_map']['You']['field_unit_energy_map'].keys())[0])
+                            print(f"updated_deck_card_list: {updated_deck_card_list}")
 
-                        used_energy_card_list_from_deck = response['player_deck_card_use_list_map']['You']
-                        print(f"used_energy_card_list_from_deck: {used_energy_card_list_from_deck}")
-                        for used_energy_card in used_energy_card_list_from_deck:
-                            self.your_tomb_repository.create_tomb_card(used_energy_card)
+                            proper_handler(your_field_unit_index, updated_deck_card_list)
 
-                        self.selected_object = None
-                        self.your_tomb_repository.create_tomb_card(current_process_card_id)
+                            used_energy_card_list_from_deck = response['player_deck_card_use_list_map']['You']
+                            print(f"used_energy_card_list_from_deck: {used_energy_card_list_from_deck}")
+                            for used_energy_card in used_energy_card_list_from_deck:
+                                self.your_tomb_repository.create_tomb_card(used_energy_card)
 
-                        current_hand_list = self.your_hand_repository.get_current_hand_state()
-                        print(f"get_current_hand_state: {current_hand_list}")
+                            self.selected_object = None
+                            self.your_tomb_repository.create_tomb_card(current_process_card_id)
 
-                        placed_card_page = self.field_area_inside_handler.get_placed_card_page()
-                        placed_card_index = self.field_area_inside_handler.get_placed_card_index()
-                        self.your_hand_repository.remove_card_by_index_and_page_number(placed_card_page, placed_card_index)
-                        self.your_hand_repository.update_your_hand()
+                            current_hand_list = self.your_hand_repository.get_current_hand_state()
+                            print(f"get_current_hand_state: {current_hand_list}")
 
-                        updated_hand_list = self.your_hand_repository.get_current_hand_state()
-                        print(f"updated_hand_list: {updated_hand_list}")
+                            placed_card_page = self.field_area_inside_handler.get_placed_card_page()
+                            placed_card_index = self.field_area_inside_handler.get_placed_card_index()
+                            self.your_hand_repository.remove_card_by_index_and_page_number(placed_card_page,
+                                                                                           placed_card_index)
+                            self.your_hand_repository.update_your_hand()
 
-                        # self.boost_selection = False
+                            updated_hand_list = self.your_hand_repository.get_current_hand_state()
+                            print(f"updated_hand_list: {updated_hand_list}")
+
+                            # self.boost_selection = False
+
+                        self.create_effect_animation_to_your_unit_and_play_animation_and_call_function_with_param(
+                            'overflow_of_energy', your_unit_index, overflow_of_energy, response
+                        )
+
                         break
 
                     # if self.field_area_inside_handler.get_field_area_action() is FieldAreaAction.TARGETING_TWO_ENEMY_AS_POSSIBLE:

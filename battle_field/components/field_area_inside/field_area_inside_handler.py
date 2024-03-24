@@ -2,6 +2,7 @@ from colorama import Fore, Style
 
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
 from battle_field.components.field_area_inside.unit_action import UnitAction
+from battle_field.entity.effect_animation import EffectAnimation
 from battle_field.infra.request.deploy_unit_card_request import DeployUnitCardRequest
 from battle_field.infra.request.drawCardByUseSupportCardRequest import DrawCardByUseSupportCardRequest
 from battle_field.infra.request.request_use_overflow_of_energy import RequestUseOverflowOfEnergy
@@ -19,7 +20,11 @@ from common.card_type import CardType
 from shapely.geometry import Point, Polygon
 
 from common.message_number import MessageNumber
+from common.target_type import TargetType
+from fake_notify_reader.repository.fake_notify_reader_repository_impl import FakeNotifyReaderRepositoryImpl
 from music_player.repository.music_player_repository_impl import MusicPlayerRepositoryImpl
+from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
+from notify_reader.service.request.effect_animation_request import EffectAnimationRequest
 from session.repository.session_repository_impl import SessionRepositoryImpl
 from test_detector.detector import DetectorAboutTest
 
@@ -46,6 +51,8 @@ class FieldAreaInsideHandler:
     __your_tomb_repository = YourTombRepository.getInstance()
     __session_info_repository = SessionRepositoryImpl.getInstance()
     __music_player_repository = MusicPlayerRepositoryImpl.getInstance()
+    __notify_reader_repository = NotifyReaderRepositoryImpl.getInstance()
+    __fake_notify_reader_repository = FakeNotifyReaderRepositoryImpl.getInstance()
 
     __your_field_unit_action_repository = YourFieldUnitActionRepository.getInstance()
     __detector_about_test = DetectorAboutTest.getInstance()
@@ -276,45 +283,73 @@ class FieldAreaInsideHandler:
             is_false_message = response.get('false_message_enum')
             return is_false_message
 
-        self.__music_player_repository.play_sound_effect_of_card_execution('swamp_of_ghost')
-        # TODO: Summary와 연동하도록 재구성 필요
-        # drawn_card_list = self.__your_deck_repository.draw_deck_with_count(3)
-        drawn_card_list = response['player_draw_card_list_map']['You']
-        print(f"{Fore.RED}drawn_card_list:{Fore.GREEN} {drawn_card_list}{Style.RESET_ALL}")
+        def swamp_of_ghost(response):
+            self.__music_player_repository.play_sound_effect_of_card_execution('swamp_of_ghost')
+            # TODO: Summary와 연동하도록 재구성 필요
+            # drawn_card_list = self.__your_deck_repository.draw_deck_with_count(3)
+            drawn_card_list = response['player_draw_card_list_map']['You']
+            print(f"{Fore.RED}drawn_card_list:{Fore.GREEN} {drawn_card_list}{Style.RESET_ALL}")
 
-        # after_draw_deck_list = self.__your_deck_repository.get_current_deck_state()
-        # print(f"after draw 3: {after_draw_deck_list}")
+            # after_draw_deck_list = self.__your_deck_repository.get_current_deck_state()
+            # print(f"after draw 3: {after_draw_deck_list}")
 
-        after_draw_deck_list = response['updated_deck_card_list']
-        print(f"{Fore.RED}after_draw_deck_list:{Fore.GREEN} {after_draw_deck_list}{Style.RESET_ALL}")
+            after_draw_deck_list = response['updated_deck_card_list']
+            print(f"{Fore.RED}after_draw_deck_list:{Fore.GREEN} {after_draw_deck_list}{Style.RESET_ALL}")
 
-        self.__your_deck_repository.update_deck(after_draw_deck_list)
+            self.__your_deck_repository.update_deck(after_draw_deck_list)
 
-        # TODO: 테스트인 경우와 실제 통신하는 경우를 스마트하게 분리 할 필요가 있음 (아래는 통신)
-        # try:
-        #     draw_card_response = self.__your_hand_repository.requestDrawCardByUseSupportCard(
-        #         DrawCardByUseSupportCardRequest(_sessionInfo=self.__session_info_repository.get_session_info(),
-        #                                         _cardId=placed_card_id)
-        #     )
-        #
-        #     if draw_card_response is not None:
-        #         drawn_card_list = draw_card_response
-        #
-        # except Exception as e:
-        #     print(f"draw_card Error! {e}")
+            # TODO: 테스트인 경우와 실제 통신하는 경우를 스마트하게 분리 할 필요가 있음 (아래는 통신)
+            # try:
+            #     draw_card_response = self.__your_hand_repository.requestDrawCardByUseSupportCard(
+            #         DrawCardByUseSupportCardRequest(_sessionInfo=self.__session_info_repository.get_session_info(),
+            #                                         _cardId=placed_card_id)
+            #     )
+            #
+            #     if draw_card_response is not None:
+            #         drawn_card_list = draw_card_response
+            #
+            # except Exception as e:
+            #     print(f"draw_card Error! {e}")
 
-        # self.__your_hand_repository.create_additional_hand_card_list(drawn_card_list)
-        # self.__your_hand_repository.remove_card_by_index(placed_card_index)
-        self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)
-        self.__your_hand_repository.save_current_hand_state(drawn_card_list)
-        self.__your_hand_repository.update_your_hand()
+            # self.__your_hand_repository.create_additional_hand_card_list(drawn_card_list)
+            # self.__your_hand_repository.remove_card_by_index(placed_card_index)
+            self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)
+            self.__your_hand_repository.save_current_hand_state(drawn_card_list)
+            self.__your_hand_repository.update_your_hand()
 
-        self.__your_tomb_repository.create_tomb_card(20)
-        print(
-            f"handle_support_card_draw_deck() -> current_tomb_unit_list: {self.__your_tomb_repository.get_current_tomb_state()}")
+            self.__your_tomb_repository.create_tomb_card(20)
+            print(
+                f"handle_support_card_draw_deck() -> current_tomb_unit_list: {self.__your_tomb_repository.get_current_tomb_state()}")
 
-        self.__field_area_action = FieldAreaAction.DRAW_DECK
-        return self.__field_area_action
+            self.__field_area_action = FieldAreaAction.DRAW_DECK
+            return self.__field_area_action
+
+        effect_animation = EffectAnimation()
+        effect_animation.set_animation_name('swamp_of_ghost')
+
+        self.__notify_reader_repository.save_notify_effect_animation_request(
+            EffectAnimationRequest(
+                effect_animation=effect_animation,
+                target_player='You',
+                target_index=99999,
+                target_type=TargetType.AREA,
+                call_function=swamp_of_ghost,
+                function_need_param=True,
+                param=response
+            )
+        )
+
+        self.__fake_notify_reader_repository.save_notify_effect_animation_request(
+            EffectAnimationRequest(
+                effect_animation=effect_animation,
+                target_player='You',
+                target_index=99999,
+                target_type=TargetType.AREA,
+                call_function=swamp_of_ghost,
+                function_need_param=True,
+                param=response
+            )
+        )
 
     def handle_support_card_search_unit_from_deck(self, placed_card_id, placed_card_index):
         print(f"handle_support_card_search_unit_from_deck -> placed_card_id: {placed_card_id}, placed_card_index: {placed_card_index}")
