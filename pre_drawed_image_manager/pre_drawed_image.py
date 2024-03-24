@@ -552,7 +552,7 @@ class PreDrawedImage:
         # self.pre_draw_legacy_sea_of_wraith()
         self.pre_draw_corpse_explosion()
         # self.pre_draw_nether_blade_area_skill()
-        self.pre_draw_nether_blade_targeting_skill()
+        # self.pre_draw_nether_blade_targeting_skill()
         self.pre_draw_death()
 
         self.pre_drawed_swamp_of_ghost_effect_animation()
@@ -589,7 +589,7 @@ class PreDrawedImage:
 
         self.__pre_drawed_effect_animation['sea_of_wraith'] = sea_of_wraith_skill_animation
 
-    def pre_draw_nether_blade_targeting_skill(self):
+    def pre_draw_full_screen_nether_blade_targeting_skill(self, width, height):
         nether_blade_targeting_skill_animation = {}
         image_dir = os.path.join(self.__project_root, "local_storage", "animation",
                                  'nether_blade_targeting_skill')
@@ -599,7 +599,7 @@ class PreDrawedImage:
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'nether_blade_targeting_skill',
                                                 f"{number}.png")
             print(f"effect_animation_image_data = {animation_image_data}")
-            nether_blade_targeting_skill_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
+            nether_blade_targeting_skill_animation[number] = ImageDataLoader.load_force_fit_full_screen_image_data(animation_image_data, width + 300, height + 300)
 
         self.__pre_drawed_effect_animation['nether_blade_targeting_skill'] = nether_blade_targeting_skill_animation
 
