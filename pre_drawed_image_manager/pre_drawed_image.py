@@ -145,7 +145,58 @@ class PreDrawedImage:
             pre_drawed_dark_flame_effect[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
         self.__pre_drawed_effect_animation['burn_effect'] = pre_drawed_dark_flame_effect
 
+    def pre_draw_call_of_Leonic_effect_animation(self):
+        pre_draw_effect_animation = {}
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation",
+                                 'call_of_leonic')
+        file_list = os.listdir(image_dir)
 
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'call_of_leonic',
+                                                f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
+            pre_draw_effect_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
+        self.__pre_drawed_effect_animation['call_of_leonic'] = pre_draw_effect_animation
+
+
+    def pre_draw_death_of_field_effect_animation(self):
+        pre_draw_effect_animation = {}
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation",
+                                 'death_of_field')
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'death_of_field',
+                                                f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
+            pre_draw_effect_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
+        self.__pre_drawed_effect_animation['death_of_field'] = pre_draw_effect_animation
+
+    def pre_draw_overflow_of_energy_effect_animation(self):
+        pre_draw_effect_animation = {}
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation",
+                                 'overflow_of_energy')
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'overflow_of_energy',
+                                                f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
+            pre_draw_effect_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
+        self.__pre_drawed_effect_animation['overflow_of_energy'] = pre_draw_effect_animation
+
+    def pre_drawed_swamp_of_ghost_effect_animation(self):
+        pre_draw_effect_animation = {}
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation",
+                                 'swamp_of_ghost')
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'swamp_of_ghost',
+                                                f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
+            pre_draw_effect_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
+        self.__pre_drawed_effect_animation['swamp_of_ghost'] = pre_draw_effect_animation
 
 
     def pre_draw_card_frame(self):
@@ -503,6 +554,11 @@ class PreDrawedImage:
         # self.pre_draw_nether_blade_area_skill()
         self.pre_draw_nether_blade_targeting_skill()
         self.pre_draw_death()
+
+        self.pre_drawed_swamp_of_ghost_effect_animation()
+        self.pre_draw_call_of_Leonic_effect_animation()
+        self.pre_draw_death_of_field_effect_animation()
+        self.pre_draw_overflow_of_energy_effect_animation()
 
     def pre_draw_full_screen_nether_blade_skill(self, width, height):
         print(f"pre_draw_full_screen_nether_blade_skill -> width: {width}, height: {height}")
