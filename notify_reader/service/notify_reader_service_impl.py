@@ -181,6 +181,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
             cls.__instance.notify_callback_table['NOTIFY_SURRENDER'] = cls.__instance.notify_surrender
 
+            cls.__instance.notify_callback_table[
+                'NOTIFY_USE_UNIT_ENERGY_BOOST_SUPPORT_CARD'] = cls.__instance.notify_use_unit_energy_boost_support
+
         return cls.__instance
 
     @classmethod
@@ -1476,7 +1479,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 target_type=TargetType.AREA,
                 call_function=opponent_draw_card,
                 function_need_param=True,
-                param = data
+                param = data,
+                need_dalay=True
             )
         )
 
@@ -1593,6 +1597,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 data)['player_deck_card_use_list_map'][player_who_use_card]
             field_unit_energy_map = (
                 data)['player_field_unit_energy_map'][player_who_use_card]['field_unit_energy_map']
+            hand_use_card_id = data['player_hand_use_map'][player_who_use_card]['card_id']
+            self.__battle_field_repository.set_current_use_card_id(hand_use_card_id)
 
             # 카드를 사용 하고, 묘지로 보냄
             for used_card_id in usage_card_deck_list_map:
@@ -1601,7 +1607,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                     self.__opponent_tomb_repository.create_opponent_tomb_card(used_card_id)
                 elif player_who_use_card == "You":
                     self.__your_tomb_repository.create_tomb_card(used_card_id)
-                self.__battle_field_repository.set_current_use_card_id(used_card_id)
+
 
             # 필드 유닛 에너지 정보 호출
             for unit_index, unit_value in \
@@ -1622,6 +1628,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
                      # 필드 유닛 에너지 정보 갱신
                     for field_unit_index, field_unit_energy_info in field_unit_energy_map.items():
+                        field_unit_index = int(field_unit_index)
                         print(f"{Fore.RED}field_unit_index:{Fore.GREEN} {field_unit_index}{Style.RESET_ALL}")
                         print(f"{Fore.RED}field_unit_energy_info:{Fore.GREEN} {field_unit_energy_info}{Style.RESET_ALL}")
 
@@ -1656,7 +1663,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                             effect_animation = EffectAnimation()
                             effect_animation.set_animation_name('overflow_of_energy')
                             effect_animation.change_local_translation(
-                                self.__your_field_unit_repository.find_field_unit_by_index(
+                                self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
                                     field_unit_index).get_fixed_card_base().get_local_translation())
                             effect_animation.draw_animation_panel()
 
@@ -2281,7 +2288,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             # 필드 에너지 제거
             if player_who_targeted == "Opponent":
                 def remove_field_energy(data):
-                    result_opponent_energy_count = data["player_field_energy_map"][player_who_targeted]
+                    result_opponent_energy_count = data["player_field_energy_map"]['Opponent']
                     # remove_field_energy_point = data["player_field_energy_map"][player_who_targeted]
                     # opponent_energy_count = self.__opponent_field_energy_repository.get_opponent_field_energy() - remove_field_energy_point
                     # if opponent_energy_count <= 0:
@@ -2301,14 +2308,15 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                         target_type=TargetType.AREA,
                         call_function=remove_field_energy,
                         function_need_param=True,
-                        param=data
+                        param=data,
+                        need_dalay=True
                     )
                 )
 
 
             elif player_who_targeted == "You":
                 def remove_field_energy(data):
-                    result_your_energy_count = data["player_field_energy_map"][player_who_targeted]
+                    result_your_energy_count = data["player_field_energy_map"]['You']
                     # remove_field_energy_point = data["player_field_energy_map"][player_who_targeted]
                     # your_energy_count = self.__your_field_energy_repository.get_your_field_energy() - remove_field_energy_point
                     # if your_energy_count <= 0:

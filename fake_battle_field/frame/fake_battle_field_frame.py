@@ -1429,6 +1429,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             return
 
         if key.lower() == 'kp_1':
+
             if self.animation_test_image_panel:
                 self.animation_test_image_panel = None
 
@@ -1811,6 +1812,30 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 )
 
                 return
+
+        if key.lower() == '8':
+            opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
+            opponent_field_unit_list = self.opponent_field_unit_repository.get_current_field_unit_card_object_list()
+            first_non_none_index = (
+                next((index for index, item in enumerate(opponent_field_unit_list) if item is not None), None))
+            print(f"opponent hand list : {opponent_hand_list}")
+            for opponent_hand_index, opponent_hand in enumerate(opponent_hand_list):
+                if opponent_hand == 2:
+                    print("상대방 넘쳐흐르는 사기 사용!! ")
+
+                    response = self.your_hand_repository.request_use_overflow_of_energy(
+                        RequestUseOverflowOfEnergy(
+                            _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                            _unitIndex=first_non_none_index,
+                            _supportCardId="2")
+                    )
+
+                    is_success_value = response.get('is_success', False)
+
+                    if is_success_value == False:
+                        # self.selected_object = None
+                        self.reset_every_selected_action()
+                        return
 
         if key.lower() == 'kp_7':
             opponent_hand_list = self.__fake_opponent_hand_repository.get_fake_opponent_hand_list()
@@ -2421,6 +2446,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         if len(self.__notify_reader_repository.get_notify_effect_animation_request_list()) != 0:
             for _ in range(0,len(self.__notify_reader_repository.get_notify_effect_animation_request_list())):
                 effect_animation_request = self.__notify_reader_repository.get_notify_effect_animation_request_list().pop()
+                print(f"effect animation request : {effect_animation_request}")
                 effect_animation = effect_animation_request.get_effect_animation()
                 effect_animation.set_total_window_size(self.width, self.height)
 
@@ -2455,7 +2481,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     if effect_animation_request.get_function_need_param():
                         print('파라미터가 필요한 광역기 실행중')
                         self.play_effect_animation_by_index_and_call_function_with_param(
-                            animation_index, effect_animation_request.get_call_function(), effect_animation_request.get_param())
+                            animation_index, effect_animation_request.get_call_function(), effect_animation_request.get_param(),effect_animation_request.get_need_delay())
                     else:
                         print('광역 공격 실행중')
                         self.play_effect_animation_by_index_and_call_function(animation_index,
@@ -2473,7 +2499,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if effect_animation_request.get_function_need_param():
                         self.play_effect_animation_by_index_and_call_function_with_param(animation_index, effect_animation_request.get_call_function(
-                            ),effect_animation_request.get_param())
+                            ),effect_animation_request.get_param(),effect_animation_request.get_need_delay())
                     else:
                         self.play_effect_animation_by_index_and_call_function(animation_index,
                                                                               effect_animation_request.get_call_function())
@@ -14439,7 +14465,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         self.master.after(0, animate)
 
 
-    def play_effect_animation_by_index_and_call_function_with_param(self, index, function, param):
+    def play_effect_animation_by_index_and_call_function_with_param(self, index, function, param, need_delay = False):
 
         def animate():
             effect_animation = self.effect_animation_repository.get_effect_animation_by_index(index)
@@ -14447,6 +14473,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             if not effect_animation.is_finished:
                 self.master.after(17, animate)
             else:
+
                 self.effect_animation_repository.remove_effect_animation_by_index(index)
                 function(param)
                 print("finish animation")
@@ -14456,7 +14483,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
         print(f"effect_animation : {effect_animation}")
         effect_animation.reset_animation_count()
 
-        self.master.after(0, animate)
+        if need_delay:
+            self.master.after(2000, animate)
+        else:
+            self.master.after(0, animate)
         
         
     def create_effect_animation_to_opponent_unit_and_play_animation_and_call_function(self, effect_name, index, function):
