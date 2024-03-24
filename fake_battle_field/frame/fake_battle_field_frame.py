@@ -6000,10 +6000,11 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     self.attack_animation_object.set_is_your_attack_main_character(True)
                     self.attack_animation_object.set_response_data(process_second_passive_skill_response)
-                    self.create_effect_animation_with_vertices_and_play_animation_and_call_function(
-                        'nether_blade_targeting_skill', self.opponent_main_character_panel.get_vertices(),
-                        self.start_nether_blade_second_passive_targeting_motion_animation
-                    )
+                    # self.create_effect_animation_with_vertices_and_play_animation_and_call_function(
+                    #     'nether_blade_targeting_skill', self.opponent_main_character_panel.get_vertices(),
+                    #     self.start_nether_blade_second_passive_targeting_motion_animation
+                    # )
+                    self.master.after(0, self.nether_blade_second_passive_skill_animation)
 
                     # self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
                     #     'nether_blade_targeting_skill', wide_area_attack, 1)
@@ -6060,6 +6061,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         #     'nether_blade_targeting_skill', opponent_field_unit_object.get_index(),
                         #     self.start_nether_blade_second_passive_targeting_motion_animation
                         # )
+                        self.attack_animation_object.set_opponent_field_unit(opponent_field_unit_object)
+
                         self.master.after(0, self.nether_blade_second_passive_skill_animation)
                         self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
 
@@ -6244,10 +6247,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 _usageSkillIndex="2"))
 
                         # self.attack_animation_object.set_animation_actor_damage(20)
-                        self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function(
-                            'nether_blade_targeting_skill', opponent_field_unit_object.get_index(),
-                            self.start_nether_blade_turn_start_second_passive_targeting_motion_animation
-                        )
+                        # self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function(
+                        #     'nether_blade_targeting_skill', opponent_field_unit_object.get_index(),
+                        #     self.start_nether_blade_turn_start_second_passive_targeting_motion_animation
+                        # )
+
+                        # opponent_field_unit = self.attack_animation_object.get_opponent_field_unit()
+                        self.attack_animation_object.set_opponent_field_unit(opponent_field_unit_object)
+
+                        self.master.after(0, self.nether_blade_turn_start_second_passive_skill_animation)
+
                         # self.master.after(0, self.start_nether_blade_turn_start_second_passive_targeting_motion_animation)
                         self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
 
@@ -11269,8 +11278,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.targeting_enemy_select_support_lightning_border_list.append(
                             self.opponent_main_character_panel)
 
+                        # ActionToApplyOpponent.NETHER_BLADE_SECOND_TARGETING_PASSIVE_SKILL
                         self.opponent_fixed_unit_card_inside_handler.set_action_to_apply_opponent(
-                            ActionToApplyOpponent.NETHER_BLADE_TURN_START_SECOND_TARGETING_PASSIVE_SKILL)
+                            ActionToApplyOpponent.NETHER_BLADE_SECOND_TARGETING_PASSIVE_SKILL)
+                            # ActionToApplyOpponent.NETHER_BLADE_TURN_START_SECOND_TARGETING_PASSIVE_SKILL)
 
                         your_field_unit_id = 19
                         self.targeting_enemy_select_using_your_field_card_id = your_field_unit_id
