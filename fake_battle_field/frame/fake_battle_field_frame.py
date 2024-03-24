@@ -2563,6 +2563,21 @@ class FakeBattleFieldFrame(OpenGLFrame):
             fixed_card_base.set_height_ratio(self.height_ratio)
             fixed_card_base.draw()
 
+            if self.opponent_field_unit_repository.get_is_index_in_harmful_status(index):
+
+                if 'dark_flame' in self.opponent_field_unit_repository.get_harmful_status_by_index(index):
+
+                    fixed_card_effect_animation = opponent_field_unit.get_fixed_card_dark_flame_effect_animation()
+                    if fixed_card_effect_animation is not None:
+                        if fixed_card_effect_animation.get_animation_panel() == None:
+                            vertices = [(0, 0), (105, 0), (105, 170), (0, 170)]
+                            fixed_card_effect_animation.draw_animation_panel_with_vertices(vertices)
+
+                        fixed_card_effect_animation.update_effect_animation_panel()
+                        fixed_card_effect_animation.get_animation_panel().draw()
+                    else:
+                        opponent_field_unit.create_fixed_card_dark_flame_effect_animation()
+
             attached_shape_list = fixed_card_base.get_attached_shapes()
 
             for attached_shape in attached_shape_list:

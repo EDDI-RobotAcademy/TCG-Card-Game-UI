@@ -119,6 +119,8 @@ class PreDrawedImage:
     __pre_drawed_page_slash = None
     __pre_drawed_page_number = {}
 
+    __pre_drawed_dark_flame_effect = {}
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -129,6 +131,22 @@ class PreDrawedImage:
         if cls.__instance is None:
             cls.__instance = cls()
         return cls.__instance
+
+    def pre_draw_dark_flame_effect_animation(self):
+        pre_drawed_dark_flame_effect = {}
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation",
+                                 'burn_effect')
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'burn_effect',
+                                                f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
+            pre_drawed_dark_flame_effect[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
+        self.__pre_drawed_effect_animation['burn_effect'] = pre_drawed_dark_flame_effect
+
+
+
 
     def pre_draw_card_frame(self):
         for card_number in self.__card_info_from_csv_repository.getCardNumber():
@@ -1046,6 +1064,8 @@ class PreDrawedImage:
         self.pre_draw_page_slash()
         self.pre_draw_page_number()
 
+        self.pre_draw_dark_flame_effect_animation()
+
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
 
@@ -1284,3 +1304,6 @@ class PreDrawedImage:
 
     def get_pre_drawed_page_number(self, page_number):
         return self.__pre_drawed_page_number[page_number]
+
+    def get_pre_draw_dark_flame_effect_animation(self, number = 0):
+        return self.__pre_drawed_dark_flame_effect[number]

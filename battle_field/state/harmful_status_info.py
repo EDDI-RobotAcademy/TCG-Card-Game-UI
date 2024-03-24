@@ -14,6 +14,12 @@ class HarmfulStatusInfo:
 
         print(f"updated_harmful_status_info: {self.harmful_status}")
 
+    def is_index_in_harmful_status(self, index):
+        if index in self.harmful_status.keys():
+            return True
+        else:
+            return False
+
     def get_harmful_status_of_index(self, unit_index):
         if unit_index not in self.harmful_status.keys():
             return None
