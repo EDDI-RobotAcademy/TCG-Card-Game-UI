@@ -197,11 +197,8 @@ class FieldAreaInsideHandler:
             deploy_is_success = deploy_your_unit_request['is_success']
             if deploy_is_success is False:
                 print(f"self.__card_info_repository.getCardGradeForCardNumber(placed_card_id): {self.__card_info_repository.getCardGradeForCardNumber(placed_card_id)}")
-                if int(self.__card_info_repository.getCardGradeForCardNumber(placed_card_id)) is CardGrade.MYTHICAL.value:
-                    print("신화유닛 4턴 후 사용 가능")
-                    return MessageNumber.USE_MYTH_CARD_AFTER_FOUR_TURN
-                print("유닛 소환 실패 ")
-                return MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN
+                deploy_false_message = deploy_your_unit_request['false_message_enum']
+                return deploy_false_message
 
         # TODO: Memory Leak에 대한 추가 작업이 필요할 수 있음
         # self.__your_hand_repository.remove_card_by_index(placed_card_index)
@@ -276,7 +273,8 @@ class FieldAreaInsideHandler:
         is_success_value = response.get('is_success', False)
 
         if is_success_value == False:
-            return
+            is_false_message = response.get('false_message_enum')
+            return is_false_message
 
         self.__music_player_repository.play_sound_effect_of_card_execution('swamp_of_ghost')
         # TODO: Summary와 연동하도록 재구성 필요
