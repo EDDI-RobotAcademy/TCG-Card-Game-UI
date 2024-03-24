@@ -5,14 +5,19 @@ from pyopengltk import OpenGLFrame
 from screeninfo import get_monitors
 from shapely import Polygon, Point
 
+from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
+from battle_field.infra.opponent_hand_repository import OpponentHandRepository
+from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
 from battle_field_muligun.entity.scene.battle_field_muligun_scene import BattleFieldMuligunScene
 from battle_field_muligun.service.request.check_opponent_muligun_request import CheckOpponentMuligunRequest
 from battle_field_muligun.service.request.muligun_request import MuligunRequest
 from battle_field_muligun_timer.battle_field_muligun_timer import BattleFieldMuligunTimer
+from fake_battle_field.service.request.real_battle_start_request import RealBattleStartRequest
 from image_shape.non_background_image import NonBackgroundImage
 from image_shape.rectangle_image import RectangleImage
+from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
 from opengl_battle_field_pickable_card.pickable_card import PickableCard
 from opengl_rectangle_lightning_border.lightning_border import LightningBorder
 from opengl_shape.image_rectangle_element import ImageRectangleElement
@@ -176,9 +181,9 @@ class BattleFieldMuligunFrame(OpenGLFrame):
         # glDisable(GL_BLEND)
         if self.muligun_your_hand_repository.get_is_my_mulligan():
             if self.muligun_your_hand_repository.get_is_opponent_mulligan():
-              #  print(f"check opponent muligun responseData:{mulligan_done}")
+                #  print(f"check opponent muligun responseData:{mulligan_done}")
 
-               # if mulligan_done is True:
+                # if mulligan_done is True:
                 self.message_visible = False
                 self.timer.stop_timer()
                 print("사용자 둘 다 멀리건 선택 완료")
@@ -186,7 +191,28 @@ class BattleFieldMuligunFrame(OpenGLFrame):
                 self.timer_visible = False
                 # self.master.after(self.__switchFrameWithMenuName('battle-field'))
                 self.is_doing_mulligan = False
+
+
                 self.__switchFrameWithMenuName('battle-field')
+
+                response = self.muligun_your_hand_repository.requestBattleStart(
+                    RealBattleStartRequest(
+                        self.sessionRepository.get_session_info()
+                    )
+                )
+
+                print('battle_start_response', response)
+                is_your_turn = response['is_your_turn']
+                NotifyReaderRepositoryImpl.getInstance().set_is_your_turn_for_check_fake_process(is_your_turn)
+                if is_your_turn:
+                    draw_card_id = response['player_draw_card_list_map']['You']
+                    self.your_hand_repository.save_current_hand_state(draw_card_id)
+                    YourFieldEnergyRepository.getInstance().increase_your_field_energy()
+                else:
+                    OpponentFieldEnergyRepository.getInstance().increase_opponent_field_energy()
+                    OpponentHandRepository.getInstance().save_current_opponent_hand_state([-1])
+
+
             else:
                 self.message_visible = True
                 #TODO: 시간 초가 종료 되었을 때 상대가 선택하지 않으면 배틀 필드 화면으로 넘어감.

@@ -26,6 +26,7 @@ from card_shop_frame.frame.buy_check_frame.service.buy_check_service_impl import
 from decision_first_strike.decision_first_strike_frame_service import DecisionFirstStrikeFrameService
 from fake_battle_field.infra.fake_opponent_hand_repository import FakeOpponentHandRepositoryImpl
 from fake_battle_field.service.fake_battle_field_frame_service_impl import FakeBattleFieldFrameServiceImpl
+from fake_notify_reader.controller.fake_notify_reader_controller_impl import FakeNotifyReaderControllerImpl
 from lobby_frame.service.lobby_menu_frame_service_impl import LobbyMenuFrameServiceImpl
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
 from matching_window.service.matching_window_service_impl import MatchingWindowServiceImpl
@@ -38,6 +39,7 @@ from rock_paper_scissors.service.rock_paper_scissors_service_impl import RockPap
 from rock_paper_scissors.frame.check_rock_paper_scissors_winner.service.check_rock_paper_scissors_winner_service_impl import CheckRockPaperScissorsWinnerServiceImpl
 
 from session.service.session_service_impl import SessionServiceImpl
+from test_detector.detector import DetectorAboutTest
 from tests.ljs.ugly_test_result_frame.service.test_result_frame_service import TestResultFrameService
 
 from ui_frame.controller.ui_frame_controller import UiFrameController
@@ -100,6 +102,11 @@ class UiFrameControllerImpl(UiFrameController):
             cls.__instance.__battle_result_frame_service = TestResultFrameService.getInstance()
 
             cls.__instance.__battleFieldFrame = BattleFieldFrame
+            cls.__instance.notify_reader_controller = NotifyReaderControllerImpl.getInstance()
+
+            # For Check Fake Battle Field or Real Battle Field
+            cls.__instance.detector_about_test = DetectorAboutTest.getInstance()
+            cls.__instance.fake_notify_reader_controller = FakeNotifyReaderControllerImpl.getInstance()
 
         return cls.__instance
 
@@ -179,8 +186,12 @@ class UiFrameControllerImpl(UiFrameController):
         rootWindow = self.__windowService.getRootWindow()
 
         def get_notify():
+            # detector_about_test.set_is_it_test(True)
+            if self.detector_about_test.get_is_fake_battle_field() is False:
+                self.notify_reader_controller.requestToReadNotifyCommand()
+            else:
+                self.fake_notify_reader_controller.requestToReadNotifyCommand()
 
-            NotifyReaderControllerImpl.getInstance().requestToReadNotifyCommand()
             rootWindow.after(17, get_notify)
         rootWindow.after(0,get_notify)
 

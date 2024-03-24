@@ -23,8 +23,8 @@ class FieldEnergyApplication:
         response = self.__field_energy_repository.request_to_attach_energy_to_unit(
             RequestAttachFieldEnergyToUnit(
                 #todo : faketest 종료 시 변경 할 필요가 있음
-                #_sessionInfo=self.__session_repository.get_session_info()
-                _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                _sessionInfo=self.__session_repository.get_session_info(),
+                # _sessionInfo=self.__session_repository.get_first_fake_session_info(),
                 _unitIndex=unitIndex,
                 _energyRace=energyRace,
                 _energyCount=energyCount

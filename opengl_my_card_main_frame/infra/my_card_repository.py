@@ -5,6 +5,7 @@ from colorama import Fore, Style
 from battle_field.state.current_deck import CurrentDeckState
 
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
+from image_shape.non_background_image import NonBackgroundImage
 from opengl_my_card_main_frame.state.my_card_page import MyCardPage
 from opengl_my_card_main_frame.state.my_card_state import MyCardState
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
@@ -32,6 +33,8 @@ class MyCardRepository:
     y_bottom_base_ratio = 0.593
 
     current_page = 0
+    page_slash_object = None
+    max_page_object = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -84,8 +87,14 @@ class MyCardRepository:
 
             my_card_page.set_page_number(page_index + 1)
             my_card_page.create_my_card_list()
+            my_card_page.create_current_page_representation(page_index + 1)
 
             self.my_card_page_list.append(my_card_page)
+
+        # x: 934, y: 929
+        # x: 970, y: 902
+        self.create_max_page_representation(num_pages)
+        self.create_page_slash()
 
     def next_my_card_page(self):
         if self.current_page == len(self.my_card_page_list) - 1:
@@ -102,7 +111,58 @@ class MyCardRepository:
     def get_current_my_card_page(self):
         return self.current_page
 
+    def get_current_page_object(self):
+        return self.my_card_page_list[self.get_current_my_card_page()]
+
     def get_my_card_object_list_from_current_page(self):
-        print(self.my_card_page_list)
-        print(self.get_current_my_card_page())
+        # print(self.my_card_page_list)
+        # print(self.get_current_my_card_page())
         return self.my_card_page_list[self.get_current_my_card_page()].get_my_card_page_card_object_list()
+
+    def get_my_card_count_object_list_from_current_page(self):
+        return self.my_card_page_list[self.get_current_my_card_page()].get_my_card_page_card_count_object_list()
+
+
+    def create_max_page_representation(self, num_pages):
+        # x: 934, y: 929
+        # x: 970, y: 902
+        # 31 / 1848 = 0.0167748
+        start_x_point = 0.4981674 * self.total_width
+        end_x_point = 0.5320914 * self.total_width
+        start_y_point = 0.866437 * self.total_height
+        end_y_point = 0.9354015 * self.total_height
+
+        max_page_number_image = self.preDrawedImageInstance.get_pre_drawed_page_number(num_pages)
+        max_page_number = NonBackgroundImage(image_data=max_page_number_image,
+                                             vertices=[
+                                                 (start_x_point, start_y_point),
+                                                 (end_x_point, start_y_point),
+                                                 (end_x_point, end_y_point),
+                                                 (start_x_point, end_y_point)
+                                             ])
+        self.max_page_object = max_page_number
+
+    def get_max_page_object(self):
+        return self.max_page_object
+
+    def create_page_slash(self):
+        # x: 934, y: 929
+        # x: 970, y: 902
+        # 31 / 1848 = 0.0167748
+        start_x_point = 0.4764674 * self.total_width
+        end_x_point = 0.5103914 * self.total_width
+        start_y_point = 0.866437 * self.total_height
+        end_y_point = 0.9354015 * self.total_height
+
+        page_slash_image = self.preDrawedImageInstance.get_pre_draw_page_slash()
+        page_slash = NonBackgroundImage(image_data=page_slash_image,
+                                        vertices=[
+                                            (start_x_point, start_y_point),
+                                            (end_x_point, start_y_point),
+                                            (end_x_point, end_y_point),
+                                            (start_x_point, end_y_point)
+                                        ])
+        self.page_slash_object = page_slash
+
+    def get_page_slash_object(self):
+        return self.page_slash_object

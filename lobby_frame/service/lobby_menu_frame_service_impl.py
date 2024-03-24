@@ -45,7 +45,7 @@ from rock_paper_scissors.repository.rock_paper_scissors_repository_impl import R
 from rock_paper_scissors.service.request.rock_paper_scissors_request import RockPaperScissorsRequest
 from session.repository.session_repository_impl import SessionRepositoryImpl
 from card_shop_frame.repository.card_shop_repository_impl import CardShopMenuFrameRepositoryImpl
-
+from test_detector.detector import DetectorAboutTest
 
 imageWidth = 256
 imageHeight = 256
@@ -92,6 +92,9 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             # Shop
             cls.__instance.__myCardRepository = MyCardRepository.getInstance()
             cls.__instance.__musicPlayerRepository = MusicPlayerRepositoryImpl.getInstance()
+
+            # Fake Battle Field
+            cls.__instance.__detector_about_test = DetectorAboutTest.getInstance()
         return cls.__instance
 
     @classmethod
@@ -148,6 +151,10 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
         def onClickEntrance(event):
             #rootWindow.after(3000, self.__waitForPrepareBattle)
             self.__musicPlayerRepository.play_sound_effect_of_mouse_on_click('menu_button_click')
+
+            self.__sessionRepository.clearFirstFakeSessionInfoFile()
+            self.__detector_about_test.set_is_fake_battle_field(False)
+
             self.__matchingWindowController.makeMatchingWindow(rootWindow)
             self.__matchingWindowController.matching(rootWindow)
 
@@ -306,6 +313,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                 print(f"your real_battle_start_response: {real_battle_start_response}")
 
                 is_your_turn_value = real_battle_start_response.get('is_your_turn', None)
+                print(f"{Fore.RED}is_your_turn_value: {is_your_turn_value}{Style.RESET_ALL}")
                 self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(is_your_turn_value)
 
                 your_draw_card_id = real_battle_start_response.get('player_draw_card_list_map', {}).get('You', [])[0]
@@ -355,6 +363,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
                 print(f"opponent_field_energy: {opponent_field_energy}")
 
                 self.__opponentFieldEnergyRepository.increase_opponent_field_energy(opponent_field_energy)
+                self.__detector_about_test.set_is_fake_battle_field(True)
 
             switchFrameWithMenuName("fake-battle-field")
 

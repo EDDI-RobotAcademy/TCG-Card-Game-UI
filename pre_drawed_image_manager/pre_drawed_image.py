@@ -116,6 +116,9 @@ class PreDrawedImage:
     __pre_drawed_create_deck_button = None
     __pre_drawed_go_back_button = None
 
+    __pre_drawed_page_slash = None
+    __pre_drawed_page_number = {}
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -139,6 +142,10 @@ class PreDrawedImage:
     def pre_draw_opponent_tomb(self):
         tomb_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field", "tomb.jpeg")
         self.__pre_drawed_opponent_tomb = ImageDataLoader.load_rectangle_image_data(tomb_image_path)
+
+    def pre_draw_page_slash(self):
+        page_slash_image_path = os.path.join(self.__project_root, "local_storage", "number_of_page", "0.png")
+        self.__pre_drawed_page_slash = ImageDataLoader.load_rectangle_origin_image_data(page_slash_image_path)
 
     def pre_draw_opponent_lost_zone(self):
         lost_zone_image_path = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
@@ -323,6 +330,23 @@ class PreDrawedImage:
             # print(f"type_number: {type_number}, card_number: {card_number}")
             self.__pre_drawed_card_type[card_number] = card_type_image_data_list[type_number]
 
+    def pre_draw_page_number(self):
+        image_dir = os.path.join(self.__project_root, "local_storage", "number_of_page")
+        file_list = os.listdir(image_dir)
+
+        for page_number in range(1, len(file_list) + 1):
+            page_number_image_data = os.path.join(self.__project_root, "local_storage", "number_of_page", f"{page_number}.png")
+            self.__pre_drawed_page_number[page_number] = ImageDataLoader.load_rectangle_origin_image_data(page_number_image_data)
+
+    def pre_draw_mulligan_timer(self):
+        image_dir = os.path.join(self.__project_root, "local_storage", "mulligan_timer")
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list) + 1):
+            timer_image_data = os.path.join(self.__project_root, "local_storage", "mulligan_timer", f"{number}.png")
+            print(f"animation image data = {timer_image_data}")
+            self.__pre_drawed_mulligan_timer[number] = ImageDataLoader.load_rectangle_image_data(timer_image_data)
+
     def pre_draw_card_attack(self):
         image_dir = os.path.join(self.__project_root, "local_storage", "card_number_image")
         file_list = os.listdir(image_dir)
@@ -459,7 +483,7 @@ class PreDrawedImage:
         # self.pre_draw_legacy_sea_of_wraith()
         self.pre_draw_corpse_explosion()
         # self.pre_draw_nether_blade_area_skill()
-        self.pre_draw_nether_blade_targeting_skill()
+        # self.pre_draw_nether_blade_targeting_skill()
         self.pre_draw_death()
 
     def pre_draw_full_screen_nether_blade_skill(self, width, height):
@@ -491,7 +515,7 @@ class PreDrawedImage:
 
         self.__pre_drawed_effect_animation['sea_of_wraith'] = sea_of_wraith_skill_animation
 
-    def pre_draw_nether_blade_targeting_skill(self):
+    def pre_draw_full_screen_nether_blade_targeting_skill(self, width, height):
         nether_blade_targeting_skill_animation = {}
         image_dir = os.path.join(self.__project_root, "local_storage", "animation",
                                  'nether_blade_targeting_skill')
@@ -501,7 +525,7 @@ class PreDrawedImage:
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'nether_blade_targeting_skill',
                                                 f"{number}.png")
             print(f"effect_animation_image_data = {animation_image_data}")
-            nether_blade_targeting_skill_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
+            nether_blade_targeting_skill_animation[number] = ImageDataLoader.load_force_fit_full_screen_image_data(animation_image_data, width + 300, height + 300)
 
         self.__pre_drawed_effect_animation['nether_blade_targeting_skill'] = nether_blade_targeting_skill_animation
 
@@ -794,11 +818,14 @@ class PreDrawedImage:
         image_dir = os.path.join(self.__project_root, "local_storage", "my_card_frame", "number_of_cards_owned")
         file_list = os.listdir(image_dir)
 
-        for number in range(2, 10):
+        for number in range(2, 21):
             text_image_data = os.path.join(self.__project_root, "local_storage", "my_card_frame", "number_of_cards_owned",
                                            f"{number}.png")
-            print(f"animation image data = {text_image_data}")
-            self.__pre_drawed_number_of_cards[number] = ImageDataLoader.load_rectangle_image_data(text_image_data)
+            # print(f"animation image data = {text_image_data}")
+            self.__pre_drawed_number_of_cards[number] = ImageDataLoader.load_rectangle_origin_image_data(text_image_data)
+
+        text_image_data = os.path.join(self.__project_root, "local_storage", "my_card_frame", "number_of_cards_owned", "n.png")
+        self.__pre_drawed_number_of_cards['n'] = ImageDataLoader.load_rectangle_origin_image_data(text_image_data)
 
     def pre_draw_multi_draw_button(self):
         multi_draw_button_image_data = os.path.join(self.__project_root, "local_storage", "button_image", "multi_draw_button.jpg")
@@ -811,7 +838,7 @@ class PreDrawedImage:
         for number in range(2, 10):
             text_image_data = os.path.join(self.__project_root, "local_storage", "energy_details_number",
                                            f"{number}.png")
-            print(f"animation image data = {text_image_data}")
+            # print(f"animation image data = {text_image_data}")
             self.__pre_drawed_number_of_details_energy[number] = ImageDataLoader.load_rectangle_image_data(text_image_data)
 
     def pre_draw_battle_field_card_frame(self):
@@ -857,7 +884,7 @@ class PreDrawedImage:
 
         for png_file in png_files:
             card_type_mark = int(png_file[:-4])
-            print(f"pre_draw_unit_race() -> race_number: {card_type_mark}")
+            # print(f"pre_draw_unit_race() -> race_number: {card_type_mark}")
             card_type_mark_image_path = os.path.join(self.__project_root, "local_storage", "card_type_mark", f"{png_file}")
             self.__pre_drawed_card_type_mark[card_type_mark] = ImageDataLoader.load_rectangle_image_data(card_type_mark_image_path)
 
@@ -870,7 +897,7 @@ class PreDrawedImage:
 
         for png_file in png_files:
             attack_number = int(png_file[:-4])
-            print(f"number images: {attack_number}")
+            # print(f"number images: {attack_number}")
             wizard_card_attack_image_data = os.path.join(self.__project_root, "local_storage", "wizard_card_attack_power",
                                                   f"{png_file}")
             wizard_card_attack_image_data_list[attack_number] = ImageDataLoader.load_rectangle_origin_image_data(
@@ -878,7 +905,7 @@ class PreDrawedImage:
 
         for card_number in self.__card_info_from_csv_repository.getCardNumber():
             attack_number = self.__card_info_from_csv_repository.getCardAttackForCardNumber(card_number)
-            print(f"attack_number: {attack_number}, card_number: {card_number}")
+            # print(f"attack_number: {attack_number}, card_number: {card_number}")
             self.__pre_drawed_wizard_card_attack_power[card_number] = wizard_card_attack_image_data_list[attack_number]
 
     def pre_draw_message_on_the_battle_screen(self):
@@ -888,7 +915,7 @@ class PreDrawedImage:
         for number in range(0, len(file_list) - 1):
             number_image_data = os.path.join(self.__project_root, "local_storage", "message_on_the_battle_screen",
                                              f"{number}.png")
-            print(f"image data = {number_image_data}")
+            # print(f"image data = {number_image_data}")
             self.__pre_drawed_message_on_the_battle_screen[number] = ImageDataLoader.load_message_on_the_battle_screen_image_data(number_image_data)
 
 
@@ -1016,11 +1043,17 @@ class PreDrawedImage:
 
         self.pre_draw_mulligan_timer()
 
+        self.pre_draw_page_slash()
+        self.pre_draw_page_number()
+
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
 
     def get_pre_draw_go_back_button(self):
-        return self.__pre_drawed_go_back_button;
+        return self.__pre_drawed_go_back_button
+
+    def get_pre_draw_page_slash(self):
+        return self.__pre_drawed_page_slash
 
     def get_pre_draw_opponent_tomb(self):
         return self.__pre_drawed_opponent_tomb
@@ -1195,6 +1228,9 @@ class PreDrawedImage:
     def get_pre_draw_number_of_cards(self, number):
         return self.__pre_drawed_number_of_cards[number]
 
+    def get_pre_draw_exceed_number_of_cards(self):
+        return self.__pre_drawed_number_of_cards['n']
+
     def get_pre_draw_multi_draw_button(self):
         return self.__pre_drawed_multi_draw_button
 
@@ -1245,3 +1281,6 @@ class PreDrawedImage:
 
     def get_pre_draw_mulligan_timer(self, number=0):
         return self.__pre_drawed_mulligan_timer[number]
+
+    def get_pre_drawed_page_number(self, page_number):
+        return self.__pre_drawed_page_number[page_number]

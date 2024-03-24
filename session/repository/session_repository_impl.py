@@ -65,6 +65,20 @@ class SessionRepositoryImpl(SessionRepository):
         except Exception as e:
             print(f"파일에 세션 작성 중 에러 발생: {e}")
 
+    def clearFirstFakeSessionInfoFile(self):
+        print("SessionRepositoryImpl: clearFirstFakeSessionInfoFile()")
+
+        try:
+            # 파일이 존재하면 파일 내용을 비웁니다.
+            if os.path.exists(self.FIRST_FAKE_SESSION_INFO_FILE_PATH):
+                with open(self.FIRST_FAKE_SESSION_INFO_FILE_PATH, 'w') as file:
+                    file.write('')
+                print("파일 내용이 성공적으로 지워졌습니다.")
+            else:
+                print("파일이 존재하지 않습니다.")
+        except Exception as e:
+            print(f"파일 내용을 지우는 중 에러 발생: {e}")
+
     def writeSecondFakeRedisTokenSessionInfoToFile(self, secondFakeRedisTokenSessionInfo):
         print("SessionRepositoryImpl: writeSecondFakeRedisTokenSessionInfoToFile()")
 

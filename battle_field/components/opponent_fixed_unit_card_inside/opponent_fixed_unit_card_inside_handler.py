@@ -206,7 +206,7 @@ class OpponentFixedUnitCardInsideHandler:
 
             energy_burn_response = self.__your_hand_repository.request_use_energy_burn_to_unit(
                 RequestUseEnergyBurnToUnit(
-                    _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                    _sessionInfo=self.__session_repository.get_session_info(),
                     _itemCardId=placed_card_id,
                     _opponentTargetUnitIndex=unit_index)
                 )
@@ -394,7 +394,7 @@ class OpponentFixedUnitCardInsideHandler:
 
         death_sice_usage_response = self.__your_hand_repository.request_use_death_sice_to_unit(
             RequestUseDeathSiceToUnit(
-                _sessionInfo=self.__session_repository.get_first_fake_session_info(),
+                _sessionInfo=self.__session_repository.get_session_info(),
                 _itemCardId=placed_card_id,
                 _opponentTargetUnitIndex=unit_index)
         )

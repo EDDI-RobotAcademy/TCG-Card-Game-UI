@@ -79,7 +79,7 @@ class MyCardMainFrame(OpenGLFrame):
 
     def initgl(self):
         print("initgl 입니다.")
-        glClearColor(0.0, 0.0, 0.0, 0)
+        glClearColor(1.0, 1.0, 1.0, 0)
         glOrtho(0, self.width, self.height, 0, -1, 1)
 
         # self.tkMakeCurrent()
@@ -142,17 +142,17 @@ class MyCardMainFrame(OpenGLFrame):
         self.tkMakeCurrent()
         self.render.render()
 
-        if self.show_my_deck_register_screen is True:
-            glEnable(GL_BLEND)
-            if glIsEnabled(GL_BLEND):
-                print("Blending is enabled.")
-            else:
-                print("Blending is not enabled.")
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-
-            self.make_my_deck_register_frame()
-            self.render_after = MyDeckRegisterFrameRenderer(self.my_deck_register_scene, self)
-            self.render_after.render()
+        # if self.show_my_deck_register_screen is True:
+        #     glEnable(GL_BLEND)
+        #     if glIsEnabled(GL_BLEND):
+        #         print("Blending is enabled.")
+        #     else:
+        #         print("Blending is not enabled.")
+        #     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+        #
+        #     self.make_my_deck_register_frame()
+        #     self.render_after = MyDeckRegisterFrameRenderer(self.my_deck_register_scene, self)
+        #     self.render_after.render()
 
     def make_card_main_frame(self):
         # project_root = get_project_root()
@@ -328,7 +328,7 @@ class MyCardMainFrame(OpenGLFrame):
                                               ])
         # self.my_card_main_scene.add_button_list(next_page_button)
         self.my_card_main_scene.add_next_button(next_page_button)
-        print(f"버튼들 다 담김?: {self.my_card_main_scene.get_button_list()}")
+        print(f"my_card_main_frame -> 버튼들(next_button) 다 담김?: {self.my_card_main_scene.get_next_button()}")
 
         # 이전 페이지 버튼
         # before_page_button_rectangle = Rectangle(color=(0.0, 0.0, 1.0, 1.0),
@@ -372,6 +372,7 @@ class MyCardMainFrame(OpenGLFrame):
                                               ])
         # self.my_card_main_scene.add_button_list(pre_page_button)
         self.my_card_main_scene.add_prev_button(prev_page_button)
+        print(f"my_card_main_frame -> 버튼들(prev_button) 다 담김?: {self.my_card_main_scene.get_prev_button()}")
 
         # TODO: 카드 갯수 표기 배치 (이건 한 개만 테스트 한 것)
         # 가로 길이 비율 0.036, 세로 길이 비율 0.056

@@ -134,6 +134,7 @@ from battle_field_muligun.service.request.muligun_request import MuligunRequest
 
 from card_info_from_csv.repository.card_info_from_csv_repository_impl import CardInfoFromCsvRepositoryImpl
 from common.attack_type import AttackType
+from common.battle_finish_position import BattleFinishPosition
 from common.card_grade import CardGrade
 from common.card_race import CardRace
 from common.card_type import CardType
@@ -207,6 +208,8 @@ class BattleFieldFrame(OpenGLFrame):
         self.drag_start = None
 
         self.lightning_border = LightningBorder()
+
+        self.game_end_sound_call = False
 
         self.your_hand_repository = YourHandRepository.getInstance()
         self.hand_card_list = None
@@ -443,6 +446,7 @@ class BattleFieldFrame(OpenGLFrame):
 
         self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_skill(width, height)
         self.pre_drawed_image_instance.pre_draw_full_screen_sea_of_wraith(width, height)
+        self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_targeting_skill(width, height)
 
         battle_field_scene = BattleFieldScene()
         battle_field_scene.create_battle_field_cene(self.width, self.height)
@@ -1093,6 +1097,11 @@ class BattleFieldFrame(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
+        self.your_hand_prev_button.draw()
+        self.your_hand_next_button.draw()
+
+        self.post_draw()
+
         current_page_your_hand_list = self.your_hand_repository.get_current_page_your_hand_list()
         if current_page_your_hand_list is not None:
             for get_current_page_hand_card in current_page_your_hand_list:
@@ -1118,10 +1127,7 @@ class BattleFieldFrame(OpenGLFrame):
                         self.lightning_border.update_shape(selected_search_unit)
                         self.lightning_border.draw_lightning_border()
 
-        self.your_hand_prev_button.draw()
-        self.your_hand_next_button.draw()
 
-        self.post_draw()
 
         if self.field_area_inside_handler.get_field_area_action() is FieldAreaAction.PLAY_ANIMATION:
             for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
@@ -1461,6 +1467,8 @@ class BattleFieldFrame(OpenGLFrame):
 
                 vibration(1)
 
+            self.__music_player_repository.play_sound_effect_of_card_execution('death_scythe')
+
             self.play_effect_animation_by_index_and_call_function(animation_index, vibration_death_scythe)
 
         if self.field_area_inside_handler.get_required_to_process_passive_skill_multiple_unit_list():
@@ -1618,6 +1626,7 @@ class BattleFieldFrame(OpenGLFrame):
             self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
             self.opponent_field_area_inside_handler.clear_field_area_action()
 
+        # self.post_draw()
 
         if self.current_fixed_details_card:
             self.current_fixed_details_card.set_width_ratio(self.width_ratio)
@@ -1920,17 +1929,26 @@ class BattleFieldFrame(OpenGLFrame):
                 attached_shape.set_height_ratio(self.height_ratio)
                 attached_shape.draw()
 
+        if self.__notify_reader_repository.get_notify_message_on_screen():
+            print('get_notify_message_on_screen:', self.__notify_reader_repository.get_notify_message_on_screen())
+            if self.__notify_reader_repository.get_notify_message_on_screen() == MessageNumber.YOUR_TURN.value:
+                self.reset_your_turn_timer()
+
+
+            self.message_on_the_screen.create_message_on_the_battle_screen(
+                self.__notify_reader_repository.get_notify_message_on_screen()
+            )
+            self.__notify_reader_repository.clear_notify_message_on_screen()
+
         # 글쓰기
         if self.message_on_the_screen.get_current_message_on_the_battle_screen():
-            glEnable(GL_BLEND)
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
             self.message_on_the_screen.set_width_ratio(self.width_ratio)
             self.message_on_the_screen.set_height_ratio(self.height_ratio)
             self.current_field_message_on_the_battle_screen_panel = (
                 self.message_on_the_screen.get_current_message_on_the_battle_screen()
             )
             self.current_field_message_on_the_battle_screen_panel.draw()
-            glDisable(GL_BLEND)
 
         # self.post_draw()
         # if len(self.battle_result_panel_list) != 0:
@@ -1941,11 +1959,17 @@ class BattleFieldFrame(OpenGLFrame):
         #         self.battle_result_panel_list[0].draw()
 
         if len(self.battle_result_panel_list) != 0:
-            if self.is_playing_action_animation == False and self.field_area_inside_handler.get_field_area_action() == None:
+            if self.is_playing_action_animation == False and self.field_area_inside_handler.get_field_area_action() == None and self.opponent_field_area_inside_handler.get_field_area_action() == None:
                 for battle_result_panel in self.battle_result_panel_list:
                     battle_result_panel.set_width_ratio(self.width_ratio)
                     battle_result_panel.set_height_ratio(self.height_ratio)
                     battle_result_panel.draw()
+                if self.battle_field_repository.get_is_win() == BattleFinishPosition.Winner and not self.game_end_sound_call:
+                    self.__music_player_repository.play_sound_effect_of_game_end('winner')
+                    self.game_end_sound_call = True
+                elif self.battle_field_repository.get_is_win() == BattleFinishPosition.Loser and not self.game_end_sound_call:
+                    self.__music_player_repository.play_sound_effect_of_game_end('loser')
+                    self.game_end_sound_call = True
 
         if self.skill_focus_background_panel:
             glEnable(GL_BLEND)
@@ -2132,6 +2156,8 @@ class BattleFieldFrame(OpenGLFrame):
                             self.return_to_initial_location()
                             self.reset_every_selected_action()
                             return
+
+                        self.__music_player_repository.play_sound_effect_of_card_execution('field_of_death')
 
                         opponent_field_energy = self.opponent_field_energy_repository.get_opponent_field_energy()
                         print(f"before land of death -> opponent_field_energy: {opponent_field_energy}")
@@ -3417,6 +3443,7 @@ class BattleFieldFrame(OpenGLFrame):
 
                     if pickable_card_base.is_point_inside((x, y)):
                         print("카드 선택!")
+                        self.__music_player_repository.play_sound_effect_of_mouse_on_click('hand_card_pick')
                         hand_card.selected = not hand_card.selected
                         self.selected_object = hand_card
                         self.drag_start = (x, y)
@@ -4151,6 +4178,7 @@ class BattleFieldFrame(OpenGLFrame):
                             return
 
                         print("덱에서 에너지 검색해서 부스팅 진행")
+                        self.__music_player_repository.play_sound_effect_of_card_execution('overflow_of_energy')
 
                         current_process_card_id = self.field_area_inside_handler.get_action_set_card_id()
 
@@ -4214,11 +4242,13 @@ class BattleFieldFrame(OpenGLFrame):
 
                 if self.your_deck.is_point_inside_next_button((x, y)):
                     print("다음 버튼 클릭")
+                    self.__music_player_repository.play_sound_effect_of_mouse_on_click('page_button_click')
 
                     self.your_deck_repository.next_deck_page()
 
                 if self.your_deck.is_point_inside_prev_button((x, y)):
                     print("이전 버튼 클릭")
+                    self.__music_player_repository.play_sound_effect_of_mouse_on_click('page_button_click')
 
                     self.your_deck_repository.prev_deck_page()
 
@@ -4268,6 +4298,8 @@ class BattleFieldFrame(OpenGLFrame):
                         print(
                             f"self.field_area_inside_handler.get - > {self.field_area_inside_handler.get_field_area_action()}")
                         return
+
+                    self.__music_player_repository.play_sound_effect_of_card_execution('call_of_leonic')
                     # 서포트
 
                     # 실제로 지울 때 몇 개 지우는지만 알면 된다.
@@ -4572,6 +4604,7 @@ class BattleFieldFrame(OpenGLFrame):
             your_hand_next_button_clicked = self.your_hand.is_point_inside_next_button_hand((x, y))
             if your_hand_next_button_clicked:
                 print("Your Hand Next Button Clicked!")
+                self.__music_player_repository.play_sound_effect_of_mouse_on_click('page_button_click')
 
                 self.your_hand_repository.next_your_hand_page()
                 self.selected_object = None
@@ -4579,6 +4612,7 @@ class BattleFieldFrame(OpenGLFrame):
             your_hand_prev_button_clicked = self.your_hand.is_point_inside_prev_button_hand((x, y))
             if your_hand_prev_button_clicked:
                 print("Your Hand Prev Button Clicked!")
+                self.__music_player_repository.play_sound_effect_of_mouse_on_click('page_button_click')
 
                 self.your_hand_repository.prev_your_hand_page()
                 self.selected_object = None
@@ -4748,14 +4782,16 @@ class BattleFieldFrame(OpenGLFrame):
             self.battle_field_repository.win()
             return
 
-        self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(False)
-        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
-        print(
-            f"{Fore.RED}call_turn_end() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
+        # self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(False)
+        # whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        # print(f"{Fore.RED}call_turn_end() -> whose_turn True(Your) or False(Opponent):{Fore.GREEN} {whose_turn}{Style.RESET_ALL}")
 
         hp_data = turn_end_request_result['player_field_unit_health_point_map']
         harmful_data = turn_end_request_result['player_field_unit_harmful_effect_map']
         dead_data = turn_end_request_result['player_field_unit_death_map']
+        field_energy_count = turn_end_request_result['player_field_energy_map']['Opponent']
+
+        self.opponent_field_energy_repository.set_opponent_field_energy(field_energy_count)
 
         self.apply_response_data_of_field_unit_hp(hp_data)
         self.apply_response_data_of_harmful_status(harmful_data)
@@ -4785,15 +4821,15 @@ class BattleFieldFrame(OpenGLFrame):
             self.your_field_unit_action_repository.set_current_field_unit_action_ready(current_your_field_unit_index)
             self.your_field_unit_action_repository.set_current_field_unit_action_count(current_your_field_unit_index, 1)
 
-        whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
-        if whose_turn is False:
-            self.timer.stop_timer()
-            self.timer_repository.set_timer(60)
-            self.timer_repository.set_function(self.fake_opponent_turn_end)
-            self.timer.get_timer()
-            self.timer.start_timer()
-            self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.OPPONENT_TURN.value)
-            self.reset_every_selected_action()
+        # whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        # if whose_turn is False:
+        self.timer.stop_timer()
+        self.timer_repository.set_timer(60)
+        self.timer_repository.set_function(None)
+        self.timer.get_timer()
+        self.timer.start_timer()
+        self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.OPPONENT_TURN.value)
+        self.reset_every_selected_action()
 
     def call_surrender(self):
         print("항복 요청!")
@@ -5762,9 +5798,9 @@ class BattleFieldFrame(OpenGLFrame):
         def slash_with_sword(step_count):
             if step_count == 1:
                 if self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 1:
-                    self.__music_player_repository.play_sound_effect_with_event_name('warrior_basic_attack')
+                    self.__music_player_repository.play_sound_effect_of_unit_attack('warrior_basic_attack')
                 elif self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
-                    self.__music_player_repository.play_sound_effect_with_event_name('magician_basic_attack')
+                    self.__music_player_repository.play_sound_effect_of_unit_attack('magician_basic_attack')
             if step_count < 11:
                 sword_accel_x_dist = sword_accel_x * step_count
 
@@ -6109,7 +6145,7 @@ class BattleFieldFrame(OpenGLFrame):
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
                 if step_count == 6:
-                    self.__music_player_repository.play_sound_effect_with_event_name('valrn_active_skill_2')
+                    self.__music_player_repository.play_sound_effect_of_unit_attack('valrn_active_skill_2')
             else:
                 self.start_wide_area_motion_animation(attack_animation_object)
                 self.is_attack_motion_finished = True
@@ -6454,7 +6490,7 @@ class BattleFieldFrame(OpenGLFrame):
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
                 if step_count == 6:
-                    self.__music_player_repository.play_sound_effect_with_event_name('valrn_active_skill_2')
+                    self.__music_player_repository.play_sound_effect_of_unit_attack('valrn_active_skill_2')
             else:
                 self.start_opponent_valrn_sea_of_wraith_motion_animation(attack_animation_object)
 
@@ -7167,9 +7203,9 @@ class BattleFieldFrame(OpenGLFrame):
         def slash_with_sword(step_count):
             if step_count == 1:
                 if self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 1:
-                    self.__music_player_repository.play_sound_effect_with_event_name('warrior_basic_attack')
+                    self.__music_player_repository.play_sound_effect_of_unit_attack('warrior_basic_attack')
                 elif self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
-                    self.__music_player_repository.play_sound_effect_with_event_name('magician_basic_attack')
+                    self.__music_player_repository.play_sound_effect_of_unit_attack('magician_basic_attack')
             if step_count < 11:
                 sword_accel_x_dist = sword_accel_x * step_count
 
@@ -7378,6 +7414,8 @@ class BattleFieldFrame(OpenGLFrame):
 
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
+                if step_count == 9:
+                    self.__music_player_repository.play_sound_effect_of_unit_attack('nether_passive_skill_1')
             else:
                 self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
                     'nether_blade_area_skill',
@@ -7620,6 +7658,7 @@ class BattleFieldFrame(OpenGLFrame):
     ### Opponent Second Passive
     def start_opponent_nether_blade_second_passive_targeting_motion_animation(self, attack_animation_object):
         steps = 50
+        self.__music_player_repository.play_sound_effect_of_unit_attack('nether_passive_skill_2')
 
         is_attack_main_character = False
         your_field_unit = None
@@ -7882,7 +7921,7 @@ class BattleFieldFrame(OpenGLFrame):
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
                 if step_count == 9:
-                    self.__music_player_repository.play_sound_effect_with_event_name('nether_passive_skill_1')
+                    self.__music_player_repository.play_sound_effect_of_unit_attack('nether_passive_skill_1')
             else:
 
                 # effect_animation.draw_full_screen_animation_panel()
@@ -8214,9 +8253,23 @@ class BattleFieldFrame(OpenGLFrame):
         self.timer_repository.set_check_nether_blade_second_passive_targeting_animation(True)
         update_position(1)
 
+    # def start_nether_blade_second_passive_targeting_motion_animation(self):
+    #     steps = 20
+    #
+    #     def nether_blade_second_targeting_action(step_count):
+    #
+    #         if step_count < steps:
+    #             self.master.after(20, nether_blade_second_targeting_action, step_count + 1)
+    #         else:
+    #             self.nether_blade_second_passive_targeting_skill_after_effect()
+    #
+    #     self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
+    #         'sea_of_wraith', nether_blade_second_targeting_action, 1)
+
     def start_nether_blade_second_passive_targeting_motion_animation(self):
+    # def nether_blade_second_passive_targeting_skill_after_effect(self):
         steps = 50
-        self.__music_player_repository.play_sound_effect_with_event_name('nether_passive_skill_2')
+        self.__music_player_repository.play_sound_effect_of_unit_attack('nether_passive_skill_2')
 
         is_attack_main_character = self.attack_animation_object.get_is_your_attack_main_character()
         opponent_field_unit = None
@@ -8490,7 +8543,7 @@ class BattleFieldFrame(OpenGLFrame):
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
                 if step_count == 9:
-                    self.__music_player_repository.play_sound_effect_with_event_name('nether_passive_skill_1')
+                    self.__music_player_repository.play_sound_effect_of_unit_attack('nether_passive_skill_1')
             else:
                 self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
                     'nether_blade_area_skill',
@@ -8826,7 +8879,7 @@ class BattleFieldFrame(OpenGLFrame):
 
     def start_nether_blade_turn_start_second_passive_targeting_motion_animation(self):
         steps = 50
-        self.__music_player_repository.play_sound_effect_with_event_name('nether_passive_skill_2')
+        self.__music_player_repository.play_sound_effect_of_unit_attack('nether_passive_skill_2')
 
         is_attack_main_character = False
         opponent_field_unit = None
@@ -9233,7 +9286,7 @@ class BattleFieldFrame(OpenGLFrame):
 
         # self.play_effect_animation_by_index_and_call_function(your_field_card_index,
         #                                                       burst_shadow_ball_animation)
-        self.__music_player_repository.play_sound_effect_with_event_name('valrn_active_skill_1')
+        self.__music_player_repository.play_sound_effect_of_unit_attack('valrn_active_skill_1')
         self.play_effect_animation_with_acceleration_by_index_and_call_function(
             your_field_card_index,
             burst_shadow_ball_animation,
@@ -9637,7 +9690,7 @@ class BattleFieldFrame(OpenGLFrame):
 
         # self.play_effect_animation_by_index_and_call_function(your_field_card_index,
         #                                                       burst_shadow_ball_animation)
-        self.__music_player_repository.play_sound_effect_with_event_name('valrn_active_skill_1')
+        self.__music_player_repository.play_sound_effect_of_unit_attack('valrn_active_skill_1')
         self.play_effect_animation_with_acceleration_by_index_and_call_function(
             your_field_card_index,
             burst_shadow_ball_animation,
@@ -9945,7 +9998,7 @@ class BattleFieldFrame(OpenGLFrame):
 
         # self.play_effect_animation_by_index_and_call_function(your_field_card_index,
         #                                                       burst_shadow_ball_animation)
-        self.__music_player_repository.play_sound_effect_with_event_name('valrn_active_skill_1')
+        self.__music_player_repository.play_sound_effect_of_unit_attack('valrn_active_skill_1')
         self.play_effect_animation_with_acceleration_by_index_and_call_function(
             opponent_field_card_index,
             burst_shadow_ball_animation,
@@ -10308,7 +10361,7 @@ class BattleFieldFrame(OpenGLFrame):
 
         # self.play_effect_animation_by_index_and_call_function(your_field_card_index,
         #                                                       burst_shadow_ball_animation)
-        self.__music_player_repository.play_sound_effect_with_event_name('valrn_active_skill_1')
+        self.__music_player_repository.play_sound_effect_of_unit_attack('valrn_active_skill_1')
         self.play_effect_animation_with_acceleration_by_index_and_call_function(
             opponent_field_card_index,
             burst_shadow_ball_animation,
@@ -10620,8 +10673,8 @@ class BattleFieldFrame(OpenGLFrame):
 
             if step_count < steps:
                 self.master.after(20, update_position, step_count + 1)
-                if step_count == 8 and self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
-                    self.__music_player_repository.play_sound_effect_with_event_name('magician_basic_attack')
+                # if step_count == 8 and self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
+                #     self.__music_player_repository.play_sound_effect_with_event_name('magician_basic_attack')
             else:
                 self.start_opponent_attack_main_character_post_animation(attack_animation_object)
 
@@ -10658,9 +10711,9 @@ class BattleFieldFrame(OpenGLFrame):
         def moving_action(step_count):
             if step_count == 1:
                 if self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 1:
-                    self.__music_player_repository.play_sound_effect_with_event_name('warrior_basic_attack')
-                # elif self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
-                #     self.__music_player_repository.play_sound_effect_with_event_name_for_wav('magician_basic_attack')
+                    self.__music_player_repository.play_sound_effect_of_unit_attack('warrior_basic_attack')
+                elif self.card_info_repository.getCardJobForCardNumber(animation_actor_card_id) == 2:
+                    self.__music_player_repository.play_sound_effect_of_unit_attack('magician_basic_attack')
             if step_count < 11:
                 sword_accel_x_dist = sword_accel_x * step_count
 
@@ -11149,6 +11202,8 @@ class BattleFieldFrame(OpenGLFrame):
         self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
             animation_index, effect_animation_panel)
 
+        self.__music_player_repository.play_sound_effect_of_card_execution(effect_name)
+
         self.play_effect_animation_by_index_and_call_function(animation_index, function)
 
     def create_effect_animation_with_vertices_and_play_animation_and_call_function_with_param(self, effect_name,
@@ -11201,6 +11256,9 @@ class BattleFieldFrame(OpenGLFrame):
         self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
             animation_index, effect_animation_panel)
 
+        if effect_name == 'dark_blast':
+            self.__music_player_repository.play_sound_effect_of_card_execution('energy_burn')
+
         self.play_effect_animation_by_index_and_call_function_with_param(animation_index, function, param)
 
     def create_effect_animation_to_your_field_and_play_animation_and_call_function_with_param(self, effect_name,
@@ -11223,15 +11281,26 @@ class BattleFieldFrame(OpenGLFrame):
 
         self.play_effect_animation_by_index_and_call_function_with_param(animation_index, function, param)
 
+    def reset_your_turn_timer(self):
+        self.timer.stop_timer()
+        self.timer_repository.set_timer(60)
+        self.timer_repository.set_function(self.call_turn_end)
+        self.timer_repository.set_unit_timeout_function(self.targeting_skill_timeout)
+        self.timer.get_timer()
+        self.timer.start_timer()
+
     def start_first_turn(self):
+        self.timer_repository.set_timer(60)
+        self.timer.get_timer()
+        self.timer.start_timer()
         whose_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
         if whose_turn is True:
             self.timer_repository.set_function(self.call_turn_end)
             self.timer_repository.set_unit_timeout_function(self.targeting_skill_timeout)
-            self.timer_repository.set_timer(60)
-            self.timer.get_timer()
-            self.timer.start_timer()
+
             self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.YOUR_TURN.value)
+        else:
+            self.message_on_the_screen.create_message_on_the_battle_screen(MessageNumber.OPPONENT_TURN.value)
 
         #     return
         #
@@ -11245,9 +11314,9 @@ class BattleFieldFrame(OpenGLFrame):
 
     def targeting_skill_timeout(self):
         print("패시브 타임아웃 확인")
-        my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
-        if my_turn is False:
-            return
+        # my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        # if my_turn is False:
+        #     return
         print("내 턴에만 되는지 확인용")
         if self.timer_repository.get_check_nether_blade_second_passive_targeting_animation() is True:
             self.finish_nether_blade_second_passive_targeting_animation(self.attack_animation_object)
@@ -11283,9 +11352,9 @@ class BattleFieldFrame(OpenGLFrame):
         self.timer.start_timer()
 
     def check_my_turn(self):
-        my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
-        if my_turn is True:
-            return
+        # my_turn = self.__notify_reader_repository.get_is_your_turn_for_check_fake_process()
+        # if my_turn is True:
+        #     return
         # my_turn_result = CheckMyTurnRequest(
         #         self.__session_repository.get_session_info())
         my_turn_result = self.round_repository.request_turn_end(
@@ -11548,6 +11617,8 @@ class BattleFieldFrame(OpenGLFrame):
 
                     self.create_effect_animation_to_your_unit_and_play_animation_and_call_function(
                         'death_scythe', int(unit_index), vibration_death_scythe_you)
+
+                self.__music_player_repository.play_sound_effect_of_card_execution('death_scythe')
 
     def energy_burn_animation(self):
         notify_dict_data = self.attack_animation_object.get_notify_data()
