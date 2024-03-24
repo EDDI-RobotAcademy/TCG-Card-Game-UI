@@ -2137,8 +2137,9 @@ class BattleFieldFrame(OpenGLFrame):
                                 # self.selected_object = None
                                 self.return_to_initial_location()
                                 self.reset_every_selected_action()
+                                is_contract_of_doom_false_message = response.get('false_message_enum')
                                 self.message_on_the_screen.create_message_on_the_battle_screen(
-                                    MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN.value)
+                                    is_contract_of_doom_false_message)
                                 return
 
                             self.attack_animation_object.set_your_usage_card_id(your_card_id)
@@ -2242,15 +2243,14 @@ class BattleFieldFrame(OpenGLFrame):
                 is_pickable_card_inside_unit = self.opponent_fixed_unit_card_inside_handler.handle_pickable_card_inside_unit(
                     self.selected_object, x, y)
 
-                if is_pickable_card_inside_unit:
-                    self.selected_object = None
-                    # self.return_to_initial_location()
-                    return
-                elif is_pickable_card_inside_unit == False:
+                if isinstance(is_pickable_card_inside_unit, int):
                     self.return_to_initial_location()
                     self.reset_every_selected_action()
                     self.message_on_the_screen.create_message_on_the_battle_screen(
-                        MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN.value)
+                        is_pickable_card_inside_unit)
+                elif is_pickable_card_inside_unit:
+                    self.selected_object = None
+                    # self.return_to_initial_location()
                     return
                 else:
                     self.return_to_initial_location()
@@ -2316,8 +2316,9 @@ class BattleFieldFrame(OpenGLFrame):
                                     # self.selected_object = None
                                     self.return_to_initial_location()
                                     self.reset_every_selected_action()
+                                    is_morale_conversion_false_message = response.get('false_message_enum')
                                     self.message_on_the_screen.create_message_on_the_battle_screen(
-                                        MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN.value)
+                                        is_morale_conversion_false_message)
                                     return
 
                                 card_id = current_field_unit.get_card_number()
@@ -2403,8 +2404,9 @@ class BattleFieldFrame(OpenGLFrame):
                                 if is_success_value == False:
                                     self.return_to_initial_location()
                                     self.reset_every_selected_action()
+                                    is_false_message = response.get('false_message_enum')
                                     self.message_on_the_screen.create_message_on_the_battle_screen(
-                                        MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN.value)
+                                        is_false_message)
                                     return
 
                                 self.your_field_unit_repository.update_your_unit_extra_effect_at_index(unit_index,
@@ -2425,8 +2427,9 @@ class BattleFieldFrame(OpenGLFrame):
                                 if is_success_value == False:
                                     self.return_to_initial_location()
                                     self.reset_every_selected_action()
+                                    is_false_message = response.get('false_message_enum')
                                     self.message_on_the_screen.create_message_on_the_battle_screen(
-                                        MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN.value)
+                                        is_false_message)
                                     return
 
                             # self.selected_object = None
@@ -2512,16 +2515,10 @@ class BattleFieldFrame(OpenGLFrame):
             drop_action_result = self.field_area_inside_handler.handle_card_drop(x, y, self.selected_object,
                                                                                  self.your_field_panel)
 
-            if drop_action_result is MessageNumber.USE_MYTH_CARD_AFTER_FOUR_TURN:
-                print("신화카드는 4턴 후에 사용 가능")
+            if isinstance(drop_action_result ,int):
                 self.return_to_initial_location()
                 self.reset_every_selected_action()
-                self.message_on_the_screen.create_message_on_the_battle_screen(drop_action_result.value)
-            elif drop_action_result is MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN:
-                print("상대턴 사용 불가")
-                self.return_to_initial_location()
-                self.reset_every_selected_action()
-                self.message_on_the_screen.create_message_on_the_battle_screen(drop_action_result.value)
+                self.message_on_the_screen.create_message_on_the_battle_screen(drop_action_result)
             elif drop_action_result is None or drop_action_result is FieldAreaAction.Dummy:
                 print("self.field_area_inside_handler.get_field_area_action() = None")
                 self.return_to_initial_location()
@@ -3538,6 +3535,9 @@ class BattleFieldFrame(OpenGLFrame):
                         # )
                         if not response.get('is_success'):
                             self.reset_every_selected_action()
+                            is_false_message = response.get('false_message_enum')
+                            self.message_on_the_screen.create_message_on_the_battle_screen(
+                                is_false_message)
                             return
 
                         # self.your_field_unit_repository.attach_race_energy(
@@ -3615,6 +3615,9 @@ class BattleFieldFrame(OpenGLFrame):
 
                     if is_success_value == False:
                         self.reset_every_selected_action()
+                        is_false_message = response.get('false_message_enum')
+                        self.message_on_the_screen.create_message_on_the_battle_screen(
+                            is_false_message)
                         return
 
                     self.attack_animation_object.set_opponent_main_character(self.opponent_main_character_panel)
@@ -4219,6 +4222,9 @@ class BattleFieldFrame(OpenGLFrame):
                         if is_success_value == False:
                             # self.selected_object = None
                             self.reset_every_selected_action()
+                            is_false_message = response.get('false_message_enum')
+                            self.message_on_the_screen.create_message_on_the_battle_screen(
+                                is_false_message)
                             return
 
                         print("덱에서 에너지 검색해서 부스팅 진행")
@@ -4348,6 +4354,9 @@ class BattleFieldFrame(OpenGLFrame):
                         self.selected_search_unit_page_number_list = []
                         print(
                             f"self.field_area_inside_handler.get - > {self.field_area_inside_handler.get_field_area_action()}")
+                        is_false_message = response.get('false_message_enum')
+                        self.message_on_the_screen.create_message_on_the_battle_screen(
+                            is_false_message)
                         return
 
                     self.__music_player_repository.play_sound_effect_of_card_execution('call_of_leonic')
@@ -4487,8 +4496,9 @@ class BattleFieldFrame(OpenGLFrame):
                             if is_success_value == False:
                                 self.return_to_initial_location()
                                 self.reset_every_selected_action()
+                                is_false_message = corpse_explosion_response.get('false_message_enum')
                                 self.message_on_the_screen.create_message_on_the_battle_screen(
-                                    MessageNumber.CARD_UNAVAILABLE_OPPONENT_TURN.value)
+                                    is_false_message)
                                 return
 
                             def calculate_corpse_explosion():
