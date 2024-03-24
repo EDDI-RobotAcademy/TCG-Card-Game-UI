@@ -999,18 +999,22 @@ class BattleFieldFrame(OpenGLFrame):
             fixed_card_base.set_height_ratio(self.height_ratio)
             fixed_card_base.draw()
 
-            if self.opponent_field_unit_repository.get_is_index_in_harmful_status(index):
-
-                if 'dark_flame' in self.opponent_field_unit_repository.get_harmful_status_by_index(index):
-
+            if self.opponent_field_unit_repository.get_is_index_in_harmful_status(index) == True:
+                if 'DarkFire' in self.opponent_field_unit_repository.get_harmful_status_by_index(index):
                     fixed_card_effect_animation = opponent_field_unit.get_fixed_card_dark_flame_effect_animation()
                     if fixed_card_effect_animation is not None:
+                        fixed_card_effect_animation.set_total_window_size(self.width, self.height)
+                        fixed_card_effect_animation.set_width_ratio(self.width_ratio)
+                        fixed_card_effect_animation.set_height_ratio(self.height_ratio)
+                        print(fixed_card_effect_animation.get_animation_panel())
                         if fixed_card_effect_animation.get_animation_panel() == None:
                             vertices = [(0, 0), (105, 0), (105, 170), (0, 170)]
                             fixed_card_effect_animation.draw_animation_panel_with_vertices(vertices)
-
-                        fixed_card_effect_animation.update_effect_animation_panel()
-                        fixed_card_effect_animation.get_animation_panel().draw()
+                            self.play_harmful_effect_animation(self.opponent_field_unit_repository, index,
+                                                               fixed_card_effect_animation)
+                            print('create harmful effect animation')
+                        else:
+                            fixed_card_effect_animation.get_animation_panel().draw()
                     else:
                         opponent_field_unit.create_fixed_card_dark_flame_effect_animation()
 
@@ -1082,6 +1086,25 @@ class BattleFieldFrame(OpenGLFrame):
                     attached_shape.set_width_ratio(self.width_ratio)
                     attached_shape.set_height_ratio(self.height_ratio)
                     attached_shape.draw()
+
+                if self.your_field_unit_repository.get_is_index_in_harmful_status(index) == True:
+                    if 'DarkFire' in self.your_field_unit_repository.get_harmful_status_by_index(index):
+                        fixed_card_effect_animation = field_unit.get_fixed_card_dark_flame_effect_animation()
+                        if fixed_card_effect_animation is not None:
+                            fixed_card_effect_animation.set_total_window_size(self.width, self.height)
+                            fixed_card_effect_animation.set_width_ratio(self.width_ratio)
+                            fixed_card_effect_animation.set_height_ratio(self.height_ratio)
+                            print(fixed_card_effect_animation.get_animation_panel())
+                            if fixed_card_effect_animation.get_animation_panel() == None:
+                                vertices = [(0, 0), (105, 0), (105, 170), (0, 170)]
+                                fixed_card_effect_animation.draw_animation_panel_with_vertices(vertices)
+                                self.play_harmful_effect_animation(self.your_field_unit_repository, index,
+                                                                   fixed_card_effect_animation)
+                                print('create harmful effect animation')
+                            else:
+                                fixed_card_effect_animation.get_animation_panel().draw()
+                        else:
+                            field_unit.create_fixed_card_dark_flame_effect_animation()
 
         # if len(self.battle_result_panel_list) == 2:
         # if len(self.battle_result_panel_list) != 0:
@@ -12145,3 +12168,19 @@ class BattleFieldFrame(OpenGLFrame):
         #         call_function=calculate_your_field_unit_hp
         #     )
         # )
+
+    def play_harmful_effect_animation(self, repository, index, harmful_effect_animation):
+
+        def animate():
+            if repository.get_is_index_in_harmful_status(index):
+                harmful_effect_animation.update_harmful_effect_animation_panel()
+            else:
+                harmful_effect_animation.is_finished = True
+
+            if not harmful_effect_animation.is_finished:
+                self.master.after(17, animate)
+            else:
+                print("harmful_effect_animation finish")
+
+        harmful_effect_animation.reset_animation_count()
+        self.master.after(0, animate)
