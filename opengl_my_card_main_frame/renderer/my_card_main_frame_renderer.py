@@ -68,6 +68,14 @@ class MyCardMainFrameRenderer:
         if current_page_number_object:
             current_page_number_object.draw()
 
+        max_page_object = self.my_card_repository.get_max_page_object()
+        if max_page_object:
+            max_page_object.draw()
+
+        page_slash_object = self.my_card_repository.get_page_slash_object()
+        if page_slash_object:
+            page_slash_object.draw()
+
         self.window.tkSwapBuffers()
 
     def _render_shape(self, shape):
