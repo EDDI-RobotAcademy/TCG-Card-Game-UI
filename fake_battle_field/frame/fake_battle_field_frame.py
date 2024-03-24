@@ -4021,6 +4021,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             # self.selected_object = None
                             self.return_to_initial_location()
                             self.reset_every_selected_action()
+                            is_death_false_message = response.get('false_message_enum')
+                            self.message_on_the_screen.create_message_on_the_battle_screen(
+                                is_death_false_message)
                             return
 
                         def field_of_death(param):
