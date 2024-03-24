@@ -68,7 +68,6 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
                     # TODO : battleField 도메인을 호출하여 프레임을 전환해야합니다.
                     self.__rockPaperScissorsServiceImpl.startRPS_Timer()
                     switchFrameWithMenuName('rock-paper-scissors')
-                    self.__rockPaperScissorsServiceImpl.RPS_TimerFunction(rootWindow, switchFrameWithMenuName)
                     # TODO : 또한 opponentId를 넘겨주어 상대편 아이디가 표시되게 합니다.
                     # self.__battleFieldService.someFunction(opponentId)
 

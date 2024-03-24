@@ -162,6 +162,9 @@ class UiFrameControllerImpl(UiFrameController):
         rockPaperScissorsFrame = self.__rockPaperScissorsService.createRockPaperScissorsUiFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerRockPaperScissorsUiFrame(rockPaperScissorsFrame)
 
+        checkRockPaperScissorsFrame = self.__checkRockPaperScissorsWinnerServiceImpl.createCheckRockPaperScissorsWinnerUiFrame(rootWindow, self.switchFrameWithMenuName)
+        self.__uiFrameService.registerCheckRockPaperScissorsUiFrame(checkRockPaperScissorsFrame)
+
         # TODO: 매칭 없이 통합 테스트를 진행하기 위한 별도의 가짜 방 (지속적으로 업데이트 해야함)
         fakeBattleFieldFrame = self.__fakeBattleFieldFrameServiece.createFakeBattleFieldFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerFakeBattleFieldUiFrame(fakeBattleFieldFrame)

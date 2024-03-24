@@ -10,6 +10,7 @@ from rock_paper_scissors.service.rock_paper_scissors_service import RockPaperSci
 from rock_paper_scissors.service.request.rock_paper_scissors_request import RockPaperScissorsRequest
 from session.repository.session_repository_impl import SessionRepositoryImpl
 from rock_paper_scissors.frame.check_rock_paper_scissors_winner.service.check_rock_paper_scissors_winner_service_impl import CheckRockPaperScissorsWinnerServiceImpl
+from rock_paper_scissors.frame.check_rock_paper_scissors_winner.repository.check_rock_paper_scissors_winner_repository_impl import CheckRockPaperScissorsWinnerRepositoryImpl
 
 class RockPaperScissorsServiceImpl(RockPaperScissorsService):
     __instance = None
@@ -23,7 +24,8 @@ class RockPaperScissorsServiceImpl(RockPaperScissorsService):
             cls.__instance = super().__new__(cls)
             cls.__instance.__rockPaperScissorsRepositoryImpl = RockPaperScissorsRepositoryImpl.getInstance()
             cls.__instance.__sessionRepositoryImpl = SessionRepositoryImpl.getInstance()
-            cls.__instance.__checkRockPaperScissorsWinnerServiceImpl = CheckRockPaperScissorsWinnerServiceImpl()
+            cls.__instance.__checkRockPaperScissorsWinnerServiceImpl = CheckRockPaperScissorsWinnerServiceImpl.getInstance()
+            cls.__instance.__checkRockPaperScissorsWinnerRepositoryImpl = CheckRockPaperScissorsWinnerRepositoryImpl.getInstance()
 
             cls.__instance.__preDrawedImageInstance = PreDrawedImage.getInstance()
         return cls.__instance
@@ -51,17 +53,15 @@ class RockPaperScissorsServiceImpl(RockPaperScissorsService):
 
     def createRockPaperScissorsUiFrame(self, rootWindow, switchFrameWithMenuName):
         rockPaperScissorsFrame = self.__rockPaperScissorsRepositoryImpl.createRockPaperScissorsFrame(rootWindow)
-
         def final_decision_button_click(target_rps):
             print(f"target_rps: {target_rps}")
-            self.__rockPaperScissorsRepositoryImpl.setRPSLoop(target_rps)
             responseData = self.__rockPaperScissorsRepositoryImpl.requestRockPaperScissors(
                 RockPaperScissorsRequest(self.__sessionRepositoryImpl.get_session_info(), target_rps))
             print(f"responseData: {responseData}")
             if responseData.get("is_success") is True:
-                self.RPS_Timer.deleteTimer()
-                self.__checkRockPaperScissorsWinnerServiceImpl.createCheckRockPaperScissorsWinnerUiFrame(
-                    rockPaperScissorsFrame, switchFrameWithMenuName)
+                self.RPS_Timer.stopTimer()
+                switchFrameWithMenuName('check-rock-paper-scissors')
+                self.__checkRockPaperScissorsWinnerServiceImpl.check_RPSWinner(rootWindow, switchFrameWithMenuName)
 
 
         def on_paper_image_click(event):
@@ -145,16 +145,15 @@ class RockPaperScissorsServiceImpl(RockPaperScissorsService):
         self.final_decision_button.place(relx=0.5, rely=0.9, anchor="center")
 
         def timeout():
+            print("시간초과")
             responseData = self.__rockPaperScissorsRepositoryImpl.requestRockPaperScissors(
                 RockPaperScissorsRequest(self.__sessionRepositoryImpl.get_session_info(), ""))
             if responseData.get("is_success") is True:
+                self.RPS_Timer.stopTimer()
                 self.__checkRockPaperScissorsWinnerServiceImpl.createCheckRockPaperScissorsWinnerUiFrame(
                     rockPaperScissorsFrame, switchFrameWithMenuName)
 
         self.RPS_Timer = Timer(rockPaperScissorsFrame, 30, 0.2, 0.6, timeout)
-
-
-
 
         return rockPaperScissorsFrame
 
