@@ -213,7 +213,7 @@ class PreDrawedImage:
         self.__pre_drawed_opponent_tomb = ImageDataLoader.load_rectangle_image_data(tomb_image_path)
 
     def pre_draw_page_slash(self):
-        page_slash_image_path = os.path.join(self.__project_root, "local_storage", "number_of_page", "0.png")
+        page_slash_image_path = os.path.join(self.__project_root, "local_storage", "my_card_frame", "number_of_page", "0.png")
         self.__pre_drawed_page_slash = ImageDataLoader.load_rectangle_origin_image_data(page_slash_image_path)
 
     def pre_draw_opponent_lost_zone(self):
@@ -400,11 +400,11 @@ class PreDrawedImage:
             self.__pre_drawed_card_type[card_number] = card_type_image_data_list[type_number]
 
     def pre_draw_page_number(self):
-        image_dir = os.path.join(self.__project_root, "local_storage", "number_of_page")
+        image_dir = os.path.join(self.__project_root, "local_storage", "my_card_frame", "number_of_page")
         file_list = os.listdir(image_dir)
 
         for page_number in range(1, len(file_list) + 1):
-            page_number_image_data = os.path.join(self.__project_root, "local_storage", "number_of_page", f"{page_number}.png")
+            page_number_image_data = os.path.join(self.__project_root, "local_storage", "my_card_frame", "number_of_page", f"{page_number}.png")
             self.__pre_drawed_page_number[page_number] = ImageDataLoader.load_rectangle_origin_image_data(page_number_image_data)
 
     def pre_draw_mulligan_timer(self):
