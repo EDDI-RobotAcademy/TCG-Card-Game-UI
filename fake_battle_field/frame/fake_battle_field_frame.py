@@ -715,8 +715,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     result = self.__fake_opponent_hand_repository.request_use_energy_card_to_unit(
                         RequestUseFieldOfDeath(
                             _sessionInfo=self.__session_repository.get_second_fake_session_info(),
-                            _supportCardId=36
-                        ))
+                            _itemCardId=36
+                        )
+                    )
 
                     print(f"fake death scythe result: {result}")
                     is_success_value = result.get('is_success', False)
@@ -4040,7 +4041,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             response = self.your_hand_repository.request_use_field_of_death(
                                 RequestUseFieldOfDeath(
                                     _sessionInfo=self.__session_repository.get_first_fake_session_info(),
-                                    _supportCardId=your_card_id)
+                                    _itemCardId=your_card_id)
                             )
 
                             is_death_success_value = response.get('is_success', False)

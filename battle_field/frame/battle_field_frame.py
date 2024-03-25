@@ -2214,7 +2214,7 @@ class BattleFieldFrame(OpenGLFrame):
                             response = self.your_hand_repository.request_use_field_of_death(
                                 RequestUseFieldOfDeath(
                                     _sessionInfo=self.__session_repository.get_session_info(),
-                                    _supportCardId=your_card_id)
+                                    _itemCardId=your_card_id)
                             )
 
                             is_death_success_value = response.get('is_success', False)
