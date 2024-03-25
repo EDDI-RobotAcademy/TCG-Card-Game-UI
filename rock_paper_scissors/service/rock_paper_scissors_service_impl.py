@@ -151,7 +151,7 @@ class RockPaperScissorsServiceImpl(RockPaperScissorsService):
                 RockPaperScissorsRequest(self.__sessionRepositoryImpl.get_session_info(), ""))
             if responseData.get("is_success") is True:
                 self.RPS_Timer.stopTimer()
-                RPS_label.config(text="")
+                RPS_label.config(text="보")
                 switchFrameWithMenuName('check-rock-paper-scissors')
                 self.__checkRockPaperScissorsWinnerServiceImpl.check_RPSWinner(rootWindow, switchFrameWithMenuName)
 

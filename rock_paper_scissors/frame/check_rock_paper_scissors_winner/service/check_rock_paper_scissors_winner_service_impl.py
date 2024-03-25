@@ -58,9 +58,10 @@ class CheckRockPaperScissorsWinnerServiceImpl(CheckRockPaperScissorsWinnerServic
                 # self.__notifyReaderRepositoryImpl.set_is_your_turn_for_check_fake_process(self.setWinnerToNotify())
                 checkRockPaperScissorsWinnerFrame.update()
                 time.sleep(5)
-                self.check_RPS_label.configure(text="상대방의 선택을 기다리는중")
                 self.__rockPaperScissorRepositoryImpl.resetRPS()
                 switchFrameWithMenuName('battle-field-muligun')
+                self.check_RPS_label.configure(text="상대방의 선택을 기다리는중")
+                checkRockPaperScissorsWinnerFrame.update()
                 break
 
             checkRockPaperScissorsWinnerFrame.update()
