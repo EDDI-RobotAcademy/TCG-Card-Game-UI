@@ -2170,7 +2170,7 @@ class BattleFieldFrame(OpenGLFrame):
 
                             return
 
-                if card_type in [CardType.SUPPORT.value]:
+                if card_type in [CardType.ITEM.value]:
                     if your_card_id != 36:
                         self.return_to_initial_location()
                         return
