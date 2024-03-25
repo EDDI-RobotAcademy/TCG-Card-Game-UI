@@ -18,3 +18,7 @@ class CheckRockPaperScissorsWinnerService(abc.ABC):
     def findWinner(self):
         pass
 
+    @abc.abstractmethod
+    def check_RPSWinner(self, rootWindow, switchFrameWithMenuName):
+        pass
+

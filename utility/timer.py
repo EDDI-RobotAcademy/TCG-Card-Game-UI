@@ -38,3 +38,8 @@ class Timer(tkinter.Label):
 
     def deleteTimer(self):
         self.destroy()
+
+    def stopTimer(self):
+        if self.__timer_id is not None:
+            self.master.after_cancel(self.__timer_id)
+            self.__timer_id = None
