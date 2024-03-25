@@ -55,7 +55,7 @@ class ReceiverRepositoryImpl(ReceiverRepository):
 
         while True:
             try:
-                data = socketObject.recv(1024)
+                data = socketObject.recv(2048)
 
                 if not data:
                     socketObject.close()
