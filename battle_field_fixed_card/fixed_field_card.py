@@ -92,6 +92,28 @@ class FixedFieldCard:
         else:
             return None
 
+    def create_fixed_card_freeze_effect_animation(self):
+
+        self.freeze_effect_animation = EffectAnimation()
+
+        self.freeze_effect_animation.set_animation_name('frozen_effect')
+        self.freeze_effect_animation.change_local_translation(self.local_translation)
+        # self.dark_flame_effect_animation = NonBackgroundImage(
+        #     image_data=self.__pre_drawed_image_instance.get_pre_draw_dark_flame_effect_animation(),
+        #     vertices=vertices,
+        #     local_translation=self.local_translation
+        # )
+        # self.dark_flame_effect_animation.set_initial_vertices(vertices)
+
+    def get_fixed_card_freeze_effect_animation(self):
+        return self.freeze_effect_animation
+
+    def get_fixed_card_freeze_effect_animation_panel(self):
+        print('get fixed card freeze effect panel: ', self.freeze_effect_animation)
+        if self.freeze_effect_animation is not None:
+            return self.freeze_effect_animation.get_animation_panel()
+        else:
+            return None
 
     def creat_fixed_card_energy_race_circle(self, color, vertices, local_translation):
         attached_energy_circle = Circle(color=color,
