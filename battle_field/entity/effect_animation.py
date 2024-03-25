@@ -211,9 +211,6 @@ class EffectAnimation:
             self.is_finished = True
 
     def update_harmful_effect_animation_panel(self):
-        print(self.total_animation_count)
-        print(self.__current_animation_count)
-
         if self.__current_animation_count == self.total_animation_count-1:
             self.__current_animation_count = 0
 

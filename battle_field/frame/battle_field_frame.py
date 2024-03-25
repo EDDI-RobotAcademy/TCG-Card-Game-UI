@@ -1007,7 +1007,6 @@ class BattleFieldFrame(OpenGLFrame):
                         fixed_card_effect_animation.set_total_window_size(self.width, self.height)
                         fixed_card_effect_animation.set_width_ratio(self.width_ratio)
                         fixed_card_effect_animation.set_height_ratio(self.height_ratio)
-                        print(fixed_card_effect_animation.get_animation_panel())
                         if fixed_card_effect_animation.get_animation_panel() == None:
                             vertices = [(0, 0), (105, 0), (105, 170), (0, 170)]
                             fixed_card_effect_animation.draw_animation_panel_with_vertices(vertices)
@@ -1095,7 +1094,6 @@ class BattleFieldFrame(OpenGLFrame):
                             fixed_card_effect_animation.set_total_window_size(self.width, self.height)
                             fixed_card_effect_animation.set_width_ratio(self.width_ratio)
                             fixed_card_effect_animation.set_height_ratio(self.height_ratio)
-                            print(fixed_card_effect_animation.get_animation_panel())
                             if fixed_card_effect_animation.get_animation_panel() == None:
                                 vertices = [(0, 0), (105, 0), (105, 170), (0, 170)]
                                 fixed_card_effect_animation.draw_animation_panel_with_vertices(vertices)
@@ -7654,11 +7652,17 @@ class BattleFieldFrame(OpenGLFrame):
 
                 # 죽은 유닛들 묘지에 배치 및 Replacing
                 for dead_unit_index in your_dead_field_unit_index_list:
-                    field_unit_id = self.your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
-                    self.your_tomb_repository.create_tomb_card(field_unit_id)
-                    self.your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
+                    def remove_field_unit(unit_index):
+                        field_unit_id = self.your_field_unit_repository.get_card_id_by_index(unit_index)
+                        self.your_tomb_repository.create_tomb_card(field_unit_id)
+                        self.your_field_unit_repository.remove_card_by_index(unit_index)
+                        self.your_field_unit_repository.remove_harmful_status_by_index(unit_index)
+                        self.your_field_unit_repository.replace_field_card_position()
 
-                self.your_field_unit_repository.replace_field_card_position()
+                    self.create_effect_animation_to_your_unit_and_play_animation_and_call_function_with_param(
+                        'death', dead_unit_index, remove_field_unit, dead_unit_index
+                    )
+
 
                 self.attack_animation_object.set_opponent_animation_actor(None)
                 self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
@@ -7898,11 +7902,16 @@ class BattleFieldFrame(OpenGLFrame):
 
                     # 죽은 유닛들 묘지에 배치 및 Replacing
                     for dead_unit_index in your_dead_field_unit_index_list:
-                        field_unit_id = self.your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
-                        self.your_tomb_repository.create_tomb_card(field_unit_id)
-                        self.your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
+                        def remove_field_unit(unit_index):
+                            field_unit_id = self.your_field_unit_repository.get_card_id_by_index(unit_index)
+                            self.your_tomb_repository.create_tomb_card(field_unit_id)
+                            self.your_field_unit_repository.remove_card_by_index(unit_index)
+                            self.your_field_unit_repository.remove_harmful_status_by_index(unit_index)
+                            self.your_field_unit_repository.replace_field_card_position()
 
-                    self.your_field_unit_repository.replace_field_card_position()
+                        self.create_effect_animation_to_your_unit_and_play_animation_and_call_function_with_param(
+                            'death', dead_unit_index, remove_field_unit, dead_unit_index
+                        )
 
                 else:
                     print(

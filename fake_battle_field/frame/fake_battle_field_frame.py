@@ -2605,7 +2605,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         fixed_card_effect_animation.set_total_window_size(self.width, self.height)
                         fixed_card_effect_animation.set_width_ratio(self.width_ratio)
                         fixed_card_effect_animation.set_height_ratio(self.height_ratio)
-                        print(fixed_card_effect_animation.get_animation_panel())
                         if fixed_card_effect_animation.get_animation_panel() == None:
                             vertices = [(0, 0), (105, 0), (105, 170), (0, 170)]
                             fixed_card_effect_animation.draw_animation_panel_with_vertices(vertices)
@@ -2685,7 +2684,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             fixed_card_effect_animation.set_total_window_size(self.width, self.height)
                             fixed_card_effect_animation.set_width_ratio(self.width_ratio)
                             fixed_card_effect_animation.set_height_ratio(self.height_ratio)
-                            print(fixed_card_effect_animation.get_animation_panel())
                             if fixed_card_effect_animation.get_animation_panel() == None:
                                 vertices = [(0, 0), (105, 0), (105, 170), (0, 170)]
                                 fixed_card_effect_animation.draw_animation_panel_with_vertices(vertices)
