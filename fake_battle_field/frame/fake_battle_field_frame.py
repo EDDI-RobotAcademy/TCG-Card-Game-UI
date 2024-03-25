@@ -10784,11 +10784,17 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                 # 죽은 유닛들 묘지에 배치 및 Replacing
                 for dead_unit_index in your_dead_field_unit_index_list:
-                    field_unit_id = self.your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
-                    self.your_tomb_repository.create_tomb_card(field_unit_id)
-                    self.your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
+                    def remove_field_unit(unit_index):
+                        field_unit_id = self.your_field_unit_repository.get_card_id_by_index(unit_index)
+                        self.your_tomb_repository.create_tomb_card(field_unit_id)
+                        self.your_field_unit_repository.remove_card_by_index(unit_index)
+                        self.your_field_unit_repository.remove_harmful_status_by_index(unit_index)
+                        self.your_field_unit_repository.replace_field_card_position()
 
-                self.your_field_unit_repository.replace_field_card_position()
+                    self.create_effect_animation_to_your_unit_and_play_animation_and_call_function_with_param(
+                        'death', dead_unit_index, remove_field_unit, dead_unit_index
+                    )
+
 
                 self.attack_animation_object.set_opponent_animation_actor(None)
                 self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
@@ -11065,11 +11071,16 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     # 죽은 유닛들 묘지에 배치 및 Replacing
                     for dead_unit_index in your_dead_field_unit_index_list:
-                        field_unit_id = self.your_field_unit_repository.get_card_id_by_index(int(dead_unit_index))
-                        self.your_tomb_repository.create_tomb_card(field_unit_id)
-                        self.your_field_unit_repository.remove_card_by_index(int(dead_unit_index))
+                        def remove_field_unit(unit_index):
+                            field_unit_id = self.your_field_unit_repository.get_card_id_by_index(unit_index)
+                            self.your_tomb_repository.create_tomb_card(field_unit_id)
+                            self.your_field_unit_repository.remove_card_by_index(unit_index)
+                            self.your_field_unit_repository.remove_harmful_status_by_index(unit_index)
+                            self.your_field_unit_repository.replace_field_card_position()
 
-                    self.your_field_unit_repository.replace_field_card_position()
+                        self.create_effect_animation_to_your_unit_and_play_animation_and_call_function_with_param(
+                            'death', dead_unit_index, remove_field_unit, dead_unit_index
+                        )
 
                 else:
                     print(f"{Fore.RED}메인 캐릭터 공격 -> is_attack_main_character(True): {Fore.GREEN}{is_attack_main_character}{Style.RESET_ALL}")
@@ -15229,7 +15240,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         if turn_end_request_result.get('is_success', False) == False:
             return
-        print(f"my_turn_result: {my_turn_result}")
+
         if turn_end_request_result.get('is_success') is True:
             self.__notify_reader_repository.set_is_your_turn_for_check_fake_process(True)
             self.timer.stop_timer()
