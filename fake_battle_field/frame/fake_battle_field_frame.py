@@ -4410,6 +4410,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             #     self.message_on_the_screen.create_message_on_the_battle_screen(drop_action_result)
             elif drop_action_result is None or drop_action_result is FieldAreaAction.Dummy:
                 print("self.field_area_inside_handler.get_field_area_action() = None")
+                self.selected_object = None
                 self.return_to_initial_location()
             elif drop_action_result is FieldAreaAction.ENERGY_BOOST:
                 print("self.field_area_inside_handler.get_field_area_action() = EnergyBoost")
