@@ -656,25 +656,21 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
     def search_card(self, notice_dictionary):
         notify_dict_data = notice_dictionary['NOTIFY_USE_SEARCH_DECK_SUPPORT_CARD']
+        card_id = (notify_dict_data.get("player_hand_use_map", {})
+                   .get("Opponent", {})
+                   .get("card_id", None))
+        self.__battle_field_repository.set_current_use_card_id(card_id)
 
         def call_of_leonic(notify_dict_data):
 
-            card_id = (notify_dict_data.get("player_hand_use_map", {})
-                       .get("Opponent", {})
-                       .get("card_id", None))
-
-            card_kind = (notify_dict_data.get("player_hand_use_map", {})
-                         .get("Opponent", {})
-                         .get("card_kind", None))
-
-            search_count = (notify_dict_data.get("player_hand_use_map", {})
+            search_count = (notify_dict_data.get("player_search_count_map", {})
                             .get("Opponent", None))
 
             fake_search_list = []
             for count in range(0, search_count):
                 fake_search_list.append(-1)
 
-            self.__battle_field_repository.set_current_use_card_id(card_id)
+
 
             self.__fake_opponent_hand_repository.save_fake_opponent_hand_list(fake_search_list)
 
