@@ -423,6 +423,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
 
             self.muligun_your_hand_repository.set_is_my_mulligan(True)
             current_hand_state = self.muligun_your_hand_repository.get_current_hand_state()
+            self.your_hand_repository.save_current_hand_state(current_hand_state)
             # print(self.hand_card_list)
             # for hand_card in self.hand_card_list:
             #     print(hand_card)
