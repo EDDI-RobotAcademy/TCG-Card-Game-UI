@@ -14560,10 +14560,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         def animate():
             if repository.get_is_index_in_harmful_status(index):
                 harmful_effect_animation.update_harmful_effect_animation_panel()
-                harmful_effect_animation.change_local_translation(
-                   repository.find_field_unit_by_index(
-                        index).get_fixed_card_base().get_local_translation()
-                )
+
             else:
                 harmful_effect_animation.is_finished = True
 
