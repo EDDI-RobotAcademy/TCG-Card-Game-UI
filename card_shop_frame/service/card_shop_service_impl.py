@@ -10,7 +10,10 @@ from card_shop_frame.frame.shop_title_frame.service.shop_title_frame_service_imp
 from card_shop_frame.frame.shop_button_frame.service.shop_button_frame_service_impl import ShopButtonFrameServiceImpl
 from card_shop_frame.frame.select_race_ui_frame.service.select_race_ui_frame_service_impl import SelectRaceUiFrameServiceImpl
 from lobby_frame.repository.lobby_menu_frame_repository_impl import LobbyMenuFrameRepositoryImpl
-from session.service.session_service_impl import SessionServiceImpl
+from session.repository.session_repository_impl import SessionRepositoryImpl
+from lobby_frame.service.request.card_list_request import CardListRequest
+from opengl_my_card_main_frame.infra.my_card_repository import MyCardRepository
+from music_player.repository.music_player_repository_impl import MusicPlayerRepositoryImpl
 
 
 class CardShopMenuFrameServiceImpl(CardShopMenuFrameService):
@@ -21,12 +24,14 @@ class CardShopMenuFrameServiceImpl(CardShopMenuFrameService):
             cls.__instance.__cardShopMenuFrameRepository = CardShopMenuFrameRepositoryImpl.getInstance()
             cls.__instance.__buyCheckService = BuyCheckServiceImpl.getInstance()
             cls.__instance.__buyCheckRepository = BuyCheckRepositoryImpl.getInstance()
-            cls.__instance.__sessionService = SessionServiceImpl.getInstance()
+            cls.__instance.__sessionRepository = SessionRepositoryImpl.getInstance()
             cls.__instance.__lobbyMenuFrameRepository = LobbyMenuFrameRepositoryImpl.getInstance()
             cls.__instance.__myGameMoneyFrameService = MyGameMoneyFrameServiceImpl.getInstance()
             cls.__instance.__shopTitleFrameService = ShopTitleFrameServiceImpl.getInstance()
             cls.__instance.__shopButtonFrameService = ShopButtonFrameServiceImpl.getInstance()
             cls.__instance.__selectRaceFrameService = SelectRaceUiFrameServiceImpl.getInstance()
+            cls.__instance.__myCardRepository = MyCardRepository.getInstance()
+            cls.__instance.__musicPlayerRepository = MusicPlayerRepositoryImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -61,6 +66,37 @@ class CardShopMenuFrameServiceImpl(CardShopMenuFrameService):
             self.__buyCheckService.createBuyCheckUiFrame(cardShopMenuFrame, switchFrameWithMenuName)
             self.DisabledCardShopUiButton()
 
+        def onClickMyCard():
+            self.__musicPlayerRepository.play_sound_effect_of_mouse_on_click('menu_button_click')
+            try:
+                session_info = self.__sessionRepository.get_session_info()
+                if session_info is not None:
+                    responseData = self.__lobbyMenuFrameRepository.requestAccountCardList(
+                        CardListRequest(session_info))
+
+                    print(f"responseData: {responseData}")
+
+                    if responseData is not None:
+                        server_data = responseData.get("card_id_list")
+
+                        self.__myCardRepository.save_my_card_to_dictionary_state(server_data)
+                        print(f"my_card_dictionary: {self.__myCardRepository.get_my_card_dictionary_from_state()}")
+
+
+                        # for i, number in enumerate(server_data):
+                        #     for key, value in server_data[i].items():
+                        #         self.card_data_list.append(int(key))
+                        #         self.number_of_cards_list.append(int(value))
+                        #         print(f"서버로 부터 카드 정보 잘 받았니?:{self.card_data_list}")
+                        #         print(f"서버로 부터 카드 갯수 잘 받았니?: {self.number_of_cards_list}")
+
+                        switchFrameWithMenuName("my-card-main")
+
+                    else:
+                        print("Invalid or missing response data.")
+
+            except Exception as e:
+                print(f"An error occurred: {e}")
 
         # shopTitleFrame = self.__shopTitleFrameService.createShopTitleUiFrame(cardShopMenuFrame, switchFrameWithMenuName)
         # shopTitleFrame.pack(side=tkinter.TOP)
@@ -149,7 +185,7 @@ class CardShopMenuFrameServiceImpl(CardShopMenuFrameService):
                                              image=self.button_image_my_card_button,
                                              bd=0, highlightthickness=0,
                                              relief="flat",
-                                             command=lambda: switchFrameWithMenuName("my-card-main"),
+                                             command=lambda: onClickMyCard(),
                                              width=220, height=60)
         self.my_card_button.place(relx=0.058, rely=0.155, anchor="center")
 
