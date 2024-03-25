@@ -5042,6 +5042,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                         if response.get('is_success',False) == False:
                             print('non targeting active skill error!! ')
+                            self.reset_every_selected_action()
+                            is_false_message = response.get('false_message_enum')
+                            self.message_on_the_screen.create_message_on_the_battle_screen(
+                                is_false_message)
                             return
 
 
@@ -6513,7 +6517,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     print("메인 캐릭터 공격")
 
                     your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
-                    self.your_field_unit_action_repository.use_field_unit_action_count_by_index(your_field_card_index)
 
                     your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
                     print(f"your_field_card_id: {your_field_card_id}")
@@ -6533,6 +6536,8 @@ class FakeBattleFieldFrame(OpenGLFrame):
                         self.message_on_the_screen.create_message_on_the_battle_screen(
                             is_false_message)
                         return
+
+                    self.your_field_unit_action_repository.use_field_unit_action_count_by_index(your_field_card_index)
 
 
 
@@ -6619,8 +6624,6 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
                     if opponent_fixed_card_base.is_point_inside((x, y)):
                         your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
-                        self.your_field_unit_action_repository.use_field_unit_action_count_by_index(
-                            your_field_card_index)
 
                         response = self.__fake_battle_field_frame_repository.request_attack_opponent_unit(
                             RequestAttackToOpponentFieldUnitWithActiveSkill(
@@ -6639,6 +6642,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             self.message_on_the_screen.create_message_on_the_battle_screen(
                                 is_false_message)
                             return
+
+                        self.your_field_unit_action_repository.use_field_unit_action_count_by_index(
+                            your_field_card_index)
 
                         self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
 
