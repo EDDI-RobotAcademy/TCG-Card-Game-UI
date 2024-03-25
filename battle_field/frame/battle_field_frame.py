@@ -1000,6 +1000,15 @@ class BattleFieldFrame(OpenGLFrame):
             fixed_card_base.set_height_ratio(self.height_ratio)
             fixed_card_base.draw()
 
+
+
+            attached_shape_list = fixed_card_base.get_attached_shapes()
+
+            for attached_shape in attached_shape_list:
+                attached_shape.set_width_ratio(self.width_ratio)
+                attached_shape.set_height_ratio(self.height_ratio)
+                attached_shape.draw()
+
             if self.opponent_field_unit_repository.get_is_index_in_harmful_status(index) == True:
                 if 'DarkFire' in self.opponent_field_unit_repository.get_harmful_status_by_index(index):
                     fixed_card_effect_animation = opponent_field_unit.get_fixed_card_dark_flame_effect_animation()
@@ -1017,13 +1026,6 @@ class BattleFieldFrame(OpenGLFrame):
                             fixed_card_effect_animation.get_animation_panel().draw()
                     else:
                         opponent_field_unit.create_fixed_card_dark_flame_effect_animation()
-
-            attached_shape_list = fixed_card_base.get_attached_shapes()
-
-            for attached_shape in attached_shape_list:
-                attached_shape.set_width_ratio(self.width_ratio)
-                attached_shape.set_height_ratio(self.height_ratio)
-                attached_shape.draw()
 
         if self.battle_field_repository.get_current_use_card_id():
             self.message_on_the_screen.clear_current_message_on_the_battle_screen()
@@ -11022,19 +11024,30 @@ class BattleFieldFrame(OpenGLFrame):
 
             if player == 'You':
                 for unit_index in dead_field_unit_index_list:
-                    card_id = self.your_field_unit_repository.get_card_id_by_index(unit_index)
-                    self.your_tomb_repository.create_tomb_card(card_id)
-                    self.your_field_unit_repository.remove_card_by_index(unit_index)
-                    self.your_field_unit_repository.remove_harmful_status_by_index(unit_index)
-                self.your_field_unit_repository.replace_field_card_position()
+                    def remove_field_unit(unit_index):
+                        card_id = self.your_field_unit_repository.get_card_id_by_index(unit_index)
+                        self.your_tomb_repository.create_tomb_card(card_id)
+                        self.your_field_unit_repository.remove_card_by_index(unit_index)
+                        self.your_field_unit_repository.remove_harmful_status_by_index(unit_index)
+                        self.your_field_unit_repository.replace_field_card_position()
+
+                    self.create_effect_animation_to_your_unit_and_play_animation_and_call_function_with_param(
+                        'death', unit_index, remove_field_unit, unit_index
+                    )
+
+
             elif player == 'Opponent':
                 for unit_index in dead_field_unit_index_list:
-                    card_id = self.opponent_field_unit_repository.get_opponent_card_id_by_index(unit_index)
-                    self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
-                    self.opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
-                    self.opponent_field_unit_repository.remove_harmful_status_by_index(unit_index)
+                    def remove_field_unit(unit_index):
+                        card_id = self.opponent_field_unit_repository.get_opponent_card_id_by_index(unit_index)
+                        self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                        self.opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
+                        self.opponent_field_unit_repository.remove_harmful_status_by_index(unit_index)
+                        self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
-                self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+                    self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function_with_param(
+                        'death', unit_index, remove_field_unit, unit_index
+                    )
 
             else:
                 print(f'apply_notify_data_of_dead_unit error : unknown player {player}')
