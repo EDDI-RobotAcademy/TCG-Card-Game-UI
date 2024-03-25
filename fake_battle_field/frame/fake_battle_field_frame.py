@@ -715,8 +715,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
                     result = self.__fake_opponent_hand_repository.request_use_energy_card_to_unit(
                         RequestUseFieldOfDeath(
                             _sessionInfo=self.__session_repository.get_second_fake_session_info(),
-                            _supportCardId=36
-                        ))
+                            _itemCardId=36
+                        )
+                    )
 
                     print(f"fake death scythe result: {result}")
                     is_success_value = result.get('is_success', False)
@@ -4040,7 +4041,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                             response = self.your_hand_repository.request_use_field_of_death(
                                 RequestUseFieldOfDeath(
                                     _sessionInfo=self.__session_repository.get_first_fake_session_info(),
-                                    _supportCardId=your_card_id)
+                                    _itemCardId=your_card_id)
                             )
 
                             is_death_success_value = response.get('is_success', False)
@@ -4410,6 +4411,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
             #     self.message_on_the_screen.create_message_on_the_battle_screen(drop_action_result)
             elif drop_action_result is None or drop_action_result is FieldAreaAction.Dummy:
                 print("self.field_area_inside_handler.get_field_area_action() = None")
+                self.selected_object = None
                 self.return_to_initial_location()
             elif drop_action_result is FieldAreaAction.ENERGY_BOOST:
                 print("self.field_area_inside_handler.get_field_area_action() = EnergyBoost")
