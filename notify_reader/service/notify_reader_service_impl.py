@@ -105,8 +105,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 cls.__instance.notify_use_multiple_unit_damage_item_card
             )
 
-            cls.__instance.notify_callback_table['NOTIFY_USE_FIELD_ENERGY_REMOVE_SUPPORT_CARD'] = (
-                cls.__instance.notify_use_field_energy_remove_support_card)
+            cls.__instance.notify_callback_table['NOTIFY_USE_FIELD_ENERGY_REMOVE_ITEM_CARD'] = (
+                cls.__instance.notify_use_field_energy_remove_item_card)
 
             cls.__instance.notify_callback_table['NOTIFY_USE_INSTANT_UNIT_DEATH_ITEM_CARD'] = (
                 cls.__instance.notify_use_instant_unit_death_item_card)
@@ -2290,7 +2290,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 #
                 #     self.__your_field_unit_repository.replace_field_card_position()
 
-    def notify_use_field_energy_remove_support_card(self, notice_dictionary):
+    def notify_use_field_energy_remove_item_card(self, notice_dictionary):
 
         
         
@@ -2302,7 +2302,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         #                  {"You":2}}}
 
         # 수신된 정보를 대입
-        data = notice_dictionary['NOTIFY_USE_FIELD_ENERGY_REMOVE_SUPPORT_CARD']
+        data = notice_dictionary['NOTIFY_USE_FIELD_ENERGY_REMOVE_ITEM_CARD']
 
         # 유저 관련 키값 변수 선언
         player_who_use_card = None
