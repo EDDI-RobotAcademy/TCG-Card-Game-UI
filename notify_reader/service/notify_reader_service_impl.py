@@ -656,25 +656,39 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
     def search_card(self, notice_dictionary):
         notify_dict_data = notice_dictionary['NOTIFY_USE_SEARCH_DECK_SUPPORT_CARD']
-
         card_id = (notify_dict_data.get("player_hand_use_map", {})
                    .get("Opponent", {})
                    .get("card_id", None))
-
-        card_kind = (notify_dict_data.get("player_hand_use_map", {})
-                     .get("Opponent", {})
-                     .get("card_kind", None))
-
-        search_count = (notify_dict_data.get("player_hand_use_map", {})
-                        .get("Opponent", None))
-
-        fake_search_list = []
-        for count in range(0, search_count):
-            fake_search_list.append(-1)
-
         self.__battle_field_repository.set_current_use_card_id(card_id)
 
-        self.__fake_opponent_hand_repository.save_fake_opponent_hand_list(fake_search_list)
+        def call_of_leonic(notify_dict_data):
+
+            search_count = (notify_dict_data.get("player_search_count_map", {})
+                            .get("Opponent", None))
+
+            fake_search_list = []
+            for count in range(0, search_count):
+                fake_search_list.append(-1)
+
+
+
+            self.__fake_opponent_hand_repository.save_fake_opponent_hand_list(fake_search_list)
+
+        effect_animation = EffectAnimation()
+        effect_animation.set_animation_name('call_of_leonic')
+
+        self.__notify_reader_repository.save_notify_effect_animation_request(
+            EffectAnimationRequest(
+                effect_animation=effect_animation,
+                target_player='Opponent',
+                target_index=99999,
+                target_type=TargetType.AREA,
+                call_function=call_of_leonic,
+                function_need_param=True,
+                param=notify_dict_data,
+                need_dalay=True
+            )
+        )
 
         # self.__opponent_hand_repository.save_current_opponent_hand_state(fake_search_list)
 

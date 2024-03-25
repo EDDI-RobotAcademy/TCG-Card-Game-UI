@@ -4433,7 +4433,7 @@ class BattleFieldFrame(OpenGLFrame):
                         self.selected_search_unit_id_list = []
                         self.selected_search_unit_page_number_list = []
 
-                self.create_effect_animation_to_your_field_and_play_animation_and_call_function_with_param(
+                    self.create_effect_animation_to_your_field_and_play_animation_and_call_function_with_param(
                         'call_of_leonic', call_of_leonic, response)
 
 
