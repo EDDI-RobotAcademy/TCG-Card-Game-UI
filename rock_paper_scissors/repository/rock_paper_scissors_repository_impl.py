@@ -46,11 +46,6 @@ class RockPaperScissorsRepositoryImpl(RockPaperScissorsRepository):
     def resetRPS(self):
         self.__rps = ""
 
-    def setcheckRPS(self, setcheckRPS):
-        self.__checkRPS = setcheckRPS
-
-    def getCheckRPS(self):
-        return self.__checkRPS
 
     def setRPSTimerClick(self, checkClick):
         print(f"RockPaperScissorsRepositoryImpl rps checkClick {checkClick}")

@@ -60,6 +60,7 @@ class RockPaperScissorsServiceImpl(RockPaperScissorsService):
             print(f"responseData: {responseData}")
             if responseData.get("is_success") is True:
                 self.RPS_Timer.stopTimer()
+                RPS_label.config(text="")
                 switchFrameWithMenuName('check-rock-paper-scissors')
                 self.__checkRockPaperScissorsWinnerServiceImpl.check_RPSWinner(rootWindow, switchFrameWithMenuName)
 
@@ -150,8 +151,9 @@ class RockPaperScissorsServiceImpl(RockPaperScissorsService):
                 RockPaperScissorsRequest(self.__sessionRepositoryImpl.get_session_info(), ""))
             if responseData.get("is_success") is True:
                 self.RPS_Timer.stopTimer()
-                self.__checkRockPaperScissorsWinnerServiceImpl.createCheckRockPaperScissorsWinnerUiFrame(
-                    rockPaperScissorsFrame, switchFrameWithMenuName)
+                RPS_label.config(text="")
+                switchFrameWithMenuName('check-rock-paper-scissors')
+                self.__checkRockPaperScissorsWinnerServiceImpl.check_RPSWinner(rootWindow, switchFrameWithMenuName)
 
         self.RPS_Timer = Timer(rockPaperScissorsFrame, 30, 0.2, 0.6, timeout)
 

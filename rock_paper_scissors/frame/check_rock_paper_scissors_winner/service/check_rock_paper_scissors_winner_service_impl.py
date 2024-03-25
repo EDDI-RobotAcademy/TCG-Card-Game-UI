@@ -42,35 +42,12 @@ class CheckRockPaperScissorsWinnerServiceImpl(CheckRockPaperScissorsWinnerServic
 
         self.check_RPS_label.place(relx=0.5, rely=0.5, anchor="center", bordermode="outside", relwidth=0.5, relheight=0.5)
 
-        # for i in range(70):
-        #     time.sleep(1)
-        #     responseData = self.__checkRockPaperScissorsWinnerRepositoryImpl.requestCheckRockPaperScissorsWinner(
-        #         CheckRockPaperScissorsWinnerRequest(self.__sessionRepositoryImpl.get_session_info()))
-        #     print(f"responseData: {responseData}")
-        #
-        #     if responseData.get("am_i_first_turn") in ("WIN", "LOSE"):
-        #         self.__checkRockPaperScissorsWinnerRepositoryImpl.setRPSWinner(responseData.get("am_i_first_turn"))
-        #         self.check_RPS_label.configure(text="당신이 " + self.findWinner() + "입니다.")
-        #         # self.__notifyReaderRepositoryImpl.set_is_your_turn_for_check_fake_process(self.setWinnerToNotify())
-        #         checkRockPaperScissorsWinnerFrame.update()
-        #         time.sleep(5)
-        #         self.__rockPaperScissorRepositoryImpl.resetRPS()
-        #         self.__rockPaperScissorRepositoryImpl.setcheckRPS(False)
-        #         from rock_paper_scissors.service.rock_paper_scissors_service_impl import RockPaperScissorsServiceImpl
-        #         self.__rockPaperScissorServiceImpl = RockPaperScissorsServiceImpl.getInstance()
-        #         self.__rockPaperScissorServiceImpl.createRockPaperScissorsFrame(checkRockPaperScissorsWinnerFrame, switchFrameWithMenuName)
-        #         switchFrameWithMenuName('battle-field-muligun')
-        #         break
-        #
-        #     checkRockPaperScissorsWinnerFrame.update()
-
         return checkRockPaperScissorsWinnerFrame
 
     def check_RPSWinner(self, rootWindow, switchFrameWithMenuName):
-        checkRockPaperScissorsWinnerFrame = self.__checkRockPaperScissorsWinnerRepositoryImpl.createCheckRockPaperScissorsWinnerFrame(
-            rootWindow)
-        count = 0
-        if count < 70:
+        checkRockPaperScissorsWinnerFrame = self.__checkRockPaperScissorsWinnerRepositoryImpl.createCheckRockPaperScissorsWinnerFrame(rootWindow)
+        for i in range(70):
+            time.sleep(1)
             responseData = self.__checkRockPaperScissorsWinnerRepositoryImpl.requestCheckRockPaperScissorsWinner(
                 CheckRockPaperScissorsWinnerRequest(self.__sessionRepositoryImpl.get_session_info()))
             print(f"responseData: {responseData}")
@@ -78,15 +55,15 @@ class CheckRockPaperScissorsWinnerServiceImpl(CheckRockPaperScissorsWinnerServic
             if responseData.get("am_i_first_turn") in ("WIN", "LOSE"):
                 self.__checkRockPaperScissorsWinnerRepositoryImpl.setRPSWinner(responseData.get("am_i_first_turn"))
                 self.check_RPS_label.configure(text="당신이 " + self.findWinner() + "입니다.")
+                # self.__notifyReaderRepositoryImpl.set_is_your_turn_for_check_fake_process(self.setWinnerToNotify())
+                checkRockPaperScissorsWinnerFrame.update()
                 time.sleep(5)
+                self.check_RPS_label.configure(text="상대방의 선택을 기다리는중")
                 self.__rockPaperScissorRepositoryImpl.resetRPS()
-                # self.__rockPaperScissorRepositoryImpl.setcheckRPS(False)
-                # from rock_paper_scissors.service.rock_paper_scissors_service_impl import RockPaperScissorsServiceImpl
-                # self.__rockPaperScissorServiceImpl = RockPaperScissorsServiceImpl.getInstance()
                 switchFrameWithMenuName('battle-field-muligun')
-                return
+                break
 
-            checkRockPaperScissorsWinnerFrame.after(1000, self.check_RPSWinner, switchFrameWithMenuName, count + 1)
+            checkRockPaperScissorsWinnerFrame.update()
 
     def findWinner(self):
         RPSWinner_mapping = {
