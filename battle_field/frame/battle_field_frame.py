@@ -2171,60 +2171,53 @@ class BattleFieldFrame(OpenGLFrame):
                             return
 
                 if card_type in [CardType.ITEM.value]:
-                    if your_card_id != 36:
-                        self.return_to_initial_location()
-                        return
+                    if your_card_id == 36:
+                        if self.is_point_inside_opponent_field_area((x, y), self.opponent_field_panel):
+                            print("죽음의 대지 사용")
 
-                    # if your_card_id == 2:
-                    #     self.return_to_initial_location()
-                    #     return
+                            response = self.your_hand_repository.request_use_field_of_death(
+                                RequestUseFieldOfDeath(
+                                    _sessionInfo=self.__session_repository.get_session_info(),
+                                    _supportCardId=your_card_id)
+                            )
 
-                    if self.is_point_inside_opponent_field_area((x, y), self.opponent_field_panel):
-                        print("죽음의 대지 사용")
+                            is_death_success_value = response.get('is_success', False)
 
-                        response = self.your_hand_repository.request_use_field_of_death(
-                            RequestUseFieldOfDeath(
-                                _sessionInfo=self.__session_repository.get_session_info(),
-                                _supportCardId=your_card_id)
-                        )
+                            if is_death_success_value == False:
+                                # self.selected_object = None
+                                self.return_to_initial_location()
+                                self.reset_every_selected_action()
+                                return
 
-                        is_death_success_value = response.get('is_success', False)
+                            def field_of_death(param):
 
-                        if is_death_success_value == False:
-                            # self.selected_object = None
-                            self.return_to_initial_location()
-                            self.reset_every_selected_action()
-                            return
+                                self.__music_player_repository.play_sound_effect_of_card_execution('field_of_death')
 
-                        def field_of_death(param):
+                                opponent_field_energy = self.opponent_field_energy_repository.get_opponent_field_energy()
+                                print(f"before land of death -> opponent_field_energy: {opponent_field_energy}")
 
-                            self.__music_player_repository.play_sound_effect_of_card_execution('field_of_death')
+                                self.opponent_field_energy_repository.decrease_opponent_field_energy(2)
 
-                            opponent_field_energy = self.opponent_field_energy_repository.get_opponent_field_energy()
-                            print(f"before land of death -> opponent_field_energy: {opponent_field_energy}")
+                                print(
+                                    f"after land of death -> opponent_field_energy: {self.opponent_field_energy_repository.get_opponent_field_energy()}")
 
-                            self.opponent_field_energy_repository.decrease_opponent_field_energy(2)
+                                self.your_tomb_repository.create_tomb_card(your_card_id)
 
-                            print(
-                                f"after land of death -> opponent_field_energy: {self.opponent_field_energy_repository.get_opponent_field_energy()}")
+                                # your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
+                                # self.your_hand_repository.remove_card_by_index(your_card_index)
+                                your_card_index = self.your_hand_repository.find_index_by_selected_object_with_page(
+                                    self.selected_object)
+                                self.your_hand_repository.remove_card_by_index_with_page(your_card_index)
 
-                            self.your_tomb_repository.create_tomb_card(your_card_id)
+                                # self.your_hand_repository.replace_hand_card_position()
+                                self.your_hand_repository.update_your_hand()
 
-                            # your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
-                            # self.your_hand_repository.remove_card_by_index(your_card_index)
-                            your_card_index = self.your_hand_repository.find_index_by_selected_object_with_page(
-                                self.selected_object)
-                            self.your_hand_repository.remove_card_by_index_with_page(your_card_index)
+                                self.selected_object = None
+                                return
 
-                            # self.your_hand_repository.replace_hand_card_position()
-                            self.your_hand_repository.update_your_hand()
-
-                            self.selected_object = None
-                            return
-
-                        self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
-                            'death_of_field', field_of_death, None
-                        )
+                            self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
+                                'death_of_field', field_of_death, None
+                            )
 
             # Opponent Field Area 끝
 
