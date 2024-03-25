@@ -23,5 +23,9 @@ class RockPaperScissorsRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def resetRPS(self):
+        pass
+
+    @abc.abstractmethod
     def requestRockPaperScissors(self, RockPaperScissorsRequest):
         pass

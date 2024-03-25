@@ -9,8 +9,8 @@ class RockPaperScissorsRepositoryImpl(RockPaperScissorsRepository):
 
     def __init__(self):
         self.__rps = ""
-        self.__rpsLoop = ""
         self.__RPS_timer_click = False
+        self.__checkRPS = False
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -36,7 +36,6 @@ class RockPaperScissorsRepositoryImpl(RockPaperScissorsRepository):
         print("RockPaperScissorsRepositoryImpl: saveReceiveIpcChannel()")
         self.__receiveIpcChannel = receiveIpcChannel
 
-
     def setRPS(self, rps):
         print(f"RockPaperScissorsRepositoryImpl rps set {rps}")
         self.__rps = rps
@@ -44,12 +43,9 @@ class RockPaperScissorsRepositoryImpl(RockPaperScissorsRepository):
     def getRPS(self):
         return self.__rps
 
-    def setRPSLoop(self, rps):
-        print(f"RockPaperScissorsRepositoryImpl rps set {rps}")
-        self.__rpsLoop = rps
+    def resetRPS(self):
+        self.__rps = ""
 
-    def getRPSLoop(self):
-        return self.__rpsLoop
 
     def setRPSTimerClick(self, checkClick):
         print(f"RockPaperScissorsRepositoryImpl rps checkClick {checkClick}")

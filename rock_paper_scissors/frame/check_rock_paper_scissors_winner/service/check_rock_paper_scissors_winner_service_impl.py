@@ -5,12 +5,14 @@ import threading
 from rock_paper_scissors.frame.check_rock_paper_scissors_winner.repository.check_rock_paper_scissors_winner_repository_impl import CheckRockPaperScissorsWinnerRepositoryImpl
 from rock_paper_scissors.frame.check_rock_paper_scissors_winner.service.request.check_rock_paper_scissors_winner_request import CheckRockPaperScissorsWinnerRequest
 from rock_paper_scissors.frame.check_rock_paper_scissors_winner.service.check_rock_paper_scissors_winner_service import CheckRockPaperScissorsWinnerService
+from rock_paper_scissors.repository.rock_paper_scissors_repository_impl import RockPaperScissorsRepositoryImpl
 from session.repository.session_repository_impl import SessionRepositoryImpl
 from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
 
 
 class CheckRockPaperScissorsWinnerServiceImpl(CheckRockPaperScissorsWinnerService):
     __instance = None
+    __rockPaperScissorServiceImpl = None
 
     def __new__(cls):
         if cls.__instance is None:
@@ -18,6 +20,7 @@ class CheckRockPaperScissorsWinnerServiceImpl(CheckRockPaperScissorsWinnerServic
             cls.__instance.__checkRockPaperScissorsWinnerRepositoryImpl = CheckRockPaperScissorsWinnerRepositoryImpl.getInstance()
             cls.__instance.__sessionRepositoryImpl = SessionRepositoryImpl.getInstance()
             cls.__instance.__notifyReaderRepositoryImpl = NotifyReaderRepositoryImpl.getInstance()
+            cls.__instance.__rockPaperScissorRepositoryImpl = RockPaperScissorsRepositoryImpl.getInstance()
         return cls.__instance
 
     @classmethod
@@ -39,8 +42,10 @@ class CheckRockPaperScissorsWinnerServiceImpl(CheckRockPaperScissorsWinnerServic
 
         self.check_RPS_label.place(relx=0.5, rely=0.5, anchor="center", bordermode="outside", relwidth=0.5, relheight=0.5)
 
-        checkRockPaperScissorsWinnerFrame.pack()
+        return checkRockPaperScissorsWinnerFrame
 
+    def check_RPSWinner(self, rootWindow, switchFrameWithMenuName):
+        checkRockPaperScissorsWinnerFrame = self.__checkRockPaperScissorsWinnerRepositoryImpl.createCheckRockPaperScissorsWinnerFrame(rootWindow)
         for i in range(70):
             time.sleep(1)
             responseData = self.__checkRockPaperScissorsWinnerRepositoryImpl.requestCheckRockPaperScissorsWinner(
@@ -50,16 +55,15 @@ class CheckRockPaperScissorsWinnerServiceImpl(CheckRockPaperScissorsWinnerServic
             if responseData.get("am_i_first_turn") in ("WIN", "LOSE"):
                 self.__checkRockPaperScissorsWinnerRepositoryImpl.setRPSWinner(responseData.get("am_i_first_turn"))
                 self.check_RPS_label.configure(text="당신이 " + self.findWinner() + "입니다.")
-                self.__notifyReaderRepositoryImpl.set_is_your_turn_for_check_fake_process(self.setWinnerToNotify())
+                # self.__notifyReaderRepositoryImpl.set_is_your_turn_for_check_fake_process(self.setWinnerToNotify())
                 checkRockPaperScissorsWinnerFrame.update()
                 time.sleep(5)
+                self.check_RPS_label.configure(text="상대방의 선택을 기다리는중")
+                self.__rockPaperScissorRepositoryImpl.resetRPS()
                 switchFrameWithMenuName('battle-field-muligun')
                 break
 
             checkRockPaperScissorsWinnerFrame.update()
-
-
-        return checkRockPaperScissorsWinnerFrame
 
     def findWinner(self):
         RPSWinner_mapping = {
@@ -71,15 +75,15 @@ class CheckRockPaperScissorsWinnerServiceImpl(CheckRockPaperScissorsWinnerServic
         RPSWinnerResult = RPSWinner_mapping.get(RPSWinner, "Unknown")
         return RPSWinnerResult
 
-    def setWinnerToNotify(self):
-        RPSWinner_mapping = {
-            "WIN": True,
-            "LOSE": False
-        }
-        RPSWinner = self.__checkRockPaperScissorsWinnerRepositoryImpl.getRPSWinner()
-        print(f"RPSWinner: {RPSWinner}")
-        RPSWinnerResult = RPSWinner_mapping.get(RPSWinner, "Unknown")
-        return RPSWinnerResult
+    # def setWinnerToNotify(self):
+    #     RPSWinner_mapping = {
+    #         "WIN": True,
+    #         "LOSE": False
+    #     }
+    #     RPSWinner = self.__checkRockPaperScissorsWinnerRepositoryImpl.getRPSWinner()
+    #     print(f"RPSWinner: {RPSWinner}")
+    #     RPSWinnerResult = RPSWinner_mapping.get(RPSWinner, "Unknown")
+    #     return RPSWinnerResult
 
 
 
