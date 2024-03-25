@@ -102,7 +102,7 @@ class YourFieldUnitRepository:
         self.harmful_status_info.update_harmful_status(unit_index, harmful_status_list)
 
     def get_harmful_status_by_index(self, index):
-        self.harmful_status_info.get_harmful_status_of_index(index)
+        return self.harmful_status_info.get_harmful_status_of_index(index)
 
     def get_is_index_in_harmful_status(self, index):
         return self.harmful_status_info.is_index_in_harmful_status(index)
