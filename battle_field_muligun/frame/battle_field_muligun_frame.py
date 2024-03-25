@@ -7,6 +7,7 @@ from shapely import Polygon, Point
 
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.opponent_hand_repository import OpponentHandRepository
+from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
@@ -31,6 +32,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
 
     your_hand_repository = YourHandRepository.getInstance()
+    your_deck_repository = YourDeckRepository.getInstance()
 
     def __init__(self,  master=None, switchFrameWithMenuName=None, **kwargs):
         super().__init__(master, **kwargs)
@@ -403,6 +405,12 @@ class BattleFieldMuligunFrame(OpenGLFrame):
             self.hand_card_list = self.muligun_your_hand_repository.get_current_hand_card_list()
             print(f"{Fore.RED}self.hand_card_list:{Fore.GREEN} {self.hand_card_list}{Style.RESET_ALL}")
 
+            deck_card_list = responseData['updated_deck_card_list']
+
+            print(f"deck_card_list: {deck_card_list}")
+
+            self.your_deck_repository.save_deck_state(deck_card_list)
+
             # TODO: 새로 받을 카드 임의로 지정. 나중에는 서버에서 받아야 함. 임의로 넣었기 때문에 현재 2개만 교체 가능
             # self.redraw_card()
 
@@ -577,6 +585,12 @@ class BattleFieldMuligunFrame(OpenGLFrame):
                                default_list))
 
             print(f"{Fore.RED}Mulligan ResponseData:{Fore.GREEN} {responseData}{Style.RESET_ALL}")
+
+            deck_card_list = responseData['updated_deck_card_list']
+            print(f"deck_card_list: {deck_card_list}")
+
+            self.your_deck_repository.save_deck_state(deck_card_list)
+
             self.is_doing_mulligan = False
             self.__switchFrameWithMenuName('battle-field')
 
