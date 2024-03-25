@@ -185,7 +185,8 @@ class YourFieldUnitRepository:
                 attached_shape.local_translate(local_translation)
 
             animation_panel = current_field_unit.get_fixed_card_dark_flame_effect_animation_panel()
-            animation_panel.local_translate(local_translation)
+            if animation_panel:
+                animation_panel.local_translate(local_translation)
 
             # pickable_card_base = current_field_unit.get_pickable_card_base()
             # pickable_card_base.local_translate(local_translation)

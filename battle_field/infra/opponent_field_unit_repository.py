@@ -108,7 +108,8 @@ class OpponentFieldUnitRepository:
                 attached_shape.local_translate(local_translation)
 
             animation_panel = current_field_unit_card.get_fixed_card_dark_flame_effect_animation_panel()
-            animation_panel.local_translate(local_translation)
+            if animation_panel:
+                animation_panel.local_translate(local_translation)
 
     def attach_race_energy(self, opponent_field_unit_index, energy_race, energy_count):
         self.attached_energy_info.add_race_energy_at_index(opponent_field_unit_index, energy_race, energy_count)
