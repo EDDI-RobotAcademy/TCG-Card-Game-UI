@@ -107,10 +107,15 @@ class OpponentFieldUnitRepository:
             for attached_shape in fixed_card_base.get_attached_shapes():
                 attached_shape.local_translate(local_translation)
 
-            animation_panel = current_field_unit_card.get_fixed_card_dark_flame_effect_animation_panel()
-            if animation_panel:
-                print('animation panel set local translation', local_translation)
-                animation_panel.local_translate(local_translation)
+            dark_flame_animation_panel = current_field_unit_card.get_fixed_card_dark_flame_effect_animation_panel()
+            if dark_flame_animation_panel:
+                print('flame animation panel set local translation', local_translation)
+                dark_flame_animation_panel.local_translate(local_translation)
+
+            freeze_effect_animation_panel = current_field_unit_card.get_fixed_card_freeze_effect_animation_panel()
+            if freeze_effect_animation_panel:
+                print('frozen animation panel set local translation', local_translation)
+                freeze_effect_animation_panel.local_translate(local_translation)
 
     def attach_race_energy(self, opponent_field_unit_index, energy_race, energy_count):
         self.attached_energy_info.add_race_energy_at_index(opponent_field_unit_index, energy_race, energy_count)

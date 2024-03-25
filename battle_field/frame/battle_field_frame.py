@@ -1010,6 +1010,24 @@ class BattleFieldFrame(OpenGLFrame):
                 attached_shape.draw()
 
             if self.opponent_field_unit_repository.get_is_index_in_harmful_status(index) == True:
+                if 'Freeze' in self.opponent_field_unit_repository.get_harmful_status_by_index(index):
+                    fixed_card_effect_animation = opponent_field_unit.get_fixed_card_freeze_effect_animation()
+                    if fixed_card_effect_animation is not None:
+
+                        fixed_card_effect_animation.set_total_window_size(self.width, self.height)
+                        fixed_card_effect_animation.set_width_ratio(self.width_ratio)
+                        fixed_card_effect_animation.set_height_ratio(self.height_ratio)
+                        if fixed_card_effect_animation.get_animation_panel() == None:
+                            vertices = [(0, 0), (105, 0), (105, 170), (0, 170)]
+                            fixed_card_effect_animation.draw_animation_panel_with_vertices(vertices)
+                            self.play_harmful_effect_animation(self.opponent_field_unit_repository, index,
+                                                               fixed_card_effect_animation)
+                            print('create harmful effect animation')
+                        else:
+                            fixed_card_effect_animation.get_animation_panel().draw()
+                    else:
+                        opponent_field_unit.create_fixed_card_freeze_effect_animation()
+
                 if 'DarkFire' in self.opponent_field_unit_repository.get_harmful_status_by_index(index):
                     fixed_card_effect_animation = opponent_field_unit.get_fixed_card_dark_flame_effect_animation()
                     if fixed_card_effect_animation is not None:
@@ -1090,6 +1108,24 @@ class BattleFieldFrame(OpenGLFrame):
                     attached_shape.draw()
 
                 if self.your_field_unit_repository.get_is_index_in_harmful_status(index) == True:
+
+                    if 'Freeze' in self.your_field_unit_repository.get_harmful_status_by_index(index):
+                        fixed_card_effect_animation = field_unit.get_fixed_card_freeze_effect_animation()
+                        if fixed_card_effect_animation is not None:
+                            fixed_card_effect_animation.set_total_window_size(self.width, self.height)
+                            fixed_card_effect_animation.set_width_ratio(self.width_ratio)
+                            fixed_card_effect_animation.set_height_ratio(self.height_ratio)
+                            if fixed_card_effect_animation.get_animation_panel() == None:
+                                vertices = [(0, 0), (105, 0), (105, 170), (0, 170)]
+                                fixed_card_effect_animation.draw_animation_panel_with_vertices(vertices)
+                                self.play_harmful_effect_animation(self.your_field_unit_repository, index,
+                                                                   fixed_card_effect_animation)
+                                print('create harmful effect animation')
+                            else:
+                                fixed_card_effect_animation.get_animation_panel().draw()
+                        else:
+                            field_unit.create_fixed_card_freeze_effect_animation()
+
                     if 'DarkFire' in self.your_field_unit_repository.get_harmful_status_by_index(index):
                         fixed_card_effect_animation = field_unit.get_fixed_card_dark_flame_effect_animation()
                         if fixed_card_effect_animation is not None:
@@ -4367,33 +4403,41 @@ class BattleFieldFrame(OpenGLFrame):
                             is_false_message)
                         return
 
-                    self.__music_player_repository.play_sound_effect_of_card_execution('call_of_leonic')
-                    # 서포트
-
-                    # 실제로 지울 때 몇 개 지우는지만 알면 된다.
-                    # 어차피 셔플 받아서 이미지만 갈아 끼워넣을 것이기 때문
-                    processing_length = len(self.selected_search_unit_index_list)
-                    self.your_deck_repository.remove_card_object_list_with_count(processing_length)
-
-                    self.your_hand_repository.remove_card_by_index_with_page(
-                        self.field_area_inside_handler.get_placed_card_index())
-                    self.your_tomb_repository.create_tomb_card(self.field_area_inside_handler.get_action_set_card_id())
-
-                    # self.your_hand_repository.create_additional_hand_card_list(self.selected_search_unit_id_list)
-                    self.your_hand_repository.save_current_hand_state(self.selected_search_unit_id_list)
-                    self.your_hand_repository.update_your_hand()
-                    # self.selected_search_unit_page_number_list
-                    self.selected_search_unit_lightning_border = []
-
                     self.field_area_inside_handler.clear_field_area_action()
 
-                    shuffled_deck_list = response.get('updated_deck_card_list')
+                    def call_of_leonic(response):
+                        self.__music_player_repository.play_sound_effect_of_card_execution('call_of_leonic')
+                        # 서포트
 
-                    self.your_deck_repository.update_deck(shuffled_deck_list)
+                        # 실제로 지울 때 몇 개 지우는지만 알면 된다.
+                        # 어차피 셔플 받아서 이미지만 갈아 끼워넣을 것이기 때문
+                        processing_length = len(self.selected_search_unit_index_list)
+                        self.your_deck_repository.remove_card_object_list_with_count(processing_length)
 
-                    self.selected_search_unit_index_list = []
-                    self.selected_search_unit_id_list = []
-                    self.selected_search_unit_page_number_list = []
+                        self.your_hand_repository.remove_card_by_index_with_page(
+                            self.field_area_inside_handler.get_placed_card_index())
+                        self.your_tomb_repository.create_tomb_card(
+                            self.field_area_inside_handler.get_action_set_card_id())
+
+                        # self.your_hand_repository.create_additional_hand_card_list(self.selected_search_unit_id_list)
+                        self.your_hand_repository.save_current_hand_state(self.selected_search_unit_id_list)
+                        self.your_hand_repository.update_your_hand()
+                        # self.selected_search_unit_page_number_list
+                        self.selected_search_unit_lightning_border = []
+
+                        shuffled_deck_list = response.get('updated_deck_card_list')
+
+                        self.your_deck_repository.update_deck(shuffled_deck_list)
+
+                        self.selected_search_unit_index_list = []
+                        self.selected_search_unit_id_list = []
+                        self.selected_search_unit_page_number_list = []
+
+                self.create_effect_animation_to_your_field_and_play_animation_and_call_function_with_param(
+                        'call_of_leonic', call_of_leonic, response)
+
+
+
 
                 # TODO: 개수 제한 필요
                 for current_page_deck_card_object in self.your_deck_repository.get_current_page_deck_list():

@@ -211,15 +211,17 @@ class EffectAnimation:
             self.is_finished = True
 
     def update_harmful_effect_animation_panel(self):
-        if self.__current_animation_count == self.total_animation_count-1:
+        if self.__current_animation_count >= self.total_animation_count-1:
             self.__current_animation_count = 0
 
             # print(f"{Fore.RED}update_effect_animation_panel() -> self.__current_animation_count: {Fore.GREEN}{self.__current_animation_count}{Style.RESET_ALL}")
-        self.__current_animation_count += 1
+
         # image_count = self.__current_animation_count % 16
         image_count = self.__current_animation_count
         self.animation_panel.set_image_data(
             self.__pre_drawed_image.get_pre_draw_effect_animation(self.animation_name, image_count))
+
+        self.__current_animation_count += 1
 
     def animate(self):
         def animate():
