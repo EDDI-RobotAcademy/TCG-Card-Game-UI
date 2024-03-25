@@ -209,6 +209,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
                 if is_your_turn:
                     draw_card_id = response['player_draw_card_list_map']['You']
                     self.your_hand_repository.save_current_hand_state(draw_card_id)
+                    self.your_deck_repository.draw_deck()
                     YourFieldEnergyRepository.getInstance().increase_your_field_energy()
                 else:
                     OpponentFieldEnergyRepository.getInstance().increase_opponent_field_energy()
@@ -430,7 +431,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
             #     print(hand_card.get_card_number())
             #     self.your_hand_repository.save_current_hand_state(hand_card.get_card_number())
             # self.your_hand_repository.save_current_hand_state(self.hand_card_list)
-            self.your_hand_repository.build_your_hand_page()
+            # self.your_hand_repository.build_your_hand_page()
 
             # try:
             #     #     # responseData = self.muligun_your_hand_repository.requestCheckOpponentMuligun(
