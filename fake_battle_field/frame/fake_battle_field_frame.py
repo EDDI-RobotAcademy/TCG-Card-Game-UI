@@ -2601,6 +2601,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                 if 'DarkFire' in self.opponent_field_unit_repository.get_harmful_status_by_index(index):
                     fixed_card_effect_animation = opponent_field_unit.get_fixed_card_dark_flame_effect_animation()
                     if fixed_card_effect_animation is not None:
+
                         fixed_card_effect_animation.set_total_window_size(self.width, self.height)
                         fixed_card_effect_animation.set_width_ratio(self.width_ratio)
                         fixed_card_effect_animation.set_height_ratio(self.height_ratio)
@@ -14559,6 +14560,10 @@ class FakeBattleFieldFrame(OpenGLFrame):
         def animate():
             if repository.get_is_index_in_harmful_status(index):
                 harmful_effect_animation.update_harmful_effect_animation_panel()
+                harmful_effect_animation.change_local_translation(
+                   repository.find_field_unit_by_index(
+                        index).get_fixed_card_base().get_local_translation()
+                )
             else:
                 harmful_effect_animation.is_finished = True
 

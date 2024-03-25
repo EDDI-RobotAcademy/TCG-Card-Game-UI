@@ -72,6 +72,7 @@ class FixedFieldCard:
     def create_fixed_card_dark_flame_effect_animation(self):
 
         self.dark_flame_effect_animation = EffectAnimation()
+
         self.dark_flame_effect_animation.set_animation_name('burn_effect')
         self.dark_flame_effect_animation.change_local_translation(self.local_translation)
         # self.dark_flame_effect_animation = NonBackgroundImage(
@@ -83,6 +84,9 @@ class FixedFieldCard:
 
     def get_fixed_card_dark_flame_effect_animation(self):
         return self.dark_flame_effect_animation
+
+    def get_fixed_card_dark_flame_effect_animation_panel(self):
+        return self.dark_flame_effect_animation.get_animation_panel()
 
 
     def creat_fixed_card_energy_race_circle(self, color, vertices, local_translation):
