@@ -102,7 +102,7 @@ class YourFieldUnitRepository:
         self.harmful_status_info.update_harmful_status(unit_index, harmful_status_list)
 
     def get_harmful_status_by_index(self, index):
-        self.harmful_status_info.get_harmful_status_of_index(index)
+        return self.harmful_status_info.get_harmful_status_of_index(index)
 
     def get_is_index_in_harmful_status(self, index):
         return self.harmful_status_info.is_index_in_harmful_status(index)
@@ -183,6 +183,10 @@ class YourFieldUnitRepository:
 
             for attached_shape in fixed_card_base.get_attached_shapes():
                 attached_shape.local_translate(local_translation)
+
+            animation_panel = current_field_unit.get_fixed_card_dark_flame_effect_animation_panel()
+            if animation_panel:
+                animation_panel.local_translate(local_translation)
 
             # pickable_card_base = current_field_unit.get_pickable_card_base()
             # pickable_card_base.local_translate(local_translation)

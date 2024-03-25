@@ -1066,7 +1066,7 @@ class BattleFieldFrame(OpenGLFrame):
             self.attack_animation_object.set_animation_action(AnimationAction.DUMMY)
 
         if self.field_area_inside_handler.get_field_area_action() is not FieldAreaAction.PLAY_ANIMATION:
-            for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
+            for index, field_unit in enumerate(self.your_field_unit_repository.get_current_field_unit_list()):
                 if field_unit is None:
                     continue
 
@@ -2170,7 +2170,7 @@ class BattleFieldFrame(OpenGLFrame):
 
                             return
 
-                if card_type in [CardType.SUPPORT.value]:
+                if card_type in [CardType.ITEM.value]:
                     if your_card_id != 36:
                         self.return_to_initial_location()
                         return
@@ -3192,6 +3192,10 @@ class BattleFieldFrame(OpenGLFrame):
 
                         if response.get('is_success', False) == False:
                             print('non targeting active skill error!! ')
+                            self.reset_every_selected_action()
+                            is_false_message = response.get('false_message_enum')
+                            self.message_on_the_screen.create_message_on_the_battle_screen(
+                                is_false_message)
                             return
 
                         damage = self.card_info_repository.getCardSkillSecondDamageForCardNumber(your_field_unit_id)
@@ -3748,6 +3752,9 @@ class BattleFieldFrame(OpenGLFrame):
                         if attack_opponent_unit_response.get('is_success', False) == False:
                             print("attack unit failed!! ")
                             self.reset_every_selected_action()
+                            is_false_message = attack_opponent_unit_response.get('false_message_enum')
+                            self.message_on_the_screen.create_message_on_the_battle_screen(
+                                is_false_message)
                             return
 
                         self.your_field_unit_action_repository.use_field_unit_action_count_by_index(
@@ -4098,7 +4105,6 @@ class BattleFieldFrame(OpenGLFrame):
                     print("메인 캐릭터 공격")
 
                     your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
-                    self.your_field_unit_action_repository.use_field_unit_action_count_by_index(your_field_card_index)
 
                     your_field_card_id = self.targeting_enemy_select_using_your_field_card_id
                     print(f"your_field_card_id: {your_field_card_id}")
@@ -4114,7 +4120,12 @@ class BattleFieldFrame(OpenGLFrame):
                     if response.get('is_success', False) == False:
                         print('active skill target one error : ', response)
                         self.reset_every_selected_action()
+                        is_false_message = response.get('false_message_enum')
+                        self.message_on_the_screen.create_message_on_the_battle_screen(
+                            is_false_message)
                         return
+
+                    self.your_field_unit_action_repository.use_field_unit_action_count_by_index(your_field_card_index)
 
                     #### 모션 프레임
                     your_field_unit = self.your_field_unit_repository.find_field_unit_by_index(your_field_card_index)
@@ -4146,8 +4157,7 @@ class BattleFieldFrame(OpenGLFrame):
 
                     if opponent_fixed_card_base.is_point_inside((x, y)):
                         your_field_card_index = self.targeting_enemy_select_using_your_field_card_index
-                        self.your_field_unit_action_repository.use_field_unit_action_count_by_index(
-                            your_field_card_index)
+
 
                         response = self.__fake_battle_field_frame_repository.request_attack_opponent_unit(
                             RequestAttackToOpponentFieldUnitWithActiveSkill(
@@ -4162,8 +4172,13 @@ class BattleFieldFrame(OpenGLFrame):
                         if response.get('is_success', False) == False:
                             print('active skill error occured!! ')
                             self.reset_every_selected_action()
+                            is_false_message = response.get('false_message_enum')
+                            self.message_on_the_screen.create_message_on_the_battle_screen(
+                                is_false_message)
                             return
 
+                        self.your_field_unit_action_repository.use_field_unit_action_count_by_index(
+                            your_field_card_index)
                         self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
 
                         ### 애니메이션 준비
