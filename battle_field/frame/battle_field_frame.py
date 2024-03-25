@@ -1066,7 +1066,7 @@ class BattleFieldFrame(OpenGLFrame):
             self.attack_animation_object.set_animation_action(AnimationAction.DUMMY)
 
         if self.field_area_inside_handler.get_field_area_action() is not FieldAreaAction.PLAY_ANIMATION:
-            for field_unit in self.your_field_unit_repository.get_current_field_unit_list():
+            for index, field_unit in enumerate(self.your_field_unit_repository.get_current_field_unit_list()):
                 if field_unit is None:
                     continue
 
