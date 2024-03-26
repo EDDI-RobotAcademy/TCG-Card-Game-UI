@@ -566,6 +566,7 @@ class PreDrawedImage:
         self.pre_draw_corpse_explosion()
         # self.pre_draw_nether_blade_area_skill()
         # self.pre_draw_nether_blade_targeting_skill()
+        self.pre_draw_nether_blade_targeting_skill_remain()
         self.pre_draw_death()
 
         self.pre_drawed_swamp_of_ghost_effect_animation()
@@ -618,6 +619,20 @@ class PreDrawedImage:
             nether_blade_targeting_skill_animation[number] = ImageDataLoader.load_force_fit_full_screen_image_data(animation_image_data, width + 300, height + 300)
 
         self.__pre_drawed_effect_animation['nether_blade_targeting_skill'] = nether_blade_targeting_skill_animation
+
+    def pre_draw_nether_blade_targeting_skill_remain(self):
+        effect_animation = {}
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation",
+                                 'nether_blade_targeting_skill_remain')
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'nether_blade_targeting_skill_remain',
+                                                f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
+            effect_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
+
+        self.__pre_drawed_effect_animation['nether_blade_targeting_skill_remain'] = effect_animation
 
     def pre_draw_death(self):
         death_animation = {}
