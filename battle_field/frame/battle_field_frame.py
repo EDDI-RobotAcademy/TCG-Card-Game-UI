@@ -781,9 +781,7 @@ class BattleFieldFrame(OpenGLFrame):
 
         self.surrender_confirm.set_width_ratio(self.width_ratio)
         self.surrender_confirm.set_height_ratio(self.height_ratio)
-        if self.option_popup_surrender_button_selected:
-            for surrender_confirm_panel in self.surrender_confirm_panel_list:
-                surrender_confirm_panel.draw()
+
 
         if self.battle_field_repository.get_is_game_end():
             print("게임 끝났어 ")
@@ -2057,6 +2055,10 @@ class BattleFieldFrame(OpenGLFrame):
             )
             self.current_field_message_on_the_battle_screen_panel.draw()
 
+        if self.option_popup_surrender_button_selected:
+            for surrender_confirm_panel in self.surrender_confirm_panel_list:
+                surrender_confirm_panel.draw()
+
         # self.post_draw()
         # if len(self.battle_result_panel_list) != 0:
         #     if self.is_playing_action_animation == False and self.field_area_inside_handler.get_field_area_action() == None:
@@ -2066,7 +2068,7 @@ class BattleFieldFrame(OpenGLFrame):
         #         self.battle_result_panel_list[0].draw()
 
         if len(self.battle_result_panel_list) != 0:
-            if self.is_playing_action_animation == False and self.field_area_inside_handler.get_field_area_action() == None and self.opponent_field_area_inside_handler.get_field_area_action() == None:
+            if self.field_area_inside_handler.get_field_area_action() == None and self.opponent_field_area_inside_handler.get_field_area_action() == None:
                 for battle_result_panel in self.battle_result_panel_list:
                     battle_result_panel.set_width_ratio(self.width_ratio)
                     battle_result_panel.set_height_ratio(self.height_ratio)
@@ -6043,6 +6045,9 @@ class BattleFieldFrame(OpenGLFrame):
         slash_with_sword(1)
 
     def finish_opponent_attack_your_unit_post_animation(self, attack_animation_object):
+        data = attack_animation_object.get_notify_data()
+        self.apply_response_data_of_harmful_status(data['player_field_unit_harmful_effect_map'])
+
         sword_shape = attack_animation_object.get_opponent_weapon_shape()
 
         opponent_animation_actor = attack_animation_object.get_opponent_animation_actor()
@@ -6247,6 +6252,7 @@ class BattleFieldFrame(OpenGLFrame):
                                     attached_shape.set_image_data(
                                         self.pre_drawed_image_instance.get_pre_draw_unit_hp(health))
 
+                self.opponent_field_area_inside_handler.clear_field_area_action()
 
 
         move_to_origin_location(1)

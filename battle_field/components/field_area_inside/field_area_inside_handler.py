@@ -250,7 +250,7 @@ class FieldAreaInsideHandler:
                 self.__field_area_action = FieldAreaAction.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS
                 return self.__field_area_action
 
-            self.__field_area_action = FieldAreaAction.PLACE_UNIT
+            # self.__field_area_action = FieldAreaAction.PLACE_UNIT
             return self.__field_area_action
 
         if placed_card_id == 19:
