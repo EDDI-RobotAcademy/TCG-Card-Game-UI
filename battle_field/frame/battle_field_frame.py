@@ -2391,7 +2391,7 @@ class BattleFieldFrame(OpenGLFrame):
                                         f"사기 전환 이후 필드 에너지 수량: {self.your_field_energy_repository.get_your_field_energy()}")
 
                                 self.create_effect_animation_to_your_unit_and_play_animation_and_call_function(
-                                    'dark_blast', unit_index, morale_conversion)
+                                    'morale_conversion', unit_index, morale_conversion)
 
 
                             elif placed_card_id == 33:

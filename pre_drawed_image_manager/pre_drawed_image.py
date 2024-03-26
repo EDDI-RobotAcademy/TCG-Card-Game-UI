@@ -573,9 +573,25 @@ class PreDrawedImage:
         self.pre_draw_call_of_Leonic_effect_animation()
         self.pre_draw_death_of_field_effect_animation()
         self.pre_draw_overflow_of_energy_effect_animation()
+        self.pre_draw_morale_conversion_effect_animation()
 
         self.pre_draw_dark_flame_effect_animation()
         self.pre_draw_freeze_effect_animation()
+
+    def pre_draw_morale_conversion_effect_animation(self):
+        effect_animation = {}
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation",
+                                 'morale_conversion')
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation",
+                                                'morale_conversion',
+                                                f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
+            effect_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
+
+        self.__pre_drawed_effect_animation['morale_conversion'] = effect_animation
 
     def pre_draw_full_screen_nether_blade_skill(self, width, height):
         print(f"pre_draw_full_screen_nether_blade_skill -> width: {width}, height: {height}")
