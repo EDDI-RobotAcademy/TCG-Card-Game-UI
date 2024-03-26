@@ -2688,7 +2688,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         self.__battle_field_repository.set_current_use_card_id(hand_use_card_id)
         #todo : 애니메이션 제작해서 넘겨야합
         effect_animation = EffectAnimation()
-        effect_animation.set_animation_name('dark_blast')
+        effect_animation.set_animation_name('morale_conversion')
         effect_animation.change_local_translation(
             self.__opponent_field_unit_repository.find_field_unit_by_index(unit_index).get_fixed_card_base().get_local_translation())
         effect_animation.draw_animation_panel()
