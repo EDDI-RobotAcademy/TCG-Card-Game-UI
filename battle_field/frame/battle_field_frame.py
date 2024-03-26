@@ -2600,6 +2600,7 @@ class BattleFieldFrame(OpenGLFrame):
             elif drop_action_result is None or drop_action_result is FieldAreaAction.Dummy:
                 print("self.field_area_inside_handler.get_field_area_action() = None")
                 self.return_to_initial_location()
+                self.selected_object = None
             elif drop_action_result is FieldAreaAction.ENERGY_BOOST:
                 print("self.field_area_inside_handler.get_field_area_action() = EnergyBoost")
                 self.return_to_initial_location()
