@@ -10,3 +10,12 @@ And finally we did it. We have confirmed that not only web/app development but a
 
 # Demo Play
 [![Video Label](http://img.youtube.com/vi/EQCNLK_O2JE/0.jpg)](https://youtu.be/EQCNLK_O2JE)
+
+# Review
+Unlike Server, there are some shortcomings in Domain expression when it comes to expressing the UI on the screen. Because the mission had to be completed within a short period of time and the domain expression was not familiar, there were quite a few difficulties in the frame expression. Next time I make one, I want to separate the Mouse Left Click Event, Mouse Right Click Event, Mouse Drag Event, and Mouse Release Event Domains. Additionally, a large amount of infra/repository was used to express each state. This is also tied to battle_field, so in the next work, it is necessary to improve productivity by coordinating each Element and the tasks related to it and better separating each Domain Element.
+
+# Server Team
+
+
+# Client Team
+
