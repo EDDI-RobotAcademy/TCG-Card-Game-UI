@@ -9,3 +9,4 @@ class TargetType(Enum):
     TOMB = 4
     LOST_ZONE = 5
     AREA = 6
+    FULL_SCREEN = 7
