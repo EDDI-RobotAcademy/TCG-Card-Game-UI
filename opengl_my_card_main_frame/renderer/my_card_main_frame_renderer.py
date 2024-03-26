@@ -76,6 +76,9 @@ class MyCardMainFrameRenderer:
         if page_slash_object:
             page_slash_object.draw()
 
+        if self.my_card_repository.get_prepare_message_visible() == True:
+            self.scene.prepare_message.draw()
+
         self.window.tkSwapBuffers()
 
     def _render_shape(self, shape):

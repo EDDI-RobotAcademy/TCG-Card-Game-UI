@@ -442,6 +442,21 @@ class MyCardMainFrame(OpenGLFrame):
         # print(f"카드 번호 길이: {len(all_card_number)}")
         self.my_card_repository.build_my_card_page()
 
+        # 대기 메세지 창
+        prepare_message_left_x_point = self.width * 0.268
+        prepare_message_right_x_point = self.width * 0.702
+        prepare_message_top_y_point = self.height * 0.276
+        prepare_message_bottom_y_point = self.height * 0.672
+        prepare_message_data = self.__pre_drawed_image_instance.get_pre_draw_preparing_message()
+        prepare_message = NonBackgroundImage(image_data=prepare_message_data,
+                                              vertices=[
+                                                  (prepare_message_left_x_point, prepare_message_top_y_point),
+                                                  (prepare_message_right_x_point, prepare_message_top_y_point),
+                                                  (prepare_message_right_x_point, prepare_message_bottom_y_point),
+                                                  (prepare_message_left_x_point, prepare_message_bottom_y_point)
+                                              ])
+        self.my_card_main_scene.add_prepare_message(prepare_message)
+
         # # TODO: UI 디자인 업데이트 이후 수정 필요
         # # x: 1329, y: 495
         # # x: 125, y: 496
