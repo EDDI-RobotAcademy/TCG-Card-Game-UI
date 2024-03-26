@@ -7,3 +7,6 @@ Developers ultimately need to learn how to collaborate. I wanted to conduct a pr
 A chronic problem in the embedded and hardware fields is collaboration. SW developers who cannot collaborate, no matter how much experience they have, reduce productivity in creating something together. The purpose is to gain experience in collaborative and large-scale software development.  
 
 And finally we did it. We have confirmed that not only web/app development but also game development can achieve high productivity at low cost using agile methods.
+
+# Demo Play
+[![Video Label](http://img.youtube.com/vi/EQCNLK_O2JE/0.jpg)](https://youtu.be/EQCNLK_O2JE)
