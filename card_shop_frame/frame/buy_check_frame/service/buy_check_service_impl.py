@@ -1,5 +1,7 @@
 import tkinter
+from PIL import ImageTk, Image
 
+from card_shop_frame.frame.buy_check_frame.entity.buy_check_frame import BuyCheckFrame
 from card_shop_frame.frame.buy_check_frame.service.buy_check_service import BuyCheckService
 from card_shop_frame.frame.buy_check_frame.repository.buy_check_repository_impl import BuyCheckRepositoryImpl
 from card_shop_frame.repository.card_shop_repository_impl import CardShopMenuFrameRepositoryImpl
@@ -88,23 +90,57 @@ class BuyCheckServiceImpl(BuyCheckService):
                                                      fg="red", bg="#F7F8E0", anchor="center", justify="center")
                 not_have_money_label.place(relx=0.25, rely=0.8,  anchor="center", bordermode="outside")
 
+        def resize_image(image_path, width, height):
+            image_origin = Image.open(image_path)
+            resized_image = image_origin.resize((width, height), Image.ANTIALIAS)
+            return ImageTk.PhotoImage(resized_image)
 
-        check_label = tkinter.Label(buyCheckFrame, text="100골드를 사용하여\n"+self.__cardShopMenuFrameRepository.getRace()+" 카드 뽑기를 구매하시겠습니까?",
-                                    font=("Helvetica", 28), fg="black", bg="#F7F8E0",
-                                    anchor="center", justify="center")
-        check_label.place(relx=0.5, rely=0.3, anchor="center", bordermode="outside")
+        self.image_select_all = resize_image("local_storage/shop_image/select_all.png", 500, 700)
+        self.image_select_undead = resize_image("local_storage/shop_image/select_undead.png", 500, 700)
+        self.image_select_trent = resize_image("local_storage/shop_image/select_trent.png", 500, 700)
+        self.image_select_human = resize_image("local_storage/shop_image/select_human.png", 500, 700)
 
-        yes_button = tkinter.Button(buyCheckFrame, text="예", bg="#2E2BE2", fg="white",
-                                              command=lambda: yes_click_button(buyCheckFrame), width=24,
-                                              height=2)
+        self.button_image_yes = resize_image("local_storage/shop_image/yes_button.png", 170, 50)
+        self.button_image_no = resize_image("local_storage/shop_image/no_button.png", 170, 50)
 
-        yes_button.place(relx=0.25, rely=0.9, anchor="center")
+        if self.__cardShopMenuFrameRepository.getRace() == "전체":
+            self.screen_image = self.image_select_all
+            self.image_width = self.image_select_all.width()
+            self.image_height = self.image_select_all.height()
 
-        no_button = tkinter.Button(buyCheckFrame, text="아니오", bg="#2E2BE2", fg="white",
-                                    command=lambda: restore_frame(buyCheckFrame), width=24,
-                                    height=2)
+        elif self.__cardShopMenuFrameRepository.getRace() == "언데드":
+            self.screen_image = self.image_select_undead
+            self.image_width = self.image_select_undead.width()
+            self.image_height = self.image_select_undead.height()
 
-        no_button.place(relx=0.75, rely=0.9, anchor="center")
+        elif self.__cardShopMenuFrameRepository.getRace() == "트랜트":
+            self.screen_image = self.image_select_trent
+            self.image_width = self.image_select_trent.width()
+            self.image_height = self.image_select_trent.height()
+
+        elif self.__cardShopMenuFrameRepository.getRace() == "휴먼":
+            self.screen_image = self.image_select_human
+            self.image_width = self.image_select_human.width()
+            self.image_height = self.image_select_human.height()
+
+
+        buyCheckFrame.set_image(self.screen_image)
+
+        yes_button = tkinter.Button(buyCheckFrame,
+                                    image=self.button_image_yes,
+                                    bd=0, highlightthickness=0,
+                                    command=lambda: yes_click_button(buyCheckFrame),
+                                    width=170, height=50)
+
+        yes_button.place(relx=0.29, rely=0.88, anchor="center")
+
+        no_button = tkinter.Button(buyCheckFrame,
+                                   image=self.button_image_no,
+                                   bd=0, highlightthickness=0,
+                                   command=lambda: restore_frame(buyCheckFrame),
+                                   width=170, height=50)
+
+        no_button.place(relx=0.71, rely=0.88, anchor="center")
 
         buyCheckFrame.place(relx=0.5, rely=0.5, anchor=tkinter.CENTER)
 
