@@ -557,6 +557,7 @@ class PreDrawedImage:
         self.pre_draw_burst_shadow_ball()
         self.pre_draw_moving_shadow_ball()
         self.pre_draw_dark_blast()
+        self.pre_draw_energy_burn()
         self.pre_draw_death_scythe()
         self.pre_draw_magic_attack()
         self.pre_draw_sword_attack()
@@ -770,6 +771,18 @@ class PreDrawedImage:
             dark_blast_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['dark_blast'] = dark_blast_animation
+
+    def pre_draw_energy_burn(self):
+        energy_burn_animation = {}
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation", 'energy_burn')
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'energy_burn', f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
+            energy_burn_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
+
+        self.__pre_drawed_effect_animation['energy_burn'] = energy_burn_animation
 
     def pre_draw_magic_attack(self):
         magic_attack_animation = {}
