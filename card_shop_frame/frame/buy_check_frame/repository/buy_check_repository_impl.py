@@ -23,6 +23,7 @@ class BuyCheckRepositoryImpl(BuyCheckRepository):
     y_bottom_base_ratio = 0.593
 
     need_to_redraw = False
+    try_again_screen_visible = False
 
     def __new__(cls):
         if cls.__instance is None:
@@ -34,6 +35,12 @@ class BuyCheckRepositoryImpl(BuyCheckRepository):
         if cls.__instance is None:
             cls.__instance = cls()
         return cls.__instance
+
+    def get_try_again_screen_visible(self):
+        return self.try_again_screen_visible
+
+    def set_try_again_screen_visible(self, try_again_screen_visible):
+        self.try_again_screen_visible = try_again_screen_visible
 
     def set_total_window_size(self, width, height):
         self.total_width = width

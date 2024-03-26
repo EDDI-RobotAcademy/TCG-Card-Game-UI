@@ -5,6 +5,7 @@ from OpenGL.GLU import *
 from screeninfo import get_monitors
 
 from common.utility import get_project_root
+from image_shape.non_background_image import NonBackgroundImage
 from image_shape.rectangle_image import RectangleImage
 from opengl_buy_random_card_frame.entity.buy_random_card_scene import BuyRandomCardScene
 
@@ -174,6 +175,20 @@ class BuyRandomCardFrame(OpenGLFrame):
 
         self.response_card_number = BuyCheckRepositoryImpl.getInstance().getRandomCardList()
         print(f"response_card_number: {self.response_card_number}")
+
+        try_again_screen_left_x_point = self.width * 0.268
+        try_again_screen_right_x_point = self.width * 0.683
+        try_again_screen_top_y_point = self.height * 0.276
+        try_again_screen_bottom_y_point = self.height * 0.672
+        try_again_image_data = self.__pre_drawed_image_instance.get_pre_draw_try_again_screen()
+        try_again_screen = NonBackgroundImage(image_data=try_again_image_data,
+                                              vertices=[
+                                                  (try_again_screen_left_x_point, try_again_screen_top_y_point),
+                                                  (try_again_screen_right_x_point, try_again_screen_top_y_point),
+                                                  (try_again_screen_right_x_point, try_again_screen_bottom_y_point),
+                                                  (try_again_screen_left_x_point, try_again_screen_bottom_y_point)
+                                              ])
+        self.buy_random_card_scene.add_try_again_screen(try_again_screen)
 
         # x = 200
         # y = 200

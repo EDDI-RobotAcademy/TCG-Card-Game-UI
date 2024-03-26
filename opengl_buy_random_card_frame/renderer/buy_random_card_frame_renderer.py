@@ -13,6 +13,7 @@ class BuyRandomCardFrameRenderer:
     def __init__(self, scene, window):
         self.scene = scene
         self.window = window
+        self.try_again_screen_visible = False
 
     def render(self):
         # print("buy random card frame 렌더러 호출")
@@ -40,7 +41,7 @@ class BuyRandomCardFrameRenderer:
         if self.scene.again_button:
             self.scene.again_button.draw()
 
-        glDisable(GL_BLEND)
+        # glDisable(GL_BLEND)
 
         # for card in self.scene.card_list[:10]:
         #     # print(f"카드 리스트 몇 개임? {len(self.scene.card_list[:10])}")
@@ -66,6 +67,9 @@ class BuyRandomCardFrameRenderer:
             attached_shape_list = pickable_card_base.get_attached_shapes()
             for attached_shape in attached_shape_list:
                 attached_shape.draw()
+
+        if self.buy_check_repository.get_try_again_screen_visible() == True:
+            self.scene.try_again_screen.draw()
 
         self.window.tkSwapBuffers()
 
