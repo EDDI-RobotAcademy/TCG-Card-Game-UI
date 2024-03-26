@@ -8,7 +8,7 @@ class RockPaperScissorsRepositoryImpl(RockPaperScissorsRepository):
     __receiveIpcChannel = None
 
     def __init__(self):
-        self.__rps = ""
+        self.__rps = "보"
         self.__RPS_timer_click = False
         self.__checkRPS = False
     def __new__(cls):
@@ -44,7 +44,7 @@ class RockPaperScissorsRepositoryImpl(RockPaperScissorsRepository):
         return self.__rps
 
     def resetRPS(self):
-        self.__rps = ""
+        self.__rps = "보"
 
 
     def setRPSTimerClick(self, checkClick):

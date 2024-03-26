@@ -148,10 +148,10 @@ class RockPaperScissorsServiceImpl(RockPaperScissorsService):
         def timeout():
             print("시간초과")
             responseData = self.__rockPaperScissorsRepositoryImpl.requestRockPaperScissors(
-                RockPaperScissorsRequest(self.__sessionRepositoryImpl.get_session_info(), ""))
+                RockPaperScissorsRequest(self.__sessionRepositoryImpl.get_session_info(), "Paper"))
             if responseData.get("is_success") is True:
                 self.RPS_Timer.stopTimer()
-                RPS_label.config(text="")
+                RPS_label.config(text="보")
                 switchFrameWithMenuName('check-rock-paper-scissors')
                 self.__checkRockPaperScissorsWinnerServiceImpl.check_RPSWinner(rootWindow, switchFrameWithMenuName)
 
