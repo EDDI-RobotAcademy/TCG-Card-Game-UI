@@ -17,28 +17,29 @@ Unlike Server, there are some shortcomings in Domain expression when it comes to
 # Project Manager
 [![Sanghoon Lee]()](https://github.com/silenc3502)  
 
-# Server Team
-[![Sanghoon Lee]()](https://github.com/silenc3502)  
-![Janghun Park]  
-![Sungyong Lee]  
-![Youngchan Hwang]  
-![Hyoungjun Lee]  
-![Sanggun Youn]  
-
 # Client Team
 [![Sanghoon Lee]()](https://github.com/silenc3502)  
-![Jaeseung Lee]  
-![Seunghun Jo]  
-![Jaelim Lee]  
-![Junghun Woo]  
+[![Jaeseung Lee]()]()  
+[![Seunghun Jo]()]()  
+[![Jaelim Lee]()]()  
+[![Junghun Woo]()]() 
 
 # Design
-![Jaelim Lee]  
+[![Jaelim Lee]()]()  
 
 # Animation
-![Sanggun Youn]  
+[![Sanggun Youn]()]()  
 [![Jaeseung Lee]()]()  
 [![Sanghoon Lee]()](https://github.com/silenc3502)  
 
 # Sound Engineering
-![Janghun Park]  
+[![Janghun Park]()]()  
+
+# Server Team
+[![Sanghoon Lee]()](https://github.com/silenc3502)  
+[![Janghun Park]()]()  
+[![Sungyong Lee]()]()  
+[![Youngchan Hwang]()]()  
+[![Hyoungjun Lee]()]()  
+[![Sanggun Youn]()]()  
+
