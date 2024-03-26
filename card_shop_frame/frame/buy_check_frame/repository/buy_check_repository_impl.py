@@ -54,7 +54,7 @@ class BuyCheckRepositoryImpl(BuyCheckRepository):
     def get_next_card_position(self, index):
         # TODO: 배치 간격 고려
         # 10개 배치 (위 5, 아래 5)
-        current_card_size = 220
+        current_card_size = 170
         card_width_ratio = current_card_size / self.total_width
         card_height_ratio = current_card_size * 1.615 / self.total_height
         print(f"{Fore.RED}card_width_ratio: {card_width_ratio}{Style.RESET_ALL}")
@@ -62,11 +62,16 @@ class BuyCheckRepositoryImpl(BuyCheckRepository):
         card_height_margin_ratio = card_height_margin / self.total_height
         print(f"{Fore.RED}card_height_margin_ratio: {card_height_margin_ratio}{Style.RESET_ALL}")
 
-        top_height = ((1 - (card_height_ratio * 2 + card_height_margin_ratio)) / 2) * self.total_height
+        top_height = (((1 - (card_height_ratio * 2 + card_height_margin_ratio)) / 2) + 0.0344488) * self.total_height
 
-        card_width_margin = 60
+        card_width_margin = 90
         card_width_margin_ratio = card_width_margin / self.total_width
-        left_start_width = ((1 - (card_width_ratio * 5 + card_width_margin_ratio * 4)) / 2) * self.total_width
+        # 75 / 1850 = 0.04054054 + (20 / 1850)
+        # 1642 / 1850 = 0.88756756756
+        # 계산에서 제외할 부분 1 - 0.88756756756 + 0.04054054 = 0.15297297244
+        # 계산할 부분 1 - 0.15297297244 = 0.84702702756
+        left_start_width = 0.05135134 * self.total_width
+        left_start_width_on_page = left_start_width + ((0.84702702756 - (card_width_ratio * 5 + card_width_margin_ratio * 4)) / 2) * self.total_width
         x_increment = (card_width_ratio + card_width_margin_ratio) * self.total_width
 
         place_index = index % 5
@@ -83,7 +88,7 @@ class BuyCheckRepositoryImpl(BuyCheckRepository):
         # x_increment = (self.x_right_base_ratio - self.x_left_base_ratio + card_width_ratio) / 5.0
         # next_x = base_x + self.total_width * (x_increment * place_index)
 
-        next_x = left_start_width + x_increment * place_index
+        next_x = left_start_width_on_page + x_increment * place_index
         print(f"{Fore.RED}next_x: {next_x}, current_y: {current_y}{Style.RESET_ALL}")
         return (next_x, current_y)
 
