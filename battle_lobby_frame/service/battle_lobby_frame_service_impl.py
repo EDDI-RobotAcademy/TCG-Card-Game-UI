@@ -1,4 +1,5 @@
 import tkinter
+from PIL import ImageTk, Image
 
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
 from battle_field_function.controller.battle_field_function_controller_impl import BattleFieldFunctionControllerImpl
@@ -41,12 +42,20 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
     def createBattleLobbyUiFrame(self, rootWindow, switchFrameWithMenuName):
         self.__battleLobbyFrame = self.__battleLobbyFrameRepository.createBattleLobbyFrame(rootWindow)
 
-        label = tkinter.Label(self.__battleLobbyFrame, text="WATING ROOM FOR BATTLE", font=("Helvetica", 50, "bold"),
-                              fg="#FFFFFF", bg="#000000")
-        label.place(relx=0.5, rely=0.15, anchor="center")
+        # label = tkinter.Label(self.__battleLobbyFrame, text="WATING ROOM FOR BATTLE", font=("Helvetica", 50, "bold"),
+        #                       fg="#FFFFFF", bg="#000000")
+        # label.place(relx=0.5, rely=0.15, anchor="center")
 
-        enterButton = tkinter.Button(self.__battleLobbyFrame, text="입장", font=("Arial", 20))
-        enterButton.place(relx=0.5, rely=0.85, anchor="center", width=180, height=60)
+        self.button_enter_origin = Image.open("local_storage/waiting_room_image/enter_button.png")
+        enter_button = self.button_enter_origin.resize((350, 85))
+        self.button_enter = ImageTk.PhotoImage(enter_button)
+
+        button_enter = tkinter.Button(self.__battleLobbyFrame,
+                                      image=self.button_enter,
+                                      bd=0, highlightthickness=0,
+                                      width=350, height=85)
+
+        button_enter.place(relx=0.5, rely=0.87, anchor="center")
 
         def onClickEnter(event=None):
             try:
@@ -74,7 +83,7 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
             except Exception as e:
                 print(e)
 
-        enterButton.bind("<Button-1>", onClickEnter)
+        button_enter.bind("<Button-1>", onClickEnter)
 
         self.__timer = Timer(rootWindow=self.__battleLobbyFrame, time=self.__deck_selection_time, relx=0.5, rely=0.25,
                              expiredEvent=onClickEnter)

@@ -1,5 +1,8 @@
 from OpenGL import GL
 
+from OpenGL.GL import *
+from OpenGL.GLU import *
+
 from card_shop_frame.frame.buy_check_frame.repository.buy_check_repository_impl import BuyCheckRepositoryImpl
 
 
@@ -23,10 +26,18 @@ class BuyRandomCardFrameRenderer:
         if self.scene.buy_random_background:
             self.scene.buy_random_background.draw()
 
-        # 버튼 도형
-        for button in self.scene.button_list:
-            # print(f"버튼 그리기: {button}")
-            self._render_shape(button)
+        # # 버튼 도형
+        # for button in self.scene.button_list:
+        #     # print(f"버튼 그리기: {button}")
+        #     self._render_shape(button)
+
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+        if self.scene.go_to_back_button:
+            self.scene.go_to_back_button.draw()
+
+        glDisable(GL_BLEND)
 
         # for card in self.scene.card_list[:10]:
         #     # print(f"카드 리스트 몇 개임? {len(self.scene.card_list[:10])}")

@@ -154,15 +154,18 @@ class BuyRandomCardFrame(OpenGLFrame):
 
 
         # 뒤로가기 버튼
-        go_to_back_button = Rectangle(color=(0.0, 1.0, 0.0, 1.0),
+        go_to_back_button = Rectangle(color=(1.0, 1.0, 1.0, 0.0),
                                       local_translation=(0, 0),
-                                      vertices=[(0.85 * self.width, 0.85 * self.height + 90),
-                                                (self.width - 50, 0.85 * self.height + 90),
-                                                (self.width - 50, self.height - 10),
-                                                (0.85 * self.width, self.height - 10)])
+                                      vertices=[(0.9016216 * self.width, 0.1978346 * self.height),
+                                                (0.97567567 * self.width, 0.1978346 * self.height),
+                                                (0.97567567 * self.width, 0.258858 * self.height),
+                                                (0.9016216 * self.width, 0.258858 * self.height)])
+        go_to_back_button.set_draw_border(False)
 
-        self.buy_random_card_scene.add_button_list(go_to_back_button)
-        print(f"버튼 도형 잘 들어갔니?:{self.buy_random_card_scene.get_button_list()}")
+        # self.buy_random_card_scene.add_button_list(go_to_back_button)
+        # print(f"버튼 도형 잘 들어갔니?:{self.buy_random_card_scene.get_button_list()}")
+
+        self.buy_random_card_scene.add_go_to_back_button(go_to_back_button)
 
         self.response_card_number = BuyCheckRepositoryImpl.getInstance().getRandomCardList()
         print(f"response_card_number: {self.response_card_number}")
