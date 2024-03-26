@@ -210,43 +210,66 @@ class FieldAreaInsideHandler:
         # TODO: Memory Leak에 대한 추가 작업이 필요할 수 있음
         # self.__your_hand_repository.remove_card_by_index(placed_card_index)
         self.__music_player_repository.play_sound_effect_of_unit_deploy(str(placed_card_id))
-        self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)
 
-        self.__your_field_unit_repository.create_field_unit_card(placed_card_id)
-        self.__your_field_unit_repository.save_current_field_unit_state(placed_card_id)
-        self.__recently_added_card_index = self.__your_field_unit_repository.get_recently_added_field_unit_index()
+        def deploy_unit(param):
+            placed_card_id = param[0]
+            placed_card_index = param[1]
 
-        # your_hand_page = self.__your_hand_repository.get_current_your_hand_page()
-        # your_hand_page_card_list = self.__your_hand_repository.your_hand_page_list[your_hand_page].get_your_hand_page_card_list()
-        # print(f"length of your_hand_page_card_list: {len(your_hand_page_card_list)}")
+            self.__your_hand_repository.remove_card_by_index_with_page(placed_card_index)
 
-        # self.__your_hand_repository.replace_hand_card_position()
-        self.__your_hand_repository.update_your_hand()
-        self.__your_field_unit_repository.replace_field_card_position()
+            self.__your_field_unit_repository.create_field_unit_card(placed_card_id)
+            self.__your_field_unit_repository.save_current_field_unit_state(placed_card_id)
+            self.__recently_added_card_index = self.__your_field_unit_repository.get_recently_added_field_unit_index()
 
-#        print(f"{Fore.RED}deploy_your_unit_request -> number_of_passive_skill_to_handle:{Fore.GREEN} {deploy_your_unit_request['number_of_passive_skill_to_handle']}{Style.RESET_ALL}")
+            # your_hand_page = self.__your_hand_repository.get_current_your_hand_page()
+            # your_hand_page_card_list = self.__your_hand_repository.your_hand_page_list[your_hand_page].get_your_hand_page_card_list()
+            # print(f"length of your_hand_page_card_list: {len(your_hand_page_card_list)}")
 
-        self.__your_field_unit_action_repository.create_field_unit_action_count(0)
+            # self.__your_hand_repository.replace_hand_card_position()
+            self.__your_hand_repository.update_your_hand()
+            self.__your_field_unit_repository.replace_field_card_position()
 
-        passive_skill_type = self.__card_info_repository.getCardPassiveFirstForCardNumber(placed_card_id)
-        if passive_skill_type == 2:
-            print("광역기")
+    #        print(f"{Fore.RED}deploy_your_unit_request -> number_of_passive_skill_to_handle:{Fore.GREEN} {deploy_your_unit_request['number_of_passive_skill_to_handle']}{Style.RESET_ALL}")
 
-            self.__field_area_action = FieldAreaAction.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS
-            if placed_card_id == 19:
-                self.set_unit_action(UnitAction.NETHER_BLADE_FIRST_WIDE_AREA_PASSIVE_SKILL)
+            self.__your_field_unit_action_repository.create_field_unit_action_count(0)
 
+            passive_skill_type = self.__card_info_repository.getCardPassiveFirstForCardNumber(placed_card_id)
+            if passive_skill_type == 2:
+                print("광역기")
+
+                self.__field_area_action = FieldAreaAction.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS
+                if placed_card_id == 19:
+                    self.set_unit_action(UnitAction.NETHER_BLADE_FIRST_WIDE_AREA_PASSIVE_SKILL)
+
+                return self.__field_area_action
+
+
+            elif passive_skill_type == 1:
+                print("단일기")
+
+                self.__field_area_action = FieldAreaAction.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS
+                return self.__field_area_action
+
+            self.__field_area_action = FieldAreaAction.PLACE_UNIT
             return self.__field_area_action
 
+        if placed_card_id == 19:
+            effect_animation = EffectAnimation()
+            effect_animation.set_animation_name('nether_blade_scene')
 
-        elif passive_skill_type == 1:
-            print("단일기")
-
-            self.__field_area_action = FieldAreaAction.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS
-            return self.__field_area_action
-
-        self.__field_area_action = FieldAreaAction.PLACE_UNIT
-        return self.__field_area_action
+            self.__notify_reader_repository.save_notify_effect_animation_request(
+                EffectAnimationRequest(
+                    effect_animation=effect_animation,
+                    target_player='You',
+                    target_index=99999,
+                    target_type=TargetType.FULL_SCREEN,
+                    call_function=deploy_unit,
+                    function_need_param=True,
+                    param=(placed_card_id, placed_card_index)
+                )
+            )
+        else:
+            deploy_unit((placed_card_id, placed_card_index))
 
     def handle_support_card_energy_boost(self, placed_card_id, placed_card_index):
         print(f"handle_support_card_energy_boost -> placed_card_id: {placed_card_id}")

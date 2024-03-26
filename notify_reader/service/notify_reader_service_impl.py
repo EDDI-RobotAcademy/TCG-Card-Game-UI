@@ -283,52 +283,70 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         print(f"{Fore.RED}notify_deploy_unit() -> Opponent deploy card_id:{Fore.GREEN} {card_id}{Style.RESET_ALL}")
 
         self.__battle_field_repository.set_current_use_card_id(card_id)
-        self.__opponent_field_unit_repository.create_field_unit_card(card_id)
-        self.__music_player_repository.play_sound_effect_of_unit_deploy(str(card_id))
-        # self.__opponent_field_unit_repository.place_field_unit(card_id)
 
-        self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
-        recently_added_card_index = self.__opponent_field_unit_repository.get_field_unit_max_index()
+        def deploy_unit(card_id):
+            self.__opponent_field_unit_repository.create_field_unit_card(card_id)
+            self.__music_player_repository.play_sound_effect_of_unit_deploy(str(card_id))
+            # self.__opponent_field_unit_repository.place_field_unit(card_id)
 
-        passive_skill_type = self.__card_info_repository.getCardPassiveFirstForCardNumber(card_id)
-        if passive_skill_type == 2:
-            print("광역기")
+            self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+            recently_added_card_index = self.__opponent_field_unit_repository.get_field_unit_max_index()
 
-            # # self.__opponent_field_area_action = OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS
-            # if card_id == 19:
-            #     opponent_animation_actor = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(recently_added_card_index)
-            #     self.__attack_animation_object.set_opponent_animation_actor(opponent_animation_actor)
-            #     # self.__opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.PLAY_ANIMATION)
-            #     # self.__opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
-            #
-            #     damage = self.__card_info_repository.getCardPassiveFirstDamageForCardNumber(opponent_animation_actor.get_card_number())
-            #     self.__attack_animation_object.set_opponent_animation_actor_damage(damage)
-            #
-            #     self.__opponent_field_area_inside_handler.set_unit_action(OpponentUnitAction.NETHER_BLADE_FIRST_WIDE_AREA_PASSIVE_SKILL)
-            #
-            #     extra_ability = self.__opponent_field_unit_repository.get_opponent_unit_extra_ability_at_index(recently_added_card_index)
-            #     self.__attack_animation_object.set_extra_ability(extra_ability)
-            #
-            #     self.__opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.PLAY_ANIMATION)
-            #
-            #     process_first_passive_skill_response = self.__fake_battle_field_frame_repository.request_to_process_first_passive_skill(
-            #         WideAreaPassiveSkillFromDeployRequest(
-            #             _sessionInfo=self.__session_repository.get_second_fake_session_info(),
-            #             _unitCardIndex=str(recently_added_card_index),
-            #             _usageSkillIndex="1"))
-            #
-            #     is_success = process_first_passive_skill_response['is_success']
-            #     if is_success is False:
-            #         return FieldAreaAction.Dummy
+            passive_skill_type = self.__card_info_repository.getCardPassiveFirstForCardNumber(card_id)
+            if passive_skill_type == 2:
+                print("광역기")
 
-            return
+                # # self.__opponent_field_area_action = OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS
+                # if card_id == 19:
+                #     opponent_animation_actor = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(recently_added_card_index)
+                #     self.__attack_animation_object.set_opponent_animation_actor(opponent_animation_actor)
+                #     # self.__opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.PLAY_ANIMATION)
+                #     # self.__opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
+                #
+                #     damage = self.__card_info_repository.getCardPassiveFirstDamageForCardNumber(opponent_animation_actor.get_card_number())
+                #     self.__attack_animation_object.set_opponent_animation_actor_damage(damage)
+                #
+                #     self.__opponent_field_area_inside_handler.set_unit_action(OpponentUnitAction.NETHER_BLADE_FIRST_WIDE_AREA_PASSIVE_SKILL)
+                #
+                #     extra_ability = self.__opponent_field_unit_repository.get_opponent_unit_extra_ability_at_index(recently_added_card_index)
+                #     self.__attack_animation_object.set_extra_ability(extra_ability)
+                #
+                #     self.__opponent_field_area_inside_handler.set_active_field_area_action(OpponentFieldAreaActionProcess.PLAY_ANIMATION)
+                #
+                #     process_first_passive_skill_response = self.__fake_battle_field_frame_repository.request_to_process_first_passive_skill(
+                #         WideAreaPassiveSkillFromDeployRequest(
+                #             _sessionInfo=self.__session_repository.get_second_fake_session_info(),
+                #             _unitCardIndex=str(recently_added_card_index),
+                #             _usageSkillIndex="1"))
+                #
+                #     is_success = process_first_passive_skill_response['is_success']
+                #     if is_success is False:
+                #         return FieldAreaAction.Dummy
+
+                return
 
 
-        elif passive_skill_type == 1:
-            print("단일기")
+            elif passive_skill_type == 1:
+                print("단일기")
 
-            self.__opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
-            return
+                self.__opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
+                return
+
+        effect_animation = EffectAnimation()
+        effect_animation.set_animation_name('nether_blade_scene')
+
+        self.__notify_reader_repository.save_notify_effect_animation_request(
+            EffectAnimationRequest(
+                effect_animation=effect_animation,
+                target_player='Opponent',
+                target_index=99999,
+                target_type=TargetType.FULL_SCREEN,
+                call_function=deploy_unit,
+                function_need_param=True,
+                param=card_id,
+                need_dalay=True
+            )
+        )
 
         return
 

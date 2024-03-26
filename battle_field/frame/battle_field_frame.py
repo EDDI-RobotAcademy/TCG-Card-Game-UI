@@ -447,6 +447,7 @@ class BattleFieldFrame(OpenGLFrame):
         self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_skill(width, height)
         self.pre_drawed_image_instance.pre_draw_full_screen_sea_of_wraith(width, height)
         self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_targeting_skill(width, height)
+        self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_deploy(width, height)
 
         battle_field_scene = BattleFieldScene()
         battle_field_scene.create_battle_field_cene(self.width, self.height)
@@ -963,6 +964,19 @@ class BattleFieldFrame(OpenGLFrame):
                                                                               effect_animation_request.get_call_function())
                     # self.play_effect_animation_by_index_and_call_function(animation_index,
                     #                                                            effect_animation_request.get_call_function())
+
+                elif effect_animation_request.get_target_type() == TargetType.FULL_SCREEN:
+                    effect_animation.draw_full_screen_animation_panel()
+                    effect_animation_panel = effect_animation.get_animation_panel()
+                    animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+                        effect_animation)
+
+                    self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+                        animation_index, effect_animation_panel)
+
+                    self.play_effect_animation_by_index_and_call_function_with_param(animation_index,
+                                effect_animation_request.get_call_function(), effect_animation_request.get_param(),
+                                need_delay= effect_animation_request.get_need_delay())
 
         # self.play_effect_animation()
 
