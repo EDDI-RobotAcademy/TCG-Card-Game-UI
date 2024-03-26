@@ -6,6 +6,7 @@ from battle_field.entity.effect_animation import EffectAnimation
 from battle_field.infra.request.deploy_unit_card_request import DeployUnitCardRequest
 from battle_field.infra.request.drawCardByUseSupportCardRequest import DrawCardByUseSupportCardRequest
 from battle_field.infra.request.request_use_overflow_of_energy import RequestUseOverflowOfEnergy
+from battle_field.infra.request.search_card_by_use_support_card_request import SearchCardByUseSupportCardRequest
 from battle_field.infra.your_deck_repository import YourDeckRepository
 
 from battle_field.infra.your_field_unit_action_repository import YourFieldUnitActionRepository
@@ -384,7 +385,28 @@ class FieldAreaInsideHandler:
 
         self.__action_set_card_id = placed_card_id
         self.set_placed_card_index(placed_card_index)
-        self.__your_deck_repository.update_deck_search_unit_card()
+
+
+        response = self.__your_deck_repository.request_use_call_of_leonic(
+            SearchCardByUseSupportCardRequest(
+                _sessionInfo=self.__session_info_repository.get_session_info(),
+                _cardId="30")
+        )
+        print(f"{Fore.RED}swamp_of_dead -> response:{Fore.GREEN} {response}{Style.RESET_ALL}")
+        is_success_value = response.get('is_success', False)
+
+        if is_success_value == False:
+            is_false_message = response.get('false_message_enum')
+            return is_false_message
+        accessible_deck_unit_card_index_string_list = list(response['accessible_deck_unit_card_list'].keys())
+        accessible_deck_unit_card_index_list = []
+        for accessible_deck_unit_card_index in accessible_deck_unit_card_index_string_list:
+            accessible_deck_unit_card_index_list.append(int(accessible_deck_unit_card_index))
+        accessible_deck_unit_card_number_list = list(response.get('accessible_deck_unit_card_list').values())
+
+        print(f"accessible_deck_unit_card_index_list: {accessible_deck_unit_card_index_list}")
+        print(f"accessible_deck_unit_card_number_list: {accessible_deck_unit_card_number_list}")
+        self.__your_deck_repository.update_deck_search_unit_card(accessible_deck_unit_card_index_list, accessible_deck_unit_card_number_list)
 
         self.__field_area_action = FieldAreaAction.SEARCH_UNIT_CARD
         return self.__field_area_action
