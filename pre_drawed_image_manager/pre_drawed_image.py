@@ -1114,7 +1114,7 @@ class PreDrawedImage:
         self.pre_draw_shadow_ball_button()
         self.pre_draw_sea_of_spector_button()
 
-        self.pre_draw_animation()
+        # self.pre_draw_animation()
         self.pre_draw_effect_animation()
 
         self.pre_draw_number_of_energy()
