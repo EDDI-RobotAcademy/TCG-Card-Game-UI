@@ -2672,6 +2672,10 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         field_energy = notify_dict_data.get('player_field_energy_map', {}).get('Opponent',None)
 
+        unit_index = (notify_dict_data.get("player_field_unit_death_map", {})
+                               .get("Opponent", {})
+                               .get("dead_field_unit_index_list", []))[0]
+
         def change_field_energy():
             self.__opponent_field_energy_repository.set_opponent_field_energy(field_energy)
             self.apply_notify_data_of_dead_unit(notify_dict_data['player_field_unit_death_map'])
@@ -2680,13 +2684,16 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         #todo : 애니메이션 제작해서 넘겨야합
         effect_animation = EffectAnimation()
         effect_animation.set_animation_name('dark_blast')
+        effect_animation.change_local_translation(
+            self.__opponent_field_unit_repository.find_field_unit_by_index(unit_index).get_fixed_card_base().get_local_translation())
+        effect_animation.draw_animation_panel()
 
         self.__notify_reader_repository.save_notify_effect_animation_request(
             EffectAnimationRequest(
                 effect_animation=effect_animation,
                 target_player='Opponent',
-                target_index=99999,
-                target_type=TargetType.AREA,
+                target_index=unit_index,
+                target_type=TargetType.UNIT,
                 call_function=change_field_energy
             )
         )
