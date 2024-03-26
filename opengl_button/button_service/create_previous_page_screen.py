@@ -1,6 +1,7 @@
 from colorama import Fore, Style
 from shapely import Polygon, Point
 
+from music_player.repository.music_player_repository_impl import MusicPlayerRepositoryImpl
 from opengl_my_card_main_frame.entity.my_card_main_scene import MyCardMainScene
 from opengl_my_card_main_frame.infra.my_card_repository import MyCardRepository
 
@@ -15,6 +16,8 @@ class CreatePreviousPageScreen:
         self.page_manager = page_manager
         self.my_card_main_scene = my_card_main_frame.my_card_main_scene
 
+        self.music_player_repository = MusicPlayerRepositoryImpl.getInstance()
+
         self.width_ratio = 1
         self.height_ratio = 1
 
@@ -25,6 +28,7 @@ class CreatePreviousPageScreen:
 
             prev_button = self.my_card_main_scene.get_prev_button()
             if self.is_point_inside_object(prev_button, (x, y)):
+                self.music_player_repository.play_sound_effect_of_mouse_on_click('page_button_click')
                 print(f"prev_button_screen -> mouse_click_event() clicked next_button")
                 print(f"{Fore.RED}current page number: {self.my_card_repository.get_current_my_card_page()}{Style.RESET_ALL}")
 

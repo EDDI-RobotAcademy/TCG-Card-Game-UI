@@ -1,5 +1,6 @@
 from shapely import Polygon, Point
 
+from music_player.repository.music_player_repository_impl import MusicPlayerRepositoryImpl
 from opengl_my_deck_register_frame.service.my_deck_register_frame_service_impl import MyDeckRegisterFrameServiceImpl
 from ui_frame.service.ui_frame_service_impl import UiFrameServiceImpl
 
@@ -70,6 +71,7 @@ class CreateDeckRegisterButton:
 
         self.my_card_main_frame = my_card_main_frame
         self.my_deck_register_frame_service = MyDeckRegisterFrameServiceImpl.getInstance()
+        self.music_player_repository = MusicPlayerRepositoryImpl.getInstance()
 
         self.width_ratio = 1
         self.height_ratio = 1
@@ -96,6 +98,7 @@ class CreateDeckRegisterButton:
 
             create_deck_button = self.my_card_main_frame.my_card_main_scene.get_create_deck_button()
             if self.is_point_inside_object(create_deck_button, (x, y)):
+                self.music_player_repository.play_sound_effect_of_mouse_on_click('menu_button_click')
                 print(f"create_deck_button -> mouse_click_event() clicked create_deck_button")
 
             # center_x = 0.5 * self.my_card_main_frame.width
