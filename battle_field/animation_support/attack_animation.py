@@ -128,6 +128,7 @@ class AttackAnimation:
         self.notify_data = notify_data
 
     def get_notify_data(self):
+        print('attack animation notify data :', self.notify_data)
         return self.notify_data
 
     def set_your_field_hp_shape(self, your_field_hp_shape):

@@ -7,6 +7,7 @@ from shapely import Polygon, Point
 
 from battle_field.infra.opponent_field_energy_repository import OpponentFieldEnergyRepository
 from battle_field.infra.opponent_hand_repository import OpponentHandRepository
+from battle_field.infra.your_deck_repository import YourDeckRepository
 from battle_field.infra.your_field_energy_repository import YourFieldEnergyRepository
 from battle_field.infra.your_hand_repository import YourHandRepository
 from battle_field_muligun.infra.muligun_your_hand_repository import MuligunYourHandRepository
@@ -31,6 +32,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
     __pre_drawed_image_instance = PreDrawedImage.getInstance()
 
     your_hand_repository = YourHandRepository.getInstance()
+    your_deck_repository = YourDeckRepository.getInstance()
 
     def __init__(self,  master=None, switchFrameWithMenuName=None, **kwargs):
         super().__init__(master, **kwargs)
@@ -207,6 +209,7 @@ class BattleFieldMuligunFrame(OpenGLFrame):
                 if is_your_turn:
                     draw_card_id = response['player_draw_card_list_map']['You']
                     self.your_hand_repository.save_current_hand_state(draw_card_id)
+                    self.your_deck_repository.draw_deck()
                     YourFieldEnergyRepository.getInstance().increase_your_field_energy()
                 else:
                     OpponentFieldEnergyRepository.getInstance().increase_opponent_field_energy()
@@ -403,6 +406,12 @@ class BattleFieldMuligunFrame(OpenGLFrame):
             self.hand_card_list = self.muligun_your_hand_repository.get_current_hand_card_list()
             print(f"{Fore.RED}self.hand_card_list:{Fore.GREEN} {self.hand_card_list}{Style.RESET_ALL}")
 
+            deck_card_list = responseData['updated_deck_card_list']
+
+            print(f"deck_card_list: {deck_card_list}")
+
+            self.your_deck_repository.save_deck_state(deck_card_list)
+
             # TODO: 새로 받을 카드 임의로 지정. 나중에는 서버에서 받아야 함. 임의로 넣었기 때문에 현재 2개만 교체 가능
             # self.redraw_card()
 
@@ -415,13 +424,14 @@ class BattleFieldMuligunFrame(OpenGLFrame):
 
             self.muligun_your_hand_repository.set_is_my_mulligan(True)
             current_hand_state = self.muligun_your_hand_repository.get_current_hand_state()
+            self.your_hand_repository.save_current_hand_state(current_hand_state)
             # print(self.hand_card_list)
             # for hand_card in self.hand_card_list:
             #     print(hand_card)
             #     print(hand_card.get_card_number())
             #     self.your_hand_repository.save_current_hand_state(hand_card.get_card_number())
             # self.your_hand_repository.save_current_hand_state(self.hand_card_list)
-            self.your_hand_repository.build_your_hand_page()
+            # self.your_hand_repository.build_your_hand_page()
 
             # try:
             #     #     # responseData = self.muligun_your_hand_repository.requestCheckOpponentMuligun(
@@ -577,6 +587,12 @@ class BattleFieldMuligunFrame(OpenGLFrame):
                                default_list))
 
             print(f"{Fore.RED}Mulligan ResponseData:{Fore.GREEN} {responseData}{Style.RESET_ALL}")
+
+            deck_card_list = responseData['updated_deck_card_list']
+            print(f"deck_card_list: {deck_card_list}")
+
+            self.your_deck_repository.save_deck_state(deck_card_list)
+
             self.is_doing_mulligan = False
             self.__switchFrameWithMenuName('battle-field')
 
