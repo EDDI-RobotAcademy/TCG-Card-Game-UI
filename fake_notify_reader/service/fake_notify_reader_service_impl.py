@@ -2041,7 +2041,7 @@ class FakeNotifyReaderServiceImpl(FakeNotifyReaderService):
                     self.__opponent_field_energy_repository.set_opponent_field_energy(result_opponent_energy_count)
 
                 effect_animation = EffectAnimation()
-                effect_animation.set_animation_name('death_of_field')
+                effect_animation.set_animation_name('field_of_death')
 
                 self.__notify_reader_repository.save_notify_effect_animation_request(
                     EffectAnimationRequest(
@@ -2069,7 +2069,7 @@ class FakeNotifyReaderServiceImpl(FakeNotifyReaderService):
                     self.__your_field_energy_repository.set_your_field_energy(result_your_energy_count)
 
                 effect_animation = EffectAnimation()
-                effect_animation.set_animation_name('death_of_field')
+                effect_animation.set_animation_name('field_of_death')
 
                 self.__notify_reader_repository.save_notify_effect_animation_request(
                     EffectAnimationRequest(

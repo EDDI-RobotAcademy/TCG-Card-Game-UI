@@ -927,6 +927,7 @@ class BattleFieldFrame(OpenGLFrame):
                     effect_animation_panel = effect_animation.get_animation_panel()
                     animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
                         effect_animation)
+
                     self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
                         animation_index, effect_animation_panel)
 
@@ -947,6 +948,7 @@ class BattleFieldFrame(OpenGLFrame):
                     effect_animation_panel = effect_animation.get_animation_panel()
                     animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
                         effect_animation)
+
                     self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
                         animation_index, effect_animation_panel)
 
@@ -1422,6 +1424,8 @@ class BattleFieldFrame(OpenGLFrame):
                         calculate_energy_burn(target_index)
 
                 vibration(1)
+
+            self.__music_player_repository.play_sound_effect_of_card_execution('energy_burn')
 
             self.play_effect_animation_by_index_and_call_function_with_param(animation_index, vibration_energy_burn,
                                                                              target_index)
@@ -2241,7 +2245,7 @@ class BattleFieldFrame(OpenGLFrame):
 
                             def field_of_death(param):
 
-                                self.__music_player_repository.play_sound_effect_of_card_execution('field_of_death')
+                                # self.__music_player_repository.play_sound_effect_of_card_execution('field_of_death')
 
                                 opponent_field_energy = self.opponent_field_energy_repository.get_opponent_field_energy()
                                 print(f"before land of death -> opponent_field_energy: {opponent_field_energy}")
@@ -2266,7 +2270,7 @@ class BattleFieldFrame(OpenGLFrame):
                                 return
 
                             self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
-                                'death_of_field', field_of_death, None
+                                'field_of_death', field_of_death, None
                             )
 
             # Opponent Field Area 끝
@@ -2363,6 +2367,8 @@ class BattleFieldFrame(OpenGLFrame):
                                     self.message_on_the_screen.create_message_on_the_battle_screen(
                                         is_morale_conversion_false_message)
                                     return
+
+                                self.__music_player_repository.play_sound_effect_of_card_execution('morale_conversion')
 
                                 card_id = current_field_unit.get_card_number()
                                 fixed_field_unit_hp = self.card_info_repository.getCardHpForCardNumber(card_id)
@@ -4434,7 +4440,7 @@ class BattleFieldFrame(OpenGLFrame):
                     self.field_area_inside_handler.clear_field_area_action()
 
                     def call_of_leonic(response):
-                        self.__music_player_repository.play_sound_effect_of_card_execution('call_of_leonic')
+                        # self.__music_player_repository.play_sound_effect_of_card_execution('call_of_leonic')
                         # 서포트
 
                         # 실제로 지울 때 몇 개 지우는지만 알면 된다.
@@ -6879,6 +6885,8 @@ class BattleFieldFrame(OpenGLFrame):
             effect_animation)
         self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
             animation_index, effect_animation_panel)
+
+        self.__music_player_repository.play_sound_effect_of_card_execution('contract_of_doom')
 
         self.play_effect_animation_by_index_and_call_function(animation_index,
                                                               self.your_contract_of_doom_attack_animation)
@@ -11256,6 +11264,9 @@ class BattleFieldFrame(OpenGLFrame):
         print(f"effect_animation : {effect_animation}")
         effect_animation.reset_animation_count()
 
+        effect_animation_name = effect_animation.get_animation_name()
+        self.__music_player_repository.play_sound_effect_of_card_execution(effect_animation_name)
+
         self.master.after(0, animate)
 
     def play_effect_animation_by_index_and_call_function_with_param(self, index, function, param, need_delay=False):
@@ -11275,6 +11286,9 @@ class BattleFieldFrame(OpenGLFrame):
         effect_animation = self.effect_animation_repository.get_effect_animation_by_index(index)
         print(f"effect_animation : {effect_animation}")
         effect_animation.reset_animation_count()
+
+        effect_animation_name = effect_animation.get_animation_name()
+        self.__music_player_repository.play_sound_effect_of_card_execution(effect_animation_name)
 
         if need_delay:
             self.master.after(2000, animate)
@@ -11296,6 +11310,8 @@ class BattleFieldFrame(OpenGLFrame):
 
         self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
             animation_index, effect_animation_panel)
+
+        self.__music_player_repository.play_sound_effect_of_card_execution(effect_name)
 
         self.play_effect_animation_by_index_and_call_function(animation_index, function)
 
@@ -11350,6 +11366,8 @@ class BattleFieldFrame(OpenGLFrame):
             effect_animation)
         self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
             animation_index, effect_animation_panel)
+
+        self.__music_player_repository.play_sound_effect_of_card_execution(effect_name)
 
         self.play_effect_animation_by_index_and_call_function_with_param(animation_index, function, param)
 
@@ -11443,6 +11461,8 @@ class BattleFieldFrame(OpenGLFrame):
         self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
             animation_index, effect_animation_panel)
 
+        self.__music_player_repository.play_sound_effect_of_card_execution(effect_name)
+
         self.play_effect_animation_by_index_and_call_function(animation_index, function)
 
     def create_effect_animation_to_your_unit_and_play_animation_and_call_function_with_param(self, effect_name, index,
@@ -11461,8 +11481,7 @@ class BattleFieldFrame(OpenGLFrame):
         self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
             animation_index, effect_animation_panel)
 
-        if effect_name == 'dark_blast':
-            self.__music_player_repository.play_sound_effect_of_card_execution('energy_burn')
+        self.__music_player_repository.play_sound_effect_of_card_execution(effect_name)
 
         self.play_effect_animation_by_index_and_call_function_with_param(animation_index, function, param)
 
@@ -11823,7 +11842,7 @@ class BattleFieldFrame(OpenGLFrame):
                     self.create_effect_animation_to_your_unit_and_play_animation_and_call_function(
                         'death_scythe', int(unit_index), vibration_death_scythe_you)
 
-                self.__music_player_repository.play_sound_effect_of_card_execution('death_scythe')
+                # self.__music_player_repository.play_sound_effect_of_card_execution('death_scythe')
 
     def energy_burn_animation(self):
         notify_dict_data = self.attack_animation_object.get_notify_data()
@@ -11944,7 +11963,7 @@ class BattleFieldFrame(OpenGLFrame):
                 vibration(1)
 
             self.create_effect_animation_to_your_unit_and_play_animation_and_call_function(
-                'dark_blast', field_unit_index, vibration_energy_burn)
+                'energy_burn', field_unit_index, vibration_energy_burn)
 
 
         else:
@@ -12069,7 +12088,7 @@ class BattleFieldFrame(OpenGLFrame):
                 vibration(1)
 
             self.create_effect_animation_to_your_unit_and_play_animation_and_call_function(
-                'dark_blast', field_unit_index, vibration_energy_burn)
+                'energy_burn', field_unit_index, vibration_energy_burn)
 
     def repository_clear(self):
         self.your_deck_repository.clear_every_resource()
