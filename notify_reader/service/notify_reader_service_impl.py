@@ -332,21 +332,24 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 self.__opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS)
                 return
 
-        effect_animation = EffectAnimation()
-        effect_animation.set_animation_name('nether_blade_scene')
-
-        self.__notify_reader_repository.save_notify_effect_animation_request(
-            EffectAnimationRequest(
-                effect_animation=effect_animation,
-                target_player='Opponent',
-                target_index=99999,
-                target_type=TargetType.FULL_SCREEN,
-                call_function=deploy_unit,
-                function_need_param=True,
-                param=card_id,
-                need_dalay=True
+        if card_id == 19:
+            effect_animation = EffectAnimation()
+            effect_animation.set_animation_name('nether_blade_scene')
+            self.__notify_reader_repository.save_notify_effect_animation_request(
+                EffectAnimationRequest(
+                    effect_animation=effect_animation,
+                    target_player='Opponent',
+                    target_index=99999,
+                    target_type=TargetType.FULL_SCREEN,
+                    call_function=deploy_unit,
+                    function_need_param=True,
+                    param=card_id,
+                    need_dalay=True
+                )
             )
-        )
+        else:
+            deploy_unit(card_id)
+
 
         return
 
