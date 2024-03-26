@@ -1,3 +1,5 @@
+from shapely import Polygon, Point
+
 from opengl_my_deck_register_frame.service.my_deck_register_frame_service_impl import MyDeckRegisterFrameServiceImpl
 from ui_frame.service.ui_frame_service_impl import UiFrameServiceImpl
 
@@ -69,49 +71,71 @@ class CreateDeckRegisterButton:
         self.my_card_main_frame = my_card_main_frame
         self.my_deck_register_frame_service = MyDeckRegisterFrameServiceImpl.getInstance()
 
+        self.width_ratio = 1
+        self.height_ratio = 1
+
+    def is_point_inside_object(self, object, coordinates):
+        x, y = coordinates
+        y *= -1
+
+        object_vertices = object.get_vertices()
+
+        ratio_applied_valid_object = [(x * self.width_ratio, y * self.height_ratio) for x, y in object_vertices]
+        print(f"draw_again_button -> is_point_inside_object() - ratio_applied_valid_your_field: {ratio_applied_valid_object}")
+        print(f"x: {x * self.width_ratio}, y: {y * self.height_ratio}")
+
+        poly = Polygon(ratio_applied_valid_object)
+        point = Point(x, y)
+
+        return point.within(poly)
+
     def mouse_click_event(self, event):
         try:
             x, y = event.x, event.y
             y = self.my_card_main_frame.winfo_reqheight() - y
 
-            center_x = 0.5 * self.my_card_main_frame.width
-            center_y = 0.5 * self.my_card_main_frame.height
-            button_width = 0.15 * self.my_card_main_frame.width
-            button_height = 0.06 * self.my_card_main_frame.height
-            ok_button_y_offset = 0.8 * 0.5 * self.my_card_main_frame.height
-            ok_button_x_offset = 0.25 * 0.5 * self.my_card_main_frame.width
+            create_deck_button = self.my_card_main_frame.my_card_main_scene.get_create_deck_button()
+            if self.is_point_inside_object(create_deck_button, (x, y)):
+                print(f"create_deck_button -> mouse_click_event() clicked create_deck_button")
 
-            deck_button_rectangle_vertices = [(center_x - 0.5 * button_width + ok_button_x_offset,
-                                               center_y - 0.5 * 0.5 * self.my_card_main_frame.height - button_height + ok_button_y_offset),
-                                              (center_x + 0.5 * button_width + ok_button_x_offset,
-                                               center_y - 0.5 * 0.5 * self.my_card_main_frame.height - button_height + ok_button_y_offset),
-                                              (center_x + 0.5 * button_width + ok_button_x_offset,
-                                               center_y - 0.5 * 0.5 * self.my_card_main_frame.height + ok_button_y_offset),
-                                              (center_x - 0.5 * button_width + ok_button_x_offset,
-                                               center_y - 0.5 * 0.5 * self.my_card_main_frame.height + ok_button_y_offset)]
-
-            if self.my_card_main_frame.show_my_deck_register_screen is True and self.check_collision(x, y, deck_button_rectangle_vertices):
-                # 입력한 텍스트를 가져오기
-                deck_name = self.my_card_main_frame.getString()
-                self.my_card_main_frame.getMyDeckRegisterScene().add_deck_name_list(deck_name)
-                print(f"생성할 덱 이름 잘 들어 왔냐?{self.my_card_main_frame.getMyDeckRegisterScene().get_deck_name_list()}")
-
-                for text in self.my_card_main_frame.getMyDeckRegisterScene().get_deck_name_list():
-                    print(f"text:{text}")
-                    self.my_deck_register_frame_service.on_deck_register_click(text)
-                if event: # 확인 버튼을 클릭했을 때
-                    self.my_card_main_frame.show_my_deck_register_screen = False
-                    # 화면에 있는 것들 싹 다 지워야 함.
-                    self.my_card_main_frame.clear_screen()
-                    # self.my_card_main_frame.getTextBox().destroy()
-                    self.destroy_entry()
-
-                    # 다시 내 카드 화면 그려...
-                    self.my_card_main_frame.show_first_page_card_screen = True
-                    self.my_card_main_frame.drawMyCardMainFrame()
-
-                    print("다 지워졌니?")
-                    # TODO: 준비중인 페이지 입니다 메세지 창 띄우기
+            # center_x = 0.5 * self.my_card_main_frame.width
+            # center_y = 0.5 * self.my_card_main_frame.height
+            # button_width = 0.15 * self.my_card_main_frame.width
+            # button_height = 0.06 * self.my_card_main_frame.height
+            # ok_button_y_offset = 0.8 * 0.5 * self.my_card_main_frame.height
+            # ok_button_x_offset = 0.25 * 0.5 * self.my_card_main_frame.width
+            #
+            # deck_button_rectangle_vertices = [(center_x - 0.5 * button_width + ok_button_x_offset,
+            #                                    center_y - 0.5 * 0.5 * self.my_card_main_frame.height - button_height + ok_button_y_offset),
+            #                                   (center_x + 0.5 * button_width + ok_button_x_offset,
+            #                                    center_y - 0.5 * 0.5 * self.my_card_main_frame.height - button_height + ok_button_y_offset),
+            #                                   (center_x + 0.5 * button_width + ok_button_x_offset,
+            #                                    center_y - 0.5 * 0.5 * self.my_card_main_frame.height + ok_button_y_offset),
+            #                                   (center_x - 0.5 * button_width + ok_button_x_offset,
+            #                                    center_y - 0.5 * 0.5 * self.my_card_main_frame.height + ok_button_y_offset)]
+            #
+            # if self.my_card_main_frame.show_my_deck_register_screen is True and self.check_collision(x, y, deck_button_rectangle_vertices):
+            #     # 입력한 텍스트를 가져오기
+            #     deck_name = self.my_card_main_frame.getString()
+            #     self.my_card_main_frame.getMyDeckRegisterScene().add_deck_name_list(deck_name)
+            #     print(f"생성할 덱 이름 잘 들어 왔냐?{self.my_card_main_frame.getMyDeckRegisterScene().get_deck_name_list()}")
+            #
+            #     for text in self.my_card_main_frame.getMyDeckRegisterScene().get_deck_name_list():
+            #         print(f"text:{text}")
+            #         self.my_deck_register_frame_service.on_deck_register_click(text)
+            #     if event: # 확인 버튼을 클릭했을 때
+            #         self.my_card_main_frame.show_my_deck_register_screen = False
+            #         # 화면에 있는 것들 싹 다 지워야 함.
+            #         self.my_card_main_frame.clear_screen()
+            #         # self.my_card_main_frame.getTextBox().destroy()
+            #         self.destroy_entry()
+            #
+            #         # 다시 내 카드 화면 그려...
+            #         self.my_card_main_frame.show_first_page_card_screen = True
+            #         self.my_card_main_frame.drawMyCardMainFrame()
+            #
+            #         print("다 지워졌니?")
+            #         # TODO: 준비중인 페이지 입니다 메세지 창 띄우기
 
         except Exception as e:
             print(f"create deck register button Error : {e}")
