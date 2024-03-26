@@ -3844,10 +3844,15 @@ class BattleFieldFrame(OpenGLFrame):
 
                     self.attack_animation_object.set_is_your_attack_main_character(True)
                     self.attack_animation_object.set_response_data(process_second_passive_skill_response)
-                    self.create_effect_animation_with_vertices_and_play_animation_and_call_function(
-                        'nether_blade_targeting_skill', self.opponent_main_character_panel.get_vertices(),
-                        self.start_nether_blade_second_passive_targeting_motion_animation
-                    )
+                    self.master.after(0, self.start_nether_blade_second_passive_targeting_motion_animation)
+                    # self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
+                    #     'nether_blade_targeting_skill', ,
+                    #
+                    # )
+                    # self.create_effect_animation_with_vertices_and_play_animation_and_call_function(
+                    #     'nether_blade_targeting_skill', self.opponent_main_character_panel.get_vertices(),
+                    #     self.start_nether_blade_second_passive_targeting_motion_animation
+                    # )
 
                     if process_second_passive_skill_response.get('player_main_character_survival_map_for_notice',
                                                                  {}).get('Opponent',
@@ -3873,7 +3878,6 @@ class BattleFieldFrame(OpenGLFrame):
 
                     opponent_fixed_card_base = opponent_field_unit_object.get_fixed_card_base()
                     print("지정한 상대 유닛 베이스 찾기")
-                    print('일단 어딘지 찾아')
 
                     if opponent_fixed_card_base.is_point_inside((x, y)):
                         self.attack_animation_object.set_opponent_field_unit(opponent_field_unit_object)
@@ -3898,10 +3902,14 @@ class BattleFieldFrame(OpenGLFrame):
                         self.attack_animation_object.set_response_data(process_second_passive_skill_response)
 
                         # self.attack_animation_object.set_animation_actor_damage(20)
-                        self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function(
-                            'nether_blade_targeting_skill', opponent_field_unit_object.get_index(),
-                            self.start_nether_blade_second_passive_targeting_motion_animation
-                        )
+
+
+                        self.master.after(0, self.start_nether_blade_second_passive_targeting_motion_animation)
+
+                        # self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function(
+                        #     'nether_blade_targeting_skill', opponent_field_unit_object.get_index(),
+                        #     self.start_nether_blade_second_passive_targeting_motion_animation
+                        # )
                         # self.master.after(0, self.start_nether_blade_second_passive_targeting_motion_animation)
                         self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
 
@@ -3946,10 +3954,13 @@ class BattleFieldFrame(OpenGLFrame):
                         return FieldAreaAction.Dummy
 
                     self.attack_animation_object.set_response_data(process_second_passive_skill_response)
-                    self.create_effect_animation_with_vertices_and_play_animation_and_call_function(
-                        'nether_blade_targeting_skill', self.opponent_main_character_panel.get_vertices(),
-                        self.start_nether_blade_second_passive_targeting_motion_animation
-                    )
+
+                    self.master.after(0, self.start_nether_blade_second_passive_targeting_motion_animation)
+
+                    # self.create_effect_animation_with_vertices_and_play_animation_and_call_function(
+                    #     'nether_blade_targeting_skill', self.opponent_main_character_panel.get_vertices(),
+                    #     self.start_nether_blade_second_passive_targeting_motion_animation
+                    # )
                     # self.master.after(0, self.start_nether_blade_second_passive_targeting_motion_animation)
 
                     return
@@ -3986,10 +3997,13 @@ class BattleFieldFrame(OpenGLFrame):
                                 _usageSkillIndex="2"))
 
                         # self.attack_animation_object.set_animation_actor_damage(20)
-                        self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function(
-                            'nether_blade_targeting_skill', opponent_field_unit_object.get_index(),
-                            self.start_nether_blade_turn_start_second_passive_targeting_motion_animation
-                        )
+
+                        self.master.after(0, self.start_nether_blade_second_passive_targeting_motion_animation)
+                        #
+                        # self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function(
+                        #     'nether_blade_targeting_skill', opponent_field_unit_object.get_index(),
+                        #     self.start_nether_blade_turn_start_second_passive_targeting_motion_animation
+                        # )
                         # self.master.after(0, self.start_nether_blade_turn_start_second_passive_targeting_motion_animation)
                         self.opponent_you_selected_lightning_border_list.append(opponent_fixed_card_base)
 
@@ -7847,15 +7861,27 @@ class BattleFieldFrame(OpenGLFrame):
                 # attack_animation_object.set_is_finished(True)
                 # attack_animation_object.set_need_post_process(True)
 
-        if is_attack_main_character:
-            self.create_effect_animation_with_vertices_and_play_animation_and_call_function_with_param(
-                'nether_blade_targeting_skill', self.your_main_character_panel.get_vertices(),
-                targeting_attack, 1
-            )
-        else:
-            self.create_effect_animation_to_your_unit_and_play_animation_and_call_function_with_param(
-                'nether_blade_targeting_skill', your_field_unit.get_index(), targeting_attack, 1
-            )
+        def target_animation(param):
+            targeting_attack(1)
+            if is_attack_main_character:
+                self.create_effect_animation_with_vertices_and_play_animation(
+                    'dark_blast', self.your_main_character_panel.get_vertices())
+            else:
+                self.create_effect_animation_to_your_unit_and_play_animation_and_call_function(
+                    'dark_blast', your_field_unit.get_index())
+
+        self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
+            'nether_blade_targeting_skill', target_animation, None)
+
+        # if is_attack_main_character:
+        #     self.create_effect_animation_with_vertices_and_play_animation_and_call_function_with_param(
+        #         'nether_blade_targeting_skill', self.your_main_character_panel.get_vertices(),
+        #         targeting_attack, 1
+        #     )
+        # else:
+        #     self.create_effect_animation_to_your_unit_and_play_animation_and_call_function_with_param(
+        #         'nether_blade_targeting_skill', your_field_unit.get_index(), targeting_attack, 1
+        #     )
         # targeting_attack(1)
 
     def finish_opponent_nether_blade_second_passive_targeting_animation(self, attack_animation_object):
@@ -8464,7 +8490,18 @@ class BattleFieldFrame(OpenGLFrame):
                 # attack_animation_object.set_is_finished(True)
                 # attack_animation_object.set_need_post_process(True)
 
-        targeting_attack(1)
+        def target_animation(param):
+            targeting_attack(1)
+            if is_attack_main_character:
+                self.create_effect_animation_with_vertices_and_play_animation(
+                    'dark_blast', self.opponent_main_character_panel.get_vertices())
+            else:
+                self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function(
+                    'dark_blast', opponent_field_unit.get_index())
+
+        self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
+            'nether_blade_targeting_skill', target_animation, None)
+
 
     def finish_nether_blade_second_passive_targeting_animation(self, attack_animation_object):
         animation_actor = attack_animation_object.get_animation_actor()
@@ -11231,7 +11268,7 @@ class BattleFieldFrame(OpenGLFrame):
             self.master.after(0, animate)
 
     def create_effect_animation_to_opponent_unit_and_play_animation_and_call_function(self, effect_name, index,
-                                                                                      function):
+                                                                                      function=None):
         effect_animation = EffectAnimation()
         effect_animation.set_animation_name(effect_name)
         effect_animation.set_total_window_size(self.width, self.height)
@@ -11345,6 +11382,21 @@ class BattleFieldFrame(OpenGLFrame):
 
         self.play_effect_animation_by_index_and_call_function(animation_index, function)
 
+    def create_effect_animation_with_vertices_and_play_animation(self, effect_name, vertices):
+        effect_animation = EffectAnimation()
+        effect_animation.set_animation_name(effect_name)
+        effect_animation.set_total_window_size(self.width, self.height)
+        effect_animation.draw_animation_panel_with_vertices(vertices)
+        effect_animation_panel = effect_animation.get_animation_panel()
+
+        animation_index = self.effect_animation_repository.save_effect_animation_at_dictionary_without_index_and_return_index(
+            effect_animation)
+
+        self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
+            animation_index, effect_animation_panel)
+
+        self.play_effect_animation_by_index(animation_index)
+
     def create_effect_animation_with_vertices_and_play_animation_and_call_function_with_param(self, effect_name,
                                                                                               vertices, function,
                                                                                               param):
@@ -11362,7 +11414,7 @@ class BattleFieldFrame(OpenGLFrame):
 
         self.play_effect_animation_by_index_and_call_function_with_param(animation_index, function, param)
 
-    def create_effect_animation_to_your_unit_and_play_animation_and_call_function(self, effect_name, index, function):
+    def create_effect_animation_to_your_unit_and_play_animation_and_call_function(self, effect_name, index, function=None):
         effect_animation = EffectAnimation()
         effect_animation.set_animation_name(effect_name)
         effect_animation.set_total_window_size(self.width, self.height)
