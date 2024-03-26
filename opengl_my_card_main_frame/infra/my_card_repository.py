@@ -149,8 +149,14 @@ class MyCardRepository:
         # x: 934, y: 929
         # x: 970, y: 902
         # 31 / 1848 = 0.0167748
-        start_x_point = 0.4764674 * self.total_width
-        end_x_point = 0.5103914 * self.total_width
+        # 10 / 1850 = 0.0054054
+        # 0.4764674 + 0.0054054 = 0.4818728
+        # 0.5103914 + 0.0054054 = 0.5157968
+
+        # 0.00216216
+        # 0.00054054
+        start_x_point = 0.48079172 * self.total_width
+        end_x_point = 0.51471572 * self.total_width
         start_y_point = 0.866437 * self.total_height
         end_y_point = 0.9354015 * self.total_height
 
