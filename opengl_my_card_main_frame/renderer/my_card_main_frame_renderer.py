@@ -78,6 +78,7 @@ class MyCardMainFrameRenderer:
 
         if self.my_card_repository.get_prepare_message_visible() == True:
             self.scene.prepare_message.draw()
+            self.scene.ok_button.draw()
 
         self.window.tkSwapBuffers()
 

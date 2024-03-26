@@ -10,6 +10,7 @@ class MyCardMainScene:
 
         self.go_back_button = None
         self.prepare_message = None
+        self.ok_button = None
 
     def add_my_card_background(self, rectangle):
         self.my_card_background.append(rectangle)
@@ -64,3 +65,9 @@ class MyCardMainScene:
 
     def get_prepare_message(self):
         return self.prepare_message
+
+    def add_ok_button(self, button):
+        self.ok_button = button
+
+    def get_ok_button(self):
+        return self.ok_button
