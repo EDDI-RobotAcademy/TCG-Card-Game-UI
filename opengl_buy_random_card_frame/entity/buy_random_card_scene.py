@@ -7,6 +7,7 @@ class BuyRandomCardScene:
 
         self.buy_random_background = None
         self.go_to_back_button = None
+        self.again_button = None
 
     def add_buy_random_background(self, background):
         self.buy_random_background = background
@@ -37,6 +38,12 @@ class BuyRandomCardScene:
 
     def get_go_to_back_button(self):
         return self.go_to_back_button
+
+    def add_again_button(self, again_button):
+        self.again_button = again_button
+
+    def get_again_button(self):
+        return self.again_button
 
     def add_card_list(self, card):
         self.card_list.append(card)

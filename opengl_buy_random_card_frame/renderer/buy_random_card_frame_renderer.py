@@ -37,6 +37,9 @@ class BuyRandomCardFrameRenderer:
         if self.scene.go_to_back_button:
             self.scene.go_to_back_button.draw()
 
+        if self.scene.again_button:
+            self.scene.again_button.draw()
+
         glDisable(GL_BLEND)
 
         # for card in self.scene.card_list[:10]:
