@@ -8,6 +8,7 @@ from rock_paper_scissors.frame.check_rock_paper_scissors_winner.service.check_ro
 from rock_paper_scissors.repository.rock_paper_scissors_repository_impl import RockPaperScissorsRepositoryImpl
 from session.repository.session_repository_impl import SessionRepositoryImpl
 from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
+from battle_field_muligun.frame.battle_field_muligun_frame import BattleFieldMuligunFrame
 
 
 class CheckRockPaperScissorsWinnerServiceImpl(CheckRockPaperScissorsWinnerService):
@@ -58,9 +59,10 @@ class CheckRockPaperScissorsWinnerServiceImpl(CheckRockPaperScissorsWinnerServic
                 # self.__notifyReaderRepositoryImpl.set_is_your_turn_for_check_fake_process(self.setWinnerToNotify())
                 checkRockPaperScissorsWinnerFrame.update()
                 time.sleep(5)
-                self.check_RPS_label.configure(text="상대방의 선택을 기다리는중")
-                self.__rockPaperScissorRepositoryImpl.resetRPS()
                 switchFrameWithMenuName('battle-field-muligun')
+                self.__rockPaperScissorRepositoryImpl.resetRPS()
+                self.check_RPS_label.configure(text="상대방의 선택을 기다리는중")
+                checkRockPaperScissorsWinnerFrame.update()
                 break
 
             checkRockPaperScissorsWinnerFrame.update()
