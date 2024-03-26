@@ -284,7 +284,7 @@ class FieldAreaInsideHandler:
             return is_false_message
 
         def swamp_of_ghost(response):
-            self.__music_player_repository.play_sound_effect_of_card_execution('swamp_of_ghost')
+            # self.__music_player_repository.play_sound_effect_of_card_execution('swamp_of_ghost')
             # TODO: Summary와 연동하도록 재구성 필요
             # drawn_card_list = self.__your_deck_repository.draw_deck_with_count(3)
             drawn_card_list = response['player_draw_card_list_map']['You']

@@ -39,6 +39,7 @@ from fake_battle_field.infra.fake_battle_field_frame_repository_impl import Fake
 from fake_battle_field.infra.fake_opponent_hand_repository import FakeOpponentHandRepositoryImpl
 from image_shape.circle_kinds import CircleKinds
 from image_shape.non_background_number_image import NonBackgroundNumberImage
+from music_player.repository.music_player_repository_impl import MusicPlayerRepositoryImpl
 from notify_reader.entity.notice_type import NoticeType
 from notify_reader.repository.notify_reader_repository_impl import NotifyReaderRepositoryImpl
 from notify_reader.service.notify_reader_service import NotifyReaderService
@@ -58,6 +59,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
             cls.__instance = super().__new__(cls)
 
             cls.__instance.__attack_animation_object = AttackAnimation.getInstance()
+            cls.__instance.__music_player_repository = MusicPlayerRepositoryImpl.getInstance()
 
             cls.__instance.__notify_reader_repository = NotifyReaderRepositoryImpl.getInstance()
             cls.__instance.__battle_field_function_service = BattleFieldFunctionServiceImpl.getInstance()
@@ -282,6 +284,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         self.__battle_field_repository.set_current_use_card_id(card_id)
         self.__opponent_field_unit_repository.create_field_unit_card(card_id)
+        self.__music_player_repository.play_sound_effect_of_unit_deploy(str(card_id))
         # self.__opponent_field_unit_repository.place_field_unit(card_id)
 
         self.__opponent_field_unit_repository.replace_opponent_field_unit_card_position()
@@ -659,6 +662,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         card_id = (notify_dict_data.get("player_hand_use_map", {})
                    .get("Opponent", {})
                    .get("card_id", None))
+
         self.__battle_field_repository.set_current_use_card_id(card_id)
 
         def call_of_leonic(notify_dict_data):
@@ -672,7 +676,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
 
 
-            self.__fake_opponent_hand_repository.save_fake_opponent_hand_list(fake_search_list)
+            # self.__fake_opponent_hand_repository.save_fake_opponent_hand_list(fake_search_list)
+            self.__opponent_hand_repository.save_current_opponent_hand_state(fake_search_list)
 
         effect_animation = EffectAnimation()
         effect_animation.set_animation_name('call_of_leonic')
@@ -2356,7 +2361,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                     self.__opponent_field_energy_repository.set_opponent_field_energy(result_opponent_energy_count)
 
                 effect_animation = EffectAnimation()
-                effect_animation.set_animation_name('death_of_field')
+                effect_animation.set_animation_name('field_of_death')
 
                 self.__notify_reader_repository.save_notify_effect_animation_request(
                     EffectAnimationRequest(
@@ -2385,7 +2390,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                     self.__your_field_energy_repository.set_your_field_energy(result_your_energy_count)
 
                 effect_animation = EffectAnimation()
-                effect_animation.set_animation_name('death_of_field')
+                effect_animation.set_animation_name('field_of_death')
 
                 self.__notify_reader_repository.save_notify_effect_animation_request(
                     EffectAnimationRequest(
