@@ -175,15 +175,15 @@ class PreDrawedImage:
     def pre_draw_death_of_field_effect_animation(self):
         pre_draw_effect_animation = {}
         image_dir = os.path.join(self.__project_root, "local_storage", "animation",
-                                 'death_of_field')
+                                 'field_of_death')
         file_list = os.listdir(image_dir)
 
         for number in range(0, len(file_list)):
-            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'death_of_field',
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'field_of_death',
                                                 f"{number}.png")
             print(f"effect_animation_image_data = {animation_image_data}")
             pre_draw_effect_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
-        self.__pre_drawed_effect_animation['death_of_field'] = pre_draw_effect_animation
+        self.__pre_drawed_effect_animation['field_of_death'] = pre_draw_effect_animation
 
     def pre_draw_overflow_of_energy_effect_animation(self):
         pre_draw_effect_animation = {}
