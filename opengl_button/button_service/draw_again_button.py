@@ -1,10 +1,17 @@
 from colorama import Fore, Style
 from shapely import Polygon, Point
 
+from card_shop_frame.frame.buy_check_frame.repository.buy_check_repository_impl import BuyCheckRepositoryImpl
+from image_shape.non_background_image import NonBackgroundImage
+from opengl_buy_random_card_frame.entity.buy_random_card_scene import BuyRandomCardScene
+from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
+
 
 class DrawAgainButton:
 
     # my_card_repository = MyCardRepository.getInstance()
+    __pre_drawed_image_instance = PreDrawedImage.getInstance()
+    __buy_check_repository = BuyCheckRepositoryImpl.getInstance()
 
     def __init__(self, master, buy_random_card_frame):
         self.master = master
@@ -13,6 +20,8 @@ class DrawAgainButton:
 
         self.width_ratio = 1
         self.height_ratio = 1
+
+        self.try_again_screen_visible = False
 
     def is_point_inside_object(self, object, coordinates):
         x, y = coordinates
@@ -39,6 +48,9 @@ class DrawAgainButton:
                 print(f"draw_again_button -> mouse_click_event() clicked draw_again_button")
 
                 # 여기서 화면 띄우기 뽑기 진행하시면 됩니다
+                self.__buy_check_repository.set_try_again_screen_visible(True)
+
+
 
         except Exception as e:
             print(f"next page button Error : {e}")

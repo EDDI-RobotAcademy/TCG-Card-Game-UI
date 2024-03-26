@@ -121,6 +121,11 @@ class PreDrawedImage:
 
     __pre_drawed_dark_flame_effect = {}
 
+    __pre_drawed_try_again_screen = None
+
+    __pre_drawed_preparing_message = None
+    __pre_drawed_preparing_ok_button = None
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -551,6 +556,18 @@ class PreDrawedImage:
                                                    f"{number}.png")
             # print(f"image data = {field_energy_image_data}")
             self.__pre_drawed_field_energy[number] = ImageDataLoader.load_rectangle_image_data(field_energy_image_data)
+
+    def pre_draw_try_again_screen(self):
+        try_again_screen_image_path = os.path.join(self.__project_root, "local_storage", "shop_image", "try_again_screen.png")
+        self.__pre_drawed_try_again_screen = ImageDataLoader.load_rectangle_origin_image_data(try_again_screen_image_path)
+
+    def pre_draw_preparing_message(self):
+        preparing_message_image_path = os.path.join(self.__project_root, "local_storage", "preparing_message", "preparing_message.png")
+        self.__pre_drawed_preparing_message = ImageDataLoader.load_rectangle_origin_image_data(preparing_message_image_path)
+
+    def pre_draw_preparing_ok_button(self):
+        preparing_ok_button_path = os.path.join(self.__project_root, "local_storage", "preparing_message", "ok_button.png")
+        self.__pre_drawed_preparing_ok_button =ImageDataLoader.load_rectangle_origin_image_data(preparing_ok_button_path)
 
     def pre_draw_effect_animation(self):
 
@@ -1196,6 +1213,9 @@ class PreDrawedImage:
         self.pre_draw_page_slash()
         self.pre_draw_page_number()
 
+        self.pre_draw_try_again_screen()
+        self.pre_draw_preparing_message()
+        self.pre_draw_preparing_ok_button()
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
@@ -1438,3 +1458,12 @@ class PreDrawedImage:
 
     def get_pre_draw_dark_flame_effect_animation(self, number = 0):
         return self.__pre_drawed_dark_flame_effect[number]
+
+    def get_pre_draw_try_again_screen(self):
+        return self.__pre_drawed_try_again_screen
+
+    def get_pre_draw_preparing_message(self):
+        return self.__pre_drawed_preparing_message
+
+    def get_pre_draw_preparing_ok_button(self):
+        return self.__pre_drawed_preparing_ok_button
