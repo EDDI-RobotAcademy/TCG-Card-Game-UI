@@ -9,4 +9,4 @@ A chronic problem in the embedded and hardware fields is collaboration. SW devel
 And finally we did it. We have confirmed that not only web/app development but also game development can achieve high productivity at low cost using agile methods.
 
 # Demo Play
-[![Video Label](http://img.youtube.com/vi/'ACeNHIArRIwKU13d'/0.jpg)](https://youtu.be/'ACeNHIArRIwKU13d')
+[![Video Label](http://img.youtube.com/vi/ACeNHIArRIwKU13d/0.jpg)](https://youtu.be/ACeNHIArRIwKU13d)
