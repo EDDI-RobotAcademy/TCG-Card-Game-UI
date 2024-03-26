@@ -74,22 +74,20 @@ class DeckPage:
             new_card.set_index(index)
             self.deck_page_card_object_list.append(new_card)
 
-    def create_deck_card_list_search_unit_card(self, deck_list):
+    def create_deck_card_list_search_unit_card(self, index_list):
 
         index_count = 0
 
-        for index, card_number in enumerate(deck_list):
-            if self.__card_info_repository.getCardTypeForCardNumber(card_number) is CardType.UNIT.value:
-                if self.__card_info_repository.getCardGradeForCardNumber(card_number) < CardGrade.LEGEND.value:
-                    print(f"index: {index}, card_number: {card_number}")
-                    new_card = FixedFieldCard(local_translation=self.get_next_card_position(index - index_count))
-                    new_card.init_card(card_number)
-                    new_card.set_index(index)
-                    self.deck_page_card_object_list.append(new_card)
-                else:
-                    index_count += 1
-            else:
-                index_count += 1
+        deck_page_card_list = self.get_deck_page_card_list()
+        print(f"current_deck_state: {deck_page_card_list}")
+        card_list = list(zip(index_list, deck_page_card_list))
+        for index, card_number in card_list:
+            print(f"index: {index}, card_number: {card_number}")
+            new_card = FixedFieldCard(local_translation=self.get_next_card_position(index_count))
+            new_card.init_card(card_number)
+            new_card.set_index(index)
+            self.deck_page_card_object_list.append(new_card)
+            index_count += 1
 
 
     def remove_card_by_multiple_index(self, card_index_list):
