@@ -889,7 +889,7 @@ class PreDrawedImage:
         self.__pre_drawed_my_card_background = ImageDataLoader.load_background_image_data(my_card_background, width, height)
 
     def pre_draw_buy_random_background(self, width, height):
-        buy_random_background = os.path.join(self.__project_root, "local_storage", "image", "battle_lobby", "background.png")
+        buy_random_background = os.path.join(self.__project_root, "local_storage", "shop_image", "new_card_background.png")
         self.__pre_drawed_buy_random_background = ImageDataLoader.load_background_image_data(buy_random_background, width, height)
 
     def pre_draw_rock(self):
