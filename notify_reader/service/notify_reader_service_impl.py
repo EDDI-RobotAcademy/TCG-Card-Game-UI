@@ -347,6 +347,8 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                     need_dalay=True
                 )
             )
+        else:
+            deploy_unit(card_id)
 
 
         return
