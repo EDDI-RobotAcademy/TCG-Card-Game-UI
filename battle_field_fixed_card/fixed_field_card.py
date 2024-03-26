@@ -86,7 +86,6 @@ class FixedFieldCard:
         return self.dark_flame_effect_animation
 
     def get_fixed_card_dark_flame_effect_animation_panel(self):
-        print('get fixed card dark flame effect animation panel: ', self.dark_flame_effect_animation)
         if self.dark_flame_effect_animation is not None:
             return self.dark_flame_effect_animation.get_animation_panel()
         else:
@@ -109,7 +108,6 @@ class FixedFieldCard:
         return self.freeze_effect_animation
 
     def get_fixed_card_freeze_effect_animation_panel(self):
-        print('get fixed card freeze effect panel: ', self.freeze_effect_animation)
         if self.freeze_effect_animation is not None:
             return self.freeze_effect_animation.get_animation_panel()
         else:

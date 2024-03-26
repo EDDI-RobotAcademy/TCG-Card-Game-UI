@@ -1,8 +1,13 @@
+from music_player.repository.music_player_repository_impl import MusicPlayerRepositoryImpl
+
+
 class CreateDeckRegisterScreen:
     def __init__(self, my_card_main_frame):
         self.my_card_main_frame = my_card_main_frame
+        # self.music_player_repository = MusicPlayerRepositoryImpl.getInstance()
 
     def mouse_click_event(self, event):
+        # self.music_player_repository.play_sound_effect_of_mouse_on_click('menu_button_click')
         try:
             x, y = event.x, event.y
             y = self.my_card_main_frame.winfo_reqheight() - y

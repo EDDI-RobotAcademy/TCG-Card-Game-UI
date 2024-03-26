@@ -49,6 +49,8 @@ class YourDeckRepository:
     def build_deck_page(self):
         deck_list = self.get_current_deck_state()
 
+        print(f"deck_list: {deck_list}")
+
         num_cards_per_page = 12
         num_pages = ceil(len(deck_list) / num_cards_per_page)
 
@@ -65,29 +67,24 @@ class YourDeckRepository:
 
             self.deck_page_list.append(current_page)
 
-    def build_deck_page_search_unit_card(self):
+    def build_deck_page_search_unit_card(self, accessible_deck_unit_card_index_list):
         deck_list = self.get_current_deck_state()
 
-        deck_list_leonic = []
-
-        for card_number in deck_list:
-            if self.__card_info_repository.getCardTypeForCardNumber(card_number) is CardType.UNIT.value:
-                if self.__card_info_repository.getCardGradeForCardNumber(card_number) < CardGrade.LEGEND.value:
-                    deck_list_leonic.append(card_number)
+        print(f"deck_list: {deck_list}")
 
         num_cards_per_page = 12
-        num_pages = ceil(len(deck_list_leonic) / num_cards_per_page)
+        num_pages = ceil(len(deck_list) / num_cards_per_page)
 
         for page_index in range(num_pages):
             start_index = page_index * num_cards_per_page
             end_index = (page_index + 1) * num_cards_per_page
-            current_deck_page = deck_list_leonic[start_index:end_index]
+            current_deck_page = deck_list[start_index:end_index]
 
             current_page = DeckPage()
             current_page.set_total_window_size(self.total_width, self.total_height)
             current_page.add_deck_to_page(current_deck_page)
             current_page.set_page_number(page_index + 1)
-            current_page.create_deck_card_list_search_unit_card(deck_list)
+            current_page.create_deck_card_list_search_unit_card(accessible_deck_unit_card_index_list)
 
             self.deck_page_list.append(current_page)
 
@@ -96,10 +93,10 @@ class YourDeckRepository:
         self.current_deck_state.update_to_deck(shuffled_deck_list)
         self.build_deck_page()
 
-    def update_deck_search_unit_card(self):
+    def update_deck_search_unit_card(self, accessible_deck_unit_card_index_list, accessible_deck_unit_card_number_list):
         self.deck_page_list = []
-        self.current_deck_state.update_to_deck(self.get_current_deck_state())
-        self.build_deck_page_search_unit_card()
+        self.current_deck_state.update_to_deck(accessible_deck_unit_card_number_list)
+        self.build_deck_page_search_unit_card(accessible_deck_unit_card_index_list)
 
     # def update_deck(self, shuffled_deck_list):
     #     print(f"update_deck -> shuffled_deck_list: {shuffled_deck_list}, length: {len(shuffled_deck_list)}")

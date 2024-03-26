@@ -171,7 +171,6 @@ class YourFieldUnitRepository:
         for index, current_field_unit in enumerate(valid_field_unit_list):
             next_x = self.x_base + x_increment * index
             local_translation = (next_x, current_y)
-            print(f"replace_field_unit_position -> local_translation: {local_translation}")
 
             tool_card = current_field_unit.get_tool_card()
             tool_card.local_translate(local_translation)
@@ -186,12 +185,10 @@ class YourFieldUnitRepository:
 
             dark_flame_animation_panel = current_field_unit.get_fixed_card_dark_flame_effect_animation_panel()
             if dark_flame_animation_panel:
-                print('flame animation panel set local translation', local_translation)
                 dark_flame_animation_panel.local_translate(local_translation)
 
             freeze_effect_animation_panel = current_field_unit.get_fixed_card_freeze_effect_animation_panel()
             if freeze_effect_animation_panel:
-                print('frozen animation panel set local translation', local_translation)
                 freeze_effect_animation_panel.local_translate(local_translation)
 
             # pickable_card_base = current_field_unit.get_pickable_card_base()
