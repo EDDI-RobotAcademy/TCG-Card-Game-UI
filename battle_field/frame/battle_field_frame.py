@@ -2739,8 +2739,10 @@ class BattleFieldFrame(OpenGLFrame):
                     select_details_card_base_vertices = select_details_card_base.get_vertices()
 
                     opponent_field_unit_extra_effect_info = (
-                        self.opponent_field_unit_repository.get_your_unit_extra_ability_at_index(
+                        self.opponent_field_unit_repository.get_opponent_unit_extra_ability_at_index(
                             opponent_field_unit_index))
+
+                    print(f"opponent_field_unit_extra_effect_info : {opponent_field_unit_extra_effect_info}")
 
                     opponent_field_unit_total_energy = opponent_field_unit_attached_energy.get_total_energy_at_index(
                         opponent_field_unit_index)
