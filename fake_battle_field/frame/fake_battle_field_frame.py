@@ -4082,7 +4082,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
                                 return
 
                             self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
-                                'death_of_field', field_of_death, None
+                                'field_of_death', field_of_death, None
                             )
 
             # Opponent Field Area 끝
