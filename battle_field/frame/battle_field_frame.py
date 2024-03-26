@@ -942,7 +942,8 @@ class BattleFieldFrame(OpenGLFrame):
                                                                               effect_animation_request.get_call_function())
 
                 elif effect_animation_request.get_target_type() == TargetType.UNIT:
-                    effect_animation.draw_animation_panel()
+                    if effect_animation.get_animation_panel == None:
+                        effect_animation.draw_animation_panel()
                     print(effect_animation_request.get_target_index())
 
                     effect_animation_panel = effect_animation.get_animation_panel()
@@ -2370,25 +2371,34 @@ class BattleFieldFrame(OpenGLFrame):
 
                                 self.__music_player_repository.play_sound_effect_of_card_execution('morale_conversion')
 
-                                card_id = current_field_unit.get_card_number()
-                                fixed_field_unit_hp = self.card_info_repository.getCardHpForCardNumber(card_id)
-                                acquire_energy = round(fixed_field_unit_hp / 5)
-                                print(f"acquire_energy: {acquire_energy}")
+                                def morale_conversion():
+                                    card_id = current_field_unit.get_card_number()
+                                    fixed_field_unit_hp = self.card_info_repository.getCardHpForCardNumber(card_id)
+                                    acquire_energy = round(fixed_field_unit_hp / 5)
+                                    print(f"acquire_energy: {acquire_energy}")
 
-                                self.your_field_energy_repository.increase_your_field_energy(acquire_energy)
-                                # self.your_hand_repository.remove_card_by_index(placed_index)
-                                self.your_hand_repository.remove_card_by_index_with_page(placed_index)
-                                self.your_field_unit_repository.remove_card_by_index(unit_index)
+                                    def remove_field_unit():
+                                        self.your_field_energy_repository.increase_your_field_energy(acquire_energy)
+                                        # self.your_hand_repository.remove_card_by_index(placed_index)
+                                        self.your_hand_repository.remove_card_by_index_with_page(placed_index)
+                                        self.your_field_unit_repository.remove_card_by_index(unit_index)
 
-                                # self.your_hand_repository.replace_hand_card_position()
-                                self.your_hand_repository.update_your_hand()
-                                self.your_field_unit_repository.replace_field_card_position()
+                                        # self.your_hand_repository.replace_hand_card_position()
+                                        self.your_hand_repository.update_your_hand()
+                                        self.your_field_unit_repository.replace_field_card_position()
 
-                                self.your_tomb_repository.create_tomb_card(card_id)
-                                self.your_tomb_repository.create_tomb_card(placed_card_id)
+                                        self.your_tomb_repository.create_tomb_card(card_id)
+                                        self.your_tomb_repository.create_tomb_card(placed_card_id)
 
-                                print(
-                                    f"사기 전환 이후 필드 에너지 수량: {self.your_field_energy_repository.get_your_field_energy()}")
+                                    self.create_effect_animation_to_your_unit_and_play_animation_and_call_function(
+                                        'death', unit_index, remove_field_unit)
+
+                                    print(
+                                        f"사기 전환 이후 필드 에너지 수량: {self.your_field_energy_repository.get_your_field_energy()}")
+
+                                self.create_effect_animation_to_your_unit_and_play_animation_and_call_function(
+                                    'dark_blast', unit_index, morale_conversion)
+
 
                             elif placed_card_id == 33:
                                 print(f"시체 폭발(33) -> placed_card_id: {placed_card_id}")
@@ -6178,13 +6188,27 @@ class BattleFieldFrame(OpenGLFrame):
 
                 for opponent_dead_unit_index in opponent_dead_unit_index_list:
                     # opponent_dead_unit_index = opponent_dead_unit.get_index()
-                    self.opponent_field_unit_repository.remove_card_by_multiple_index([int(opponent_dead_unit_index)])
-                    self.opponent_field_unit_repository.remove_harmful_status_by_index(int(opponent_dead_unit_index))
+                    def remove_field_unit(unit_index):
+                        card_id = self.opponent_field_unit_repository.get_opponent_card_id_by_index(unit_index)
+                        self.opponent_tomb_repository.create_opponent_tomb_card(card_id)
+                        self.opponent_field_unit_repository.remove_current_field_unit_card(unit_index)
+                        self.opponent_field_unit_repository.remove_harmful_status_by_index(unit_index)
+                        self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
+                    self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function_with_param(
+                        'death', opponent_dead_unit_index, remove_field_unit, opponent_dead_unit_index)
 
                 for your_dead_unit_index in your_dead_unit_index_list:
                     # your_dead_unit_index = your_dead_unit.get_index()
-                    self.your_field_unit_repository.remove_card_by_index(int(your_dead_unit_index))
-                    self.your_field_unit_repository.remove_harmful_status_by_index(int(your_dead_unit_index))
+                    def remove_field_unit(unit_index):
+                        card_id = self.your_field_unit_repository.get_card_id_by_index(unit_index)
+                        self.your_tomb_repository.create_tomb_card(card_id)
+                        self.your_field_unit_repository.remove_card_by_index(unit_index)
+                        self.your_field_unit_repository.remove_harmful_status_by_index(unit_index)
+                        self.your_field_unit_repository.replace_field_card_position()
+
+                    self.create_effect_animation_to_your_unit_and_play_animation_and_call_function_with_param(
+                        'death', your_dead_unit_index, remove_field_unit, your_dead_unit_index)
 
                 for index, health in opponent_unit_health_index_map.items():
                     opponent_field_unit = self.opponent_field_unit_repository.find_opponent_field_unit_by_index(
@@ -6207,8 +6231,7 @@ class BattleFieldFrame(OpenGLFrame):
                                     attached_shape.set_image_data(
                                         self.pre_drawed_image_instance.get_pre_draw_unit_hp(health))
 
-                self.your_field_unit_repository.replace_field_card_position()
-                self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
+
 
         move_to_origin_location(1)
 
@@ -7887,7 +7910,7 @@ class BattleFieldFrame(OpenGLFrame):
             targeting_attack(1)
             if is_attack_main_character:
                 self.create_effect_animation_with_vertices_and_play_animation(
-                    'dark_blast', self.your_main_character_panel.get_vertices())
+                    'nether_blade_targeting_skill_remain', self.your_main_character_panel.get_vertices())
             else:
                 self.create_effect_animation_to_your_unit_and_play_animation_and_call_function(
                     'dark_blast', your_field_unit.get_index())
@@ -8516,10 +8539,10 @@ class BattleFieldFrame(OpenGLFrame):
             targeting_attack(1)
             if is_attack_main_character:
                 self.create_effect_animation_with_vertices_and_play_animation(
-                    'dark_blast', self.opponent_main_character_panel.get_vertices())
+                    'nether_blade_targeting_skill_remain', self.opponent_main_character_panel.get_vertices())
             else:
                 self.create_effect_animation_to_opponent_unit_and_play_animation_and_call_function(
-                    'dark_blast', opponent_field_unit.get_index())
+                    'nether_blade_targeting_skill_remain', opponent_field_unit.get_index())
 
         self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
             'nether_blade_targeting_skill', target_animation, None)
