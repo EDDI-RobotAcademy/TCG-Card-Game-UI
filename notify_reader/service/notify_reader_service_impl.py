@@ -907,8 +907,12 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 print(f"{Fore.RED}energy_key:{Fore.GREEN} {race_energy_number}{Style.RESET_ALL}")
                 print(f"{Fore.RED}energy_count:{Fore.GREEN} {race_energy_count}{Style.RESET_ALL}")
 
+                current_race_energy_count = self.__opponent_field_unit_repository.get_opponent_field_unit_race_energy(
+                    int(unit_index), EnergyType.Undead)
+                energy_difference = race_energy_count - current_race_energy_count
+
                 self.__opponent_field_unit_repository.attach_race_energy(int(unit_index), EnergyType.Undead,
-                                                                         race_energy_count)
+                                                                         energy_difference)
 
                 opponent_field_unit = self.__opponent_field_unit_repository.find_opponent_field_unit_by_index(
                     int(unit_index))
@@ -2402,8 +2406,9 @@ class NotifyReaderServiceImpl(NotifyReaderService):
         data = notice_dictionary['NOTIFY_SURRENDER']
         print(f"{Fore.RED}notify_surrender:{Fore.GREEN} {data}{Style.RESET_ALL}")
 
-        self.__opponent_field_area_inside_handler.set_field_area_action(
-            OpponentFieldAreaActionProcess.NEED_TO_FINISH_GAME)
+        # self.__opponent_field_area_inside_handler.set_field_area_action(
+        #     OpponentFieldAreaActionProcess.NEED_TO_FINISH_GAME)
+        self.__battle_field_repository.win()
 
 
     def notify_use_unit_energy_remove_item_card(self, notice_dictionary):

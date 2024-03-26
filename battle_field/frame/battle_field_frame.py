@@ -639,11 +639,11 @@ class BattleFieldFrame(OpenGLFrame):
         self.skill_focus_background_panel = skill_focus_panel_instance.get_skill_background_panel()
         self.skill_focus_panel = skill_focus_panel_instance.get_skill_focus_panel()
 
-        if self.battle_field_repository.get_is_game_end():
-            print("게임 끝났어 ")
-            self.battle_result.set_total_window_size(self.width, self.height)
-            self.battle_result.create_battle_result_panel_list()
-            self.battle_result_panel_list = self.battle_result.get_battle_result_panel_list()
+        # if self.battle_field_repository.get_is_game_end():
+        #     print("게임 끝났어 ")
+        #     self.battle_result.set_total_window_size(self.width, self.height)
+        #     self.battle_result.create_battle_result_panel_list()
+        #     self.battle_result_panel_list = self.battle_result.get_battle_result_panel_list()
 
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
@@ -784,6 +784,12 @@ class BattleFieldFrame(OpenGLFrame):
             for surrender_confirm_panel in self.surrender_confirm_panel_list:
                 surrender_confirm_panel.draw()
 
+        if self.battle_field_repository.get_is_game_end():
+            print("게임 끝났어 ")
+            self.battle_result.set_total_window_size(self.width, self.height)
+            self.battle_result.create_battle_result_panel_list()
+            self.battle_result_panel_list = self.battle_result.get_battle_result_panel_list()
+
         glDisable(GL_BLEND)
 
     def post_draw(self):
@@ -886,7 +892,11 @@ class BattleFieldFrame(OpenGLFrame):
 
 
         if self.battle_field_repository.get_is_game_end():
-            self.battle_finish()
+            if len(self.battle_result_panel_list) == 0:
+                print(f"{Fore.RED}게임이 종료되었습니다!{Style.RESET_ALL}")
+                self.timer.stop_timer()
+                self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
+                self.battle_finish()
 
         if len(self.__notify_reader_repository.get_notify_effect_animation_request_list()) != 0:
             for _ in range(0, len(self.__notify_reader_repository.get_notify_effect_animation_request_list())):
@@ -969,11 +979,11 @@ class BattleFieldFrame(OpenGLFrame):
 
         self.draw_base()
 
-        if self.opponent_field_area_inside_handler.get_field_area_action() is OpponentFieldAreaActionProcess.NEED_TO_FINISH_GAME:
-            print(f"{Fore.RED}게임이 종료되었습니다!{Style.RESET_ALL}")
-            self.timer.stop_timer()
-
-            self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
+        # if self.opponent_field_area_inside_handler.get_field_area_action() is OpponentFieldAreaActionProcess.NEED_TO_FINISH_GAME:
+        #     print(f"{Fore.RED}게임이 종료되었습니다!{Style.RESET_ALL}")
+        #     self.timer.stop_timer()
+        #     self.battle_field_repository.win()
+        #     self.opponent_field_area_inside_handler.set_field_area_action(OpponentFieldAreaActionProcess.Dummy)
 
         opponent_animation_actor = self.attack_animation_object.get_opponent_animation_actor()
         if opponent_animation_actor:
@@ -1044,6 +1054,8 @@ class BattleFieldFrame(OpenGLFrame):
                             fixed_card_effect_animation.get_animation_panel().draw()
                     else:
                         opponent_field_unit.create_fixed_card_dark_flame_effect_animation()
+
+                self.opponent_field_unit_repository.replace_opponent_field_unit_card_position()
 
         if self.battle_field_repository.get_current_use_card_id():
             self.message_on_the_screen.clear_current_message_on_the_battle_screen()
@@ -1142,6 +1154,8 @@ class BattleFieldFrame(OpenGLFrame):
                                 fixed_card_effect_animation.get_animation_panel().draw()
                         else:
                             field_unit.create_fixed_card_dark_flame_effect_animation()
+
+                    self.your_field_unit_repository.replace_field_card_position()
 
         # if len(self.battle_result_panel_list) == 2:
         # if len(self.battle_result_panel_list) != 0:
