@@ -55,7 +55,7 @@ class BuyCheckServiceImpl(BuyCheckService):
             buyCheckFrame.destroy()
 
         def count_down_confirmed_upper_legend():
-            self.legend_stack_count = self.legend_stack_count-1
+            self.legend_stack_count = self.legend_stack_count - 1
 
 
 
