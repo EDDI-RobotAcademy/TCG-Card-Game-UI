@@ -184,9 +184,9 @@ class BattleFieldFrame(OpenGLFrame):
     is_loading_finished = False
     def __init__(self, master=None, switchFrameWithMenuName=None, **kwargs):
         super().__init__(master, **kwargs)
-        # is_loading_finished = False
+        self.is_loading_finished = False
 
-        # self.
+        # self.play_loading_effect_animation()
 
         self.init_monitor_specification()
 
@@ -408,6 +408,8 @@ class BattleFieldFrame(OpenGLFrame):
         self.bind("<ButtonRelease-1>", self.on_canvas_release)
         self.bind("<Button-1>", self.on_canvas_left_click)
         self.bind("<Button-3>", self.on_canvas_right_click)
+
+        self.is_loading_finished = True
 
     def init_monitor_specification(self):
         monitors = get_monitors()
@@ -12434,16 +12436,21 @@ class BattleFieldFrame(OpenGLFrame):
         self.master.after(0, animate)
 
     def play_loading_effect_animation(self):
+        loading_animation = EffectAnimation()
+        loading_animation.set_animation_name('loading_screen')
+        loading_animation.draw_full_screen_animation_panel()
+        loading_animation_panel = loading_animation.get_animation_panel()
 
         def animate():
-
+            loading_animation.update_loading_animation_panel()
+            loading_animation.set_width_ratio(self.width_ratio)
+            loading_animation.set_height_ratio(self.height_ratio)
+            loading_animation_panel.draw()
 
             if not self.is_loading_finished:
                 self.master.after(17, animate)
             else:
                 print("harmful_effect_animation finish")
 
-        loading_animation = EffectAnimation()
-        loading_animation.set_animation_name('loading_screen')
-        loading_animation.draw_full_screen_animation_panel()
+
         self.master.after(0, animate)
