@@ -181,9 +181,12 @@ class BattleFieldFrame(OpenGLFrame):
     attack_animation_object = AttackAnimation.getInstance()
 
     animation_step_count = 0
-
+    is_loading_finished = False
     def __init__(self, master=None, switchFrameWithMenuName=None, **kwargs):
         super().__init__(master, **kwargs)
+        self.is_loading_finished = False
+
+        # self.play_loading_effect_animation()
 
         self.init_monitor_specification()
 
@@ -406,6 +409,8 @@ class BattleFieldFrame(OpenGLFrame):
         self.bind("<Button-1>", self.on_canvas_left_click)
         self.bind("<Button-3>", self.on_canvas_right_click)
 
+        self.is_loading_finished = True
+
     def init_monitor_specification(self):
         monitors = get_monitors()
         target_monitor = monitors[2] if len(monitors) > 2 else monitors[0]
@@ -448,6 +453,7 @@ class BattleFieldFrame(OpenGLFrame):
         self.pre_drawed_image_instance.pre_draw_full_screen_sea_of_wraith(width, height)
         self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_targeting_skill(width, height)
         self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_deploy(width, height)
+        self.pre_drawed_image_instance.pre_draw_full_screen_call_of_Leonic_effect_animation(width, height)
 
         battle_field_scene = BattleFieldScene()
         battle_field_scene.create_battle_field_cene(self.width, self.height)
@@ -4501,8 +4507,11 @@ class BattleFieldFrame(OpenGLFrame):
                         self.selected_search_unit_id_list = []
                         self.selected_search_unit_page_number_list = []
 
-                    self.create_effect_animation_to_your_field_and_play_animation_and_call_function_with_param(
+                    # self.create_effect_animation_to_your_field_and_play_animation_and_call_function_with_param(
+                    #     'call_of_leonic', call_of_leonic, response)
+                    self.create_effect_animation_to_full_screen_and_play_animation_and_call_function_with_param(
                         'call_of_leonic', call_of_leonic, response)
+
 
 
 
@@ -12425,4 +12434,24 @@ class BattleFieldFrame(OpenGLFrame):
                 print("harmful_effect_animation finish")
 
         harmful_effect_animation.reset_animation_count()
+        self.master.after(0, animate)
+
+    def play_loading_effect_animation(self):
+        loading_animation = EffectAnimation()
+        loading_animation.set_animation_name('loading_screen')
+        loading_animation.draw_full_screen_animation_panel()
+        loading_animation_panel = loading_animation.get_animation_panel()
+
+        def animate():
+            loading_animation.update_loading_animation_panel()
+            loading_animation.set_width_ratio(self.width_ratio)
+            loading_animation.set_height_ratio(self.height_ratio)
+            loading_animation_panel.draw()
+
+            if not self.is_loading_finished:
+                self.master.after(17, animate)
+            else:
+                print("harmful_effect_animation finish")
+
+
         self.master.after(0, animate)

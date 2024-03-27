@@ -722,7 +722,7 @@ class NotifyReaderServiceImpl(NotifyReaderService):
                 effect_animation=effect_animation,
                 target_player='Opponent',
                 target_index=99999,
-                target_type=TargetType.AREA,
+                target_type=TargetType.FULL_SCREEN,
                 call_function=call_of_leonic,
                 function_need_param=True,
                 param=notify_dict_data,

@@ -128,6 +128,9 @@ class PreDrawedImage:
     __pre_drawed_preparing_message = None
     __pre_drawed_preparing_ok_button = None
 
+    __pre_drawed_loading_screen = {}
+    __pre_drawed_card_drawing_scene = {}
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -177,6 +180,22 @@ class PreDrawedImage:
             print(f"effect_animation_image_data = {animation_image_data}")
             pre_draw_effect_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
         self.__pre_drawed_effect_animation['call_of_leonic'] = pre_draw_effect_animation
+
+    def pre_draw_full_screen_call_of_Leonic_effect_animation(self, width, height):
+        print(f"pre_draw_full_screen_call_of_leonic -> width: {width}, height: {height}")
+        call_of_leonic_animation = {}
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation",
+                                 'call_of_leonic')
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'call_of_leonic',
+                                                f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
+            call_of_leonic_animation[number] = ImageDataLoader.load_force_fit_full_screen_image_data(
+                animation_image_data, width + 300, height + 300)
+
+        self.__pre_drawed_effect_animation['call_of_leonic'] = call_of_leonic_animation
 
 
     def pre_draw_field_of_death_effect_animation(self):
@@ -348,6 +367,26 @@ class PreDrawedImage:
                                                         f"{card_number}.png")
             self.__pre_drawed_card_illustration[card_number] = ImageDataLoader.load_rectangle_image_data(
                 card_illustration_image_data)
+
+    def pre_draw_card_drawing_scene(self, width = None, height = None):
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation", "card_drawing_scene")
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            number_image_data = os.path.join(self.__project_root, "local_storage", "animation", "card_drawing_scene", f"{number}.png")
+            print(f"image data = {number_image_data}")
+            self.__pre_drawed_card_drawing_scene[number] = ImageDataLoader.load_rectangle_image_data(number_image_data)
+
+        #todo : 풀스크린으로 변경해야할수있음
+
+        # image_dir = os.path.join(self.__project_root, "local_storage", "animation", "card_drawing_scene")
+        # file_list = os.listdir(image_dir)
+        #
+        # for number in range(0, len(file_list)):
+        #     number_image_data = os.path.join(self.__project_root, "local_storage", "animation", "card_drawing_scene", f"{number}.png")
+        #     print(f"effect_animation_image_data = {number_image_data}")
+        #     self.__pre_drawed_card_drawing_scene[number] = ImageDataLoader.load_force_fit_full_screen_image_data(
+        #         number_image_data, width + 300, height + 300)
 
     def pre_draw_character_hp(self):
         image_dir = os.path.join(self.__project_root, "local_storage", "unit_card_hp")
@@ -579,6 +618,8 @@ class PreDrawedImage:
         preparing_ok_button_path = os.path.join(self.__project_root, "local_storage", "preparing_message", "ok_button.png")
         self.__pre_drawed_preparing_ok_button =ImageDataLoader.load_rectangle_origin_image_data(preparing_ok_button_path)
 
+
+
     def pre_draw_effect_animation(self):
 
         self.pre_draw_burst_shadow_ball()
@@ -605,6 +646,50 @@ class PreDrawedImage:
 
         self.pre_draw_dark_flame_effect_animation()
         self.pre_draw_freeze_effect_animation()
+
+        # self.pre_draw_loading_screen_animation()
+        self.pre_draw_full_screen_loading_screen_animation()
+
+    def pre_draw_loading_screen_animation(self):
+        effect_animation = {}
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation",
+                                 'loading_screen')
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation",
+                                                'loading_screen',
+                                                f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
+
+            effect_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
+
+        self.__pre_drawed_effect_animation['loading_screen'] = effect_animation
+
+    def pre_draw_full_screen_loading_screen_animation(self):
+        from screeninfo import get_monitors
+        monitors = get_monitors()
+        target_monitor = monitors[2] if len(monitors) > 2 else monitors[0]
+
+        width = target_monitor.width
+        height = target_monitor.height
+
+        effect_animation = {}
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation",
+                                 'loading_screen')
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation",
+                                                'loading_screen',
+                                                f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
+
+            effect_animation[number] = ImageDataLoader.load_force_fit_full_screen_image_data(
+                animation_image_data, width + 300, height + 300)
+
+        self.__pre_drawed_effect_animation['loading_screen'] = effect_animation
+
 
     def pre_draw_morale_conversion_effect_animation(self):
         effect_animation = {}
@@ -1151,6 +1236,8 @@ class PreDrawedImage:
         self.pre_draw_lose_text()
         self.pre_draw_battle_result_background()
 
+        self.pre_draw_card_drawing_scene()
+
         self.pre_draw_card_illustration()
         self.pre_draw_card_race()
         self.pre_draw_card_type()
@@ -1227,8 +1314,12 @@ class PreDrawedImage:
         self.pre_draw_preparing_message()
         self.pre_draw_preparing_ok_button()
 
+
+        # self.pre_draw_loading_screen()
+
         self.pre_draw_yes_button()
         self.pre_draw_no_button()
+
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
@@ -1486,3 +1577,9 @@ class PreDrawedImage:
 
     def get_pre_draw_preparing_ok_button(self):
         return self.__pre_drawed_preparing_ok_button
+
+    def get_pre_draw_loading_screen(self):
+        return self.__pre_drawed_loading_screen
+
+    def get_pre_draw_card_drawing_scene(self):
+        return self.__pre_drawed_card_drawing_scene
