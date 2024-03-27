@@ -3840,6 +3840,8 @@ class BattleFieldFrame(OpenGLFrame):
                         self.your_field_unit_action_repository.use_field_unit_action_count_by_index(
                             your_field_card_index)
 
+                        self.attack_animation_object.set_response_data(attack_opponent_unit_response)
+
                         self.apply_basic_attack_result_to_ui_with_response(attack_opponent_unit_response)
 
                         self.reset_every_selected_action()
@@ -5736,6 +5738,9 @@ class BattleFieldFrame(OpenGLFrame):
             if step_count < steps:
                 self.master.after(20, move_to_origin_location, step_count + 1)
             else:
+                response_data = attack_animation_object.get_response_data()
+
+                self.apply_response_data_of_harmful_status(response_data['player_field_unit_harmful_effect_map'])
                 is_playing_action_animation = False
                 your_fixed_card_base.update_vertices(your_fixed_card_base.get_initial_vertices())
                 if tool_card is not None:
