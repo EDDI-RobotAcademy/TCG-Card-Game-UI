@@ -95,7 +95,7 @@ class OpponentFieldUnitRepository:
 
         for index, current_field_unit_card in enumerate(valid_opponent_field_unit_list):
             next_x = self.x_base + x_increment * index
-            print(f"next_x: {next_x}")
+            # print(f"next_x: {next_x}")
             local_translation = (next_x, current_y)
 
             tool_card = current_field_unit_card.get_tool_card()
@@ -109,12 +109,12 @@ class OpponentFieldUnitRepository:
 
             dark_flame_animation_panel = current_field_unit_card.get_fixed_card_dark_flame_effect_animation_panel()
             if dark_flame_animation_panel:
-                print('flame animation panel set local translation', local_translation)
+                # print('flame animation panel set local translation', local_translation)
                 dark_flame_animation_panel.local_translate(local_translation)
 
             freeze_effect_animation_panel = current_field_unit_card.get_fixed_card_freeze_effect_animation_panel()
             if freeze_effect_animation_panel:
-                print('frozen animation panel set local translation', local_translation)
+                # print('frozen animation panel set local translation', local_translation)
                 freeze_effect_animation_panel.local_translate(local_translation)
 
     def attach_race_energy(self, opponent_field_unit_index, energy_race, energy_count):
