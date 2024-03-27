@@ -449,8 +449,6 @@ class BattleFieldFrame(OpenGLFrame):
 
         self.attack_animation_object.set_total_window_size(self.width, self.height)
 
-
-
         battle_field_scene = BattleFieldScene()
         battle_field_scene.create_battle_field_cene(self.width, self.height)
         self.battle_field_background_shape_list = battle_field_scene.get_battle_field_background()

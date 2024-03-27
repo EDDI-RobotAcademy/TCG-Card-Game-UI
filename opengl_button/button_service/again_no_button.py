@@ -41,7 +41,7 @@ class AgainNoButton:
 
             draw_no_button = self.buy_random_card_frame.buy_random_card_scene.get_no_button()
             if self.is_point_inside_object(draw_no_button, (x, y)):
-                print(f"draw_again_button -> mouse_click_event() clicked draw_again_button")
+                print(f"draw_again_button -> mouse_click_event() clicked draw_no_button")
 
                 self.__buy_check_repository.set_try_again_screen_visible(False)
 
