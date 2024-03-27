@@ -126,6 +126,8 @@ class PreDrawedImage:
     __pre_drawed_preparing_message = None
     __pre_drawed_preparing_ok_button = None
 
+    __pre_drawed_loading_screen = {}
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -175,6 +177,22 @@ class PreDrawedImage:
             print(f"effect_animation_image_data = {animation_image_data}")
             pre_draw_effect_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
         self.__pre_drawed_effect_animation['call_of_leonic'] = pre_draw_effect_animation
+
+    def pre_draw_full_screen_call_of_Leonic_effect_animation(self, width, height):
+        print(f"pre_draw_full_screen_call_of_leonic -> width: {width}, height: {height}")
+        call_of_leonic_animation = {}
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation",
+                                 'call_of_leonic')
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'call_of_leonic',
+                                                f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
+            call_of_leonic_animation[number] = ImageDataLoader.load_force_fit_full_screen_image_data(
+                animation_image_data, width + 300, height + 300)
+
+        self.__pre_drawed_effect_animation['call_of_leonic'] = call_of_leonic_animation
 
 
     def pre_draw_field_of_death_effect_animation(self):
@@ -569,6 +587,8 @@ class PreDrawedImage:
         preparing_ok_button_path = os.path.join(self.__project_root, "local_storage", "preparing_message", "ok_button.png")
         self.__pre_drawed_preparing_ok_button =ImageDataLoader.load_rectangle_origin_image_data(preparing_ok_button_path)
 
+
+
     def pre_draw_effect_animation(self):
 
         self.pre_draw_burst_shadow_ball()
@@ -595,6 +615,24 @@ class PreDrawedImage:
 
         self.pre_draw_dark_flame_effect_animation()
         self.pre_draw_freeze_effect_animation()
+
+        self.pre_draw_loading_screen_animation()
+
+    def pre_draw_loading_screen_animation(self):
+        effect_animation = {}
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation",
+                                 'loading-screen')
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation",
+                                                'loading-screen',
+                                                f"{number}.png")
+            print(f"effect_animation_image_data = {animation_image_data}")
+
+            effect_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
+
+        self.__pre_drawed_effect_animation['loading_screen'] = effect_animation
 
     def pre_draw_morale_conversion_effect_animation(self):
         effect_animation = {}
@@ -1217,6 +1255,8 @@ class PreDrawedImage:
         self.pre_draw_preparing_message()
         self.pre_draw_preparing_ok_button()
 
+        # self.pre_draw_loading_screen()
+
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
 
@@ -1467,3 +1507,6 @@ class PreDrawedImage:
 
     def get_pre_draw_preparing_ok_button(self):
         return self.__pre_drawed_preparing_ok_button
+
+    def get_pre_draw_loading_screen(self):
+        return self.__pre_drawed_loading_screen
