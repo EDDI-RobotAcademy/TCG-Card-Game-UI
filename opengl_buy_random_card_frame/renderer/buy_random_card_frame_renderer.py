@@ -70,6 +70,8 @@ class BuyRandomCardFrameRenderer:
 
         if self.buy_check_repository.get_try_again_screen_visible() == True:
             self.scene.try_again_screen.draw()
+            self.scene.yes_button.draw()
+            self.scene.no_button.draw()
 
         self.window.tkSwapBuffers()
 

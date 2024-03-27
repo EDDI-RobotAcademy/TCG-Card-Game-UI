@@ -176,6 +176,7 @@ class BuyRandomCardFrame(OpenGLFrame):
         self.response_card_number = BuyCheckRepositoryImpl.getInstance().getRandomCardList()
         print(f"response_card_number: {self.response_card_number}")
 
+        # 다시 실행 팝업창
         try_again_screen_left_x_point = self.width * 0.268
         try_again_screen_right_x_point = self.width * 0.683
         try_again_screen_top_y_point = self.height * 0.276
@@ -189,6 +190,36 @@ class BuyRandomCardFrame(OpenGLFrame):
                                                   (try_again_screen_left_x_point, try_again_screen_bottom_y_point)
                                               ])
         self.buy_random_card_scene.add_try_again_screen(try_again_screen)
+
+        # 예 버튼
+        yes_button_left_x_point = self.width * 0.356
+        yes_button_right_x_point = self.width * 0.44
+        yes_button_top_y_point = self.height * 0.575
+        yes_button_bottom_y_point = self.height * 0.629
+        yes_button_image_data = self.__pre_drawed_image_instance.get_pre_draw_yes_button()
+        yes_button = NonBackgroundImage(image_data=yes_button_image_data,
+                                        vertices=[
+                                            (yes_button_left_x_point, yes_button_top_y_point),
+                                            (yes_button_right_x_point, yes_button_top_y_point),
+                                            (yes_button_right_x_point, yes_button_bottom_y_point),
+                                            (yes_button_left_x_point, yes_button_bottom_y_point)
+                                        ])
+        self.buy_random_card_scene.add_yes_button(yes_button)
+
+        # 아니오 버튼
+        no_button_left_x_point = self.width * 0.512
+        no_button_right_x_point = self.width * 0.596
+        no_button_top_y_point = self.height * 0.575
+        no_button_bottom_y_point = self.height * 0.629
+        no_button_image_data = self.__pre_drawed_image_instance.get_pre_draw_no_button()
+        no_button = NonBackgroundImage(image_data=no_button_image_data,
+                                        vertices=[
+                                            (no_button_left_x_point, no_button_top_y_point),
+                                            (no_button_right_x_point, no_button_top_y_point),
+                                            (no_button_right_x_point, no_button_bottom_y_point),
+                                            (no_button_left_x_point, no_button_bottom_y_point)
+                                        ])
+        self.buy_random_card_scene.add_no_button(no_button)
 
         # x = 200
         # y = 200
