@@ -1,5 +1,6 @@
 from pyopengltk import OpenGLFrame
 
+from main_frame.entity.main_menu_frame import MainMenuFrame
 from opengl_dummy_frame.dummy_frame import DummyFrame
 from opengl_my_card_main_frame.frame.my_card_main_frame import MyCardMainFrame
 from ui_frame.repository.ui_frame_repository import UiFrameRepository
@@ -55,6 +56,9 @@ class UiFrameRepositoryImpl(UiFrameRepository):
         self.__musicPlayIpcChannel.put(name)
 
         if isinstance(foundUiFrame, OpenGLFrame):
+            if isinstance(foundUiFrame, MainMenuFrame):
+                del DummyFrame
+
             # if isinstance(foundUiFrame, DummyFrame):
             #     return
 
