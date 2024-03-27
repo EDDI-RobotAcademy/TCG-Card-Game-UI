@@ -1,6 +1,7 @@
 from shapely import Polygon, Point
 
 from card_shop_frame.frame.buy_check_frame.repository.buy_check_repository_impl import BuyCheckRepositoryImpl
+from card_shop_frame.frame.buy_check_frame.service.buy_check_service_impl import BuyCheckServiceImpl
 from card_shop_frame.repository.card_shop_repository_impl import CardShopMenuFrameRepositoryImpl
 from card_shop_frame.frame.buy_check_frame.service.request.buy_random_card_request import BuyRandomCardRequest
 from session.repository.session_repository_impl import SessionRepositoryImpl
@@ -17,6 +18,8 @@ class AgainYesButton:
     __buyCheckRepository = BuyCheckRepositoryImpl.getInstance()
     __sessionRepository = SessionRepositoryImpl.getInstance()
     # __cardShopMenuFrameService = CardShopMenuFrameServiceImpl.getInstance()
+
+    buy_check_service = BuyCheckServiceImpl.getInstance()
 
     def __init__(self, master, buy_random_card_frame):
         self.master = master
@@ -50,7 +53,24 @@ class AgainYesButton:
             draw_yes_button = self.buy_random_card_frame.buy_random_card_scene.get_yes_button()
             if self.is_point_inside_object(draw_yes_button, (x, y)):
                 print(f"draw_again_button -> mouse_click_event() clicked draw_yes_button")
-                pass
+
+                responseData = self.__buyCheckRepository.requestBuyRandomCard(
+                    BuyRandomCardRequest(sessionInfo=self.__sessionRepository.get_session_info(),
+                                         race_name=self.buy_check_service.get_race_value(),
+                                         is_confirmed_upper_legend=True))
+
+                is_success = responseData.get('is_success')
+                print(f"redraw -> is_success: {is_success}")
+
+                cardlist = responseData.get('card_id_list')
+                print(f"redraw -> cardlist: {cardlist}")
+
+                if is_success == True:
+                    self.__buyCheckRepository.clearRandomCardList()
+                    self.__buyCheckRepository.clear_random_buy_card_object_list()
+                    self.__buyCheckRepository.setRandomCardList(cardlist)
+                    self.__buyCheckRepository.set_need_to_redraw(True)
+                    self.__buyCheckRepository.set_try_again_screen_visible(False)
 
                 # if self.legend_stack_count == 0:
                 #     responseData = self.__buyCheckRepository.requestBuyRandomCard(
@@ -61,7 +81,7 @@ class AgainYesButton:
                 #     responseData = self.__buyCheckRepository.requestBuyRandomCard(
                 #         BuyRandomCardRequest(sessionInfo=self.__sessionRepository.get_session_info(),
                 #                              race_name=self.findRace(), is_confirmed_upper_legend=False))
-                #
+                # 
                 # is_success = responseData.get('is_success')
                 # print(f"is_success: {is_success}")
                 # cardlist = responseData.get('card_id_list')
@@ -76,9 +96,9 @@ class AgainYesButton:
                 #     self.__cardShopMenuFrameService.RestoreCardShopUiButton()
                 #     switchFrameWithMenuName("buy-random-card")
                 #     buyCheckFrame.destroy()
-                #
+                # 
                 # else:
-                #
+                # 
                 #     pass
 
 

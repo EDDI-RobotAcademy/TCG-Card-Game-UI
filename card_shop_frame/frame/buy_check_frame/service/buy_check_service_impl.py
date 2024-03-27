@@ -1,18 +1,22 @@
 import tkinter
 from PIL import ImageTk, Image
 
-from card_shop_frame.frame.buy_check_frame.entity.buy_check_frame import BuyCheckFrame
+# from card_shop_frame.frame.buy_check_frame.entity.buy_check_frame import BuyCheckFrame
 from card_shop_frame.frame.buy_check_frame.service.buy_check_service import BuyCheckService
 from card_shop_frame.frame.buy_check_frame.repository.buy_check_repository_impl import BuyCheckRepositoryImpl
 from card_shop_frame.repository.card_shop_repository_impl import CardShopMenuFrameRepositoryImpl
-from card_shop_frame.frame.buy_check_frame.service.request.free_random_card_request import FreeRandomCardRequest
+# from card_shop_frame.frame.buy_check_frame.service.request.free_random_card_request import FreeRandomCardRequest
 from card_shop_frame.frame.buy_check_frame.service.request.buy_random_card_request import BuyRandomCardRequest
+from common.card_race import CardRace
 from session.repository.session_repository_impl import SessionRepositoryImpl
-from opengl_buy_random_card_frame.service.buy_random_card_frame_service_impl import BuyRandomCardFrameServiceImpl
+# from opengl_buy_random_card_frame.service.buy_random_card_frame_service_impl import BuyRandomCardFrameServiceImpl
 
 
 class BuyCheckServiceImpl(BuyCheckService):
     __instance = None
+
+    __continuous_race = CardRace.DUMMY
+
     def __new__(cls):
         from card_shop_frame.service.card_shop_service_impl import CardShopMenuFrameServiceImpl
         if cls.__instance is None:
@@ -33,6 +37,12 @@ class BuyCheckServiceImpl(BuyCheckService):
     def __init__(self):
         self.legend_stack_count = 10
 
+    def set_race_value(self, card_race):
+        self.__continuous_race = card_race
+
+    def get_race_value(self):
+        return self.__continuous_race
+
 
     def findRace(self):
         race_mapping = {
@@ -44,6 +54,8 @@ class BuyCheckServiceImpl(BuyCheckService):
         Race = self.__cardShopMenuFrameRepository.getRace()
         Eg_Race = race_mapping.get(Race, "Unknown")
         print(f"Eg_Race: {Eg_Race}")
+
+        self.__continuous_race = Eg_Race
         return Eg_Race
 
 
