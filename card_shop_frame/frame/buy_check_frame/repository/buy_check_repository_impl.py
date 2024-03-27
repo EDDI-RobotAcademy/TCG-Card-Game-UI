@@ -64,10 +64,10 @@ class BuyCheckRepositoryImpl(BuyCheckRepository):
         current_card_size = 170
         card_width_ratio = current_card_size / self.total_width
         card_height_ratio = current_card_size * 1.615 / self.total_height
-        print(f"{Fore.RED}card_width_ratio: {card_width_ratio}{Style.RESET_ALL}")
+        # print(f"{Fore.RED}card_width_ratio: {card_width_ratio}{Style.RESET_ALL}")
         card_height_margin = 100
         card_height_margin_ratio = card_height_margin / self.total_height
-        print(f"{Fore.RED}card_height_margin_ratio: {card_height_margin_ratio}{Style.RESET_ALL}")
+        # print(f"{Fore.RED}card_height_margin_ratio: {card_height_margin_ratio}{Style.RESET_ALL}")
 
         top_height = (((1 - (card_height_ratio * 2 + card_height_margin_ratio)) / 2) + 0.0344488) * self.total_height
 
@@ -96,7 +96,7 @@ class BuyCheckRepositoryImpl(BuyCheckRepository):
         # next_x = base_x + self.total_width * (x_increment * place_index)
 
         next_x = left_start_width_on_page + x_increment * place_index
-        print(f"{Fore.RED}next_x: {next_x}, current_y: {current_y}{Style.RESET_ALL}")
+        # print(f"{Fore.RED}next_x: {next_x}, current_y: {current_y}{Style.RESET_ALL}")
         return (next_x, current_y)
 
     def create_random_buy_list(self):

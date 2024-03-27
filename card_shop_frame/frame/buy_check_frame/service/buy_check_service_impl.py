@@ -88,6 +88,8 @@ class BuyCheckServiceImpl(BuyCheckService):
             cardlist = responseData.get('card_id_list')
             print(f"cardlist: {cardlist}")
             if is_success == True:
+                
+
                 self.__buyCheckRepository.clearRandomCardList()
                 self.__buyCheckRepository.clear_random_buy_card_object_list()
                 self.__buyCheckRepository.setRandomCardList(cardlist)
@@ -97,6 +99,7 @@ class BuyCheckServiceImpl(BuyCheckService):
                 self.__cardShopMenuFrameService.RestoreCardShopUiButton()
                 switchFrameWithMenuName("buy-random-card")
                 buyCheckFrame.destroy()
+
             else:
                 not_have_money_label = tkinter.Label(buyCheckFrame, text="골드가 부족합니다.", font=("Helvetica", 10),
                                                      fg="red", bg="#F7F8E0", anchor="center", justify="center")

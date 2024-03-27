@@ -369,24 +369,26 @@ class PreDrawedImage:
                 card_illustration_image_data)
 
     def pre_draw_card_drawing_scene(self, width = None, height = None):
-        image_dir = os.path.join(self.__project_root, "local_storage", "animation", "card_drawing_scene")
-        file_list = os.listdir(image_dir)
-
-        for number in range(0, len(file_list)):
-            number_image_data = os.path.join(self.__project_root, "local_storage", "animation", "card_drawing_scene", f"{number}.png")
-            # print(f"image data = {number_image_data}")
-            self.__pre_drawed_card_drawing_scene[number] = ImageDataLoader.load_rectangle_image_data(number_image_data)
-
-        #todo : 풀스크린으로 변경해야할수있음
-
         # image_dir = os.path.join(self.__project_root, "local_storage", "animation", "card_drawing_scene")
         # file_list = os.listdir(image_dir)
         #
         # for number in range(0, len(file_list)):
         #     number_image_data = os.path.join(self.__project_root, "local_storage", "animation", "card_drawing_scene", f"{number}.png")
-        #     print(f"effect_animation_image_data = {number_image_data}")
-        #     self.__pre_drawed_card_drawing_scene[number] = ImageDataLoader.load_force_fit_full_screen_image_data(
-        #         number_image_data, width + 300, height + 300)
+        #     # print(f"image data = {number_image_data}")
+        #     self.__pre_drawed_card_drawing_scene[number] = ImageDataLoader.load_rectangle_image_data(number_image_data)
+
+        #todo : 풀스크린으로 변경해야할수있음
+        effect_animation = {}
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation", "card_drawing_scene")
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", "card_drawing_scene", f"{number}.png")
+            effect_animation[number] = ImageDataLoader.load_force_fit_full_screen_image_data(
+                animation_image_data, width + 300, height + 300)
+
+        self.__pre_drawed_effect_animation['card_drawing_scene'] = effect_animation
+
 
     def pre_draw_character_hp(self):
         image_dir = os.path.join(self.__project_root, "local_storage", "unit_card_hp")
@@ -1236,7 +1238,7 @@ class PreDrawedImage:
         self.pre_draw_lose_text()
         self.pre_draw_battle_result_background()
 
-        self.pre_draw_card_drawing_scene()
+        # self.pre_draw_card_drawing_scene()
 
         self.pre_draw_card_illustration()
         self.pre_draw_card_race()

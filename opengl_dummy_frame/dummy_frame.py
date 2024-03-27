@@ -108,12 +108,14 @@ class DummyFrame(OpenGLFrame):
         self.switch_frame_with_menu_name("main-menu")
 
 
+
     def pre_draw_full_screen(self, width, height):
         self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_skill(width, height)
         self.pre_drawed_image_instance.pre_draw_full_screen_sea_of_wraith(width, height)
         self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_targeting_skill(width, height)
         self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_deploy(width, height)
         self.pre_drawed_image_instance.pre_draw_full_screen_call_of_Leonic_effect_animation(width, height)
+        self.pre_drawed_image_instance.pre_draw_card_drawing_scene(width, height)
 
         # self.current_width = self.width
         # self.current_height = self.height
