@@ -190,7 +190,7 @@ class FakeBattleFieldFrame(OpenGLFrame):
         super().__init__(master, **kwargs)
         self.is_loading_finished = False
 
-        self.play_loading_effect_animation()
+        # self.play_loading_effect_animation()
 
         self.init_monitor_specification()
 

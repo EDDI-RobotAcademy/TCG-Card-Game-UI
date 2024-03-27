@@ -639,7 +639,7 @@ class PreDrawedImage:
         self.pre_draw_death()
 
         self.pre_drawed_swamp_of_ghost_effect_animation()
-        self.pre_draw_call_of_Leonic_effect_animation()
+        # self.pre_draw_call_of_Leonic_effect_animation()
         self.pre_draw_field_of_death_effect_animation()
         self.pre_draw_overflow_of_energy_effect_animation()
         self.pre_draw_morale_conversion_effect_animation()
@@ -648,7 +648,7 @@ class PreDrawedImage:
         self.pre_draw_freeze_effect_animation()
 
         # self.pre_draw_loading_screen_animation()
-        self.pre_draw_full_screen_loading_screen_animation()
+        # self.pre_draw_full_screen_loading_screen_animation()
 
     def pre_draw_loading_screen_animation(self):
         effect_animation = {}

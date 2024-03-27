@@ -53,7 +53,8 @@ class ImageGenerator:
 
     def initImages(self):
         self.__selectedDeckImage = self.__setImageByDirectoryAndName("battle_lobby", "deck")
-        self.__unselectedDeckImage = self.__setImageByDirectoryAndName("battle_lobby", "background")
+        self.__unselectedDeckImage = self.__setImageByDirectoryAndName("battle"
+                                                                       "_lobby", "select_deck_button")
         csv_repository = CardInfoFromCsvRepositoryImpl.getInstance()
         for card_number in csv_repository.getCardNumber():
             if csv_repository.getCardGradeForCardNumber(card_number) == CardGrade.MYTHICAL.value:
@@ -76,8 +77,8 @@ class ImageGenerator:
         openDeckImage = Image.open(
             os.path.join(os.getcwd(), "local_storage", "image", directoryName, f"{imageName}.png"))
         # openDeckImage = Image.open(os.path.join(os.getcwd(), "../../../local_storage", "image", directoryName, f"{imageName}.png"))
-        thumbnailImage = openDeckImage.copy()
-        thumbnailImage.thumbnail((300, 300), )
+        thumbnailImage = openDeckImage.resize((900, 150))
+        # thumbnailImage.thumbnail((1000, 100), )
         result = ImageTk.PhotoImage(thumbnailImage)
         return result
 

@@ -114,28 +114,30 @@ class BattleLobbyFrameServiceImpl(BattleLobbyFrameService):
                 return 0.3 if j % 2 == 0 else 0.7
 
             for deckDataList in request.values():
+                print(deckDataList)
                 if len(deckDataList) == 0:
                     # Todo: 사용 할 수 있는 덱이 없다면 즉시 항복을 하고 패배합니다.
                     self.__timer.editTimer(3, lambda : self.callSurrenderAndExitLobby(switchFrameWithMenuName))
                 else:
                     for i, deckData in enumerate(deckDataList):
-                        for deckId, deckName in deckData.items():
-                                generatedImage = imageGenerator.getUnselectedDeckImage()
-                                deck = tkinter.Canvas(self.__battleLobbyFrame, highlightthickness=0,
-                                                      highlightbackground="#93FFE8")
-                                deck.create_image(150, 40, image=generatedImage)
-                                deck.create_text(150, 40, text=deckName, font=("Arial", 15))
-                                deck.pack()
-                                deck.place(relx=relX(i), rely=0.4 + (i // 2 * 0.15),
-                                           anchor="center", width=300, height=80)
+                        if i == 0:
+                            for deckId, deckName in deckData.items():
+                                    generatedImage = imageGenerator.getUnselectedDeckImage()
+                                    deck = tkinter.Canvas(self.__battleLobbyFrame, highlightthickness=0,
+                                                          highlightbackground="#93FFE8")
+                                    deck.create_image(0, 0, anchor='nw', image=generatedImage)
+                                    # deck.create_text(150, 40, text=deckName, font=("Arial", 15))
+                                    deck.pack()
+                                    deck.place(relx=0.5, rely=0.35 + (i // 2 * 0.15),
+                                               anchor="center", width=900, height=150)
 
-                                def onClick(event, _deck):
-                                    self.__battleLobbyFrameRepository.selectDeck(_deck)
+                                    def onClick(event, _deck):
+                                        self.__battleLobbyFrameRepository.selectDeck(_deck)
 
-                                deck.bind("<Button-1>",
-                                          lambda event, current_deck=deck: onClick(event, current_deck))
-                                self.__battleLobbyFrameRepository.addDeckToDeckList(deck)
-                                self.__battleLobbyFrameRepository.addDeckIdToDeckIdList(deckId)
+                                    deck.bind("<Button-1>",
+                                              lambda event, current_deck=deck: onClick(event, current_deck))
+                                    self.__battleLobbyFrameRepository.addDeckToDeckList(deck)
+                                    self.__battleLobbyFrameRepository.addDeckIdToDeckIdList(deckId)
 
     def checkTimeForDeckSelection(self):
         self.__timer.resetTimer()
