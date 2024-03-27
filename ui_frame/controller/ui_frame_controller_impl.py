@@ -31,6 +31,7 @@ from lobby_frame.service.lobby_menu_frame_service_impl import LobbyMenuFrameServ
 from main_frame.service.main_menu_frame_service_impl import MainMenuFrameServiceImpl
 from matching_window.service.matching_window_service_impl import MatchingWindowServiceImpl
 from opengl_battle_field.frame.battle_field_frame import legacyBattleFieldFrame
+from opengl_dummy_frame.service.opengl_dummy_frame_service import OpenGLDummyFrameService
 from opengl_my_card_main_frame.service.my_card_main_frame_service_impl import MyCardMainFrameServiceImpl
 from opengl_buy_random_card_frame.service.buy_random_card_frame_service_impl import BuyRandomCardFrameServiceImpl
 from opengl_my_deck_register_frame.service.my_deck_register_frame_service_impl import MyDeckRegisterFrameServiceImpl
@@ -55,6 +56,9 @@ class UiFrameControllerImpl(UiFrameController):
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
+
+            cls.__instance.__openGLDummyFrameService = OpenGLDummyFrameService.getInstance()
+
             cls.__instance.__uiFrameService = UiFrameServiceImpl.getInstance()
             cls.__instance.__windowService = WindowServiceImpl.getInstance()
 
@@ -122,6 +126,9 @@ class UiFrameControllerImpl(UiFrameController):
         self.__windowService.createRootWindow()
         rootWindow = self.__windowService.getRootWindow()
 
+        openglDummyFrame = self.__openGLDummyFrameService.createOpenGLDummyFrame(rootWindow, self.switchFrameWithMenuName)
+        self.__uiFrameService.registerOpenGLDummyFrame(openglDummyFrame)
+
         mainMenuFrame = self.__mainMenuFrameService.createMainUiFrame(rootWindow, self.switchFrameWithMenuName)
         self.__uiFrameService.registerMainMenuUiFrame(mainMenuFrame)
 
@@ -176,6 +183,9 @@ class UiFrameControllerImpl(UiFrameController):
 
         battleFieldFrame = self.__battleFieldFrame()
         self.__uiFrameService.registerBattleFieldUiFrame(battleFieldFrame)
+
+    def opengl_dummy_frame(self):
+        self.switchFrameWithMenuName("dummy")
 
     def first_main_window(self):
         self.switchFrameWithMenuName("main-menu")
