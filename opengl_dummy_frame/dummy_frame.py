@@ -72,6 +72,8 @@ class DummyFrame(OpenGLFrame):
         self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_skill(width, height)
         self.pre_drawed_image_instance.pre_draw_full_screen_sea_of_wraith(width, height)
         self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_targeting_skill(width, height)
+        self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_deploy(width, height)
+        self.pre_drawed_image_instance.pre_draw_full_screen_call_of_Leonic_effect_animation(width, height)
 
         # self.current_width = self.width
         # self.current_height = self.height
