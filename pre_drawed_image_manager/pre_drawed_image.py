@@ -128,6 +128,9 @@ class PreDrawedImage:
     __pre_drawed_preparing_message = None
     __pre_drawed_preparing_ok_button = None
 
+    __pre_drawed_loading_screen = {}
+    __pre_drawed_card_drawing_scene = {}
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -148,7 +151,7 @@ class PreDrawedImage:
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'burn_effect',
                                                 f"{number}.png")
-            print(f"effect_animation_image_data = {animation_image_data}")
+            # print(f"effect_animation_image_data = {animation_image_data}")
             pre_drawed_dark_flame_effect[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
         self.__pre_drawed_effect_animation['burn_effect'] = pre_drawed_dark_flame_effect
 
@@ -161,7 +164,7 @@ class PreDrawedImage:
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'frozen_effect',
                                                 f"{number}.png")
-            print(f"effect_animation_image_data = {animation_image_data}")
+            # print(f"effect_animation_image_data = {animation_image_data}")
             pre_drawed_frozen_effect[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
         self.__pre_drawed_effect_animation['frozen_effect'] = pre_drawed_frozen_effect
 
@@ -174,9 +177,25 @@ class PreDrawedImage:
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'call_of_leonic',
                                                 f"{number}.png")
-            print(f"effect_animation_image_data = {animation_image_data}")
+            # print(f"effect_animation_image_data = {animation_image_data}")
             pre_draw_effect_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
         self.__pre_drawed_effect_animation['call_of_leonic'] = pre_draw_effect_animation
+
+    def pre_draw_full_screen_call_of_Leonic_effect_animation(self, width, height):
+        # print(f"pre_draw_full_screen_call_of_leonic -> width: {width}, height: {height}")
+        call_of_leonic_animation = {}
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation",
+                                 'call_of_leonic')
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'call_of_leonic',
+                                                f"{number}.png")
+            # print(f"effect_animation_image_data = {animation_image_data}")
+            call_of_leonic_animation[number] = ImageDataLoader.load_force_fit_full_screen_image_data(
+                animation_image_data, width + 300, height + 300)
+
+        self.__pre_drawed_effect_animation['call_of_leonic'] = call_of_leonic_animation
 
 
     def pre_draw_field_of_death_effect_animation(self):
@@ -188,7 +207,7 @@ class PreDrawedImage:
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'field_of_death',
                                                 f"{number}.png")
-            print(f"effect_animation_image_data = {animation_image_data}")
+            # print(f"effect_animation_image_data = {animation_image_data}")
             pre_draw_effect_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
         self.__pre_drawed_effect_animation['field_of_death'] = pre_draw_effect_animation
 
@@ -201,7 +220,7 @@ class PreDrawedImage:
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'overflow_of_energy',
                                                 f"{number}.png")
-            print(f"effect_animation_image_data = {animation_image_data}")
+            # print(f"effect_animation_image_data = {animation_image_data}")
             pre_draw_effect_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
         self.__pre_drawed_effect_animation['overflow_of_energy'] = pre_draw_effect_animation
 
@@ -214,7 +233,7 @@ class PreDrawedImage:
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'swamp_of_ghost',
                                                 f"{number}.png")
-            print(f"effect_animation_image_data = {animation_image_data}")
+            # print(f"effect_animation_image_data = {animation_image_data}")
             pre_draw_effect_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
         self.__pre_drawed_effect_animation['swamp_of_ghost'] = pre_draw_effect_animation
 
@@ -349,6 +368,26 @@ class PreDrawedImage:
             self.__pre_drawed_card_illustration[card_number] = ImageDataLoader.load_rectangle_image_data(
                 card_illustration_image_data)
 
+    def pre_draw_card_drawing_scene(self, width = None, height = None):
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation", "card_drawing_scene")
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            number_image_data = os.path.join(self.__project_root, "local_storage", "animation", "card_drawing_scene", f"{number}.png")
+            # print(f"image data = {number_image_data}")
+            self.__pre_drawed_card_drawing_scene[number] = ImageDataLoader.load_rectangle_image_data(number_image_data)
+
+        #todo : 풀스크린으로 변경해야할수있음
+
+        # image_dir = os.path.join(self.__project_root, "local_storage", "animation", "card_drawing_scene")
+        # file_list = os.listdir(image_dir)
+        #
+        # for number in range(0, len(file_list)):
+        #     number_image_data = os.path.join(self.__project_root, "local_storage", "animation", "card_drawing_scene", f"{number}.png")
+        #     print(f"effect_animation_image_data = {number_image_data}")
+        #     self.__pre_drawed_card_drawing_scene[number] = ImageDataLoader.load_force_fit_full_screen_image_data(
+        #         number_image_data, width + 300, height + 300)
+
     def pre_draw_character_hp(self):
         image_dir = os.path.join(self.__project_root, "local_storage", "unit_card_hp")
         file_list = os.listdir(image_dir)
@@ -433,7 +472,7 @@ class PreDrawedImage:
 
         for number in range(0, len(file_list) + 1):
             timer_image_data = os.path.join(self.__project_root, "local_storage", "mulligan_timer", f"{number}.png")
-            print(f"animation image data = {timer_image_data}")
+            # print(f"animation image data = {timer_image_data}")
             self.__pre_drawed_mulligan_timer[number] = ImageDataLoader.load_rectangle_image_data(timer_image_data)
 
     def pre_draw_card_attack(self):
@@ -579,6 +618,8 @@ class PreDrawedImage:
         preparing_ok_button_path = os.path.join(self.__project_root, "local_storage", "preparing_message", "ok_button.png")
         self.__pre_drawed_preparing_ok_button =ImageDataLoader.load_rectangle_origin_image_data(preparing_ok_button_path)
 
+
+
     def pre_draw_effect_animation(self):
 
         self.pre_draw_burst_shadow_ball()
@@ -606,6 +647,50 @@ class PreDrawedImage:
         self.pre_draw_dark_flame_effect_animation()
         self.pre_draw_freeze_effect_animation()
 
+        # self.pre_draw_loading_screen_animation()
+        self.pre_draw_full_screen_loading_screen_animation()
+
+    def pre_draw_loading_screen_animation(self):
+        effect_animation = {}
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation",
+                                 'loading_screen')
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation",
+                                                'loading_screen',
+                                                f"{number}.png")
+            # print(f"effect_animation_image_data = {animation_image_data}")
+
+            effect_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
+
+        self.__pre_drawed_effect_animation['loading_screen'] = effect_animation
+
+    def pre_draw_full_screen_loading_screen_animation(self):
+        from screeninfo import get_monitors
+        monitors = get_monitors()
+        target_monitor = monitors[2] if len(monitors) > 2 else monitors[0]
+
+        width = target_monitor.width
+        height = target_monitor.height
+
+        effect_animation = {}
+        image_dir = os.path.join(self.__project_root, "local_storage", "animation",
+                                 'loading_screen')
+        file_list = os.listdir(image_dir)
+
+        for number in range(0, len(file_list)):
+            animation_image_data = os.path.join(self.__project_root, "local_storage", "animation",
+                                                'loading_screen',
+                                                f"{number}.png")
+            # print(f"effect_animation_image_data = {animation_image_data}")
+
+            effect_animation[number] = ImageDataLoader.load_force_fit_full_screen_image_data(
+                animation_image_data, width + 300, height + 300)
+
+        self.__pre_drawed_effect_animation['loading_screen'] = effect_animation
+
+
     def pre_draw_morale_conversion_effect_animation(self):
         effect_animation = {}
         image_dir = os.path.join(self.__project_root, "local_storage", "animation",
@@ -616,13 +701,13 @@ class PreDrawedImage:
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation",
                                                 'morale_conversion',
                                                 f"{number}.png")
-            print(f"effect_animation_image_data = {animation_image_data}")
+            # print(f"effect_animation_image_data = {animation_image_data}")
             effect_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['morale_conversion'] = effect_animation
 
     def pre_draw_full_screen_nether_blade_deploy(self, width, height):
-        print(f"pre_draw_full_screen_nether_blade_deploy -> width: {width}, height: {height}")
+        # print(f"pre_draw_full_screen_nether_blade_deploy -> width: {width}, height: {height}")
         nether_blade_scene_animation = {}
         image_dir = os.path.join(self.__project_root, "local_storage", "animation",
                                  'nether_blade_scene')
@@ -631,14 +716,14 @@ class PreDrawedImage:
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'nether_blade_scene',
                                                 f"{number}.png")
-            print(f"effect_animation_image_data = {animation_image_data}")
+            # print(f"effect_animation_image_data = {animation_image_data}")
             nether_blade_scene_animation[number] = ImageDataLoader.load_force_fit_full_screen_image_data(animation_image_data, width + 300, height + 300)
 
         self.__pre_drawed_effect_animation['nether_blade_scene'] = nether_blade_scene_animation
 
 
     def pre_draw_full_screen_nether_blade_skill(self, width, height):
-        print(f"pre_draw_full_screen_nether_blade_skill -> width: {width}, height: {height}")
+        # print(f"pre_draw_full_screen_nether_blade_skill -> width: {width}, height: {height}")
         nether_blade_area_skill_animation = {}
         image_dir = os.path.join(self.__project_root, "local_storage", "animation",
                                  'nether_blade_area_skill')
@@ -647,13 +732,13 @@ class PreDrawedImage:
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'nether_blade_area_skill',
                                                 f"{number}.png")
-            print(f"effect_animation_image_data = {animation_image_data}")
+            # print(f"effect_animation_image_data = {animation_image_data}")
             nether_blade_area_skill_animation[number] = ImageDataLoader.load_force_fit_full_screen_image_data(animation_image_data, width + 300, height + 300)
 
         self.__pre_drawed_effect_animation['nether_blade_area_skill'] = nether_blade_area_skill_animation
 
     def pre_draw_full_screen_sea_of_wraith(self, width, height):
-        print(f"pre_draw_full_screen_sea_of_wraith -> width: {width}, height: {height}")
+        # print(f"pre_draw_full_screen_sea_of_wraith -> width: {width}, height: {height}")
         sea_of_wraith_skill_animation = {}
         image_dir = os.path.join(self.__project_root, "local_storage", "animation", 'sea_of_wraith')
         file_list = os.listdir(image_dir)
@@ -661,7 +746,7 @@ class PreDrawedImage:
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'sea_of_wraith',
                                                 f"{number}.png")
-            print(f"effect_animation_image_data = {animation_image_data}")
+            # print(f"effect_animation_image_data = {animation_image_data}")
             sea_of_wraith_skill_animation[number] = ImageDataLoader.load_force_fit_full_screen_image_data(animation_image_data, width + 300, height + 300)
 
         self.__pre_drawed_effect_animation['sea_of_wraith'] = sea_of_wraith_skill_animation
@@ -675,7 +760,7 @@ class PreDrawedImage:
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'nether_blade_targeting_skill',
                                                 f"{number}.png")
-            print(f"effect_animation_image_data = {animation_image_data}")
+            # print(f"effect_animation_image_data = {animation_image_data}")
             nether_blade_targeting_skill_animation[number] = ImageDataLoader.load_force_fit_full_screen_image_data(animation_image_data, width + 300, height + 300)
 
         self.__pre_drawed_effect_animation['nether_blade_targeting_skill'] = nether_blade_targeting_skill_animation
@@ -689,7 +774,7 @@ class PreDrawedImage:
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'nether_blade_targeting_skill_remain',
                                                 f"{number}.png")
-            print(f"effect_animation_image_data = {animation_image_data}")
+            # print(f"effect_animation_image_data = {animation_image_data}")
             effect_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['nether_blade_targeting_skill_remain'] = effect_animation
@@ -703,7 +788,7 @@ class PreDrawedImage:
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'death',
                                                 f"{number}.png")
-            print(f"effect_animation_image_data = {animation_image_data}")
+            # print(f"effect_animation_image_data = {animation_image_data}")
             death_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['death'] = death_animation
@@ -717,7 +802,7 @@ class PreDrawedImage:
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'corpse_explosion',
                                                 f"{number}.png")
-            print(f"effect_animation_image_data = {animation_image_data}")
+            # print(f"effect_animation_image_data = {animation_image_data}")
             corpse_explosion_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['corpse_explosion'] = corpse_explosion_animation
@@ -744,7 +829,7 @@ class PreDrawedImage:
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'legacy_sea_of_wraith',
                                                 f"{number}.png")
-            print(f"effect_animation_image_data = {animation_image_data}")
+            # print(f"effect_animation_image_data = {animation_image_data}")
             sea_of_wraith_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['legacy_sea_of_wraith'] = sea_of_wraith_animation
@@ -758,7 +843,7 @@ class PreDrawedImage:
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'contract_of_doom',
                                                 f"{number}.png")
-            print(f"effect_animation_image_data = {animation_image_data}")
+            # print(f"effect_animation_image_data = {animation_image_data}")
             contract_of_doom_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['contract_of_doom'] = contract_of_doom_animation
@@ -771,7 +856,7 @@ class PreDrawedImage:
 
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'burst_shadow_ball',f"{number}.png")
-            print(f"effect_animation_image_data = {animation_image_data}")
+            # print(f"effect_animation_image_data = {animation_image_data}")
             burst_shadow_ball_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['burst_shadow_ball'] = burst_shadow_ball_animation
@@ -783,7 +868,7 @@ class PreDrawedImage:
 
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'moving_shadow_ball',f"{number}.png")
-            print(f"effect_animation_image_data = {animation_image_data}")
+            # print(f"effect_animation_image_data = {animation_image_data}")
             moving_shadow_ball_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['moving_shadow_ball'] = moving_shadow_ball_animation
@@ -794,7 +879,7 @@ class PreDrawedImage:
 
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'dark_blast', f"{number}.png")
-            print(f"effect_animation_image_data = {animation_image_data}")
+            # print(f"effect_animation_image_data = {animation_image_data}")
             dark_blast_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['dark_blast'] = dark_blast_animation
@@ -806,7 +891,7 @@ class PreDrawedImage:
 
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'energy_burn', f"{number}.png")
-            print(f"effect_animation_image_data = {animation_image_data}")
+            # print(f"effect_animation_image_data = {animation_image_data}")
             energy_burn_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['energy_burn'] = energy_burn_animation
@@ -818,7 +903,7 @@ class PreDrawedImage:
 
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'magic_attack', f"{number}.png")
-            print(f"effect_animation_image_data = {animation_image_data}")
+            # print(f"effect_animation_image_data = {animation_image_data}")
             magic_attack_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['magic_attack'] = magic_attack_animation
@@ -829,7 +914,7 @@ class PreDrawedImage:
 
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'sword_attack', f"{number}.png")
-            print(f"effect_animation_image_data = {animation_image_data}")
+            # print(f"effect_animation_image_data = {animation_image_data}")
             sword_attack_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['sword_attack'] = sword_attack_animation
@@ -841,7 +926,7 @@ class PreDrawedImage:
 
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", 'death_scythe', f"{number}.png")
-            print(f"effect_animation_image_data = {animation_image_data}")
+            # print(f"effect_animation_image_data = {animation_image_data}")
             death_scythe_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
         self.__pre_drawed_effect_animation['death_scythe'] = death_scythe_animation
@@ -854,7 +939,7 @@ class PreDrawedImage:
         for number in range(0, len(file_list)):
             animation_image_data = os.path.join(self.__project_root, "local_storage", "animation", f"{number}.png")
             # animation_image_data = os.path.join(self.__project_root, "local_storage", "animation_for_test", f"{number}.png")
-            print(f"animation image data = {animation_image_data}")
+            # print(f"animation image data = {animation_image_data}")
             self.__pre_drawed_animation[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
     def pre_draw_number_of_energy(self):
@@ -866,11 +951,11 @@ class PreDrawedImage:
             animation_image_data = os.path.join(self.__project_root, "local_storage", "number_of_energy",
                                                 f"{number}.png")
             # animation_image_data = os.path.join(self.__project_root, "local_storage", "animation_for_test", f"{number}.png")
-            print(f"animation image data = {animation_image_data}")
+            # print(f"animation image data = {animation_image_data}")
             self.__pre_drawed_number_of_energy[number] = ImageDataLoader.load_rectangle_image_data(animation_image_data)
 
     def pre_draw_battle_field_background(self, width, height):
-        print(f"pre_draw_battle_field_background -> width = {width}, height = {height}")
+        # print(f"pre_draw_battle_field_background -> width = {width}, height = {height}")
 
         battle_field_background = os.path.join(self.__project_root, "local_storage", "image", "battle_field",
                                                "battle_field_background.png")
@@ -895,7 +980,7 @@ class PreDrawedImage:
 
         for number in range(0, len(unit_energy_image_file_list)):
             unit_energy_image_path = os.path.join(self.__project_root, "local_storage", "unit_card_energy", f"{number}.png")
-            print(f"unit_energy_image_data = {unit_energy_image_path}")
+            # print(f"unit_energy_image_data = {unit_energy_image_path}")
             self.__pre_drawed_unit_energy[number] = ImageDataLoader.load_rectangle_origin_image_data(unit_energy_image_path)
 
     def pre_draw_unit_hp(self):
@@ -1103,7 +1188,7 @@ class PreDrawedImage:
         for number in range(0, len(file_list)):
             number_image_data = os.path.join(self.__project_root, "local_storage", "battle_field_timer",
                                              f"{number}.png")
-            print(f"image data = {number_image_data}")
+            # print(f"image data = {number_image_data}")
             self.__pre_drawed_battle_field_timer[number] = ImageDataLoader.load_rectangle_image_data(number_image_data)
 
     def pre_draw_use_energy_opponent_unit(self):
@@ -1113,7 +1198,7 @@ class PreDrawedImage:
         for number in range(1, len(file_list) + 1):
             number_image_data = os.path.join(self.__project_root, "local_storage", "message_on_the_battle_screen", "use_energy_opponent_unit",
                                              f"{number}.png")
-            print(f"image data = {number_image_data}")
+            # print(f"image data = {number_image_data}")
             self.__pre_draw_use_energy_opponent_unit[number] = ImageDataLoader.load_message_on_the_battle_screen_image_data(number_image_data)
 
     def pre_draw_mulligan_timer(self):
@@ -1122,7 +1207,7 @@ class PreDrawedImage:
 
         for number in range(0, len(file_list) + 1):
             timer_image_data = os.path.join(self.__project_root, "local_storage", "mulligan_timer", f"{number}.png")
-            print(f"animation image data = {timer_image_data}")
+            # print(f"animation image data = {timer_image_data}")
             self.__pre_drawed_mulligan_timer[number] = ImageDataLoader.load_rectangle_image_data(timer_image_data)
 
     def pre_draw_every_image(self):
@@ -1150,6 +1235,8 @@ class PreDrawedImage:
         self.pre_draw_win_text()
         self.pre_draw_lose_text()
         self.pre_draw_battle_result_background()
+
+        self.pre_draw_card_drawing_scene()
 
         self.pre_draw_card_illustration()
         self.pre_draw_card_race()
@@ -1227,8 +1314,12 @@ class PreDrawedImage:
         self.pre_draw_preparing_message()
         self.pre_draw_preparing_ok_button()
 
+
+        # self.pre_draw_loading_screen()
+
         self.pre_draw_yes_button()
         self.pre_draw_no_button()
+
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
@@ -1486,3 +1577,9 @@ class PreDrawedImage:
 
     def get_pre_draw_preparing_ok_button(self):
         return self.__pre_drawed_preparing_ok_button
+
+    def get_pre_draw_loading_screen(self):
+        return self.__pre_drawed_loading_screen
+
+    def get_pre_draw_card_drawing_scene(self):
+        return self.__pre_drawed_card_drawing_scene

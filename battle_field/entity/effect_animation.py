@@ -223,6 +223,20 @@ class EffectAnimation:
 
         self.__current_animation_count += 1
 
+    def update_loading_animation_panel(self):
+        if self.__current_animation_count >= 238:
+            self.__current_animation_count = 223
+
+            # print(f"{Fore.RED}update_effect_animation_panel() -> self.__current_animation_count: {Fore.GREEN}{self.__current_animation_count}{Style.RESET_ALL}")
+        print(f'current_animation_count: {self.__current_animation_count}')
+        # image_count = self.__current_animation_count % 16
+        image_count = self.__current_animation_count
+        self.animation_panel.set_image_data(
+            self.__pre_drawed_image.get_pre_draw_effect_animation(self.animation_name, image_count))
+
+        self.__current_animation_count += 1
+
+
     def animate(self):
         def animate():
             finish_list = []

@@ -153,6 +153,21 @@ class MusicPlayerRepositoryImpl(MusicPlayerRepository):
         sound = pygame.mixer.Sound(sound_effect_file_path)
         sound.play()
 
+    def play_sound_effect_of_card_execution_with_delay(self, card_execution_event_name: str, delay: int):
+        print("MusicPlayerRepositoryImpl : play_sound_effect_of_card_execution_with_delay - " + card_execution_event_name)
+        current_location = os.getcwd()
+        sound_effect_file_path = (
+            os.path.join(
+                current_location,
+                'local_storage', 'sound_effect', 'card_execution', f'{card_execution_event_name}.mp3'))
+        if not os.path.exists(sound_effect_file_path):
+            print('유효하지 않은 경로입니다.')
+            return
+        time.sleep(delay)
+        pygame.mixer.init()
+        sound = pygame.mixer.Sound(sound_effect_file_path)
+        sound.play()
+
     def play_sound_effect_of_timer(self, timer_event_name: str, stop_event: int):
         print("MusicPlayerRepositoryImpl : play_sound_effect_of_timer - " + timer_event_name)
         pygame.mixer.init()
