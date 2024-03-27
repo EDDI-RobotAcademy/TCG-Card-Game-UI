@@ -4,6 +4,7 @@ from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from screeninfo import get_monitors
 
+from battle_field.entity.effect_animation import EffectAnimation
 from common.utility import get_project_root
 from image_shape.non_background_image import NonBackgroundImage
 from image_shape.rectangle_image import RectangleImage
@@ -25,6 +26,13 @@ class BuyRandomCardFrame(OpenGLFrame):
 
     def __init__(self, master=None, **kwargs):
         super().__init__(master, **kwargs)
+
+        self.animation_finished = False
+
+        self.card_drawing_animation = None
+        self.card_drawing_animation_panel = None
+
+
 
         self.init_monitor_specification()
 
@@ -98,10 +106,24 @@ class BuyRandomCardFrame(OpenGLFrame):
 
         self.buy_check_repository.set_total_window_size(self.width, self.height)
 
+        self.card_drawing_animation = EffectAnimation()
+        self.card_drawing_animation.set_total_window_size(self.width, self.height)
+        self.card_drawing_animation.set_animation_name('card_drawing_scene')
+        self.card_drawing_animation.draw_full_screen_animation_panel()
+        self.card_drawing_animation_panel = self.card_drawing_animation.get_animation_panel()
+
+
+
         self.make_card_main_frame()
         self.render = BuyRandomCardFrameRenderer(self.buy_random_card_scene, self)
 
         self.buy_check_repository.create_random_buy_list()
+
+        self.render.set_effect_animation(self.card_drawing_animation)
+
+        # self.play_card_drawing_effect_animation()
+
+
 
     def reshape(self, width, height):
         print(f"Reshaping window to width={width}, height={height}")
@@ -253,10 +275,51 @@ class BuyRandomCardFrame(OpenGLFrame):
         if self.is_reshape_not_complete:
             return
 
+        if self.card_drawing_animation_panel:
+            if self.card_drawing_animation.is_finished:
+                self.animation_finished = True
+                self.card_drawing_animation_panel = None
+                self.card_drawing_animation = None
+
+            else:
+                self.card_drawing_animation.set_width_ratio(self.width_ratio)
+                self.card_drawing_animation.set_height_ratio(self.height_ratio)
+                self.card_drawing_animation.update_effect_animation_panel()
+                # print('그리는중')
+                # print(self.card_drawing_animation)
+                # print(self.card_drawing_animation_panel)
+                # self.card_drawing_animation.set_width_ratio(self.width_ratio)
+                # self.card_drawing_animation.set_height_ratio(self.height_ratio)
+                # self.card_drawing_animation.update_effect_animation_panel()
+                # self.card_drawing_animation_panel.draw()
+
+
+
         self.render.render()
+        
+
 
         # if self.redraw_check is True:
         #     self.make_card_main_frame()
         #     self.render_after = BuyRandomCardFrameRenderer(self.buy_random_card_scene, self)
         #     self.render_after.render()
 
+    
+    def play_card_drawing_effect_animation(self):
+        def animate():
+            self.card_drawing_animation.set_width_ratio(self.width_ratio)
+            self.card_drawing_animation.set_height_ratio(self.height_ratio)
+            self.card_drawing_animation.update_effect_animation_panel()
+            self.card_drawing_animation_panel.draw()
+
+
+            if not self.card_drawing_animation.is_finished:
+                self.master.after(100, animate)
+            else:
+                print("drawing_effect_animation finish")
+                self.animation_finished = True
+                # self.card_drawing_animation_panel = None
+                # self.card_drawing_animation = None
+
+        self.card_drawing_animation.reset_animation_count()
+        self.master.after(17, animate)

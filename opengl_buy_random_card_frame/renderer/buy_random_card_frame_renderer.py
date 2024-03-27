@@ -15,6 +15,9 @@ class BuyRandomCardFrameRenderer:
         self.window = window
         self.try_again_screen_visible = False
 
+    def set_effect_animation(self, effect_animation):
+        self.effect_animation = effect_animation
+
     def render(self):
         # print("buy random card frame 렌더러 호출")
         self.window.tkMakeCurrent()
@@ -72,6 +75,11 @@ class BuyRandomCardFrameRenderer:
             self.scene.try_again_screen.draw()
             self.scene.yes_button.draw()
             self.scene.no_button.draw()
+
+        if self.effect_animation.get_animation_panel():
+            if self.effect_animation.is_finished == False:
+                self.effect_animation.get_animation_panel().draw()
+
 
         self.window.tkSwapBuffers()
 
