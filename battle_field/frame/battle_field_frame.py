@@ -2600,6 +2600,7 @@ class BattleFieldFrame(OpenGLFrame):
                                                                                  self.your_field_panel)
 
             if isinstance(drop_action_result ,int):
+                self.selected_object = None
                 self.return_to_initial_location()
                 self.reset_every_selected_action()
                 self.message_on_the_screen.create_message_on_the_battle_screen(drop_action_result)
