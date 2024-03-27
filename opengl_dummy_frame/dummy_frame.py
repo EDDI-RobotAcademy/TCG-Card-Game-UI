@@ -1,7 +1,15 @@
+import os
+import tkinter
+
 from OpenGL.GL import *
 from OpenGL.GLU import *
 from pyopengltk import OpenGLFrame
 
+from PIL import Image, ImageTk
+
+from common.utility import get_project_root
+
+from battle_field.entity.effect_animation import EffectAnimation
 from battle_field.infra.window_size_repository import WindowSizeRepository
 from pre_drawed_image_manager.pre_drawed_image import PreDrawedImage
 
@@ -11,12 +19,15 @@ class DummyFrame(OpenGLFrame):
 
     width = 0
     height = 0
-
+    count = 0.01
     window_size_repository = WindowSizeRepository.getInstance()
     pre_drawed_image_instance = PreDrawedImage.getInstance()
 
     def __init__(self, master=None, switchFrameWithMenuName=None, **kwargs):
         super().__init__(master, **kwargs)
+
+
+
 
         self.switch_frame_with_menu_name = switchFrameWithMenuName
 
@@ -69,9 +80,40 @@ class DummyFrame(OpenGLFrame):
 
         self.window_size_repository.set_total_window_size(self.width, self.height)
 
+        self.label = tkinter.Label(self)
+        self.label.place(anchor="nw")
+        self.load_image()
+        self.display_image()
+
+        self.master.after(1000, self.pre_draw_full_screen, width, height)
+
+    def load_image(self):
+        # 이미지 로드 및 Tkinter PhotoImage로 변환
+        self.original_image = Image.open("local_storage/image/battle_lobby/loading_screen.png")
+
+    def display_image(self):
+        # 이미지를 현재 창 크기에 맞게 리사이즈하고 Label에 표시
+        resized_img = self.original_image.resize((self.master.winfo_width(), self.master.winfo_height()),
+                                                 Image.ANTIALIAS)
+        self.image = ImageTk.PhotoImage(resized_img)
+        self.label.config(image=self.image)
+
+    def redraw(self):
+        if self.is_reshape_not_complete:
+
+            return
+
+
+
+        self.switch_frame_with_menu_name("main-menu")
+
+
+    def pre_draw_full_screen(self, width, height):
         self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_skill(width, height)
         self.pre_drawed_image_instance.pre_draw_full_screen_sea_of_wraith(width, height)
         self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_targeting_skill(width, height)
+        self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_deploy(width, height)
+        self.pre_drawed_image_instance.pre_draw_full_screen_call_of_Leonic_effect_animation(width, height)
 
         # self.current_width = self.width
         # self.current_height = self.height
@@ -80,10 +122,9 @@ class DummyFrame(OpenGLFrame):
         # self.prev_height = self.height
         self.is_reshape_not_complete = False
 
-    def redraw(self):
-        if self.is_reshape_not_complete:
-            return
 
-
-
-        self.switch_frame_with_menu_name("main-menu")
+    def resize_image(self, image, width, height):
+        """
+        이미지를 지정된 크기로 리사이즈합니다.
+        """
+        return image.resize((width, height))
