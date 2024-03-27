@@ -1,11 +1,13 @@
 import tkinter
 from PIL import ImageTk, Image
 from colorama import Fore, Style
+from screeninfo import get_monitors
 
 from main_frame.repository.main_menu_frame_repository_impl import MainMenuFrameRepositoryImpl
 from main_frame.service.main_menu_frame_service import MainMenuFrameService
 from main_frame.service.request.program_exit_request import ProgramExitRequest
 from music_player.repository.music_player_repository_impl import MusicPlayerRepositoryImpl
+from opengl_dummy_frame.repository.opengl_dummy_frame_repository import OpenGLDummyFrameRepository
 from session.service.session_service_impl import SessionServiceImpl
 
 
@@ -13,6 +15,8 @@ class MainMenuFrameServiceImpl(MainMenuFrameService):
     __instance = None
 
     title_bar_height = None
+
+    opengl_dummy_frame_repository = OpenGLDummyFrameRepository.getInstance()
 
     def __new__(cls):
         if cls.__instance is None:
@@ -29,7 +33,15 @@ class MainMenuFrameServiceImpl(MainMenuFrameService):
             cls.__instance = cls()
         return cls.__instance
 
+    # def check_full_screen_size(self):
+    #     dummy_frame = self.opengl_dummy_frame_repository.get_dummy_frame()
+    #     width = dummy_frame.get_real_width()
+    #     height = dummy_frame.get_real_height()
+    #
+    #     print(f"main-menu frame width: {width}, height: {height}")
+
     def createMainUiFrame(self, rootWindow, switchFrameWithMenuName):
+        # self.check_full_screen_size()
         mainMenuFrame = self.__mainMenuFrameRepository.createMainMenuFrame(rootWindow)
         # title_bar_height = mainMenuFrame.winfo_rooty() - mainMenuFrame.winfo_y()
         # print(f"{Fore.RED}title_bar_height: {title_bar_height}{Style.RESET_ALL}")
