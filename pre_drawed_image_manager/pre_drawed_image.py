@@ -122,6 +122,8 @@ class PreDrawedImage:
     __pre_drawed_dark_flame_effect = {}
 
     __pre_drawed_try_again_screen = None
+    __pre_drawed_yes_button = None
+    __pre_drawed_no_button = None
 
     __pre_drawed_preparing_message = None
     __pre_drawed_preparing_ok_button = None
@@ -599,6 +601,14 @@ class PreDrawedImage:
     def pre_draw_try_again_screen(self):
         try_again_screen_image_path = os.path.join(self.__project_root, "local_storage", "shop_image", "try_again_screen.png")
         self.__pre_drawed_try_again_screen = ImageDataLoader.load_rectangle_origin_image_data(try_again_screen_image_path)
+
+    def pre_draw_yes_button(self):
+        yes_button_path = os.path.join(self.__project_root, "local_storage", "shop_image", "yes_button.png")
+        self.__pre_drawed_yes_button =ImageDataLoader.load_rectangle_origin_image_data(yes_button_path)
+
+    def pre_draw_no_button(self):
+        no_button_path = os.path.join(self.__project_root, "local_storage", "shop_image", "no_button.png")
+        self.__pre_drawed_no_button = ImageDataLoader.load_rectangle_origin_image_data(no_button_path)
 
     def pre_draw_preparing_message(self):
         preparing_message_image_path = os.path.join(self.__project_root, "local_storage", "preparing_message", "preparing_message.png")
@@ -1304,7 +1314,12 @@ class PreDrawedImage:
         self.pre_draw_preparing_message()
         self.pre_draw_preparing_ok_button()
 
+
         # self.pre_draw_loading_screen()
+
+        self.pre_draw_yes_button()
+        self.pre_draw_no_button()
+
 
         # Multi Window Size Issue로 백그라운드만은 미리 그리지 않음
         # self.pre_draw_battle_field_muligun_background()
@@ -1550,6 +1565,12 @@ class PreDrawedImage:
 
     def get_pre_draw_try_again_screen(self):
         return self.__pre_drawed_try_again_screen
+
+    def get_pre_draw_yes_button(self):
+        return self.__pre_drawed_yes_button
+
+    def get_pre_draw_no_button(self):
+        return self.__pre_drawed_no_button
 
     def get_pre_draw_preparing_message(self):
         return self.__pre_drawed_preparing_message
