@@ -461,9 +461,9 @@ class FakeBattleFieldFrame(OpenGLFrame):
 
         self.attack_animation_object.set_total_window_size(self.width, self.height)
 
-        self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_skill(width, height)
-        self.pre_drawed_image_instance.pre_draw_full_screen_sea_of_wraith(width, height)
-        self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_targeting_skill(width, height)
+        # self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_skill(width, height)
+        # self.pre_drawed_image_instance.pre_draw_full_screen_sea_of_wraith(width, height)
+        # self.pre_drawed_image_instance.pre_draw_full_screen_nether_blade_targeting_skill(width, height)
 
         battle_field_scene = BattleFieldScene()
         battle_field_scene.create_battle_field_cene(self.width, self.height)
