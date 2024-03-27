@@ -43,6 +43,10 @@ class MusicPlayerRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
+    def play_sound_effect_of_card_execution_with_delay(self, card_execution_event_name: str, delay: int):
+        pass
+
+    @abc.abstractmethod
     def play_sound_effect_of_timer(self, timer_event_name: str, stop_event: int):
         pass
 
