@@ -11328,12 +11328,13 @@ class BattleFieldFrame(OpenGLFrame):
         effect_animation.reset_animation_count()
 
         effect_animation_name = effect_animation.get_animation_name()
-        self.__music_player_repository.play_sound_effect_of_card_execution(effect_animation_name)
 
         if need_delay:
             self.master.after(2000, animate)
+            self.__music_player_repository.play_sound_effect_of_card_execution_with_delay(effect_animation_name, 2)
         else:
             self.master.after(0, animate)
+            self.__music_player_repository.play_sound_effect_of_card_execution(effect_animation_name)
 
     def create_effect_animation_to_opponent_unit_and_play_animation_and_call_function(self, effect_name, index,
                                                                                       function=None):
@@ -11351,7 +11352,7 @@ class BattleFieldFrame(OpenGLFrame):
         self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
             animation_index, effect_animation_panel)
 
-        self.__music_player_repository.play_sound_effect_of_card_execution(effect_name)
+        # self.__music_player_repository.play_sound_effect_of_card_execution(effect_name)
 
         self.play_effect_animation_by_index_and_call_function(animation_index, function)
 
@@ -11407,7 +11408,7 @@ class BattleFieldFrame(OpenGLFrame):
         self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
             animation_index, effect_animation_panel)
 
-        self.__music_player_repository.play_sound_effect_of_card_execution(effect_name)
+        # self.__music_player_repository.play_sound_effect_of_card_execution(effect_name)
 
         self.play_effect_animation_by_index_and_call_function_with_param(animation_index, function, param)
 
@@ -11450,7 +11451,7 @@ class BattleFieldFrame(OpenGLFrame):
         self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
             animation_index, effect_animation_panel)
 
-        self.__music_player_repository.play_sound_effect_of_card_execution(effect_name)
+        # self.__music_player_repository.play_sound_effect_of_card_execution(effect_name)
 
         self.play_effect_animation_by_index_and_call_function(animation_index, function)
 
@@ -11501,7 +11502,7 @@ class BattleFieldFrame(OpenGLFrame):
         self.effect_animation_repository.save_effect_animation_panel_at_dictionary_with_index(
             animation_index, effect_animation_panel)
 
-        self.__music_player_repository.play_sound_effect_of_card_execution(effect_name)
+        # self.__music_player_repository.play_sound_effect_of_card_execution(effect_name)
 
         self.play_effect_animation_by_index_and_call_function(animation_index, function)
 
