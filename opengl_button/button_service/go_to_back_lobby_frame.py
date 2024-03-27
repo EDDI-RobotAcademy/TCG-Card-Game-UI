@@ -1,6 +1,7 @@
 from colorama import Fore, Style
 from shapely import Polygon, Point
 
+from music_player.repository.music_player_repository_impl import MusicPlayerRepositoryImpl
 from ui_frame.service.ui_frame_service_impl import UiFrameServiceImpl
 
 
@@ -9,6 +10,7 @@ class GoToBackLobbyFrame:
         self.master = master
         self.my_card_main_frame = my_card_main_frame
         self.ui_frame_service = UiFrameServiceImpl.getInstance()
+        self.music_player_repository = MusicPlayerRepositoryImpl.getInstance()
 
         self.my_card_main_scene = my_card_main_frame.my_card_main_scene
 
@@ -37,6 +39,7 @@ class GoToBackLobbyFrame:
 
             go_back_button = self.my_card_main_scene.get_go_back_button()
             if self.is_point_inside_object(go_back_button, (x, y)):
+                self.music_player_repository.play_sound_effect_of_mouse_on_click('menu_button_click')
                 print(f"mouse_click_event() clicked go_back_button")
 
                 self.switchFrame("lobby-menu")

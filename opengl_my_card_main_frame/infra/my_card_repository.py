@@ -36,6 +36,8 @@ class MyCardRepository:
     page_slash_object = None
     max_page_object = None
 
+    prepare_message_visible = False
+
     def __new__(cls):
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
@@ -46,6 +48,12 @@ class MyCardRepository:
         if cls.__instance is None:
             cls.__instance = cls()
         return cls.__instance
+
+    def get_prepare_message_visible(self):
+        return self.prepare_message_visible
+
+    def set_prepare_message_visible(self, prepare_message_visible):
+        self.prepare_message_visible = prepare_message_visible
 
     def set_total_window_size(self, width, height):
         print(f"my_card_repository set_total_window_size -> width: {width}, height: {height}")
