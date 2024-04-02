@@ -520,10 +520,10 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         self.__attack_animation_object.set_is_opponent_attack_main_character(True)
 
-        survival_info = notify_dict_data['player_main_character_survival_map']['You']
-
-        if survival_info == "Death":
-            self.__your_hp_repository.your_character_die()
+        # survival_info = notify_dict_data['player_main_character_survival_map']['You']
+        #
+        # if survival_info == "Death":
+        #     self.__your_hp_repository.your_character_die()
 
         opponent_attacker_unit_info = next(
             iter(notify_dict_data["player_field_unit_attack_map"]["Opponent"]["field_unit_attack_map"]))
@@ -993,10 +993,10 @@ class NotifyReaderServiceImpl(NotifyReaderService):
 
         self.__attack_animation_object.set_is_opponent_attack_main_character(True)
 
-        survival_info = notify_data['player_main_character_survival_map']['You']
-
-        if survival_info == "Death":
-            self.__your_hp_repository.your_character_die()
+        # survival_info = notify_data['player_main_character_survival_map']['You']
+        #
+        # if survival_info == "Death":
+        #     self.__your_hp_repository.your_character_die()
 
         opponent_attacker_unit_info = next(
             iter(notify_data["player_field_unit_attack_map"]["Opponent"]["field_unit_attack_map"]))

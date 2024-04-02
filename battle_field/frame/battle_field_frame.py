@@ -2068,9 +2068,9 @@ class BattleFieldFrame(OpenGLFrame):
         #         self.battle_result_panel_list[0].draw()
 
         if len(self.battle_result_panel_list) != 0:
-            print(self.field_area_inside_handler.get_field_area_action())
-            print(self.opponent_field_area_inside_handler.get_field_area_action())
-            if self.field_area_inside_handler.get_field_area_action() == None and self.opponent_field_area_inside_handler.get_field_area_action() == None:
+
+            if self.field_area_inside_handler.get_field_area_action() == FieldAreaAction.Dummy or self.opponent_field_area_inside_handler.get_field_area_action() == OpponentFieldAreaActionProcess.Dummy or (
+                    self.field_area_inside_handler.get_field_area_action() == None and self.opponent_field_area_inside_handler.get_field_area_action() == None):
 
                 for battle_result_panel in self.battle_result_panel_list:
                     battle_result_panel.set_width_ratio(self.width_ratio)
@@ -2606,6 +2606,7 @@ class BattleFieldFrame(OpenGLFrame):
                 self.return_to_initial_location()
                 self.reset_every_selected_action()
                 self.message_on_the_screen.create_message_on_the_battle_screen(drop_action_result)
+                # self.selected_object = None
             elif drop_action_result is None or drop_action_result is FieldAreaAction.Dummy:
                 print("self.field_area_inside_handler.get_field_area_action() = None")
                 self.return_to_initial_location()
@@ -10375,6 +10376,7 @@ class BattleFieldFrame(OpenGLFrame):
 
                 if your_character_survival_state != 'Survival':
                     print('죽었습니다!!')
+                    self.your_hp_repository.your_character_die()
                     self.timer.stop_timer()
                     self.battle_field_repository.lose()
 
@@ -11128,6 +11130,11 @@ class BattleFieldFrame(OpenGLFrame):
                 # opponent_damage = attack_animation_object.get_opponent_animation_actor_damage()
                 health_point = notify_data['player_main_character_health_point_map']['You']
                 self.your_hp_repository.change_hp(int(health_point))
+
+                survival_info = notify_data['player_main_character_survival_map']['You']
+
+                if survival_info == "Death":
+                    self.your_hp_repository.your_character_die()
                 if self.your_hp_repository.get_your_character_survival_info() == SurvivalType.DEATH:
                     self.battle_field_repository.lose()
 
