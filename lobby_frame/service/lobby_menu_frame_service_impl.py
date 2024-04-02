@@ -367,12 +367,12 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
 
             switchFrameWithMenuName("fake-battle-field")
 
-        fake_battle_field_button = tkinter.Button(lobbyMenuFrame, text="개발 테스트용 전장", bg="#2E2BE2", fg="white",
-                                          # command=lambda: switchFrameWithMenuName("fake-battle-field"), width=36,
-                                            command=on_fake_battle_field_button_click,
-                                            width=36,
-                                            height=2)
-        fake_battle_field_button.place(relx=0.2, rely=0.65, anchor="center")
+        # fake_battle_field_button = tkinter.Button(lobbyMenuFrame, text="개발 테스트용 전장", bg="#2E2BE2", fg="white",
+        #                                   # command=lambda: switchFrameWithMenuName("fake-battle-field"), width=36,
+        #                                     command=on_fake_battle_field_button_click,
+        #                                     width=36,
+        #                                     height=2)
+        # fake_battle_field_button.place(relx=0.2, rely=0.65, anchor="center")
 
         def onClickExit(event):
             self.__musicPlayerRepository.play_sound_effect_of_mouse_on_click('menu_button_click')
@@ -451,7 +451,7 @@ class LobbyMenuFrameServiceImpl(LobbyMenuFrameService):
             self.__musicPlayerRepository.play_sound_effect_of_mouse_on_click('mouse_on_button')
 
         battle_entrance_button.bind("<Enter>", play_mouse_on_button_sound)
-        fake_battle_field_button.bind("<Enter>", play_mouse_on_button_sound)
+        # fake_battle_field_button.bind("<Enter>", play_mouse_on_button_sound)
         my_card_button.bind("<Enter>", play_mouse_on_button_sound)
         card_shop_button.bind("<Enter>", play_mouse_on_button_sound)
         exit_button.bind("<Enter>", play_mouse_on_button_sound)

@@ -2068,6 +2068,8 @@ class BattleFieldFrame(OpenGLFrame):
         #         self.battle_result_panel_list[0].draw()
 
         if len(self.battle_result_panel_list) != 0:
+            print(self.field_area_inside_handler.get_field_area_action())
+            print(self.opponent_field_area_inside_handler.get_field_area_action())
             if self.field_area_inside_handler.get_field_area_action() == None and self.opponent_field_area_inside_handler.get_field_area_action() == None:
 
                 for battle_result_panel in self.battle_result_panel_list:
@@ -2277,11 +2279,16 @@ class BattleFieldFrame(OpenGLFrame):
 
                                 self.your_tomb_repository.create_tomb_card(your_card_id)
 
+                                print(f"selected_object : {self.selected_object}")
+
+
                                 # your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
                                 # self.your_hand_repository.remove_card_by_index(your_card_index)
                                 your_card_index = self.your_hand_repository.find_index_by_selected_object_with_page(
                                     self.selected_object)
+                                print(f"your_card_index : {your_card_index}")
                                 self.your_hand_repository.remove_card_by_index_with_page(your_card_index)
+
 
                                 # self.your_hand_repository.replace_hand_card_position()
                                 self.your_hand_repository.update_your_hand()
@@ -2292,6 +2299,8 @@ class BattleFieldFrame(OpenGLFrame):
                             self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
                                 'field_of_death', field_of_death, None
                             )
+
+                        return
 
             # Opponent Field Area 끝
 
@@ -2606,6 +2615,14 @@ class BattleFieldFrame(OpenGLFrame):
                 self.return_to_initial_location()
                 self.field_area_inside_handler.set_placed_card_page(
                     self.your_hand_repository.get_current_your_hand_page())
+            elif drop_action_result is FieldAreaAction.PLACE_UNIT:
+                self.field_area_inside_handler.clear_field_area_action()
+                self.selected_object = None
+            elif drop_action_result is FieldAreaAction.DRAW_DECK:
+                self.field_area_inside_handler.clear_field_area_action()
+                self.selected_object = None
+            elif drop_action_result is FieldAreaAction.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS:
+                self.selected_object = None
             else:
                 print("self.field_area_inside_handler.get_field_area_action() = Some Action")
                 # self.selected_object = None
@@ -2613,14 +2630,7 @@ class BattleFieldFrame(OpenGLFrame):
                 self.field_area_inside_handler.set_placed_card_page(
                     self.your_hand_repository.get_current_your_hand_page())
                 print(f"추정된 필드 액션 : {self.field_area_inside_handler.get_field_area_action()}")
-                if drop_action_result is FieldAreaAction.PLACE_UNIT:
-                    self.field_area_inside_handler.clear_field_area_action()
-                    self.selected_object = None
-                if drop_action_result is FieldAreaAction.DRAW_DECK:
-                    self.field_area_inside_handler.clear_field_area_action()
-                    self.selected_object = None
-                if drop_action_result is FieldAreaAction.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS:
-                    self.selected_object = None
+
                 # 서포트 관련하여 시작 포인트
                 # handler에서 id 와 index를 받아서 저장 해놓고
                 # false가 떳을 경우의 함수를 추가하여 return값으로 selection_object를 주는 함수를 만든다.

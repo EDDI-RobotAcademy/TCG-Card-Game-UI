@@ -83,9 +83,16 @@ class YourHandPage:
             f"{self.your_hand_page_card_list}, "
             f"your_hand_page_card_object_list: {self.your_hand_page_card_object_list}")
 
+    # def find_index_by_selected_object(self, selected_object):
+    #     for index, card in enumerate(self.your_hand_page_card_object_list):
+    #         if card == selected_object:
+    #             return index
+    #     return -1
+
     def find_index_by_selected_object(self, selected_object):
-        for index, card in enumerate(self.your_hand_page_card_object_list):
-            if card == selected_object:
+        print(f"self.your_hand_page_card_object_list : {self.your_hand_page_card_object_list}")
+        for index, _ in enumerate(self.your_hand_page_card_object_list):
+            if index == selected_object.get_index():
                 return index
         return -1
 
