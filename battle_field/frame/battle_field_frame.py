@@ -2068,7 +2068,10 @@ class BattleFieldFrame(OpenGLFrame):
         #         self.battle_result_panel_list[0].draw()
 
         if len(self.battle_result_panel_list) != 0:
-            if self.field_area_inside_handler.get_field_area_action() == None and self.opponent_field_area_inside_handler.get_field_area_action() == None:
+            print('my action:', self.field_area_inside_handler.get_field_area_action())
+            print('opponent action:', self.opponent_field_area_inside_handler.get_field_area_action())
+            if self.field_area_inside_handler.get_field_area_action() == FieldAreaAction.Dummy or self.opponent_field_area_inside_handler.get_field_area_action() == OpponentFieldAreaActionProcess.Dummy or (
+                    self.field_area_inside_handler.get_field_area_action() == None and self.opponent_field_area_inside_handler.get_field_area_action() == None):
 
                 for battle_result_panel in self.battle_result_panel_list:
                     battle_result_panel.set_width_ratio(self.width_ratio)
@@ -2597,6 +2600,7 @@ class BattleFieldFrame(OpenGLFrame):
                 self.return_to_initial_location()
                 self.reset_every_selected_action()
                 self.message_on_the_screen.create_message_on_the_battle_screen(drop_action_result)
+                # self.selected_object = None
             elif drop_action_result is None or drop_action_result is FieldAreaAction.Dummy:
                 print("self.field_area_inside_handler.get_field_area_action() = None")
                 self.return_to_initial_location()
@@ -2606,6 +2610,14 @@ class BattleFieldFrame(OpenGLFrame):
                 self.return_to_initial_location()
                 self.field_area_inside_handler.set_placed_card_page(
                     self.your_hand_repository.get_current_your_hand_page())
+            elif drop_action_result is FieldAreaAction.PLACE_UNIT:
+                self.field_area_inside_handler.clear_field_area_action()
+                self.selected_object = None
+            elif drop_action_result is FieldAreaAction.DRAW_DECK:
+                self.field_area_inside_handler.clear_field_area_action()
+                self.selected_object = None
+            elif drop_action_result is FieldAreaAction.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS:
+                self.selected_object = None
             else:
                 print("self.field_area_inside_handler.get_field_area_action() = Some Action")
                 # self.selected_object = None
@@ -2613,14 +2625,7 @@ class BattleFieldFrame(OpenGLFrame):
                 self.field_area_inside_handler.set_placed_card_page(
                     self.your_hand_repository.get_current_your_hand_page())
                 print(f"추정된 필드 액션 : {self.field_area_inside_handler.get_field_area_action()}")
-                if drop_action_result is FieldAreaAction.PLACE_UNIT:
-                    self.field_area_inside_handler.clear_field_area_action()
-                    self.selected_object = None
-                if drop_action_result is FieldAreaAction.DRAW_DECK:
-                    self.field_area_inside_handler.clear_field_area_action()
-                    self.selected_object = None
-                if drop_action_result is FieldAreaAction.REQUIRED_FIRST_PASSIVE_SKILL_PROCESS:
-                    self.selected_object = None
+
                 # 서포트 관련하여 시작 포인트
                 # handler에서 id 와 index를 받아서 저장 해놓고
                 # false가 떳을 경우의 함수를 추가하여 return값으로 selection_object를 주는 함수를 만든다.
@@ -10365,6 +10370,7 @@ class BattleFieldFrame(OpenGLFrame):
 
                 if your_character_survival_state != 'Survival':
                     print('죽었습니다!!')
+                    self.your_hp_repository.your_character_die()
                     self.timer.stop_timer()
                     self.battle_field_repository.lose()
 
@@ -11118,6 +11124,11 @@ class BattleFieldFrame(OpenGLFrame):
                 # opponent_damage = attack_animation_object.get_opponent_animation_actor_damage()
                 health_point = notify_data['player_main_character_health_point_map']['You']
                 self.your_hp_repository.change_hp(int(health_point))
+
+                survival_info = notify_data['player_main_character_survival_map']['You']
+
+                if survival_info == "Death":
+                    self.your_hp_repository.your_character_die()
                 if self.your_hp_repository.get_your_character_survival_info() == SurvivalType.DEATH:
                     self.battle_field_repository.lose()
 

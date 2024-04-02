@@ -124,7 +124,7 @@ class LegacyFieldAreaInsideHandler:
         elif passive_skill_type == 1:
             print("단일기")
 
-        self.__field_area_action = FieldAreaAction.PLACE_UNIT
+        self.__field_area_action = None
         return self.__field_area_action
 
     def handle_support_card_energy_boost(self, placed_card_id, placed_card_index):
