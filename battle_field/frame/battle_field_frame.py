@@ -2068,8 +2068,7 @@ class BattleFieldFrame(OpenGLFrame):
         #         self.battle_result_panel_list[0].draw()
 
         if len(self.battle_result_panel_list) != 0:
-            print('my action:', self.field_area_inside_handler.get_field_area_action())
-            print('opponent action:', self.opponent_field_area_inside_handler.get_field_area_action())
+
             if self.field_area_inside_handler.get_field_area_action() == FieldAreaAction.Dummy or self.opponent_field_area_inside_handler.get_field_area_action() == OpponentFieldAreaActionProcess.Dummy or (
                     self.field_area_inside_handler.get_field_area_action() == None and self.opponent_field_area_inside_handler.get_field_area_action() == None):
 
@@ -2280,11 +2279,16 @@ class BattleFieldFrame(OpenGLFrame):
 
                                 self.your_tomb_repository.create_tomb_card(your_card_id)
 
+                                print(f"selected_object : {self.selected_object}")
+
+
                                 # your_card_index = self.your_hand_repository.find_index_by_selected_object(self.selected_object)
                                 # self.your_hand_repository.remove_card_by_index(your_card_index)
                                 your_card_index = self.your_hand_repository.find_index_by_selected_object_with_page(
                                     self.selected_object)
+                                print(f"your_card_index : {your_card_index}")
                                 self.your_hand_repository.remove_card_by_index_with_page(your_card_index)
+
 
                                 # self.your_hand_repository.replace_hand_card_position()
                                 self.your_hand_repository.update_your_hand()
@@ -2295,6 +2299,8 @@ class BattleFieldFrame(OpenGLFrame):
                             self.create_effect_animation_to_opponent_field_and_play_animation_and_call_function_with_param(
                                 'field_of_death', field_of_death, None
                             )
+
+                        return
 
             # Opponent Field Area 끝
 

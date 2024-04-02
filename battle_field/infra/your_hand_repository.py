@@ -252,7 +252,9 @@ class YourHandRepository:
 
         return selected_object_index
 
+    # TODO: Legacy
     def find_index_by_selected_object(self, selected_object):
+        print(f"self.current_hand_card_list : {self.current_hand_card_list}")
         for index, card in enumerate(self.current_hand_card_list):
             if card == selected_object:
                 return index
