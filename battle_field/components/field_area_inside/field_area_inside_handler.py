@@ -3,6 +3,7 @@ from colorama import Fore, Style
 from battle_field.components.field_area_inside.field_area_action import FieldAreaAction
 from battle_field.components.field_area_inside.unit_action import UnitAction
 from battle_field.entity.effect_animation import EffectAnimation
+from battle_field.infra.battle_field_repository import BattleFieldRepository
 from battle_field.infra.request.deploy_unit_card_request import DeployUnitCardRequest
 from battle_field.infra.request.drawCardByUseSupportCardRequest import DrawCardByUseSupportCardRequest
 from battle_field.infra.request.request_use_overflow_of_energy import RequestUseOverflowOfEnergy
@@ -54,6 +55,7 @@ class FieldAreaInsideHandler:
     __music_player_repository = MusicPlayerRepositoryImpl.getInstance()
     __notify_reader_repository = NotifyReaderRepositoryImpl.getInstance()
     __fake_notify_reader_repository = FakeNotifyReaderRepositoryImpl.getInstance()
+    __battle_field_repository = BattleFieldRepository.getInstance()
 
     __your_field_unit_action_repository = YourFieldUnitActionRepository.getInstance()
     __detector_about_test = DetectorAboutTest.getInstance()
@@ -265,6 +267,7 @@ class FieldAreaInsideHandler:
                     target_player='You',
                     target_index=99999,
                     target_type=TargetType.FULL_SCREEN,
+                    # call_function=lambda x : self.__battle_field_repository.get_master().after(2000, deploy_unit, x) ,
                     call_function=deploy_unit,
                     function_need_param=True,
                     param=(placed_card_id, placed_card_index)
