@@ -23,6 +23,12 @@ class BattleFieldRepository:
             cls.__instance = cls()
         return cls.__instance
 
+    def save_master(self, master):
+        self.frame_master = master
+
+    def get_master(self):
+        return self.frame_master
+
     def get_battle_field_button_list(self):
         return self.battle_field_button_list
 
