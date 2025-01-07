@@ -29,7 +29,7 @@ class LoginMenuFrame(tkinter.Frame):
     def display_image(self):
         # 이미지를 현재 창 크기에 맞게 리사이즈하고 Label에 표시
         resized_img = self.original_image.resize((self.master.winfo_width(), self.master.winfo_height()),
-                                                 Image.ANTIALIAS)
+                                                 Image.Resampling.LANCZOS)
         self.image = ImageTk.PhotoImage(resized_img)
         self.label.config(image=self.image)
 

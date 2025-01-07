@@ -1,4 +1,5 @@
 import colorama
+from functools import partial
 
 from client_socket.service.client_socket_service_impl import ClientSocketServiceImpl
 from initializer.init_domain import DomainInitializer
@@ -6,6 +7,7 @@ from music_player.controller.music_player_controller_impl import MusicPlayerCont
 from notify_reader.controller.notify_reader_controller_impl import NotifyReaderControllerImpl
 from receiver.controller.receiver_controller_impl import ReceiverControllerImpl
 from task_worker.service.task_worker_service_impl import TaskWorkerServiceImpl
+from thread_worker_pool.service.thread_worker_pool_service_impl import ThreadWorkerPoolServiceImpl
 from transmitter.controller.transmitter_controller_impl import TransmitterControllerImpl
 from ui_frame.controller.ui_frame_controller_impl import UiFrameControllerImpl
 
@@ -39,21 +41,43 @@ if __name__ == "__main__":
     musicPlayerController = MusicPlayerControllerImpl.getInstance()
     musicPlayerController.loadAllMusicFiles()
 
-    taskWorkerService = TaskWorkerServiceImpl.getInstance()
-    taskWorkerService.createTaskWorker("Transmitter", transmitterController.requestToTransmitCommand)
-    taskWorkerService.executeTaskWorker("Transmitter")
+    threadWorkerPoolService = ThreadWorkerPoolServiceImpl.getInstance()
 
-    taskWorkerService.createTaskWorker("Receiver", receiverController.requestToReceiveCommand)
-    taskWorkerService.executeTaskWorker("Receiver")
+    threadWorkerPoolService.executeThreadPoolWorker(
+        f"Transmitter-0",
+        partial(transmitterController.requestToTransmitCommand)
+    )
+
+    # taskWorkerService = TaskWorkerServiceImpl.getInstance()
+    # taskWorkerService.createTaskWorker("Transmitter", transmitterController.requestToTransmitCommand)
+    # taskWorkerService.executeTaskWorker("Transmitter")
+
+    threadWorkerPoolService.executeThreadPoolWorker(
+        f"Receiver-0",
+        partial(receiverController.requestToReceiveCommand)
+    )
+
+    # taskWorkerService.createTaskWorker("Receiver", receiverController.requestToReceiveCommand)
+    # taskWorkerService.executeTaskWorker("Receiver")
 
     # taskWorkerService.createTaskWorker("NotifyReader", notifyReaderController.requestToReadNotifyCommand)
     # taskWorkerService.executeTaskWorker("NotifyReader")
 
-    taskWorkerService.createTaskWorker("MusicPlayer", musicPlayerController.playBackgroundMusic)
-    taskWorkerService.executeTaskWorker("MusicPlayer")
+    threadWorkerPoolService.executeThreadPoolWorker(
+        f"MusicPlayer-0",
+        partial(musicPlayerController.playBackgroundMusic)
+    )
 
-    taskWorkerService.createTaskWorker("UI", uiFrameController.requestToStartPrintGameUi)
-    taskWorkerService.executeTaskWorker("UI")
+    # taskWorkerService.createTaskWorker("MusicPlayer", musicPlayerController.playBackgroundMusic)
+    # taskWorkerService.executeTaskWorker("MusicPlayer")
+
+    threadWorkerPoolService.executeThreadPoolWorker(
+        f"UI-0",
+        partial(uiFrameController.requestToStartPrintGameUi)
+    )
+
+    # taskWorkerService.createTaskWorker("UI", uiFrameController.requestToStartPrintGameUi)
+    # taskWorkerService.executeTaskWorker("UI")
 
     # uiFrameController.first_main_window()
 

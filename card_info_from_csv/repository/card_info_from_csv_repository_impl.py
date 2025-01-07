@@ -47,7 +47,7 @@ class CardInfoFromCsvRepositoryImpl(CardInfoFromCsvRepository):
 
     def readCardData(self, filePath):
         with open(filePath, 'r') as file:
-            dataFile = pd.read_csv(file, skiprows=0, index_col=4)
+            dataFile = pd.read_csv(r'C:\lecture\TCG-Card-Game-UI\local_storage\card\data.csv', skiprows=0, index_col=4)
             dataFile.fillna(0, inplace=True)
 
         return dataFile.itertuples()

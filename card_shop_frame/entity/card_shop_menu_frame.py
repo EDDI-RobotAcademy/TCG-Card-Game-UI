@@ -31,7 +31,7 @@ class CardShopMenuFrame(tkinter.Frame):
     def display_background_image(self):
         # 이미지를 현재 창 크기에 맞게 리사이즈하고 Label에 표시
         resized_img = self.original_image.resize((self.winfo_width(), self.winfo_height()),
-                                                 Image.ANTIALIAS)
+                                                 Image.Resampling.LANCZOS)
         self.image = ImageTk.PhotoImage(resized_img)
         self.label.config(image=self.image)
 
